@@ -8023,7 +8023,7 @@ function broadcastEmoteUsage(emoteName, emoteHash, senderTabId = null) {
 }
 
 // Add emote to your set (for global emotes clicked in chat) - returns success/failure
-async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false) {
+async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false, replace = false) {
   try {
     const authToken = await getAuthCookie()
     if (!authToken) {
@@ -8058,6 +8058,7 @@ async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false)
         source: 'extension',
         sourceId: emoteHash,
         zeroWidth: !!zeroWidth,
+        ...(replace ? { replace: true } : {}),
       }),
     })
 
@@ -8085,7 +8086,8 @@ async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false)
 
     // Check if already in your set (by hash) to avoid duplicates
     // Use snapshot to prevent race with concurrent filter/reassign
-    const currentInventory = [...emoteInventory]
+    // A replace re-pointed the slot: drop the old entry under this name first.
+    const currentInventory = [...emoteInventory].filter((e) => !(data.replaced && e.name === emoteName))
     if (!currentInventory.some((e) => e.hash === newEmote.hash)) {
       currentInventory.push(newEmote)
       emoteInventory = currentInventory
@@ -9984,7 +9986,13 @@ async function handleMessage(message, sender, sendResponse) {
     return true // Keep channel open for async response
   } else if (message.type === 'add_to_inventory') {
     // Async - send response when done
-    addToInventory(message.emoteName, message.emoteHash, message.emoteUrl, message.zeroWidth).then((result) => {
+    addToInventory(
+      message.emoteName,
+      message.emoteHash,
+      message.emoteUrl,
+      message.zeroWidth,
+      message.replace === true,
+    ).then((result) => {
       sendResponse(result)
     })
     return true // Keep channel open for async response

@@ -13,7 +13,7 @@
  *   3. typing the whole name registered the catalog's variant even though the
  *      channel's emote answers to that name.
  *   4. auto-add on send skipped any name you already own, so a different IDK never
- *      replaced yours; it now swaps (remove, then add, in that order) — but only for
+ *      replaced yours; it now swaps (one add carrying replace) — but only for
  *      a deliberate catalog pick, never for tabbing onto the channel's own emote.
  *
  * Carved out of the non-module content-script bundle and evaluated standalone
@@ -303,30 +303,28 @@ describe('4. sending a picked variant', () => {
   })
 })
 
-describe('4b. swapEmoteInInventory: remove first, then add, never leaves you with neither', () => {
+const ADD = slice(EMOTES, '// Add emote to inventory (click-to-add', '// Swap what you own under a name')
+const BG = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const BG_ADD = slice(BG, 'async function addToInventory(', '// Coalesce concurrent removes')
+
+describe('4b. swapEmoteInInventory: ONE add carrying replace, rolled back on refusal', () => {
   function swapRig({
-    removeOk = true,
     addResults = [true],
-    old = { url: OWNED, source: 'heatsync', zeroWidth: true },
+    old = { url: OWNED, source: 'heatsync', zeroWidth: true, hash: 'oldhash' },
   } = {}) {
     const log = []
     const toasts = []
     const viewerPersonalEmotes = new Map(old ? [['IDK', old]] : [])
+    const hashToName = new Map([['oldhash', 'IDK']])
     const adds = [...addResults]
-    let removalDone = false
     const env = {
       viewerPersonalEmotes,
-      removeEmoteFromInventory: async (name, _el, opts) => {
-        log.push(['remove', name, opts])
-        // the real one clears the local entry synchronously, before it first awaits
-        viewerPersonalEmotes.delete(name)
-        await new Promise((r) => setTimeout(r, 5)) // the server round trip
-        removalDone = true
-        if (!removeOk) viewerPersonalEmotes.set(name, old)
-        return removeOk
+      hashToName,
+      removeEmoteFromInventory: async () => {
+        throw new Error('swap must not remove first')
       },
-      addEmoteToInventory: async (name, url, source, _el, zw, silent) => {
-        log.push(['add', name, url, source, zw, silent, removalDone])
+      addEmoteToInventory: async (name, url, source, _el, zw, silent, replace) => {
+        log.push(['add', name, url, source, zw, silent, replace, viewerPersonalEmotes.get(name)?.url])
         await Promise.resolve()
         return adds.length ? adds.shift() : false
       },
@@ -337,51 +335,153 @@ describe('4b. swapEmoteInInventory: remove first, then add, never leaves you wit
     const { swapEmoteInInventory } = new Function(...names, `${SWAP}; return { swapEmoteInInventory }`)(
       ...names.map((k) => env[k]),
     )
-    return { swapEmoteInInventory, log, toasts, viewerPersonalEmotes }
+    return { swapEmoteInInventory, log, toasts, viewerPersonalEmotes, hashToName }
   }
 
-  test('removes the old one, THEN adds the new one, and says so plainly', async () => {
+  test('one silent add with replace:true, no removal, and says so plainly', async () => {
     const r = swapRig()
     expect(await r.swapEmoteInInventory('IDK', OTHER, '7tv', false)).toBe(true)
-    expect(r.log.map((l) => l[0])).toEqual(['remove', 'add'])
-    expect(r.log[1][6]).toBe(true) // the server had already dropped the old one when the add went out
-    expect(r.log[0][2]).toEqual({ silent: true }) // the swap speaks once, not "removed" then "added"
+    expect(r.log.length).toBe(1)
+    expect(r.log[0].slice(0, 7)).toEqual(['add', 'IDK', OTHER, '7tv', false, true, true])
     expect(r.toasts).toEqual([['mc_emote_swapped:IDK', 'success']])
+    expect(r.hashToName.has('oldhash')).toBe(false)
   })
 
-  test('the new one is seeded locally at once, so the line you send right now draws it', async () => {
+  test('the new one is seeded locally before the add goes out, so the line you send right now draws it', async () => {
     const r = swapRig()
     const done = r.swapEmoteInInventory('IDK', OTHER, '7tv', false)
-    // synchronously after the call: the old entry is gone, the new one stands in
     expect(r.viewerPersonalEmotes.get('IDK')).toMatchObject({ url: OTHER, state: 'owned' })
     await done
+    expect(r.log[0][7]).toBe(OTHER)
   })
 
-  test('a removal the server refuses ends the swap: nothing is added', async () => {
-    const r = swapRig({ removeOk: false })
+  test('a refused swap rolls back to the old entry (no extra toast: the add said why)', async () => {
+    const r = swapRig({ addResults: [false] })
     expect(await r.swapEmoteInInventory('IDK', OTHER, '7tv', false)).toBe(false)
-    expect(r.log.map((l) => l[0])).toEqual(['remove'])
-    expect(r.viewerPersonalEmotes.get('IDK').url).toBe(OWNED) // put back
-  })
-
-  test('a refused new emote brings the old one back, and says it did', async () => {
-    const r = swapRig({ addResults: [false, true] })
-    expect(await r.swapEmoteInInventory('IDK', OTHER, '7tv', false)).toBe(false)
-    expect(r.log.map((l) => l[0])).toEqual(['remove', 'add', 'add'])
-    expect(r.log[2].slice(1, 5)).toEqual(['IDK', OWNED, 'heatsync', true]) // the old emote, zeroWidth kept
-    expect(r.toasts).toEqual([['mc_emote_swap_failed:IDK', 'error']])
-  })
-
-  test('when even the restore fails it stays loud (the add already toasted its own reason)', async () => {
-    const r = swapRig({ addResults: [false, false] })
-    expect(await r.swapEmoteInInventory('IDK', OTHER, '7tv', false)).toBe(false)
+    expect(r.log.length).toBe(1)
+    expect(r.viewerPersonalEmotes.get('IDK')).toMatchObject({ url: OWNED, hash: 'oldhash' })
     expect(r.toasts).toEqual([])
+    expect(r.hashToName.get('oldhash')).toBe('IDK')
   })
 
   test('nothing to swap out: no calls', async () => {
     const r = swapRig({ old: null })
     expect(await r.swapEmoteInInventory('IDK', OTHER, '7tv', false)).toBe(false)
     expect(r.log).toEqual([])
+  })
+})
+
+describe('4b2. addEmoteToInventory carries replace to the background and names an upload refusal', () => {
+  function addRig(resp) {
+    const sent = []
+    const toasts = []
+    const env = {
+      mcRemoteEmoteIndex: new Map(),
+      zeroWidthFromAnyCache: () => false,
+      showToast: (text, kind) => toasts.push([text, kind]),
+      t: (key, args) => `${key}:${args?.join(',')}`,
+      pendingEmoteOps: new Set(),
+      chrome: {
+        runtime: {
+          lastError: null,
+          sendMessage: (msg, cb) => {
+            sent.push(msg)
+            cb(resp)
+          },
+        },
+      },
+      blockedEmoteNames: new Set(),
+      removedEmoteFallback: new Map(),
+      persistRemovedFallback() {},
+      blockedEmoteFallback: new Map(),
+      persistBlockedFallback() {},
+      localRemovals: new Map(),
+      inventoryEmotes: new Set(),
+      inventoryHashes: new Map(),
+      viewerPersonalEmotes: new Map(),
+      emoteCache: new Map(),
+      emoteHashes: new Map(),
+      hashToName: new Map(),
+      queryEmoteWrappers: () => [],
+      refreshEmoteTooltip() {},
+      flashAllEmotes() {},
+      log() {},
+    }
+    const names = Object.keys(env)
+    const { addEmoteToInventory } = new Function(...names, `${ADD}; return { addEmoteToInventory }`)(
+      ...names.map((k) => env[k]),
+    )
+    return { addEmoteToInventory, sent, toasts }
+  }
+
+  test('replace=true puts replace:true on the add_to_inventory message', async () => {
+    const r = addRig({ success: true, hash: 'h2', slot: 3 })
+    expect(await r.addEmoteToInventory('IDK', OTHER, '7tv', null, false, true, true)).toBe(true)
+    expect(r.sent.length).toBe(1)
+    expect(r.sent[0]).toMatchObject({ type: 'add_to_inventory', emoteName: 'IDK', emoteUrl: OTHER, replace: true })
+  })
+
+  test('a plain add never sends replace', async () => {
+    const r = addRig({ success: true, hash: 'h2', slot: 3 })
+    await r.addEmoteToInventory('IDK', OTHER, '7tv', null, false, true)
+    expect('replace' in r.sent[0]).toBe(false)
+  })
+
+  test('the upload 409 under replace gets the plain "your upload keeps the name" toast', async () => {
+    const r = addRig({ success: false, error: 'name held by your upload' })
+    expect(await r.addEmoteToInventory('IDK', OTHER, '7tv', null, false, true, true)).toBe(false)
+    expect(r.toasts).toEqual([['mc_emote_swap_upload:IDK', 'error']])
+  })
+})
+
+describe('4b3. background addToInventory puts replace in the POST body and drops the replaced entry', () => {
+  async function bgRig({ replace, ok = true, data = { hash: 'h2', slot: 3, replaced: true } }) {
+    const bodies = []
+    const store = {
+      emoteInventory: [
+        { name: 'IDK', hash: 'oldhash', url: OWNED },
+        { name: 'Other', hash: 'x', url: CHAN },
+      ],
+    }
+    const env = {
+      getAuthCookie: async () => 'tok',
+      broadcastToTabs() {},
+      log() {},
+      API_URL: 'https://x.test',
+      fetchWithTimeout: async (_url, init) => {
+        bodies.push(JSON.parse(init.body))
+        return { ok, status: ok ? 200 : 409, json: async () => data }
+      },
+      browser: { storage: { local: { set: async () => {} } } },
+    }
+    const names = Object.keys(env)
+    const { addToInventory, inv } = new Function(
+      ...names,
+      `let emoteInventory = ${JSON.stringify(store.emoteInventory)}
+${BG_ADD}
+return { addToInventory, inv: () => emoteInventory }`,
+    )(...names.map((k) => env[k]))
+    const res = await (replace === undefined
+      ? addToInventory('IDK', 'h2', OTHER, false)
+      : addToInventory('IDK', 'h2', OTHER, false, replace))
+    return { bodies, res, inv: inv() }
+  }
+
+  test('replace=true: body carries replace:true and the old entry under the name is dropped', async () => {
+    const r = await bgRig({ replace: true })
+    expect(r.bodies[0].replace).toBe(true)
+    expect(r.res.success).toBe(true)
+    expect(r.inv.map((e) => e.hash).sort()).toEqual(['h2', 'x'])
+  })
+
+  test('no replace: body has no replace key', async () => {
+    const r = await bgRig({ replace: undefined, data: { hash: 'h2', slot: 3 } })
+    expect('replace' in r.bodies[0]).toBe(false)
+  })
+
+  test('the 409 for an upload comes back as the error text', async () => {
+    const r = await bgRig({ replace: true, ok: false, data: { error: 'name held by your upload' } })
+    expect(r.res).toEqual({ success: false, error: 'name held by your upload' })
   })
 })
 

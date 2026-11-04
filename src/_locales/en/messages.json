@@ -1792,8 +1792,8 @@
       }
     }
   },
-  "mc_emote_swap_failed": {
-    "message": "couldn’t swap $NAME$ — your old one is back",
+  "mc_emote_swap_upload": {
+    "message": "your own upload keeps the name $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"

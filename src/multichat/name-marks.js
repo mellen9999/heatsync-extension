@@ -5,7 +5,7 @@
 //
 // order before the name: chatterino badge (the callers' third-party badges), sub flair, 🔥, heat bar.
 // 🔥 and the bar never sit together (someone whose bar shows is plainly on heatsync), and 🔥 is never
-// on or beside a heat score. never on your own lines. all server data here is hostile: bounded + validated.
+// on or beside a heat score. your own lines wear it too: you are a heatsync user by definition. all server data here is hostile: bounded + validated.
 
 const HSM_FLAIR_BATCH = 50
 const HSM_FLAIR_TTL = 600000
@@ -53,10 +53,10 @@ function hsMarksBar(heat) {
 }
 
 /** Which heat marks a line wears. known: a heatsync user as far as this client can tell;
- * mine: it is your own line. */
+ * mine: it is your own line (signed in, so known whether or not your emote set has loaded). */
 function hsMarksWear(flameOn, barsOn, known, mine, heat) {
   const bar = barsOn ? hsMarksBar(heat) : null
-  return { flame: !!(flameOn && known && !mine && !bar), bar }
+  return { flame: !!(flameOn && (known || mine) && !bar), bar }
 }
 
 /** An image on the shared allowlist: https, no userinfo / port / control bytes, <= 512, exact host or `.`-suffix. */

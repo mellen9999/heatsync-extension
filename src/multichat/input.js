@@ -4718,6 +4718,21 @@ function updateCharCount(precomputedText) {
   const limit = composerCharLimit(composerLegs())
   const over = len > limit
   input.classList.toggle('over-limit', over)
+  const label = charCountLabel(text.trim().length, limit)
+  let counter = document.getElementById('hs-mc-charcount')
+  if (label) {
+    if (!counter) {
+      counter = document.createElement('span')
+      counter.id = 'hs-mc-charcount'
+      const host = document.getElementById('hs-mc-input-wrap') || input
+      host.insertAdjacentElement('afterend', counter)
+    }
+    counter.textContent = label.text
+    counter.dataset.level = label.level
+    counter.hidden = false
+  } else if (counter) {
+    counter.hidden = true
+  }
 
   // Highlight overflow chars for plain <input> using overlay div
   if (input.tagName === 'INPUT') {

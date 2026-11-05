@@ -325,6 +325,10 @@
     .hs-mc-slash-row.selected .hs-mc-slash-desc { color: #000; }
     .hs-mc-slash-row:hover .hs-mc-slash-name,
     .hs-mc-slash-row.selected .hs-mc-slash-name { color: #000; }
+    /* n/limit — only within 10% of the cap; colored text, no fill */
+    #hs-mc-charcount { flex: 0 0 auto; align-self: center; padding: 0 6px; font-size: 13px; color: #ff0; }
+    #hs-mc-charcount[hidden] { display: none; }
+    #hs-mc-charcount[data-level="over"] { color: #f00; }
     #hs-mc-input.over-limit {
       /* text color handled by highlight overlay */
     }

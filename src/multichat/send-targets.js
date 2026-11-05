@@ -79,6 +79,17 @@ const YT_CHAT_MAX_LEN = 200
 const CHAT_MAX_LEN = { twitch: 500, kick: 500, youtube: YT_CHAT_MAX_LEN }
 
 /**
+ * The "n/limit" counter: silent until the line is within 10% of the cap (the
+ * site's warning band), yellow there, red once over. Counts what goes on the
+ * wire — trimmed, like every send path.
+ * @returns {{text: string, level: 'warn'|'over'}|null}
+ */
+function charCountLabel(len, limit) {
+  if (!(limit > 0) || !(len > limit * 0.9)) return null
+  return { text: `${len}/${limit}`, level: len > limit ? 'over' : 'warn' }
+}
+
+/**
  * The composer's length cap for what the next send reaches: the tightest cap
  * among the active legs (a mirrored youtube leg is rejected past 200, not
  * truncated). No leg known → the 500 default.

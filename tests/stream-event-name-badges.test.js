@@ -50,6 +50,57 @@ describe('stream-event streamer name', () => {
     expect(p.cls).toBe('')
     expect(ns.hsNameBadges(p)).toBe('')
   })
+  test('an unknown streamer is looked up: their twitch colour, and the badges go in when the id lands', async () => {
+    const userIds = new Map([['dansgaming', '7236692']])
+    const colours = new Map([['dansgaming', '#008000']])
+    const el = {
+      dataset: { hsNlogin: 'dansgaming', hsNsrc: 'twitch', hsNbadge: '1' },
+      textContent: 'dansgaming',
+      style: { color: '' },
+      before: '',
+      attr: '',
+      insertAdjacentHTML(where, html) {
+        if (where === 'beforebegin') this.before += html
+      },
+      setAttribute(k, v) {
+        if (k === 'style') this.attr = v
+      },
+    }
+    const stubs = {
+      _hsUserIdCache: userIds,
+      _hsUserColorCache: colours,
+      knownColors: new Map(),
+      hsResolveUserColor: async () => '#008000',
+      hasResolvedHsPaint: () => false,
+      clearHsPaintFromElement() {},
+      CSS: { escape: (x) => x },
+      document: { querySelectorAll: () => [el] },
+    }
+    const prev = {}
+    for (const [k, v] of Object.entries(stubs)) {
+      prev[k] = globalThis[k]
+      globalThis[k] = v
+    }
+    try {
+      ns.hsNameResolveLogin('dansgaming')
+      await new Promise((r) => setTimeout(r, 0))
+      expect(el.dataset.hsNuid).toBe('7236692')
+      expect(el.attr).toBe('color:#008000')
+      expect(el.before).toContain('data-for="7236692"')
+      expect(el.dataset.hsNbadge).toBeUndefined()
+      // a second answer doesn't double them
+      ns.hsNameResolveLogin('dansgaming')
+      await new Promise((r) => setTimeout(r, 0))
+      expect(el.before.split('<img').length - 1).toBe(1)
+    } finally {
+      for (const k of Object.keys(stubs)) globalThis[k] = prev[k]
+    }
+  })
+  test('the row looks an unheard streamer up and marks it for late badges', () => {
+    const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+    expect(main).toContain('resolve: !isYtEvent')
+    expect(main).toContain('data-hs-nbadge')
+  })
   test('the row puts the badges before the name', () => {
     const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
     expect(main).toContain('evtBadges +')

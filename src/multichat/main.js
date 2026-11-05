@@ -7797,14 +7797,19 @@
       // Build structured HTML: [username] ◆ action game
       // No colour found above → the shared name-style fallback (chat-heard colour
       // or the palette), plus the heatsync/7TV paint when chat knows the twitch id.
+      // A streamer chat hasn't heard yet is looked up (twitch colour + id), like a
+      // card name: the row repaints, and takes its badges, when the answer lands.
       const evt = hsNameParts({
         name: ch,
         platform: isYtEvent ? 'youtube' : 'twitch',
         colour: userColor,
         login: isYtEvent ? '' : chLc,
+        resolve: !isYtEvent,
       })
       // the badges keyed to the streamer's twitch id, before the name like a chat row
       const evtBadges = evtPlat === 'twitch' ? hsNameBadges(evt) : ''
+      // no id yet: the lookup's answer puts the badges in (hsNameSweepLogin)
+      if (evtPlat === 'twitch' && !evt.uid) evt.attrs += ' data-hs-nbadge="1"'
       const evtCls = `hs-mc-user hs-evt-user${evt.cls ? ` ${evt.cls}` : ''}`
       // A row whose subject IS the channel (went live, game switch...) knows the
       // channel's handle on the platform it came from, so it links there. A row

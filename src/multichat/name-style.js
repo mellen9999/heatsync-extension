@@ -220,6 +220,12 @@ function hsNameSweepLogin(lower) {
       el.dataset.hsNuid = uid
       el.dataset.hsNplat = 'twitch'
       hsNameQueue(uid, 'twitch')
+      // a name that wanted badges but had no id for them (a went-live row)
+      if (el.dataset.hsNbadge) {
+        delete el.dataset.hsNbadge
+        const html = typeof renderThirdPartyBadges === 'function' ? renderThirdPartyBadges(uid) : ''
+        if (html) el.insertAdjacentHTML('beforebegin', html)
+      }
     }
     hsNameRefresh(el)
   }

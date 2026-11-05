@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "slash कमांड"
+  },
+  "mc_lock_banned": {
+    "message": "आप इस चैनल से बैन हैं"
+  },
+  "mc_lock_timed_out": {
+    "message": "आप टाइमआउट में हैं · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "केवल सब्सक्राइबर — यहाँ चैट के लिए सब्सक्राइब करें"
+  },
+  "mc_lock_followers": {
+    "message": "केवल फ़ॉलोअर — यहाँ चैट के लिए फ़ॉलो करें"
+  },
+  "mc_lock_emote": {
+    "message": "केवल इमोट — यहाँ सिर्फ़ इमोट"
+  },
+  "mc_follows_title": {
+    "message": "फ़ॉलो किए · लाइव"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ लाइव",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "आपके फ़ॉलो किए कोई लाइव नहीं हैं"
+  },
+  "mc_follows_hint": {
+    "message": "j/k चलें · enter चैट · w देखें · esc बंद"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "इमोजी"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "इमोजी खोजें"
+  },
+  "mc_emoji_none": {
+    "message": "कोई इमोजी नहीं मिला"
+  },
+  "mc_emoji_no_data": {
+    "message": "इमोजी सूची लोड नहीं हुई"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: चैट बंद है"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: रिले भरा है, बाद में फिर कोशिश होगी"
   }
 }

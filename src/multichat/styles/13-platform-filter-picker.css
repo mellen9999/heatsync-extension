@@ -364,6 +364,24 @@
     }
 
 
+    /* ── emoji tab: category row + a wrapping grid of square tiles ── */
+    .hs-mc-emoji-cats { display: flex; flex-wrap: wrap; gap: 2px; padding: 4px 4px 0; }
+    .hs-mc-emoji-cat, .hs-mc-emoji {
+      background: #000;
+      color: #fff;
+      border: 1px solid transparent;
+      border-radius: 0;
+      font: inherit;
+      cursor: pointer;
+      padding: 0;
+    }
+    .hs-mc-emoji-cat { font-size: 17px; width: 28px; height: 28px; border-color: var(--hs-border); }
+    .hs-mc-emoji-cat.active { border-color: #fff; }
+    .hs-mc-emoji-grid { display: flex !important; flex-wrap: wrap; align-content: flex-start; gap: 2px; padding: 4px; }
+    .hs-mc-emoji { font-size: 22px; width: 36px; height: 36px; }
+    .hs-mc-emoji-cat:hover, .hs-mc-emoji-cat:active, .hs-mc-emoji:hover, .hs-mc-emoji:active { background: #fff; color: #000; }
+    .hs-mc-emoji-grid .hs-mc-picker-empty { width: 100%; }
+
     /* ── gifs tab ──────────────────────────────────────────────────────────
        A real grid, not a wrapping flex row: keyboard navigation needs to know
        how many columns there are, and only a grid will tell it (hsGifCols

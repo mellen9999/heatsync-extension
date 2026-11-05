@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "slash-kommandoer"
+  },
+  "mc_lock_banned": {
+    "message": "du er bandlyst fra denne kanal"
+  },
+  "mc_lock_timed_out": {
+    "message": "du er sat i timeout · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "kun for abonnenter — abonnér for at chatte her"
+  },
+  "mc_lock_followers": {
+    "message": "kun for følgere — følg for at chatte her"
+  },
+  "mc_lock_emote": {
+    "message": "kun emotes — kun emotes her"
+  },
+  "mc_follows_title": {
+    "message": "følger · live"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "ingen du følger er live"
+  },
+  "mc_follows_hint": {
+    "message": "j/k flyt · enter chat · w se · esc luk"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "emoji"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "søg emoji"
+  },
+  "mc_emoji_none": {
+    "message": "ingen emoji matcher"
+  },
+  "mc_emoji_no_data": {
+    "message": "emojiliste ikke indlæst"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: chatten er slået fra"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: relay er fuldt, prøver igen senere"
   }
 }

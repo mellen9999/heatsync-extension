@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "слэш-команды"
+  },
+  "mc_lock_banned": {
+    "message": "ты забанен на этом канале"
+  },
+  "mc_lock_timed_out": {
+    "message": "ты в таймауте · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "только для подписчиков — подпишись, чтобы писать здесь"
+  },
+  "mc_lock_followers": {
+    "message": "только для фолловеров — подпишись, чтобы писать здесь"
+  },
+  "mc_lock_emote": {
+    "message": "только эмоуты — здесь только эмоуты"
+  },
+  "mc_follows_title": {
+    "message": "подписки · в эфире"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ в эфире",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "никто из твоих подписок не в эфире"
+  },
+  "mc_follows_hint": {
+    "message": "j/k двигаться · enter чат · w смотреть · esc закрыть"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "эмодзи"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "поиск эмодзи"
+  },
+  "mc_emoji_none": {
+    "message": "нет подходящих эмодзи"
+  },
+  "mc_emoji_no_data": {
+    "message": "список эмодзи не загружен"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: чат выключен"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: релей полон, повторим позже"
   }
 }

@@ -15,10 +15,35 @@ const _FEED_EVENTS = new Set([
   'message-edited',
   'message-deleted',
   'message-updated',
+  'heat-updated',
   'reaction:added',
   'reaction:removed',
   'vote:updated',
 ])
+
+// heat:updated → every cached copy of the post. Only numbers are adopted (a
+// string would reach the renderer's innerHTML-adjacent heat formatting).
+function feedApplyHeat(d) {
+  const heat = Number(d?.newHeat)
+  if (!Number.isFinite(heat)) return false
+  const copies = feedCachedCopies(d.messageId)
+  for (const m of copies) {
+    m.heat = heat
+    const max = Number(d.newMaxHeat)
+    if (Number.isFinite(max)) m.max_heat = max
+  }
+  return copies.length > 0
+}
+
+// heat can move many times a second on a hot post: one repaint per beat
+let _feedHeatTimer = null
+function feedHeatRepaintSoon() {
+  if (_feedHeatTimer) return
+  _feedHeatTimer = cleanup.setTimeout(() => {
+    _feedHeatTimer = null
+    if (currentTab === 'feed') renderFeed()
+  }, 500)
+}
 
 // A cached post by id: the open thread's OP / replies first, then the feed.
 function feedFindMsg(id) {
@@ -1608,6 +1633,12 @@ function listenForSocialEvents() {
             if (msgsEl) {
               for (const el of msgsEl.querySelectorAll('.hs-mc-empty[data-hs-yt-status]')) el.remove()
             }
+          } else if (msg.status === 'chat-off' || msg.status === 'no-slot') {
+            // said in plain words, one row that 'connected' clears: a silent tab here reads as a broken one
+            upsertNotice(
+              t(msg.status === 'chat-off' ? 'mc_social_yt_chat_off' : 'mc_social_yt_no_slot'),
+              'var(--hs-warn)',
+            )
           } else if (msg.status === 'error') {
             // Drop noise: rate-limit, "not currently live / chat disabled",
             // AND "could not resolve youtube url" (the expected outcome when
@@ -1637,6 +1668,12 @@ function listenForSocialEvents() {
     if (msg.type === 'reaction:added' || msg.type === 'reaction:removed' || msg.type === 'vote:updated') {
       if (msg.data) feedOnFrame(msg.data)
       return
+    }
+    if (msg.type === 'heat-updated' && msg.data) {
+      if (feedApplyHeat(msg.data) && currentTab === 'feed') feedHeatRepaintSoon()
+    }
+    if (msg.type === 'dm_message_deleted' && msg.data) {
+      dropDmFromTimeline(msg.data.messageId)
     }
     if (msg.type === 'message-updated' && msg.data) {
       const uid = msg.data.base36_id

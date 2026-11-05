@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "slash команди"
+  },
+  "mc_lock_banned": {
+    "message": "баннат си от този канал"
+  },
+  "mc_lock_timed_out": {
+    "message": "заглушен си · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "само за абонати — абонирай се, за да пишеш тук"
+  },
+  "mc_lock_followers": {
+    "message": "само за последователи — последвай, за да пишеш тук"
+  },
+  "mc_lock_emote": {
+    "message": "само емотикони — тук само емотикони"
+  },
+  "mc_follows_title": {
+    "message": "следвани · на живо"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ на живо",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "никой, когото следваш, не е на живо"
+  },
+  "mc_follows_hint": {
+    "message": "j/k движение · enter чат · w гледай · esc затвори"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "емоджи"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "търси емоджи"
+  },
+  "mc_emoji_none": {
+    "message": "няма съвпадащи емоджи"
+  },
+  "mc_emoji_no_data": {
+    "message": "списъкът с емоджи не е зареден"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: чатът е изключен"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: релето е пълно, опитваме пак по-късно"
   }
 }

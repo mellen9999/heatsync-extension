@@ -3480,6 +3480,13 @@ function updateInputPlaceholder() {
     if (chanName && _composerNeedsLogin()) placeholder = t('mc_social_login_first')
   }
 
+  // shut for you here (banned / timed out / a room rule): say why, in place of the invite to type
+  const lockCh = quoteState ? '' : chatLockTabChannel()
+  const lock = lockCh ? chatLockFor(lockCh) : null
+  if (lock) placeholder = chatLockLabel(lock)
+  input.classList.toggle('hs-mc-lock-out', !!lock && !chatLockIsRule(lock))
+  input.classList.toggle('hs-mc-lock-rule', chatLockIsRule(lock))
+
   if (wysiwygEnabled) {
     input.dataset.placeholder = placeholder
   } else {
@@ -4711,6 +4718,21 @@ function updateCharCount(precomputedText) {
   const limit = composerCharLimit(composerLegs())
   const over = len > limit
   input.classList.toggle('over-limit', over)
+  const label = charCountLabel(text.trim().length, limit)
+  let counter = document.getElementById('hs-mc-charcount')
+  if (label) {
+    if (!counter) {
+      counter = document.createElement('span')
+      counter.id = 'hs-mc-charcount'
+      const host = document.getElementById('hs-mc-input-wrap') || input
+      host.insertAdjacentElement('afterend', counter)
+    }
+    counter.textContent = label.text
+    counter.dataset.level = label.level
+    counter.hidden = false
+  } else if (counter) {
+    counter.hidden = true
+  }
 
   // Highlight overflow chars for plain <input> using overlay div
   if (input.tagName === 'INPUT') {
@@ -9033,6 +9055,15 @@ async function sendMessage() {
     flashInputError(input)
     showToast(t('mc_yt_send_open_stream'), 'error')
     return
+  }
+  // twitch is the only leg and the room has you locked out: hold the send, keep the words
+  if (sendToTwitch && !sendToKick && !sendToYoutube && twitchName) {
+    const lock = chatLockFor(twitchName)
+    if (chatLockHoldsSend(lock)) {
+      flashInputError(input)
+      showToast(chatLockLabel(lock), 'error')
+      return
+    }
   }
   const isDualSend = sendToKick && sendToTwitch
 

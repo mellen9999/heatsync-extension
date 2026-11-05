@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "คำสั่ง slash"
+  },
+  "mc_lock_banned": {
+    "message": "คุณถูกแบนจากช่องนี้"
+  },
+  "mc_lock_timed_out": {
+    "message": "คุณถูกไทม์เอาต์ · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "เฉพาะผู้สมัครสมาชิก — สมัครเพื่อแชทที่นี่"
+  },
+  "mc_lock_followers": {
+    "message": "เฉพาะผู้ติดตาม — ติดตามเพื่อแชทที่นี่"
+  },
+  "mc_lock_emote": {
+    "message": "เฉพาะอีโมต — ที่นี่ใช้ได้แค่อีโมต"
+  },
+  "mc_follows_title": {
+    "message": "ติดตาม · ไลฟ์"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ ไลฟ์",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "ไม่มีใครที่คุณติดตามกำลังไลฟ์"
+  },
+  "mc_follows_hint": {
+    "message": "j/k เลื่อน · enter แชท · w ดู · esc ปิด"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "อีโมจิ"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "ค้นหาอีโมจิ"
+  },
+  "mc_emoji_none": {
+    "message": "ไม่พบอีโมจิที่ตรงกัน"
+  },
+  "mc_emoji_no_data": {
+    "message": "ยังไม่โหลดรายการอีโมจิ"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: แชทปิดอยู่"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: รีเลย์เต็ม จะลองใหม่ภายหลัง"
   }
 }

@@ -1,7 +1,7 @@
 {
   "_": "bytes, measured 2026-10-29 + 2% headroom (min 256B). lower to measured, never raise to go green; a raise needs the reason in its commit.",
   "chrome": {
-    "multichat-core.js": 1561700,
+    "multichat-core.js": 1572200,
     "content.js": 232523,
     "heatsync-button.js": 143466,
     "autocomplete-hook.js": 94813,
@@ -40,7 +40,7 @@
     "total zip": 1962810
   },
   "firefox": {
-    "multichat-core.js": 1561700,
+    "multichat-core.js": 1572200,
     "content.js": 232523,
     "heatsync-button.js": 143466,
     "autocomplete-hook.js": 94813,

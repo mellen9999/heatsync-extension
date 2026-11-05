@@ -272,6 +272,22 @@ function handleIncomingWhisper(msg) {
   whisperSaveDebounced()
 }
 
+// a heatsync DM deleted on another client leaves this timeline too
+function dropDmFromTimeline(messageId) {
+  const id = String(messageId || '')
+  if (!id) return 0
+  let n = 0
+  for (let i = whisperTimeline.length - 1; i >= 0; i--) {
+    const w = whisperTimeline[i]
+    if (w.platform === 'heatsync' && w.id === id) {
+      whisperTimeline.splice(i, 1)
+      n++
+    }
+  }
+  if (n && currentTab === 'whispers') renderWhispersTab()
+  return n
+}
+
 function handleIncomingDm(data) {
   const time = data.created_at ? new Date(data.created_at).getTime() : Date.now()
   if (_whisperMarkSeen(_whisperDedupKey('heatsync', data.id, data.from_display_name, time, data.content))) return

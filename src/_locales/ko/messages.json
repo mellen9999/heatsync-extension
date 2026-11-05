@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "슬래시 명령어"
+  },
+  "mc_lock_banned": {
+    "message": "이 채널에서 차단되었습니다"
+  },
+  "mc_lock_timed_out": {
+    "message": "타임아웃 중 · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "구독자 전용 — 구독하고 여기서 채팅하세요"
+  },
+  "mc_lock_followers": {
+    "message": "팔로워 전용 — 팔로우하고 여기서 채팅하세요"
+  },
+  "mc_lock_emote": {
+    "message": "이모트 전용 — 여기선 이모트만"
+  },
+  "mc_follows_title": {
+    "message": "팔로잉 · 라이브"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ 라이브",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "팔로우한 사람 중 라이브가 없어요"
+  },
+  "mc_follows_hint": {
+    "message": "j/k 이동 · enter 채팅 · w 시청 · esc 닫기"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "이모지"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "이모지 검색"
+  },
+  "mc_emoji_none": {
+    "message": "일치하는 이모지 없음"
+  },
+  "mc_emoji_no_data": {
+    "message": "이모지 목록을 불러오지 못했어요"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: 채팅이 꺼져 있어요"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: 릴레이가 가득 찼어요, 나중에 다시 시도해요"
   }
 }

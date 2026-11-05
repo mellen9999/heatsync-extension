@@ -1179,6 +1179,7 @@ function emoteImgHtml([name, emote]) {
  */
 const MC_PICKER_TABS = [
   { id: 'emotes', labelKey: 'mc_emo_tab_emotes' },
+  { id: 'emoji', labelKey: 'mc_emo_tab_emoji' },
   { id: 'gifs', labelKey: 'mc_emo_tab_gifs' },
   { id: 'twitch', label: 'twitch', when: () => hostPlatform === 'twitch' },
   { id: 'kick', label: 'kick', when: () => hostPlatform === 'kick' },
@@ -1277,6 +1278,7 @@ function showEmotePicker(tab = null) {
     if (pickerTab === 'twitch') renderTwitchTab()
     if (pickerTab === 'kick') renderKickTab()
     if (pickerTab === 'youtube') renderYoutubeTab()
+    if (pickerTab === 'emoji') hsOnEmojiTabShown()
     if (pickerTab === 'gifs') hsOnGifTabShown()
     attachPickerCloseHandler(picker)
     return
@@ -1304,6 +1306,7 @@ function showEmotePicker(tab = null) {
           ${renderEmoteSections(sections)}
         </div>
       </div>
+      ${hsEmojiTabHtml()}
       ${hsGifTabHtml()}
       ${
         showTwitchTab
@@ -1418,6 +1421,7 @@ function showEmotePicker(tab = null) {
   const rerenderSearch = mcRerenderSearch
 
   hsWireGifTab(picker)
+  hsWireEmojiTab(picker)
 
   // Emote size controls
   picker.querySelectorAll('.hs-mc-size-btn').forEach((btn) => {
@@ -1452,6 +1456,7 @@ function showEmotePicker(tab = null) {
       if (newTab === 'twitch') renderTwitchTab()
       if (newTab === 'kick') renderKickTab()
       if (newTab === 'youtube') renderYoutubeTab()
+      if (newTab === 'emoji') hsOnEmojiTabShown()
       if (newTab === 'gifs') hsOnGifTabShown()
       if (oldTab === 'twitch' && newTab !== 'twitch') stopPredictionPoll()
       // Leaving the gifs tab drops the in-flight request on the floor: its
@@ -1593,6 +1598,7 @@ function showEmotePicker(tab = null) {
   if (pickerTab === 'twitch') renderTwitchTab()
   if (pickerTab === 'kick') renderKickTab()
   if (pickerTab === 'youtube') renderYoutubeTab()
+  if (pickerTab === 'emoji') hsOnEmojiTabShown()
   if (pickerTab === 'gifs') hsOnGifTabShown()
 
   attachPickerCloseHandler(picker)

@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "slash command"
+  },
+  "mc_lock_banned": {
+    "message": "anda diharamkan daripada saluran ini"
+  },
+  "mc_lock_timed_out": {
+    "message": "anda di-timeout · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "pelanggan sahaja — langgan untuk sembang di sini"
+  },
+  "mc_lock_followers": {
+    "message": "pengikut sahaja — ikut untuk sembang di sini"
+  },
+  "mc_lock_emote": {
+    "message": "emote sahaja — di sini emote sahaja"
+  },
+  "mc_follows_title": {
+    "message": "diikuti · live"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "tiada sesiapa yang anda ikuti sedang live"
+  },
+  "mc_follows_hint": {
+    "message": "j/k gerak · enter sembang · w tonton · esc tutup"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "emoji"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "cari emoji"
+  },
+  "mc_emoji_none": {
+    "message": "tiada emoji sepadan"
+  },
+  "mc_emoji_no_data": {
+    "message": "senarai emoji belum dimuat"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: sembang dimatikan"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: relay penuh, cuba lagi nanti"
   }
 }

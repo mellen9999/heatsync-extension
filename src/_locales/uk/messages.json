@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "slash-команди"
+  },
+  "mc_lock_banned": {
+    "message": "тебе забанено на цьому каналі"
+  },
+  "mc_lock_timed_out": {
+    "message": "ти в таймауті · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "лише для підписників — підпишись, щоб писати тут"
+  },
+  "mc_lock_followers": {
+    "message": "лише для фоловерів — підпишись, щоб писати тут"
+  },
+  "mc_lock_emote": {
+    "message": "лише емоути — тут лише емоути"
+  },
+  "mc_follows_title": {
+    "message": "підписки · в ефірі"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ в ефірі",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "ніхто з твоїх підписок не в ефірі"
+  },
+  "mc_follows_hint": {
+    "message": "j/k рух · enter чат · w дивитись · esc закрити"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "емодзі"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "пошук емодзі"
+  },
+  "mc_emoji_none": {
+    "message": "немає відповідних емодзі"
+  },
+  "mc_emoji_no_data": {
+    "message": "список емодзі не завантажено"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: чат вимкнено"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: релей повний, спробуємо пізніше"
   }
 }

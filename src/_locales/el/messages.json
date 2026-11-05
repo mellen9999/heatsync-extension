@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "εντολές slash"
+  },
+  "mc_lock_banned": {
+    "message": "έχεις αποκλειστεί από αυτό το κανάλι"
+  },
+  "mc_lock_timed_out": {
+    "message": "έχεις timeout · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "μόνο για συνδρομητές — γίνε συνδρομητής για να γράφεις"
+  },
+  "mc_lock_followers": {
+    "message": "μόνο για followers — κάνε follow για να γράφεις"
+  },
+  "mc_lock_emote": {
+    "message": "μόνο emotes — εδώ μόνο emotes"
+  },
+  "mc_follows_title": {
+    "message": "ακολουθείς · live"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "κανείς από όσους ακολουθείς δεν είναι live"
+  },
+  "mc_follows_hint": {
+    "message": "j/k κίνηση · enter chat · w προβολή · esc κλείσιμο"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "emoji"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "αναζήτηση emoji"
+  },
+  "mc_emoji_none": {
+    "message": "κανένα emoji δεν ταιριάζει"
+  },
+  "mc_emoji_no_data": {
+    "message": "η λίστα emoji δεν φορτώθηκε"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: το chat είναι κλειστό"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: το relay είναι γεμάτο, νέα προσπάθεια αργότερα"
   }
 }

@@ -84,6 +84,7 @@ describe('hydrateHsCosmetics', () => {
   })
 
   test('survives storage that throws', async () => {
+    const prev = globalThis.browser
     globalThis.browser = {
       storage: {
         local: {
@@ -93,6 +94,11 @@ describe('hydrateHsCosmetics', () => {
         },
       },
     }
-    await hydrateHsCosmetics()
+    try {
+      await hydrateHsCosmetics()
+    } finally {
+      // bun runs every file in one global: a throwing stub left behind fails whoever touches storage next
+      globalThis.browser = prev
+    }
   })
 })

@@ -301,3 +301,180 @@ describe('promote on chat', () => {
     for (const after of failBranches) expect(after.slice(0, 200)).not.toContain('keepTempTabAfterSend')
   })
 })
+
+// every popout window shape, run through the real loadActiveTab + bootActiveTab + bootSwitch + temp-tab block
+const popStart = main.indexOf('/** The channel a twitch/kick popout window is locked to')
+const popBlock = main.slice(popStart, main.indexOf('// One-time repair for tabs saved twitch-only'))
+const bootStart = main.indexOf('const bootActiveTab = () => {')
+const bootBlock = main.slice(bootStart, main.indexOf('// PHASE -1 kill-switch', bootStart))
+
+function popout({ host, path, search = '', channels = [], stored = {}, hidden = new Set() }) {
+  const persisted = []
+  const btn = {
+    textContent: '',
+    title: '',
+    style: { display: '' },
+    _c: new Set(),
+    classList: { add: (c) => btn._c.add(c), contains: (c) => btn._c.has(c) },
+  }
+  const f = new Function(
+    'host',
+    'path',
+    'search',
+    'channels',
+    'stored',
+    'hidden',
+    'persisted',
+    'btn',
+    `
+    let currentTab = 'feed'
+    let _bouncedFromLive = ''
+    let _autoSwitching = false
+    let _keepingLive = false
+    let _liveSyncArmed = false
+    let _savedActiveTab = 'live'
+    let _savedYtNative = false
+    let liveChannel = null
+    const hostPlatform = host
+    const isYtPopout = host === 'yt' && /^\\/live_chat(?!_replay)/.test(path)
+    const _autoYtVideoId = null
+    const hiddenTabs = hidden
+    const config = { channels }
+    const location = { pathname: path, search, hash: '' }
+    const document = { body: { classList: { contains: (c) => c === 'hs-popout' } } }
+    const youtubeLinks = new Map([['__live_yt_auto__', { channelName: 'somestreamer' }]])
+    const ytSubscribedUrls = new Map()
+    const tabBarElement = { querySelector: () => btn }
+    const BUILTIN_TABS = ['feed', 'live', 'mentions']
+    const _TAB_SUBSYSTEM = {}
+    const isEnabled = () => true
+    const mcRowOwner = (id) => id
+    const t = (k) => ({ mc_tab_live: 'watching', mc_tab_temp_title: 'TEMP' })[k] || k
+    const cachedUiSettings = async () => ({ ui_settings: stored })
+    const getCurrentChannel = () => {
+      if (host === 'yt') return /v=/.test(search) ? search.replace(/.*v=/, '') : null
+      return path.match(/^\\/(?:popout\\/|embed\\/)?([a-zA-Z0-9_-]+)/)?.[1]?.toLowerCase() || null
+    }
+    const getLiveChannel = () => liveChannel || getCurrentChannel()
+    const getLivePlatformNames = () => ({ twitch: '', kick: '', youtube: '' })
+    const parseYoutubeChannelType = (p, s) => (/^\\/@/.test(p) ? 'handle' : /v=/.test(s) ? 'video' : null)
+    const ytHandleLiveUrl = (p) => 'https://www.youtube.com' + p
+    const hsLiveChannelEntry = () => ({})
+    const saveConfig = () => {}
+    const saveUiSetting = (k, v) => persisted.push([k, v])
+    const switchTab = (id) => {
+      if (id === 'live' && _liveSyncArmed && !liveTabShown()) id = liveTarget()
+      if (!_autoSwitching) persisted.push(['activeTab', id])
+      currentTab = id
+    }
+    const resolveLiveCandidateToTab = async (c) => { persisted.push(['keep', c.name, c.platform]) }
+    ${popBlock}
+    ${bootBlock}
+    ${block}
+    return {
+      loadActiveTab, bootSwitch, syncLiveTab, liveTabShown, updateLiveTabLabel, keepLiveTab, popoutUrlChannel,
+      st: () => ({ currentTab, liveChannel, shown: liveTabShown() }),
+    }
+  `,
+  )(host, path, search, channels, stored, hidden, persisted, btn)
+  return { f, btn, persisted }
+}
+
+async function boot(o) {
+  const r = popout(o)
+  await r.f.loadActiveTab()
+  r.f.bootSwitch()
+  r.f.updateLiveTabLabel()
+  return r
+}
+
+const saved = [{ id: 'xqc', twitch: 'xqc', kick: 'xqc', youtube: '' }]
+const shapes = [
+  ['twitch /popout/<ch>/chat', { host: 'twitch', path: '/popout/forsen/chat' }, 'forsen'],
+  ['twitch /embed/<ch>/chat', { host: 'twitch', path: '/embed/forsen/chat' }, 'forsen'],
+  ['kick /popout/<ch>/chat', { host: 'kick', path: '/popout/forsen/chat' }, 'forsen'],
+  ['kick /embed/<ch>/chat', { host: 'kick', path: '/embed/forsen/chat' }, 'forsen'],
+  [
+    'youtube live_chat popout',
+    { host: 'yt', path: '/live_chat', search: '?is_popout=1&v=jfKfPfyJRdk' },
+    'somestreamer',
+  ],
+]
+
+describe('popout windows: uncovered channel shows the selected temp tab', () => {
+  for (const [name, o, label] of shapes) {
+    test(name, async () => {
+      // a stale override from another popout must never leak in (youtube has no channel in its path)
+      const { f, btn } = await boot({ ...o, channels: saved, stored: { activeTab: 'xqc', liveChannel: 'xqc' } })
+      expect(f.st().currentTab).toBe('live')
+      expect(btn.style.display).toBe('')
+      expect(btn.textContent).toBe(label)
+      expect(btn._c.has('hs-mc-tab-temp')).toBe(true)
+    })
+  }
+})
+
+describe('popout windows: a covering saved tab is selected, temp tab hidden', () => {
+  const cover = { id: 'forsen', twitch: 'forsen', kick: 'forsen', youtube: '' }
+  for (const [name, o] of shapes.slice(0, 4)) {
+    test(name, async () => {
+      const { f, btn, persisted } = await boot({ ...o, channels: [cover, ...saved] })
+      expect(f.st().currentTab).toBe('forsen')
+      expect(btn.style.display).toBe('none')
+      expect(persisted.some(([k]) => k === 'activeTab')).toBe(false) // the page's doing, not a pick
+    })
+  }
+  test('youtube live_chat popout covered by a saved video/handle tab', async () => {
+    const yt = { id: 'a', twitch: '', kick: '', youtube: 'https://www.youtube.com/watch?v=jfKfPfyJRdk' }
+    const { f, btn } = await boot({ ...shapes[4][1], channels: [yt] })
+    expect(f.st().currentTab).toBe('a')
+    expect(btn.style.display).toBe('none')
+  })
+})
+
+describe('popout windows: a popout never persists or restores the liveChannel override', () => {
+  test('a stored override does not reach a youtube popout', async () => {
+    const { f } = await boot({ ...shapes[4][1], channels: saved, stored: { liveChannel: 'xqc', activeTab: 'xqc' } })
+    expect(f.st().liveChannel).toBe(null)
+    expect(f.st().currentTab).toBe('live')
+  })
+  test('the uncovered temp tab selection is a pick of "live" (persisted), liveChannel is not', async () => {
+    const { persisted } = await boot({ ...shapes[0][1], channels: saved })
+    expect(persisted.some(([k]) => k === 'liveChannel')).toBe(false)
+  })
+  test('source: no stored-override restore, no override save', () => {
+    expect(main).not.toContain("saveUiSetting('liveChannel'")
+    expect(main).not.toContain('liveChannel = stored.ui_settings.liveChannel')
+  })
+})
+
+describe('popout windows: keep tab', () => {
+  test('keeps the popout channel with the host platform', async () => {
+    for (const [host, path] of [
+      ['kick', '/popout/forsen/chat'],
+      ['twitch', '/popout/forsen/chat'],
+    ]) {
+      const r = popout({ host, path, channels: saved })
+      await r.f.loadActiveTab()
+      r.f.bootSwitch()
+      expect(r.f.liveTabShown()).toBe(true)
+      await r.f.keepLiveTab()
+      expect(r.persisted.filter(([k]) => k === 'keep')).toEqual([['keep', 'forsen', host]])
+    }
+  })
+})
+
+describe('popout wiring', () => {
+  test('kick popout detection accepts /embed/ like its mount route', () => {
+    expect(main).toContain('isPopout = /^\\/(?:popout|embed)\\/[a-zA-Z0-9_-]+\\/chat/.test(location.pathname)')
+  })
+  test('the panel popout button opens the host platform popout url the shapes above boot from', () => {
+    const pa = read('../src/multichat/panel-actions.js')
+    expect(pa).toContain('https://www.twitch.tv/popout/${ctx.twitch}/chat?popout=')
+    expect(pa).toContain('https://kick.com/popout/${ctx.kick}/chat')
+    expect(pa).toContain('/live_chat')
+  })
+  test('a youtube popout boots through liveTarget, not a bare "live"', () => {
+    expect(main).toContain('if (isYtPopout) return liveTarget()')
+  })
+})

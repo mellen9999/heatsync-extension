@@ -7077,9 +7077,6 @@
     if (id !== 'add' && !_autoSwitching) {
       try {
         saveUiSetting('activeTab', id)
-        // liveChannel override is popout-scoped — persisting it from regular
-        // pages was how a stale pick haunted every future boot
-        if (document.body.classList.contains('hs-popout')) saveUiSetting('liveChannel', liveChannel)
       } catch (_) {
         /* context invalidated */
       }
@@ -12434,6 +12431,11 @@
   // 'whispers' belongs here too — it's a real, restorable tab; leaving it out
   // silently bounced you to 'live' every reload if that's where you were.
   const BUILTIN_TABS = mcRestorableTabs()
+  /** The channel a twitch/kick popout window is locked to, from its path. */
+  function popoutUrlChannel() {
+    return location.pathname.match(/^\/(?:popout|embed)\/([a-zA-Z0-9_-]+)/)?.[1] || null
+  }
+
   async function loadActiveTab() {
     try {
       const stored = await cachedUiSettings()
@@ -12442,13 +12444,6 @@
       // Validate: must be a built-in tab or a configured channel (never restore 'add')
       const channelIds = config.channels.map((c) => c.id)
       _savedActiveTab = saved !== 'add' && (BUILTIN_TABS.includes(saved) || channelIds.includes(saved)) ? saved : 'live'
-      // Restore live channel override — POPOUT ONLY. The override exists so
-      // the popout picker survives its navigation hop; restoring it on
-      // regular pages pinned the live tab to a long-dead pick (the
-      // "live tab always opens quin69" bug) instead of the page's channel.
-      if (stored.ui_settings?.liveChannel && document.body.classList.contains('hs-popout')) {
-        liveChannel = stored.ui_settings.liveChannel
-      }
       // Opened from an event row (#hs-live): the click meant "go to that
       // channel", so land on its live tab, not whichever tab was last active.
       if (location.hash === '#hs-live') {
@@ -12478,10 +12473,14 @@
       // session's saved tab (which often points to a different channel and
       // produces a blank panel because that channel's pane was never built).
       if (document.body.classList.contains('hs-popout')) {
-        const urlCh = location.pathname.match(/^\/(?:popout|embed)\/([a-zA-Z0-9_-]+)/)?.[1]
+        const urlCh = popoutUrlChannel()
         if (urlCh) {
           _savedActiveTab = 'live'
           liveChannel = urlCh
+        } else {
+          // a youtube popout has no channel in its path: the page's own stream decides
+          _savedActiveTab = 'live'
+          liveChannel = null
         }
       }
     } catch (_) {
@@ -13936,7 +13935,8 @@
     const want = _savedActiveTab === 'live' ? liveTarget() : _savedActiveTab
     const restorable =
       want && !hiddenTabs.has(mcRowOwner(want)) && !(_TAB_SUBSYSTEM[want] && !isEnabled(_TAB_SUBSYSTEM[want]))
-    if (isYtPopout) return 'live'
+    // one stream: the temp tab, or the saved tab covering it (liveTarget says which)
+    if (isYtPopout) return liveTarget()
     if (restorable) return want
     // Nothing restorable but channel tabs exist: land on the first one.
     const firstTab = config.channels?.find((c) => c?.id && !hiddenTabs.has(mcRowOwner(c.id)))
@@ -13989,7 +13989,7 @@
       // Without this the panel mounted at its docked 376px inside a ~400px
       // popout window, and the kick body-mount branch below reads hs-popout
       // expecting it to be set.
-      isPopout = /^\/popout\/[a-zA-Z0-9_-]+\/chat/.test(location.pathname)
+      isPopout = /^\/(?:popout|embed)\/[a-zA-Z0-9_-]+\/chat/.test(location.pathname)
     } else {
       // Twitch: persistent overlay across every URL — directory, settings,
       // videos, etc. all keep the panel mounted. getOrCreateHsContainer

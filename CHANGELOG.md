@@ -1,5 +1,21 @@
 # changelog
 
+## [1.7.118] — 2026-11-05
+
+### added
+- **name marks** — twitch lines wear sub flair, flame and heat bar before the name, like the app.
+- **notifications** — heatsync replies, mentions and report updates are rows in the mentions tab; reading them clears the badge.
+- **emoji** — the picker has an emoji tab: search by name or category, enter takes the first.
+- **follows** — a keyboard list of who you follow is live (space f / alt+l): enter opens a tab, w watches.
+- **composer** — says when you're banned, timed out or locked by a room rule, and holds the send; an n/limit counter shows near the cap.
+- **mod** — `/nuke` works on the site too.
+
+### fixed
+- **tab-complete** — your twitch sub emotes complete even with inventory suggestions off; a name you own completes to your picture, not the channel's.
+- **went-live lines** — a streamer chat hasn't heard yet gets their color and badges.
+- **youtube** — chat-off and relay-full say so in a row.
+- **style** — no more italics; emphasis underlines.
+
 ## [1.7.117] — 2026-11-05
 
 ### added

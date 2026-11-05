@@ -1,0 +1,20 @@
+    /* Live follows list (follows-view.js) — rides .hs-pane-panel. Square,
+       terminal, hover/selected = reverse video, no motion. */
+    .hs-fl { outline: none; font-size: 13px; }
+    .hs-fl-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .hs-fl-title { color: var(--hs-brand); }
+    .hs-fl-count { color: var(--hs-muted); }
+    .hs-fl-row { display: flex; align-items: center; gap: 8px; padding: 2px 6px; border: 1px solid transparent; cursor: pointer; }
+    .hs-fl-row:hover, .hs-fl-row:active, .hs-fl-sel { background: #fff; color: #000; }
+    .hs-fl-plat { flex: 0 0 auto; }
+    .hs-fl-twitch { color: var(--hs-plat-twitch); }
+    .hs-fl-kick { color: var(--hs-plat-kick); }
+    .hs-fl-youtube { color: var(--hs-plat-youtube); }
+    .hs-fl-row:hover .hs-fl-plat, .hs-fl-row:active .hs-fl-plat, .hs-fl-sel .hs-fl-plat { color: #000; }
+    .hs-fl-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: underline; }
+    .hs-fl-game { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--hs-muted); }
+    .hs-fl-row:hover .hs-fl-game, .hs-fl-row:active .hs-fl-game, .hs-fl-sel .hs-fl-game { color: #000; }
+    .hs-fl-up, .hs-fl-views { flex: 0 0 auto; text-align: right; }
+    .hs-fl-views { min-width: 4ch; }
+    .hs-fl-note { color: var(--hs-muted); padding: 8px 0; }
+    .hs-fl-hint { margin-top: 8px; color: var(--hs-muted); }

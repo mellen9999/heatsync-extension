@@ -6881,5 +6881,22 @@
   },
   "mc_lock_emote": {
     "message": "emote-only — emotes only here"
+  },
+  "mc_follows_title": {
+    "message": "following · live"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "nobody you follow is live"
+  },
+  "mc_follows_hint": {
+    "message": "j/k move · enter chat · w watch · esc close"
   }
 }

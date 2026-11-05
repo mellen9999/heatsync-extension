@@ -5866,6 +5866,8 @@
   }
 
   initOverlayKeys(mcSignal)
+  registerOverlayKey('f', () => openFollowsView())
+  document.addEventListener('keydown', followsKeyHandler, { capture: true, signal: mcSignal })
   registerOverlayKey('/', () => focusLiveSearch())
   registerOverlayKey('n', () => cycleLiveSearch(1))
   registerOverlayKey('N', () => cycleLiveSearch(-1))
@@ -11459,6 +11461,7 @@
 
   function _applyFollowedSnapshot(snapshot) {
     if (!Array.isArray(snapshot)) return
+    followsSet(snapshot)
     _swLiveSet = new Set(
       snapshot
         .filter((s) => s.platform === 'twitch' || s.platform === 'kick' || s.platform === 'youtube')

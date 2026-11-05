@@ -239,9 +239,9 @@ export const SLASH_REGISTRY = [
     cmd: 'nuke',
     args: '<term> [secs]',
     desc: 'bulk-delete recent messages containing a term',
-    on: 'ext',
+    on: 'both',
     needs: 'mod',
-    does: 'twitch',
+    does: 'twitch+kick',
     warn: 'destructive',
   },
   {

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
+import { readFileSync, realpathSync } from 'node:fs'
 import { join } from 'node:path'
 
 /**
@@ -17,10 +17,20 @@ let Window = null
 try {
   Window = (await import('happy-dom')).Window
 } catch {
+  // a worktree's node_modules is a symlink into the primary checkout, so its
+  // real path finds the sibling site repo where `../../heatsync` does not —
+  // without it this suite skipped in every worktree and rotted unseen
+  const root = join(import.meta.dir, '..')
+  let real = root
   try {
-    const site = process.env.HS_SITE_DIR || join(import.meta.dir, '..', '..', 'heatsync')
-    Window = (await import(join(site, 'node_modules', 'happy-dom', 'lib', 'index.js'))).Window
+    real = join(realpathSync(join(root, 'node_modules')), '..')
   } catch {}
+  for (const site of [process.env.HS_SITE_DIR, join(root, '..', 'heatsync'), join(real, '..', 'heatsync')]) {
+    if (Window || !site) continue
+    try {
+      Window = (await import(join(site, 'node_modules', 'happy-dom', 'lib', 'index.js'))).Window
+    } catch {}
+  }
 }
 const suite = Window ? describe : describe.skip
 
@@ -41,8 +51,14 @@ beforeEach(() => {
     'document',
     'currentTab',
     'renderMessages',
+    't',
     `${code}; return { hsConfirm, hsPanePanelOpen, hsPanePanelAbort }`,
-  )(d, 'chan', () => repaints++)
+  )(
+    d,
+    'chan',
+    () => repaints++,
+    (k) => k,
+  )
   api._prev = prev
 })
 afterEach(() => {

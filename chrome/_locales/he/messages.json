@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "תגי chatterino אצל צ'אטרים"
   },
+  "mc_settings_sub_flair": {
+    "message": "עיטור סאב"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "תג המנוי של twitch של משתמש heatsync לפני שמו"
+  },
+  "mc_settings_flame_mark": {
+    "message": "להבה"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 לפני השם של משתמש heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "פסי חום"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "פס דק לפני השם שמראה כמה חום צבר צ'אטר"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "עדיפות ספק אימוטים"
   },

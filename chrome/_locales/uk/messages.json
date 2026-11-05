@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "бейджі chatterino у чатерів"
   },
+  "mc_settings_sub_flair": {
+    "message": "значок сабу"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "значок підписника twitch користувача heatsync перед іменем"
+  },
+  "mc_settings_flame_mark": {
+    "message": "полум'я"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 перед іменем користувача heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "смуги жару"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "тонка смуга перед іменем, що показує, скільки жару заробив чатер"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "пріоритет провайдера emotes"
   },

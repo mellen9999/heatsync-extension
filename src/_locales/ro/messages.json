@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "insigne chatterino la chatteri"
   },
+  "mc_settings_sub_flair": {
+    "message": "podoabă sub"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "insigna de abonat twitch a unui utilizator heatsync înaintea numelui"
+  },
+  "mc_settings_flame_mark": {
+    "message": "flacără"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 înaintea numelui unui utilizator heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "bare de căldură"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "o bară subțire înaintea numelui care arată câtă căldură a câștigat un chatter"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "prioritate furnizor emote-uri"
   },

@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "ป้าย chatterino บนคนแชท"
   },
+  "mc_settings_sub_flair": {
+    "message": "เครื่องประดับซับ"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "ป้ายซับ twitch ของผู้ใช้ heatsync ก่อนชื่อ"
+  },
+  "mc_settings_flame_mark": {
+    "message": "เปลวไฟ"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 ก่อนชื่อของผู้ใช้ heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "แถบความร้อน"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "แถบบางก่อนชื่อที่แสดงว่าผู้แชทได้รับความร้อนเท่าไร"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "ลำดับความสำคัญผู้ให้บริการ emote"
   },

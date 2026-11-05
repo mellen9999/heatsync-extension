@@ -884,7 +884,10 @@ function updateThirdPartyBadgesInPlace() {
       const chat = wantChat ? mcChatterinoBadgeMap.get(uid)?.at(-1) : null
       if (!bttv && !ffzList && !chat) continue
       for (const div of divSet) {
-        const anchor = div.querySelector('.hs-mc-avatar') || div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
+        const anchor =
+          div.querySelector('.hs-mc-marks') ||
+          div.querySelector('.hs-mc-avatar') ||
+          div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
         if (!anchor) continue
         const insert = (img) => {
           if (img) {

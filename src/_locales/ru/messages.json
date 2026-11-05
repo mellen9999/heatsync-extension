@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "значки chatterino у чаттеров"
   },
+  "mc_settings_sub_flair": {
+    "message": "значок сабa"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "значок подписчика twitch пользователя heatsync перед именем"
+  },
+  "mc_settings_flame_mark": {
+    "message": "пламя"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 перед именем пользователя heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "полосы жара"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "тонкая полоса перед именем, показывающая, сколько жара заработал чаттер"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "приоритет провайдеров emotes"
   },

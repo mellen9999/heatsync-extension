@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "chatterino-badges bij chatters"
   },
+  "mc_settings_sub_flair": {
+    "message": "sub-sierraad"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "de twitch sub-badge van een heatsync-gebruiker voor zijn naam"
+  },
+  "mc_settings_flame_mark": {
+    "message": "vlam"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 voor de naam van een heatsync-gebruiker"
+  },
+  "mc_settings_heat_bars": {
+    "message": "hitte-balken"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "een dunne balk voor de naam die toont hoeveel hitte een chatter heeft verdiend"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "emote-provider voorrang"
   },

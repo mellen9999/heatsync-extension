@@ -9571,6 +9571,39 @@ async function handleMessage(message, sender, sendResponse) {
     return true
   }
 
+  // Chat-row name marks (src/multichat/name-marks-data.js): sub flair by twitch id, heat by login. Public
+  // endpoints; this must stay a BG fetch (content-script fetches to heatsync.org trip the edge). The content
+  // script validates and bounds every field of the answer, this only caps and shapes the ask.
+  if (message.type === 'fetch_name_marks') {
+    const flair = message.kind === 'flair'
+    const ok = flair ? /^\d{1,20}$/ : /^[a-z0-9_]{1,25}$/
+    const ids = Array.from(
+      new Set((Array.isArray(message.ids) ? message.ids : []).filter((x) => typeof x === 'string' && ok.test(x))),
+    ).slice(0, flair ? 50 : 25)
+    if (!ids.length || (message.kind !== 'flair' && message.kind !== 'heat')) {
+      sendResponse({ ok: false })
+      return true
+    }
+    ;(flair
+      ? fetchWithTimeout(`${API_URL}/api/users/flair?ids=${ids.join(',')}`, {}, 10000)
+      : fetchWithTimeout(
+          `${API_URL}/api/users/heat`,
+          { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ usernames: ids }) },
+          10000,
+        )
+    )
+      .then(async (r) => {
+        if (!r.ok) {
+          r.body?.cancel?.()
+          return sendResponse({ ok: false })
+        }
+        const body = await r.json().catch(() => null)
+        sendResponse(body && typeof body === 'object' ? { ok: true, body } : { ok: false })
+      })
+      .catch(() => sendResponse({ ok: false }))
+    return true
+  }
+
   // Query all open Twitch/Kick tabs to find channels the user is watching
   if (message.type === 'get_watching_channels') {
     const skip = RESERVED_PATHS

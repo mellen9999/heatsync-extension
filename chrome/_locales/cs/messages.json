@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "chatterino odznaky u chatterů"
   },
+  "mc_settings_sub_flair": {
+    "message": "sub ozdoba"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "twitch sub odznak uživatele heatsync před jeho jménem"
+  },
+  "mc_settings_flame_mark": {
+    "message": "plamen"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 před jménem uživatele heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "pruhy žáru"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "tenký pruh před jménem ukazující, kolik žáru chatař získal"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "priorita zdrojů emotes"
   },

@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "chatterino jelvények a chattereken"
   },
+  "mc_settings_sub_flair": {
+    "message": "sub dísz"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "egy heatsync-felhasználó twitch sub jelvénye a neve előtt"
+  },
+  "mc_settings_flame_mark": {
+    "message": "láng"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 a heatsync-felhasználó neve előtt"
+  },
+  "mc_settings_heat_bars": {
+    "message": "hősávok"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "vékony sáv a név előtt, amely mutatja, mennyi hőt szerzett a csevegő"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "emote szolgáltató prioritás"
   },

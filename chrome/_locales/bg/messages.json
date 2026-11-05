@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "chatterino значки на чатъри"
   },
+  "mc_settings_sub_flair": {
+    "message": "знак за абонат"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "абонаментната значка в twitch на потребител на heatsync преди името му"
+  },
+  "mc_settings_flame_mark": {
+    "message": "пламък"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 пред името на потребител на heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "ленти за топлина"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "тънка лента пред името, показваща колко топлина е натрупал чатър"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "приоритет на emote доставчици"
   },

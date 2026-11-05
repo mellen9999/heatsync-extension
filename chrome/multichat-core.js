@@ -3601,6 +3601,24 @@ const SETTINGS = [
     control: 'pill',
     rerender: true,
   },
+  // name marks (name-marks.js): sub flair, 🔥, heat bar before a twitch chatter's name
+  ...[
+    ['subFlair', 'sub_flair'],
+    ['flame', 'flame_mark'],
+    ['heatBars', 'heat_bars'],
+  ].map(([key, l]) => ({
+    key,
+    type: 'bool',
+    default: true,
+    scope: 'sync',
+    category: 'display',
+    section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
+    labelKey: `mc_settings_${l}`,
+    tipKey: `mc_settings_${l}_desc`,
+    control: 'pill',
+    rerender: true,
+  })),
   {
     // Which third-party provider wins when the same emote NAME exists in
     // more than one (7TV/BTTV/FFZ) within a channel's or the global pool.
@@ -15391,7 +15409,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '0dbfcbc1b88c' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '74e22fde37d3' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -18903,6 +18921,7 @@ function injectStyles() {
       padding: 2px 4px 2px 8px;
       font-size: 13px;
       line-height: 18px;
+      font-style: italic;
       border-left: 3px solid var(--evt);
       border-bottom: 1px solid #000;
       /* No tinted background. Any near-black wash reads as a muddy grey block
@@ -19340,11 +19359,6 @@ function injectStyles() {
       top: -1px;
     }
 
-
-    /* no italics anywhere: emphasis is bold, underline, reverse or blink only.
-       markdown *x* / _x_ renders <em>, so it reads as underline here. */
-    #hs-mc-overlay :is(em, i, cite, dfn, var, address) { font-style: normal; }
-    #hs-mc-overlay em { text-decoration: underline; }
     /* UNIFIED INPUT BAR - always visible at bottom */
     #hs-mc-inputbar {
       position: absolute;
@@ -19648,6 +19662,7 @@ function injectStyles() {
       padding: 6px 10px;
       word-break: break-word;
     }
+    .hs-notif-body-fallback { font-style: italic; }
     .hs-notif-actions {
       display: inline-flex;
       gap: 0;
@@ -20554,6 +20569,7 @@ function injectStyles() {
     .hs-mc-system-text {
       color: #ffffff;
       font-size: 13px;
+      font-style: italic;
       display: block;
     }
     /* ANSI 0-15 semantic palette:
@@ -20959,6 +20975,29 @@ function injectStyles() {
       vertical-align: middle;
       margin-right: 2px;
       cursor: default;
+    }
+    /* name marks (name-marks.js): sub flair, flame, heat bar — before the name, twitch rows */
+    .hs-mark-flair {
+      display: inline;
+      width: var(--hs-badge-img, 18px);
+      height: var(--hs-badge-img, 18px);
+      vertical-align: text-bottom;
+      margin-right: 2px;
+      cursor: default;
+    }
+    .hs-mark-flame,
+    .hs-mark-heat {
+      margin-right: 2px;
+      cursor: default;
+    }
+    .hs-mark-heat-w {
+      color: #ffffff;
+    }
+    .hs-mark-heat-y {
+      color: #ffff00;
+    }
+    .hs-mark-heat-r {
+      color: #ff0000;
     }
 
     /* ---- inline chat media (images / video / yt thumb / rich link cards) ---- */
@@ -23061,6 +23100,7 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
     }
     .hs-pcard-note-body.hs-pcard-note-empty {
       color: var(--hs-card-dim);
+      font-style: italic;
     }
     .hs-pcard-note-edit {
       align-self: flex-start;
@@ -52401,7 +52441,7 @@ function buildFeedMessageDiv(m, opUsername) {
       const badge = document.createElement('span')
       badge.className = 'hs-feed-edited'
       badge.textContent = ` ${t('mc_social_edited')}`
-      badge.style.cssText = 'color:#ffffff;font-size:13px;margin-left:4px;'
+      badge.style.cssText = 'color:#ffffff;font-size:13px;font-style:italic;margin-left:4px;'
       body.appendChild(badge)
     }
   }
@@ -70868,7 +70908,10 @@ function updateThirdPartyBadgesInPlace() {
       const chat = wantChat ? mcChatterinoBadgeMap.get(uid)?.at(-1) : null
       if (!bttv && !ffzList && !chat) continue
       for (const div of divSet) {
-        const anchor = div.querySelector('.hs-mc-avatar') || div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
+        const anchor =
+          div.querySelector('.hs-mc-marks') ||
+          div.querySelector('.hs-mc-avatar') ||
+          div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
         if (!anchor) continue
         const insert = (img) => {
           if (img) {
@@ -71269,12 +71312,6 @@ function hsNameSweepLogin(lower) {
       el.dataset.hsNuid = uid
       el.dataset.hsNplat = 'twitch'
       hsNameQueue(uid, 'twitch')
-      // a name that wanted badges but had no id for them (a went-live row)
-      if (el.dataset.hsNbadge) {
-        delete el.dataset.hsNbadge
-        const html = typeof renderThirdPartyBadges === 'function' ? renderThirdPartyBadges(uid) : ''
-        if (html) el.insertAdjacentHTML('beforebegin', html)
-      }
     }
     hsNameRefresh(el)
   }
@@ -71324,6 +71361,258 @@ function hsNameCardsIn(root) {
   return n
 }
 
+
+
+// --- multichat/name-marks.js ---
+// What a TWITCH chat line wears before the name, besides badges: the sub flair, 🔥 for a known heatsync
+// user, a heat bar. Every decision lives here so the extension, the site and the rust app agree
+// (heatsync-chat docs/contract.md "render rules"). Self-contained — no imports: the site vendors
+// this file byte for byte (scripts/sync-ext-copies.sh), so it must stay free of bundle-scope names.
+//
+// order before the name: chatterino badge (the callers' third-party badges), sub flair, 🔥, heat bar.
+// 🔥 and the bar never sit together (someone whose bar shows is plainly on heatsync), and 🔥 is never
+// on or beside a heat score. never on your own lines. all server data here is hostile: bounded + validated.
+
+const HSM_FLAIR_BATCH = 50
+const HSM_FLAIR_TTL = 600000
+const HSM_FLAIR_MAX = 500
+const HSM_HEAT_BATCH = 25
+const HSM_HEAT_TTL = 120000
+const HSM_HEAT_MAX = 1000
+const HSM_URL_MAX = 512
+const HSM_HEAT_CAP = 1e9
+const HSM_IMAGE_HOSTS = [
+  '7tv.app',
+  'betterttv.net',
+  'frankerfacez.com',
+  'kick.com',
+  'ggpht.com',
+  'googleusercontent.com',
+  'static-cdn.jtvnw.net',
+  'heatsync.org',
+  'fourtf.com',
+  '7tv.io',
+  'cdn.heatsync.org',
+  'files.kick.com',
+]
+
+/** A twitch login as heatsync takes it: lowercase letters, digits, underscore, 1..25. */
+function hsMarksValidLogin(s) {
+  return typeof s === 'string' && /^[a-z0-9_]{1,25}$/.test(s)
+}
+
+/** A score off the wire: finite, >= 0, whole, clamped; anything else is 0. */
+function hsMarksScore(v) {
+  return typeof v === 'number' && Number.isFinite(v) && v >= 0 ? Math.floor(Math.min(v, HSM_HEAT_CAP)) : 0
+}
+
+/** The bar a score draws: { glyph, ink:'w'|'y'|'r' } or null under 5.
+ * white while cold, yellow warming, red from 1000; thicker as it climbs. */
+function hsMarksBar(heat) {
+  const h = hsMarksScore(heat)
+  if (h < 5) return null
+  if (h < 20) return { glyph: '▎', ink: 'w' }
+  if (h < 50) return { glyph: '▍', ink: 'w' }
+  if (h < 100) return { glyph: '▍', ink: 'y' }
+  if (h < 1000) return { glyph: '▌', ink: 'y' }
+  return { glyph: '▊', ink: 'r' }
+}
+
+/** Which heat marks a line wears. known: a heatsync user as far as this client can tell;
+ * mine: it is your own line. */
+function hsMarksWear(flameOn, barsOn, known, mine, heat) {
+  const bar = barsOn ? hsMarksBar(heat) : null
+  return { flame: !!(flameOn && known && !mine && !bar), bar }
+}
+
+/** An image on the shared allowlist: https, no userinfo / port / control bytes, <= 512, exact host or `.`-suffix. */
+function hsMarksImageOk(url) {
+  if (typeof url !== 'string' || url.length > HSM_URL_MAX) return false
+  const m = /^https:\/\/([\w.-]+)(?:[/?#]|$)/.exec(url)
+  if (!m || /[\u0000- \u007f]/.test(url)) return false
+  const h = m[1].toLowerCase()
+  return HSM_IMAGE_HOSTS.some((a) => h === a || h.endsWith(`.${a}`))
+}
+
+/** One /api/users/flair row -> { url, title } or null. Only a twitch_sub on the allowlist. */
+function hsMarksFlair(row) {
+  if (!row || typeof row !== 'object' || row.flair_type !== 'twitch_sub') return null
+  if (!hsMarksImageOk(row.badge_url)) return null
+  const who = String(row.broadcaster_login ?? '')
+    .replace(/[^A-Za-z0-9_]/g, '')
+    .slice(0, 25)
+  return { url: row.badge_url, title: who ? `${who} sub` : 'sub' }
+}
+
+function _hsmEsc(s) {
+  return String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
+}
+
+/** The markup for the marks a line wears (flair already validated by hsMarksFlair), '' for none. */
+function hsMarksHtml(flair, wear) {
+  let out = ''
+  if (flair) {
+    const t = _hsmEsc(flair.title)
+    out += `<img class="hs-mark-flair" src="${_hsmEsc(flair.url)}" alt="${t}" title="${t}" width="18" height="18" decoding="async">`
+  }
+  if (wear?.flame) out += '<span class="hs-mark-flame" title="heatsync user">\u{1F525}</span>'
+  if (wear?.bar) out += `<span class="hs-mark-heat hs-mark-heat-${wear.bar.ink}" title="heat">${wear.bar.glyph}</span>`
+  return out
+}
+
+
+
+// --- multichat/name-marks-data.js ---
+// Sub flair + heat for TWITCH chat rows: what is known about each chatter, asked in batches through the
+// background (a content-script fetch to heatsync.org trips the edge), kept briefly, bounded. The decisions
+// (tiers, order, validation) are name-marks.js; this file only holds data and paints rows.
+//
+// flair: keyed by twitch id, ttl 600s, <=500 chatters, 50 per request. heat: keyed by login, ttl 120s,
+// <=1000 logins, 25 per request, kept live by the server's heat push. never a request per row.
+
+const _hsmSets = {
+  flair: { map: new Map(), q: new Set(), size: HSM_FLAIR_BATCH, ttl: HSM_FLAIR_TTL, max: HSM_FLAIR_MAX, zero: null },
+  heat: { map: new Map(), q: new Set(), size: HSM_HEAT_BATCH, ttl: HSM_HEAT_TTL, max: HSM_HEAT_MAX, zero: 0 },
+}
+const _HSM_ASK_AGAIN = 30000 // an ask that never answered may be repeated after this
+const _HSM_QUEUE_MAX = 600
+let _hsmTimer = null
+let _hsmFails = 0
+let _hsmWaitUntil = 0
+
+/** the three switches, all on by default; false only when the viewer turned it off */
+function hsMarksOn(key) {
+  return getSetting(key) !== false
+}
+
+// what a value draws: the flair image, or the bar's glyph + ink. a change in it means a repaint
+function _hsmSig(kind, v) {
+  const b = kind === 'heat' ? hsMarksBar(v) : null
+  return kind === 'heat' ? `${b?.glyph}${b?.ink}` : v?.url
+}
+
+/** the held value for key (flair: validated {url,title}|null; heat: score), asking when unknown/stale */
+function _hsmGet(kind, key) {
+  const s = _hsmSets[kind]
+  let e = s.map.get(key)
+  if (!e) {
+    if (s.map.size >= s.max) s.map.delete(s.map.keys().next().value)
+    e = { v: s.zero, at: 0, asked: 0 }
+    s.map.set(key, e)
+  }
+  const now = Date.now()
+  if (now - e.at > s.ttl && now - e.asked > _HSM_ASK_AGAIN && s.q.size < _HSM_QUEUE_MAX) {
+    s.q.add(key)
+    if (!_hsmTimer) _hsmTimer = cleanup.setTimeout(_hsmFlush, Math.max(500, _hsmWaitUntil - now))
+  }
+  return e.v
+}
+
+function _hsmFlush() {
+  _hsmTimer = null
+  const changed = new Set()
+  const jobs = Object.entries(_hsmSets).map(async ([kind, s]) => {
+    const ids = [...s.q].slice(0, s.size)
+    for (const id of ids) {
+      s.q.delete(id)
+      const e = s.map.get(id)
+      if (e) e.asked = Date.now()
+    }
+    if (!ids.length) return true
+    let body = null
+    try {
+      const resp = await safeSendMessage({ type: 'fetch_name_marks', kind, ids })
+      if (resp?.ok) body = resp.body
+    } catch (_) {}
+    const rows = (kind === 'flair' ? body?.flairs : body?.users) ?? null
+    for (const id of ids) {
+      const e = s.map.get(id)
+      if (!e) continue
+      e.asked = 0
+      if (!rows || typeof rows !== 'object') continue
+      const row = Object.hasOwn(rows, id) ? rows[id] : null
+      const v = kind === 'flair' ? hsMarksFlair(row) : hsMarksScore(row?.heat)
+      if (_hsmSig(kind, e.v) !== _hsmSig(kind, v)) changed.add(id)
+      e.v = v
+      e.at = Date.now()
+    }
+    return !!rows && typeof rows === 'object'
+  })
+  Promise.all(jobs).then((oks) => {
+    // failures wait 5s doubling to 60s; a good answer resets it
+    const failed = oks.includes(false)
+    _hsmFails = failed ? _hsmFails + 1 : 0
+    _hsmWaitUntil = failed ? Date.now() + Math.min(60000, 5000 * 2 ** (_hsmFails - 1)) : 0
+    if (!_hsmTimer && (_hsmSets.flair.q.size || _hsmSets.heat.q.size)) {
+      _hsmTimer = cleanup.setTimeout(_hsmFlush, Math.max(500, _hsmWaitUntil - Date.now()))
+    }
+    if (changed.size) hsMarksRepaint(changed)
+  })
+}
+
+/** the server's heat push: new scores for logins we hold (a push never grows the cache) */
+function hsMarksOnHeatPush(updates) {
+  if (!Array.isArray(updates)) return
+  const changed = new Set()
+  for (const u of updates.slice(0, 500)) {
+    const login = typeof u?.username === 'string' ? u.username.toLowerCase() : ''
+    const e = _hsmSets.heat.map.get(login)
+    if (!e) continue
+    const next = hsMarksScore(u.userHeat)
+    if (_hsmSig('heat', e.v) !== _hsmSig('heat', next)) changed.add(login)
+    e.v = next
+    e.at = Date.now()
+  }
+  if (changed.size) hsMarksRepaint(changed)
+}
+
+/** a sender emote set is "known" when it holds a live emote: we have seen heatsync content from them */
+function hsMarksKnown(uid) {
+  const set = uid && typeof getSenderEmotes === 'function' ? getSenderEmotes(`twitch:${uid}`) : null
+  if (!set?.size) return false
+  for (const e of set.values()) if (!e?.removedAt) return true
+  return false
+}
+
+/** the marks span a twitch row carries before its name ('' when all three switches are off) */
+function hsMarksRowHtml(m, uid) {
+  const flairOn = hsMarksOn('subFlair')
+  const flameOn = hsMarksOn('flame')
+  const barsOn = hsMarksOn('heatBars')
+  if (!flairOn && !flameOn && !barsOn) return ''
+  const login = String(m?.user ?? '').toLowerCase()
+  const flair = flairOn && /^\d{1,20}$/.test(uid) ? _hsmGet('flair', uid) : null
+  const heat = (flameOn || barsOn) && hsMarksValidLogin(login) ? _hsmGet('heat', login) : 0
+  const wear = hsMarksWear(flameOn, barsOn, flameOn && hsMarksKnown(uid), isSelf(m), heat)
+  return `<span class="hs-mc-marks">${hsMarksHtml(flair, wear)}</span>`
+}
+
+/** logins or ids whose marks changed: repaint the drawn rows in place (rows built later read the caches) */
+function hsMarksRepaint(keys) {
+  try {
+    const msgs = document.getElementById('hs-mc-messages')
+    if (!msgs) return
+    let any = false
+    for (const div of msgs.querySelectorAll('.hs-mc-msg[data-msg-key]')) {
+      const m = div._hsMsg
+      const slot = div.querySelector('.hs-mc-marks')
+      if (!m || !slot || (m.platform && m.platform !== 'twitch')) continue
+      const login = String(m.user ?? '').toLowerCase()
+      if (!keys.has(login) && !keys.has(String(m.userId ?? ''))) continue
+      const html = hsMarksRowHtml(m, String(m.userId ?? ''))
+      const inner = html.slice('<span class="hs-mc-marks">'.length, -'</span>'.length)
+      if (slot.innerHTML !== inner) {
+        slot.innerHTML = inner
+        any = true
+      }
+    }
+    if (any) pinAfterInPlaceUpdate()
+  } catch (_) {}
+}
+
+cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+  if (msg?.type === 'heat_batch_update') hsMarksOnHeatPush(msg.updates)
+})
 
 
 // --- multichat/mod-toolbar.js ---
@@ -90513,19 +90802,14 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Build structured HTML: [username] ◆ action game
       // No colour found above → the shared name-style fallback (chat-heard colour
       // or the palette), plus the heatsync/7TV paint when chat knows the twitch id.
-      // A streamer chat hasn't heard yet is looked up (twitch colour + id), like a
-      // card name: the row repaints, and takes its badges, when the answer lands.
       const evt = hsNameParts({
         name: ch,
         platform: isYtEvent ? 'youtube' : 'twitch',
         colour: userColor,
         login: isYtEvent ? '' : chLc,
-        resolve: !isYtEvent,
       })
       // the badges keyed to the streamer's twitch id, before the name like a chat row
       const evtBadges = evtPlat === 'twitch' ? hsNameBadges(evt) : ''
-      // no id yet: the lookup's answer puts the badges in (hsNameSweepLogin)
-      if (evtPlat === 'twitch' && !evt.uid) evt.attrs += ' data-hs-nbadge="1"'
       const evtCls = `hs-mc-user hs-evt-user${evt.cls ? ` ${evt.cls}` : ''}`
       // A row whose subject IS the channel (went live, game switch...) knows the
       // channel's handle on the platform it came from, so it links there. A row
@@ -91073,6 +91357,8 @@ const STORAGE_KEY = 'heatsync_multichat'
             ? 'heatsync'
             : 'twitch'
     const platLabel = plat === 'yt' ? '[Y]' : plat === 'kick' ? '[K]' : plat === 'heatsync' ? '[H]' : '[T]'
+    // after the chatterino badge, before the name: sub flair, 🔥, heat bar (twitch rows only)
+    const marksHtml = plat === 'twitch' ? hsMarksRowHtml(m, String(uidTwitch || '')) : ''
     const platformBadge =
       platformBadgesEnabled || plat !== hostPlatform
         ? `<span class="hs-mc-platform-badge hs-mc-pb-${plat}" style="font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle;color:${PLAT_COLORS[plat]}">${platLabel}</span>`
@@ -91372,8 +91658,8 @@ const STORAGE_KEY = 'heatsync_multichat'
         : m.type === 'notice'
           ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', t('mc_main_dismiss'), `title="${t('mc_main_dismiss')}"`) : ''}`
           : m.isAction
-            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
-            : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
+            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')};font-style:italic">${processedText}</span>${stickerHtml}`
+            : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
     div.innerHTML = `${replyBar}${msgBody}`
     // Correct emote states based on current inventory + blocked (cached HTML
     // may have stale states). String-includes gate skips the querySelectorAll

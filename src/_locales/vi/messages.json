@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "huy hiệu chatterino trên người chat"
   },
+  "mc_settings_sub_flair": {
+    "message": "huy hiệu sub"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "huy hiệu sub twitch của người dùng heatsync trước tên"
+  },
+  "mc_settings_flame_mark": {
+    "message": "ngọn lửa"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 trước tên người dùng heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "thanh nhiệt"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "thanh mỏng trước tên cho biết người chat đã kiếm được bao nhiêu nhiệt"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "ưu tiên nguồn emote"
   },

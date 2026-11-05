@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "चैटर पर chatterino बैज"
   },
+  "mc_settings_sub_flair": {
+    "message": "सब फ्लेयर"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "heatsync यूज़र का twitch सब बैज उसके नाम से पहले"
+  },
+  "mc_settings_flame_mark": {
+    "message": "लौ"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 heatsync यूज़र के नाम से पहले"
+  },
+  "mc_settings_heat_bars": {
+    "message": "हीट बार"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "नाम से पहले एक पतली पट्टी जो दिखाती है कि चैटर ने कितनी हीट कमाई है"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "emote प्रोवाइडर की प्राथमिकता"
   },

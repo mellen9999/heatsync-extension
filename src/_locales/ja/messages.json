@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "チャッターの chatterino バッジ"
   },
+  "mc_settings_sub_flair": {
+    "message": "サブ装飾"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "heatsync ユーザーの twitch サブバッジを名前の前に表示"
+  },
+  "mc_settings_flame_mark": {
+    "message": "炎"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "heatsync ユーザーの名前の前に 🔥"
+  },
+  "mc_settings_heat_bars": {
+    "message": "ヒートバー"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "名前の前に細いバーで、チャッターが獲得したヒートを表示"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "emote プロバイダの優先順位"
   },

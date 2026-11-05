@@ -6863,10 +6863,10 @@
     "message": "スラッシュコマンド"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "このチャンネルからBANされています"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "タイムアウト中 · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,19 +6874,19 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "サブスク限定 — ここで話すには登録してね"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "フォロワー限定 — ここで話すにはフォローしてね"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "エモート限定 — ここはエモートのみ"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "フォロー中 · ライブ"
   },
   "mc_follows_count": {
-    "message": "$COUNT$ live",
+    "message": "$COUNT$ ライブ",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "フォロー中でライブの人はいません"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k 移動 · enter チャット · w 視聴 · esc 閉じる"
   },
   "mc_emo_tab_emoji": {
-    "message": "emoji"
+    "message": "絵文字"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "絵文字を検索"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "一致する絵文字なし"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "絵文字リストを読み込めません"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: チャットはオフです"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: リレーが満杯です、後で再試行します"
   }
 }

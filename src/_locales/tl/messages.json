@@ -6863,10 +6863,10 @@
     "message": "mga slash command"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "naka-ban ka sa channel na ito"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "naka-timeout ka · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,16 +6874,16 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "para sa subscribers lang — mag-subscribe para makapag-chat dito"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "para sa followers lang — mag-follow para makapag-chat dito"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "emote lang — emote lang dito"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "sinusundan · live"
   },
   "mc_follows_count": {
     "message": "$COUNT$ live",
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "walang live sa mga sinusundan mo"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k galaw · enter chat · w panoorin · esc isara"
   },
   "mc_emo_tab_emoji": {
     "message": "emoji"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "maghanap ng emoji"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "walang tugmang emoji"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "hindi pa na-load ang listahan ng emoji"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: patay ang chat"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: puno ang relay, susubukan ulit mamaya"
   }
 }

@@ -6863,10 +6863,10 @@
     "message": "comandos slash"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "estás baneado de este canal"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "estás en timeout · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,19 +6874,19 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "solo suscriptores — suscríbete para chatear aquí"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "solo seguidores — sigue para chatear aquí"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "solo emotes — aquí solo emotes"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "siguiendo · en vivo"
   },
   "mc_follows_count": {
-    "message": "$COUNT$ live",
+    "message": "$COUNT$ en vivo",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "nadie a quien sigues está en vivo"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k mover · enter chat · w ver · esc cerrar"
   },
   "mc_emo_tab_emoji": {
     "message": "emoji"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "buscar emoji"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "ningún emoji coincide"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "lista de emoji no cargada"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: el chat está apagado"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: el relay está lleno, reintentando luego"
   }
 }

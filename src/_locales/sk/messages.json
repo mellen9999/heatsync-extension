@@ -6863,10 +6863,10 @@
     "message": "slash príkazy"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "máš ban na tomto kanáli"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "máš timeout · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,19 +6874,19 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "len pre odberateľov — odoberaj, aby si mohol písať"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "len pre sledujúcich — sleduj, aby si mohol písať"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "len emotes — tu len emotes"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "sleduješ · naživo"
   },
   "mc_follows_count": {
-    "message": "$COUNT$ live",
+    "message": "$COUNT$ naživo",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "nikto, koho sleduješ, nie je naživo"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k pohyb · enter chat · w pozerať · esc zavrieť"
   },
   "mc_emo_tab_emoji": {
     "message": "emoji"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "hľadať emoji"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "žiadne emoji nenájdené"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "zoznam emoji nie je načítaný"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: chat je vypnutý"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: relay je plné, skúsime neskôr"
   }
 }

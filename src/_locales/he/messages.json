@@ -6863,10 +6863,10 @@
     "message": "פקודות slash"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "חסמו אותך בערוץ הזה"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "אתה בטיים-אאוט · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,19 +6874,19 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "למנויים בלבד — הירשם כדי לצ׳אטט כאן"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "לעוקבים בלבד — עקוב כדי לצ׳אטט כאן"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "אמוטים בלבד — כאן רק אמוטים"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "במעקב · חי"
   },
   "mc_follows_count": {
-    "message": "$COUNT$ live",
+    "message": "$COUNT$ חי",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "אף אחד מהנעקבים שלך לא חי"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k הזזה · enter צ׳אט · w צפייה · esc סגירה"
   },
   "mc_emo_tab_emoji": {
-    "message": "emoji"
+    "message": "אימוג׳י"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "חפש אימוג׳י"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "אין אימוג׳י תואם"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "רשימת האימוג׳י לא נטענה"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: הצ׳אט כבוי"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: הריליי מלא, ננסה שוב מאוחר יותר"
   }
 }

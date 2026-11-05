@@ -6863,10 +6863,10 @@
     "message": "lệnh slash"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "bạn bị cấm khỏi kênh này"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "bạn đang bị timeout · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,16 +6874,16 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "chỉ dành cho người đăng ký — đăng ký để chat ở đây"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "chỉ dành cho người theo dõi — theo dõi để chat ở đây"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "chỉ emote — ở đây chỉ dùng emote"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "đang theo dõi · live"
   },
   "mc_follows_count": {
     "message": "$COUNT$ live",
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "không ai bạn theo dõi đang live"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k di chuyển · enter chat · w xem · esc đóng"
   },
   "mc_emo_tab_emoji": {
     "message": "emoji"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "tìm emoji"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "không có emoji khớp"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "chưa tải danh sách emoji"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: chat đang tắt"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: relay đã đầy, sẽ thử lại sau"
   }
 }

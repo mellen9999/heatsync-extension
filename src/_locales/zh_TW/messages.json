@@ -6863,10 +6863,10 @@
     "message": "斜線指令"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "你已被此頻道封鎖"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "你已被禁言 · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,19 +6874,19 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "僅限訂閱者 — 訂閱後即可在此聊天"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "僅限追隨者 — 追隨後即可在此聊天"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "僅限表情 — 這裡只能發表情"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "已追隨 · 直播中"
   },
   "mc_follows_count": {
-    "message": "$COUNT$ live",
+    "message": "$COUNT$ 直播中",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "你追隨的人都沒在直播"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k 移動 · enter 聊天 · w 觀看 · esc 關閉"
   },
   "mc_emo_tab_emoji": {
-    "message": "emoji"
+    "message": "表情"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "搜尋表情"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "沒有符合的表情"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "表情列表未載入"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: 聊天已關閉"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: 中繼已滿，稍後重試"
   }
 }

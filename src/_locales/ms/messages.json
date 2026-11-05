@@ -6863,10 +6863,10 @@
     "message": "slash command"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "anda diharamkan daripada saluran ini"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "anda di-timeout · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,16 +6874,16 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "pelanggan sahaja — langgan untuk sembang di sini"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "pengikut sahaja — ikut untuk sembang di sini"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "emote sahaja — di sini emote sahaja"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "diikuti · live"
   },
   "mc_follows_count": {
     "message": "$COUNT$ live",
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "tiada sesiapa yang anda ikuti sedang live"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k gerak · enter sembang · w tonton · esc tutup"
   },
   "mc_emo_tab_emoji": {
     "message": "emoji"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "cari emoji"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "tiada emoji sepadan"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "senarai emoji belum dimuat"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: sembang dimatikan"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: relay penuh, cuba lagi nanti"
   }
 }

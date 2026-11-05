@@ -6863,10 +6863,10 @@
     "message": "أوامر slash"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "أنت محظور من هذه القناة"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "تم كتمك مؤقتًا · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,19 +6874,19 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "للمشتركين فقط — اشترك للدردشة هنا"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "للمتابعين فقط — تابع للدردشة هنا"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "إيموجي فقط — الإيموجي فقط هنا"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "المتابَعون · مباشر"
   },
   "mc_follows_count": {
-    "message": "$COUNT$ live",
+    "message": "$COUNT$ مباشر",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "لا أحد تتابعه في بث مباشر"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k تنقل · enter دردشة · w مشاهدة · esc إغلاق"
   },
   "mc_emo_tab_emoji": {
-    "message": "emoji"
+    "message": "إيموجي"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "ابحث عن إيموجي"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "لا إيموجي مطابق"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "لم تُحمّل قائمة الإيموجي"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: الدردشة متوقفة"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: المرحّل ممتلئ، سنعيد المحاولة لاحقًا"
   }
 }

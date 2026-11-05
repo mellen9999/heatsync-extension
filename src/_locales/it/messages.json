@@ -6863,10 +6863,10 @@
     "message": "comandi slash"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "sei bannato da questo canale"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "sei in timeout · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,16 +6874,16 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "solo iscritti — iscriviti per chattare qui"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "solo follower — segui per chattare qui"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "solo emote — qui solo emote"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "seguiti · live"
   },
   "mc_follows_count": {
     "message": "$COUNT$ live",
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "nessuno che segui è live"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k muovi · enter chat · w guarda · esc chiudi"
   },
   "mc_emo_tab_emoji": {
     "message": "emoji"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "cerca emoji"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "nessun emoji trovato"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "lista emoji non caricata"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: la chat è spenta"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: il relay è pieno, riprovo più tardi"
   }
 }

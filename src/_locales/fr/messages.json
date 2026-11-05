@@ -6863,10 +6863,10 @@
     "message": "commandes slash"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "tu es banni de cette chaîne"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "tu es en timeout · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,19 +6874,19 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "abonnés uniquement — abonne-toi pour écrire ici"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "followers uniquement — suis pour écrire ici"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "emotes uniquement — ici que des emotes"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "suivis · en direct"
   },
   "mc_follows_count": {
-    "message": "$COUNT$ live",
+    "message": "$COUNT$ en direct",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "personne que tu suis n’est en direct"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k déplacer · enter chat · w regarder · esc fermer"
   },
   "mc_emo_tab_emoji": {
     "message": "emoji"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "chercher un emoji"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "aucun emoji trouvé"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "liste d’emoji non chargée"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: le chat est désactivé"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: le relais est plein, nouvel essai plus tard"
   }
 }

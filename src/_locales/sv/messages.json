@@ -6863,10 +6863,10 @@
     "message": "slash-kommandon"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "du är bannad från den här kanalen"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "du är i timeout · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,16 +6874,16 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "endast prenumeranter — prenumerera för att chatta här"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "endast följare — följ för att chatta här"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "endast emotes — här bara emotes"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "följer · live"
   },
   "mc_follows_count": {
     "message": "$COUNT$ live",
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "ingen du följer är live"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k flytta · enter chatt · w titta · esc stäng"
   },
   "mc_emo_tab_emoji": {
     "message": "emoji"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "sök emoji"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "inga emoji matchar"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "emojilistan är inte laddad"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: chatten är av"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: relay är full, försöker igen senare"
   }
 }

@@ -6863,10 +6863,10 @@
     "message": "слэш-команды"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "ты забанен на этом канале"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "ты в таймауте · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,19 +6874,19 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "только для подписчиков — подпишись, чтобы писать здесь"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "только для фолловеров — подпишись, чтобы писать здесь"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "только эмоуты — здесь только эмоуты"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "подписки · в эфире"
   },
   "mc_follows_count": {
-    "message": "$COUNT$ live",
+    "message": "$COUNT$ в эфире",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "никто из твоих подписок не в эфире"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k двигаться · enter чат · w смотреть · esc закрыть"
   },
   "mc_emo_tab_emoji": {
-    "message": "emoji"
+    "message": "эмодзи"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "поиск эмодзи"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "нет подходящих эмодзи"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "список эмодзи не загружен"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: чат выключен"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: релей полон, повторим позже"
   }
 }

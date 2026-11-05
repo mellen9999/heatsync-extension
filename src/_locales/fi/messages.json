@@ -6863,10 +6863,10 @@
     "message": "slash-komennot"
   },
   "mc_lock_banned": {
-    "message": "you are banned from this channel"
+    "message": "sinulla on porttikielto tälle kanavalle"
   },
   "mc_lock_timed_out": {
-    "message": "you are timed out · $TIME$",
+    "message": "olet jäähyllä · $TIME$",
     "placeholders": {
       "time": {
         "content": "$1"
@@ -6874,19 +6874,19 @@
     }
   },
   "mc_lock_subs": {
-    "message": "subscribers-only — sub to chat here"
+    "message": "vain tilaajille — tilaa, niin voit chattailla"
   },
   "mc_lock_followers": {
-    "message": "followers-only — follow to chat here"
+    "message": "vain seuraajille — seuraa, niin voit chattailla"
   },
   "mc_lock_emote": {
-    "message": "emote-only — emotes only here"
+    "message": "vain emotet — täällä vain emotet"
   },
   "mc_follows_title": {
-    "message": "following · live"
+    "message": "seuratut · livenä"
   },
   "mc_follows_count": {
-    "message": "$COUNT$ live",
+    "message": "$COUNT$ livenä",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -6894,27 +6894,27 @@
     }
   },
   "mc_follows_empty": {
-    "message": "nobody you follow is live"
+    "message": "kukaan seuraamistasi ei ole livenä"
   },
   "mc_follows_hint": {
-    "message": "j/k move · enter chat · w watch · esc close"
+    "message": "j/k liiku · enter chat · w katso · esc sulje"
   },
   "mc_emo_tab_emoji": {
     "message": "emoji"
   },
   "mc_emoji_search_placeholder": {
-    "message": "search emoji"
+    "message": "hae emojia"
   },
   "mc_emoji_none": {
-    "message": "no emoji match"
+    "message": "ei täsmääviä emojeja"
   },
   "mc_emoji_no_data": {
-    "message": "emoji list not loaded"
+    "message": "emojilistaa ei ladattu"
   },
   "mc_social_yt_chat_off": {
-    "message": "youtube: chat is off"
+    "message": "youtube: chat on pois päältä"
   },
   "mc_social_yt_no_slot": {
-    "message": "youtube: relay is full, retrying later"
+    "message": "youtube: relay on täynnä, yritetään myöhemmin"
   }
 }

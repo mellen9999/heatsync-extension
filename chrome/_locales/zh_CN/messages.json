@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "用户的 chatterino 徽章"
   },
+  "mc_settings_sub_flair": {
+    "message": "订阅装饰"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "在 heatsync 用户名字前显示其 twitch 订阅徽章"
+  },
+  "mc_settings_flame_mark": {
+    "message": "火焰"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "在 heatsync 用户名字前显示 🔥"
+  },
+  "mc_settings_heat_bars": {
+    "message": "热度条"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "名字前的细条，显示聊天者获得的热度"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "emote 来源优先级"
   },

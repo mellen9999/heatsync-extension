@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "chatterino-märken på chattare"
   },
+  "mc_settings_sub_flair": {
+    "message": "sub-prydnad"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "en heatsync-användares twitch sub-badge före namnet"
+  },
+  "mc_settings_flame_mark": {
+    "message": "låga"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 före namnet på en heatsync-användare"
+  },
+  "mc_settings_heat_bars": {
+    "message": "värmestaplar"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "ett tunt streck före namnet som visar hur mycket värme en chattare har tjänat"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "prioritet för emote-leverantörer"
   },

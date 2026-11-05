@@ -778,6 +778,29 @@
       margin-right: 2px;
       cursor: default;
     }
+    /* name marks (name-marks.js): sub flair, flame, heat bar — before the name, twitch rows */
+    .hs-mark-flair {
+      display: inline;
+      width: var(--hs-badge-img, 18px);
+      height: var(--hs-badge-img, 18px);
+      vertical-align: text-bottom;
+      margin-right: 2px;
+      cursor: default;
+    }
+    .hs-mark-flame,
+    .hs-mark-heat {
+      margin-right: 2px;
+      cursor: default;
+    }
+    .hs-mark-heat-w {
+      color: #ffffff;
+    }
+    .hs-mark-heat-y {
+      color: #ffff00;
+    }
+    .hs-mark-heat-r {
+      color: #ff0000;
+    }
 
     /* ---- inline chat media (images / video / yt thumb / rich link cards) ---- */
     /* square, capped, no autoplaying iframes — built in feed-embed.js          */

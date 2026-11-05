@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "chatterino-badget chatissaolijoilla"
   },
+  "mc_settings_sub_flair": {
+    "message": "sub-koriste"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "heatsync-käyttäjän twitch-sub-merkki ennen nimeä"
+  },
+  "mc_settings_flame_mark": {
+    "message": "liekki"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 heatsync-käyttäjän nimen edessä"
+  },
+  "mc_settings_heat_bars": {
+    "message": "lämpöpalkit"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "ohut palkki nimen edessä, joka näyttää kuinka paljon lämpöä chattaaja on ansainnut"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "emote-palvelun prioriteetti"
   },

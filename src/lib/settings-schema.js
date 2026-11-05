@@ -676,6 +676,24 @@ const SETTINGS = [
     control: 'pill',
     rerender: true,
   },
+  // name marks (name-marks.js): sub flair, 🔥, heat bar before a twitch chatter's name
+  ...[
+    ['subFlair', 'sub_flair'],
+    ['flame', 'flame_mark'],
+    ['heatBars', 'heat_bars'],
+  ].map(([key, l]) => ({
+    key,
+    type: 'bool',
+    default: true,
+    scope: 'sync',
+    category: 'display',
+    section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
+    labelKey: `mc_settings_${l}`,
+    tipKey: `mc_settings_${l}_desc`,
+    control: 'pill',
+    rerender: true,
+  })),
   {
     // Which third-party provider wins when the same emote NAME exists in
     // more than one (7TV/BTTV/FFZ) within a channel's or the global pool.

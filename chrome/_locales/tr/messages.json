@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "sohbetçilerde chatterino rozetleri"
   },
+  "mc_settings_sub_flair": {
+    "message": "sub süsü"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "bir heatsync kullanıcısının twitch sub rozeti, adının önünde"
+  },
+  "mc_settings_flame_mark": {
+    "message": "alev"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 bir heatsync kullanıcısının adının önünde"
+  },
+  "mc_settings_heat_bars": {
+    "message": "ısı çubukları"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "adın önünde, sohbet edenin ne kadar ısı kazandığını gösteren ince bir çubuk"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "emote sağlayıcı önceliği"
   },

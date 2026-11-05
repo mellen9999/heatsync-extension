@@ -822,6 +822,8 @@ const MULTICHAT_MODULES = [
   'paints.js',
   'cosmetics.js',
   'name-style.js',
+  'name-marks.js',
+  'name-marks-data.js',
   'mod-toolbar.js',
   'automod-queue.js',
   'blocked-terms.js',

@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "lencana chatterino pada chatter"
   },
+  "mc_settings_sub_flair": {
+    "message": "hiasan sub"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "lencana sub twitch pengguna heatsync sebelum namanya"
+  },
+  "mc_settings_flame_mark": {
+    "message": "api"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 sebelum nama pengguna heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "bilah panas"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "bilah tipis sebelum nama yang menunjukkan berapa banyak panas yang diperoleh chatter"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "prioritas penyedia emote"
   },

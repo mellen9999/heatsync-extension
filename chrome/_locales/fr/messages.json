@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "badges chatterino sur les chatteurs"
   },
+  "mc_settings_sub_flair": {
+    "message": "badge sub"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "le badge d'abonné twitch d'un utilisateur heatsync avant son nom"
+  },
+  "mc_settings_flame_mark": {
+    "message": "flamme"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 avant le nom d'un utilisateur heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "barres de chaleur"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "une fine barre avant le nom montrant la chaleur gagnée par un chatteur"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "priorité des fournisseurs d'emotes"
   },

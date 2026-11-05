@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "chatterino badge sa mga chatter"
   },
+  "mc_settings_sub_flair": {
+    "message": "palamuti ng sub"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "ang twitch sub badge ng isang heatsync user bago ang pangalan"
+  },
+  "mc_settings_flame_mark": {
+    "message": "apoy"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 bago ang pangalan ng isang heatsync user"
+  },
+  "mc_settings_heat_bars": {
+    "message": "heat bar"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "manipis na bar bago ang pangalan na nagpapakita kung gaano karaming init ang nakuha ng chatter"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "priyoridad ng emote provider"
   },

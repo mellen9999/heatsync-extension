@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "شارات chatterino عند المستخدمين"
   },
+  "mc_settings_sub_flair": {
+    "message": "وسم المشترك"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "شارة اشتراك twitch لمستخدم heatsync قبل اسمه"
+  },
+  "mc_settings_flame_mark": {
+    "message": "لهب"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 قبل اسم مستخدم heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "أشرطة الحرارة"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "شريط رفيع قبل الاسم يعرض مقدار الحرارة التي جمعها المتحدث"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "أولوية مزوّدي emote"
   },

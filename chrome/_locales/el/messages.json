@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "badges chatterino στους χρήστες"
   },
+  "mc_settings_sub_flair": {
+    "message": "διακόσμηση sub"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "το σήμα συνδρομητή twitch ενός χρήστη heatsync πριν από το όνομά του"
+  },
+  "mc_settings_flame_mark": {
+    "message": "φλόγα"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "🔥 πριν από το όνομα ενός χρήστη heatsync"
+  },
+  "mc_settings_heat_bars": {
+    "message": "μπάρες θερμότητας"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "μια λεπτή μπάρα πριν από το όνομα που δείχνει πόση θερμότητα έχει κερδίσει ένας χρήστης"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "προτεραιότητα παρόχου emotes"
   },

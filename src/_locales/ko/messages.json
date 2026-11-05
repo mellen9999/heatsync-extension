@@ -1285,6 +1285,24 @@
   "mc_settings_chatterino_badges_desc": {
     "message": "채터의 chatterino 배지"
   },
+  "mc_settings_sub_flair": {
+    "message": "구독 장식"
+  },
+  "mc_settings_sub_flair_desc": {
+    "message": "heatsync 사용자의 twitch 구독 배지를 이름 앞에 표시"
+  },
+  "mc_settings_flame_mark": {
+    "message": "불꽃"
+  },
+  "mc_settings_flame_mark_desc": {
+    "message": "heatsync 사용자 이름 앞에 🔥"
+  },
+  "mc_settings_heat_bars": {
+    "message": "히트 바"
+  },
+  "mc_settings_heat_bars_desc": {
+    "message": "이름 앞의 얇은 막대로 채터가 얻은 히트를 표시"
+  },
   "mc_settings_emote_provider_priority": {
     "message": "emote 제공자 우선순위"
   },

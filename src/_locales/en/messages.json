@@ -6915,5 +6915,17 @@
   },
   "mc_follows_hint": {
     "message": "j/k move · enter chat · w watch · esc close"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "emoji"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "search emoji"
+  },
+  "mc_emoji_none": {
+    "message": "no emoji match"
+  },
+  "mc_emoji_no_data": {
+    "message": "emoji list not loaded"
   }
 }

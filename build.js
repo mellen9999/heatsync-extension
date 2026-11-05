@@ -781,6 +781,7 @@ const MULTICHAT_MODULES = [
   'kick-native-tap.js',
   'send-targets.js',
   'chat-lock.js',
+  'emoji-tab.js',
   'follows-view.js',
   'self-identity.js',
   'x-glyph.js',

@@ -3,7 +3,7 @@
 ## [1.7.117] — 2026-11-05
 
 ### added
-- **34 languages** — the panel, menus, slash commands and popup follow your browser's language.
+- **34 languages** — the multichat panel, menus, slash command descriptions and popup are translated in full; before, many of their strings stayed english.
 - **right-click a line** — reply and copy link live in the line's menu; the hover reply button is gone.
 - **share a layout** — `/sharelayout` copies a heatsync.org/m link of your tabs, `/layout <link>` opens one.
 - **mod commands** — announce, vip, mod, poll, prediction and color work the same as on the site.

@@ -154,6 +154,12 @@ function attachConsoleWatch(p: any, label: string, errors: string[]) {
   p.on('console', (m: any) => {
     if (m.type() !== 'error') return
     const text = String(m.text())
+    // Chrome reports the same opaque-frame refusal as a console error too, not
+    // only a pageerror, so the known class above has to be screened here as well.
+    if (KNOWN_PREEXISTING.test(text)) {
+      console.warn(`  ⚠ ${label}: known pre-existing — ${text.slice(0, 150)}`)
+      return
+    }
     if (EXT_ATTRIBUTABLE.test(text)) errors.push(`${label}: ${text.slice(0, 300)}`)
   })
 }

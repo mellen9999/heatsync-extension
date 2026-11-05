@@ -6930,8 +6930,10 @@ function handleWSMessage(msg) {
       case 'account:changed':
         // A platform was linked or unlinked on heatsync.org: without this the
         // ext kept the old identity until a restart and told a linked user
-        // their emotes "won't render for others".
+        // their emotes "won't render for others". Flair set or cleared there too:
+        // the panels drop what they hold for your own rows and ask again.
         fetchUserInfo().catch(() => {})
+        broadcastToTabs({ type: 'account_changed' }).catch(() => {})
         break
 
       case 'server:shutdown':

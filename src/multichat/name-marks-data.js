@@ -85,6 +85,17 @@ function _hsmFlush() {
   })
 }
 
+/** your account changed (flair set or cleared on any device): every held flair is asked again, and a row
+ * whose answer changed (yours) repaints when it lands */
+function hsMarksForgetSelf() {
+  const s = _hsmSets.flair
+  for (const [k, e] of s.map) {
+    e.at = 0
+    s.q.add(k)
+  }
+  _hsmFlush()
+}
+
 /** the server's heat push: new scores for logins we hold (a push never grows the cache) */
 function hsMarksOnHeatPush(updates) {
   if (!Array.isArray(updates)) return
@@ -147,4 +158,5 @@ function hsMarksRepaint(keys) {
 
 cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
   if (msg?.type === 'heat_batch_update') hsMarksOnHeatPush(msg.updates)
+  else if (msg?.type === 'account_changed') hsMarksForgetSelf()
 })

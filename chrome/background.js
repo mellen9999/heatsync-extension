@@ -379,6 +379,22 @@ function splitIncomingUiState(obj) {
   return { sync: sanitizeUiSettings(sync), overflow }
 }
 
+// settings:delete → what to remove. Device-local keys are never synced so a
+// remote delete must not touch them; blocklist keys live in a local mirror.
+function planSettingsDelete(key) {
+  if (typeof key !== 'string' || !key || key === '__proto__') return {}
+  if (DEVICE_LOCAL_KEYS.has(key)) return {}
+  const overflowKey = OVERFLOW_MIRROR_KEYS[key]
+  if (UI_SYNC_BLOCKLIST.has(key)) return overflowKey ? { overflowKey } : {}
+  return { syncKey: key }
+}
+
+function omitKey(obj, key) {
+  const out = { ...obj }
+  delete out[key]
+  return out
+}
+
 // Serialized read-modify-write for ui_settings in sync storage.
 // Three message handlers (ui-state:sync/update, settings:patch, settings:delete)
 // can race on concurrent WS events. Chain all writes through this so each sees
@@ -7706,6 +7722,15 @@ function handleWSMessage(msg) {
           // (patchKeys.length || overflowKeys.length)` that used to wrap it
           // guarded nothing else, so it went with it.
         }
+        break
+      }
+
+      // a setting deleted on another device must go away here too, or the next
+      // full ui-state fanout / local write resurrects it
+      case 'settings:delete': {
+        const del = planSettingsDelete(msg.key)
+        if (del.syncKey) uiSettingsRmw((ui) => omitKey(ui, del.syncKey))
+        if (del.overflowKey) browser.storage.local.remove(del.overflowKey).catch(() => {})
         break
       }
 

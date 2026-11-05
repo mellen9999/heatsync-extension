@@ -447,7 +447,6 @@
       padding: 2px 4px 2px 8px;
       font-size: 13px;
       line-height: 18px;
-      font-style: italic;
       border-left: 3px solid var(--evt);
       border-bottom: 1px solid #000;
       /* No tinted background. Any near-black wash reads as a muddy grey block

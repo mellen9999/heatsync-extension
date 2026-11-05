@@ -280,3 +280,8 @@
       top: -1px;
     }
 
+
+    /* no italics anywhere: emphasis is bold, underline, reverse or blink only.
+       markdown *x* / _x_ renders <em>, so it reads as underline here. */
+    #hs-mc-overlay :is(em, i, cite, dfn, var, address) { font-style: normal; }
+    #hs-mc-overlay em { text-decoration: underline; }

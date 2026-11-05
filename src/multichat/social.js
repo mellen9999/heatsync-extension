@@ -2304,7 +2304,7 @@ function buildFeedMessageDiv(m, opUsername) {
       const badge = document.createElement('span')
       badge.className = 'hs-feed-edited'
       badge.textContent = ` ${t('mc_social_edited')}`
-      badge.style.cssText = 'color:#ffffff;font-size:13px;font-style:italic;margin-left:4px;'
+      badge.style.cssText = 'color:#ffffff;font-size:13px;margin-left:4px;'
       body.appendChild(badge)
     }
   }

@@ -127,7 +127,6 @@
     }
     .hs-pcard-note-body.hs-pcard-note-empty {
       color: var(--hs-card-dim);
-      font-style: italic;
     }
     .hs-pcard-note-edit {
       align-self: flex-start;

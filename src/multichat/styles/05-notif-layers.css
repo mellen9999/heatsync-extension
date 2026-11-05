@@ -88,7 +88,6 @@
       padding: 6px 10px;
       word-break: break-word;
     }
-    .hs-notif-body-fallback { font-style: italic; }
     .hs-notif-actions {
       display: inline-flex;
       gap: 0;

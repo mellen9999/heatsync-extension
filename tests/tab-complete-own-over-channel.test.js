@@ -28,8 +28,11 @@ const OWN = 'https://cdn.7tv.app/emote/01F64J1AMG000AR232513EFJBF/1x.webp'
 const CHAN = 'https://cdn.7tv.app/emote/01FNSCJEGG000EJT2EVEY3F98H/1x.webp'
 const CHAN_SAME = 'https://cdn.7tv.app/emote/01F64J1AMG000AR232513EFJBF/2x.webp'
 
-function rig({ own = OWN, chan = CHAN, settings = {} } = {}) {
-  const viewerPersonalEmotes = new Map(own ? [['YESIDOTHINKSO', { url: own, source: 'heatsync', state: 'owned' }]] : [])
+function rig({ own = OWN, chan = CHAN, settings = {}, extra = [] } = {}) {
+  const viewerPersonalEmotes = new Map([
+    ...(own ? [['YESIDOTHINKSO', { url: own, source: 'heatsync', state: 'owned' }]] : []),
+    ...extra,
+  ])
   const pool = new Map(chan ? [['YESIDOTHINKSO', { url: chan, source: '7tv', state: 'channel' }]] : [])
   const env = {
     emoteCache: new Map(),
@@ -74,5 +77,31 @@ describe('tab-complete: a name you own under a different picture than the channe
     const { acEmotes, tierByName } = rig({ settings: { suggestInventoryEmotes: false } })
     expect(acEmotes.get('YESIDOTHINKSO').url).toBe(CHAN)
     expect(tierByName.get('YESIDOTHINKSO')).toBe(0)
+  })
+})
+
+// Your twitch sub emotes ride in viewerPersonalEmotes (the /api/user/emotes
+// walk and twitch's own picker both land there) but they are not inventory:
+// twitch lets you type them anywhere. The toggle hid them too, so a subbed
+// dellorEat never completed while the app offered it (2026-11-05).
+describe('tab-complete: twitch sub emotes are not inventory', () => {
+  const SUB = 'https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_x/static/dark/3.0'
+  const extra = [
+    ['dellorEat', { url: SUB, source: 'heatsync', state: 'owned', subscription: true }],
+    ['nativeSub', { url: SUB, source: 'twitch', state: 'owned', subscription: true, owner: 'dellor' }],
+  ]
+
+  test('inventory suggestions off: sub emotes still complete, inventory does not', () => {
+    const { acEmotes, tierByName } = rig({ own: OWN, chan: null, extra, settings: { suggestInventoryEmotes: false } })
+    expect(acEmotes.get('dellorEat')?.url).toBe(SUB)
+    expect(acEmotes.get('nativeSub')?.url).toBe(SUB)
+    expect(tierByName.get('dellorEat')).toBe(1)
+    expect(acEmotes.has('YESIDOTHINKSO')).toBe(false)
+  })
+
+  test('inventory suggestions on: both complete', () => {
+    const { acEmotes } = rig({ own: OWN, chan: null, extra })
+    expect(acEmotes.has('dellorEat')).toBe(true)
+    expect(acEmotes.get('YESIDOTHINKSO')?.url).toBe(OWN)
   })
 })

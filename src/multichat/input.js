@@ -5184,13 +5184,15 @@ function _getMergedAcEmotes() {
   }
   // Off: names that exist ONLY in your inventory stop being offered. Names the
   // channel or a global pool also defines still complete — those are real words
-  // in this chat regardless of what you collected.
-  if (acInventory)
-    for (const [k, v] of viewerPersonalEmotes) {
-      acEmotes.set(k, v)
-      tierByName.set(k, 1)
-      lowerByName.set(k, k.toLowerCase())
-    }
+  // in this chat regardless of what you collected. Your twitch sub emotes share
+  // viewerPersonalEmotes but are not inventory: twitch lets you type them in any
+  // chat, so they complete with the toggle off too (as in the app).
+  for (const [k, v] of viewerPersonalEmotes) {
+    if (!acInventory && !v.subscription) continue
+    acEmotes.set(k, v)
+    tierByName.set(k, 1)
+    lowerByName.set(k, k.toLowerCase())
+  }
   // A name you own that the channel also defines: the one the SENT LINE draws
   // is what Tab must show. A line draws the sender's own set before the
   // channel's (emotes.js _lookup, the ref the server vouches is that same set),

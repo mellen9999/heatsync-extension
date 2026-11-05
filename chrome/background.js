@@ -7169,6 +7169,21 @@ function handleWSMessage(msg) {
         broadcastToTabs({ type: 'message-deleted', data: msg })
         break
 
+      // a moderator pulled a post: the same ending as its author deleting it
+      case 'message:hidden':
+        if (msg.data?.id) broadcastToTabs({ type: 'message-deleted', data: { message_id: msg.data.id } })
+        break
+
+      // live heat on a post (flat frame: messageId, newHeat, newMaxHeat)
+      case 'heat:updated':
+        if (msg.messageId) broadcastToTabs({ type: 'heat-updated', data: msg })
+        break
+
+      // a heatsync DM was deleted on another client
+      case 'dm:message-deleted':
+        if (msg.messageId) broadcastToTabs({ type: 'dm_message_deleted', data: msg })
+        break
+
       // Live engagement on the thread a tab has open (see feedThreadSet).
       case 'reaction:added':
       case 'reaction:removed':

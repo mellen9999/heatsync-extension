@@ -1629,6 +1629,12 @@ function listenForSocialEvents() {
             if (msgsEl) {
               for (const el of msgsEl.querySelectorAll('.hs-mc-empty[data-hs-yt-status]')) el.remove()
             }
+          } else if (msg.status === 'chat-off' || msg.status === 'no-slot') {
+            // said in plain words, one row that 'connected' clears: a silent tab here reads as a broken one
+            upsertNotice(
+              t(msg.status === 'chat-off' ? 'mc_social_yt_chat_off' : 'mc_social_yt_no_slot'),
+              'var(--hs-warn)',
+            )
           } else if (msg.status === 'error') {
             // Drop noise: rate-limit, "not currently live / chat disabled",
             // AND "could not resolve youtube url" (the expected outcome when

@@ -5146,8 +5146,9 @@ function _isBlockedAnyPlat(name) {
 }
 
 // Merged autocomplete emote source: channel pools (tier 0) over the viewer's
-// set (tier 1) over globals (tier 2) — channel written LAST so a name owned AND
-// defined by the channel resolves to the channel image. findEmoteMatches runs
+// set (tier 1) over globals (tier 2) — channel written LAST so a name the channel
+// defines resolves to the channel image, except one you own under a different
+// picture (see keepOwn below: Tab shows what the sent line draws). findEmoteMatches runs
 // on EVERY debounced keystroke-word, and rebuilding this merge — allocating
 // two Maps across thousands of emotes each call — was the dominant typing-lag
 // cost on emote-heavy channels. Memoize it, keyed by a cheap signature: active
@@ -5190,8 +5191,23 @@ function _getMergedAcEmotes() {
       tierByName.set(k, 1)
       lowerByName.set(k, k.toLowerCase())
     }
+  // A name you own that the channel also defines: the one the SENT LINE draws
+  // is what Tab must show. A line draws the sender's own set before the
+  // channel's (emotes.js _lookup, the ref the server vouches is that same set),
+  // so yours stays under the name and the channel's different picture does not
+  // overwrite it — it used to, and the box showed the room's YESIDOTHINKSO while
+  // the sent row drew the one in your set. The channel's copy stays reachable
+  // through the catalog (fetchRemoteEmoteMatches' twin check keeps a different
+  // picture under the same name), and sending that swaps yours out.
+  // Same picture under both: the channel entry wins as before (the tier only
+  // labels it). Inventory renders off: rows draw the channel's, so Tab does too.
+  const keepOwn = acInventory && getSetting('renderInventoryEmotes') !== false && typeof _acPicKey === 'function'
   for (const acChCache of acPools)
     for (const [k, v] of acChCache) {
+      if (keepOwn && tierByName.get(k) === 1) {
+        const own = acEmotes.get(k)
+        if (own?.url && v?.url && _acPicKey(own.url) !== _acPicKey(v.url)) continue
+      }
       acEmotes.set(k, v)
       tierByName.set(k, 0)
       lowerByName.set(k, k.toLowerCase())
@@ -5276,10 +5292,9 @@ function findEmoteMatches(search) {
   // (heatsync inventory + native sub emotes), 2 = globals. Tier rides on each
   // pushed match so the sort can rank "channel > own > global" without
   // re-walking the source maps.
-  // Channel emotes are written into the merge map LAST so a name you own AND that
-  // the channel also defines (e.g. nl_kripp's BTTV "SoupTime") resolves to the
-  // CHANNEL image — that's what actually renders in this channel. Channel-first is
-  // the user-chosen order (reverses the older own-first call).
+  // Channel emotes are written into the merge map LAST so a name the channel
+  // defines resolves to the CHANNEL image — unless you own a different picture
+  // under that name, which is what your sent line draws (_getMergedAcEmotes).
   if (!isUserSearch) {
     const { acEmotes, tierByName, lowerByName } = _getMergedAcEmotes()
     for (const [name, emote] of acEmotes) {

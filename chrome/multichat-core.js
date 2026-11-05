@@ -3602,23 +3602,45 @@ const SETTINGS = [
     rerender: true,
   },
   // name marks (name-marks.js): sub flair, 🔥, heat bar before a twitch chatter's name
-  ...[
-    ['subFlair', 'sub_flair'],
-    ['flame', 'flame_mark'],
-    ['heatBars', 'heat_bars'],
-  ].map(([key, l]) => ({
-    key,
+  {
+    key: 'subFlair',
     type: 'bool',
     default: true,
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
     sectionKey: 'btn_settings_cosmetics',
-    labelKey: `mc_settings_${l}`,
-    tipKey: `mc_settings_${l}_desc`,
+    labelKey: 'mc_settings_sub_flair',
+    tipKey: 'mc_settings_sub_flair_desc',
     control: 'pill',
     rerender: true,
-  })),
+  },
+  {
+    key: 'flame',
+    type: 'bool',
+    default: true,
+    scope: 'sync',
+    category: 'display',
+    section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
+    labelKey: 'mc_settings_flame_mark',
+    tipKey: 'mc_settings_flame_mark_desc',
+    control: 'pill',
+    rerender: true,
+  },
+  {
+    key: 'heatBars',
+    type: 'bool',
+    default: true,
+    scope: 'sync',
+    category: 'display',
+    section: 'cosmetics',
+    sectionKey: 'btn_settings_cosmetics',
+    labelKey: 'mc_settings_heat_bars',
+    tipKey: 'mc_settings_heat_bars_desc',
+    control: 'pill',
+    rerender: true,
+  },
   {
     // Which third-party provider wins when the same emote NAME exists in
     // more than one (7TV/BTTV/FFZ) within a channel's or the global pool.
@@ -15409,7 +15431,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '74e22fde37d3' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'ae9b43a59faa' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -16892,6 +16914,17 @@ const YT_CHAT_MAX_LEN = 200
 const CHAT_MAX_LEN = { twitch: 500, kick: 500, youtube: YT_CHAT_MAX_LEN }
 
 /**
+ * The "n/limit" counter: silent until the line is within 10% of the cap (the
+ * site's warning band), yellow there, red once over. Counts what goes on the
+ * wire — trimmed, like every send path.
+ * @returns {{text: string, level: 'warn'|'over'}|null}
+ */
+function charCountLabel(len, limit) {
+  if (!(limit > 0) || !(len > limit * 0.9)) return null
+  return { text: `${len}/${limit}`, level: len > limit ? 'over' : 'warn' }
+}
+
+/**
  * The composer's length cap for what the next send reaches: the tightest cap
  * among the active legs (a mirrored youtube leg is rejected past 200, not
  * truncated). No leg known → the 500 default.
@@ -17001,6 +17034,487 @@ function youtubeModErrorMessage(err) {
       // flattening every future yt error into one useless sentence.
       return err ? String(err) : t('mc_common_unknown')
   }
+}
+
+
+// --- multichat/chat-lock.js ---
+// chat-lock.js — the composer says why you can't chat in a twitch channel
+// (banned, timed out with the time left, a room rule you don't meet) and holds
+// the send, instead of learning it from a toast after a refused send.
+// Port of the site's chat/chat-lock.js + the rust app's lock.rs.
+//
+// No import/export: concatenated into the multichat bundle (see build.js
+// MULTICHAT_MODULES) — top-level declarations are shared globals.
+//
+// Signals: a CLEARCHAT naming us (the moment it happens), and a NOTICE when a
+// send is refused (also how a lock that began before this page loaded becomes
+// known). A ban has no end and twitch never says it was lifted, so a ban shows
+// but still lets a send through (twitch re-judges it); a room rule holds until
+// ROOMSTATE turns the mode off, or CHAT_LOCK_RULE_RECHECK_MS passes.
+// Memory only: a reload inside a timeout re-learns it from the first refusal.
+
+const CHAT_LOCK_RULE_RECHECK_MS = 10 * 60 * 1000
+const CHAT_LOCK_MAX = 200
+const chatLocks = new Map() // channel -> { cause, until }
+
+const CHAT_LOCK_NOTICE_CAUSE = {
+  msg_banned: 'banned',
+  msg_timedout: 'timeout',
+  msg_subsonly: 'subs',
+  msg_followersonly: 'followers',
+  msg_followersonly_followed: 'followers',
+  msg_followersonly_zero: 'followers',
+  msg_emoteonly: 'emote',
+}
+
+function chatLockPut(channel, cause, until) {
+  const k = String(channel || '').toLowerCase()
+  if (!k || !cause) return
+  chatLocks.delete(k)
+  chatLocks.set(k, { cause, until: until ?? null })
+  if (chatLocks.size > CHAT_LOCK_MAX) chatLocks.delete(chatLocks.keys().next().value)
+}
+
+function chatLockClear(channel) {
+  chatLocks.delete(String(channel || '').toLowerCase())
+}
+
+/** @returns {{cause: string, until: number|null}|null} the lock in force */
+function chatLockFor(channel, now = Date.now()) {
+  const k = String(channel || '').toLowerCase()
+  const v = chatLocks.get(k)
+  if (!v) return null
+  if (v.until != null && v.until <= now) {
+    chatLocks.delete(k)
+    return null
+  }
+  return v
+}
+
+// a refused-send NOTICE → the lock it implies, or null (slow mode, duplicate… are not a lock on you)
+function chatLockFromNotice(msgId, line, now = Date.now()) {
+  const cause = CHAT_LOCK_NOTICE_CAUSE[msgId]
+  if (!cause) return null
+  if (cause === 'banned') return { cause, until: null }
+  if (cause === 'timeout') {
+    const s = Number((String(line || '').match(/(\d+)\s+more\s+second/i) || [])[1])
+    return Number.isFinite(s) && s > 0 ? { cause, until: now + s * 1000 } : null
+  }
+  return { cause, until: now + CHAT_LOCK_RULE_RECHECK_MS }
+}
+
+// CLEARCHAT aimed at us (the parsed timeout_success/ban_success notice) → lock, or null.
+// Backlog replays of an old event must not lock us: a ban only counts when fresh.
+function chatLockFromClearchat(msg, selfNames, now = Date.now()) {
+  if (!msg || (msg.noticeType !== 'timeout_success' && msg.noticeType !== 'ban_success')) return null
+  const target = String(msg.targetUser || '').toLowerCase()
+  if (!target || !selfNames.includes(target)) return null
+  const at = Number(msg.time) || now
+  if (now - at > 60000) return null
+  if (msg.noticeType === 'ban_success' || !(msg.banDuration > 0)) return { cause: 'banned', until: null }
+  const until = at + msg.banDuration * 1000
+  return until > now ? { cause: 'timeout', until } : null
+}
+
+// ROOMSTATE: a mode turned off frees whoever it was keeping out
+function chatLockRoomstate(msg) {
+  const v = msg?.channel ? chatLocks.get(String(msg.channel).toLowerCase()) : null
+  if (!v) return
+  if (
+    (v.cause === 'subs' && msg.subsOnly === false) ||
+    (v.cause === 'emote' && msg.emoteOnly === false) ||
+    (v.cause === 'followers' && msg.followersOnly === -1)
+  )
+    chatLockClear(msg.channel)
+}
+
+function chatLockClock(secs) {
+  const h = Math.floor(secs / 3600)
+  const m = Math.floor((secs % 3600) / 60)
+  const s = secs % 60
+  return `${h ? `${h}:${String(m).padStart(2, '0')}` : m}:${String(s).padStart(2, '0')}`
+}
+
+/** "timed out · 4:59", "banned from this channel", or the room rule. */
+function chatLockLabel(lock, now = Date.now()) {
+  if (!lock) return ''
+  if (lock.cause === 'timeout')
+    return t('mc_lock_timed_out', [chatLockClock(Math.max(0, Math.ceil((lock.until - now) / 1000)))])
+  const key = {
+    banned: 'mc_lock_banned',
+    subs: 'mc_lock_subs',
+    followers: 'mc_lock_followers',
+    emote: 'mc_lock_emote',
+  }[lock.cause]
+  return key ? t(key) : ''
+}
+
+// red = out of the room, yellow = a rule of the room
+function chatLockIsRule(lock) {
+  return !!lock && lock.cause !== 'banned' && lock.cause !== 'timeout'
+}
+
+// a ban only tells; timeouts and room rules hold the send
+function chatLockHoldsSend(lock) {
+  return !!lock && lock.cause !== 'banned'
+}
+
+// the twitch channel the composer on this tab speaks to, or '' (kick/yt-only tab, feed, …)
+function chatLockTabChannel() {
+  if (typeof currentTab === 'undefined') return ''
+  if (currentTab === 'live') {
+    return typeof hostPlatform !== 'undefined' && hostPlatform === 'twitch' && typeof getLiveChannel === 'function'
+      ? String(getLiveChannel() || '').toLowerCase()
+      : ''
+  }
+  const ch = config?.channels?.find((c) => c.id === currentTab)
+  return ch?.twitch ? String(ch.twitch).toLowerCase() : ''
+}
+
+// 1s repaint while a timeout counts down; stops itself
+let chatLockTimer = null
+function chatLockTick() {
+  const ch = chatLockTabChannel()
+  const lock = ch ? chatLockFor(ch) : null
+  if (typeof updateInputPlaceholder === 'function') updateInputPlaceholder()
+  if (!lock || lock.cause !== 'timeout') {
+    clearInterval(chatLockTimer)
+    chatLockTimer = null
+  }
+}
+function chatLockArm() {
+  if (chatLockTimer) return
+  chatLockTimer = setInterval(chatLockTick, 1000)
+}
+
+// every signal funnels through here: store, then repaint the composer
+function chatLockSet(channel, lock) {
+  if (!lock) return
+  chatLockPut(channel, lock.cause, lock.until)
+  if (lock.cause === 'timeout') chatLockArm()
+  if (typeof updateInputPlaceholder === 'function') updateInputPlaceholder()
+}
+
+
+// --- multichat/emoji-tab.js ---
+// emoji-tab.js — the picker's emoji tab: search by name or filter by category,
+// click (or Enter in the search box) puts the emoji in the composer. Port of
+// the site picker's emoji tab (emote-picker.js) over the bundled EMOJI_DATA.
+//
+// No import/export: concatenated into the multichat bundle (build.js).
+
+const HS_EMOJI_CAP = 200
+const HS_EMOJI_CATS = [
+  ['smileys', '😀'],
+  ['people', '👋'],
+  ['animals', '🐱'],
+  ['food', '🍕'],
+  ['travel', '✈️'],
+  ['activities', '⚽'],
+  ['objects', '💡'],
+  ['symbols', '❤️'],
+  ['flags', '🏳️'],
+]
+let hsEmojiCat = ''
+
+// name-substring + optional category, capped — pure
+function hsEmojiFilter(data, q, cat) {
+  if (!Array.isArray(data)) return []
+  const needle = String(q || '')
+    .toLowerCase()
+    .trim()
+  const out = []
+  for (const e of data) {
+    if (cat && e.category !== cat) continue
+    if (needle && !e.name.includes(needle)) continue
+    out.push(e)
+    if (out.length >= HS_EMOJI_CAP) break
+  }
+  return out
+}
+
+/** The tab's markup. Built with the panel, like every other tab. */
+function hsEmojiTabHtml() {
+  const cats = HS_EMOJI_CATS.map(
+    ([id, ico]) => `<button type="button" class="hs-mc-emoji-cat" data-cat="${id}" title="${id}">${ico}</button>`,
+  ).join('')
+  return `<div class="hs-mc-tab-content hs-mc-emoji-tab" id="hs-mc-tab-emoji" style="display: none; flex-direction: column;">
+        <div class="hs-mc-picker-header">
+          <div class="hs-mc-search-wrap">
+            <input type="text" id="hs-mc-emoji-search" placeholder="${escapeHtml(t('mc_emoji_search_placeholder'))}" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="hs-mc-emoji-cats">${cats}</div>
+        </div>
+        <div class="hs-mc-picker-scroll hs-mc-emoji-grid" id="hs-mc-emoji-grid"></div>
+      </div>`
+}
+
+function hsRenderEmoji() {
+  const grid = document.getElementById('hs-mc-emoji-grid')
+  if (!grid) return
+  const q = document.getElementById('hs-mc-emoji-search')?.value || ''
+  const rows = hsEmojiFilter(typeof EMOJI_DATA === 'undefined' ? [] : EMOJI_DATA, q, hsEmojiCat)
+  if (!rows.length) {
+    const none = document.createElement('div')
+    none.className = 'hs-mc-picker-empty'
+    none.textContent = t(typeof EMOJI_DATA === 'undefined' ? 'mc_emoji_no_data' : 'mc_emoji_none')
+    grid.replaceChildren(none)
+    return
+  }
+  const frag = document.createDocumentFragment()
+  for (const e of rows) {
+    const b = document.createElement('button')
+    b.type = 'button'
+    b.className = 'hs-mc-emoji'
+    b.textContent = e.emoji
+    b.title = `:${e.name}:`
+    b.dataset.emoji = e.emoji
+    frag.append(b)
+  }
+  grid.replaceChildren(frag)
+}
+
+function hsPickEmoji(ch) {
+  if (ch) mcQuoteToInput(ch)
+}
+
+function hsWireEmojiTab(picker) {
+  const input = document.getElementById('hs-mc-emoji-search')
+  const grid = document.getElementById('hs-mc-emoji-grid')
+  if (!input || !grid) return
+  let timer = null
+  cleanup.addEventListener(
+    input,
+    'input',
+    () => {
+      cleanup.clearTimeout(timer)
+      timer = cleanup.setTimeout(hsRenderEmoji, 120)
+    },
+    'mc-emoji-search',
+  )
+  // Enter takes the first match, so a typed name is one keystroke from the composer
+  cleanup.addEventListener(
+    input,
+    'keydown',
+    (e) => {
+      if (e.key !== 'Enter') return
+      e.preventDefault()
+      hsPickEmoji(grid.querySelector('.hs-mc-emoji')?.dataset.emoji)
+    },
+    'mc-emoji-enter',
+  )
+  // a real <button> steals focus on mousedown; the search box keeps it
+  cleanup.addEventListener(
+    grid,
+    'mousedown',
+    (e) => e.target.closest('.hs-mc-emoji') && e.preventDefault(),
+    'mc-emoji-nofocus',
+  )
+  cleanup.addEventListener(
+    grid,
+    'click',
+    (e) => {
+      const b = e.target.closest('.hs-mc-emoji')
+      if (!b) return
+      e.stopPropagation()
+      hsPickEmoji(b.dataset.emoji)
+    },
+    'mc-emoji-pick',
+  )
+  for (const btn of picker.querySelectorAll('.hs-mc-emoji-cat')) {
+    cleanup.addEventListener(
+      btn,
+      'click',
+      (e) => {
+        e.stopPropagation()
+        hsEmojiCat = hsEmojiCat === btn.dataset.cat ? '' : btn.dataset.cat
+        for (const o of picker.querySelectorAll('.hs-mc-emoji-cat'))
+          o.classList.toggle('active', o.dataset.cat === hsEmojiCat)
+        hsRenderEmoji()
+      },
+      'mc-emoji-cat',
+    )
+  }
+}
+
+/** Called every time the tab becomes the visible one, built or cached. */
+function hsOnEmojiTabShown() {
+  hsRenderEmoji()
+  document.getElementById('hs-mc-emoji-search')?.focus()
+}
+
+
+// --- multichat/follows-view.js ---
+// follows-view.js — who you follow is live right now: a keyboard list, most
+// viewers first, in the pane panel. Port of the site's follow rail and the rust
+// app's ctrl-b following screen, over the snapshot the service worker already
+// pushes (live_followed_updated) — no new request.
+//
+//   <Space>f (vi normal mode) or Alt+L   open · j/k or arrows move
+//   enter  open as a chat tab (youtube: watch)   w  watch   esc  close
+//
+// No import/export: concatenated into the multichat bundle (build.js).
+
+const FOLLOWS_MAX = 500
+let followsSnap = [] // [{ platform, username, name, viewers, game, startedAt }]
+let followsRefresh = null // set while the panel is open: repaint on a new snapshot
+
+function followsAbbrev(n) {
+  const v = Number(n) || 0
+  if (v >= 1e6) return `${(v / 1e6).toFixed(1).replace(/\.0$/, '')}m`
+  if (v >= 1e3) return `${(v / 1e3).toFixed(1).replace(/\.0$/, '')}k`
+  return String(v)
+}
+
+function followsUptime(startedAt, now = Date.now()) {
+  const ms = now - Date.parse(startedAt || '')
+  if (!Number.isFinite(ms) || ms < 60000) return ''
+  const m = Math.floor(ms / 60000)
+  return m >= 60 ? `${Math.floor(m / 60)}h${String(m % 60).padStart(2, '0')}m` : `${m}m`
+}
+
+// the SW snapshot → the rows shown: live only, bounded, most viewers first
+function followsNormalize(snapshot) {
+  if (!Array.isArray(snapshot)) return []
+  const out = []
+  for (const s of snapshot) {
+    const platform = String(s?.platform || '').toLowerCase()
+    const username = String(s?.username || '').toLowerCase()
+    if (!username || (platform !== 'twitch' && platform !== 'kick' && platform !== 'youtube')) continue
+    const st = s.stream || {}
+    out.push({
+      platform,
+      username,
+      name: String(s.displayName || username).slice(0, 40),
+      viewers: Number(s.viewers ?? st.viewerCount ?? 0) || 0,
+      game: String(st.category || st.game || '').slice(0, 60),
+      startedAt: String(st.startedAt || st.started_at || ''),
+    })
+    if (out.length >= FOLLOWS_MAX) break
+  }
+  return out.sort((a, b) => b.viewers - a.viewers || a.name.localeCompare(b.name))
+}
+
+function followsSet(snapshot) {
+  followsSnap = followsNormalize(snapshot)
+  followsRefresh?.()
+}
+
+function followsWatchUrl(f) {
+  if (f.platform === 'kick') return `https://kick.com/${encodeURIComponent(f.username)}`
+  if (f.platform === 'youtube') return `https://www.youtube.com/@${encodeURIComponent(f.username)}`
+  return `https://www.twitch.tv/${encodeURIComponent(f.username)}`
+}
+
+// the saved tab for this follow (twitch/kick leg), adding one when there is none
+function followsOpenChat(f) {
+  if (f.platform === 'youtube') return followsWatch(f)
+  const has = config.channels.find((c) => String(c[f.platform] || '').toLowerCase() === f.username)
+  if (has) return switchTab(has.id)
+  addChannelsBulk([{ [f.platform]: f.username }])
+  const added = config.channels.find((c) => String(c[f.platform] || '').toLowerCase() === f.username)
+  if (added) switchTab(added.id)
+}
+
+function followsWatch(f) {
+  window.open(followsWatchUrl(f), '_blank', 'noopener,noreferrer')
+}
+
+function openFollowsView() {
+  const page = document.createElement('div')
+  page.className = 'hs-fl'
+  const head = document.createElement('div')
+  head.className = 'hs-fl-head'
+  const title = document.createElement('span')
+  title.className = 'hs-fl-title'
+  title.textContent = t('mc_follows_title')
+  const count = document.createElement('span')
+  count.className = 'hs-fl-count'
+  head.append(title, count)
+  const list = document.createElement('div')
+  list.className = 'hs-fl-list'
+  const hint = document.createElement('div')
+  hint.className = 'hs-fl-hint'
+  hint.textContent = t('mc_follows_hint')
+  page.append(head, list, hint)
+
+  let sel = 0
+  const render = () => {
+    count.textContent = t('mc_follows_count', [String(followsSnap.length)])
+    sel = Math.min(sel, Math.max(0, followsSnap.length - 1))
+    if (!followsSnap.length) {
+      const none = document.createElement('div')
+      none.className = 'hs-fl-note'
+      none.textContent = t('mc_follows_empty')
+      list.replaceChildren(none)
+      return
+    }
+    list.replaceChildren(
+      ...followsSnap.map((f, i) => {
+        const row = document.createElement('div')
+        row.className = `hs-fl-row${i === sel ? ' hs-fl-sel' : ''}`
+        const cell = (cls, text) => {
+          const s = document.createElement('span')
+          s.className = cls
+          s.textContent = text
+          return s
+        }
+        row.append(
+          cell(`hs-fl-plat hs-fl-${f.platform}`, f.platform === 'youtube' ? 'y' : f.platform[0]),
+          cell('hs-fl-name', f.name),
+          cell('hs-fl-game', f.game),
+          cell('hs-fl-up', followsUptime(f.startedAt)),
+          cell('hs-fl-views', followsAbbrev(f.viewers)),
+        )
+        row.addEventListener('click', () => {
+          sel = i
+          render()
+        })
+        row.addEventListener('dblclick', () => followsOpenChat(f))
+        return row
+      }),
+    )
+    list.children[sel]?.scrollIntoView?.({ block: 'nearest' })
+  }
+  const onKey = (e) => {
+    if (e.ctrlKey || e.altKey || e.metaKey) return
+    const move = e.key === 'j' || e.key === 'ArrowDown' ? 1 : e.key === 'k' || e.key === 'ArrowUp' ? -1 : 0
+    if (move) {
+      sel = Math.max(0, Math.min(followsSnap.length - 1, sel + move))
+      render()
+    } else if (e.key === 'Enter' && followsSnap[sel]) {
+      closeIt(true)
+      followsOpenChat(followsSnap[sel])
+    } else if (e.key === 'w' && followsSnap[sel]) {
+      followsWatch(followsSnap[sel])
+    } else return
+    e.preventDefault()
+    e.stopPropagation()
+  }
+  const panel = hsPanePanelOpenWith({
+    label: t('mc_follows_title'),
+    body: page,
+    buttons: [],
+    onKey,
+    onDone: () => {
+      followsRefresh = null
+    },
+  })
+  if (!panel) return false
+  const closeIt = (restoreRow) => activePanePanel?.finish(false, restoreRow)
+  followsRefresh = render
+  render()
+  return true
+}
+
+function followsKeyHandler(e) {
+  if (!e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.key.toLowerCase() !== 'l') return
+  const a = document.activeElement
+  if (a && a.id !== 'hs-mc-input' && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable)) return
+  if (!document.getElementById('hs-mc-messages')) return
+  e.preventDefault()
+  e.stopPropagation()
+  openFollowsView()
 }
 
 
@@ -18921,7 +19435,6 @@ function injectStyles() {
       padding: 2px 4px 2px 8px;
       font-size: 13px;
       line-height: 18px;
-      font-style: italic;
       border-left: 3px solid var(--evt);
       border-bottom: 1px solid #000;
       /* No tinted background. Any near-black wash reads as a muddy grey block
@@ -19359,6 +19872,11 @@ function injectStyles() {
       top: -1px;
     }
 
+
+    /* no italics anywhere: emphasis is bold, underline, reverse or blink only.
+       markdown *x* / _x_ renders <em>, so it reads as underline here. */
+    #hs-mc-overlay :is(em, i, cite, dfn, var, address) { font-style: normal; }
+    #hs-mc-overlay em { text-decoration: underline; }
     /* UNIFIED INPUT BAR - always visible at bottom */
     #hs-mc-inputbar {
       position: absolute;
@@ -19662,7 +20180,6 @@ function injectStyles() {
       padding: 6px 10px;
       word-break: break-word;
     }
-    .hs-notif-body-fallback { font-style: italic; }
     .hs-notif-actions {
       display: inline-flex;
       gap: 0;
@@ -20569,7 +21086,6 @@ function injectStyles() {
     .hs-mc-system-text {
       color: #ffffff;
       font-size: 13px;
-      font-style: italic;
       display: block;
     }
     /* ANSI 0-15 semantic palette:
@@ -22399,6 +22915,13 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
     #hs-mc-input::placeholder {
       color: var(--hs-muted);
     }
+    /* shut for you here: red = out of the room, yellow = a rule of the room */
+    #hs-mc-input.hs-mc-lock-out { border-color: #f00; }
+    #hs-mc-input.hs-mc-lock-out::placeholder { color: #f00; }
+    #hs-mc-input.hs-mc-lock-rule { border-color: #ff0; }
+    #hs-mc-input.hs-mc-lock-rule::placeholder { color: #ff0; }
+    #hs-mc-input.hs-mc-lock-out::before { color: #f00; }
+    #hs-mc-input.hs-mc-lock-rule::before { color: #ff0; }
     /* Resub-share mode — purple border on the whole inputbar so the user
        knows their next message becomes the resub celebration body. */
     #hs-mc-inputbar.hs-mc-resub-share {
@@ -22681,6 +23204,10 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
     .hs-mc-slash-row.selected .hs-mc-slash-desc { color: #000; }
     .hs-mc-slash-row:hover .hs-mc-slash-name,
     .hs-mc-slash-row.selected .hs-mc-slash-name { color: #000; }
+    /* n/limit — only within 10% of the cap; colored text, no fill */
+    #hs-mc-charcount { flex: 0 0 auto; align-self: center; padding: 0 6px; font-size: 13px; color: #ff0; }
+    #hs-mc-charcount[hidden] { display: none; }
+    #hs-mc-charcount[data-level="over"] { color: #f00; }
     #hs-mc-input.over-limit {
       /* text color handled by highlight overlay */
     }
@@ -23100,7 +23627,6 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
     }
     .hs-pcard-note-body.hs-pcard-note-empty {
       color: var(--hs-card-dim);
-      font-style: italic;
     }
     .hs-pcard-note-edit {
       align-self: flex-start;
@@ -23524,6 +24050,24 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
       --hs-emote-size: 32px;
     }
 
+
+    /* ── emoji tab: category row + a wrapping grid of square tiles ── */
+    .hs-mc-emoji-cats { display: flex; flex-wrap: wrap; gap: 2px; padding: 4px 4px 0; }
+    .hs-mc-emoji-cat, .hs-mc-emoji {
+      background: #000;
+      color: #fff;
+      border: 1px solid transparent;
+      border-radius: 0;
+      font: inherit;
+      cursor: pointer;
+      padding: 0;
+    }
+    .hs-mc-emoji-cat { font-size: 17px; width: 28px; height: 28px; border-color: var(--hs-border); }
+    .hs-mc-emoji-cat.active { border-color: #fff; }
+    .hs-mc-emoji-grid { display: flex !important; flex-wrap: wrap; align-content: flex-start; gap: 2px; padding: 4px; }
+    .hs-mc-emoji { font-size: 22px; width: 36px; height: 36px; }
+    .hs-mc-emoji-cat:hover, .hs-mc-emoji-cat:active, .hs-mc-emoji:hover, .hs-mc-emoji:active { background: #fff; color: #000; }
+    .hs-mc-emoji-grid .hs-mc-picker-empty { width: 100%; }
 
     /* ── gifs tab ──────────────────────────────────────────────────────────
        A real grid, not a wrapping flex row: keyboard navigation needs to know
@@ -29697,6 +30241,26 @@ html.hs-card-scroll-lock body {
   color: #ffffff;
   font-size: 13px;
 }
+    /* Live follows list (follows-view.js) — rides .hs-pane-panel. Square,
+       terminal, hover/selected = reverse video, no motion. */
+    .hs-fl { outline: none; font-size: 13px; }
+    .hs-fl-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .hs-fl-title { color: var(--hs-brand); }
+    .hs-fl-count { color: var(--hs-muted); }
+    .hs-fl-row { display: flex; align-items: center; gap: 8px; padding: 2px 6px; border: 1px solid transparent; cursor: pointer; }
+    .hs-fl-row:hover, .hs-fl-row:active, .hs-fl-sel { background: #fff; color: #000; }
+    .hs-fl-plat { flex: 0 0 auto; }
+    .hs-fl-twitch { color: var(--hs-plat-twitch); }
+    .hs-fl-kick { color: var(--hs-plat-kick); }
+    .hs-fl-youtube { color: var(--hs-plat-youtube); }
+    .hs-fl-row:hover .hs-fl-plat, .hs-fl-row:active .hs-fl-plat, .hs-fl-sel .hs-fl-plat { color: #000; }
+    .hs-fl-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: underline; }
+    .hs-fl-game { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--hs-muted); }
+    .hs-fl-row:hover .hs-fl-game, .hs-fl-row:active .hs-fl-game, .hs-fl-sel .hs-fl-game { color: #000; }
+    .hs-fl-up, .hs-fl-views { flex: 0 0 auto; text-align: right; }
+    .hs-fl-views { min-width: 4ch; }
+    .hs-fl-note { color: var(--hs-muted); padding: 8px 0; }
+    .hs-fl-hint { margin-top: 8px; color: var(--hs-muted); }
 `
   style.textContent = css
   document.head.appendChild(cleanup.trackNode(style))
@@ -32680,6 +33244,59 @@ function scanExistingMentions() {
   }
 }
 
+// A heatsync notification (background.js shapeHsNotif) as a row in the mentions
+// tab: a reply to your post, an @ in a post, a fixed report. Rust shows the same in
+// its notifs tab; the ext used to keep only the toolbar count.
+const HS_NOTIF_KINDS = new Set(['reply', 'mention', 'feedback_fixed'])
+function hsNotifText(d) {
+  const who = d.anon ? 'anonymous: ' : ''
+  if (d.kind === 'reply') {
+    const to = d.op === true ? 'replied to your post' : d.op === false ? 'replied to your reply' : 'replied to you'
+    return `${who}${d.text ? `${to}: ${d.text}` : to}`
+  }
+  if (d.kind === 'feedback_fixed') return d.text || 'your report was fixed'
+  return `${who}${d.text || 'you were mentioned in a post'}`
+}
+
+function hsNotifIn(d) {
+  if (!isEnabled('mentions') || !HS_NOTIF_KINDS.has(d.kind)) return
+  const msg = {
+    type: 'inline-notif',
+    kind: d.kind,
+    postId: d.id || '',
+    text: hsNotifText(d),
+    user: 'heatsync',
+    platform: 'heatsync',
+    channel: 'heatsync',
+    time: d.time || Date.now(),
+    id: `hsn-${d.time || Date.now()}-${d.id || ''}`,
+  }
+  mentionsBuffer.push(msg)
+  if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER)
+  persistMentions()
+  notifyMention(msg)
+  noteSeenEvent('mentions', msg.time)
+  if (currentTab === 'mentions') {
+    bumpSeen('mentions')
+    hsNotifsRead()
+    if (!appendMessage(msg, 'mentions')) renderMessages('mentions')
+  } else {
+    updateTabIndicator('mentions')
+  }
+}
+
+// the server marks them read for every device; rows stay, just no longer unread
+function hsNotifsRead() {
+  let any = false
+  for (const m of mentionsBuffer) {
+    if (m.type === 'inline-notif' && !m.read) {
+      m.read = true
+      any = true
+    }
+  }
+  if (any) safeSendMessage({ type: 'notifs_read' })
+}
+
 
 // --- multichat/irc.js ---
 // IRC - read-only IRC client, message parsing, CircularBuffer
@@ -33407,7 +34024,10 @@ class IRC extends ChatClient {
       return
     }
     if (msg.type === 'whisper') return // whispers come via EventSub now
-    if (msg.type === 'roomstate') return // BG already converted to mode_change notice
+    if (msg.type === 'roomstate') {
+      chatLockRoomstate(msg)
+      return // BG already converted to mode_change notice
+    }
     const ch = msg.channel
     if (!ch || !this.channels.has(ch)) return
     if (msg.user) {
@@ -33428,6 +34048,13 @@ class IRC extends ChatClient {
     } catch {}
     if (!msg.type || msg.type === 'usernotice' || msg.type === 'notice') {
       const buf = this.channels.get(ch)
+      // a timeout/ban aimed at us shuts the composer the moment it lands
+      if (msg.type === 'notice') {
+        try {
+          const lk = chatLockFromClearchat(msg, selfNamesFor('twitch'))
+          if (lk) chatLockSet(ch, lk)
+        } catch (_) {}
+      }
       // A single timeout/ban reaches us many ways: the CLEARCHAT (everyone), the
       // mod-only timeout_success/ban_success NOTICE, the direct-IRC vs server
       // EventSub fanout, and the native tap. EventSub can even drop the timeout
@@ -35145,6 +35772,11 @@ function handleAuthIrcMessage(event) {
     if (line.includes(' NOTICE ')) {
       const msgId = parseNoticeMsgId(line)
       if (msgId && TWITCH_SEND_REJECT_NOTICES.has(msgId)) {
+        // the composer learns why it is shut (banned / timed out / room rule) from the refusal itself
+        try {
+          const lockCh = (line.match(/ NOTICE #(\w+)/) || [])[1]
+          if (lockCh) chatLockSet(lockCh, chatLockFromNotice(msgId, line))
+        } catch (_) {}
         if (typeof showToast === 'function') showToast(t(TWITCH_SEND_REJECT_NOTICES.get(msgId)), 'error')
         // ALSO a persistent inline red row in that channel's chat — the toast
         // alone lasts ~2s, and a rejected send otherwise leaves no trace: the
@@ -36812,6 +37444,7 @@ function emoteImgHtml([name, emote]) {
  */
 const MC_PICKER_TABS = [
   { id: 'emotes', labelKey: 'mc_emo_tab_emotes' },
+  { id: 'emoji', labelKey: 'mc_emo_tab_emoji' },
   { id: 'gifs', labelKey: 'mc_emo_tab_gifs' },
   { id: 'twitch', label: 'twitch', when: () => hostPlatform === 'twitch' },
   { id: 'kick', label: 'kick', when: () => hostPlatform === 'kick' },
@@ -36910,6 +37543,7 @@ function showEmotePicker(tab = null) {
     if (pickerTab === 'twitch') renderTwitchTab()
     if (pickerTab === 'kick') renderKickTab()
     if (pickerTab === 'youtube') renderYoutubeTab()
+    if (pickerTab === 'emoji') hsOnEmojiTabShown()
     if (pickerTab === 'gifs') hsOnGifTabShown()
     attachPickerCloseHandler(picker)
     return
@@ -36937,6 +37571,7 @@ function showEmotePicker(tab = null) {
           ${renderEmoteSections(sections)}
         </div>
       </div>
+      ${hsEmojiTabHtml()}
       ${hsGifTabHtml()}
       ${
         showTwitchTab
@@ -37051,6 +37686,7 @@ function showEmotePicker(tab = null) {
   const rerenderSearch = mcRerenderSearch
 
   hsWireGifTab(picker)
+  hsWireEmojiTab(picker)
 
   // Emote size controls
   picker.querySelectorAll('.hs-mc-size-btn').forEach((btn) => {
@@ -37085,6 +37721,7 @@ function showEmotePicker(tab = null) {
       if (newTab === 'twitch') renderTwitchTab()
       if (newTab === 'kick') renderKickTab()
       if (newTab === 'youtube') renderYoutubeTab()
+      if (newTab === 'emoji') hsOnEmojiTabShown()
       if (newTab === 'gifs') hsOnGifTabShown()
       if (oldTab === 'twitch' && newTab !== 'twitch') stopPredictionPoll()
       // Leaving the gifs tab drops the in-flight request on the floor: its
@@ -37226,6 +37863,7 @@ function showEmotePicker(tab = null) {
   if (pickerTab === 'twitch') renderTwitchTab()
   if (pickerTab === 'kick') renderKickTab()
   if (pickerTab === 'youtube') renderYoutubeTab()
+  if (pickerTab === 'emoji') hsOnEmojiTabShown()
   if (pickerTab === 'gifs') hsOnGifTabShown()
 
   attachPickerCloseHandler(picker)
@@ -50152,10 +50790,35 @@ const _FEED_EVENTS = new Set([
   'message-edited',
   'message-deleted',
   'message-updated',
+  'heat-updated',
   'reaction:added',
   'reaction:removed',
   'vote:updated',
 ])
+
+// heat:updated → every cached copy of the post. Only numbers are adopted (a
+// string would reach the renderer's innerHTML-adjacent heat formatting).
+function feedApplyHeat(d) {
+  const heat = Number(d?.newHeat)
+  if (!Number.isFinite(heat)) return false
+  const copies = feedCachedCopies(d.messageId)
+  for (const m of copies) {
+    m.heat = heat
+    const max = Number(d.newMaxHeat)
+    if (Number.isFinite(max)) m.max_heat = max
+  }
+  return copies.length > 0
+}
+
+// heat can move many times a second on a hot post: one repaint per beat
+let _feedHeatTimer = null
+function feedHeatRepaintSoon() {
+  if (_feedHeatTimer) return
+  _feedHeatTimer = cleanup.setTimeout(() => {
+    _feedHeatTimer = null
+    if (currentTab === 'feed') renderFeed()
+  }, 500)
+}
 
 // A cached post by id: the open thread's OP / replies first, then the feed.
 function feedFindMsg(id) {
@@ -51433,6 +52096,10 @@ function listenForSocialEvents() {
     if (typeof msg?.type === 'string' && msg.type.startsWith('youtube_') && gateAtBoot('chat-youtube') === false) {
       return
     }
+    if (msg.type === 'hs_notif') {
+      if (msg.data) hsNotifIn(msg.data)
+      return
+    }
     if (msg.type === 'chat_origin_broadcast' && msg.text) {
       // Heatsync.org chat-tile sent a chat — record the origin so the
       // upcoming platform echo gets tagged [H] via peekSentHost. Same
@@ -51741,6 +52408,12 @@ function listenForSocialEvents() {
             if (msgsEl) {
               for (const el of msgsEl.querySelectorAll('.hs-mc-empty[data-hs-yt-status]')) el.remove()
             }
+          } else if (msg.status === 'chat-off' || msg.status === 'no-slot') {
+            // said in plain words, one row that 'connected' clears: a silent tab here reads as a broken one
+            upsertNotice(
+              t(msg.status === 'chat-off' ? 'mc_social_yt_chat_off' : 'mc_social_yt_no_slot'),
+              'var(--hs-warn)',
+            )
           } else if (msg.status === 'error') {
             // Drop noise: rate-limit, "not currently live / chat disabled",
             // AND "could not resolve youtube url" (the expected outcome when
@@ -51770,6 +52443,12 @@ function listenForSocialEvents() {
     if (msg.type === 'reaction:added' || msg.type === 'reaction:removed' || msg.type === 'vote:updated') {
       if (msg.data) feedOnFrame(msg.data)
       return
+    }
+    if (msg.type === 'heat-updated' && msg.data) {
+      if (feedApplyHeat(msg.data) && currentTab === 'feed') feedHeatRepaintSoon()
+    }
+    if (msg.type === 'dm_message_deleted' && msg.data) {
+      dropDmFromTimeline(msg.data.messageId)
     }
     if (msg.type === 'message-updated' && msg.data) {
       const uid = msg.data.base36_id
@@ -52441,7 +53120,7 @@ function buildFeedMessageDiv(m, opUsername) {
       const badge = document.createElement('span')
       badge.className = 'hs-feed-edited'
       badge.textContent = ` ${t('mc_social_edited')}`
-      badge.style.cssText = 'color:#ffffff;font-size:13px;font-style:italic;margin-left:4px;'
+      badge.style.cssText = 'color:#ffffff;font-size:13px;margin-left:4px;'
       body.appendChild(badge)
     }
   }
@@ -54529,6 +55208,22 @@ function handleIncomingWhisper(msg) {
     }
   }
   whisperSaveDebounced()
+}
+
+// a heatsync DM deleted on another client leaves this timeline too
+function dropDmFromTimeline(messageId) {
+  const id = String(messageId || '')
+  if (!id) return 0
+  let n = 0
+  for (let i = whisperTimeline.length - 1; i >= 0; i--) {
+    const w = whisperTimeline[i]
+    if (w.platform === 'heatsync' && w.id === id) {
+      whisperTimeline.splice(i, 1)
+      n++
+    }
+  }
+  if (n && currentTab === 'whispers') renderWhispersTab()
+  return n
 }
 
 function handleIncomingDm(data) {
@@ -59203,6 +59898,13 @@ function updateInputPlaceholder() {
     if (chanName && _composerNeedsLogin()) placeholder = t('mc_social_login_first')
   }
 
+  // shut for you here (banned / timed out / a room rule): say why, in place of the invite to type
+  const lockCh = quoteState ? '' : chatLockTabChannel()
+  const lock = lockCh ? chatLockFor(lockCh) : null
+  if (lock) placeholder = chatLockLabel(lock)
+  input.classList.toggle('hs-mc-lock-out', !!lock && !chatLockIsRule(lock))
+  input.classList.toggle('hs-mc-lock-rule', chatLockIsRule(lock))
+
   if (wysiwygEnabled) {
     input.dataset.placeholder = placeholder
   } else {
@@ -60434,6 +61136,21 @@ function updateCharCount(precomputedText) {
   const limit = composerCharLimit(composerLegs())
   const over = len > limit
   input.classList.toggle('over-limit', over)
+  const label = charCountLabel(text.trim().length, limit)
+  let counter = document.getElementById('hs-mc-charcount')
+  if (label) {
+    if (!counter) {
+      counter = document.createElement('span')
+      counter.id = 'hs-mc-charcount'
+      const host = document.getElementById('hs-mc-input-wrap') || input
+      host.insertAdjacentElement('afterend', counter)
+    }
+    counter.textContent = label.text
+    counter.dataset.level = label.level
+    counter.hidden = false
+  } else if (counter) {
+    counter.hidden = true
+  }
 
   // Highlight overflow chars for plain <input> using overlay div
   if (input.tagName === 'INPUT') {
@@ -64756,6 +65473,15 @@ async function sendMessage() {
     flashInputError(input)
     showToast(t('mc_yt_send_open_stream'), 'error')
     return
+  }
+  // twitch is the only leg and the room has you locked out: hold the send, keep the words
+  if (sendToTwitch && !sendToKick && !sendToYoutube && twitchName) {
+    const lock = chatLockFor(twitchName)
+    if (chatLockHoldsSend(lock)) {
+      flashInputError(input)
+      showToast(chatLockLabel(lock), 'error')
+      return
+    }
   }
   const isDualSend = sendToKick && sendToTwitch
 
@@ -71312,6 +72038,12 @@ function hsNameSweepLogin(lower) {
       el.dataset.hsNuid = uid
       el.dataset.hsNplat = 'twitch'
       hsNameQueue(uid, 'twitch')
+      // a name that wanted badges but had no id for them (a went-live row)
+      if (el.dataset.hsNbadge) {
+        delete el.dataset.hsNbadge
+        const html = typeof renderThirdPartyBadges === 'function' ? renderThirdPartyBadges(uid) : ''
+        if (html) el.insertAdjacentHTML('beforebegin', html)
+      }
     }
     hsNameRefresh(el)
   }
@@ -84098,6 +84830,8 @@ const STORAGE_KEY = 'heatsync_multichat'
       replyTo: m.replyTo || undefined,
       type: m.type || undefined,
       msgId: m.msgId || undefined,
+      postId: m.postId || undefined,
+      kind: m.kind || undefined,
       isHighlighted: m.isHighlighted || undefined,
       avatar: m.avatar || undefined,
       msgType: m.msgType || undefined,
@@ -88871,6 +89605,8 @@ const STORAGE_KEY = 'heatsync_multichat'
   }
 
   initOverlayKeys(mcSignal)
+  registerOverlayKey('f', () => openFollowsView())
+  document.addEventListener('keydown', followsKeyHandler, { capture: true, signal: mcSignal })
   registerOverlayKey('/', () => focusLiveSearch())
   registerOverlayKey('n', () => cycleLiveSearch(1))
   registerOverlayKey('N', () => cycleLiveSearch(-1))
@@ -90048,6 +90784,9 @@ const STORAGE_KEY = 'heatsync_multichat'
 
     // Discover/pinned refresh bars removed — auto-poll handles freshness
 
+    // looking at the mentions tab reads the heatsync notifications (toolbar badge, other devices)
+    if (id === 'mentions' && mentionsBuffer.some((x) => x.type === 'inline-notif' && !x.read)) hsNotifsRead()
+
     // Clear whisper unread when switching to whispers tab — server-backed.
     if (id === 'whispers') {
       bumpSeen('whispers')
@@ -90802,14 +91541,19 @@ const STORAGE_KEY = 'heatsync_multichat'
       // Build structured HTML: [username] ◆ action game
       // No colour found above → the shared name-style fallback (chat-heard colour
       // or the palette), plus the heatsync/7TV paint when chat knows the twitch id.
+      // A streamer chat hasn't heard yet is looked up (twitch colour + id), like a
+      // card name: the row repaints, and takes its badges, when the answer lands.
       const evt = hsNameParts({
         name: ch,
         platform: isYtEvent ? 'youtube' : 'twitch',
         colour: userColor,
         login: isYtEvent ? '' : chLc,
+        resolve: !isYtEvent,
       })
       // the badges keyed to the streamer's twitch id, before the name like a chat row
       const evtBadges = evtPlat === 'twitch' ? hsNameBadges(evt) : ''
+      // no id yet: the lookup's answer puts the badges in (hsNameSweepLogin)
+      if (evtPlat === 'twitch' && !evt.uid) evt.attrs += ' data-hs-nbadge="1"'
       const evtCls = `hs-mc-user hs-evt-user${evt.cls ? ` ${evt.cls}` : ''}`
       // A row whose subject IS the channel (went live, game switch...) knows the
       // channel's handle on the platform it came from, so it links there. A row
@@ -90949,6 +91693,28 @@ const STORAGE_KEY = 'heatsync_multichat'
         // the feed-tab row handler (social.js buildFeedMessageDiv).
         openThread(m.reply_to || m.base36_id, m.reply_to ? m.base36_id : null)
       })
+      return div
+    }
+
+    // a heatsync notification (reply / mention / fixed report): its post opens in the feed
+    if (m.type === 'inline-notif') {
+      const div = document.createElement('div')
+      div.className = 'hs-mc-feed-inline hs-mc-notif-inline'
+      const color = m.kind === 'reply' ? 'var(--hs-reply)' : m.kind === 'feedback_fixed' ? '#0f0' : '#f00'
+      div.style.borderLeftColor = color
+      const tsVal = timestampsEnabled ? formatTimeFromTs(m.time) : ''
+      const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
+      const tag = m.kind === 'reply' ? '[reply]' : m.kind === 'feedback_fixed' ? '[fixed]' : '[@]'
+      div.innerHTML = `${tsSpan}<span style="color:${color};font-size:13px;font-weight:700;margin-right:4px">${tag}</span><span class="hs-mc-text">${escapeHtml(m.text)}</span>`
+      if (m.postId) {
+        div.dataset.hsClickable = ''
+        div.style.cursor = 'pointer'
+        div.addEventListener('click', () => {
+          threadReturnTab = currentTab === 'feed' ? null : currentTab
+          switchTab('feed')
+          openThread(m.postId)
+        })
+      }
       return div
     }
 
@@ -91658,7 +92424,7 @@ const STORAGE_KEY = 'heatsync_multichat'
         : m.type === 'notice'
           ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', t('mc_main_dismiss'), `title="${t('mc_main_dismiss')}"`) : ''}`
           : m.isAction
-            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')};font-style:italic">${processedText}</span>${stickerHtml}`
+            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
             : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
     div.innerHTML = `${replyBar}${msgBody}`
     // Correct emote states based on current inventory + blocked (cached HTML
@@ -92887,7 +93653,15 @@ const STORAGE_KEY = 'heatsync_multichat'
   const _rmInsertedKeys = new Set()
   // Row types that never take a stripe. Stamped on the node too, so a repaint
   // can tell them apart without the message object.
-  const _NO_ZEBRA_TYPES = new Set(['stream-event', 'feed-post', 'inline-dm', 'moment', 'cmd-receipt', 'automod-hold'])
+  const _NO_ZEBRA_TYPES = new Set([
+    'stream-event',
+    'feed-post',
+    'inline-notif',
+    'inline-dm',
+    'moment',
+    'cmd-receipt',
+    'automod-hold',
+  ])
   function stampZebra(div, m, prevDiv) {
     if (_NO_ZEBRA_TYPES.has(m.type)) div.dataset.hsNz = '1'
     div.classList.toggle('hs-mc-zebra', zebraOfInsert(m, prevDiv))
@@ -94461,6 +95235,7 @@ const STORAGE_KEY = 'heatsync_multichat'
 
   function _applyFollowedSnapshot(snapshot) {
     if (!Array.isArray(snapshot)) return
+    followsSet(snapshot)
     _swLiveSet = new Set(
       snapshot
         .filter((s) => s.platform === 'twitch' || s.platform === 'kick' || s.platform === 'youtube')

@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "slash-befehle"
+  },
+  "mc_lock_banned": {
+    "message": "du bist in diesem kanal gebannt"
+  },
+  "mc_lock_timed_out": {
+    "message": "du bist im timeout · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "nur für abonnenten — abonniere, um hier zu chatten"
+  },
+  "mc_lock_followers": {
+    "message": "nur für follower — folge, um hier zu chatten"
+  },
+  "mc_lock_emote": {
+    "message": "nur emotes — hier nur emotes"
+  },
+  "mc_follows_title": {
+    "message": "gefolgt · live"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "niemand, dem du folgst, ist live"
+  },
+  "mc_follows_hint": {
+    "message": "j/k bewegen · enter chat · w ansehen · esc schließen"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "emoji"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "emoji suchen"
+  },
+  "mc_emoji_none": {
+    "message": "kein emoji passt"
+  },
+  "mc_emoji_no_data": {
+    "message": "emoji-liste nicht geladen"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: chat ist aus"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: relay ist voll, neuer versuch später"
   }
 }

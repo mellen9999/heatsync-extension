@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "comenzi slash"
+  },
+  "mc_lock_banned": {
+    "message": "ești banat de pe acest canal"
+  },
+  "mc_lock_timed_out": {
+    "message": "ești în timeout · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "doar abonați — abonează-te ca să scrii aici"
+  },
+  "mc_lock_followers": {
+    "message": "doar urmăritori — urmărește ca să scrii aici"
+  },
+  "mc_lock_emote": {
+    "message": "doar emote-uri — aici doar emote-uri"
+  },
+  "mc_follows_title": {
+    "message": "urmărești · live"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ live",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "nimeni din cei urmăriți nu e live"
+  },
+  "mc_follows_hint": {
+    "message": "j/k mută · enter chat · w privește · esc închide"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "emoji"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "caută emoji"
+  },
+  "mc_emoji_none": {
+    "message": "niciun emoji potrivit"
+  },
+  "mc_emoji_no_data": {
+    "message": "lista de emoji nu e încărcată"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: chatul e oprit"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: relay-ul e plin, reîncerc mai târziu"
   }
 }

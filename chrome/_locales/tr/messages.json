@@ -6879,5 +6879,60 @@
   },
   "slash_help_label": {
     "message": "slash komutları"
+  },
+  "mc_lock_banned": {
+    "message": "bu kanaldan yasaklandın"
+  },
+  "mc_lock_timed_out": {
+    "message": "zaman aşımındasın · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "sadece aboneler — burada yazmak için abone ol"
+  },
+  "mc_lock_followers": {
+    "message": "sadece takipçiler — burada yazmak için takip et"
+  },
+  "mc_lock_emote": {
+    "message": "sadece emote — burada sadece emote"
+  },
+  "mc_follows_title": {
+    "message": "takip edilenler · canlı"
+  },
+  "mc_follows_count": {
+    "message": "$COUNT$ canlı",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_follows_empty": {
+    "message": "takip ettiklerinden kimse canlı değil"
+  },
+  "mc_follows_hint": {
+    "message": "j/k git · enter sohbet · w izle · esc kapat"
+  },
+  "mc_emo_tab_emoji": {
+    "message": "emoji"
+  },
+  "mc_emoji_search_placeholder": {
+    "message": "emoji ara"
+  },
+  "mc_emoji_none": {
+    "message": "eşleşen emoji yok"
+  },
+  "mc_emoji_no_data": {
+    "message": "emoji listesi yüklenmedi"
+  },
+  "mc_social_yt_chat_off": {
+    "message": "youtube: sohbet kapalı"
+  },
+  "mc_social_yt_no_slot": {
+    "message": "youtube: relay dolu, sonra tekrar denenecek"
   }
 }

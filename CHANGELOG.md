@@ -1,5 +1,21 @@
 # changelog
 
+## [1.7.117] — 2026-11-05
+
+### added
+- **34 languages** — the panel, menus, slash commands and popup follow your browser's language.
+- **right-click a line** — reply and copy link live in the line's menu; the hover reply button is gone.
+- **share a layout** — `/sharelayout` copies a heatsync.org/m link of your tabs, `/layout <link>` opens one.
+- **mod commands** — announce, vip, mod, poll, prediction and color work the same as on the site.
+- **went-live lines** — the streamer's name wears their badges, and the line carries its [T]/[K]/[Y] tag.
+- **twitch** — an optional switch lets you send the same line twice in a row.
+
+### fixed
+- **emotes** — a line sent right after picking or swapping an emote shows the one you picked, not your old one of that name.
+- **linked accounts** — linking or unlinking a platform on heatsync.org reaches the extension without a restart.
+- **tabs** — an older tab list from another device no longer overwrites a newer one.
+- **kick** — the overlay stays off kick's sign-in pages.
+
 ## [1.7.116] — 2026-11-02
 
 ### fixed

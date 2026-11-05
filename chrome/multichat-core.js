@@ -15431,7 +15431,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '14a182d20b81' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'fc5e27aab606' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -50227,13 +50227,15 @@ function _getMergedAcEmotes() {
   }
   // Off: names that exist ONLY in your inventory stop being offered. Names the
   // channel or a global pool also defines still complete — those are real words
-  // in this chat regardless of what you collected.
-  if (acInventory)
-    for (const [k, v] of viewerPersonalEmotes) {
-      acEmotes.set(k, v)
-      tierByName.set(k, 1)
-      lowerByName.set(k, k.toLowerCase())
-    }
+  // in this chat regardless of what you collected. Your twitch sub emotes share
+  // viewerPersonalEmotes but are not inventory: twitch lets you type them in any
+  // chat, so they complete with the toggle off too (as in the app).
+  for (const [k, v] of viewerPersonalEmotes) {
+    if (!acInventory && !v.subscription) continue
+    acEmotes.set(k, v)
+    tierByName.set(k, 1)
+    lowerByName.set(k, k.toLowerCase())
+  }
   // A name you own that the channel also defines: the one the SENT LINE draws
   // is what Tab must show. A line draws the sender's own set before the
   // channel's (emotes.js _lookup, the ref the server vouches is that same set),

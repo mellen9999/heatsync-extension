@@ -15431,7 +15431,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '117a865abf22' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '93a6e20df468' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -95609,6 +95609,8 @@ const STORAGE_KEY = 'heatsync_multichat'
     const hit = config.channels.find(
       (c) =>
         c?.id &&
+        // a hidden saved tab can't be shown, so it doesn't cover: the temp tab stands in for it
+        !hiddenTabs.has(mcRowOwner(c.id)) &&
         ((c.twitch && tw.has(c.twitch.toLowerCase())) ||
           (c.kick && ki.has(c.kick.toLowerCase())) ||
           (c.youtube && ytHas(c.youtube))),

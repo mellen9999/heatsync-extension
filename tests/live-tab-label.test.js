@@ -112,6 +112,11 @@ describe('visibility', () => {
     const { f } = make({ channels: [{ id: 'a', twitch: 'other', kick: 'forsen', youtube: '' }] })
     expect(f.liveTabShown()).toBe(false)
   })
+  test('a hidden saved tab does not cover: the temp tab stands in', () => {
+    const { f } = make({ channels: [{ id: 'forsen', twitch: 'forsen' }], hidden: new Set(['forsen']) })
+    expect(f.liveCoverId()).toBe(null)
+    expect(f.liveTabShown()).toBe(true)
+  })
   test('shown when the saved tabs are other channels', () => {
     const { f } = make({ channels: [{ id: 'xqc', twitch: 'xqc', kick: 'xqc', youtube: '' }] })
     expect(f.liveTabShown()).toBe(true)

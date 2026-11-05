@@ -11782,6 +11782,8 @@
     const hit = config.channels.find(
       (c) =>
         c?.id &&
+        // a hidden saved tab can't be shown, so it doesn't cover: the temp tab stands in for it
+        !hiddenTabs.has(mcRowOwner(c.id)) &&
         ((c.twitch && tw.has(c.twitch.toLowerCase())) ||
           (c.kick && ki.has(c.kick.toLowerCase())) ||
           (c.youtube && ytHas(c.youtube))),

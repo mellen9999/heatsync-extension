@@ -524,6 +524,12 @@
   "mc_tab_live": {
     "message": "pinapanood"
   },
+  "mc_tab_temp_title": {
+    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+  },
+  "mc_tab_keep": {
+    "message": "keep tab"
+  },
   "mc_tab_pinned": {
     "message": "naka-save"
   },

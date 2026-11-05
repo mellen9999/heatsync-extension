@@ -1560,9 +1560,9 @@ function listenForSocialEvents() {
             // generic "live" to the real channel — so the auto-live tab reads as
             // a selection ("lofigirl"), not a blank tab with chat pouring in.
             // Runs regardless of the active tab (the label is always visible).
-            if (typeof updateLiveTabLabel === 'function') {
+            if (typeof syncLiveTab === 'function') {
               try {
-                updateLiveTabLabel()
+                syncLiveTab()
               } catch {}
             }
             if (currentTab === 'live') {
@@ -2072,7 +2072,12 @@ function renderFeed() {
   if (feedMessages.length === 0) {
     _feedVirtualTeardown(msgsEl)
     msgsEl.textContent = ''
-    msgsEl.appendChild(_renderFeedEmptyCard())
+    const emptyCard = _renderFeedEmptyCard()
+    // no saved tabs and no channel on the page: the temp tab is hidden, so the
+    // first-run "add streams" call to action lives here
+    if (typeof appendCockpitCta === 'function' && !config.channels?.length && !getLiveChannel())
+      appendCockpitCta(emptyCard)
+    msgsEl.appendChild(emptyCard)
     return
   }
 

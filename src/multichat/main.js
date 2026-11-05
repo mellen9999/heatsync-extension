@@ -88,11 +88,16 @@
   // paints a tab that isn't in the bar.
   let currentTab = 'live'
   let prevTab = 'live'
-  // Set when a channel-less page bounced the empty watching tab to following,
-  // so the next nav onto a channel can hand the panel back to its chat. Any
-  // tab the user picks themselves clears it (switchTab).
-  let _bouncedFromLive = false
+  // Set to the tab id we auto-switched to when the temp tab ('live') went away
+  // under the user (the page lost its channel, or a saved tab now covers it), so
+  // the next nav onto an uncovered channel can hand the panel back. Any tab the
+  // user picks themselves clears it (switchTab). '' = nothing to hand back.
+  let _bouncedFromLive = ''
   let _autoSwitching = false
+  // The temp tab only redirects once boot has landed on a tab, so an early
+  // updateTabBar can't switch a half-built panel.
+  let _liveSyncArmed = false
+  let _keepingLive = false
   // Tabs whose chat legs are still joining. A fresh install lands on a channel
   // and the first messages take ~15-25s (bg irc join + history hydration), and
   // an empty panel saying "no messages yet" for that long reads as broken —
@@ -3947,8 +3952,6 @@
         openPopoutForCurrentTab()
       } else if (tabId === 'subscribe') {
         openSubForCurrentTab(tab)
-      } else if (tabId === 'live') {
-        showLiveChannelPicker(tab)
       } else if (tabId === 'collapse') {
         toggleChatHidden()
       } else if (tabId === 'native') {
@@ -3999,7 +4002,7 @@
         return
       }
 
-      // Live tab gets platform edit context menu
+      // Live (temp) tab: keep it, pick another open stream, edit platforms
       if (tabId === 'live') {
         e.preventDefault()
         document.getElementById('hs-mc-ctx-menu')?.remove()
@@ -4007,18 +4010,23 @@
         menu.id = 'hs-mc-ctx-menu'
         menu.style.cssText =
           'position:fixed;z-index:99999;background:#000;border:1px solid #ffffff;border-radius:0;padding:4px 0;min-width:150px;font-size:13px;font-family:inherit;'
-        const item = document.createElement('div')
-        item.textContent = t('mc_main_edit_platforms')
-        item.style.cssText = 'padding:6px 12px;cursor:pointer;color:#fff;'
-        item.addEventListener('mouseenter', () => (item.style.background = '#000000'), {
-          signal: mcSignal,
-        })
-        item.addEventListener('mouseleave', () => (item.style.background = ''), { signal: mcSignal })
-        item.addEventListener('click', () => {
-          menu.remove()
-          showEditLivePlatforms()
-        })
-        menu.appendChild(item)
+        const addItem = (label, fn) => {
+          const item = document.createElement('div')
+          item.textContent = label
+          item.style.cssText = 'padding:6px 12px;cursor:pointer;color:#fff;'
+          item.addEventListener('mouseenter', () => (item.style.background = '#000000'), {
+            signal: mcSignal,
+          })
+          item.addEventListener('mouseleave', () => (item.style.background = ''), { signal: mcSignal })
+          item.addEventListener('click', () => {
+            menu.remove()
+            fn()
+          })
+          menu.appendChild(item)
+        }
+        addItem(t('mc_tab_keep'), () => keepLiveTab())
+        addItem(t('mc_tab_live'), () => showLiveChannelPicker(tab))
+        addItem(t('mc_main_edit_platforms'), () => showEditLivePlatforms())
         document.body.appendChild(menu)
         const mw = menu.offsetWidth,
           mh = menu.offsetHeight
@@ -6109,7 +6117,10 @@
       if (btn) btn.style.display = hiddenTabs.has(id) || subOff ? 'none' : ''
     }
     const curOff = _TAB_SUBSYSTEM[currentTab] && !isEnabled(_TAB_SUBSYSTEM[currentTab])
-    if (hiddenTabs.has(currentTab) || curOff) switchTab('live')
+    if (hiddenTabs.has(currentTab) || curOff) {
+      const to = liveTarget()
+      if (to !== currentTab) switchTab(to)
+    }
   }
 
   // Background chest-claim sweeper. Chests spawn every ~15min during active
@@ -6277,6 +6288,8 @@
     })
 
     applyHiddenTabs()
+    // a saved tab may now cover the page channel (or have stopped covering it)
+    syncLiveTab()
     // The tabs above were rebuilt from scratch and their labels written with
     // textContent, which drops the counter chip — repaint it, or the number
     // vanishes on every live-status poll and channel edit.
@@ -6931,7 +6944,10 @@
     const _swPhase = {}
     _restoreParts = null
     log('switchTab called:', id, sub || '')
-    if (!_autoSwitching) _bouncedFromLive = false
+    if (!_autoSwitching) _bouncedFromLive = ''
+    // the temp tab is gone while a saved tab covers the page channel (or the page
+    // has none): any stray 'live' lands on liveTarget() instead
+    if (id === 'live' && _liveSyncArmed && !liveTabShown()) id = liveTarget()
     ;({ id, sub } = mcCanonTab(id, sub))
     const nextSub = mcResolveSub(id, sub, lastSubByTab)
     if (id === currentTab && sub && nextSub === sub) {
@@ -8126,7 +8142,7 @@
           return
         }
         if (typeof getCurrentChannel === 'function' && (getCurrentChannel() || '').toLowerCase() === chLc) {
-          switchTab('live')
+          switchTab(liveTarget())
           return
         }
         const url = plat === 'kick' ? `https://kick.com/${ch}` : `https://www.twitch.tv/${ch}`
@@ -10618,6 +10634,55 @@
   let _slowRenderLoggedAt = 0
   let _renderCalls = 0
   let _lastRenderAt = 0
+  // The first-run call to action: add streams, or pull in the ones you follow.
+  // Shown on the temp tab when nothing is saved, and on the feed when the page
+  // has no channel to watch (the temp tab is hidden there).
+  function appendCockpitCta(el) {
+    const title = document.createElement('div')
+    title.style.cssText = 'font-weight:600;margin-bottom:4px'
+    title.textContent = t('mc_main_add_streams_title')
+    const sub = document.createElement('div')
+    sub.style.cssText = 'opacity:.7;margin-bottom:10px'
+    sub.textContent = t('mc_main_add_streams_sub')
+    const btn = document.createElement('button')
+    btn.style.cssText =
+      'cursor:pointer;padding:6px 12px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit'
+    btn.textContent = t('mc_main_add_channel_btn')
+    try {
+      cleanup.addEventListener(btn, 'click', () => {
+        try {
+          switchTab('add')
+        } catch (_) {}
+      })
+    } catch (_) {}
+    // The primary way out of an empty cockpit: pull in the channels you
+    // already follow instead of typing them one at a time. Sits ALONGSIDE
+    // the manual button, never replacing it — someone who wants one
+    // specific channel should not be routed through a follow list.
+    const fillBtn = document.createElement('button')
+    fillBtn.style.cssText =
+      'cursor:pointer;padding:6px 12px;border:1px solid #fff;background:transparent;color:#fff;font:inherit;margin-bottom:6px'
+    fillBtn.textContent = t('mc_fill_cockpit')
+    try {
+      cleanup.addEventListener(fillBtn, 'click', () => {
+        try {
+          switchTab('add')
+          // switchTab('add') renders the manual form; swap straight to the
+          // picker so the button does what it says on one click.
+          // Re-query rather than closing over msgsEl: switchTab has just
+          // re-rendered the panel, and a captured node is how you end up
+          // painting into something already detached.
+          const pane = document.getElementById('hs-mc-messages')
+          if (typeof renderFollowImportPicker === 'function' && pane) renderFollowImportPicker(pane)
+        } catch (_) {}
+      })
+    } catch (_) {}
+    el.appendChild(title)
+    el.appendChild(sub)
+    el.appendChild(fillBtn)
+    el.appendChild(btn)
+  }
+
   function renderMessages(id, opts) {
     const t0 = performance.now()
     _renderCalls++
@@ -10858,69 +10923,11 @@
       // no channels are configured, show an actionable CTA pointing at the core
       // multichat value (add streams across platforms) instead of a dead end.
       if (id === 'live' && !config.channels?.length) {
-        const title = document.createElement('div')
-        title.style.cssText = 'font-weight:600;margin-bottom:4px'
-        title.textContent = t('mc_main_add_streams_title')
-        const sub = document.createElement('div')
-        sub.style.cssText = 'opacity:.7;margin-bottom:10px'
-        sub.textContent = t('mc_main_add_streams_sub')
-        const btn = document.createElement('button')
-        btn.style.cssText =
-          'cursor:pointer;padding:6px 12px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit'
-        btn.textContent = t('mc_main_add_channel_btn')
-        try {
-          cleanup.addEventListener(btn, 'click', () => {
-            try {
-              switchTab('add')
-            } catch (_) {}
-          })
-        } catch (_) {}
-        // The primary way out of an empty cockpit: pull in the channels you
-        // already follow instead of typing them one at a time. Sits ALONGSIDE
-        // the manual button, never replacing it — someone who wants one
-        // specific channel should not be routed through a follow list.
-        const fillBtn = document.createElement('button')
-        fillBtn.style.cssText =
-          'cursor:pointer;padding:6px 12px;border:1px solid #fff;background:transparent;color:#fff;font:inherit;margin-bottom:6px'
-        fillBtn.textContent = t('mc_fill_cockpit')
-        try {
-          cleanup.addEventListener(fillBtn, 'click', () => {
-            try {
-              switchTab('add')
-              // switchTab('add') renders the manual form; swap straight to the
-              // picker so the button does what it says on one click.
-              // Re-query rather than closing over msgsEl: switchTab has just
-              // re-rendered the panel, and a captured node is how you end up
-              // painting into something already detached.
-              const el = document.getElementById('hs-mc-messages')
-              if (typeof renderFollowImportPicker === 'function' && el) renderFollowImportPicker(el)
-            } catch (_) {}
-          })
-        } catch (_) {}
-        empty.appendChild(title)
-        empty.appendChild(sub)
-        empty.appendChild(fillBtn)
-        // (falls through to the add-channel button appended below)
-        empty.appendChild(btn)
+        appendCockpitCta(empty)
       } else if (isTabConnecting(id)) {
         // Not wired up yet — say so rather than claiming an empty chat we
         // haven't actually connected to.
         empty.textContent = t('mc_connecting')
-      } else if (id === 'live' && currentTab === 'live' && !tabHasChatLegs('live')) {
-        // No channel on this page, so "watching" has nothing to show and can
-        // never fill — a blank column is never the answer. Land on following,
-        // which always has something. Tab-switch deferred: we're mid-render.
-        empty.textContent = t('mc_connecting')
-        cleanup.setTimeout(() => {
-          if (currentTab !== 'live' || tabHasChatLegs('live')) return
-          _autoSwitching = true
-          try {
-            switchTab('feed')
-            _bouncedFromLive = true
-          } finally {
-            _autoSwitching = false
-          }
-        }, 0)
       } else {
         empty.textContent = t('mc_no_messages')
       }
@@ -11602,7 +11609,7 @@
       // If override channel went offline, fall back to URL channel or first live
       if (liveChannel && !liveSetHas(liveSet, liveChannel)) {
         liveChannel = null
-        updateLiveTabLabel()
+        syncLiveTab()
         _dropTabCache('live')
         if (currentTab === 'live') renderMessages('live')
       }
@@ -11742,9 +11749,120 @@
     )
   }
 
-  /** Update the live tab button label to show the channel it's bound to, so the
-   *  tab reads as a real selection ("lofigirl") instead of a generic "live"
-   *  that looks unselected while its chat streams in on auto-live. */
+  /** The saved tab that already shows the page channel, or null. Same legs the
+   *  live send resolves (twitch/kick by name, youtube by handle or video), so a
+   *  hidden temp tab never leaves a send target behind. A youtube page is never
+   *  matched by name against twitch/kick: that guess is not allowed. */
+  function liveCoverId() {
+    const cur = getLiveChannel()
+    if (!cur || !config.channels?.length) return null
+    const lower = cur.toLowerCase()
+    const legs = getLivePlatformNames()
+    const tw = new Set()
+    const ki = new Set()
+    if (hostPlatform !== 'yt') {
+      tw.add(lower)
+      ki.add(lower)
+    }
+    if (legs.twitch) tw.add(legs.twitch.toLowerCase())
+    if (legs.kick) ki.add(legs.kick.toLowerCase())
+    let ytHas = () => false
+    if (hostPlatform === 'yt') {
+      const isHandle = parseYoutubeChannelType(location.pathname, location.search) === 'handle'
+      const handle = (isHandle ? lower : youtubeLinks.get('__live_yt_auto__')?.channelName || '')
+        .toLowerCase()
+        .replace(/^@/, '')
+      const vid = _autoYtVideoId || (isHandle ? '' : cur)
+      const explicit = String(legs.youtube || '').toLowerCase()
+      ytHas = (url) => {
+        const u = String(url || '')
+        const ul = u.toLowerCase()
+        return (
+          !!u && ((handle && ul.includes(`/@${handle}`)) || (vid && u.includes(vid)) || (!!explicit && ul === explicit))
+        )
+      }
+    }
+    const hit = config.channels.find(
+      (c) =>
+        c?.id &&
+        ((c.twitch && tw.has(c.twitch.toLowerCase())) ||
+          (c.kick && ki.has(c.kick.toLowerCase())) ||
+          (c.youtube && ytHas(c.youtube))),
+    )
+    return hit ? hit.id : null
+  }
+
+  /** Is the temp tab on the bar: the page has a channel and no saved tab covers it. */
+  function liveTabShown() {
+    return !!getLiveChannel() && !liveCoverId()
+  }
+
+  /** Where "back to the stream" lands: the saved tab covering the page channel,
+   *  else the temp tab, else (no page channel) the first saved tab, else the feed. */
+  function liveTarget() {
+    const cover = liveCoverId()
+    if (cover) return cover
+    if (getLiveChannel()) return 'live'
+    const first = config.channels?.find((c) => c?.id && !hiddenTabs.has(mcRowOwner(c.id)))
+    return first ? first.id : 'feed'
+  }
+
+  /** Repaint the temp tab and keep the panel off it while it is hidden. Moves
+   *  off it (not persisted: _autoSwitching) when it goes away under the user,
+   *  and back onto it when it returns. */
+  function syncLiveTab() {
+    updateLiveTabLabel()
+    if (!_liveSyncArmed) return
+    const shown = liveTabShown()
+    if (currentTab === 'live' && !shown) {
+      const to = liveTarget()
+      if (to === 'live') return
+      _autoSwitching = true
+      try {
+        switchTab(to)
+      } finally {
+        _autoSwitching = false
+      }
+      _bouncedFromLive = to
+    } else if (shown && _bouncedFromLive && currentTab === _bouncedFromLive) {
+      _bouncedFromLive = ''
+      _autoSwitching = true
+      try {
+        switchTab('live')
+      } finally {
+        _autoSwitching = false
+      }
+    }
+  }
+
+  /** Promote the temp tab to a saved channel tab (the existing resolve path does
+   *  identity, dedupe and saveConfig; the cover rule then hides the temp tab). */
+  async function keepLiveTab() {
+    const cur = getLiveChannel()
+    if (!cur || _keepingLive || !liveTabShown()) return
+    _keepingLive = true
+    try {
+      if (hostPlatform === 'yt') {
+        const isHandle = parseYoutubeChannelType(location.pathname, location.search) === 'handle'
+        const handle = isHandle ? cur : youtubeLinks.get('__live_yt_auto__')?.channelName || ''
+        const url =
+          ytSubscribedUrls.get('__live_yt_auto__') ||
+          (isHandle ? ytHandleLiveUrl(location.pathname) : `https://www.youtube.com/watch?v=${cur}`)
+        await resolveLiveCandidateToTab(
+          handle
+            ? { name: handle.replace(/^@/, ''), platform: 'youtube', youtubeUrl: url }
+            : { name: cur, platform: 'youtube', youtubeUrl: url, _videoId: cur },
+        )
+      } else {
+        await resolveLiveCandidateToTab({ name: cur, platform: hostPlatform })
+      }
+    } finally {
+      _keepingLive = false
+    }
+  }
+
+  /** Update the temp tab button: the page channel's name, underlined, and hidden
+   *  while a saved tab covers that channel or the page has none. */
   function updateLiveTabLabel() {
     const liveTab = tabBarElement?.querySelector('[data-tab="live"]')
     if (!liveTab) return
@@ -11763,10 +11881,10 @@
         name = cur
       }
     }
-    // the channel tab beside it already names the channel; the name rides the
-    // tooltip so a picked-away channel is still one hover from visible
-    liveTab.textContent = t('mc_tab_live')
-    liveTab.title = name
+    liveTab.textContent = String(name || t('mc_tab_live')).toLowerCase()
+    liveTab.classList.add('hs-mc-tab-temp')
+    liveTab.title = t('mc_tab_temp_title')
+    liveTab.style.display = liveTabShown() ? '' : 'none'
   }
 
   /** Query background script for all channels the user has open tabs for */
@@ -13354,7 +13472,7 @@
           _channelLookup = null
           config.enabled = newConfig.enabled !== undefined ? newConfig.enabled : config.enabled
           updateTabBar()
-          // If current tab was removed, switch to live
+          // If current tab was removed, fall back (temp tab or a saved one covering it)
           if (
             currentTab !== 'live' &&
             currentTab !== 'feed' &&
@@ -13362,7 +13480,7 @@
             currentTab !== 'whispers' &&
             !newIds.has(currentTab)
           ) {
-            switchTab('live')
+            switchTab(liveTarget())
           }
           log('Config synced from another tab/device:', newChannels.length, 'channels')
         }
@@ -13795,18 +13913,16 @@
     // BUILTIN_TABS + channels but runs before hiddenTabs is known, and
     // applyHiddenTabs' own correction only fires if it runs AFTER this restore
     // — on a cold boot it doesn't.
-    // "watching" is never restored over channel tabs of your own: it is a click away, not a default.
+    _liveSyncArmed = true
+    // 'live' saved means "the page's channel": liveTarget() says which tab that is now.
+    const want = _savedActiveTab === 'live' ? liveTarget() : _savedActiveTab
     const restorable =
-      _savedActiveTab &&
-      !(_savedActiveTab === 'live' && config.channels?.length) &&
-      !hiddenTabs.has(mcRowOwner(_savedActiveTab)) &&
-      !(_TAB_SUBSYSTEM[_savedActiveTab] && !isEnabled(_TAB_SUBSYSTEM[_savedActiveTab]))
+      want && !hiddenTabs.has(mcRowOwner(want)) && !(_TAB_SUBSYSTEM[want] && !isEnabled(_TAB_SUBSYSTEM[want]))
     if (isYtPopout) return 'live'
-    if (restorable) return _savedActiveTab
-    // Nothing saved but channel tabs exist: land on the first one. "watching" loads the page's own
-    // chat when you ask for it, it is not what a viewer with tabs of their own expects to open on.
+    if (restorable) return want
+    // Nothing restorable but channel tabs exist: land on the first one.
     const firstTab = config.channels?.find((c) => c?.id && !hiddenTabs.has(mcRowOwner(c.id)))
-    return firstTab ? firstTab.id : 'live'
+    return firstTab ? firstTab.id : liveTarget()
   }
 
   // PHASE -1 kill-switch aborts init before any panel/HsNotifs infra exists,

@@ -299,7 +299,7 @@ async function renderFollowImportPicker(msgsEl) {
   allLiveBtn.addEventListener('click', () => {
     for (const b of boxes) b.checked = liveSet.has(`${b.dataset.plat}:${String(b.dataset.login).toLowerCase()}`)
   })
-  cancelBtn.addEventListener('click', () => switchTab('live'))
+  cancelBtn.addEventListener('click', () => switchTab(liveTarget()))
   addBtn.addEventListener('click', () => {
     const picked = boxes.filter((b) => b.checked).map((b) => ({ [b.dataset.plat]: b.dataset.login }))
     if (!picked.length) {
@@ -363,7 +363,7 @@ function renderPasteListForm(msgsEl) {
   manualLink.addEventListener('click', () => renderAddChannelForm(msgsEl))
   wrapper.appendChild(manualLink)
 
-  cancelBtn.addEventListener('click', () => switchTab('live'))
+  cancelBtn.addEventListener('click', () => switchTab(liveTarget()))
 
   // Newlines and commas only — NOT spaces. Splitting on every whitespace run
   // turns a pasted sentence into channels: "not a name!" would become three
@@ -508,7 +508,7 @@ function renderAddChannelForm(msgsEl) {
 
   msgsEl.appendChild(wrapper)
 
-  cancelBtn.addEventListener('click', () => switchTab('live'))
+  cancelBtn.addEventListener('click', () => switchTab(liveTarget()))
 
   const showErr = (msg) => {
     errEl.textContent = msg
@@ -601,7 +601,7 @@ function renderAddChannelForm(msgsEl) {
         inputs[(i + (e.shiftKey ? inputs.length - 1 : 1)) % inputs.length].focus()
       }
       if (e.key === 'Enter') doAdd()
-      if (e.key === 'Escape') switchTab('live')
+      if (e.key === 'Escape') switchTab(liveTarget())
     })
     // Track user edits per-field so autofill never overwrites typed input
     inp.addEventListener('input', () => {
@@ -744,7 +744,7 @@ function removeChannel(tabId) {
   }
 
   updateTabBar()
-  if (currentTab === tabId) switchTab('live')
+  if (currentTab === tabId) switchTab(liveTarget())
 }
 
 // Apply live platform overrides — join the correct channels on each platform

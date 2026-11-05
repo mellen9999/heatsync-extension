@@ -523,6 +523,10 @@
     .hs-mc-tab[data-live="true"] {
       padding-right: 16px !important;
     }
+    /* the temp tab (page channel, not saved) — underline is its only mark */
+    .hs-mc-tab-temp {
+      text-decoration: underline;
+    }
     .hs-mc-tab[data-live="true"]::after {
       content: '';
       position: absolute;

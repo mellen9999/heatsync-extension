@@ -1715,7 +1715,7 @@ function pcMention(name) {
   closeProfileCard()
   // Mentioning someone means chatting to them — move to a tab that reaches a
   // real chat first (the social tabs refuse a bare send).
-  if (!tabSendsToChat(currentTab)) switchTab('live')
+  if (!tabSendsToChat(currentTab)) switchTab(liveTarget())
   cleanup.setTimeout(() => {
     showInputBar()
     const input = document.getElementById('hs-mc-input')

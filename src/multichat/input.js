@@ -9056,6 +9056,16 @@ async function sendMessage() {
   const kickSlug = ch?.kick
   const twitchName = ch?.twitch
   const anonLive = currentTab === 'live' && !ch
+  // Chatting from the temp tab is the clearest ask to keep it (site parity).
+  // Runs only from a leg that really delivered, never on a failed send; the
+  // send targets above are untouched — promotion happens after the fact.
+  const fromTempTab = currentTab === 'live'
+  const keepTempTabAfterSend = () => {
+    if (!fromTempTab) return
+    try {
+      keepLiveTab().catch(() => {})
+    } catch (_) {}
+  }
 
   const ytUrl = ch?.youtube
   const isLiveYt = currentTab === 'live' && hostPlatform === 'yt'
@@ -9329,6 +9339,7 @@ async function sendMessage() {
         }
 
         if (kickOk || twitchSent) {
+          keepTempTabAfterSend()
           // Dual-send partial success: at least one platform delivered. Drain
           // the failed platform from the pending tracker's awaiting set so the
           // no_echo toast doesn't fire 20s later for the side that locally
@@ -9391,6 +9402,7 @@ async function sendMessage() {
       .then((result) => {
         if (result !== true) clearYtSendingRow(_synthId)
         if (result === true) {
+          keepTempTabAfterSend()
           // YT echoes don't loop back through our IRC handlers, so the timer
           // would always fire "no_echo" for pure-YT sends. Confirm here, with
           // explicit 'yt' platform so the per-platform awaiting set drains.
@@ -9437,6 +9449,7 @@ async function sendMessage() {
     // success, same as twitch+kick partial success — drain the twitch wait and
     // leave a quiet note for the skipped leg instead of a failed send.
     if (ytLeg && (await ytLeg) === true) {
+      keepTempTabAfterSend()
       confirmPending(_synthId, 'twitch')
       showToast(t('mc_send_twitch_skipped'), 'info')
       return
@@ -9453,6 +9466,7 @@ async function sendMessage() {
   sendIrcMessage(targetChannel, twitchText, token, twitchReplyId, twitchNick)
     .then((result) => {
       if (result === true) {
+        keepTempTabAfterSend()
         if (wsState !== 'OPEN') {
           input.style.borderColor = 'var(--hs-warn)'
           setTimeout(() => {

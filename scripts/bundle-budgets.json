@@ -35,9 +35,9 @@
     "icon-96.png": 10742,
     "icon-128.png": 5276,
     "icon-48-black.png": 4329,
-    "manifest.json": 7569,
-    "total raw": 6235250,
-    "total zip": 1493117
+    "manifest.json": 8628,
+    "total raw": 8795210,
+    "total zip": 1962810
   },
   "firefox": {
     "multichat-core.js": 1559207,
@@ -74,8 +74,8 @@
     "icon-96.png": 10742,
     "icon-128.png": 5276,
     "icon-48-black.png": 4329,
-    "manifest.json": 7352,
-    "total raw": 6235029,
-    "total zip": 1493165
+    "manifest.json": 8411,
+    "total raw": 8794988,
+    "total zip": 1962861
   }
 }

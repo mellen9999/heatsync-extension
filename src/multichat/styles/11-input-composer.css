@@ -36,6 +36,13 @@
     #hs-mc-input::placeholder {
       color: var(--hs-muted);
     }
+    /* shut for you here: red = out of the room, yellow = a rule of the room */
+    #hs-mc-input.hs-mc-lock-out { border-color: #f00; }
+    #hs-mc-input.hs-mc-lock-out::placeholder { color: #f00; }
+    #hs-mc-input.hs-mc-lock-rule { border-color: #ff0; }
+    #hs-mc-input.hs-mc-lock-rule::placeholder { color: #ff0; }
+    #hs-mc-input.hs-mc-lock-out::before { color: #f00; }
+    #hs-mc-input.hs-mc-lock-rule::before { color: #ff0; }
     /* Resub-share mode — purple border on the whole inputbar so the user
        knows their next message becomes the resub celebration body. */
     #hs-mc-inputbar.hs-mc-resub-share {

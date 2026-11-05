@@ -723,7 +723,10 @@ class IRC extends ChatClient {
       return
     }
     if (msg.type === 'whisper') return // whispers come via EventSub now
-    if (msg.type === 'roomstate') return // BG already converted to mode_change notice
+    if (msg.type === 'roomstate') {
+      chatLockRoomstate(msg)
+      return // BG already converted to mode_change notice
+    }
     const ch = msg.channel
     if (!ch || !this.channels.has(ch)) return
     if (msg.user) {
@@ -744,6 +747,13 @@ class IRC extends ChatClient {
     } catch {}
     if (!msg.type || msg.type === 'usernotice' || msg.type === 'notice') {
       const buf = this.channels.get(ch)
+      // a timeout/ban aimed at us shuts the composer the moment it lands
+      if (msg.type === 'notice') {
+        try {
+          const lk = chatLockFromClearchat(msg, selfNamesFor('twitch'))
+          if (lk) chatLockSet(ch, lk)
+        } catch (_) {}
+      }
       // A single timeout/ban reaches us many ways: the CLEARCHAT (everyone), the
       // mod-only timeout_success/ban_success NOTICE, the direct-IRC vs server
       // EventSub fanout, and the native tap. EventSub can even drop the timeout

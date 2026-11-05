@@ -3480,6 +3480,13 @@ function updateInputPlaceholder() {
     if (chanName && _composerNeedsLogin()) placeholder = t('mc_social_login_first')
   }
 
+  // shut for you here (banned / timed out / a room rule): say why, in place of the invite to type
+  const lockCh = quoteState ? '' : chatLockTabChannel()
+  const lock = lockCh ? chatLockFor(lockCh) : null
+  if (lock) placeholder = chatLockLabel(lock)
+  input.classList.toggle('hs-mc-lock-out', !!lock && !chatLockIsRule(lock))
+  input.classList.toggle('hs-mc-lock-rule', chatLockIsRule(lock))
+
   if (wysiwygEnabled) {
     input.dataset.placeholder = placeholder
   } else {
@@ -9033,6 +9040,15 @@ async function sendMessage() {
     flashInputError(input)
     showToast(t('mc_yt_send_open_stream'), 'error')
     return
+  }
+  // twitch is the only leg and the room has you locked out: hold the send, keep the words
+  if (sendToTwitch && !sendToKick && !sendToYoutube && twitchName) {
+    const lock = chatLockFor(twitchName)
+    if (chatLockHoldsSend(lock)) {
+      flashInputError(input)
+      showToast(chatLockLabel(lock), 'error')
+      return
+    }
   }
   const isDualSend = sendToKick && sendToTwitch
 

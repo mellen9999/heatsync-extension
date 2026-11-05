@@ -6861,5 +6861,25 @@
   },
   "slash_help_label": {
     "message": "slash příkazy"
+  },
+  "mc_lock_banned": {
+    "message": "you are banned from this channel"
+  },
+  "mc_lock_timed_out": {
+    "message": "you are timed out · $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_lock_subs": {
+    "message": "subscribers-only — sub to chat here"
+  },
+  "mc_lock_followers": {
+    "message": "followers-only — follow to chat here"
+  },
+  "mc_lock_emote": {
+    "message": "emote-only — emotes only here"
   }
 }

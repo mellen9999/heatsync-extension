@@ -154,6 +154,11 @@ function handleAuthIrcMessage(event) {
     if (line.includes(' NOTICE ')) {
       const msgId = parseNoticeMsgId(line)
       if (msgId && TWITCH_SEND_REJECT_NOTICES.has(msgId)) {
+        // the composer learns why it is shut (banned / timed out / room rule) from the refusal itself
+        try {
+          const lockCh = (line.match(/ NOTICE #(\w+)/) || [])[1]
+          if (lockCh) chatLockSet(lockCh, chatLockFromNotice(msgId, line))
+        } catch (_) {}
         if (typeof showToast === 'function') showToast(t(TWITCH_SEND_REJECT_NOTICES.get(msgId)), 'error')
         // ALSO a persistent inline red row in that channel's chat — the toast
         // alone lasts ~2s, and a rejected send otherwise leaves no trace: the

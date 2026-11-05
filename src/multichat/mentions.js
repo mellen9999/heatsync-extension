@@ -454,3 +454,56 @@ function scanExistingMentions() {
     updateTabIndicator('mentions')
   }
 }
+
+// A heatsync notification (background.js shapeHsNotif) as a row in the mentions
+// tab: a reply to your post, an @ in a post, a fixed report. Rust shows the same in
+// its notifs tab; the ext used to keep only the toolbar count.
+const HS_NOTIF_KINDS = new Set(['reply', 'mention', 'feedback_fixed'])
+function hsNotifText(d) {
+  const who = d.anon ? 'anonymous: ' : ''
+  if (d.kind === 'reply') {
+    const to = d.op === true ? 'replied to your post' : d.op === false ? 'replied to your reply' : 'replied to you'
+    return `${who}${d.text ? `${to}: ${d.text}` : to}`
+  }
+  if (d.kind === 'feedback_fixed') return d.text || 'your report was fixed'
+  return `${who}${d.text || 'you were mentioned in a post'}`
+}
+
+function hsNotifIn(d) {
+  if (!isEnabled('mentions') || !HS_NOTIF_KINDS.has(d.kind)) return
+  const msg = {
+    type: 'inline-notif',
+    kind: d.kind,
+    postId: d.id || '',
+    text: hsNotifText(d),
+    user: 'heatsync',
+    platform: 'heatsync',
+    channel: 'heatsync',
+    time: d.time || Date.now(),
+    id: `hsn-${d.time || Date.now()}-${d.id || ''}`,
+  }
+  mentionsBuffer.push(msg)
+  if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER)
+  persistMentions()
+  notifyMention(msg)
+  noteSeenEvent('mentions', msg.time)
+  if (currentTab === 'mentions') {
+    bumpSeen('mentions')
+    hsNotifsRead()
+    if (!appendMessage(msg, 'mentions')) renderMessages('mentions')
+  } else {
+    updateTabIndicator('mentions')
+  }
+}
+
+// the server marks them read for every device; rows stay, just no longer unread
+function hsNotifsRead() {
+  let any = false
+  for (const m of mentionsBuffer) {
+    if (m.type === 'inline-notif' && !m.read) {
+      m.read = true
+      any = true
+    }
+  }
+  if (any) safeSendMessage({ type: 'notifs_read' })
+}

@@ -6184,6 +6184,44 @@ function updateExtensionBadge() {
 // every WS auth — the in-memory counter misses notification:new events that
 // arrive while the socket is idle-closed or the SW is evicted, so reconnect
 // always adopts server truth instead of trusting stale local state.
+// the few fields of a `notification:new` frame a row needs (contract.md): kind,
+// the post it is about, a snippet, whose post it answered. Bounded, no control bytes.
+function shapeHsNotif(f) {
+  const str = (v, n) =>
+    typeof v === 'string'
+      ? v
+          .replace(/[\u0000-\u001f\u007f]/g, ' ')
+          .slice(0, n)
+          .trim()
+      : ''
+  const id = str(f?.message_id, 9)
+  return {
+    kind: str(f?.kind, 24),
+    id: /^[a-z0-9]{1,8}$/i.test(id) ? id : '',
+    text: str(f?.content, 300),
+    op: typeof f?.parent_is_op === 'boolean' ? f.parent_is_op : null,
+    anon: f?.from_username === 'Anonymous',
+    time: Date.now(),
+  }
+}
+
+// the mentions tab was looked at: the server's unread heatsync notifications are read everywhere
+async function markNotifsRead() {
+  try {
+    const res = await fetch('https://heatsync.org/api/notifications/mark-read', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'all' }),
+      signal: AbortSignal.timeout(8000),
+    })
+    if (!res.ok) return
+    unreadNotifCount = 0
+    browser.storage.session?.set({ unread_notif_count: 0 }).catch(() => {})
+    updateExtensionBadge()
+  } catch {}
+}
+
 async function hydrateUnreadNotifCount() {
   try {
     const res = await fetch('https://heatsync.org/api/notifications', {
@@ -7170,11 +7208,10 @@ function handleWSMessage(msg) {
         unreadNotifCount++
         browser.storage.session?.set({ unread_notif_count: unreadNotifCount }).catch(() => {})
         updateExtensionBadge()
-        // No broadcast. The toolbar badge is the surface for heatsync
-        // notifications; the overlay's HsNotifs has no registered type for
-        // them, so this message has never had a listener. If in-overlay
-        // notification toasts are wanted, that is a type to register — not a
-        // message to keep sending into nothing.
+        // The overlay turns it into a row in its mentions tab (hsNotifIn),
+        // so a reply to your post is readable, not just a number on the toolbar.
+        // Only the fields the row reads leave here, bounded; the frame is hostile.
+        broadcastToTabs({ type: 'hs_notif', data: shapeHsNotif(msg) })
         break
 
       case 'youtube:chat':
@@ -10295,6 +10332,8 @@ async function handleMessage(message, sender, sendResponse) {
       sendResponse({ success: true })
     })()
     return true
+  } else if (message.type === 'notifs_read') {
+    markNotifsRead()
   } else if (message.type === 'notifs_viewed') {
     unreadNotifCount = 0
     browser.storage.session?.set({ unread_notif_count: 0 }).catch(() => {})

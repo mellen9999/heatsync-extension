@@ -1296,6 +1296,10 @@ function listenForSocialEvents() {
     if (typeof msg?.type === 'string' && msg.type.startsWith('youtube_') && gateAtBoot('chat-youtube') === false) {
       return
     }
+    if (msg.type === 'hs_notif') {
+      if (msg.data) hsNotifIn(msg.data)
+      return
+    }
     if (msg.type === 'chat_origin_broadcast' && msg.text) {
       // Heatsync.org chat-tile sent a chat — record the origin so the
       // upcoming platform echo gets tagged [H] via peekSentHost. Same

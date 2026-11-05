@@ -1093,6 +1093,8 @@
       replyTo: m.replyTo || undefined,
       type: m.type || undefined,
       msgId: m.msgId || undefined,
+      postId: m.postId || undefined,
+      kind: m.kind || undefined,
       isHighlighted: m.isHighlighted || undefined,
       avatar: m.avatar || undefined,
       msgType: m.msgType || undefined,
@@ -7043,6 +7045,9 @@
 
     // Discover/pinned refresh bars removed — auto-poll handles freshness
 
+    // looking at the mentions tab reads the heatsync notifications (toolbar badge, other devices)
+    if (id === 'mentions' && mentionsBuffer.some((x) => x.type === 'inline-notif' && !x.read)) hsNotifsRead()
+
     // Clear whisper unread when switching to whispers tab — server-backed.
     if (id === 'whispers') {
       bumpSeen('whispers')
@@ -7949,6 +7954,28 @@
         // the feed-tab row handler (social.js buildFeedMessageDiv).
         openThread(m.reply_to || m.base36_id, m.reply_to ? m.base36_id : null)
       })
+      return div
+    }
+
+    // a heatsync notification (reply / mention / fixed report): its post opens in the feed
+    if (m.type === 'inline-notif') {
+      const div = document.createElement('div')
+      div.className = 'hs-mc-feed-inline hs-mc-notif-inline'
+      const color = m.kind === 'reply' ? 'var(--hs-reply)' : m.kind === 'feedback_fixed' ? '#0f0' : '#f00'
+      div.style.borderLeftColor = color
+      const tsVal = timestampsEnabled ? formatTimeFromTs(m.time) : ''
+      const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
+      const tag = m.kind === 'reply' ? '[reply]' : m.kind === 'feedback_fixed' ? '[fixed]' : '[@]'
+      div.innerHTML = `${tsSpan}<span style="color:${color};font-size:13px;font-weight:700;margin-right:4px">${tag}</span><span class="hs-mc-text">${escapeHtml(m.text)}</span>`
+      if (m.postId) {
+        div.dataset.hsClickable = ''
+        div.style.cursor = 'pointer'
+        div.addEventListener('click', () => {
+          threadReturnTab = currentTab === 'feed' ? null : currentTab
+          switchTab('feed')
+          openThread(m.postId)
+        })
+      }
       return div
     }
 
@@ -9885,7 +9912,15 @@
   const _rmInsertedKeys = new Set()
   // Row types that never take a stripe. Stamped on the node too, so a repaint
   // can tell them apart without the message object.
-  const _NO_ZEBRA_TYPES = new Set(['stream-event', 'feed-post', 'inline-dm', 'moment', 'cmd-receipt', 'automod-hold'])
+  const _NO_ZEBRA_TYPES = new Set([
+    'stream-event',
+    'feed-post',
+    'inline-notif',
+    'inline-dm',
+    'moment',
+    'cmd-receipt',
+    'automod-hold',
+  ])
   function stampZebra(div, m, prevDiv) {
     if (_NO_ZEBRA_TYPES.has(m.type)) div.dataset.hsNz = '1'
     div.classList.toggle('hs-mc-zebra', zebraOfInsert(m, prevDiv))

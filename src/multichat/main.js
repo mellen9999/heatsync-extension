@@ -11824,15 +11824,33 @@
         _autoSwitching = false
       }
       _bouncedFromLive = to
-    } else if (shown && _bouncedFromLive && currentTab === _bouncedFromLive) {
-      _bouncedFromLive = ''
+    } else if (_bouncedFromLive && currentTab === _bouncedFromLive && getLiveChannel()) {
+      // the page has a channel again: follow it to its tab (the temp tab or the saved one covering it)
+      const to = liveTarget()
+      if (to === currentTab) return
+      _bouncedFromLive = to === 'live' ? '' : to
       _autoSwitching = true
       try {
-        switchTab('live')
+        switchTab(to)
       } finally {
         _autoSwitching = false
       }
     }
+  }
+
+  // Boot onto bootActiveTab(). A saved "live" means "the page's channel": where it lands on this page
+  // (feed on a channel-less page, the saved tab covering it) is the page's doing, not a pick, so it is
+  // not saved over "live" and the next channel page still opens that channel's chat.
+  function bootSwitch() {
+    const to = bootActiveTab()
+    const followsPage = _savedActiveTab === 'live' && to !== 'live'
+    _autoSwitching = followsPage
+    try {
+      switchTab(to)
+    } finally {
+      _autoSwitching = false
+    }
+    if (followsPage) _bouncedFromLive = to
   }
 
   /** Promote the temp tab to a saved channel tab (the existing resolve path does
@@ -15843,7 +15861,7 @@
         if (mcSignal?.aborted) return
         _runOverlayMountPass(label || 'waitForMount', () => {
           ensureUIElements()
-          switchTab(bootActiveTab())
+          bootSwitch()
           startLayoutWatcher()
         })
       }
@@ -15880,7 +15898,7 @@
       // observer in getOrCreateHsContainer + the SPA nav handler.
       _runOverlayMountPass('yt body-mount', () => {
         ensureUIElements()
-        switchTab(bootActiveTab())
+        bootSwitch()
         startLayoutWatcher()
       })
       // YT computes grid items-per-row + #primary widths from window-keyed
@@ -15903,7 +15921,7 @@
       } else if (document.body.classList.contains('hs-popout')) {
         _runOverlayMountPass('kick popout body-mount', () => {
           ensureUIElements()
-          switchTab(bootActiveTab())
+          bootSwitch()
           startLayoutWatcher()
         })
       } else {
@@ -15940,7 +15958,7 @@
         log('Twitch non-channel page — body-mount overlay')
         _runOverlayMountPass('twitch non-channel body-mount', () => {
           ensureUIElements()
-          switchTab(bootActiveTab())
+          bootSwitch()
           startLayoutWatcher()
         })
         return true
@@ -15952,7 +15970,7 @@
         _runOverlayMountPass('twitch react hook', () => {
           patchChatRoomRender(chatRoom)
           ensureUIElements()
-          switchTab(bootActiveTab())
+          bootSwitch()
           startLayoutWatcher()
         })
         return true
@@ -15968,7 +15986,7 @@
         log('Using fallback DOM injection')
         _runOverlayMountPass('twitch fallback dom injection', () => {
           ensureUIElements()
-          switchTab(bootActiveTab())
+          bootSwitch()
           startLayoutWatcher()
         })
         return true

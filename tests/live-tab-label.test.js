@@ -65,8 +65,10 @@ function make(o = {}) {
     const ytHandleLiveUrl = (p) => 'https://www.youtube.com' + p
     const switchTab = (id) => { calls.switched.push([id, _autoSwitching]); currentTab = id }
     const resolveLiveCandidateToTab = async (c) => { calls.resolved.push(c) }
+    const _savedActiveTab = env.saved ?? 'live'
+    const bootActiveTab = () => env.boot
     ${block}
-    return { liveCoverId, liveTabShown, liveTarget, syncLiveTab, keepLiveTab, updateLiveTabLabel,
+    return { liveCoverId, liveTabShown, liveTarget, syncLiveTab, bootSwitch, keepLiveTab, updateLiveTabLabel,
       st: () => ({ currentTab, _bouncedFromLive, _autoSwitching }),
       go: (o) => { if ('page' in o) env.page = o.page; if ('channels' in o) env.channels = o.channels; if ('tab' in o) currentTab = o.tab } }
   `,
@@ -192,6 +194,37 @@ describe('sync (auto moves are not persisted, and are handed back)', () => {
     const { f, calls } = make({ armed: false, page: null })
     f.syncLiveTab()
     expect(calls.switched).toEqual([])
+  })
+})
+
+describe('boot', () => {
+  test('a saved "live" landing elsewhere is not saved over, and follows the page to its tab', () => {
+    const { f, calls } = make({
+      page: null,
+      tab: 'feed',
+      boot: 'feed',
+      channels: [{ id: 'hasanabi', twitch: 'hasanabi' }],
+    })
+    f.bootSwitch()
+    expect(calls.switched).toEqual([['feed', true]])
+    expect(f.st()._autoSwitching).toBe(false)
+    f.go({ page: 'hasanabi' })
+    f.syncLiveTab()
+    expect(calls.switched[1]).toEqual(['hasanabi', true])
+    f.go({ page: 'caedrel' })
+    f.syncLiveTab()
+    expect(calls.switched[2]).toEqual(['live', true])
+  })
+  test('a picked tab boots as a pick (persisted) and is never pulled away', () => {
+    const { f, calls } = make({ saved: 'xqc', boot: 'xqc', tab: 'feed', channels: [{ id: 'xqc', twitch: 'xqc' }] })
+    f.bootSwitch()
+    expect(calls.switched).toEqual([['xqc', false]])
+    f.syncLiveTab()
+    expect(calls.switched.length).toBe(1)
+  })
+  test('every boot goes through bootSwitch', () => {
+    expect(main).not.toContain('switchTab(bootActiveTab())')
+    expect(main.match(/bootSwitch\(\)/g).length).toBeGreaterThan(5)
   })
 })
 

@@ -22,6 +22,11 @@
 // (native colour is the paid perk) — the picked cache is only read for
 // kick_/yt_ ids.
 //
+// A streamer on a went-live row (o.exact) is looked up on the line's OWN
+// platform only: a kick streamer takes the kick id and the kick colour (seen in
+// kick chat, else the kick profile lookup the hover card uses), never the
+// same-named twitch login's.
+//
 // PRECEDENCE: heatsync paint > 7TV paint (twitch ids only) > flat colour.
 //
 // A registered name carries: data-hs-nuid (paint id), data-hs-nplat (platform
@@ -65,6 +70,15 @@ function hsNameQueue(uid, platform) {
   else queuePaintLookup(uid)
 }
 
+/** A colour already known for a twitch login (chat, or an earlier profile lookup), or ''. */
+function hsNameHeardColour(login) {
+  return (
+    (typeof knownColors !== 'undefined' && knownColors.get(login)) ||
+    (typeof _hsUserColorCache !== 'undefined' && _hsUserColorCache.get(login)) ||
+    ''
+  )
+}
+
 /** A caller's colour as undefined (unknown), null (server says none) or a hex. */
 function hsNameColourIn(c) {
   return c ? c : c === null ? null : undefined
@@ -82,6 +96,13 @@ function hsNameColour(o) {
     const heard =
       (typeof knownColors !== 'undefined' && knownColors.get(login)) ||
       (typeof _hsUserColorCache !== 'undefined' && _hsUserColorCache.get(login))
+    if (heard) return sanitizeColor(heard)
+  }
+  if (login && plat === 'kick') {
+    // heard in kick chat, else the kick profile lookup (never a twitch login's)
+    const heard =
+      (typeof platSeenColors !== 'undefined' && platSeenColors.get(`kick:${login}`)) ||
+      _hsKickProfile.get(login)?.colour
     if (heard) return sanitizeColor(heard)
   }
   if (o.uid && !hsNameIsTwitchSpace(o.uid)) {
@@ -109,7 +130,7 @@ function hsNameParts(o) {
   const colourIn = hsNameColourIn(o.colour)
   let uid = hsNameUid(o.userId, platform)
   let plat = platform
-  if (!uid && login) {
+  if (!uid && login && !o.exact) {
     // no id on the row: borrow the twitch id chat resolved for this very name
     uid = hsNameKnownTwitchUid(login, platform)
     if (uid) plat = 'twitch'
@@ -117,8 +138,14 @@ function hsNameParts(o) {
   if (uid) {
     hsNameQueue(uid, plat)
     if (colourIn === undefined && !hsNameIsTwitchSpace(uid)) queueNameColorLookup(uid)
-  } else if (o.resolve && login) {
-    hsNameResolveLogin(login)
+  }
+  if (o.resolve && login) {
+    if (platform === 'kick') {
+      // the kick id and colour, from kick's own profile
+      if (!uid || colourIn === undefined) hsNameResolveKick(login)
+    } else if (!uid || (colourIn === undefined && !hsNameHeardColour(login))) {
+      hsNameResolveLogin(login)
+    }
   }
   const colour = hsNameColour({ colour: colourIn, platform, login, uid, name })
   const hs = uid ? hsPaintRender(uid, name) : null
@@ -231,6 +258,55 @@ function hsNameSweepLogin(lower) {
   }
 }
 
+// ── kick streamers: the kick id + colour, from kick's own profile ───────────
+// login -> { uid: 'kick_<n>' | '', colour } — what the hover card's profile
+// lookup (resolveIdentity with platform kick, then kick's public user record)
+// says. Bounded; a miss is cached too so a row repaint never re-asks.
+const _hsKickProfile = new Map()
+const _hsKickPending = new Set()
+const HS_KICK_PROFILE_MAX = 500
+
+function hsNameResolveKick(login) {
+  if (!login || _hsKickProfile.has(login) || _hsKickPending.has(login)) return
+  if (typeof resolveIdentity !== 'function') return
+  _hsKickPending.add(login)
+  ;(async () => {
+    let uid = ''
+    let colour = ''
+    const r = await resolveIdentity(login, { platform: 'kick' }).catch(() => null)
+    const prof = r?.ok ? r.profile : null
+    if (prof) {
+      uid = hsNameUid(prof.kick_user_id ?? prof.kick_id, 'kick')
+      if (!uid && /^kick_\d+$/.test(String(prof.id || ''))) uid = String(prof.id)
+      colour = String(prof.color || prof.user_color || prof.userColor || '')
+    }
+    if (!uid && typeof pcFetchKickEnrich === 'function') {
+      const k = await pcFetchKickEnrich(login).catch(() => null)
+      if (k?.kick_user_id != null) uid = hsNameUid(String(k.kick_user_id), 'kick')
+    }
+    if (_hsKickProfile.size >= HS_KICK_PROFILE_MAX) _hsKickProfile.delete(_hsKickProfile.keys().next().value)
+    _hsKickProfile.set(login, { uid, colour })
+  })()
+    .then(() => hsNameSweepKick(login))
+    .catch(() => {})
+    .finally(() => _hsKickPending.delete(login))
+}
+
+function hsNameSweepKick(login) {
+  if (typeof document === 'undefined') return
+  const uid = _hsKickProfile.get(login)?.uid || ''
+  for (const el of document.querySelectorAll(`[data-hs-nlogin="${CSS.escape(login)}"]`)) {
+    if (el.dataset.hsNsrc !== 'kick') continue
+    if (uid && !el.dataset.hsNuid) {
+      el.dataset.hsNuid = uid
+      el.dataset.hsNplat = 'kick'
+      hsNameQueue(uid, 'kick')
+      queueNameColorLookup(uid)
+    }
+    hsNameRefresh(el)
+  }
+}
+
 // ── user cards (peek tooltip + profile panel) ───────────────────────────────
 // card-render.js is pure and mirrored from the site, so it only stamps WHO the
 // name is (data-paint-uid + data-platform + data-paint-pending) and the colour
@@ -282,6 +358,7 @@ export {
   hsNameColour,
   hsNameParts,
   hsNameRefresh,
+  hsNameResolveKick,
   hsNameResolveLogin,
   hsNameSweep,
   hsNameUid,

@@ -453,6 +453,7 @@
          where it abuts a true-black row; the 3px stripe plus saturated text
          already carry type identity at full contrast. */
       color: var(--evt);
+      font-style: normal;
     }
     .hs-mc-stream-event .hs-mc-user { text-decoration: none; font-weight: bold; }
     .hs-mc-stream-event .hs-mc-user:hover { text-decoration: underline; }

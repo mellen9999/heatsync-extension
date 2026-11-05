@@ -965,6 +965,7 @@ class IRC extends ChatClient {
       // Merge AFTER staging — anything that arrived while we yielded (or
       // during the sendMessage await) keeps its sorted place among the history.
       const grafted = mergeIntoRing(buf, staged, true)
+      historyWentLive(ch).catch(() => {})
       try {
         _dropAllTabCaches()
       } catch {}
@@ -1091,6 +1092,7 @@ class IRC extends ChatClient {
           hydrate.push(m)
         }
         mergeIntoRing(buf, hydrate)
+        historyWentLive(ch).catch(() => {})
         log('BG history hydrated:', resp.msgs.length, 'msgs for', ch)
         try {
           _dropAllTabCaches()

@@ -12,6 +12,7 @@ function make() {
   const fn = new Function(
     'knownUserIds',
     'knownColors',
+    'platSeenColors',
     '_nativeTwitchColor',
     '_isUnsetWhite',
     'currentUsername',
@@ -21,6 +22,7 @@ function make() {
     `${MAIN.slice(a, b)}; return setKnownColor`,
   )(
     knownUserIds,
+    new Map(),
     new Map(),
     new Set(),
     () => false,

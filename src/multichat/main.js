@@ -1482,7 +1482,15 @@
   const _nativeTwitchColor = new Set()
   // A twitch line with no color tag arrives as white; that is "unset", not a pick.
   const _isUnsetWhite = (c) => /^#f{3}(f{3})?$/i.test(String(c))
+  // 'platform:login' -> the colour that login was last seen wearing in THAT
+  // platform's chat. knownColors is one slot per login, so a kick "alice" and a
+  // twitch "alice" overwrite each other there; a stream-event row asks this one.
+  const platSeenColors = new Map()
   function setKnownColor(user, color, userId, platform, native = platform === 'twitch' && !_isUnsetWhite(color)) {
+    if ((platform === 'kick' || platform === 'twitch') && user && color && !_isUnsetWhite(color)) {
+      platSeenColors.set(`${platform}:${user}`, color)
+      if (platSeenColors.size > 2000) platSeenColors.delete(platSeenColors.keys().next().value)
+    }
     // Your own name is your twitch color everywhere. A kick/pick/hash color for the
     // same login (your kick account, say) must not stand in for it while twitch's
     // is still unheard — it rendered your @mentions in the wrong color until you spoke.
@@ -3461,6 +3469,64 @@
 
   // Queued storage writer — prevents concurrent read-modify-write races
   let saveQueue = Promise.resolve()
+
+  // ── went live, at the stream's start ──────────────────────────────────────
+  // A channel already live when its chat history loads has no realtime "went
+  // live" row (the ws holds back its first 90s, and a go-live before we ran never
+  // came). Twitch's public web gql (the /status query) says since when; the row
+  // goes in at that time, only if the loaded history reaches back that far. Gated
+  // on the online toggle; no notification, no tab highlight; its id is stable per
+  // stream, so a second answer or a history re-pull never doubles it. The row
+  // takes the same colour and paint chain as any stream line (userId = the
+  // channel's own twitch id, chatColor seeds the profile-lookup colour).
+  const wentLiveAsk = new Map() // login -> { at, p }
+  const WENT_LIVE_ASK_TTL = 5 * 60 * 1000
+  function askStreamStart(ch) {
+    const hit = wentLiveAsk.get(ch)
+    if (hit && Date.now() - hit.at < WENT_LIVE_ASK_TTL) return hit.p
+    const p = twitchGql(`{ user(login:"${ch}") { id chatColor stream { type createdAt game { name } } } }`)
+      .then((r) => {
+        const u = r?.data?.user
+        const st = u?.stream
+        if (!st || st.type !== 'live') return null
+        const start = Date.parse(st.createdAt)
+        if (!Number.isFinite(start)) return null
+        if (u.chatColor && typeof _hsUserColorCache !== 'undefined' && !_hsUserColorCache.get(ch)) {
+          _hsUserColorCache.set(ch, String(u.chatColor))
+        }
+        return { start, game: st.game?.name || '', userId: u.id }
+      })
+      .catch(() => null)
+    wentLiveAsk.set(ch, { at: Date.now(), p })
+    if (wentLiveAsk.size > 100) wentLiveAsk.delete(wentLiveAsk.keys().next().value)
+    return p
+  }
+
+  async function historyWentLive(channel) {
+    const ch = String(channel || '').toLowerCase()
+    if (!hermesToggles?.online || !/^[a-z0-9_]{2,40}$/.test(ch)) return
+    const info = await askStreamStart(ch)
+    if (!info) return
+    const buf = irc?.channels?.get(ch)
+    if (!buf) return
+    const all = buf.getAll()
+    const oldest = all.find((m) => m.type !== 'stream-event')?.time
+    const evt = historyWentLiveEvent(ch, info, oldest)
+    if (!evt) return
+    // already there: this row, or the realtime one for the same go-live
+    const dupe = all.some(
+      (m) =>
+        m.type === 'stream-event' &&
+        (m.id === evt.id ||
+          (m.eventClass?.includes('event-online') && m.channel === ch && (m.time || 0) >= evt.time - 120000)),
+    )
+    if (dupe) return
+    buf.insertOrdered(evt)
+    try {
+      _dropAllTabCaches()
+    } catch {}
+    if (currentTab === ch || (currentTab === 'live' && getLiveChannel() === ch)) scheduleRenderMessages()
+  }
 
   async function saveStreamEvent(evt) {
     saveQueue = saveQueue.then(async () => {
@@ -7785,46 +7851,26 @@
       // For redeems, the actor is the redeemer (m.actor). For other events the channel is the actor.
       const ch = m.actor || m.channel || ''
       const chLc = ch.toLowerCase()
-      // Look up color: event data → color map → profile cache → IRC buffers → async fetch.
-      // YT events already carry their own m.color from the DOM scrape — the
-      // Twitch-profile-keyed lookups below would be meaningless (and could even
-      // false-match a same-named Twitch user), so skip them entirely for YT.
+      // The streamer's colour, first answer wins: the frame's own colour (m.color:
+      // the server's helix colour, or a YT row's DOM scrape) → follow:colors
+      // (twitch logins) → the colour seen in that platform's chat → a profile
+      // lookup on that platform → the palette. The last three live in
+      // hsNameParts, which restyles the row when a later one lands. A kick line
+      // never reads a twitch login's colour, id or paint.
       let userColor = m.color || ''
-      if (!isYtEvent) {
-        if (!userColor) userColor = streamColorMap.get(chLc) || ''
-        if (!userColor) {
-          const cached = _profileCache.get(chLc)
-          if (cached?.profile?.twitch_color) userColor = cached.profile.twitch_color
-        }
-        if (!userColor && chLc && irc?.channels) {
-          for (const [, buf] of irc.channels) {
-            const msgs = buf.getAll()
-            // Bound the scan: a stream-event fires rarely but this used to walk
-            // EVERY message of EVERY channel (O(channels×msgs)) — a burst on a busy
-            // multi-channel setup scanned tens of thousands. A color from >300 msgs
-            // ago is stale; cap the lookback so the fallback stays cheap.
-            const floor = Math.max(0, msgs.length - 300)
-            for (let i = msgs.length - 1; i >= floor; i--) {
-              if (msgs[i].user?.toLowerCase() === chLc) {
-                userColor = msgs[i].color || ''
-                break
-              }
-            }
-            if (userColor) break
-          }
-        }
-      }
-      // Build structured HTML: [username] ◆ action game
-      // No colour found above → the shared name-style fallback (chat-heard colour
-      // or the palette), plus the heatsync/7TV paint when chat knows the twitch id.
-      // A streamer chat hasn't heard yet is looked up (twitch colour + id), like a
-      // card name: the row repaints, and takes its badges, when the answer lands.
+      if (!userColor && evtPlat === 'twitch') userColor = streamColorMap.get(chLc) || ''
+      // The streamer's id on this line's platform (the frame's userId, validated)
+      // seats the paint and badges at once, before any lookup. A redeem row
+      // names the redeemer, not the channel, so the channel's id is not theirs.
+      const evtUid = m.actor ? '' : streamEventUserId(evtPlat, m.userId)
       const evt = hsNameParts({
         name: ch,
-        platform: isYtEvent ? 'youtube' : 'twitch',
+        userId: evtUid,
+        platform: evtPlat,
         colour: userColor,
         login: isYtEvent ? '' : chLc,
         resolve: !isYtEvent,
+        exact: true,
       })
       // the badges keyed to the streamer's twitch id, before the name like a chat row
       const evtBadges = evtPlat === 'twitch' ? hsNameBadges(evt) : ''
@@ -7875,21 +7921,6 @@
         div.addEventListener('click', (e) => {
           if (e.target.closest('a, .hs-mc-user, .hs-mc-emote')) return
           window.open(streamEventUrl(evtPlat, ch), '_blank', 'noopener,noreferrer')
-        })
-      }
-      // Async fetch color if not cached — Twitch profile lookup only; YT color
-      // already came from m.color above.
-      if (!isYtEvent && !userColor && chLc) {
-        apiFetch(`/api/profile/${encodeURIComponent(chLc)}`).then((resp) => {
-          if (resp?.ok && resp.data?.profile) {
-            const profile = resp.data.profile
-            const color = profile.twitch_color
-            if (color) {
-              const el = div.querySelector('.hs-evt-user')
-              if (el) el.style.color = sanitizeColor(color)
-            }
-            _profileCache.set(chLc, { profile, ts: Date.now() })
-          }
         })
       }
       return div
@@ -15253,6 +15284,8 @@
             channel,
             actor,
             time: Date.now(),
+            color: msg.color || '',
+            userId: streamEventUserId(msg.platform, msg.userId),
             ...eventPlatformField(msg.platform),
           }
 
@@ -15267,7 +15300,7 @@
               : null
           if (liveBuffer) {
             const existing = liveBuffer.getAll()
-            if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
+            if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text && !m.histWentLive)) {
               liveBuffer.push(evt)
               saveStreamEvent(evt)
             }
@@ -15278,7 +15311,7 @@
             const chBuffer = irc?.channels?.get(channel) || kickChat?.channels?.get(channel)
             if (chBuffer) {
               const existing = chBuffer.getAll()
-              if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
+              if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text && !m.histWentLive)) {
                 chBuffer.push(evt)
                 if (!liveBuffer) saveStreamEvent(evt)
               }
@@ -15417,7 +15450,7 @@
         const chBuffer = irc?.channels?.get(channel)
         if (chBuffer) {
           const existing = chBuffer.getAll()
-          if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
+          if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text && !m.histWentLive)) {
             chBuffer.push(evt)
             saveStreamEvent(evt)
           }
@@ -15427,7 +15460,7 @@
           const liveBuffer = irc?.channels?.get(liveChannel)
           if (liveBuffer && liveBuffer !== chBuffer) {
             const existing = liveBuffer.getAll()
-            if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
+            if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text && !m.histWentLive)) {
               liveBuffer.push(evt)
             }
           }
@@ -15539,6 +15572,7 @@
             channel,
             time: Date.now(),
             color: msg.color || '',
+            userId: streamEventUserId(msg.platform, msg.userId),
             ...eventPlatformField(msg.platform),
           }
 
@@ -15547,7 +15581,7 @@
           const liveBuffer = liveChannel ? irc?.channels?.get(liveChannel) : null
           if (liveBuffer) {
             const existing = liveBuffer.getAll()
-            if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
+            if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text && !m.histWentLive)) {
               liveBuffer.push(evt)
               saveStreamEvent(evt)
             }
@@ -15558,7 +15592,7 @@
             const chBuffer = irc?.channels?.get(channel)
             if (chBuffer) {
               const existing = chBuffer.getAll()
-              if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text)) {
+              if (!existing.some((m) => m.type === 'stream-event' && m.text === evt.text && !m.histWentLive)) {
                 chBuffer.push(evt)
                 if (!liveBuffer) saveStreamEvent(evt)
               }
@@ -15586,7 +15620,8 @@
             ]
             for (const buf of tabBufs) {
               if (!buf || buf === liveBuffer) continue
-              if (!buf.getAll().some((m) => m.type === 'stream-event' && m.text === evt.text)) buf.push(evt)
+              if (!buf.getAll().some((m) => m.type === 'stream-event' && m.text === evt.text && !m.histWentLive))
+                buf.push(evt)
             }
           }
           if (!appendMessage(evt, activeTab)) renderMessages(activeTab)
@@ -15651,6 +15686,7 @@
           channel,
           time: e.time,
           color: e.color || '',
+          userId: streamEventUserId(e.platform, e.userId),
           ...eventPlatformField(e.platform),
         }
         builtEvents.push(evt)

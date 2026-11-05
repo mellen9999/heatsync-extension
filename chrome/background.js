@@ -2644,10 +2644,23 @@ async function pollFollowedLive() {
   }
 }
 
+// A stream frame's streamer id and chat colour, bounded: the page validates the
+// shape per platform (streamEventUserId), this only keeps a hostile frame from
+// stashing a huge string in the cache that rides every broadcast.
+function streamFrameWho(m) {
+  const id = m?.userId
+  const color = m?.color
+  return {
+    userId: (typeof id === 'string' || typeof id === 'number') && String(id).length <= 40 ? String(id) : '',
+    color: typeof color === 'string' && color.length <= 32 ? color : '',
+  }
+}
+
 // An inline chat line for a go-live the poll found, shaped like the Twitch
 // push's follow_stream_event so the page handles both the same way. `fresh`:
 // this is a vetted off->on transition (the cold-start and throttle gates ran).
 function announceWentLive(username, platform, stream) {
+  const who = streamFrameWho(stream)
   const game = String(stream?.game || stream?.gameName || stream?.game_name || stream?.category || '')
   const title = String(stream?.title || '')
   if (!cachedFollowHistory) cachedFollowHistory = []
@@ -2659,7 +2672,8 @@ function announceWentLive(username, platform, stream) {
     title,
     prevGame: '',
     prevTitle: '',
-    color: '',
+    color: who.color,
+    userId: who.userId,
     time: Date.now(),
   })
   if (cachedFollowHistory.length > 200) cachedFollowHistory.splice(0, cachedFollowHistory.length - 200)
@@ -2672,7 +2686,8 @@ function announceWentLive(username, platform, stream) {
     title,
     prevGame: '',
     prevTitle: '',
-    color: '',
+    color: who.color,
+    userId: who.userId,
     fresh: true,
   })
 }
@@ -2718,6 +2733,7 @@ function handleFollowStreamEvent(msg) {
     }
   }
 
+  const who = streamFrameWho(msg)
   const platform = String(msg.platform || '').toLowerCase()
   const channel = String(msg.channel || '').toLowerCase()
   const liveKey = `${platform}:${channel}`
@@ -2772,7 +2788,8 @@ function handleFollowStreamEvent(msg) {
     title: msg.title || '',
     prevGame: msg.prevGame || '',
     prevTitle: msg.prevTitle || '',
-    color: msg.color || '',
+    color: who.color,
+    userId: who.userId,
     time: now,
   })
   if (cachedFollowHistory.length > 200) cachedFollowHistory.splice(0, cachedFollowHistory.length - 200)
@@ -2785,7 +2802,8 @@ function handleFollowStreamEvent(msg) {
     title: msg.title || '',
     prevGame: msg.prevGame || '',
     prevTitle: msg.prevTitle || '',
-    color: msg.color || '',
+    color: who.color,
+    userId: who.userId,
     // An online event only gets this far when lastSeenLive did not already
     // know the channel (the early return above): a real off->on transition.
     // The page cannot work that out itself — the snapshot broadcast just above
@@ -7613,6 +7631,7 @@ function handleWSMessage(msg) {
           prevGame: msg.prevGame || '',
           prevTitle: msg.prevTitle || '',
           isLive: msg.isLive,
+          ...streamFrameWho(msg),
         })
         break
       }

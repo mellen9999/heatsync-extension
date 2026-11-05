@@ -1070,7 +1070,7 @@ const SETTINGS = [
       {
         value: 'online',
         default: true,
-        color: '#00ff00',
+        color: '#ff0000',
         labelKey: 'mc_settings_evt_online',
         tipKey: 'mc_settings_evt_online_desc',
       },
@@ -1084,7 +1084,7 @@ const SETTINGS = [
       {
         value: 'gameSwitch',
         default: true,
-        color: '#ff00ff',
+        color: '#ffff00',
         labelKey: 'mc_settings_evt_game_switch',
         tipKey: 'mc_settings_evt_game_switch_desc',
       },

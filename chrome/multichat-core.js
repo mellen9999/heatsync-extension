@@ -15431,7 +15431,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '43ae91b47d9c' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'dfab519b85ce' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -60979,6 +60979,17 @@ function _hsmFlush() {
   })
 }
 
+/** your account changed (flair set or cleared on any device): every held flair is asked again, and a row
+ * whose answer changed (yours) repaints when it lands */
+function hsMarksForgetSelf() {
+  const s = _hsmSets.flair
+  for (const [k, e] of s.map) {
+    e.at = 0
+    s.q.add(k)
+  }
+  _hsmFlush()
+}
+
 /** the server's heat push: new scores for logins we hold (a push never grows the cache) */
 function hsMarksOnHeatPush(updates) {
   if (!Array.isArray(updates)) return
@@ -61041,6 +61052,7 @@ function hsMarksRepaint(keys) {
 
 cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
   if (msg?.type === 'heat_batch_update') hsMarksOnHeatPush(msg.updates)
+  else if (msg?.type === 'account_changed') hsMarksForgetSelf()
 })
 
 

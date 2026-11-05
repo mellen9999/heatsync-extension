@@ -31,6 +31,22 @@ function resolveSendTargets(sendTargets, linkedPlatforms) {
 }
 
 /**
+ * The composer's send tag: which platforms a send from this channel reaches,
+ * in T, K, Y order. Built on resolveSendTargets (the same call sendMessage
+ * makes) so the tag can never disagree with where the send goes. Fewer than
+ * two linked platforms → [] (nothing to disambiguate, no tag).
+ * @param {{twitch?: boolean, kick?: boolean, youtube?: boolean}|null|undefined} sendTargets
+ * @param {{twitch?: boolean, kick?: boolean, youtube?: boolean}} linkedPlatforms
+ * @returns {Array<'twitch'|'kick'|'youtube'>}
+ */
+function sendTagPlatforms(sendTargets, linkedPlatforms) {
+  const all = ['twitch', 'kick', 'youtube']
+  if (all.filter((p) => linkedPlatforms?.[p]).length < 2) return []
+  const resolved = resolveSendTargets(sendTargets, linkedPlatforms)
+  return all.filter((p) => resolved[p])
+}
+
+/**
  * Compute the next sendTargets object after toggling one platform on/off.
  * Seeds from "all currently linked platforms" the first time a channel's
  * sendTargets is touched, so flipping one platform never implicitly turns

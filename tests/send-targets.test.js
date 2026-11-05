@@ -18,7 +18,7 @@ import { join } from 'node:path'
 function loadSendTargets() {
   const src = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'send-targets.js'), 'utf8')
   const fn = new Function(
-    `${src}; return { resolveSendTargets, nextSendTargets, extractYoutubeVideoId, youtubeSendErrorMessage, ytReplyText, composerCharLimit }`,
+    `${src}; return { resolveSendTargets, nextSendTargets, extractYoutubeVideoId, youtubeSendErrorMessage, ytReplyText, composerCharLimit, sendTagPlatforms }`,
   )
   return fn()
 }
@@ -30,6 +30,7 @@ const {
   youtubeSendErrorMessage,
   ytReplyText,
   composerCharLimit,
+  sendTagPlatforms,
 } = loadSendTargets()
 
 const enMessages = JSON.parse(
@@ -229,4 +230,41 @@ test('composerCharLimit: youtube leg caps at 200, twitch/kick and unknown stay 5
   expect(composerCharLimit({ twitch: true, youtube: true })).toBe(200)
   expect(composerCharLimit({ twitch: true, kick: true })).toBe(500)
   expect(composerCharLimit(null)).toBe(500)
+})
+
+test('sendTagPlatforms: every linked combo x sendTargets, T K Y order', () => {
+  const names = ['twitch', 'kick', 'youtube']
+  for (let m = 0; m < 8; m++) {
+    const linked = Object.fromEntries(names.map((p, i) => [p, !!(m & (1 << i))]))
+    const on = names.filter((p) => linked[p])
+    // absent / null / empty sendTargets: all linked on (none if <2 linked)
+    for (const st of [undefined, null, {}]) {
+      expect(sendTagPlatforms(st, linked)).toEqual(on.length < 2 ? [] : on)
+    }
+    // every on/off assignment, incl. targets for unlinked platforms
+    for (let s = 0; s < 8; s++) {
+      const st = Object.fromEntries(names.map((p, i) => [p, !!(s & (1 << i))]))
+      const got = sendTagPlatforms(st, linked)
+      const exp = on.length < 2 ? [] : resolveSendTargets(st, linked)
+      expect(got).toEqual(on.length < 2 ? [] : names.filter((p) => exp[p]))
+      for (const p of got) expect(linked[p]).toBe(true)
+      expect(got.length).toBeGreaterThan(on.length < 2 ? -1 : 0)
+    }
+  }
+})
+
+test('sendTagPlatforms: concrete cases', () => {
+  const tk = { twitch: true, kick: true }
+  expect(sendTagPlatforms(undefined, { twitch: true, kick: true, youtube: true })).toEqual([
+    'twitch',
+    'kick',
+    'youtube',
+  ])
+  expect(sendTagPlatforms({ kick: false }, { twitch: true, kick: true, youtube: true })).toEqual(['twitch', 'youtube'])
+  expect(sendTagPlatforms({ youtube: true }, tk)).toEqual(['twitch', 'kick'])
+  expect(sendTagPlatforms({ twitch: false }, tk)).toEqual(['kick'])
+  expect(sendTagPlatforms({ twitch: false, kick: false }, tk)).toEqual(['twitch', 'kick'])
+  expect(sendTagPlatforms(undefined, { twitch: true })).toEqual([])
+  expect(sendTagPlatforms(undefined, {})).toEqual([])
+  expect(sendTagPlatforms(undefined, null)).toEqual([])
 })

@@ -1183,6 +1183,7 @@ function createInputBar() {
     : `<input type="text" id="hs-mc-input" placeholder="${t('mc_input_send_message')}" autocomplete="off" spellcheck="false">`
 
   bar.innerHTML = `
+    <span id="hs-mc-send-tag" hidden></span>
     ${inputHtml}
     <input type="file" id="hs-mc-attach-input" accept="image/*,video/*" hidden>
     <button id="hs-mc-attach-btn" type="button" title="${t('mc_input_attach')}" aria-label="${t('mc_input_attach')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><circle cx="8.5" cy="8.5" r="1.6" fill="currentColor" stroke="none"></circle><path d="M21 15l-5-5L4 21"></path></svg></button>
@@ -3421,7 +3422,26 @@ function _composerNeedsLogin() {
   return composerNeedsLogin({ hsAuth: hsAuthToken, hostSession })
 }
 
+// "[TKY] " before the input on a merged channel tab: which platforms a send
+// reaches. Letters come from sendTagPlatforms (resolveSendTargets underneath,
+// same as sendMessage). Channel tabs only; nothing elsewhere. DOM setters only.
+function updateSendTag() {
+  const tag = document.getElementById('hs-mc-send-tag')
+  if (!tag) return
+  const ch = quoteState ? null : config.channels.find((c) => c.id === currentTab)
+  const plats = ch
+    ? sendTagPlatforms(ch.sendTargets, { twitch: !!ch.twitch, kick: !!ch.kick, youtube: !!ch.youtube })
+    : []
+  tag.textContent = ''
+  tag.hidden = !plats.length
+  if (!plats.length) return
+  const span = (text, cls) => Object.assign(document.createElement('span'), { textContent: text, className: cls || '' })
+  tag.append('[', ...plats.map((p) => span(p[0].toUpperCase(), `hs-mc-tag-${p}`)), ']')
+  tag.title = t('mc_input_send_tag_title', [plats.join(' + ')])
+}
+
 function updateInputPlaceholder() {
+  updateSendTag()
   const input = document.getElementById('hs-mc-input')
   if (!input) return
 

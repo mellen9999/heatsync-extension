@@ -929,6 +929,14 @@
   "mc_input_post_heatsync": {
     "message": "posta su heatsync..."
   },
+  "mc_input_send_tag_title": {
+    "message": "sends to $TARGETS$",
+    "placeholders": {
+      "targets": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_input_send_channel": {
     "message": "invia a #$CHANNEL$",
     "placeholders": {

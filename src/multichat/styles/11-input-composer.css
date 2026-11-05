@@ -328,6 +328,11 @@
     /* n/limit — only within 10% of the cap; colored text, no fill */
     #hs-mc-charcount { flex: 0 0 auto; align-self: center; padding: 0 6px; font-size: 13px; color: #ff0; }
     #hs-mc-charcount[hidden] { display: none; }
+    #hs-mc-send-tag { flex: 0 0 auto; padding-right: 6px; font-weight: 700; font-size: 13px; font-family: inherit; color: #fff; white-space: pre; }
+    #hs-mc-send-tag[hidden] { display: none; }
+    #hs-mc-send-tag .hs-mc-tag-twitch { color: var(--hs-plat-twitch); }
+    #hs-mc-send-tag .hs-mc-tag-kick { color: var(--hs-plat-kick); }
+    #hs-mc-send-tag .hs-mc-tag-youtube { color: var(--hs-plat-youtube); }
     #hs-mc-charcount[data-level="over"] { color: #f00; }
     #hs-mc-input.over-limit {
       /* text color handled by highlight overlay */

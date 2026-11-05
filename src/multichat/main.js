@@ -12224,6 +12224,7 @@
 
   function saveConfig() {
     _channelLookup = null
+    if (typeof updateSendTag === 'function') updateSendTag()
     // Notify any open UI (profile card, etc.) that channel list may have changed
     try {
       document.dispatchEvent(new CustomEvent('hs-channels-changed'))

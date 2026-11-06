@@ -85,6 +85,13 @@
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled { cursor: not-allowed; }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled:hover { background: none; color: inherit; }
     .hs-mc-ctx .hs-mc-em-sep { height: 1px; background: #000000; margin: 2px 0; }
+    /* Page zoom narrows the css viewport, and 20-card.css hides the hover peek
+     * at max-width:768px as a phone rule. A mouse at 200% is not a phone: keep
+     * the peek wherever there is no touch pointer. (20-card.css is a byte copy
+     * of the site's, so the fix lives here, with more specificity.) */
+    @media (max-width: 768px) and (not (pointer: coarse)) {
+      .hs-card.hs-card-peek { display: flex; }
+    }
     /* #hs-user-tooltip is a bare positioning/show-hide shell now — the actual
      * card (src/lib/card-render.js's .hs-card-peek output, appended as its
      * child) carries its OWN position:fixed + all visual chrome from the

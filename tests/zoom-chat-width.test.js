@@ -58,3 +58,10 @@ describe('wiring', () => {
     expect(pos).toContain('scheduleTwitchChatRefit()')
   })
 })
+
+describe('hover card under page zoom', () => {
+  test('the narrow-viewport peek hide is only for touch: a zoomed mouse keeps its hover card', () => {
+    const css = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'styles', '09-tooltips-menus.css'), 'utf8')
+    expect(css).toMatch(/@media \(max-width: 768px\) and \(not \(pointer: coarse\)\) \{\s*\.hs-card\.hs-card-peek \{ display: flex; \}/)
+  })
+})

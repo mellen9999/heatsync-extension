@@ -5543,7 +5543,6 @@
     // Highlight mentions of current user (FFZ-style red background on entire line)
     highlightUserMentions(messageElement, usernameElement, textElements)
 
-
     // Apply per-user color override (right-click on username sets color)
     if (_userColors.size && username) applyUserColorToMessage(messageElement, username)
 

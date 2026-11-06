@@ -733,7 +733,6 @@
     return !!slate && slate.getClientRects().length > 0
   }
 
-
   // Scoped emote wrapper query (avoids full-document scan).
   // Includes the reply-stack overlays — they're appended to <body>, not inside
   // #hs-mc-overlay, so without these roots the hover-highlight never lands on
@@ -3173,7 +3172,8 @@
         automodAllCaps: ui.automodAllCaps,
         muteKeywords: local.hs_mute_keywords,
         // pre-overflow installs still hold highlight words in the sync blob
-        keywordHighlights: typeof local.keyword_highlights === 'string' ? local.keyword_highlights : ui.keywordHighlights,
+        keywordHighlights:
+          typeof local.keyword_highlights === 'string' ? local.keyword_highlights : ui.keywordHighlights,
       })
       if (added.length) {
         let cur
@@ -4188,7 +4188,6 @@
 
   // Clickable links in chat messages (default on)
   let linksEnabled = true
-
 
   // Link preview tooltip on hover (default on)
   let linkPreviewsEnabled = true

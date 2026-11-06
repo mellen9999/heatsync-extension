@@ -1,9 +1,9 @@
 import { beforeEach, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
-import { compileFilterRules, evaluateFilterRules } from '../src/multichat/filter-rules.js'
-import { legacyFilterRules, mergeFilterRules } from '../src/multichat/filter-rules-legacy.js'
 import { SETTINGS } from '../src/lib/settings-schema.js'
 import { RETIRED_UI_KEYS } from '../src/lib/utils.js'
+import { compileFilterRules, evaluateFilterRules } from '../src/multichat/filter-rules.js'
+import { legacyFilterRules, mergeFilterRules } from '../src/multichat/filter-rules-legacy.js'
 
 // Four old text filters (automod patterns, automod all-caps, muted words,
 // highlight words) fold into chatFilterRules, once, on load. The engine is
@@ -57,7 +57,12 @@ test('highlight words highlight whole words in the mention colour', () => {
 })
 
 test('every rule is well-formed with a unique id', () => {
-  const rules = legacyFilterRules({ automodRegex: 'x', automodAllCaps: true, muteKeywords: 'y', keywordHighlights: 'z' })
+  const rules = legacyFilterRules({
+    automodRegex: 'x',
+    automodAllCaps: true,
+    muteKeywords: 'y',
+    keywordHighlights: 'z',
+  })
   expect(rules).toHaveLength(4)
   expect(new Set(rules.map((r) => r.id)).size).toBe(4)
   for (const r of rules) {

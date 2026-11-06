@@ -1529,7 +1529,6 @@ function renderSettingsTab() {
       return
     }
 
-
     // Section fold/unfold
     var foldTitle = e.target.closest('.hs-mc-settings-group-title[data-set-fold]')
     if (foldTitle) {
@@ -1580,7 +1579,6 @@ function renderSettingsTab() {
       }
       return
     }
-
 
     var defaultsBtn = e.target.closest('.hs-mc-defaults-btn')
     if (defaultsBtn) {

@@ -10,7 +10,13 @@ const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 
 test('the picker no longer writes settings at all', () => {
   const src = read('chrome/heatsync-button.js')
-  for (const s of ['renderSettings', 'saveExtensionSettings', 'storage.sync.set', 'ui_settings_rmw', 'heatsync-settings-btn'])
+  for (const s of [
+    'renderSettings',
+    'saveExtensionSettings',
+    'storage.sync.set',
+    'ui_settings_rmw',
+    'heatsync-settings-btn',
+  ])
     expect(src).not.toContain(s)
 })
 

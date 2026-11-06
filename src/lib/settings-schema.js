@@ -484,7 +484,6 @@ const SETTINGS = [
     applyOnLoad: true,
   },
 
-
   // ── display / density ─────────────────────────────────────────────────
   {
     key: 'messageDensity',
@@ -507,8 +506,6 @@ const SETTINGS = [
       { value: 'cozy', label: 'cozy', labelKey: 'lib_opt_cozy' },
     ],
   },
-
-
 
   // ── display / cosmetics (per-provider) ────────────────────────────────
   {
@@ -560,7 +557,6 @@ const SETTINGS = [
         ? ui.bttvBadges !== false && ui.ffzBadges !== false && ui.chatterinoBadges !== false
         : undefined,
   },
-
 
   {
     key: 'animateEmotes',
@@ -827,7 +823,6 @@ const SETTINGS = [
     alias: 'dimtimeouts',
     runtimeVar: 'dimTimeouts',
   },
-
 
   // ── chat / privacy ────────────────────────────────────────────────────
   {
@@ -1126,7 +1121,6 @@ const SETTINGS = [
     control: 'pill',
   },
 
-
   // ── mod / mod toolbar ─────────────────────────────────────────────────
   // Hover actions on chat rows when you mod the channel. Option tags are
   // the button glyphs (rendered orange, matching the toolbar itself);
@@ -1189,9 +1183,6 @@ const SETTINGS = [
     runtimeVar: 'modBanReasons',
     applyOnLoad: true,
   },
-
-
-
 
   // ── filters / content — per-viewer content-warning emote filters ──────
   // local bool + server PATCH with rollback; every category is hidden
@@ -1322,7 +1313,6 @@ const SETTINGS = [
     rerender: true,
   },
 
-
   // ── filters / rules — per-rule highlight/hide engine ─────────────────
   // Stored as a JSON string in chrome.storage.local (array can be large).
   // Rendered as a custom UI; control:'custom' suppresses the auto row.
@@ -1379,8 +1369,6 @@ const SETTINGS = [
     tipKey: 'mc_settings_channel_volume_desc',
     alias: 'volume memory channel remember',
   },
-
-
 
   {
     key: 'channelVolumeDefault',
@@ -1534,9 +1522,6 @@ const SETTINGS = [
       },
     ],
   },
-
-
-
 
   // ── system / state — ui state persisted via saveUiSetting, no settings
   // row (control:'custom' suppresses auto-row + search; 'state' section is

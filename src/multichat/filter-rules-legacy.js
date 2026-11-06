@@ -37,7 +37,13 @@ function legacyFilterRules(old) {
   const stamp = Date.now().toString(36)
   const out = []
   const add = (action, type, value, caseSensitive, color) => {
-    const r = { id: `lg${stamp}${out.length}`, enabled: true, action, scope: 'all', match: { type, value, caseSensitive } }
+    const r = {
+      id: `lg${stamp}${out.length}`,
+      enabled: true,
+      action,
+      scope: 'all',
+      match: { type, value, caseSensitive },
+    }
     if (color) r.color = color
     out.push(r)
   }

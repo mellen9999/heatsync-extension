@@ -1705,7 +1705,6 @@
     // Static: the picker's own settings panel is gone, and its compact-input +
     // mention-highlight tweaks were always on unless switched off there.
     function applyUiHidingSettings() {
-
       // Remove existing style (check both variable AND DOM in case of extension reload)
       if (uiHidingStyle) {
         uiHidingStyle.remove()
@@ -1751,24 +1750,21 @@
         // Ensure our fire button stays on far right
         rules.push('#heatsync-fire-button { order: 999 !important; margin-left: auto !important; }')
       }
+      // Chatterino-style: Red background on ENTIRE message line when mentioned
+      log(' 🔴 INJECTING RED BACKGROUND CSS FOR MENTIONS')
 
-      {
-        // Chatterino-style: Red background on ENTIRE message line when mentioned
-        log(' 🔴 INJECTING RED BACKGROUND CSS FOR MENTIONS')
+      // Primary rule: entire message line gets dark blood-red bg so full-color usernames read on top
+      rules.push('.chat-line__message.hs-mentioned { background-color: #000000 !important; }')
+      rules.push('.hs-mentioned.chat-line__message { background-color: #000000 !important; }')
 
-        // Primary rule: entire message line gets dark blood-red bg so full-color usernames read on top
-        rules.push('.chat-line__message.hs-mentioned { background-color: #000000 !important; }')
-        rules.push('.hs-mentioned.chat-line__message { background-color: #000000 !important; }')
+      // All children must be transparent so red shows through
+      rules.push(
+        '.chat-line__message.hs-mentioned * { background-color: transparent !important; background: transparent !important; }',
+      )
 
-        // All children must be transparent so red shows through
-        rules.push(
-          '.chat-line__message.hs-mentioned * { background-color: transparent !important; background: transparent !important; }',
-        )
-
-        // Generic fallback if class is on wrong element
-        rules.push('.hs-mentioned { background-color: #000000 !important; }')
-        rules.push('.hs-mentioned * { background-color: transparent !important; background: transparent !important; }')
-      }
+      // Generic fallback if class is on wrong element
+      rules.push('.hs-mentioned { background-color: #000000 !important; }')
+      rules.push('.hs-mentioned * { background-color: transparent !important; background: transparent !important; }')
 
       // ALWAYS kill Twitch's ugly white mention backgrounds (even if highlight disabled)
       // These rules must be outside the if block to always apply

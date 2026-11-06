@@ -582,7 +582,7 @@
   // 500 unifies the whole system (MAX_BUFFER) on one number and matches the
   // per-platform buffer, so a restored cached tab never exceeds the cap.
   // ~3.3x Twitch native scrollback.
-  let DOM_RENDER_CAP = 500 // registry-managed (hs_dom_render_cap)
+  const DOM_RENDER_CAP = 500
 
   // Upward scrollback: extra rows beyond DOM_RENDER_CAP to paint when the user
   // reaches the top. 0 = live tail only (DEFAULT — behaviour is byte-identical
@@ -733,10 +733,6 @@
     return !!slate && slate.getClientRects().length > 0
   }
 
-  // Whether the user has chosen to show native platform chat alongside HS.
-  // Persisted via settings registry (key: nativeVisible). Default false = same
-  // behaviour as before this feature existed.
-  let nativeVisible = false
 
   // Scoped emote wrapper query (avoids full-document scan).
   // Includes the reply-stack overlays — they're appended to <body>, not inside
@@ -2443,12 +2439,6 @@
         linksEnabled = v
       },
     },
-    partialLinksEnabled: {
-      get: () => partialLinksEnabled,
-      set: (v) => {
-        partialLinksEnabled = v
-      },
-    },
     linkPreviewsEnabled: {
       get: () => linkPreviewsEnabled,
       set: (v) => {
@@ -2489,12 +2479,6 @@
       get: () => zebraEnabled,
       set: (v) => {
         zebraEnabled = v
-      },
-    },
-    emoteProviderPriority: {
-      get: () => emoteProviderPriority,
-      set: (v) => {
-        emoteProviderPriority = v
       },
     },
     whisperToastEnabled: {
@@ -2577,12 +2561,6 @@
         emojiSize = v
       },
     },
-    domRenderCap: {
-      get: () => DOM_RENDER_CAP,
-      set: (v) => {
-        DOM_RENDER_CAP = v
-      },
-    },
     emoteAnimationMode: {
       get: () => emoteAnimationMode,
       set: (v) => {
@@ -2624,14 +2602,6 @@
       get: () => ({ ...hermesToggles }),
       set: (v) => {
         for (const k in v) hermesToggles[k] = !!v[k]
-      },
-    },
-    nativeVisible: {
-      // native-chat escape hatch removed — force OFF so a stored `true` can't
-      // reactivate the (removed) native mode.
-      get: () => false,
-      set: () => {
-        nativeVisible = false
       },
     },
   }
@@ -2715,36 +2685,12 @@
         localStorage.setItem('hs_layout_ytNonLiveChat', v ? '1' : '0')
       } catch (_) {}
     },
-    ytFeedShelves: (v) => {
-      // YT-only: body class lifts the CSS that hides the non-video shelves
-      // (shorts, playables, promos) from the home grid. Harmless off-YT.
-      try {
-        document.body.classList.toggle('hs-yt-shelves', !!v)
-      } catch (_) {}
-    },
     filterRules: () => {
       let rules = []
       try {
         rules = JSON.parse(getSetting('chatFilterRules') || '[]')
       } catch {}
       compileFilterRules(Array.isArray(rules) ? rules : [])
-    },
-    // Live re-merge: loadEmotes() rebuilds channelEmoteCaches + emoteCache
-    // from storage, replaying the same 7tv/bttv/ffz collision resolver with
-    // the new priority — no reload needed. History rows keep their prior
-    // rendering ("history is sacred"); only new messages/picker/tab-complete
-    // pick up the new winner.
-    emoteProviderPriority: () => {
-      loadEmotes()
-      markPickerDirty()
-    },
-    nativeVisible: () => {
-      // native-chat escape hatch removed — always keep native hidden + the
-      // body class off, regardless of any stored value.
-      document.body.classList.remove('hs-native-visible')
-      try {
-        setNativeChatHidden(true)
-      } catch (_) {}
     },
     fonts: () => {
       applyFontSettings(getSetting('fontFamily'), getSetting('fontSize'), getSetting('customFontName'))
@@ -2767,17 +2713,6 @@
       const pad = getSetting('messageDensity') === 'cozy' ? '5px 8px' : '2px 4px'
       document.documentElement.style.setProperty('--hs-mc-row-pad', pad)
     },
-    // render cap — debounced re-render (range fires per step)
-    renderCap: (() => {
-      let t = null
-      return () => {
-        if (t) cleanup.clearTimeout(t)
-        t = cleanup.setTimeout(() => {
-          t = null
-          if (currentTab !== 'settings') renderMessages(currentTab)
-        }, 300)
-      }
-    })(),
     // rendered html is cached per message — a src change needs a cache
     // flush before the re-render or old animated imgs survive the toggle
     emoteAnimation: (v, _def, onLoad) => {
@@ -3079,9 +3014,9 @@
     try {
       stored = (await cachedUiSettings())?.ui_settings?.subsystems || null
     } catch (_) {}
-    _gatesAtBoot = Object.assign({}, _SETTINGS_BY_KEY.get('subsystems')?.default, stored)
-    // Plumbing with no toggle any more is always on, whatever an older panel stored.
-    for (const k of SUBSYSTEMS_ALWAYS_ON) delete _gatesAtBoot[k]
+    // Only the per-site overlay switches are the user's; anything else an older
+    // panel stored (feed: false, plumbing ids, ...) is always on now.
+    _gatesAtBoot = userSubsystemGates(stored)
     // Mirror to localStorage — pcard-early.js runs at document_start, before
     // this async snapshot resolves, and needs a synchronously-readable copy
     // to decide whether to swallow the native user-card click at all (a
@@ -3096,14 +3031,9 @@
       localStorage.setItem('hs_gate_overlay', overlayOn ? '1' : '0')
       if (!overlayOn) localStorage.setItem('hs_gate_profile-cards', '0')
     } catch (_) {}
-    // A `false` left in storage would still switch that plumbing off for content.js
-    // and the background, which read their gates from there — drop it.
-    const _stuckOff = SUBSYSTEMS_ALWAYS_ON.filter((k) => stored && k in stored)
-    if (_stuckOff.length) {
-      const cleaned = Object.assign({}, stored)
-      for (const k of _stuckOff) delete cleaned[k]
-      saveUiSetting('subsystems', cleaned)
-    }
+    // A `false` left in storage would still switch a feature off for content.js
+    // and the background, which read their gates from there — keep only the switches.
+    if (stored && Object.keys(stored).some((k) => !(k in _gatesAtBoot))) saveUiSetting('subsystems', _gatesAtBoot)
   }
   function gateAtBoot(id) {
     try {
@@ -4034,8 +3964,6 @@
         openSubForCurrentTab(tab)
       } else if (tabId === 'collapse') {
         toggleChatHidden()
-      } else if (tabId === 'native') {
-        setSetting('nativeVisible', !getSetting('nativeVisible'))
       } else if (tabId === 'settings' && currentTab === 'settings') {
         switchTab(prevTab || 'feed')
       } else {
@@ -4261,8 +4189,6 @@
   // Clickable links in chat messages (default on)
   let linksEnabled = true
 
-  // Partial/defanged link detection — watch?v= refs + "(dot)"-style domains
-  let partialLinksEnabled = true
 
   // Link preview tooltip on hover (default on)
   let linkPreviewsEnabled = true
@@ -6959,9 +6885,8 @@
     // of chat-bottom). Re-apply now with the freshly-created handles in DOM.
     if (chatPosition && chatPosition !== 'right') hidePlatformResizeHandles(true)
 
-    // Ensure native chat is hidden when our UI is active — unless the user
-    // toggled the escape-hatch (nativeVisible), in which case keep it shown.
-    if (!nativeVisible) setNativeChatHidden(true)
+    // Ensure native chat is hidden when our UI is active.
+    setNativeChatHidden(true)
   }
 
   // ============================================
@@ -7249,8 +7174,8 @@
     // Update input placeholder for new tab
     updateInputPlaceholder()
 
-    // Hide native chat when our overlay is active (unless user chose nativeVisible)
-    if (!nativeVisible) setNativeChatHidden(true)
+    // Hide native chat when our overlay is active
+    setNativeChatHidden(true)
     const _tl2 = performance.now()
 
     // Refresh HsNotifs channel scope so per-channel callouts (resub-share,
@@ -7598,7 +7523,7 @@
     processedText = highlightThreadRefsInHtml(processedText)
     // Partial/defanged links ("watch?v=…", "heatsync (dot) org") — html
     // post-pass, skips existing anchors/tags. Rides the links master toggle.
-    if (linksEnabled && partialLinksEnabled) {
+    if (linksEnabled) {
       processedText = linkifyPartialLinks(processedText)
     }
     // Cheermotes — only when twitch IRC tagged bits=N (server-confirmed cheer).
@@ -8811,7 +8736,7 @@
       m.type !== 'notice' &&
       typeof extractChatEmbed === 'function'
     ) {
-      const embedHtml = extractChatEmbed(m.text, { partialLinks: linksEnabled && partialLinksEnabled })
+      const embedHtml = extractChatEmbed(m.text, { partialLinks: linksEnabled })
       if (embedHtml) {
         const holder = document.createElement('div')
         holder.className = 'hs-mc-media-wrap'

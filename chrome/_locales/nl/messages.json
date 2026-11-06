@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "klikbare links"
   },
-  "mc_settings_partial_links": {
-    "message": "gedeeltelijke links"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "maak ook gedeeltelijke en omzeilde links klikbaar — kale watch?v= youtube-verwijzingen en domeinen als \"site (dot) com\" waarmee chats linkfilters ontwijken."
-  },
   "mc_settings_link_previews": {
     "message": "linkvoorbeelden"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "toon het multichat-paneel ook op youtube-VODs, home en zoeken — standaard uit, zodat het paneel alleen bij livestreams verschijnt (waar live chat is)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: feedrijen tonen"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "toon shorts, playables en promoblokken tussen de video's op de youtube-homefeed — standaard uit, zodat de feed alleen uit netjes tegelende thumbnails bestaat"
-  },
   "mc_settings_message_density": {
     "message": "berichtdichtheid"
   },
   "mc_settings_message_density_desc": {
     "message": "regelmarge — compact is de klassieke strakke look"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "max zichtbare berichten"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "max chatrijen als live DOM (databuffer blijft 1500). lager = minder ram op drukke kanalen."
   },
   "mc_settings_name_paints": {
     "message": "heatsync naamkleuren"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "een dunne balk voor de naam die toont hoeveel hitte een chatter heeft verdiend"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "emote-provider voorrang"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "als 7tv/bttv/ffz een emote met dezelfde naam hebben, wint deze provider"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "inventaris-emotes tonen"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "als je op heatsync volgt, volg ook op twitch als er een gekoppeld twitch-account is. vereist een open twitch.tv-tab; anders in de wachtrij"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "twitch-volgen met meldingen"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "cross-platform twitch-volgers zetten ook live-meldingen voor dat kanaal aan"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "mod-werkbalkknoppen"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "subsystemen"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "twitch-chatfeed"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "twitch irc-verbinding + kanaal-joins binnen de overlay"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "kick-chatfeed"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "kick websocket-verbinding + kanaal-joins binnen de overlay"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "youtube-chatfeed"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "youtube livechat-abonnementen binnen de overlay"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "cosmetica van derden"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv paints + bttv/ffz/chatterino-badges. uit bespaart ram op drukke kanalen."
-  },
-  "mc_settings_sub_feed": {
-    "message": "feed"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "heatsync social feed-tab + zijn eventstream"
-  },
   "mc_settings_sub_whispers": {
     "message": "whispers"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch whisper eventsub-socket + whispers-tab"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "vermeldingen"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "vermeldingsdetectie, vermeldingen-tab en pings"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "streamstats"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "berichtsnelheid per kanaal, voedt de heat-ranking"
   },
   "mc_automod_label": {
     "message": "automod-wachtrij"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "inloggen"
-  },
-  "mc_settings_diag_errors": {
-    "message": "toon diagnosefouten"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "fouten worden alleen lokaal vastgelegd — nooit geüpload. deze schakelaar toont alleen het diagnosepaneel hieronder."
-  },
-  "mc_settings_debug_logging": {
-    "message": "debug-logging"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "uitgebreide console-logging van alle heatsync-scripts — geldt bij de volgende paginalading"
   },
   "mc_chatlogs_copy_failed": {
     "message": "kopiëren mislukt"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "uit: de site houdt zijn eigen chat en heatsync laadt daar niet — herlaad om toe te passen"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "volume onthouden op twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "volume onthouden op kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "volume onthouden op youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "elk twitch-kanaal houdt het laatst ingestelde volume vast, in streams, vods en embeds. uit laat de speler van twitch met rust"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "elk kick-kanaal houdt het laatst ingestelde volume vast, in streams, vods en embeds. uit laat de speler van kick met rust"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "elk youtube-kanaal houdt het laatst ingestelde volume vast, in video's, streams en embeds. uit laat de speler van youtube met rust"
-  },
   "mc_send_twitch_skipped": {
     "message": "verstuurd op youtube · twitch overgeslagen, niet ingelogd"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "systeem · back-up / herstel"
   },
-  "mc_set_recent_errors": {
-    "message": "recente fouten"
-  },
-  "mc_set_copy": {
-    "message": "kopiëren"
-  },
-  "mc_set_clear": {
-    "message": "wissen"
-  },
-  "mc_set_crash_loading": {
-    "message": "(laden...)"
-  },
   "mc_set_export_tip": {
     "message": "schrijf ui_settings + alle hs_*-sleutels naar een JSON-bestand. werkt op alle apparaten en browsers."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "alles tonen"
-  },
-  "mc_set_crash_none": {
-    "message": "(geen fouten geregistreerd)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(log onleesbaar)"
   },
   "mc_set_fmt_none": {
     "message": "geen"

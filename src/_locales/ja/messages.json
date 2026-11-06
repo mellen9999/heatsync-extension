@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "クリック可能なリンク"
   },
-  "mc_settings_partial_links": {
-    "message": "部分リンク"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "部分的なリンクや偽装リンクもリンク化する — チャットがリンクフィルタを避けるために使う、素の youtube watch?v= や \"site (dot) com\" 形式のドメイン。"
-  },
   "mc_settings_link_previews": {
     "message": "リンクプレビュー"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "youtube の VOD・ホーム・検索でも multichat パネルを表示 — 既定はオフで、パネルはライブ配信 (ライブチャットがある所) だけに出る"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: フィードの棚を表示"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "youtube のホームフィードの動画の間にショート、プレイアブル、プロモブロックを表示 — デフォルトはオフ、フィードはサムネイルだけがきれいに並ぶ"
-  },
   "mc_settings_message_density": {
     "message": "メッセージ密度"
   },
   "mc_settings_message_density_desc": {
     "message": "行の余白 — compact は従来の詰めた見た目"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "最大表示メッセージ数"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "生の DOM として保持する最大チャット行数 (データバッファは1500のまま)。小さいほど混雑チャンネルで ram を節約。"
   },
   "mc_settings_name_paints": {
     "message": "heatsync ネームペイント"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "名前の前に細いバーで、チャッターが獲得したヒートを表示"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "emote プロバイダの優先順位"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "7tv/bttv/ffz に同名の emote があるとき、このプロバイダを優先"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "インベントリ emote を表示"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "heatsync でフォローしたとき、相手に連携済みの twitch アカウントがあれば twitch でもフォロー。twitch.tv のタブを開いておく必要あり。なければキューに入る"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "通知つき twitch フォロー"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "プラットフォーム横断の twitch フォローで、そのチャンネルのライブ通知もオンにする"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "mod ツールバーのボタン"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "サブシステム"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "twitch チャットフィード"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "オーバーレイ内の twitch irc 接続 + チャンネル参加"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "kick チャットフィード"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "オーバーレイ内の kick websocket 接続 + チャンネル参加"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "youtube チャットフィード"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "オーバーレイ内の youtube ライブチャット購読"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "サードパーティのコスメ"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv ペイント + bttv/ffz/chatterino バッジ。オフにすると混雑チャンネルで ram を節約。"
-  },
-  "mc_settings_sub_feed": {
-    "message": "フィード"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "heatsync のソーシャルフィードタブ + そのイベントストリーム"
-  },
   "mc_settings_sub_whispers": {
     "message": "whisper"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch whisper の eventsub ソケット + whisper タブ"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "メンション"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "メンション検出、メンションタブ、ピン通知"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "配信統計"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "heat ランキングを支えるチャンネルごとのメッセージ頻度統計"
   },
   "mc_automod_label": {
     "message": "automod 保留"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "ログイン"
-  },
-  "mc_settings_diag_errors": {
-    "message": "診断エラーを表示"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "エラーはローカルにのみ記録され、アップロードされない。このトグルは下の診断パネルを表示するだけ。"
-  },
-  "mc_settings_debug_logging": {
-    "message": "デバッグログ"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "すべての heatsync スクリプトの詳細コンソールログ — 次のページ読み込みから有効"
   },
   "mc_chatlogs_copy_failed": {
     "message": "コピー失敗"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "オフ: サイト本来のチャットがそのまま使われ、そこでは heatsync が読み込まれません — 反映には再読み込み"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "twitchで音量を記憶"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "kickで音量を記憶"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "youtubeで音量を記憶"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "twitchの各チャンネルが最後に設定した音量を保持します(配信、vod、埋め込み)。オフならtwitchのプレイヤーには触れません"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "kickの各チャンネルが最後に設定した音量を保持します(配信、vod、埋め込み)。オフならkickのプレイヤーには触れません"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "youtubeの各チャンネルが最後に設定した音量を保持します(動画、配信、埋め込み)。オフならyoutubeのプレイヤーには触れません"
-  },
   "mc_send_twitch_skipped": {
     "message": "youtube に送信した · twitch はログインしていないのでスキップ"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "システム · バックアップ / 復元"
   },
-  "mc_set_recent_errors": {
-    "message": "最近のエラー"
-  },
-  "mc_set_copy": {
-    "message": "コピー"
-  },
-  "mc_set_clear": {
-    "message": "クリア"
-  },
-  "mc_set_crash_loading": {
-    "message": "(読み込み中...)"
-  },
   "mc_set_export_tip": {
     "message": "ui_settings とすべての hs_* キーを JSON ファイルに書き出す。端末やブラウザをまたいで使える。"
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "すべて表示"
-  },
-  "mc_set_crash_none": {
-    "message": "(記録されたエラーなし)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(ログを読み取れない)"
   },
   "mc_set_fmt_none": {
     "message": "なし"

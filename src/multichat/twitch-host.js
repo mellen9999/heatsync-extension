@@ -322,12 +322,9 @@ function softTwitchNav(prevLiveCh) {
     // Re-apply hs-native-hidden to the new chat-shell + chat-room + stream-
     // chat. Without this the body.hs-mc-navigating guard would be the only
     // thing hiding native chat — once we drop that class native chat blooms.
-    // Gated: skip re-hide when the user has chosen nativeVisible so they
-    // keep native chat visible across SPA navigations.
-    if (!nativeVisible)
-      try {
-        setNativeChatHidden(true)
-      } catch (_) {}
+    try {
+      setNativeChatHidden(true)
+    } catch (_) {}
     // Resume sticky-bottom on every channel switch — the panel persists
     // across SPA nav, so without this reset the new channel inherits the
     // previous channel's mid-scroll position and live messages stack
@@ -389,10 +386,9 @@ function softTwitchNav(prevLiveCh) {
     // tested. Plus a chat-shell mutation observer continuously re-applies
     // hs-native-hidden in case React swaps the chat-room__content node.
     const reHide = new MutationObserver(() => {
-      if (!nativeVisible)
-        try {
-          setNativeChatHidden(true)
-        } catch (_) {}
+      try {
+        setNativeChatHidden(true)
+      } catch (_) {}
     })
     const target = hsQuery('twitch:chat-shell', `.chat-shell, ${CONFIG.SELECTORS.TWITCH_CHAT_SHELL}`)
     if (target) {

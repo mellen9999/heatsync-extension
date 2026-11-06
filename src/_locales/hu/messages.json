@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "kattintható linkek"
   },
-  "mc_settings_partial_links": {
-    "message": "részleges linkek"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "a részleges és elferdített linkeket is linkké alakítja — csupasz watch?v= youtube hivatkozások és \"site (dot) com\" féle domainek, amikkel a chatek kijátsszák a linkszűrőket."
-  },
   "mc_settings_link_previews": {
     "message": "link előnézet"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "a multichat panel megjelenítése youtube VOD-okon, a főoldalon és a keresőben is — alapból ki, így a panel csak élő adásokon jelenik meg (ahol van élő chat)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: hírfolyam-polcok mutatása"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "shorts, playables és promóciós blokkok mutatása a youtube főoldali hírfolyamában a videók között — alapból kikapcsolva, így a hírfolyam csak szépen elrendezett miniatűrökből áll"
-  },
   "mc_settings_message_density": {
     "message": "üzenetsűrűség"
   },
   "mc_settings_message_density_desc": {
     "message": "sorok kitöltése — a compact a klasszikus szoros kinézet"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "látható üzenetek max."
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "ennyi chatsor marad élő DOM-ban (az adatpuffer 1500 marad). kevesebb = kevesebb ram forgalmas csatornákon."
   },
   "mc_settings_name_paints": {
     "message": "heatsync névfestékek"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "vékony sáv a név előtt, amely mutatja, mennyi hőt szerzett a csevegő"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "emote szolgáltató prioritás"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "ha a 7tv/bttv/ffz-nek ugyanolyan nevű emote-ja van, ez a szolgáltató nyer"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "készlet-emote-ok megjelenítése"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "ha a heatsync-en követsz, kövesd twitchen is, ha van összekötött twitch fiókja. nyitott twitch.tv lap kell; különben sorba kerül"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "twitch követés értesítésekkel"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "a platformközi twitch követések az élő értesítést is bekapcsolják arra a csatornára"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "mod eszköztár gombok"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "alrendszerek"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "twitch chat hírfolyam"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "twitch irc kapcsolat + csatorna csatlakozások az overlayen belül"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "kick chat hírfolyam"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "kick websocket kapcsolat + csatorna csatlakozások az overlayen belül"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "youtube chat hírfolyam"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "youtube élő chat feliratkozások az overlayen belül"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "harmadik feles kozmetikumok"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv festékek + bttv/ffz/chatterino jelvények. kikapcsolva ram-ot spórol forgalmas csatornákon."
-  },
-  "mc_settings_sub_feed": {
-    "message": "hírfolyam"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "heatsync közösségi hírfolyam lap + eseményfolyama"
-  },
   "mc_settings_sub_whispers": {
     "message": "whisperek"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch whisper eventsub socket + whisper lap"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "említések"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "említés-észlelés, említések lap és értesítések"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "stream statisztikák"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "csatornánkénti üzenetráta-statisztika a heat rangsorhoz"
   },
   "mc_automod_label": {
     "message": "automod tartás"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "belépés"
-  },
-  "mc_settings_diag_errors": {
-    "message": "diagnosztikai hibák mutatása"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "a hibák csak helyben tárolódnak — soha nem töltődnek fel. ez a kapcsoló csak az alábbi diagnosztikai panelt mutatja."
-  },
-  "mc_settings_debug_logging": {
-    "message": "debug naplózás"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "bőbeszédű konzolnapló az összes heatsync szkriptből — a következő oldalbetöltéskor lép életbe"
   },
   "mc_chatlogs_copy_failed": {
     "message": "a másolás nem sikerült"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "ki: az oldal megtartja a saját chatjét, és a heatsync nem töltődik be ott — az érvényesítéshez töltsd újra"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "hangerő megjegyzése: twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "hangerő megjegyzése: kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "hangerő megjegyzése: youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "minden twitch-csatorna megtartja az utoljára beállított hangerőt streameken, vodokon és beágyazásokon. kikapcsolva békén hagyja a twitch lejátszóját"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "minden kick-csatorna megtartja az utoljára beállított hangerőt streameken, vodokon és beágyazásokon. kikapcsolva békén hagyja a kick lejátszóját"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "minden youtube-csatorna megtartja az utoljára beállított hangerőt videókon, streameken és beágyazásokon. kikapcsolva békén hagyja a youtube lejátszóját"
-  },
   "mc_send_twitch_skipped": {
     "message": "elküldve youtube-on · twitch kihagyva, nincs bejelentkezve"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "rendszer · mentés / visszaállítás"
   },
-  "mc_set_recent_errors": {
-    "message": "legutóbbi hibák"
-  },
-  "mc_set_copy": {
-    "message": "másolás"
-  },
-  "mc_set_clear": {
-    "message": "törlés"
-  },
-  "mc_set_crash_loading": {
-    "message": "(betöltés...)"
-  },
   "mc_set_export_tip": {
     "message": "az ui_settings és az összes hs_* kulcs kiírása egy JSON fájlba. eszközök és böngészők közt hordozható."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "mind mutat"
-  },
-  "mc_set_crash_none": {
-    "message": "(nincs rögzített hiba)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(a napló nem olvasható)"
   },
   "mc_set_fmt_none": {
     "message": "nincs"

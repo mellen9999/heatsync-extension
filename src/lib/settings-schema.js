@@ -483,22 +483,7 @@ const SETTINGS = [
     apply: 'ytNonLiveChat',
     applyOnLoad: true,
   },
-  {
-    key: 'ytFeedShelves',
-    type: 'bool',
-    default: false,
-    // default OFF: shelves (shorts, playables, news, promos) are not videos and
-    // break the tile grid into short rows; the feed stays pure thumbnails.
-    scope: 'sync',
-    category: 'display',
-    section: 'layout',
-    sectionKey: 'lib_sec_layout',
-    labelKey: 'mc_settings_yt_feed_shelves',
-    tipKey: 'mc_settings_yt_feed_shelves_desc',
-    control: 'pill',
-    apply: 'ytFeedShelves',
-    applyOnLoad: true,
-  },
+
 
   // ── display / density ─────────────────────────────────────────────────
   {
@@ -523,21 +508,7 @@ const SETTINGS = [
     ],
   },
 
-  {
-    key: 'hs_dom_render_cap',
-    type: 'range',
-    default: 500,
-    scope: 'local',
-    category: 'display',
-    section: 'density',
-    sectionKey: 'lib_sec_density',
-    labelKey: 'mc_settings_max_visible_messages',
-    tipKey: 'mc_settings_max_visible_messages_desc',
-    control: 'range',
-    runtimeVar: 'domRenderCap',
-    apply: 'renderCap',
-    options: { min: 100, max: 1500, step: 100 },
-  },
+
 
   // ── display / cosmetics (per-provider) ────────────────────────────────
   {
@@ -691,36 +662,7 @@ const SETTINGS = [
     control: 'pill',
     rerender: true,
   },
-  {
-    // Which third-party provider wins when the same emote NAME exists in
-    // more than one (7TV/BTTV/FFZ) within a channel's or the global pool.
-    // Default 'ffz': its API answers at once and its images load, so Tab and
-    // the picker lead with it (mellen, 2026-10-23); 7tv's search is slow and
-    // many of its tiles come back broken. Pick 7tv to restore the old winner.
-    key: 'emoteProviderPriority',
-    type: 'enum',
-    default: 'ffz',
-    scope: 'sync',
-    category: 'display',
-    section: 'cosmetics',
-    sectionKey: 'btn_settings_cosmetics',
-    labelKey: 'mc_settings_emote_provider_priority',
-    tipKey: 'mc_settings_emote_provider_priority_desc',
-    control: 'select',
-    runtimeVar: 'emoteProviderPriority',
-    apply: 'emoteProviderPriority',
-    // loadAllSettings() hydrates this var concurrently with the init-time
-    // loadEmotes() call (Promise.allSettled race) — a non-default choice
-    // could lose that race on cold boot. applyOnLoad forces one more
-    // loadEmotes() pass strictly after hydration so the picked provider is
-    // never momentarily wrong.
-    applyOnLoad: true,
-    options: [
-      { value: '7tv', label: '7tv' },
-      { value: 'bttv', label: 'bttv' },
-      { value: 'ffz', label: 'ffz' },
-    ],
-  },
+
   {
     // Inventory emotes (yours and every other sender's) render as images.
     // Off = the plain word, exactly as it went over the wire. Channel/global
@@ -821,21 +763,7 @@ const SETTINGS = [
     runtimeVar: 'linksEnabled',
     rerender: true,
   },
-  {
-    key: 'partialLinksEnabled',
-    type: 'bool',
-    default: true,
-    scope: 'sync',
-    category: 'chat',
-    section: 'messages',
-    sectionKey: 'lib_sec_messages',
-    labelKey: 'mc_settings_partial_links',
-    tipKey: 'mc_settings_partial_links_desc',
-    control: 'pill',
-    alias: 'partiallinks',
-    runtimeVar: 'partialLinksEnabled',
-    rerender: true,
-  },
+
   {
     key: 'linkPreviewsEnabled',
     basic: true,
@@ -1197,19 +1125,7 @@ const SETTINGS = [
     tipKey: 'mc_settings_cross_follow_twitch_desc',
     control: 'pill',
   },
-  {
-    key: 'crossFollowTwitchNotify',
-    basic: true,
-    type: 'bool',
-    default: true,
-    scope: 'sync',
-    category: 'notifs',
-    section: 'cross-platform follow',
-    sectionKey: 'lib_sec_cross_follow',
-    labelKey: 'mc_settings_cross_follow_twitch_notify',
-    tipKey: 'mc_settings_cross_follow_twitch_notify_desc',
-    control: 'pill',
-  },
+
 
   // ── mod / mod toolbar ─────────────────────────────────────────────────
   // Hover actions on chat rows when you mod the channel. Option tags are
@@ -1463,48 +1379,9 @@ const SETTINGS = [
     tipKey: 'mc_settings_channel_volume_desc',
     alias: 'volume memory channel remember',
   },
-  {
-    key: 'channelVolumeTwitch',
-    basic: true,
-    type: 'bool',
-    default: true,
-    scope: 'sync',
-    category: 'display',
-    section: 'player',
-    sectionKey: 'lib_sec_player',
-    control: 'pill',
-    labelKey: 'mc_settings_channel_volume_twitch',
-    tipKey: 'mc_settings_channel_volume_twitch_desc',
-    alias: 'volume memory channel twitch',
-  },
-  {
-    key: 'channelVolumeKick',
-    basic: true,
-    type: 'bool',
-    default: true,
-    scope: 'sync',
-    category: 'display',
-    section: 'player',
-    sectionKey: 'lib_sec_player',
-    control: 'pill',
-    labelKey: 'mc_settings_channel_volume_kick',
-    tipKey: 'mc_settings_channel_volume_kick_desc',
-    alias: 'volume memory channel kick',
-  },
-  {
-    key: 'channelVolumeYouTube',
-    basic: true,
-    type: 'bool',
-    default: true,
-    scope: 'sync',
-    category: 'display',
-    section: 'player',
-    sectionKey: 'lib_sec_player',
-    control: 'pill',
-    labelKey: 'mc_settings_channel_volume_youtube',
-    tipKey: 'mc_settings_channel_volume_youtube_desc',
-    alias: 'volume memory channel youtube',
-  },
+
+
+
   {
     key: 'channelVolumeDefault',
     type: 'range',
@@ -1608,11 +1485,11 @@ const SETTINGS = [
   // Plumbing that stays on: no panel toggle (nobody wants chat without tab-complete
   // or the native-chat tap), but the gates still exist in code. Anything stored
   // `false` for these from an older panel is reset on boot (main.js snapshotGates).
-  // ── system / subsystems — compose your own chat ───────────────────────
-  // Whole features OFF for real: gated at init so a disabled subsystem
-  // never creates its sockets/listeners/DOM (RAM + CPU reclaim). Most
-  // need a reload to apply (applies:'reload'); live ones tear down in
-  // place. Server health kill-switch (__hsHealth.disabled) overrides.
+  // ── system / subsystems — heatsync chat on or off, per site ───────────
+  // Off = heatsync never mounts there and the page keeps its own chat;
+  // decided at boot, so it applies on reload. The other gates (feed,
+  // whispers, cosmetics, ...) are no longer the user's: they stay on unless
+  // the server health kill-switch (__hsHealth.disabled) turns one off.
   {
     key: 'subsystems',
     type: 'boolmap',
@@ -1627,14 +1504,6 @@ const SETTINGS = [
       'overlay-twitch': true,
       'overlay-kick': true,
       'overlay-youtube': true,
-      'irc-twitch': true,
-      'chat-kick': true,
-      'chat-youtube': true,
-      cosmetics: true,
-      feed: true,
-      whispers: true,
-      mentions: true,
-      'stream-stats': true,
     },
     options: [
       // The whole overlay, per site: off = heatsync never mounts there and the page keeps its own chat
@@ -1663,100 +1532,11 @@ const SETTINGS = [
         labelKey: 'mc_settings_sub_overlay_youtube',
         tipKey: 'mc_settings_sub_overlay_desc',
       },
-      {
-        value: 'irc-twitch',
-        default: true,
-        color: HS_PLAT_COLORS.twitch,
-        applies: 'reload',
-        labelKey: 'mc_settings_sub_irc_twitch',
-        tipKey: 'mc_settings_sub_irc_twitch_desc',
-      },
-      {
-        value: 'chat-kick',
-        default: true,
-        color: '#00ff00',
-        applies: 'reload',
-        labelKey: 'mc_settings_sub_chat_kick',
-        tipKey: 'mc_settings_sub_chat_kick_desc',
-      },
-      {
-        value: 'chat-youtube',
-        default: true,
-        color: '#ff0000',
-        applies: 'reload',
-        labelKey: 'mc_settings_sub_chat_youtube',
-        tipKey: 'mc_settings_sub_chat_youtube_desc',
-      },
-      {
-        value: 'cosmetics',
-        default: true,
-        color: '#00ffff',
-        applies: 'reload',
-        labelKey: 'mc_settings_sub_cosmetics',
-        tipKey: 'mc_settings_sub_cosmetics_desc',
-      },
-      {
-        value: 'feed',
-        default: true,
-        color: '#00ff00',
-        applies: 'reload',
-        labelKey: 'mc_settings_sub_feed',
-        tipKey: 'mc_settings_sub_feed_desc',
-      },
-      {
-        value: 'whispers',
-        default: true,
-        color: '#ffff00',
-        applies: 'reload',
-        labelKey: 'mc_settings_sub_whispers',
-        tipKey: 'mc_settings_sub_whispers_desc',
-      },
-      {
-        value: 'mentions',
-        default: true,
-        color: '#ff00ff',
-        applies: 'live',
-        labelKey: 'mc_settings_sub_mentions',
-        tipKey: 'mc_settings_sub_mentions_desc',
-      },
-      {
-        value: 'stream-stats',
-        default: true,
-        color: '#ffffff',
-        applies: 'live',
-        labelKey: 'mc_settings_sub_stream_stats',
-        tipKey: 'mc_settings_sub_stream_stats_desc',
-      },
     ],
   },
 
-  // ── system / advanced ─────────────────────────────────────────────────
-  {
-    key: 'crashTelemetry',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'system',
-    section: 'advanced',
-    sectionKey: 'mc_ms_am_advanced',
-    labelKey: 'mc_settings_diag_errors',
-    tipKey: 'mc_settings_diag_errors_desc',
-    control: 'pill',
-    rerenderSettings: true,
-  },
-  {
-    key: 'debugLogging',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'system',
-    section: 'advanced',
-    sectionKey: 'mc_ms_am_advanced',
-    labelKey: 'mc_settings_debug_logging',
-    tipKey: 'mc_settings_debug_logging_desc',
-    control: 'pill',
-    reloadApply: true,
-  },
+
+
 
   // ── system / state — ui state persisted via saveUiSetting, no settings
   // row (control:'custom' suppresses auto-row + search; 'state' section is
@@ -1790,18 +1570,7 @@ const SETTINGS = [
     maxLen: 128,
     noReset: true,
   },
-  {
-    key: 'nativeVisible',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'system',
-    section: 'state',
-    label: 'native chat visible',
-    tip: 'user chose to keep the platform-native chat column visible alongside the overlay',
-    control: 'custom',
-    noReset: true,
-  },
+
   {
     key: 'chatPositionPrevious',
     type: 'enum',
@@ -1883,6 +1652,18 @@ const SETTING_HOSTS = ['twitch', 'kick', 'youtube']
 function settingShowsOnHost(def, host) {
   if (!def || !def.hosts || !host) return true
   return def.hosts.includes(host === 'yt' ? 'youtube' : host)
+}
+
+/**
+ * The user's subsystem gates: the stored map's per-site overlay switches over
+ * their defaults. Anything else an older panel stored (feed: false, ...) is
+ * no longer a switch and must not gate anything.
+ * @param {*} stored raw ui_settings.subsystems
+ * @returns {Record<string, boolean>}
+ */
+function userSubsystemGates(stored) {
+  const def = SETTINGS.find((d) => d.key === 'subsystems')
+  return coerceSettingValue(def, stored && typeof stored === 'object' ? stored : {}) || { ...def.default }
 }
 
 function validateSettingValue(def, v) {
@@ -2083,5 +1864,6 @@ export {
   SETTINGS,
   SUBSYSTEMS_ALWAYS_ON,
   settingShowsOnHost,
+  userSubsystemGates,
   validateSettingValue,
 }

@@ -559,12 +559,6 @@
   "mc_settings_clickable_links": {
     "message": "clickable links"
   },
-  "mc_settings_partial_links": {
-    "message": "partial links"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "also linkify partial and defanged links — bare watch?v= youtube refs and \"site (dot) com\" style domains chats use to dodge link filters."
-  },
   "mc_settings_link_previews": {
     "message": "link previews"
   },
@@ -1180,23 +1174,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "show the multichat panel on youtube VODs, home and search too — off by default, so the panel only appears on livestreams (where there is live chat)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: show feed shelves"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "show shorts, playables and promo blocks between the videos on the youtube home feed — off by default, so the feed is just thumbnails that tile cleanly"
-  },
   "mc_settings_message_density": {
     "message": "message density"
   },
   "mc_settings_message_density_desc": {
     "message": "row padding — compact is the classic tight look"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "max visible messages"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "max chat rows kept as live DOM (data buffer stays 1500). lower = less ram on busy channels."
   },
   "mc_settings_name_paints": {
     "message": "heatsync name paints"
@@ -1248,12 +1230,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "a thin bar before the name showing how much heat a chatter has earned"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "emote provider priority"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "when 7tv/bttv/ffz have an emote with the same name, this provider wins"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "render inventory emotes"
@@ -1338,12 +1314,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "when you follow on heatsync, also follow on twitch if they have a linked twitch account. needs an open twitch.tv tab; queues otherwise"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "twitch follow with notifications"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "cross-platform twitch follows also turn on live notifications for that channel"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "mod toolbar buttons"
@@ -1474,53 +1444,8 @@
   "mc_settings_subsystems": {
     "message": "subsystems"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "twitch chat feed"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "twitch irc connection + channel joins inside the overlay"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "kick chat feed"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "kick websocket connection + channel joins inside the overlay"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "youtube chat feed"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "youtube live chat subscriptions inside the overlay"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "third-party cosmetics"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv paints + bttv/ffz/chatterino badges. off saves ram on busy channels."
-  },
-  "mc_settings_sub_feed": {
-    "message": "feed"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "heatsync social feed tab + its event stream"
-  },
   "mc_settings_sub_whispers": {
     "message": "whispers"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch whisper eventsub socket + whispers tab"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "mentions"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "mention detection, mentions tab and pings"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "stream stats"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "per-channel message-rate stats powering heat ranking"
   },
   "mc_automod_label": {
     "message": "automod hold"
@@ -1551,18 +1476,6 @@
   },
   "mc_signed_out_action": {
     "message": "log in"
-  },
-  "mc_settings_diag_errors": {
-    "message": "show diagnostic errors"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "errors are captured locally only — never uploaded. this toggle just shows the diagnostic panel below."
-  },
-  "mc_settings_debug_logging": {
-    "message": "debug logging"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "verbose console logging from all heatsync scripts — applies on next page load"
   },
   "mc_chatlogs_copy_failed": {
     "message": "copy failed"
@@ -3545,24 +3458,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "off: the site keeps its own chat and heatsync does not load there — reload to apply"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "remember volume on twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "remember volume on kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "remember volume on youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "each twitch channel keeps the volume you last set, in streams, vods and embeds. off leaves twitch's player alone"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "each kick channel keeps the volume you last set, in streams, vods and embeds. off leaves kick's player alone"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "each youtube channel keeps the volume you last set, in videos, streams and embeds. off leaves youtube's player alone"
-  },
   "mc_send_twitch_skipped": {
     "message": "sent on youtube · twitch skipped, not logged in"
   },
@@ -5401,18 +5296,6 @@
   "mc_set_system_backup": {
     "message": "system · backup / restore"
   },
-  "mc_set_recent_errors": {
-    "message": "recent errors"
-  },
-  "mc_set_copy": {
-    "message": "copy"
-  },
-  "mc_set_clear": {
-    "message": "clear"
-  },
-  "mc_set_crash_loading": {
-    "message": "(loading...)"
-  },
   "mc_set_export_tip": {
     "message": "dump ui_settings + all hs_* keys to a JSON file. portable across devices and browsers."
   },
@@ -5535,12 +5418,6 @@
   },
   "mc_set_show_all": {
     "message": "show all"
-  },
-  "mc_set_crash_none": {
-    "message": "(no errors recorded)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(unable to read log)"
   },
   "mc_set_fmt_none": {
     "message": "none"

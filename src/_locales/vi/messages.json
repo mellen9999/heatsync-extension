@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "liên kết bấm được"
   },
-  "mc_settings_partial_links": {
-    "message": "liên kết một phần"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "biến cả liên kết một phần và liên kết ngụy trang thành liên kết bấm được — watch?v= của youtube viết trần và tên miền kiểu \"site (dot) com\" mà chat dùng để né bộ lọc link."
-  },
   "mc_settings_link_previews": {
     "message": "xem trước liên kết"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "hiện bảng multichat cả trên vod, trang chủ và tìm kiếm của youtube — mặc định tắt, nên bảng chỉ xuất hiện ở livestream (nơi có chat trực tiếp)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: hiện kệ feed"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "hiện shorts, playables và khối quảng cáo xen giữa các video trên feed trang chủ youtube — mặc định tắt, nên feed chỉ gồm thumbnail xếp gọn gàng"
-  },
   "mc_settings_message_density": {
     "message": "mật độ tin nhắn"
   },
   "mc_settings_message_density_desc": {
     "message": "khoảng đệm dòng — gọn là kiểu chật cổ điển"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "số tin nhắn hiển thị tối đa"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "số dòng chat tối đa giữ làm DOM sống (bộ đệm dữ liệu vẫn là 1500). thấp hơn = đỡ ram ở kênh đông."
   },
   "mc_settings_name_paints": {
     "message": "name paint của heatsync"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "thanh mỏng trước tên cho biết người chat đã kiếm được bao nhiêu nhiệt"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "ưu tiên nguồn emote"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "khi 7tv/bttv/ffz có emote trùng tên, nguồn này thắng"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "hiện emote trong kho"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "khi bạn theo dõi trên heatsync, cũng theo dõi trên twitch nếu họ có tài khoản twitch liên kết. cần mở một tab twitch.tv; không thì xếp hàng chờ"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "theo dõi twitch kèm thông báo"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "theo dõi twitch chéo nền tảng cũng bật thông báo phát trực tiếp cho kênh đó"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "nút thanh công cụ mod"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "hệ thống con"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "nguồn chat twitch"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "kết nối irc twitch và vào kênh ngay trong lớp phủ"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "nguồn chat kick"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "kết nối websocket kick và vào kênh ngay trong lớp phủ"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "nguồn chat youtube"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "đăng ký chat trực tiếp youtube ngay trong lớp phủ"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "vật phẩm tùy biến bên thứ ba"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "paint 7tv + huy hiệu bttv/ffz/chatterino. tắt để tiết kiệm ram ở kênh đông."
-  },
-  "mc_settings_sub_feed": {
-    "message": "bảng tin"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "tab bảng tin xã hội heatsync và luồng sự kiện của nó"
-  },
   "mc_settings_sub_whispers": {
     "message": "whispers"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "socket eventsub whisper của twitch và tab whispers"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "lượt nhắc tên"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "phát hiện lượt nhắc, tab lượt nhắc và âm báo"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "thống kê stream"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "thống kê tốc độ tin nhắn theo kênh để xếp hạng heat"
   },
   "mc_automod_label": {
     "message": "automod đang giữ"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "đăng nhập"
-  },
-  "mc_settings_diag_errors": {
-    "message": "hiện lỗi chẩn đoán"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "lỗi chỉ được ghi cục bộ — không bao giờ tải lên. nút này chỉ hiện bảng chẩn đoán bên dưới."
-  },
-  "mc_settings_debug_logging": {
-    "message": "ghi log gỡ lỗi"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "log chi tiết trong console từ mọi script heatsync — áp dụng ở lần tải trang sau"
   },
   "mc_chatlogs_copy_failed": {
     "message": "sao chép thất bại"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "tắt: trang giữ chat riêng của nó và heatsync không tải ở đó — tải lại để áp dụng"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "nhớ âm lượng trên twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "nhớ âm lượng trên kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "nhớ âm lượng trên youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "mỗi kênh twitch giữ âm lượng bạn đặt lần cuối, trong stream, vod và embed. tắt thì không đụng đến trình phát của twitch"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "mỗi kênh kick giữ âm lượng bạn đặt lần cuối, trong stream, vod và embed. tắt thì không đụng đến trình phát của kick"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "mỗi kênh youtube giữ âm lượng bạn đặt lần cuối, trong video, stream và embed. tắt thì không đụng đến trình phát của youtube"
-  },
   "mc_send_twitch_skipped": {
     "message": "đã gửi trên youtube · bỏ qua twitch, chưa đăng nhập"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "hệ thống · sao lưu / khôi phục"
   },
-  "mc_set_recent_errors": {
-    "message": "lỗi gần đây"
-  },
-  "mc_set_copy": {
-    "message": "sao chép"
-  },
-  "mc_set_clear": {
-    "message": "xóa"
-  },
-  "mc_set_crash_loading": {
-    "message": "(đang tải…)"
-  },
   "mc_set_export_tip": {
     "message": "xuất ui_settings + mọi khóa hs_* ra tệp JSON. dùng được trên nhiều thiết bị và trình duyệt."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "hiện tất cả"
-  },
-  "mc_set_crash_none": {
-    "message": "(chưa ghi nhận lỗi)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(không đọc được nhật ký)"
   },
   "mc_set_fmt_none": {
     "message": "không có"

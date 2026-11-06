@@ -920,7 +920,7 @@ async function fetchRemoteEmoteMatches(search) {
     // ranking ("pls" → the dancing XxxPls family), and the old FFZ-first combo
     // felt dead because it was prefix-only; substring matching (below) fixed
     // that, so the fast provider can lead again.
-    // The emoteProviderPriority setting leads (default ffz — fast and reliable);
+    // emoteProviderPriority leads (ffz — fast and reliable);
     // the other two keep their old relative order.
     const byProvider = { '7tv': r7, bttv: rb, ffz: rf }
     const order =

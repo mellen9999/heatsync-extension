@@ -1408,21 +1408,6 @@
       outline: none;
       border-color: #fff;
     }
-    /* Crash log pre block */
-    .hs-mc-set-crash-pre {
-      background: #000000;
-      color: #ffffff;
-      border: 1px solid #ffffff;
-      padding: 6px 8px;
-      font-size: 13px;
-      max-height: 180px;
-      overflow: auto;
-      white-space: pre-wrap;
-      word-break: break-all;
-      margin: 0;
-      font-family: inherit;
-    }
-
     /* Channel-management modal text inputs (add/edit channel dialogs in main.js).
        Sizing/layout comes from inline cssText; this class provides the parts that
        can't be set inline: focus border swap and placeholder color. */

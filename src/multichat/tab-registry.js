@@ -51,7 +51,6 @@ const MC_TABS = [
   },
   { id: 'popout', util: true },
   { id: 'collapse', util: true },
-  { id: 'native', util: true },
   { id: 'actions', util: true },
   { id: 'subscribe', util: true },
 ]

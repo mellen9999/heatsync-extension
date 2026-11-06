@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "클릭 가능한 링크"
   },
-  "mc_settings_partial_links": {
-    "message": "부분 링크"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "부분 링크와 위장 링크도 링크로 바꿈 — 채팅이 링크 필터를 피하려고 쓰는 맨 youtube watch?v= 나 \"site (dot) com\" 식 도메인."
-  },
   "mc_settings_link_previews": {
     "message": "링크 미리보기"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "youtube VOD, 홈, 검색에서도 multichat 패널 표시 — 기본은 꺼짐이라 패널은 라이브 방송(라이브 채팅이 있는 곳)에만 나와"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: 피드 선반 표시"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "youtube 홈 피드의 영상 사이에 쇼츠, 플레이어블, 프로모션 블록 표시 — 기본값은 꺼짐, 그래서 피드가 썸네일만 깔끔하게 배열됨"
-  },
   "mc_settings_message_density": {
     "message": "메시지 밀도"
   },
   "mc_settings_message_density_desc": {
     "message": "줄 여백 — compact가 예전의 촘촘한 모양"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "최대 표시 메시지"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "라이브 DOM으로 유지할 최대 채팅 줄 수 (데이터 버퍼는 1500 그대로). 낮을수록 바쁜 채널에서 ram 절약."
   },
   "mc_settings_name_paints": {
     "message": "heatsync 이름 페인트"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "이름 앞의 얇은 막대로 채터가 얻은 히트를 표시"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "emote 제공자 우선순위"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "7tv/bttv/ffz에 같은 이름 emote가 있으면 이 제공자가 우선"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "인벤토리 emote 표시"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "heatsync에서 팔로우하면 연결된 twitch 계정이 있을 때 twitch에서도 팔로우. twitch.tv 탭이 열려 있어야 해; 아니면 대기열에 들어가"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "알림 포함 twitch 팔로우"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "플랫폼 간 twitch 팔로우가 그 채널의 라이브 알림도 같이 켬"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "mod 툴바 버튼"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "하위 시스템"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "twitch 채팅 피드"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "오버레이 안의 twitch irc 연결 + 채널 입장"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "kick 채팅 피드"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "오버레이 안의 kick websocket 연결 + 채널 입장"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "youtube 채팅 피드"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "오버레이 안의 youtube 라이브 채팅 구독"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "서드파티 꾸미기"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv 페인트 + bttv/ffz/chatterino 배지. 끄면 바쁜 채널에서 ram 절약."
-  },
-  "mc_settings_sub_feed": {
-    "message": "피드"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "heatsync 소셜 피드 탭 + 이벤트 스트림"
-  },
   "mc_settings_sub_whispers": {
     "message": "whisper"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch whisper eventsub 소켓 + whisper 탭"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "멘션"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "멘션 감지, 멘션 탭, 알림음"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "방송 통계"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "heat 순위를 만드는 채널별 메시지 속도 통계"
   },
   "mc_automod_label": {
     "message": "automod 보류"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "로그인"
-  },
-  "mc_settings_diag_errors": {
-    "message": "진단 오류 표시"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "오류는 로컬에만 기록되고 업로드되지 않아. 이 토글은 아래 진단 패널만 보여줘."
-  },
-  "mc_settings_debug_logging": {
-    "message": "디버그 로그"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "모든 heatsync 스크립트의 상세 콘솔 로그 — 다음 페이지 로드부터 적용"
   },
   "mc_chatlogs_copy_failed": {
     "message": "복사 실패"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "끔: 사이트의 자체 채팅이 그대로 유지되며 그곳에서 heatsync가 로드되지 않음 — 적용하려면 새로고침"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "twitch 볼륨 기억"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "kick 볼륨 기억"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "youtube 볼륨 기억"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "twitch의 각 채널이 마지막으로 설정한 볼륨을 방송, vod, 임베드에서 유지합니다. 끄면 twitch 플레이어를 건드리지 않습니다"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "kick의 각 채널이 마지막으로 설정한 볼륨을 방송, vod, 임베드에서 유지합니다. 끄면 kick 플레이어를 건드리지 않습니다"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "youtube의 각 채널이 마지막으로 설정한 볼륨을 영상, 방송, 임베드에서 유지합니다. 끄면 youtube 플레이어를 건드리지 않습니다"
-  },
   "mc_send_twitch_skipped": {
     "message": "youtube로 전송함 · twitch는 로그인 안 돼서 건너뜀"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "시스템 · 백업 / 복원"
   },
-  "mc_set_recent_errors": {
-    "message": "최근 오류"
-  },
-  "mc_set_copy": {
-    "message": "복사"
-  },
-  "mc_set_clear": {
-    "message": "지우기"
-  },
-  "mc_set_crash_loading": {
-    "message": "(불러오는 중...)"
-  },
   "mc_set_export_tip": {
     "message": "ui_settings와 모든 hs_* 키를 JSON 파일로 저장. 기기와 브라우저 간 이동 가능."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "전체 보기"
-  },
-  "mc_set_crash_none": {
-    "message": "(기록된 오류 없음)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(로그를 읽을 수 없음)"
   },
   "mc_set_fmt_none": {
     "message": "없음"

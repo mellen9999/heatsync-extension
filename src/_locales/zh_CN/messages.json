@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "可点击链接"
   },
-  "mc_settings_partial_links": {
-    "message": "部分链接"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "同时把部分链接和变形链接转成可点击链接 — 裸写的 youtube watch?v= 和聊天里用来绕过链接过滤的 \"site (dot) com\" 式域名。"
-  },
   "mc_settings_link_previews": {
     "message": "链接预览"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "在 youtube 的 vod、首页和搜索页也显示 multichat 面板 — 默认关闭，面板只在直播（有实时聊天）时出现"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube：显示动态栏目"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "在 youtube 首页动态的视频之间显示短视频、小游戏和推广块 — 默认关闭，这样动态就只有整齐排列的缩略图"
-  },
   "mc_settings_message_density": {
     "message": "消息密度"
   },
   "mc_settings_message_density_desc": {
     "message": "行内边距 — 紧凑是经典的紧密样式"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "最大可见消息数"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "作为实时 DOM 保留的最大聊天行数（数据缓冲仍为 1500）。越低，繁忙频道占用的 ram 越少。"
   },
   "mc_settings_name_paints": {
     "message": "heatsync 名字涂装"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "名字前的细条，显示聊天者获得的热度"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "emote 来源优先级"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "当 7tv/bttv/ffz 有同名 emote 时，以此来源为准"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "显示库存 emote"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "在 heatsync 关注时，若对方绑定了 twitch 账号，也会在 twitch 关注。需要打开一个 twitch.tv 标签页，否则排队等待"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "twitch 关注并开启通知"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "跨平台的 twitch 关注也会为该频道开启开播通知"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "mod 工具栏按钮"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "子系统"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "twitch 聊天源"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "覆盖层内的 twitch irc 连接和频道加入"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "kick 聊天源"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "覆盖层内的 kick websocket 连接和频道加入"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "youtube 聊天源"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "覆盖层内的 youtube 实时聊天订阅"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "第三方外观"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv 涂装 + bttv/ffz/chatterino 徽章。关闭可在繁忙频道节省 ram。"
-  },
-  "mc_settings_sub_feed": {
-    "message": "动态"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "heatsync 社交动态标签页及其事件流"
-  },
   "mc_settings_sub_whispers": {
     "message": "悄悄话"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch 悄悄话 eventsub 套接字和悄悄话标签页"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "提及"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "提及检测、提及标签页和提示音"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "直播统计"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "各频道的消息速率统计，用于 heat 排名"
   },
   "mc_automod_label": {
     "message": "automod 拦截"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "登录"
-  },
-  "mc_settings_diag_errors": {
-    "message": "显示诊断错误"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "错误仅在本地记录 — 绝不上传。此开关只是显示下方的诊断面板。"
-  },
-  "mc_settings_debug_logging": {
-    "message": "调试日志"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "所有 heatsync 脚本的详细控制台日志 — 下次加载页面时生效"
   },
   "mc_chatlogs_copy_failed": {
     "message": "复制失败"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "关闭：网站保留自带聊天，heatsync 不在那里加载 — 重新加载后生效"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "记住twitch音量"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "记住kick音量"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "记住youtube音量"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "twitch的每个频道都会记住你上次设置的音量,适用于直播、vod 和嵌入。关闭则不干预twitch的播放器"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "kick的每个频道都会记住你上次设置的音量,适用于直播、vod 和嵌入。关闭则不干预kick的播放器"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "youtube的每个频道都会记住你上次设置的音量,适用于视频、直播和嵌入。关闭则不干预youtube的播放器"
-  },
   "mc_send_twitch_skipped": {
     "message": "已发送到 youtube · 跳过 twitch，未登录"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "系统 · 备份 / 恢复"
   },
-  "mc_set_recent_errors": {
-    "message": "最近的错误"
-  },
-  "mc_set_copy": {
-    "message": "复制"
-  },
-  "mc_set_clear": {
-    "message": "清除"
-  },
-  "mc_set_crash_loading": {
-    "message": "（加载中…）"
-  },
   "mc_set_export_tip": {
     "message": "将 ui_settings 和所有 hs_* 键导出为 JSON 文件。可跨设备、跨浏览器使用。"
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "显示全部"
-  },
-  "mc_set_crash_none": {
-    "message": "（未记录错误）"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "（无法读取日志）"
   },
   "mc_set_fmt_none": {
     "message": "无"

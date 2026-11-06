@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "klikatelné odkazy"
   },
-  "mc_settings_partial_links": {
-    "message": "částečné odkazy"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "odkazy i z částečných a rozbitých odkazů — holé youtube odkazy watch?v= a domény ve stylu \"site (dot) com\", kterými chaty obcházejí filtry odkazů."
-  },
   "mc_settings_link_previews": {
     "message": "náhledy odkazů"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "zobrazí panel multichatu i na youtube VOD, hlavní stránce a ve vyhledávání — ve výchozím stavu vypnuto, panel se tak objeví jen u livestreamů (kde je živý chat)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: zobrazit police ve feedu"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "zobrazit shorts, playables a promo bloky mezi videi na domovském feedu youtube — ve výchozím stavu vypnuto, takže feed tvoří jen čistě uspořádané miniatury"
-  },
   "mc_settings_message_density": {
     "message": "hustota zpráv"
   },
   "mc_settings_message_density_desc": {
     "message": "odsazení řádků — compact je klasický těsný vzhled"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "max. viditelných zpráv"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "max. řádků chatu držených jako živé DOM (datový buffer zůstává 1500). méně = méně ram na rušných kanálech."
   },
   "mc_settings_name_paints": {
     "message": "heatsync barvy jmen"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "tenký pruh před jménem ukazující, kolik žáru chatař získal"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "priorita zdrojů emotes"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "když mají 7tv/bttv/ffz emote se stejným názvem, vyhraje tento zdroj"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "zobrazovat emotes z inventáře"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "když začneš sledovat na heatsync, sleduj i na twitch, pokud má propojený twitch účet. potřebuje otevřený tab twitch.tv; jinak se zařadí do fronty"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "twitch sledování s oznámeními"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "sledování na twitch napříč platformami zapne i oznámení o živém vysílání kanálu"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "tlačítka mod lišty"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "subsystémy"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "feed chatu twitch"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "twitch irc připojení + vstupy do kanálů uvnitř overlaye"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "feed chatu kick"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "kick websocket připojení + vstupy do kanálů uvnitř overlaye"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "feed chatu youtube"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "odběry youtube živého chatu uvnitř overlaye"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "kosmetika třetích stran"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv paints + bttv/ffz/chatterino odznaky. vypnuto šetří ram na rušných kanálech."
-  },
-  "mc_settings_sub_feed": {
-    "message": "feed"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "tab sociálního feedu heatsync + jeho stream událostí"
-  },
   "mc_settings_sub_whispers": {
     "message": "whispery"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch whisper eventsub socket + tab whisperů"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "zmínky"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "detekce zmínek, tab zmínek a pingy"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "statistiky streamu"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "statistiky rychlosti zpráv po kanálech pro heat žebříček"
   },
   "mc_automod_label": {
     "message": "automod zadržel"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "přihlásit"
-  },
-  "mc_settings_diag_errors": {
-    "message": "zobrazit diagnostické chyby"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "chyby se zachytávají jen lokálně — nikdy se nenahrávají. tento přepínač jen zobrazí diagnostický panel níže."
-  },
-  "mc_settings_debug_logging": {
-    "message": "debug logování"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "podrobné logování do konzole ze všech skriptů heatsync — projeví se při dalším načtení stránky"
   },
   "mc_chatlogs_copy_failed": {
     "message": "kopírování selhalo"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "vypnuto: web si ponechá vlastní chat a heatsync se tam nenačte — pro uplatnění obnov stránku"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "pamatovat hlasitost na twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "pamatovat hlasitost na kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "pamatovat hlasitost na youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "každý kanál na twitch si pamatuje naposledy nastavenou hlasitost ve streamech, vodech i vložených přehrávačích. vypnuto nechá přehrávač twitch na pokoji"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "každý kanál na kick si pamatuje naposledy nastavenou hlasitost ve streamech, vodech i vložených přehrávačích. vypnuto nechá přehrávač kick na pokoji"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "každý kanál na youtube si pamatuje naposledy nastavenou hlasitost ve videích, streamech i vložených přehrávačích. vypnuto nechá přehrávač youtube na pokoji"
-  },
   "mc_send_twitch_skipped": {
     "message": "odesláno na youtube · twitch přeskočen, nejsi přihlášen"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "systém · záloha / obnovení"
   },
-  "mc_set_recent_errors": {
-    "message": "poslední chyby"
-  },
-  "mc_set_copy": {
-    "message": "kopírovat"
-  },
-  "mc_set_clear": {
-    "message": "vymazat"
-  },
-  "mc_set_crash_loading": {
-    "message": "(načítám...)"
-  },
   "mc_set_export_tip": {
     "message": "vyexportuje ui_settings + všechny klíče hs_* do souboru JSON. přenosné mezi zařízeními a prohlížeči."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "zobrazit vše"
-  },
-  "mc_set_crash_none": {
-    "message": "(žádné zaznamenané chyby)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(log nelze přečíst)"
   },
   "mc_set_fmt_none": {
     "message": "nic"

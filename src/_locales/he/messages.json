@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "קישורים לחיצים"
   },
-  "mc_settings_partial_links": {
-    "message": "קישורים חלקיים"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "הפוך לקישורים גם קישורים חלקיים ומוסווים — הפניות youtube חשופות מסוג watch?v= ודומיינים בסגנון \"site (dot) com\" שהצ'אט משתמש בהם כדי לעקוף פילטרים של קישורים."
-  },
   "mc_settings_link_previews": {
     "message": "תצוגה מקדימה של קישורים"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "הצג את פאנל multichat גם ב-vod, בדף הבית ובחיפוש של youtube — כבוי כברירת מחדל, כך שהפאנל מופיע רק בשידורים חיים (שיש בהם צ'אט חי)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: הצג מדפי פיד"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "הצג shorts, playables ובלוקי קידום בין הסרטונים בפיד הבית של youtube — כבוי כברירת מחדל, כך שהפיד הוא רק תמונות ממוזערות מסודרות"
-  },
   "mc_settings_message_density": {
     "message": "צפיפות הודעות"
   },
   "mc_settings_message_density_desc": {
     "message": "ריווח שורות — compact הוא המראה הצפוף הקלאסי"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "מקסימום הודעות גלויות"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "מקסימום שורות צ'אט שנשמרות כ-DOM חי (מאגר הנתונים נשאר 1500). פחות = פחות ram בערוצים עמוסים."
   },
   "mc_settings_name_paints": {
     "message": "name paints של heatsync"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "פס דק לפני השם שמראה כמה חום צבר צ'אטר"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "עדיפות ספק אימוטים"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "כש-7tv/bttv/ffz יש אימוט עם אותו שם, הספק הזה מנצח"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "הצג אימוטים ממלאי"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "כשאתה עוקב ב-heatsync, עקוב גם ב-twitch אם יש חשבון twitch מקושר. דורש לשונית twitch.tv פתוחה; אחרת נכנס לתור"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "מעקב twitch עם התראות"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "מעקבי twitch בין פלטפורמות מפעילים גם התראות לייב של הערוץ"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "כפתורי סרגל mod"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "תתי-מערכות"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "הזנת צ'אט twitch"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "חיבור irc של twitch + הצטרפות לערוצים בתוך ה-overlay"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "הזנת צ'אט kick"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "חיבור websocket של kick + הצטרפות לערוצים בתוך ה-overlay"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "הזנת צ'אט youtube"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "מינויים לצ'אט החי של youtube בתוך ה-overlay"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "קוסמטיקה של צד שלישי"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "paints של 7tv + תגי bttv/ffz/chatterino. כבוי חוסך ram בערוצים עמוסים."
-  },
-  "mc_settings_sub_feed": {
-    "message": "פיד"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "לשונית הפיד החברתי של heatsync + זרם האירועים שלה"
-  },
   "mc_settings_sub_whispers": {
     "message": "לחישות"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "סוקט eventsub של whispers ב-twitch + לשונית whispers"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "תיוגים"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "זיהוי תיוגים, לשונית תיוגים והתראות"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "סטטיסטיקות סטרים"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "סטטיסטיקות קצב הודעות לכל ערוץ שמזינות את דירוג ה-heat"
   },
   "mc_automod_label": {
     "message": "החזקת automod"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "התחברות"
-  },
-  "mc_settings_diag_errors": {
-    "message": "הצג שגיאות אבחון"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "שגיאות נשמרות מקומית בלבד — אף פעם לא מועלות. המתג הזה רק מציג את פאנל האבחון למטה."
-  },
-  "mc_settings_debug_logging": {
-    "message": "לוג דיבאג"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "לוג מפורט בקונסולה מכל סקריפטי heatsync — נכנס לתוקף בטעינת הדף הבאה"
   },
   "mc_chatlogs_copy_failed": {
     "message": "ההעתקה נכשלה"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "כבוי: האתר שומר על הצ'אט שלו ו-heatsync לא נטען שם — טען מחדש להחלה"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "זכור עוצמת שמע ב-twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "זכור עוצמת שמע ב-kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "זכור עוצמת שמע ב-youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "כל ערוץ ב-twitch שומר את עוצמת השמע האחרונה שקבעת, בסטרימים, ב-vods ובהטמעות. כבוי משאיר את הנגן של twitch בשקט"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "כל ערוץ ב-kick שומר את עוצמת השמע האחרונה שקבעת, בסטרימים, ב-vods ובהטמעות. כבוי משאיר את הנגן של kick בשקט"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "כל ערוץ ב-youtube שומר את עוצמת השמע האחרונה שקבעת, בסרטונים, בסטרימים ובהטמעות. כבוי משאיר את הנגן של youtube בשקט"
-  },
   "mc_send_twitch_skipped": {
     "message": "נשלח ב-youtube · twitch דולג, לא מחובר"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "מערכת · גיבוי / שחזור"
   },
-  "mc_set_recent_errors": {
-    "message": "שגיאות אחרונות"
-  },
-  "mc_set_copy": {
-    "message": "העתק"
-  },
-  "mc_set_clear": {
-    "message": "נקה"
-  },
-  "mc_set_crash_loading": {
-    "message": "(טוען...)"
-  },
   "mc_set_export_tip": {
     "message": "מייצא את ui_settings ואת כל מפתחות hs_* לקובץ JSON. נייד בין מכשירים ודפדפנים."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "הצג הכל"
-  },
-  "mc_set_crash_none": {
-    "message": "(לא נרשמו שגיאות)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(לא ניתן לקרוא את הלוג)"
   },
   "mc_set_fmt_none": {
     "message": "אין"

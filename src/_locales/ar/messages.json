@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "روابط قابلة للنقر"
   },
-  "mc_settings_partial_links": {
-    "message": "الروابط الجزئية"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "حوّل أيضًا الروابط الجزئية والمموّهة إلى روابط قابلة للنقر — مراجع youtube المجردة watch?v= ونطاقات بأسلوب \"site (dot) com\" التي تستخدمها الدردشات لتجاوز فلاتر الروابط."
-  },
   "mc_settings_link_previews": {
     "message": "معاينة الروابط"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "عرض لوحة multichat أيضًا في youtube VODs والرئيسية والبحث — متوقف افتراضيًا، فتظهر اللوحة فقط في البث المباشر (حيث توجد دردشة مباشرة)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: إظهار أرفف الموجز"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "إظهار shorts وplayables وكتل الترويج بين الفيديوهات في الصفحة الرئيسية لـyoutube — متوقف افتراضيًا، فيبقى الموجز صورًا مصغّرة مرتبة فقط"
-  },
   "mc_settings_message_density": {
     "message": "كثافة الرسائل"
   },
   "mc_settings_message_density_desc": {
     "message": "حشوة الأسطر — compact هو المظهر الضيق الكلاسيكي"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "أقصى رسائل ظاهرة"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "أقصى أسطر دردشة تُحفظ كـ DOM حي (مخزن البيانات يبقى 1500). أقل = ذاكرة ram أقل في القنوات المزدحمة."
   },
   "mc_settings_name_paints": {
     "message": "ألوان أسماء heatsync"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "شريط رفيع قبل الاسم يعرض مقدار الحرارة التي جمعها المتحدث"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "أولوية مزوّدي emote"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "عندما يملك 7tv/bttv/ffz emote بنفس الاسم، يفوز هذا المزوّد"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "عرض emotes المخزون"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "عندما تتابع على heatsync، تابع أيضًا على twitch إن كان لديهم حساب twitch مربوط. يحتاج تبويب twitch.tv مفتوحًا؛ وإلا يُوضع في الطابور"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "متابعة twitch مع الإشعارات"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "متابعات twitch عبر المنصات تفعّل أيضًا إشعارات البث المباشر لتلك القناة"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "أزرار شريط mod"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "الأنظمة الفرعية"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "بث دردشة twitch"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "اتصال twitch irc + الانضمام للقنوات داخل الطبقة"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "بث دردشة kick"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "اتصال kick websocket + الانضمام للقنوات داخل الطبقة"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "بث دردشة youtube"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "اشتراكات دردشة youtube المباشرة داخل الطبقة"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "تجميل الأطراف الثالثة"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv paints + شارات bttv/ffz/chatterino. الإيقاف يوفّر ram في القنوات المزدحمة."
-  },
-  "mc_settings_sub_feed": {
-    "message": "موجز"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "تبويب feed الاجتماعي في heatsync + بث أحداثه"
-  },
   "mc_settings_sub_whispers": {
     "message": "همسات"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "مقبس twitch whisper eventsub + تبويب whispers"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "الإشارات"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "رصد الإشارات وتبويبها والتنبيهات"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "إحصاءات البث"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "إحصاءات معدل الرسائل لكل قناة التي تغذّي ترتيب heat"
   },
   "mc_automod_label": {
     "message": "احتجاز automod"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "تسجيل الدخول"
-  },
-  "mc_settings_diag_errors": {
-    "message": "عرض أخطاء التشخيص"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "تُلتقط الأخطاء محليًا فقط — لا تُرفع أبدًا. هذا المفتاح يعرض لوحة التشخيص أدناه فقط."
-  },
-  "mc_settings_debug_logging": {
-    "message": "سجلات debug"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "سجلات وحدة تحكم مفصّلة من كل نصوص heatsync — تسري عند تحميل الصفحة التالي"
   },
   "mc_chatlogs_copy_failed": {
     "message": "فشل النسخ"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "إيقاف: يحتفظ الموقع بدردشته الأصلية ولا يعمل heatsync هناك — أعد التحميل للتطبيق"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "تذكّر مستوى الصوت على twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "تذكّر مستوى الصوت على kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "تذكّر مستوى الصوت على youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "كل قناة على twitch تحتفظ بآخر مستوى صوت ضبطته، في البثوث والتسجيلات والمضمّنات. الإيقاف يترك مشغّل twitch كما هو"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "كل قناة على kick تحتفظ بآخر مستوى صوت ضبطته، في البثوث والتسجيلات والمضمّنات. الإيقاف يترك مشغّل kick كما هو"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "كل قناة على youtube تحتفظ بآخر مستوى صوت ضبطته، في الفيديوهات والبثوث والمضمّنات. الإيقاف يترك مشغّل youtube كما هو"
-  },
   "mc_send_twitch_skipped": {
     "message": "أُرسل على youtube · تم تخطي twitch، لم تسجّل الدخول"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "النظام · نسخ احتياطي / استعادة"
   },
-  "mc_set_recent_errors": {
-    "message": "الأخطاء الأخيرة"
-  },
-  "mc_set_copy": {
-    "message": "نسخ"
-  },
-  "mc_set_clear": {
-    "message": "مسح"
-  },
-  "mc_set_crash_loading": {
-    "message": "(جارٍ التحميل...)"
-  },
   "mc_set_export_tip": {
     "message": "تفريغ ui_settings وكل مفاتيح hs_* في ملف JSON. قابل للنقل بين الأجهزة والمتصفحات."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "عرض الكل"
-  },
-  "mc_set_crash_none": {
-    "message": "(لا أخطاء مسجّلة)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(تعذّرت قراءة السجل)"
   },
   "mc_set_fmt_none": {
     "message": "لا شيء"

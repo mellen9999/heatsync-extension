@@ -737,7 +737,7 @@ function appendLoggedText(host, text) {
   if (typeof linksEnabled === 'undefined' || !linksEnabled || !raw) return appendTextWithHashtags(host, raw)
   let html = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   html = html.replace(/https?:\/\/[^\s<]+/gi, (m) => `<a href="${m}" class="hs-mc-link">${m}</a>`)
-  if (typeof partialLinksEnabled !== 'undefined' && partialLinksEnabled) html = linkifyPartialLinks(html)
+  html = linkifyPartialLinks(html)
   if (!html.includes('<a ')) return appendTextWithHashtags(host, raw)
   const tpl = document.createElement('template')
   tpl.innerHTML = html

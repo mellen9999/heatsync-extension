@@ -2458,9 +2458,7 @@ function renderFeedContent(content, emoteRefs) {
     })
     // Partial/defanged links ("watch?v=…", "heatsync (dot) org") — same
     // post-pass chat rows use; skips the anchors built above.
-    if (partialLinksEnabled) {
-      html = linkifyPartialLinks(html)
-    }
+    html = linkifyPartialLinks(html)
   }
   // Text formatting (bold, italic, spoilers, etc.) — skip <a>...</a> blocks so URL underscores aren't italicized.
   {

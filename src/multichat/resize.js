@@ -210,8 +210,6 @@ function setupResizeHandle() {
 }
 
 function applyChatWidth(cachedRightCol) {
-  // Native chat shown: don't resize the right-column (races native chat layout).
-  if (typeof getSetting === 'function' && getSetting('nativeVisible')) return
   const rightCol = cachedRightCol || document.querySelector('.right-column')
   if (!rightCol) return
   // No-channel pages (/videos, /directory, …) body-mount the panel as a
@@ -612,10 +610,6 @@ function ensureChatResizeHandle() {
   return handle
 }
 function positionChatResizeHandle() {
-  // Native chat shown: leave the resize handle alone — CSS hides it
-  // (body.hs-native-visible). If we set display:none here during the collapse,
-  // it'd persist as a stale inline style after toggling back to HS mode.
-  if (typeof getSetting === 'function' && getSetting('nativeVisible')) return
   const handle = ensureChatResizeHandle()
   ;['top', 'bottom', 'left', 'right', 'width', 'height'].forEach((p) => {
     handle.style.removeProperty(p)

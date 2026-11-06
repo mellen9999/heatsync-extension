@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "ลิงก์คลิกได้"
   },
-  "mc_settings_partial_links": {
-    "message": "ลิงก์บางส่วน"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "แปลงลิงก์ที่เขียนไม่ครบหรือพรางไว้ให้กดได้ด้วย — watch?v= เปล่าๆ ของ youtube และโดเมนแบบ \"site (dot) com\" ที่แชทใช้หลบตัวกรองลิงก์"
-  },
   "mc_settings_link_previews": {
     "message": "พรีวิวลิงก์"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "แสดงแผง multichat บน VOD หน้าแรก และหน้าค้นหาของ youtube ด้วย — ปิดเป็นค่าเริ่มต้น แผงจึงโผล่เฉพาะไลฟ์ (ที่มีแชทสด)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: แสดงชั้นวางในฟีด"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "แสดงชอร์ต เพลย์เอเบิล และบล็อกโปรโมตระหว่างวิดีโอในฟีดหน้าแรกของ youtube — ปิดไว้เป็นค่าเริ่มต้น ฟีดจึงเป็นแค่ภาพย่อที่เรียงเรียบร้อย"
-  },
   "mc_settings_message_density": {
     "message": "ความหนาแน่นข้อความ"
   },
   "mc_settings_message_density_desc": {
     "message": "ระยะห่างแถว — compact คือแบบแน่นคลาสสิก"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "ข้อความที่เห็นสูงสุด"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "จำนวนแถวแชทสูงสุดที่เก็บเป็น DOM สด (บัฟเฟอร์ข้อมูลยังคง 1500) น้อยลง = ใช้ ram น้อยลงในช่องที่คึกคัก"
   },
   "mc_settings_name_paints": {
     "message": "name paints ของ heatsync"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "แถบบางก่อนชื่อที่แสดงว่าผู้แชทได้รับความร้อนเท่าไร"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "ลำดับความสำคัญผู้ให้บริการ emote"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "เมื่อ 7tv/bttv/ffz มี emote ชื่อเดียวกัน ผู้ให้บริการนี้ชนะ"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "แสดง emotes จากคลัง"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "เมื่อติดตามบน heatsync ให้ติดตามบน twitch ด้วยถ้าเขาผูกบัญชี twitch ไว้ ต้องเปิดแท็บ twitch.tv ไว้ ไม่งั้นเข้าคิว"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "ติดตาม twitch พร้อมแจ้งเตือน"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "การติดตาม twitch ข้ามแพลตฟอร์มจะเปิดแจ้งเตือนสดของช่องนั้นด้วย"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "ปุ่มเครื่องมือ mod"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "ระบบย่อย"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "ฟีดแชท twitch"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "การเชื่อมต่อ twitch irc + การเข้าช่องในโอเวอร์เลย์"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "ฟีดแชท kick"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "การเชื่อมต่อ websocket ของ kick + การเข้าช่องในโอเวอร์เลย์"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "ฟีดแชท youtube"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "การสมัครรับแชทสด youtube ในโอเวอร์เลย์"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "ของตกแต่งจากภายนอก"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv paints + ป้าย bttv/ffz/chatterino ปิดแล้วประหยัด ram ในช่องที่คึกคัก"
-  },
-  "mc_settings_sub_feed": {
-    "message": "ฟีด"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "แท็บฟีดโซเชียลของ heatsync + สตรีมเหตุการณ์"
-  },
   "mc_settings_sub_whispers": {
     "message": "กระซิบ"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "ซ็อกเก็ต eventsub กระซิบของ twitch + แท็บกระซิบ"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "การกล่าวถึง"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "ตรวจจับการกล่าวถึง แท็บการกล่าวถึง และเสียงปิง"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "สถิติสตรีม"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "สถิติอัตราข้อความรายช่อง ที่ใช้จัดอันดับ heat"
   },
   "mc_automod_label": {
     "message": "automod พักไว้"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "เข้าสู่ระบบ"
-  },
-  "mc_settings_diag_errors": {
-    "message": "แสดง error การวินิจฉัย"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "error ถูกเก็บในเครื่องเท่านั้น — ไม่มีการอัปโหลด สวิตช์นี้แค่แสดงแผงวินิจฉัยด้านล่าง"
-  },
-  "mc_settings_debug_logging": {
-    "message": "log ดีบั๊ก"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "log คอนโซลแบบละเอียดจากสคริปต์ heatsync ทั้งหมด — มีผลเมื่อโหลดหน้าครั้งถัดไป"
   },
   "mc_chatlogs_copy_failed": {
     "message": "คัดลอกไม่สำเร็จ"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "ปิด: เว็บไซต์ใช้แชทของตัวเองต่อไปและ heatsync จะไม่โหลดที่นั่น — รีโหลดเพื่อใช้งาน"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "จำระดับเสียงบน twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "จำระดับเสียงบน kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "จำระดับเสียงบน youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "แต่ละช่องบน twitch จะจำระดับเสียงที่ตั้งไว้ล่าสุด ทั้งในสตรีม vod และ embed ปิดไว้จะไม่แตะเพลเยอร์ของ twitch"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "แต่ละช่องบน kick จะจำระดับเสียงที่ตั้งไว้ล่าสุด ทั้งในสตรีม vod และ embed ปิดไว้จะไม่แตะเพลเยอร์ของ kick"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "แต่ละช่องบน youtube จะจำระดับเสียงที่ตั้งไว้ล่าสุด ทั้งในวิดีโอ สตรีม และ embed ปิดไว้จะไม่แตะเพลเยอร์ของ youtube"
-  },
   "mc_send_twitch_skipped": {
     "message": "ส่งบน youtube แล้ว · ข้าม twitch เพราะยังไม่ได้ล็อกอิน"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "ระบบ · สำรอง / กู้คืน"
   },
-  "mc_set_recent_errors": {
-    "message": "error ล่าสุด"
-  },
-  "mc_set_copy": {
-    "message": "คัดลอก"
-  },
-  "mc_set_clear": {
-    "message": "ล้าง"
-  },
-  "mc_set_crash_loading": {
-    "message": "(กำลังโหลด...)"
-  },
   "mc_set_export_tip": {
     "message": "ส่งออก ui_settings + คีย์ hs_* ทั้งหมดเป็นไฟล์ JSON ย้ายข้ามอุปกรณ์และเบราว์เซอร์ได้"
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "แสดงทั้งหมด"
-  },
-  "mc_set_crash_none": {
-    "message": "(ไม่มี error ที่บันทึกไว้)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(อ่านล็อกไม่ได้)"
   },
   "mc_set_fmt_none": {
     "message": "ไม่มี"

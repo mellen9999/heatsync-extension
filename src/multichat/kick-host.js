@@ -333,11 +333,9 @@ function softKickNav(prevLiveCh) {
   } catch (_) {}
   let done = false
   const finish = () => {
-    // Gated: skip re-hide when the user has chosen nativeVisible.
-    if (!nativeVisible)
-      try {
-        setNativeChatHidden(true)
-      } catch (_) {}
+    try {
+      setNativeChatHidden(true)
+    } catch (_) {}
     isScrolledUp = false
     newMessageCount = 0
     _scrollbackWindow = 0 // new channel starts at the live tail

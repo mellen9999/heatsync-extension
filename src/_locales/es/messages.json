@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "enlaces clicables"
   },
-  "mc_settings_partial_links": {
-    "message": "enlaces parciales"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "convierte también en enlaces los parciales y disfrazados — refs de youtube tipo watch?v= sueltas y dominios estilo \"site (dot) com\" que los chats usan para esquivar filtros de links."
-  },
   "mc_settings_link_previews": {
     "message": "vista previa de links"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "muestra el panel de multichat también en vods, inicio y búsqueda de youtube — apagado por defecto, así el panel solo aparece en transmisiones en vivo (donde hay chat en vivo)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: mostrar estantes del feed"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "muestra shorts, playables y bloques promocionales entre los videos del feed de inicio de youtube — desactivado por defecto, así el feed son solo miniaturas que encajan limpias"
-  },
   "mc_settings_message_density": {
     "message": "densidad de mensajes"
   },
   "mc_settings_message_density_desc": {
     "message": "relleno de filas — compacto es el look apretado de siempre"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "máx. de mensajes visibles"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "máx. de filas del chat que se mantienen como DOM vivo (el buffer de datos sigue en 1500). menos = menos ram en canales movidos."
   },
   "mc_settings_name_paints": {
     "message": "name paints de heatsync"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "una barra fina antes del nombre que muestra cuánto calor ha ganado un chatter"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "prioridad de proveedor de emotes"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "si 7tv/bttv/ffz tienen un emote con el mismo nombre, gana este proveedor"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "mostrar emotes del inventario"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "al seguir en heatsync, también sigue en twitch si tienen una cuenta de twitch vinculada. necesita una pestaña de twitch.tv abierta; si no, queda en cola"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "seguir en twitch con notificaciones"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "los follows de twitch entre plataformas también activan las notificaciones de transmisión en vivo de ese canal"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "botones de la barra de mod"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "subsistemas"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "feed del chat de twitch"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "conexión irc de twitch y entradas a canales dentro del overlay"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "feed del chat de kick"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "conexión websocket de kick y entradas a canales dentro del overlay"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "feed del chat de youtube"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "suscripciones al chat en vivo de youtube dentro del overlay"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "cosméticos de terceros"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "paints de 7tv + badges de bttv/ffz/chatterino. apagado ahorra ram en canales movidos."
-  },
-  "mc_settings_sub_feed": {
-    "message": "feed"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "pestaña del feed social de heatsync y su flujo de eventos"
-  },
   "mc_settings_sub_whispers": {
     "message": "susurros"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "socket eventsub de susurros de twitch y pestaña de susurros"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "menciones"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "detección de menciones, pestaña de menciones y avisos"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "estadísticas del stream"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "estadísticas de mensajes por canal que alimentan el ranking de heat"
   },
   "mc_automod_label": {
     "message": "automod retenido"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "iniciar sesión"
-  },
-  "mc_settings_diag_errors": {
-    "message": "mostrar errores de diagnóstico"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "los errores se guardan solo en local — nunca se suben. este interruptor solo muestra el panel de diagnóstico de abajo."
-  },
-  "mc_settings_debug_logging": {
-    "message": "registro de depuración"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "log detallado en consola de todos los scripts de heatsync — se aplica en la próxima carga de página"
   },
   "mc_chatlogs_copy_failed": {
     "message": "no se pudo copiar"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "desactivado: el sitio conserva su propio chat y heatsync no se carga allí — recarga para aplicar"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "recordar volumen en twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "recordar volumen en kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "recordar volumen en youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "cada canal de twitch conserva el último volumen que fijaste, en directos, vods y embebidos. desactivado deja el reproductor de twitch en paz"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "cada canal de kick conserva el último volumen que fijaste, en directos, vods y embebidos. desactivado deja el reproductor de kick en paz"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "cada canal de youtube conserva el último volumen que fijaste, en vídeos, directos y embebidos. desactivado deja el reproductor de youtube en paz"
-  },
   "mc_send_twitch_skipped": {
     "message": "enviado en youtube · twitch omitido, sin sesión iniciada"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "sistema · copia / restaurar"
   },
-  "mc_set_recent_errors": {
-    "message": "errores recientes"
-  },
-  "mc_set_copy": {
-    "message": "copiar"
-  },
-  "mc_set_clear": {
-    "message": "borrar"
-  },
-  "mc_set_crash_loading": {
-    "message": "(cargando...)"
-  },
   "mc_set_export_tip": {
     "message": "vuelca ui_settings + todas las claves hs_* a un archivo JSON. portable entre dispositivos y navegadores."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "mostrar todo"
-  },
-  "mc_set_crash_none": {
-    "message": "(sin errores registrados)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(no se pudo leer el log)"
   },
   "mc_set_fmt_none": {
     "message": "ninguno"

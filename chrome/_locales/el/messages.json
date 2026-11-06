@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "κλικαρίσιμοι σύνδεσμοι"
   },
-  "mc_settings_partial_links": {
-    "message": "μερικά links"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "κάνε link και τα μερικά ή συγκαλυμμένα links — γυμνά watch?v= του youtube και domains τύπου \"site (dot) com\" που χρησιμοποιεί το chat για να ξεφύγει από τα φίλτρα links."
-  },
   "mc_settings_link_previews": {
     "message": "προεπισκόπηση links"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "δείξε το πάνελ multichat και σε vod, αρχική και αναζήτηση του youtube — off από προεπιλογή, ώστε το πάνελ να εμφανίζεται μόνο σε livestreams (όπου υπάρχει live chat)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: εμφάνιση ραφιών feed"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "εμφάνιση shorts, playables και promo μεταξύ των βίντεο στο αρχικό feed του youtube — ανενεργό από προεπιλογή, ώστε το feed να είναι μόνο μικρογραφίες που στοιχίζονται καθαρά"
-  },
   "mc_settings_message_density": {
     "message": "πυκνότητα μηνυμάτων"
   },
   "mc_settings_message_density_desc": {
     "message": "padding γραμμών — το compact είναι το κλασικό σφιχτό look"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "μέγιστα ορατά μηνύματα"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "μέγιστες γραμμές chat που μένουν ως ζωντανό DOM (το data buffer μένει 1500). λιγότερα = λιγότερη ram σε κινητικά κανάλια."
   },
   "mc_settings_name_paints": {
     "message": "name paints του heatsync"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "μια λεπτή μπάρα πριν από το όνομα που δείχνει πόση θερμότητα έχει κερδίσει ένας χρήστης"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "προτεραιότητα παρόχου emotes"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "όταν 7tv/bttv/ffz έχουν emote με το ίδιο όνομα, κερδίζει αυτός ο πάροχος"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "εμφάνιση emotes inventory"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "όταν κάνεις follow στο heatsync, κάνε follow και στο twitch αν έχει συνδεδεμένο λογαριασμό twitch. θέλει ανοιχτή καρτέλα twitch.tv· αλλιώς μπαίνει σε ουρά"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "twitch follow με ειδοποιήσεις"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "τα cross-platform twitch follows ενεργοποιούν και τις live ειδοποιήσεις του καναλιού"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "κουμπιά toolbar mod"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "υποσυστήματα"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "ροή chat twitch"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "σύνδεση irc του twitch + εισόδοι σε κανάλια μέσα στο overlay"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "ροή chat kick"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "σύνδεση websocket του kick + εισόδοι σε κανάλια μέσα στο overlay"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "ροή chat youtube"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "συνδρομές στο live chat του youtube μέσα στο overlay"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "κοσμητικά τρίτων"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "paints 7tv + badges bttv/ffz/chatterino. off εξοικονομεί ram σε κινητικά κανάλια."
-  },
-  "mc_settings_sub_feed": {
-    "message": "ροή"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "καρτέλα social feed του heatsync + η ροή γεγονότων της"
-  },
   "mc_settings_sub_whispers": {
     "message": "whispers"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "socket eventsub για whispers του twitch + καρτέλα whispers"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "αναφορές"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "ανίχνευση αναφορών, καρτέλα αναφορών και ping"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "στατιστικά stream"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "στατιστικά ρυθμού μηνυμάτων ανά κανάλι που τροφοδοτούν την κατάταξη heat"
   },
   "mc_automod_label": {
     "message": "κράτηση automod"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "σύνδεση"
-  },
-  "mc_settings_diag_errors": {
-    "message": "εμφάνιση σφαλμάτων διάγνωσης"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "τα σφάλματα καταγράφονται μόνο τοπικά — δεν ανεβαίνουν ποτέ. αυτός ο διακόπτης απλώς δείχνει το πάνελ διάγνωσης παρακάτω."
-  },
-  "mc_settings_debug_logging": {
-    "message": "καταγραφή debug"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "αναλυτικό logging στην κονσόλα από όλα τα scripts του heatsync — ισχύει στην επόμενη φόρτωση σελίδας"
   },
   "mc_chatlogs_copy_failed": {
     "message": "η αντιγραφή απέτυχε"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "off: ο ιστότοπος κρατά τη δική του συνομιλία και το heatsync δεν φορτώνει εκεί — φόρτωσε ξανά για εφαρμογή"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "απομνημόνευση έντασης στο twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "απομνημόνευση έντασης στο kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "απομνημόνευση έντασης στο youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "κάθε κανάλι του twitch κρατά την ένταση που όρισες τελευταία, σε streams, vods και ενσωματώσεις. όταν είναι κλειστό, αφήνει το πρόγραμμα αναπαραγωγής του twitch ανέγγιχτο"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "κάθε κανάλι του kick κρατά την ένταση που όρισες τελευταία, σε streams, vods και ενσωματώσεις. όταν είναι κλειστό, αφήνει το πρόγραμμα αναπαραγωγής του kick ανέγγιχτο"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "κάθε κανάλι του youtube κρατά την ένταση που όρισες τελευταία, σε βίντεο, streams και ενσωματώσεις. όταν είναι κλειστό, αφήνει το πρόγραμμα αναπαραγωγής του youtube ανέγγιχτο"
-  },
   "mc_send_twitch_skipped": {
     "message": "στάλθηκε στο youtube · το twitch παραλείφθηκε, δεν έχεις συνδεθεί"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "σύστημα · αντίγραφο / επαναφορά"
   },
-  "mc_set_recent_errors": {
-    "message": "πρόσφατα σφάλματα"
-  },
-  "mc_set_copy": {
-    "message": "αντιγραφή"
-  },
-  "mc_set_clear": {
-    "message": "εκκαθάριση"
-  },
-  "mc_set_crash_loading": {
-    "message": "(φόρτωση...)"
-  },
   "mc_set_export_tip": {
     "message": "εξαγωγή ui_settings + όλων των κλειδιών hs_* σε αρχείο JSON. μεταφέρσιμο μεταξύ συσκευών και browsers."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "εμφάνιση όλων"
-  },
-  "mc_set_crash_none": {
-    "message": "(δεν καταγράφηκαν σφάλματα)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(αδυναμία ανάγνωσης log)"
   },
   "mc_set_fmt_none": {
     "message": "κανένα"

@@ -322,6 +322,16 @@ const RETIRED_UI_KEYS = new Set([
   'automodRegex',
   'automodAllCaps',
   'keywordHighlights',
+  'debugLogging',
+  'crashTelemetry',
+  'emoteProviderPriority',
+  'partialLinksEnabled',
+  'channelVolumeTwitch',
+  'channelVolumeKick',
+  'channelVolumeYouTube',
+  'crossFollowTwitchNotify',
+  'ytFeedShelves',
+  'nativeVisible',
 ])
 // registry key → chrome.storage.local key name — must match src/lib/utils.js
 // OVERFLOW_MIRROR_KEYS exactly (parity-checked at build time).

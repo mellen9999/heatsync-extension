@@ -32,7 +32,6 @@ test('storage keys are verbatim legacy keys (no renames)', () => {
     'firstChatterGlow',
     'chatFilterRules',
     'hiddenTabs',
-    'crashTelemetry',
     'fontFamily',
     'fontSize',
     'customFontName',

@@ -60,9 +60,8 @@ describe('subsystem switches', () => {
   const corpus = enforcementCorpus()
 
   test('the panel declares the expected set', () => {
-    expect(keys.length).toBeGreaterThanOrEqual(8)
-    expect(keys).toContain('feed')
-    expect(keys).toContain('chat-youtube')
+    // the 2026-11 settings pass left the per-site overlay switches alone
+    expect(keys).toEqual(['overlay-twitch', 'overlay-kick', 'overlay-youtube'])
   })
 
   test('every switch is enforced somewhere outside the schema', () => {
@@ -75,6 +74,19 @@ describe('subsystem switches', () => {
   // and its "subsystem gate" comment is false. `right-click-block` is the one
   // known case — content.js gates on it and nothing declares it.
   const KNOWN_UNDECLARED = ['right-click-block']
+  // Feature gates the settings pass took off the panel: no user switch any
+  // more, but the server health kill-switch (__hsHealth.disabled) can still
+  // close each one, so the gate calls stay.
+  const KILL_SWITCH_ONLY = [
+    'irc-twitch',
+    'chat-kick',
+    'chat-youtube',
+    'cosmetics',
+    'feed',
+    'whispers',
+    'mentions',
+    'stream-stats',
+  ]
 
   test('no gate names a switch that does not exist', () => {
     const used = [
@@ -82,7 +94,11 @@ describe('subsystem switches', () => {
     ]
     expect(used.length, 'no gate calls found — the extraction broke, not the code').toBeGreaterThan(8)
     const phantom = used.filter(
-      (k) => !keys.includes(k) && !KNOWN_UNDECLARED.includes(k) && !SUBSYSTEMS_ALWAYS_ON.includes(k),
+      (k) =>
+        !keys.includes(k) &&
+        !KNOWN_UNDECLARED.includes(k) &&
+        !SUBSYSTEMS_ALWAYS_ON.includes(k) &&
+        !KILL_SWITCH_ONLY.includes(k),
     )
     expect(phantom, 'gated on a subsystem the settings panel never declares — the branch is unreachable').toEqual([])
   })

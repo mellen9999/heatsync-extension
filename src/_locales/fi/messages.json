@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "klikattavat linkit"
   },
-  "mc_settings_partial_links": {
-    "message": "osittaiset linkit"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "tee linkeiksi myös osittaiset ja piilotetut linkit — paljaat watch?v= youtube-viitteet ja \"site (dot) com\" -tyyliset verkkotunnukset, joilla chatissa kierretään linkkisuodattimia."
-  },
   "mc_settings_link_previews": {
     "message": "linkkien esikatselu"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "näytä multichat-paneeli myös youtuben vodeilla, etusivulla ja haussa — oletuksena pois, jolloin paneeli näkyy vain livelähetyksissä (joissa on live-chat)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: näytä syötteen hyllyt"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "näytä shorts-, playables- ja promo-lohkot videoiden välissä youtuben etusivun syötteessä — oletuksena pois, jolloin syötteessä on vain siististi ruudukkoon asettuvat pikkukuvat"
-  },
   "mc_settings_message_density": {
     "message": "viestien tiheys"
   },
   "mc_settings_message_density_desc": {
     "message": "rivien täyte — compact on klassinen tiivis ulkoasu"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "näkyviä viestejä enintään"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "chat-rivien enimmäismäärä elävässä DOMissa (databuffer pysyy 1500:ssa). pienempi = vähemmän ramia vilkkailla kanavilla."
   },
   "mc_settings_name_paints": {
     "message": "heatsync name paintit"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "ohut palkki nimen edessä, joka näyttää kuinka paljon lämpöä chattaaja on ansainnut"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "emote-palvelun prioriteetti"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "kun 7tv/bttv/ffz:llä on samanniminen emote, tämä palvelu voittaa"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "näytä reppuemotet"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "kun seuraat heatsyncissä, seuraa myös twitchissä jos heillä on yhdistetty twitch-tili. vaatii avoimen twitch.tv-välilehden; muuten jonoon"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "twitch-seuranta ilmoituksilla"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "alustojen väliset twitch-seurannat laittavat myös kanavan live-ilmoitukset päälle"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "mod-työkalupalkin napit"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "alijärjestelmät"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "twitch-chat-syöte"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "twitch irc -yhteys + kanaviin liittyminen overlayn sisällä"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "kick-chat-syöte"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "kick websocket -yhteys + kanaviin liittyminen overlayn sisällä"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "youtube-chat-syöte"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "youtuben live-chat-tilaukset overlayn sisällä"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "kolmansien osapuolten kosmetiikka"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv paintit + bttv/ffz/chatterino-badget. pois päältä säästää ramia vilkkailla kanavilla."
-  },
-  "mc_settings_sub_feed": {
-    "message": "syöte"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "heatsyncin sosiaalinen feed-välilehti + sen tapahtumavirta"
-  },
   "mc_settings_sub_whispers": {
     "message": "whisperit"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch whisper eventsub -socket + whisper-välilehti"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "maininnat"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "maininnan tunnistus, mainintavälilehti ja äänimerkit"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "streamitilastot"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "kanavakohtaiset viestinopeustilastot, jotka ajavat heat-järjestystä"
   },
   "mc_automod_label": {
     "message": "automod-pito"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "kirjaudu"
-  },
-  "mc_settings_diag_errors": {
-    "message": "näytä diagnostiikkavirheet"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "virheet tallennetaan vain paikallisesti — niitä ei koskaan lähetetä. tämä kytkin vain näyttää diagnostiikkapaneelin alla."
-  },
-  "mc_settings_debug_logging": {
-    "message": "debug-lokitus"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "laaja konsolilokitus kaikista heatsync-skripteistä — astuu voimaan seuraavalla sivun latauksella"
   },
   "mc_chatlogs_copy_failed": {
     "message": "kopiointi epäonnistui"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "pois: sivusto säilyttää oman chatinsa eikä heatsync lataudu sinne — ota käyttöön lataamalla uudelleen"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "muista äänenvoimakkuus: twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "muista äänenvoimakkuus: kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "muista äänenvoimakkuus: youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "jokainen twitch-kanava muistaa viimeksi asettamasi äänenvoimakkuuden lähetyksissä, vodeissa ja upotuksissa. pois päältä jättää twitchin soittimen rauhaan"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "jokainen kick-kanava muistaa viimeksi asettamasi äänenvoimakkuuden lähetyksissä, vodeissa ja upotuksissa. pois päältä jättää kickin soittimen rauhaan"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "jokainen youtube-kanava muistaa viimeksi asettamasi äänenvoimakkuuden videoissa, lähetyksissä ja upotuksissa. pois päältä jättää youtubein soittimen rauhaan"
-  },
   "mc_send_twitch_skipped": {
     "message": "lähetetty youtubeen · twitch ohitettu, et ole kirjautunut"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "järjestelmä · varmuuskopio / palautus"
   },
-  "mc_set_recent_errors": {
-    "message": "viimeisimmät virheet"
-  },
-  "mc_set_copy": {
-    "message": "kopioi"
-  },
-  "mc_set_clear": {
-    "message": "tyhjennä"
-  },
-  "mc_set_crash_loading": {
-    "message": "(ladataan...)"
-  },
   "mc_set_export_tip": {
     "message": "vie ui_settings + kaikki hs_*-avaimet JSON-tiedostoon. siirrettävä laitteiden ja selainten välillä."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "näytä kaikki"
-  },
-  "mc_set_crash_none": {
-    "message": "(ei kirjattuja virheitä)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(lokia ei voi lukea)"
   },
   "mc_set_fmt_none": {
     "message": "ei mitään"

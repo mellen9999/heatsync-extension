@@ -94,13 +94,6 @@
     body.hs-chat-hidden #hs-mc-resize-handle,
     body.hs-chat-hidden #hs-kick-resize-handle,
     body.hs-chat-hidden #hs-yt-resize-handle { display: none !important; }
-    /* Native chat shown: the HS resize bar floats (position:fixed, max z-index)
-       over native chat + its emote picker — hide it. You're using native chat,
-       not resizing the HS panel. */
-    body.hs-native-visible #hs-c-resize-handle,
-    body.hs-native-visible #hs-mc-resize-handle,
-    body.hs-native-visible #hs-kick-resize-handle,
-    body.hs-native-visible #hs-yt-resize-handle { display: none !important; }
     body.hs-chat-hidden .chat-shell.hs-native-hidden,
     body.hs-chat-hidden [class*="chat-shell"].hs-native-hidden { display: none !important; }
     #hs-chat-restore-pill {
@@ -159,55 +152,4 @@
       background: #000 !important;
     }
 
-    /* ── NATIVE VISIBLE MODE (escape-hatch) ──────────────────────────────────
-       The chat sidebar is narrow (~302px on kick) and #hs-mc-container is a
-       fixed overlay, so showing native chat *beside* heatsync doesn't fit
-       (verified on a live kick stream: a 340px panel squeezes native to 0).
-       Instead we SWAP: native chat fills the sidebar, and the HS panel
-       collapses to just its tab-bar strip — which keeps the toggle reachable
-       so the user can swap back. setNativeChatHidden(false) removes
-       .hs-native-hidden so native renders normally; the rules below lay out
-       the swapped state.
-       VERIFIED (live-DOM sim, kick): native renders fully + panel collapses to
-       the tab-bar. TODO(reload-tweak): the strip's exact vertical offset vs the
-       kick top-nav and native's first message row needs an eyes-on reload pass
-       — adjust the padding-top below (and add a top: pin if the strip drifts
-       over the nav). */
-
-    /* Collapse the HS panel to a small top-right tab-bar strip in native mode —
-       regardless of chat position (right/left/top/BOTTOM) and on first boot.
-       The quadrupled class beats the no-channel position rules (specificity 1,3,1)
-       that otherwise pin the panel full-width/full-height (covering native chat +
-       leaving a bottom gap). Pure CSS so it applies on boot, no JS timing. */
-    body.hs-native-visible.hs-native-visible.hs-native-visible.hs-native-visible #hs-mc-container {
-      position: fixed !important;
-      top: var(--hs-twitch-topnav-h, 50px) !important;
-      right: 0 !important;
-      left: auto !important;
-      bottom: auto !important;
-      width: auto !important;
-      max-width: 360px !important;
-      height: auto !important;
-      z-index: 10000 !important;
-    }
-    body.hs-native-visible #hs-mc-container > *:not(#hs-mc-tabbar) {
-      display: none !important;
-    }
-    /* belt: if a re-hide re-adds the class before the !nativeVisible gate catches it */
-    body.hs-native-visible #channel-chatroom.hs-native-hidden,
-    body.hs-native-visible .chat-shell.hs-native-hidden {
-      display: flex !important;
-    }
-    /* push native chat content clear of the collapsed tab-bar strip (kick) */
-    body.hs-native-visible.hs-platform-kick #channel-chatroom {
-      padding-top: 48px !important;
-      box-sizing: border-box !important;
-    }
-
-    /* highlight the native-btn when active */
-    #hs-mc-native-btn.active {
-      background: #fff !important;
-      color: #000 !important;
-      border-color: #fff !important;
-    }
 

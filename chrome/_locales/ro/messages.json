@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "link-uri clicabile"
   },
-  "mc_settings_partial_links": {
-    "message": "linkuri parțiale"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "transformă în linkuri și pe cele parțiale sau deghizate — referințe goale watch?v= de youtube și domenii gen \"site (dot) com\" folosite de chaturi ca să ocolească filtrele de linkuri."
-  },
   "mc_settings_link_previews": {
     "message": "previzualizări de linkuri"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "arată panoul multichat și pe VOD-urile youtube, acasă și căutare — oprit implicit, deci panoul apare doar la livestream-uri (unde există chat live)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: arată rafturile din feed"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "arată shorts, playables și blocuri promo între videoclipurile din feedul de acasă youtube — oprit implicit, ca feedul să fie doar miniaturi aliniate frumos"
-  },
   "mc_settings_message_density": {
     "message": "densitate mesaje"
   },
   "mc_settings_message_density_desc": {
     "message": "spațiere rânduri — compact e look-ul clasic, strâns"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "max mesaje vizibile"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "max rânduri de chat păstrate ca DOM viu (bufferul de date rămâne 1500). mai puțin = mai puțin ram pe canale aglomerate."
   },
   "mc_settings_name_paints": {
     "message": "culori de nume heatsync"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "o bară subțire înaintea numelui care arată câtă căldură a câștigat un chatter"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "prioritate furnizor emote-uri"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "când 7tv/bttv/ffz au un emote cu același nume, câștigă acest furnizor"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "afișează emote-urile din inventar"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "când urmărești pe heatsync, urmărești și pe twitch dacă are un cont twitch legat. cere un tab twitch.tv deschis; altfel stă la coadă"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "urmărire twitch cu notificări"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "urmăririle twitch între platforme pornesc și notificările live pentru canalul respectiv"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "butoane bară mod"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "subsisteme"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "flux de chat twitch"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "conexiune irc twitch + intrări pe canale în overlay"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "flux de chat kick"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "conexiune websocket kick + intrări pe canale în overlay"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "flux de chat youtube"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "abonări la chatul live youtube în overlay"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "cosmetice de la terți"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "paint-uri 7tv + insigne bttv/ffz/chatterino. oprit economisește ram pe canale aglomerate."
-  },
-  "mc_settings_sub_feed": {
-    "message": "feed"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "tabul de feed social heatsync + fluxul lui de evenimente"
-  },
   "mc_settings_sub_whispers": {
     "message": "whisper-uri"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "socket eventsub pentru whisper-urile twitch + tabul de whisper-uri"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "mențiuni"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "detectarea mențiunilor, tabul de mențiuni și ping-uri"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "statistici stream"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "statistici de ritm al mesajelor pe canal care alimentează clasamentul heat"
   },
   "mc_automod_label": {
     "message": "reținut de automod"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "conectare"
-  },
-  "mc_settings_diag_errors": {
-    "message": "arată erorile de diagnostic"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "erorile se rețin doar local — nu se încarcă niciodată. comutatorul doar arată panoul de diagnostic de mai jos."
-  },
-  "mc_settings_debug_logging": {
-    "message": "loguri de debug"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "loguri detaliate în consolă de la toate scripturile heatsync — se aplică la următoarea încărcare a paginii"
   },
   "mc_chatlogs_copy_failed": {
     "message": "copierea a eșuat"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "oprit: site-ul își păstrează chatul propriu și heatsync nu se încarcă acolo — reîncarcă pentru a aplica"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "ține minte volumul pe twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "ține minte volumul pe kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "ține minte volumul pe youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "fiecare canal de pe twitch păstrează ultimul volum setat, în stream-uri, vod-uri și embeduri. oprit lasă playerul twitch în pace"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "fiecare canal de pe kick păstrează ultimul volum setat, în stream-uri, vod-uri și embeduri. oprit lasă playerul kick în pace"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "fiecare canal de pe youtube păstrează ultimul volum setat, în videoclipuri, stream-uri și embeduri. oprit lasă playerul youtube în pace"
-  },
   "mc_send_twitch_skipped": {
     "message": "trimis pe youtube · twitch omis, neautentificat"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "sistem · backup / restaurare"
   },
-  "mc_set_recent_errors": {
-    "message": "erori recente"
-  },
-  "mc_set_copy": {
-    "message": "copiază"
-  },
-  "mc_set_clear": {
-    "message": "golește"
-  },
-  "mc_set_crash_loading": {
-    "message": "(se încarcă...)"
-  },
   "mc_set_export_tip": {
     "message": "salvează ui_settings + toate cheile hs_* într-un fișier JSON. portabil între dispozitive și browsere."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "arată toate"
-  },
-  "mc_set_crash_none": {
-    "message": "(nicio eroare înregistrată)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(logul nu poate fi citit)"
   },
   "mc_set_fmt_none": {
     "message": "niciuna"

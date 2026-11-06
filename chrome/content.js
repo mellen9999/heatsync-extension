@@ -2571,36 +2571,8 @@
       log(' Applied UI hiding CSS:', rules.length, 'rules')
     }
 
-    // heatsync name paints follow their own switch, not the third-party gate
+    // heatsync name paints follow their own switch
     hsPaintsEnabled = namePaintsOn(settings.showNamePaints)
-
-    // Cosmetics — the cosmetics subsystem gate
-    if (settings.subsystems?.cosmetics === false) {
-      cosmeticsEnabled = false
-      // Remove existing cosmetic badges from DOM
-      document.querySelectorAll('.hs-cosmetic-badge').forEach((b) => b.remove())
-      document.querySelectorAll('[data-hs-paint-applied]').forEach((el) => {
-        el.style.removeProperty('background-image')
-        el.style.removeProperty('background-size')
-        el.style.removeProperty('-webkit-background-clip')
-        el.style.removeProperty('-webkit-text-fill-color')
-        el.style.removeProperty('background-clip')
-        el.style.removeProperty('filter')
-        delete el.dataset.hsPaintApplied
-      })
-    } else {
-      cosmeticsEnabled = true
-    }
-
-    // Debug logging toggle — sync localStorage so next page load picks up the new state.
-    // (DEBUG is captured at IIFE start; runtime change requires reload.)
-    try {
-      if (settings.debugLogging === true) {
-        localStorage.setItem('heatsync_debug', 'true')
-      } else if (settings.debugLogging === false) {
-        localStorage.removeItem('heatsync_debug')
-      }
-    } catch (_e) {}
   }
   // Load and apply UI settings on startup
   ;(async function loadUiSettings() {
@@ -4526,7 +4498,6 @@
   let chatterinoBadgeMap = new BadgeIndex([])
   const heatsyncColorMap = new Map() // username → HeatSync API color (from follow:colors)
   const HEATSYNC_COLOR_MAP_MAX = 2000
-  let cosmeticsEnabled = true // toggle for BTTV/FFZ/7TV cosmetics
   let dimTimeoutsEnabled = true // dim timed-out/banned messages instead of hiding
   const originalMessageBodies = new Map() // msg-id → cloned childNodes array (for restoring on timeout)
   const cosmeticsCache = new Map()
@@ -5036,7 +5007,6 @@
   // element does. Paint may arrive after the mention rendered — the
   // data-hs-cosmetic-mention stamp lets applyPendingCosmetics catch up.
   function applyMentionCosmetics(el, username) {
-    if (!cosmeticsEnabled) return
     if (isKick) {
       const c = kickCosmeticsCache.get(username)
       if (c?.paint && !el.dataset.hsPaintApplied) applyPaintToElement(el, c.paint)
@@ -5535,24 +5505,22 @@
     if (!isKick && twitchUid && usernameElement) stampHsNativePaint(usernameElement, twitchUid)
 
     // Apply third-party cosmetics (BTTV/FFZ badges + 7TV paints/badges)
-    if (cosmeticsEnabled) {
-      if (isKick) {
-        if (username) {
-          messageElement.dataset.hsCosmeticKickUser = lowerUser
-          applyKickCosmeticsToMessage(messageElement, lowerUser)
-          queueKickCosmeticsLookup(lowerUser)
-        }
-      } else if (twitchUid) {
-        applyCosmeticsToMessage(messageElement, twitchUid, usernameElement)
-        queueCosmeticsLookup(twitchUid)
-        // Discover self twitch ID once per session and register with the
-        // background so 7TV EventAPI can push real-time cosmetic updates.
-        if (!_selfTwitchIdRegistered) {
-          const me = getCurrentUsername()
-          if (me && username && me.toLowerCase() === lowerUser) {
-            _selfTwitchIdRegistered = true
-            safeSendMessage({ type: 'register_self_twitch_id', twitchId: twitchUid })
-          }
+    if (isKick) {
+      if (username) {
+        messageElement.dataset.hsCosmeticKickUser = lowerUser
+        applyKickCosmeticsToMessage(messageElement, lowerUser)
+        queueKickCosmeticsLookup(lowerUser)
+      }
+    } else if (twitchUid) {
+      applyCosmeticsToMessage(messageElement, twitchUid, usernameElement)
+      queueCosmeticsLookup(twitchUid)
+      // Discover self twitch ID once per session and register with the
+      // background so 7TV EventAPI can push real-time cosmetic updates.
+      if (!_selfTwitchIdRegistered) {
+        const me = getCurrentUsername()
+        if (me && username && me.toLowerCase() === lowerUser) {
+          _selfTwitchIdRegistered = true
+          safeSendMessage({ type: 'register_self_twitch_id', twitchId: twitchUid })
         }
       }
     }
@@ -8798,7 +8766,7 @@
         mutations.forEach((mutation) => {
           // === ATTRIBUTE MUTATION (was userIdObserver) ===
           if (mutation.type === 'attributes') {
-            if (!cosmeticsEnabled || isKick) return
+            if (isKick) return
             if (mutation.attributeName !== 'data-user-id') return
             const el = mutation.target
             if (!el?.classList?.contains('chat-line__message')) return

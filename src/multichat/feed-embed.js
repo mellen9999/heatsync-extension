@@ -438,8 +438,8 @@ function extractChatEmbed(text, opts) {
   // constantly because platforms throttle links for non-subs, and linkifyPartialLinks
   // already turns these into anchors. Without this they were link-only: you had
   // to leave chat to watch. Falls through only when no real URL produced a card,
-  // so an explicit link in the same message still wins. Rides the same
-  // partialLinksEnabled toggle — off means "don't guess at bare fragments".
+  // so an explicit link in the same message still wins. Off with clickable
+  // links — no links at all means no guessing at bare fragments either.
   if (opts?.partialLinks === false) return ''
   const yt = typeof firstPartialYtUrl === 'function' ? firstPartialYtUrl(text) : ''
   const ytHtml = yt ? chatEmbedForUrl(yt) : ''

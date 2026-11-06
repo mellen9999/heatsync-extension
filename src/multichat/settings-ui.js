@@ -1,6 +1,6 @@
 // settings tab UI — split out of main.js (2026-07-04).
 // Sub-tab bar, search/filter rows, category panes, help overlay,
-// crash-log/backup blocks, and the settings-tab-only keyboard nav. The settings
+// backup block, and the settings-tab-only keyboard nav. The settings
 // ENGINE (getSetting/setSetting, schema wiring, storage sync/broadcast) stays in
 // main.js — this file only builds and drives the tab's DOM.
 
@@ -73,7 +73,7 @@ function _renderSetSubtabBar() {
 // reusing the existing DOM/CSS vocabulary (setting-row, toggle-pill,
 // size-btns, locale-select, textarea). Categories compose registry
 // sections with the few hand-rendered islands (mod toolbar, language,
-// muted users, crash log, backup, defaults).
+// muted users, backup, defaults).
 
 let _setQuery = ''
 const _setCollapsed = new Set() // '<category>|<section title>'
@@ -578,32 +578,6 @@ function _renderMutedGroup() {
   )
 }
 
-function _renderCrashLogBlock() {
-  var crash = !!getSetting('crashTelemetry')
-  return (
-    '<div class="hs-mc-setting-row hs-mc-setting-row-block" id="hs-set-crashlog-row"' +
-    (!crash ? ' style="display:none"' : '') +
-    '>' +
-    '<div style="display:flex;justify-content:space-between;align-items:center;width:100%">' +
-    '<span class="hs-mc-setting-label">' +
-    t('mc_set_recent_errors') +
-    '</span>' +
-    '<div style="display:flex;gap:4px">' +
-    '<button id="hs-set-crash-copy" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">' +
-    t('mc_set_copy') +
-    '</button>' +
-    '<button id="hs-set-crash-clear" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 8px;font-size:13px;cursor:pointer;font-family:inherit">' +
-    t('mc_set_clear') +
-    '</button>' +
-    '</div>' +
-    '</div>' +
-    '<pre id="hs-set-crash-pre" class="hs-mc-set-crash-pre">' +
-    t('mc_set_crash_loading') +
-    '</pre>' +
-    '</div>'
-  )
-}
-
 // Action rows — buttons, not settings, but people search for them.
 // Shared between the system pane (_renderBackupGroup) and search results.
 const _SET_ACTION_ROWS = [
@@ -1039,13 +1013,7 @@ function _renderCategoryPaneInner(cat) {
     return _renderPageDefaultsRow(cat) + _regSections(cat) + mrGroupHtml()
   }
   if (cat === 'system') {
-    // crash log block nests inside the advanced section, after its pill
-    var adv = _regSections(cat, ['advanced'])
-    var advFolded = _setCollapsed.has(`${cat}|advanced`)
-    if (!advFolded && adv.endsWith('</div>')) {
-      adv = `${adv.slice(0, -6) + _renderCrashLogBlock()}</div>`
-    }
-    return _regSections(cat, ['tabs', 'subsystems', 'language']) + _renderMutedGroup() + adv + _renderBackupGroup()
+    return _regSections(cat, ['tabs', 'subsystems', 'language']) + _renderMutedGroup() + _renderBackupGroup()
   }
   return _renderPageDefaultsRow(cat) + _regSections(cat)
 }
@@ -1168,52 +1136,6 @@ async function _importAllSettings() {
 // expecting a JSONB `settings` blob that the server never produced. The
 // 11 toggles it populated were unwired (server didn't read those keys),
 // so removing it has no functional change. See _SERVER_FILTER_DEFS deletion.
-
-// Load recent errors + diag snapshot into the system sub-tab pre element.
-// Reads hs_errors directly (single source of truth — written by lib/error-reporter).
-async function _loadCrashLog() {
-  var pre = document.getElementById('hs-set-crash-pre')
-  if (!pre) return
-  try {
-    var cur = await new Promise((r) => {
-      chrome.storage.local.get('hs_errors', r)
-    })
-    var log = Array.isArray(cur?.hs_errors) ? cur.hs_errors : []
-    var diag = null
-    try {
-      diag = (await browser.runtime.sendMessage({ type: 'get_diag' }))?.diag || null
-    } catch (_) {}
-    function fmtTs(ts) {
-      var d = new Date(ts)
-      return d.toISOString().replace('T', ' ').slice(0, 19)
-    }
-    var head = diag ? `--- diag ---\n${JSON.stringify(diag, null, 2)}\n\n` : ''
-    if (log.length === 0) {
-      pre.textContent = `${head}${t('mc_set_crash_none')}`
-      return
-    }
-    pre.textContent =
-      head +
-      log
-        .slice()
-        .reverse()
-        .map(
-          (entry) =>
-            '[' +
-            fmtTs(entry.ts) +
-            '] ' +
-            (entry.plat || entry.type || '?') +
-            ': ' +
-            (entry.msg || '') +
-            '\n' +
-            (entry.stack || '') +
-            '\n',
-        )
-        .join('\n')
-  } catch (_) {
-    pre.textContent = t('mc_set_crash_unreadable')
-  }
-}
 
 // settings › help — the one help: keys for this pane, then the slash commands.
 // Esc (or ?) goes back to the cell it was opened from.
@@ -1542,9 +1464,8 @@ function renderSettingsTab() {
     '</div>' +
     '</div>'
 
-  // Controls render with live values inline (getSetting); only the crash
-  // log pre needs an async fill, and keyboard focus needs restoring.
-  if (_settingsSubtab === 'system' && !searchActive && getSetting('crashTelemetry')) _loadCrashLog()
+  // Controls render with live values inline (getSetting); only keyboard
+  // focus needs restoring.
   if (_setFocusRow) {
     var fr = msgsEl.querySelector(`[data-set-row="${CSS.escape(_setFocusRow)}"]`)
     if (fr) fr.classList.add('hs-mc-set-row-focus')
@@ -1660,32 +1581,6 @@ function renderSettingsTab() {
       return
     }
 
-    // Crash log buttons
-    if (e.target.id === 'hs-set-crash-copy') {
-      var pre = document.getElementById('hs-set-crash-pre')
-      if (pre?.textContent) {
-        var copyBtn = e.target
-        navigator.clipboard.writeText(pre.textContent).then(
-          () => {
-            copyBtn.textContent = t('btn_toast_copied')
-          },
-          () => {
-            copyBtn.textContent = t('popup_copy_failed')
-          },
-        )
-        cleanup.setTimeout(() => {
-          copyBtn.textContent = t('mc_set_copy')
-        }, 1500)
-      }
-      return
-    }
-    if (e.target.id === 'hs-set-crash-clear') {
-      chrome.storage.local.remove('hs_errors', () => {
-        void chrome.runtime.lastError
-      })
-      _loadCrashLog()
-      return
-    }
 
     var defaultsBtn = e.target.closest('.hs-mc-defaults-btn')
     if (defaultsBtn) {

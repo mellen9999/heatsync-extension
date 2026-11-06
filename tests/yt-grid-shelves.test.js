@@ -27,14 +27,10 @@ test('tile width clamps never reach items inside a section (shelf)', () => {
   for (const s of selectors) expect(s).toContain(':not(ytd-rich-section-renderer *)')
 })
 
-test('feed shelves are hidden by default and a setting brings them back', () => {
+test('feed shelves are always hidden', () => {
   expect(css).toMatch(
-    /body\.hs-platform-yt:not\(\.hs-yt-shelves\) #page-manager ytd-rich-grid-renderer > #contents > ytd-rich-section-renderer \{\s*display: none !important/,
+    /body\.hs-platform-yt #page-manager ytd-rich-grid-renderer > #contents > ytd-rich-section-renderer \{\s*display: none !important/,
   )
-  const schema = readFileSync(join(import.meta.dir, '..', 'src', 'lib', 'settings-schema.js'), 'utf8')
-  expect(schema).toMatch(/key: 'ytFeedShelves',\s*type: 'bool',\s*default: false/)
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
-  expect(main).toContain("document.body.classList.toggle('hs-yt-shelves', !!v)")
 })
 
 test('the masthead reservation is only killed on a live page, never on an offline one', () => {

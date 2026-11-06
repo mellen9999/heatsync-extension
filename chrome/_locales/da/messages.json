@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "klikbare links"
   },
-  "mc_settings_partial_links": {
-    "message": "delvise links"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "gør også delvise og afskærmede links klikbare — nøgne watch?v=-youtube-henvisninger og domæner i stil med \"site (dot) com\", som chats bruger til at snyde linkfiltre."
-  },
   "mc_settings_link_previews": {
     "message": "link-forhåndsvisning"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "vis multichat-panelet også på youtube-VODs, forsiden og søgning — slået fra som standard, så panelet kun vises ved livestreams (hvor der er livechat)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: vis feed-hylder"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "vis shorts, playables og promo-blokke mellem videoerne på youtubes forside-feed — slået fra som standard, så feedet kun er miniaturer, der flugter pænt"
-  },
   "mc_settings_message_density": {
     "message": "beskedtæthed"
   },
   "mc_settings_message_density_desc": {
     "message": "rækkeafstand — compact er det klassiske stramme look"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "maks. synlige beskeder"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "maks. chatrækker holdt som levende DOM (databufferen forbliver 1500). færre = mindre ram på travle kanaler."
   },
   "mc_settings_name_paints": {
     "message": "heatsync-navnemaling"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "en tynd bjælke før navnet, der viser hvor meget varme en chatter har optjent"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "emote-udbyderprioritet"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "når 7tv/bttv/ffz har en emote med samme navn, vinder denne udbyder"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "vis inventar-emotes"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "når du følger på heatsync, følg også på twitch hvis de har en forbundet twitch-konto. kræver en åben twitch.tv-fane; ellers sættes det i kø"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "twitch-følg med notifikationer"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "følg på tværs af platforme på twitch slår også live-notifikationer til for den kanal"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "mod-værktøjslinjeknapper"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "delsystemer"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "twitch-chatfeed"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "twitch irc-forbindelse + kanal-joins i overlayet"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "kick-chatfeed"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "kick websocket-forbindelse + kanal-joins i overlayet"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "youtube-chatfeed"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "youtube-livechat-abonnementer i overlayet"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "tredjepartskosmetik"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv-paints + bttv/ffz/chatterino-badges. fra sparer ram på travle kanaler."
-  },
-  "mc_settings_sub_feed": {
-    "message": "feed"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "heatsyncs sociale feed-fane + dens begivenhedsstrøm"
-  },
   "mc_settings_sub_whispers": {
     "message": "whispers"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch whisper eventsub-socket + whisper-fane"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "omtaler"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "omtaledetektion, omtalefane og pings"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "stream-statistik"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "beskedhastighed pr. kanal, som driver heat-rangeringen"
   },
   "mc_automod_label": {
     "message": "automod-tilbageholdt"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "log ind"
-  },
-  "mc_settings_diag_errors": {
-    "message": "vis diagnosefejl"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "fejl fanges kun lokalt — uploades aldrig. kontakten viser kun diagnosepanelet nedenfor."
-  },
-  "mc_settings_debug_logging": {
-    "message": "debug-logning"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "udførlig konsollogning fra alle heatsync-scripts — gælder ved næste sideindlæsning"
   },
   "mc_chatlogs_copy_failed": {
     "message": "kopiering mislykkedes"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "fra: siden beholder sin egen chat, og heatsync indlæses ikke der — genindlæs for at anvende"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "husk lydstyrke på twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "husk lydstyrke på kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "husk lydstyrke på youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "hver twitch-kanal husker den lydstyrke du sidst satte, i streams, vods og indlejringer. fra lader twitchs afspiller være"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "hver kick-kanal husker den lydstyrke du sidst satte, i streams, vods og indlejringer. fra lader kicks afspiller være"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "hver youtube-kanal husker den lydstyrke du sidst satte, i videoer, streams og indlejringer. fra lader youtubes afspiller være"
-  },
   "mc_send_twitch_skipped": {
     "message": "sendt på youtube · twitch sprunget over, ikke logget ind"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "system · backup / gendan"
   },
-  "mc_set_recent_errors": {
-    "message": "seneste fejl"
-  },
-  "mc_set_copy": {
-    "message": "kopiér"
-  },
-  "mc_set_clear": {
-    "message": "ryd"
-  },
-  "mc_set_crash_loading": {
-    "message": "(indlæser...)"
-  },
   "mc_set_export_tip": {
     "message": "dump ui_settings + alle hs_*-nøgler til en JSON-fil. kan flyttes mellem enheder og browsere."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "vis alle"
-  },
-  "mc_set_crash_none": {
-    "message": "(ingen fejl registreret)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(kan ikke læse loggen)"
   },
   "mc_set_fmt_none": {
     "message": "ingen"

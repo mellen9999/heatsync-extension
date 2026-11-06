@@ -590,6 +590,16 @@ const RETIRED_UI_KEYS = new Set([
   'automodRegex',
   'automodAllCaps',
   'keywordHighlights',
+  'debugLogging',
+  'crashTelemetry',
+  'emoteProviderPriority',
+  'partialLinksEnabled',
+  'channelVolumeTwitch',
+  'channelVolumeKick',
+  'channelVolumeYouTube',
+  'crossFollowTwitchNotify',
+  'ytFeedShelves',
+  'nativeVisible',
 ])
 
 // registry key → chrome.storage.local key name, for every UI_SYNC_BLOCKLIST
@@ -981,9 +991,9 @@ function liveIdentityCounterpart(hostPlatform, urlCh, res) {
 // and existing <a>…</a> spans are skipped whole so links can never nest.
 // Input is pre-escaped html; matches exclude <>"' so the emitted href is
 // attribute-safe verbatim (same contract as the feed's linkify pass).
-// Known trade-off, gated behind partialLinksEnabled: the spaced " dot " form
-// can linkify prose like "the dot com era" — that's the price of "get all of
-// them"; the toggle is the escape hatch.
+// Known trade-off: the spaced " dot " form can linkify prose like "the dot
+// com era" — that's the price of "get all of them"; clickable links off is
+// the escape hatch.
 
 // Host-less path fragments: chat drops the domain constantly ("shorts/e2B1_DNpsV4",
 // "watch?v=…", "r/place"). The 11-char youtube id shape is what keeps prose like

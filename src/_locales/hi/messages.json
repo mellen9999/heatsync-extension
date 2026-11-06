@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "क्लिक करने योग्य लिंक"
   },
-  "mc_settings_partial_links": {
-    "message": "आंशिक लिंक"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "आंशिक और छिपे हुए लिंक भी क्लिक करने लायक बनाओ — सीधे watch?v= youtube रेफ़रेंस और \"site (dot) com\" जैसे डोमेन, जिन्हें चैट लिंक फ़िल्टर से बचने के लिए इस्तेमाल करती है।"
-  },
   "mc_settings_link_previews": {
     "message": "लिंक प्रीव्यू"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "multichat पैनल youtube के vod, होम और सर्च पर भी दिखाओ — डिफ़ॉल्ट बंद, तो पैनल सिर्फ़ लाइवस्ट्रीम पर दिखता है (जहाँ लाइव चैट होती है)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: फ़ीड शेल्फ़ दिखाओ"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "youtube होम फ़ीड में वीडियो के बीच shorts, playables और प्रमो ब्लॉक दिखाओ — डिफ़ॉल्ट रूप से बंद, ताकि फ़ीड सिर्फ़ साफ़ टाइल वाले थंबनेल रहे"
-  },
   "mc_settings_message_density": {
     "message": "मैसेज डेंसिटी"
   },
   "mc_settings_message_density_desc": {
     "message": "पंक्ति पैडिंग — compact वही क्लासिक कसा हुआ लुक है"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "ज़्यादा से ज़्यादा दिखने वाले मैसेज"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "लाइव DOM में रखी जाने वाली अधिकतम चैट पंक्तियाँ (डेटा बफ़र 1500 ही रहता है)। कम = व्यस्त चैनल पर कम ram।"
   },
   "mc_settings_name_paints": {
     "message": "heatsync नेम पेंट्स"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "नाम से पहले एक पतली पट्टी जो दिखाती है कि चैटर ने कितनी हीट कमाई है"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "emote प्रोवाइडर की प्राथमिकता"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "जब 7tv/bttv/ffz के पास एक ही नाम का emote हो, तो यह प्रोवाइडर जीतता है"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "इन्वेंटरी emotes दिखाओ"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "heatsync पर फ़ॉलो करो तो twitch पर भी फ़ॉलो करो, अगर उनका twitch अकाउंट लिंक है। खुला twitch.tv टैब चाहिए; वरना कतार में रहता है"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "नोटिफ़िकेशन के साथ twitch फ़ॉलो"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "क्रॉस-प्लेटफ़ॉर्म twitch फ़ॉलो उस चैनल के लाइव नोटिफ़िकेशन भी चालू करते हैं"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "mod टूलबार बटन"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "सबसिस्टम"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "twitch चैट फ़ीड"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "ओवरले के अंदर twitch irc कनेक्शन + चैनल जॉइन"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "kick चैट फ़ीड"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "ओवरले के अंदर kick websocket कनेक्शन + चैनल जॉइन"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "youtube चैट फ़ीड"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "ओवरले के अंदर youtube लाइव चैट सब्सक्रिप्शन"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "थर्ड-पार्टी कॉस्मेटिक्स"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv paints + bttv/ffz/chatterino बैज। बंद करने से व्यस्त चैनल पर ram बचती है।"
-  },
-  "mc_settings_sub_feed": {
-    "message": "फ़ीड"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "heatsync सोशल फ़ीड टैब + उसका इवेंट स्ट्रीम"
-  },
   "mc_settings_sub_whispers": {
     "message": "व्हिस्पर"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch whisper eventsub सॉकेट + whispers टैब"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "मेंशन"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "मेंशन पहचान, मेंशन टैब और पिंग"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "स्ट्रीम स्टैट्स"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "हर चैनल की मैसेज-रेट स्टैट्स, जिनसे heat रैंकिंग बनती है"
   },
   "mc_automod_label": {
     "message": "automod होल्ड"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "लॉग इन"
-  },
-  "mc_settings_diag_errors": {
-    "message": "डायग्नोस्टिक एरर दिखाओ"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "एरर सिर्फ़ लोकल रूप से कैप्चर होते हैं — कभी अपलोड नहीं होते। यह टॉगल बस नीचे का डायग्नोस्टिक पैनल दिखाता है।"
-  },
-  "mc_settings_debug_logging": {
-    "message": "डीबग लॉगिंग"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "सभी heatsync स्क्रिप्ट से कंसोल में विस्तृत लॉग — अगले पेज लोड पर लागू होता है"
   },
   "mc_chatlogs_copy_failed": {
     "message": "कॉपी नहीं हुआ"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "बंद: साइट अपनी चैट रखती है और वहाँ heatsync लोड नहीं होता — लागू करने के लिए रीलोड करें"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "twitch पर वॉल्यूम याद रखें"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "kick पर वॉल्यूम याद रखें"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "youtube पर वॉल्यूम याद रखें"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "twitch का हर चैनल आपकी आख़िरी सेट की हुई वॉल्यूम याद रखता है, स्ट्रीम, vod और एम्बेड में। बंद होने पर twitch का प्लेयर अछूता रहता है"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "kick का हर चैनल आपकी आख़िरी सेट की हुई वॉल्यूम याद रखता है, स्ट्रीम, vod और एम्बेड में। बंद होने पर kick का प्लेयर अछूता रहता है"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "youtube का हर चैनल आपकी आख़िरी सेट की हुई वॉल्यूम याद रखता है, वीडियो, स्ट्रीम और एम्बेड में। बंद होने पर youtube का प्लेयर अछूता रहता है"
-  },
   "mc_send_twitch_skipped": {
     "message": "youtube पर भेजा · twitch छोड़ा गया, लॉग इन नहीं है"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "सिस्टम · बैकअप / रीस्टोर"
   },
-  "mc_set_recent_errors": {
-    "message": "हाल के एरर"
-  },
-  "mc_set_copy": {
-    "message": "कॉपी"
-  },
-  "mc_set_clear": {
-    "message": "साफ़ करो"
-  },
-  "mc_set_crash_loading": {
-    "message": "(लोड हो रहा है...)"
-  },
   "mc_set_export_tip": {
     "message": "ui_settings और सारी hs_* कुंजियाँ एक JSON फ़ाइल में डालता है। डिवाइस और ब्राउज़र बदलने पर भी चलती है।"
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "सब दिखाओ"
-  },
-  "mc_set_crash_none": {
-    "message": "(कोई एरर दर्ज नहीं)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(लॉग पढ़ नहीं पाए)"
   },
   "mc_set_fmt_none": {
     "message": "कोई नहीं"

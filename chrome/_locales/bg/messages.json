@@ -558,12 +558,6 @@
   "mc_settings_clickable_links": {
     "message": "кликаеми линкове"
   },
-  "mc_settings_partial_links": {
-    "message": "частични линкове"
-  },
-  "mc_settings_partial_links_desc": {
-    "message": "прави кликаеми и частични и скрити линкове — голи youtube препратки watch?v= и домейни от типа \"site (dot) com\", с които чатовете заобикалят филтрите за линкове."
-  },
   "mc_settings_link_previews": {
     "message": "преглед на линкове"
   },
@@ -1179,23 +1173,11 @@
   "mc_settings_yt_chat_non_live_desc": {
     "message": "показва панела на multichat и на youtube VOD, началната страница и търсенето — изключено по подразбиране, така че панелът се появява само при livestream (където има чат на живо)"
   },
-  "mc_settings_yt_feed_shelves": {
-    "message": "youtube: показвай секциите на емисията"
-  },
-  "mc_settings_yt_feed_shelves_desc": {
-    "message": "показвай shorts, playables и промо блокове между видеата в началната емисия на youtube — по подразбиране изкл., така емисията е само миниатюри, подредени чисто"
-  },
   "mc_settings_message_density": {
     "message": "гъстота на съобщенията"
   },
   "mc_settings_message_density_desc": {
     "message": "отстъп на редовете — compact е класическият плътен вид"
-  },
-  "mc_settings_max_visible_messages": {
-    "message": "макс. видими съобщения"
-  },
-  "mc_settings_max_visible_messages_desc": {
-    "message": "макс. редове в чата, държани като жив DOM (буферът с данни остава 1500). по-малко = по-малко ram на натоварени канали."
   },
   "mc_settings_name_paints": {
     "message": "heatsync цветове на имена"
@@ -1247,12 +1229,6 @@
   },
   "mc_settings_heat_bars_desc": {
     "message": "тънка лента пред името, показваща колко топлина е натрупал чатър"
-  },
-  "mc_settings_emote_provider_priority": {
-    "message": "приоритет на emote доставчици"
-  },
-  "mc_settings_emote_provider_priority_desc": {
-    "message": "когато 7tv/bttv/ffz имат emote с едно и също име, печели този доставчик"
   },
   "mc_settings_render_inventory_emotes": {
     "message": "показвай emotes от инвентара"
@@ -1337,12 +1313,6 @@
   },
   "mc_settings_cross_follow_twitch_desc": {
     "message": "когато следваш в heatsync, следвай и в twitch, ако имат свързан twitch акаунт. иска отворен таб twitch.tv; иначе влиза в опашка"
-  },
-  "mc_settings_cross_follow_twitch_notify": {
-    "message": "twitch следване с известия"
-  },
-  "mc_settings_cross_follow_twitch_notify_desc": {
-    "message": "следването в twitch между платформи включва и live известия за този канал"
   },
   "mc_settings_mod_toolbar_buttons": {
     "message": "бутони на mod лентата"
@@ -1473,53 +1443,8 @@
   "mc_settings_subsystems": {
     "message": "подсистеми"
   },
-  "mc_settings_sub_irc_twitch": {
-    "message": "twitch чат поток"
-  },
-  "mc_settings_sub_irc_twitch_desc": {
-    "message": "twitch irc връзка + влизане в канали вътре в overlay-а"
-  },
-  "mc_settings_sub_chat_kick": {
-    "message": "kick чат поток"
-  },
-  "mc_settings_sub_chat_kick_desc": {
-    "message": "kick websocket връзка + влизане в канали вътре в overlay-а"
-  },
-  "mc_settings_sub_chat_youtube": {
-    "message": "youtube чат поток"
-  },
-  "mc_settings_sub_chat_youtube_desc": {
-    "message": "абонаменти за youtube live чат вътре в overlay-а"
-  },
-  "mc_settings_sub_cosmetics": {
-    "message": "козметика от трети страни"
-  },
-  "mc_settings_sub_cosmetics_desc": {
-    "message": "7tv paints + bttv/ffz/chatterino значки. изключено спестява ram на натоварени канали."
-  },
-  "mc_settings_sub_feed": {
-    "message": "емисия"
-  },
-  "mc_settings_sub_feed_desc": {
-    "message": "таб със социалния feed на heatsync + неговият поток от събития"
-  },
   "mc_settings_sub_whispers": {
     "message": "шепоти"
-  },
-  "mc_settings_sub_whispers_desc": {
-    "message": "twitch whisper eventsub сокет + таб whispers"
-  },
-  "mc_settings_sub_mentions": {
-    "message": "споменавания"
-  },
-  "mc_settings_sub_mentions_desc": {
-    "message": "засичане на споменавания, таб споменавания и пингове"
-  },
-  "mc_settings_sub_stream_stats": {
-    "message": "статистика на стрийма"
-  },
-  "mc_settings_sub_stream_stats_desc": {
-    "message": "скорост на съобщенията по канал, която захранва heat класацията"
   },
   "mc_automod_label": {
     "message": "automod задържа"
@@ -1550,18 +1475,6 @@
   },
   "mc_signed_out_action": {
     "message": "вход"
-  },
-  "mc_settings_diag_errors": {
-    "message": "показвай диагностични грешки"
-  },
-  "mc_settings_diag_errors_desc": {
-    "message": "грешките се записват само локално — никога не се качват. този ключ само показва диагностичния панел по-долу."
-  },
-  "mc_settings_debug_logging": {
-    "message": "debug логове"
-  },
-  "mc_settings_debug_logging_desc": {
-    "message": "подробни логове в конзолата от всички heatsync скриптове — важат при следващо зареждане на страницата"
   },
   "mc_chatlogs_copy_failed": {
     "message": "копирането не успя"
@@ -3542,24 +3455,6 @@
   "mc_settings_sub_overlay_desc": {
     "message": "изкл.: сайтът запазва собствения си чат и heatsync не се зарежда там — презареди за прилагане"
   },
-  "mc_settings_channel_volume_twitch": {
-    "message": "запомняй звука в twitch"
-  },
-  "mc_settings_channel_volume_kick": {
-    "message": "запомняй звука в kick"
-  },
-  "mc_settings_channel_volume_youtube": {
-    "message": "запомняй звука в youtube"
-  },
-  "mc_settings_channel_volume_twitch_desc": {
-    "message": "всеки канал в twitch пази последно зададената от теб сила на звука — в стриймове, записи и вградени плейъри. изключено оставя плейъра на twitch на мира"
-  },
-  "mc_settings_channel_volume_kick_desc": {
-    "message": "всеки канал в kick пази последно зададената от теб сила на звука — в стриймове, записи и вградени плейъри. изключено оставя плейъра на kick на мира"
-  },
-  "mc_settings_channel_volume_youtube_desc": {
-    "message": "всеки канал в youtube пази последно зададената от теб сила на звука — във видеа, стриймове и вградени плейъри. изключено оставя плейъра на youtube на мира"
-  },
   "mc_send_twitch_skipped": {
     "message": "изпратено в youtube · twitch пропуснат, не си влязъл"
   },
@@ -5384,18 +5279,6 @@
   "mc_set_system_backup": {
     "message": "система · резервно копие / възстановяване"
   },
-  "mc_set_recent_errors": {
-    "message": "последни грешки"
-  },
-  "mc_set_copy": {
-    "message": "копирай"
-  },
-  "mc_set_clear": {
-    "message": "изчисти"
-  },
-  "mc_set_crash_loading": {
-    "message": "(зареждам...)"
-  },
   "mc_set_export_tip": {
     "message": "изхвърля ui_settings + всички hs_* ключове в JSON файл. пренослив между устройства и браузъри."
   },
@@ -5518,12 +5401,6 @@
   },
   "mc_set_show_all": {
     "message": "покажи всички"
-  },
-  "mc_set_crash_none": {
-    "message": "(няма записани грешки)"
-  },
-  "mc_set_crash_unreadable": {
-    "message": "(логът не може да се прочете)"
   },
   "mc_set_fmt_none": {
     "message": "никакви"

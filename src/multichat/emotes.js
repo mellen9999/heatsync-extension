@@ -31,11 +31,10 @@ function mcHasExternalSource() {
 }
 
 // Which third-party provider (7tv/bttv/ffz) wins a same-name collision within
-// a tier (channel or global). Bridged to the settings registry
-// (emoteProviderPriority, default '7tv' — matches the pre-existing hardcoded
-// winner) via _RUNTIME_BRIDGE in main.js. Read live by _buildChannelEmoteCache
-// and the global-emotes loader in loadEmotes() below.
-let emoteProviderPriority = 'ffz'
+// a tier (channel or global): ffz — its API answers at once and its images
+// load, so Tab and the picker lead with it (mellen, 2026-10-23). Read by
+// _buildChannelEmoteCache and the global-emotes loader in loadEmotes() below.
+const emoteProviderPriority = 'ffz'
 
 // Per-provider result caches keyed per-query. AbortController cancels stale
 // in-flight requests on each keystroke. Results ACCUMULATE across pages

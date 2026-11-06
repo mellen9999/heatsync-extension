@@ -15056,7 +15056,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '349da5c42e2e' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '3d4a7a177a0b' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -19820,7 +19820,7 @@ function _frTest(rule, m) {
 //   automodRegex      one hide rule per line, the line as a case-insensitive pattern
 //   automodAllCaps    one hide rule: no lower case, 8+ capitals, 11+ chars
 //   hs_mute_keywords  one hide rule per line, matched literally anywhere
-//   keywordHighlights one highlight rule per line, whole word, in the mention colour
+//   keywordHighlights one highlight rule per line or comma (the site documented commas), whole word, in the mention colour
 // Self-contained — no imports, so tests load it without the bundle scope.
 
 // Unambiguous on purpose: each run between capitals excludes capitals, so a
@@ -19836,10 +19836,11 @@ function _legacyEscape(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-function _legacyLines(text) {
+// Newlines only by default: a pattern may hold a comma.
+function _legacyLines(text, sep = /\r?\n/) {
   if (typeof text !== 'string') return []
   return text
-    .split(/\r?\n/)
+    .split(sep)
     .map((s) => s.trim())
     .filter((s) => s && s.length <= LEGACY_MAX_TERM)
 }
@@ -19866,7 +19867,7 @@ function legacyFilterRules(old) {
   for (const p of _legacyLines(old?.automodRegex)) add('hide', 'regex', p, false)
   if (old?.automodAllCaps === true) add('hide', 'regex', LEGACY_CAPS_PATTERN, true)
   for (const w of _legacyLines(old?.muteKeywords)) add('hide', 'regex', _legacyEscape(w), false)
-  for (const w of _legacyLines(old?.keywordHighlights)) {
+  for (const w of _legacyLines(old?.keywordHighlights, /[,\n]/)) {
     add('highlight', 'regex', `\\b${_legacyEscape(w)}\\b`, false, LEGACY_HIGHLIGHT_COLOR)
   }
   return out

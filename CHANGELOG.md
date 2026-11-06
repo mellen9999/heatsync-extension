@@ -1,5 +1,18 @@
 # changelog
 
+## [1.7.119] — 2026-11-05
+
+### added
+- **temp tab** — the watching tab is now a temp tab, like the site's: the channel you're on takes one unsaved slot; chatting in it or its menu keeps it. popouts get it too.
+- **stream lines** — went live and switched to lines show the streamer's own colour and name paint, kick and youtube included; ones missed while away replay from history.
+- **name marks** — your own lines wear the flame too.
+- **composer** — a merged tab's input shows where a send goes, [TKY] in each platform's colour.
+
+### fixed
+- **tabs** — a page without a channel no longer saves its fallback tab over live; the next channel page opens that channel's chat.
+- **popouts** — boot straight onto the temp tab or the saved tab covering it; a hidden saved tab no longer covers the page channel.
+- **flair** — a flair set or cleared on heatsync.org repaints your rows at once, not after 10 minutes.
+
 ## [1.7.118] — 2026-11-05
 
 ### added

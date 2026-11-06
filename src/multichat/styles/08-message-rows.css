@@ -375,7 +375,7 @@
     }
     /* ANSI 0-15 semantic palette:
        red(9)=ban/blocked/error, green(10)=owned/untimeout/safe,
-       yellow(11)=first-seen/announcement/bits/DM/kw-match/warn (attention),
+       yellow(11)=first-seen/announcement/bits/DM/warn (attention),
        magenta(13)=raid/gift/mention/first-msg-ever (special event),
        cyan(14)=stream-hype/milestone (action-needed).
        #fff reserved for brand chrome only (buttons, frames, drag bars). */
@@ -640,17 +640,16 @@
          earlier 0.30 alpha at -2px spread read as nothing on this background. */
       box-shadow: inset 2px 0 0 var(--hs-mention);
     }
-    .hs-mc-msg.hs-kw-match { background: #000000; }
-    /* Mention red wins over keyword-yellow when a row is both — "you got pinged"
-       is the stronger signal. Higher specificity guarantees the override
-       regardless of source order; drops the keyword's yellow ring too. */
-    .hs-mc-msg.mention.hs-kw-match,
-    .hs-feed-msg.mention.hs-kw-match {
+    /* Mention red wins over a highlight rule when a row is both — "you got
+       pinged" is the stronger signal. Higher specificity guarantees the
+       override regardless of source order; drops the rule's ring too. */
+    .hs-mc-msg.mention.hs-mc-rule-highlight,
+    .hs-feed-msg.mention.hs-mc-rule-highlight {
       background: var(--hs-mention-bg);
       box-shadow: none;
     }
-    .hs-mc-msg.mention.hs-kw-match.hs-mc-zebra,
-    .hs-feed-msg.mention.hs-kw-match.hs-mc-zebra {
+    .hs-mc-msg.mention.hs-mc-rule-highlight.hs-mc-zebra,
+    .hs-feed-msg.mention.hs-mc-rule-highlight.hs-mc-zebra {
       background: var(--hs-mention-bg-stripe);
     }
     /* Returning chatter — back after a long absence (twitch returning-chatter tag).
@@ -696,14 +695,13 @@
     .hs-mc-msg.hs-mc-first-msg { --hs-row-ring: #ff00ff; }
     .hs-mc-msg.hs-mc-redeemed { --hs-row-ring: var(--hs-plat-twitch); }
     .hs-mc-msg.hs-mc-highlighted { --hs-row-ring: var(--hs-gold); }
-    .hs-mc-msg.hs-kw-match { --hs-row-ring: var(--hs-mention); }
     .hs-mc-msg.hs-mc-rule-highlight { --hs-row-ring: var(--hs-rule-hl, #fff); }
     /* a ringed notice drops the system rail and its gutter: back to the row's own padding */
     .hs-mc-msg.hs-mc-system:is(.hs-mc-notice-sub, .hs-mc-notice-gift, .hs-mc-notice-raid, .hs-mc-notice-bits, .hs-mc-kicks, .hs-mc-notice-announce, .hs-mc-notice-milestone, .hs-mc-notice-watchstreak, .hs-mc-notice-charity, .hs-mc-notice-mod-anniversary) {
       border-left: 0;
       padding: var(--hs-mc-row-pad, 2px 4px);
     }
-    .hs-mc-msg:is(.hs-mc-notice-sub, .hs-mc-notice-gift, .hs-mc-notice-raid, .hs-mc-notice-bits, .hs-mc-kicks, .hs-mc-notice-announce, .hs-mc-notice-milestone, .hs-mc-notice-watchstreak, .hs-mc-notice-charity, .hs-mc-notice-mod-anniversary, .hs-mc-animated, .hs-mc-user-intro, .hs-mc-first-msg, .hs-mc-redeemed, .hs-mc-highlighted, .hs-kw-match, .hs-mc-rule-highlight) {
+    .hs-mc-msg:is(.hs-mc-notice-sub, .hs-mc-notice-gift, .hs-mc-notice-raid, .hs-mc-notice-bits, .hs-mc-kicks, .hs-mc-notice-announce, .hs-mc-notice-milestone, .hs-mc-notice-watchstreak, .hs-mc-notice-charity, .hs-mc-notice-mod-anniversary, .hs-mc-animated, .hs-mc-user-intro, .hs-mc-first-msg, .hs-mc-redeemed, .hs-mc-highlighted, .hs-mc-rule-highlight) {
       box-shadow: inset 0 0 0 1px var(--hs-row-ring);
     }
     /* Filter-rule highlight — color driven by per-rule CSS custom property */

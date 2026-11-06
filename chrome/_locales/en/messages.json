@@ -727,15 +727,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "yellow edge on someone's first message this session"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "keyword highlights"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "tints matched messages orange. one per line, case-insensitive, whole-word"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "one keyword per line"
-  },
   "mc_settings_auto_claim": {
     "message": "auto-claim channel points"
   },
@@ -1399,21 +1390,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "one per line — shown as selectable chips in the ban dialog; the choice is sent with the ban"
   },
-  "mc_settings_automod_caps": {
-    "message": "hide all-caps spam"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "hide messages over 10 chars that are mostly uppercase"
-  },
-  "mc_settings_automod_regex": {
-    "message": "filter regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "one pattern per line, case-insensitive — matching messages get hidden"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "show sexual emotes"
   },
@@ -1461,15 +1437,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "collapse identical consecutive messages (spam waves) to the first one"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "mute keywords"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "one term per line — messages containing any get hidden. distinct from keyword highlights."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "filter rules"

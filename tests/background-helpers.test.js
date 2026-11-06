@@ -264,7 +264,7 @@ describe('bgIrcParseLine — reply-parent-user-id threading (background.js live 
 // DEVICE_LOCAL_KEYS/OVERFLOW_MIRROR_KEYS/LARGE_KEY_SYNC_MAX (kept in parity
 // with src/lib/utils.js by build.js's checkUiSyncBlocklistParity guard) feeds
 // this splitter, used by the ui-state:update / settings:patch handlers to
-// route large blocklist prefs (keywordHighlights/chatFilterRules) to their
+// route large blocklist prefs (chatFilterRules) to their
 // chrome.storage.local overflow keys instead of chrome.storage.sync.
 
 const splitIncomingUiStateSrc =
@@ -280,14 +280,13 @@ describe('splitIncomingUiState', () => {
     expect(overflow).toEqual({})
   })
 
-  test('keywordHighlights/chatFilterRules go to `overflow` under their mirror key names', () => {
+  test('chatFilterRules goes to `overflow` under its mirror key name', () => {
     const { sync, overflow } = splitIncomingUiState({
       zebra: true,
-      keywordHighlights: 'foo\nbar',
       chatFilterRules: '[]',
     })
     expect(sync).toEqual({ zebra: true })
-    expect(overflow).toEqual({ keyword_highlights: 'foo\nbar', chat_filter_rules: '[]' })
+    expect(overflow).toEqual({ chat_filter_rules: '[]' })
   })
 
   test('platformFilters (device-local) is dropped entirely — not in sync or overflow', () => {
@@ -297,7 +296,7 @@ describe('splitIncomingUiState', () => {
   })
 
   test('oversized large-key value is dropped, not adopted', () => {
-    const { overflow } = splitIncomingUiState({ keywordHighlights: 'x'.repeat(32769) })
+    const { overflow } = splitIncomingUiState({ chatFilterRules: 'x'.repeat(32769) })
     expect(overflow).toEqual({})
   })
 
@@ -308,14 +307,14 @@ describe('splitIncomingUiState', () => {
 
   test('non-string large-key values are dropped — overflow bucket is string-only', () => {
     const { overflow } = splitIncomingUiState({
-      keywordHighlights: { __proto__: { polluted: true }, sneaky: 'object' },
+      platformFilters: { __proto__: { polluted: true }, sneaky: 'object' },
       chatFilterRules: ['not', 'a', 'string'],
     })
     expect(overflow).toEqual({})
   })
 
   test('numeric/boolean large-key values are dropped too', () => {
-    const { overflow } = splitIncomingUiState({ keywordHighlights: 42, chatFilterRules: true })
+    const { overflow } = splitIncomingUiState({ chatFilterRules: true })
     expect(overflow).toEqual({})
   })
 

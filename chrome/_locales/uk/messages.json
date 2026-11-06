@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "помаранчева рамка на першому повідомленні за сесію"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "виділення ключових слів"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "фарбує збіжні повідомлення у помаранчевий. по одному на рядок, без урахування регістру, ціле слово"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "одне слово в рядку"
-  },
   "mc_settings_auto_claim": {
     "message": "авто-збір channel points"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "по одній на рядок — показуються як чипи для вибору в діалозі бану; вибір надсилається разом з баном"
   },
-  "mc_settings_automod_caps": {
-    "message": "ховати спам капсом"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "ховає повідомлення довші за 10 символів, які здебільшого великими літерами"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex-фільтр"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "один шаблон на рядок, без урахування регістру — повідомлення, що збігаються, ховаються"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "показувати сексуальні emotes"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "згортає однакові повідомлення підряд (хвилі спаму) до першого"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "заглушити ключові слова"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "один термін на рядок — повідомлення з будь-яким із них ховаються. не те саме, що підсвічування ключових слів."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "спойлер\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "правила фільтрів"

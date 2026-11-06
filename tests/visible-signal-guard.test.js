@@ -46,8 +46,8 @@ describe('a signal must differ from the surface it sits on', () => {
   })
 
   // Both mention renderers (multichat + social feed), and a mention that also
-  // matched a keyword — that row once went black with no edge at all.
-  for (const sel of ['.hs-mc-msg.mention,', '.hs-mc-msg.mention.hs-kw-match,']) {
+  // matched a highlight rule — that row once went black with no edge at all.
+  for (const sel of ['.hs-mc-msg.mention,', '.hs-mc-msg.mention.hs-mc-rule-highlight,']) {
     test(`${sel.replace(/,$/, '')} is filled with the mention red`, () => {
       const body = block(rows, sel)
       expect(body, `${sel} is gone — the mention row stopped being styled at all`).toBeTruthy()
@@ -63,7 +63,7 @@ describe('a signal must differ from the surface it sits on', () => {
     expect(stripe, '--hs-mention-bg-stripe is gone').toBeTruthy()
     expect(stripe, 'a run of mentions would read as one block').not.toBe(fill)
     expect(stripe).not.toBe(SURFACE)
-    for (const sel of ['.hs-mc-msg.mention.hs-mc-zebra,', '.hs-mc-msg.mention.hs-kw-match.hs-mc-zebra,']) {
+    for (const sel of ['.hs-mc-msg.mention.hs-mc-zebra,', '.hs-mc-msg.mention.hs-mc-rule-highlight.hs-mc-zebra,']) {
       expect(block(rows, sel), `${sel} must fill with --hs-mention-bg-stripe`).toMatch(
         /background:\s*var\(--hs-mention-bg-stripe\)/,
       )

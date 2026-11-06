@@ -2170,11 +2170,7 @@
   let _uiOverflowCachePromise = null
   function cachedUiOverflow() {
     if (!_uiOverflowCachePromise) {
-      _uiOverflowCachePromise = chrome.storage.local.get([
-        'platform_filters',
-        'keyword_highlights',
-        'chat_filter_rules',
-      ])
+      _uiOverflowCachePromise = chrome.storage.local.get(['platform_filters', 'chat_filter_rules'])
     }
     return _uiOverflowCachePromise
   }
@@ -2185,9 +2181,7 @@
   // One-shot migration: heal any chrome.storage.sync.ui_settings record that
   // accumulated indexed-key bloat (server fanout used to merge raw payloads
   // without validation, which once injected `{0:{},1:"...",...}` shaped data
-  // and pushed the record over the 8 KB QUOTA_BYTES_PER_ITEM ceiling). Also
-  // moves platformFilters / keywordHighlights to chrome.storage.local where
-  // they belong (per-tab map and free-form text — neither fits in sync).
+  // and pushed the record over the 8 KB QUOTA_BYTES_PER_ITEM ceiling).
   // Idempotent + race-safe — multiple tabs running in parallel converge to
   // the same cleaned record. Gated by ui_settings_migrated_v2 in local.
   async function migrateUiSettingsOnce() {
@@ -2195,15 +2189,9 @@
       const flag = await browser.storage.local.get('ui_settings_migrated_v2')
       if (flag.ui_settings_migrated_v2) return
       const synced = await browser.storage.sync.get('ui_settings')
-      const dirty = synced.ui_settings || {}
-      const overflow = {}
-      if (typeof dirty.keywordHighlights === 'string' && dirty.keywordHighlights.length <= 65536) {
-        overflow.keyword_highlights = dirty.keywordHighlights
-      }
-      const cleaned = sanitizeUiSettings(dirty)
+      const cleaned = sanitizeUiSettings(synced.ui_settings || {})
       const writes = []
       writes.push(browser.storage.sync.set({ ui_settings: cleaned }))
-      if (Object.keys(overflow).length) writes.push(browser.storage.local.set(overflow))
       writes.push(browser.storage.local.set({ ui_settings_migrated_v2: true }))
       await Promise.all(writes.map((p) => p.catch(() => {})))
       invalidateUiSettingsCache()
@@ -2323,7 +2311,7 @@
       // Everything else goes to chrome.storage.sync. The ws fanout patch is
       // a third, overlapping view: syncPatch keys PLUS any blocklist key
       // that's a real cross-device preference (not DEVICE_LOCAL_KEYS) and
-      // fits under LARGE_KEY_SYNC_MAX — keywordHighlights/chatFilterRules
+      // fits under LARGE_KEY_SYNC_MAX — chatFilterRules
       // ride the server channel this way even though they never touch
       // chrome.storage.sync directly (8KB ceiling).
       const localPatch = {}
@@ -2577,12 +2565,6 @@
         firstChatterGlow = v
       },
     },
-    keywordHighlights: {
-      get: () => keywordHighlights,
-      set: (v) => {
-        keywordHighlights = v
-      },
-    },
     emoteSize: {
       get: () => emoteSize,
       set: (v) => {
@@ -2799,9 +2781,6 @@
         }, 300)
       }
     })(),
-    muteKeywords: () => {
-      rebuildMuteKeywordsRegex()
-    },
     // rendered html is cached per message — a src change needs a cache
     // flush before the re-render or old animated imgs survive the toggle
     emoteAnimation: (v, _def, onLoad) => {
@@ -2863,9 +2842,6 @@
         chatPositionPrevious = v
         if (!isRemote) saveUiSetting('chatPositionPrevious', v)
       }
-    },
-    automod: () => {
-      compileAutomod({ automodAllCaps: getSetting('automodAllCaps'), automodRegex: getSetting('automodRegex') })
     },
     notifPermission: (v) => {
       if (!v) return
@@ -3258,7 +3234,35 @@
   async function retireSettings() {
     if (!_settingsHydrated) return
     try {
-      const ui = (await browser.storage.sync.get('ui_settings'))?.ui_settings || {}
+      const [synced, local] = await Promise.all([
+        browser.storage.sync.get('ui_settings'),
+        browser.storage.local.get(['hs_mute_keywords', 'keyword_highlights', 'chat_filter_rules']),
+      ])
+      const ui = synced?.ui_settings || {}
+      // The four old text filters become chat filter rules (filter-rules-legacy.js).
+      // The rules are written before the old values go, so a closed tab loses nothing.
+      const added = legacyFilterRules({
+        automodRegex: ui.automodRegex,
+        automodAllCaps: ui.automodAllCaps,
+        muteKeywords: local.hs_mute_keywords,
+        // pre-overflow installs still hold highlight words in the sync blob
+        keywordHighlights: typeof local.keyword_highlights === 'string' ? local.keyword_highlights : ui.keywordHighlights,
+      })
+      if (added.length) {
+        let cur
+        try {
+          cur = JSON.parse(local.chat_filter_rules || '[]')
+        } catch {}
+        // unreadable rules: keep every old value and leave the rules alone
+        if (!Array.isArray(cur)) return
+        const next = mergeFilterRules(cur, added)
+        if (next.length !== cur.length) {
+          const json = JSON.stringify(next)
+          await browser.storage.local.set({ chat_filter_rules: json })
+          setSetting('chatFilterRules', json)
+        }
+      }
+      await browser.storage.local.remove(['hs_mute_keywords', 'keyword_highlights'])
       if (!Object.keys(ui).some((k) => RETIRED_UI_KEYS.has(k))) return
       await safeSendMessage({ type: 'ui_settings_rmw', patch: {}, dropRetired: true })
       invalidateUiSettingsCache()
@@ -4511,26 +4515,6 @@
       for (let i = 0; i < 1000; i++) set.delete(iter.next().value)
     }
     return true
-  }
-
-  // Keyword highlights — newline-separated terms; messages containing any get an orange tint
-  let keywordHighlights = ''
-  let keywordHighlightsRegex = null
-  function rebuildKeywordRegex() {
-    const terms = keywordHighlights
-      .split(/\n/)
-      .map((s) => s.trim())
-      .filter(Boolean)
-    if (!terms.length) {
-      keywordHighlightsRegex = null
-      return
-    }
-    const escaped = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-    try {
-      keywordHighlightsRegex = new RegExp(`\\b(${escaped.join('|')})\\b`, 'i')
-    } catch {
-      keywordHighlightsRegex = null
-    }
   }
 
   // ═══ Inline notification routing ═══
@@ -8645,10 +8629,6 @@
       div.classList.add('hs-mc-msg-cleared')
       if (m.clearedReason) div.dataset.clearedReason = m.clearedReason
     }
-    // Keyword highlight — message text matches a user-defined term
-    if (keywordHighlightsRegex && m.text && keywordHighlightsRegex.test(m.text)) {
-      div.classList.add('hs-kw-match')
-    }
     // Filter rule highlight — per-rule color accent (hide is handled before buffer insert)
     const _frHL = evaluateFilterRules(m, tabId)
     if (_frHL.highlight) {
@@ -9422,23 +9402,6 @@
     'kofistreambot',
     'blerp',
   ])
-  let _muteKeywordsRegex = null
-  function rebuildMuteKeywordsRegex() {
-    const terms = getSetting('hs_mute_keywords')
-      .split(/\n/)
-      .map((t) => t.trim())
-      .filter(Boolean)
-    if (!terms.length) {
-      _muteKeywordsRegex = null
-      return
-    }
-    const escaped = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-    try {
-      _muteKeywordsRegex = new RegExp(escaped.join('|'), 'i')
-    } catch {
-      _muteKeywordsRegex = null
-    }
-  }
   // Read the content-filter settings once per render pass — isMsgFiltered
   // runs per message in the render hot path (up to 1500 msgs per render).
   function _filterFlags() {
@@ -9479,7 +9442,6 @@
     if (m.cleared && !f.dim) return true
     if (typeof m.text !== 'string') return false
     if (f.cmds && m.text.charCodeAt(0) === 33) return true
-    if (_muteKeywordsRegex?.test(m.text)) return true
     return false
   }
   const _lastMsgTextByTab = new Map()
@@ -13383,15 +13345,6 @@
 
       // Overflow bucket — large/per-tab UI prefs that bypass the 8 KB sync
       // ceiling. Local-only, so cross-device sync intentionally skips them.
-      if (changes.keyword_highlights) {
-        const v = changes.keyword_highlights.newValue
-        if (typeof v === 'string' && v !== keywordHighlights) {
-          keywordHighlights = v
-          rebuildKeywordRegex()
-          renderMessages(currentTab)
-          if (currentTab === 'settings') renderSettingsTab()
-        }
-      }
       if (changes.platform_filters) {
         const v = changes.platform_filters.newValue
         if (v && typeof v === 'object' && !Array.isArray(v)) {
@@ -14387,7 +14340,7 @@
 
         // Split remote state: small sync-scope prefs merge into chrome.storage
         // .sync.ui_settings (below); large blocklist prefs that ride the server
-        // channel (keywordHighlights/chatFilterRules) land in their
+        // channel (chatFilterRules) land in their
         // chrome.storage.local overflow keys instead — never chrome.storage.sync
         // (8KB ceiling). DEVICE_LOCAL_KEYS (platformFilters) are dropped — a
         // foreign device's per-tab layout would be meaningless here.
@@ -14995,13 +14948,10 @@
           if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(msg)
         }
       }
-      // Automod + filter rules: drop messages matching filter. Own msgs exempt.
+      // Filter rules: drop messages a hide rule matches. Own msgs exempt.
       const _frOwnTw = isSelf(msg, 'twitch')
       let _frTw = null
       if (!_frOwnTw) {
-        // Lazy: automod first (cheap), then filter rules only if it survives —
-        // preserves the original short-circuit so automod'd messages skip the eval.
-        if (shouldAutomod(msg.text)) return
         _frTw = evaluateFilterRules(msg, getChannelLookup().twitch.get(msg.channel)?.id)
         if (_frTw.hide) return
       }
@@ -15108,7 +15058,6 @@
       const _frOwnKi = isSelf(msg, 'kick')
       let _frKi = null
       if (!_frOwnKi) {
-        if (shouldAutomod(msg.text)) return
         _frKi = evaluateFilterRules(msg, getChannelLookup().kick.get(msg.channel)?.id)
         if (_frKi.hide) return
       }

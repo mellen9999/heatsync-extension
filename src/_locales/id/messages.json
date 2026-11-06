@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "tepi oranye pada pesan pertama per sesi"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "sorot kata kunci"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "mewarnai pesan yang cocok menjadi oranye. satu per baris, tidak sensitif huruf, kata penuh"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "satu kata kunci per baris"
-  },
   "mc_settings_auto_claim": {
     "message": "auto-klaim poin channel"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "satu per baris — tampil sebagai chip yang bisa dipilih di dialog ban; pilihannya dikirim bersama ban"
   },
-  "mc_settings_automod_caps": {
-    "message": "sembunyikan spam huruf kapital"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "sembunyikan pesan lebih dari 10 karakter yang kebanyakan huruf besar"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex filter"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "satu pola per baris, tidak peka huruf besar/kecil — pesan yang cocok disembunyikan"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "tampilkan emote seksual"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "ringkas pesan identik berurutan (gelombang spam) jadi yang pertama saja"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "bisukan kata kunci"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "satu istilah per baris — pesan yang mengandung salah satunya disembunyikan. beda dengan sorotan kata kunci."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "aturan filter"

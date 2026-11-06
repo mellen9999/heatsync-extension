@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "מסגרת כתומה על ההודעה הראשונה בסשן"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "הדגשות מילות מפתח"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "צובע הודעות תואמות בכתום. אחד לשורה, לא רגיש לאותיות, מילה שלמה"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "מילת מפתח אחת בשורה"
-  },
   "mc_settings_auto_claim": {
     "message": "איסוף אוטומטי של channel points"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "אחת בכל שורה — מוצגות כצ'יפים לבחירה בחלון הבאן; הבחירה נשלחת עם הבאן"
   },
-  "mc_settings_automod_caps": {
-    "message": "הסתר ספאם באותיות גדולות"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "הסתר הודעות של יותר מ-10 תווים שרובן באותיות גדולות"
-  },
-  "mc_settings_automod_regex": {
-    "message": "פילטר regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "תבנית אחת בכל שורה, ללא הבחנה בין אותיות גדולות לקטנות — הודעות תואמות יוסתרו"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "הצג אימוטים מיניים"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "כווץ הודעות זהות רצופות (גלי ספאם) להודעה הראשונה"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "השתק מילות מפתח"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "מונח אחד בכל שורה — הודעות שמכילות אחד מהם מוסתרות. נפרד מהדגשות מילות מפתח."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "כללי סינון"

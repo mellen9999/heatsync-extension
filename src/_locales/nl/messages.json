@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "oranje rand op eerste bericht per sessie"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "trefwoord-highlights"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "kleurt overeenkomende berichten oranje. één per regel, hoofdletterongevoelig, heel woord"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "één trefwoord per regel"
-  },
   "mc_settings_auto_claim": {
     "message": "channel points automatisch claimen"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "één per regel — getoond als kiesbare chips in het ban-venster; de keuze gaat mee met de ban"
   },
-  "mc_settings_automod_caps": {
-    "message": "verberg hoofdletterspam"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "verberg berichten van meer dan 10 tekens die grotendeels hoofdletters zijn"
-  },
-  "mc_settings_automod_regex": {
-    "message": "filter-regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "één patroon per regel, hoofdletterongevoelig — passende berichten worden verborgen"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "toon seksuele emotes"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "klap identieke opeenvolgende berichten (spamgolven) in tot de eerste"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "dempwoorden"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "één term per regel — berichten met een van de termen worden verborgen. los van keyword-highlights."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "filterregels"

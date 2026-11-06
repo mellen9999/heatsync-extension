@@ -648,11 +648,6 @@
       const next = changes.ui_settings.newValue
       if (next) applyUiSettings(next)
     }
-    // Keyword highlights — update regex + reapply
-    if (changes.keyword_highlights) {
-      rebuildKeywordRegex(changes.keyword_highlights.newValue)
-      applyKeywordHighlightsToVisibleMessages()
-    }
     // Per-user color overrides — update map + reapply
     if (changes.hs_user_colors) {
       rebuildUserColorMap(changes.hs_user_colors.newValue)
@@ -720,54 +715,6 @@
     chrome.storage.local.get(HS_NOTE_STORE_KEY, (d) => _noteSetBlob(d?.[HS_NOTE_STORE_KEY]))
   } catch {}
 
-  // Keyword highlights (BTTV/FFZ-style custom highlight word list)
-  let _keywordRegex = null
-  function rebuildKeywordRegex(raw) {
-    if (!raw) {
-      _keywordRegex = null
-      return
-    }
-    const list = (typeof raw === 'string' ? raw.split(/[\n,]/) : Array.isArray(raw) ? raw : [])
-      .map((s) => String(s).trim())
-      .filter((s) => s && s.length < 64)
-      .slice(0, 50)
-    if (!list.length) {
-      _keywordRegex = null
-      return
-    }
-    const escaped = list.map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-    try {
-      _keywordRegex = new RegExp(`\\b(${escaped.join('|')})\\b`, 'i')
-    } catch {
-      _keywordRegex = null
-    }
-  }
-  function highlightKeywords(messageElement) {
-    if (!_keywordRegex) return
-    // cheap test on the whole row first; a hit is re-tested without the sender's own name (a keyword
-    // equal to your username outlined every message you sent)
-    if (!_keywordRegex.test(messageElement.textContent || '')) return
-    const body = messageElement.cloneNode(true)
-    body
-      .querySelectorAll('.chat-line__username-container, .chat-author__display-name, button.inline.font-bold')
-      .forEach((n) => n.remove())
-    if (!_keywordRegex.test(body.textContent || '')) return
-    let parent = messageElement
-    while (parent && !parent.classList.contains('chat-line__message') && !parent.hasAttribute('data-index')) {
-      parent = parent.parentElement
-    }
-    const target =
-      parent && (parent.classList.contains('chat-line__message') || parent.hasAttribute('data-index'))
-        ? parent
-        : messageElement
-    target.classList.add('hs-keyword-match')
-  }
-  function applyKeywordHighlightsToVisibleMessages() {
-    document.querySelectorAll('.hs-keyword-match').forEach((el) => el.classList.remove('hs-keyword-match'))
-    if (!_keywordRegex) return
-    document.querySelectorAll('.chat-line__message, [data-index]').forEach(highlightKeywords)
-  }
-
   // Per-user color overrides (right-click username → set color)
   const _userColors = new Map() // username (lower) → '#rrggbb'
   function rebuildUserColorMap(raw) {
@@ -817,11 +764,10 @@
     })
   }
 
-  // Initial load of keyword + user color settings
+  // Initial load of user color settings
   chrome.storage.local
-    .get(['keyword_highlights', 'hs_user_colors'])
+    .get(['hs_user_colors'])
     .then((d) => {
-      rebuildKeywordRegex(d.keyword_highlights)
       rebuildUserColorMap(d.hs_user_colors)
     })
     .catch(() => {})
@@ -2029,13 +1975,6 @@
     50%  { filter: hue-rotate(180deg) saturate(1.4); }
     75%  { filter: hue-rotate(270deg) saturate(1.4); }
     100% { filter: hue-rotate(360deg) saturate(1.4); }
-  }
-
-  /* Custom keyword highlight (BTTV/FFZ-style) */
-  .chat-line__message.hs-keyword-match,
-  .hs-keyword-match {
-    background-color: #000000 !important;
-    box-shadow: inset 0 0 0 1px #ffffff !important;
   }
 
   /* Show deleted/timeout messages (toggle .hs-show-cleared on <html>) */
@@ -5636,8 +5575,6 @@
     // Highlight mentions of current user (FFZ-style red background on entire line)
     highlightUserMentions(messageElement, usernameElement, textElements)
 
-    // Highlight custom keywords (BTTV/FFZ-style custom highlight list)
-    highlightKeywords(messageElement)
 
     // Apply per-user color override (right-click on username sets color)
     if (_userColors.size && username) applyUserColorToMessage(messageElement, username)

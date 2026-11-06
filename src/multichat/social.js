@@ -1232,16 +1232,14 @@ function handleYoutubeChatMsg(msg) {
     }
   }
 
-  // Same pipeline as Twitch/Kick handlers: automod + filter rules → mention → stats.
+  // Same pipeline as Twitch/Kick handlers: filter rules → mention → stats.
   // The rule VERDICT is kept, not just its .hide: a highlight rule can carry
   // a sound, and folding the call into the if-condition threw that away —
   // so a keyword alert fired on twitch and kick and was silently mute on
-  // youtube. Lazy in the same order as the other two handlers (automod is
-  // cheap, so it short-circuits before the rule eval).
+  // youtube.
   const _frOwnYt = isSelf(ytMsg, 'youtube')
   let _frYt = null
   if (!_frOwnYt) {
-    if (shouldAutomod(ytMsg.text)) return
     _frYt = evaluateFilterRules(ytMsg, targetChannelId !== '__live_yt_auto__' ? targetChannelId : null)
     if (_frYt.hide) return
   }

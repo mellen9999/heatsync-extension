@@ -276,7 +276,7 @@ test('highlight: first matching rule wins', () => {
   expect(res.highlight).toBe('#ff0000')
 })
 
-// ── additive: does not affect shouldAutomod / keywordHighlights ───────────────
+// ── additive: no side effects ─────────────────────────────────────────────────
 
 test('additive: evaluateFilterRules has no side-effects on outside state', () => {
   compileFilterRules([rule({ action: 'hide', match: { type: 'keyword', value: 'test' } })])

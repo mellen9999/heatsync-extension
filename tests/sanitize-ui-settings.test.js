@@ -96,9 +96,9 @@ describe('blocklist keys', () => {
     expect(out).toHaveProperty('zebra', true)
   })
 
-  test('keywordHighlights is stripped', () => {
-    const out = sanitizeUiSettings({ keywordHighlights: ['foo', 'bar'], zebra: false })
-    expect(out).not.toHaveProperty('keywordHighlights')
+  test('chatFilterRules is stripped', () => {
+    const out = sanitizeUiSettings({ chatFilterRules: '[]', zebra: false })
+    expect(out).not.toHaveProperty('chatFilterRules')
     expect(out).toHaveProperty('zebra', false)
   })
 
@@ -290,7 +290,7 @@ describe('real-world sync blob', () => {
     const blob = {
       zebra: true,
       platformFilters: { twitch: true }, // blocklist
-      keywordHighlights: ['foo'], // blocklist
+      chatFilterRules: '[]', // blocklist
       0: 'corrupt', // numeric key
       constructor: 'evil', // prototype pollution
       __proto__: { x: 1 }, // prototype pollution
@@ -327,8 +327,8 @@ test('out-of-range number is NOT clamped (clamping is schema job, not sanitize)'
 })
 
 // ── large-key server sync eligibility ────────────────────────────────────────
-// keywordHighlights/chatFilterRules are UI_SYNC_BLOCKLIST members (never enter
-// chrome.storage.sync) that ARE real cross-device prefs and ride the
+// chatFilterRules is a UI_SYNC_BLOCKLIST member (never enters
+// chrome.storage.sync) that IS a real cross-device pref and ride the
 // server-backed ws ui-state channel, size-capped. platformFilters is the one
 // blocklist member that's genuinely per-device and excluded from that channel
 // entirely — see DEVICE_LOCAL_KEYS.
@@ -338,9 +338,8 @@ describe('DEVICE_LOCAL_KEYS', () => {
     for (const k of DEVICE_LOCAL_KEYS) expect(UI_SYNC_BLOCKLIST.has(k)).toBe(true)
   })
 
-  test('platformFilters is device-local; keywordHighlights/chatFilterRules are not', () => {
+  test('platformFilters is device-local; chatFilterRules is not', () => {
     expect(DEVICE_LOCAL_KEYS.has('platformFilters')).toBe(true)
-    expect(DEVICE_LOCAL_KEYS.has('keywordHighlights')).toBe(false)
     expect(DEVICE_LOCAL_KEYS.has('chatFilterRules')).toBe(false)
   })
 })
@@ -353,7 +352,6 @@ describe('OVERFLOW_MIRROR_KEYS', () => {
 
   test('mirror names match the known chrome.storage.local overflow keys', () => {
     expect(OVERFLOW_MIRROR_KEYS.platformFilters).toBe('platform_filters')
-    expect(OVERFLOW_MIRROR_KEYS.keywordHighlights).toBe('keyword_highlights')
     expect(OVERFLOW_MIRROR_KEYS.chatFilterRules).toBe('chat_filter_rules')
   })
 })
@@ -373,14 +371,11 @@ describe('estimateSettingSize', () => {
 })
 
 describe('isLargeKeySyncEligible', () => {
-  test('keywordHighlights under the cap is eligible', () => {
-    expect(isLargeKeySyncEligible('keywordHighlights', 'foo\nbar')).toBe(true)
-  })
   test('chatFilterRules under the cap is eligible', () => {
     expect(isLargeKeySyncEligible('chatFilterRules', '[]')).toBe(true)
   })
-  test('keywordHighlights over LARGE_KEY_SYNC_MAX is not eligible', () => {
-    expect(isLargeKeySyncEligible('keywordHighlights', 'x'.repeat(LARGE_KEY_SYNC_MAX + 1))).toBe(false)
+  test('chatFilterRules over LARGE_KEY_SYNC_MAX is not eligible', () => {
+    expect(isLargeKeySyncEligible('chatFilterRules', 'x'.repeat(LARGE_KEY_SYNC_MAX + 1))).toBe(false)
   })
   test('value exactly at the cap is eligible (boundary)', () => {
     expect(isLargeKeySyncEligible('chatFilterRules', 'x'.repeat(LARGE_KEY_SYNC_MAX))).toBe(true)

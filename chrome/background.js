@@ -293,15 +293,15 @@ function userSetMatches(set, username, platform, aliasKeys) {
 
 // Storage hygiene — sanitize ui_settings before merging into chrome.storage
 // .sync. Strips numeric-string keys (corruption marker), prototype-pollution
-// keys, blocklist keys (platformFilters / keywordHighlights / chatFilterRules
+// keys, blocklist keys (platformFilters / chatFilterRules
 // belong in local), oversized strings (>4 KB) and oversized values (JSON
 // >6 KB). Mirrors the canonical implementation in src/lib/utils.js —
 // duplicated here because the service worker is not bundled with the lib
 // (parity enforced at build time by build.js's checkUiSyncBlocklistParity).
-const UI_SYNC_BLOCKLIST = new Set(['platformFilters', 'keywordHighlights', 'chatFilterRules'])
+const UI_SYNC_BLOCKLIST = new Set(['platformFilters', 'chatFilterRules'])
 // Subset of UI_SYNC_BLOCKLIST that never leaves the device at all — see
-// src/lib/utils.js for the full rationale. keywordHighlights/chatFilterRules
-// are real prefs and DO ride the server ui-state channel (size-capped);
+// src/lib/utils.js for the full rationale. chatFilterRules is a real pref
+// and DOES ride the server ui-state channel (size-capped);
 // platformFilters is per-device tab-layout state and never does.
 const DEVICE_LOCAL_KEYS = new Set(['platformFilters'])
 // Retired by the 2026-11 settings pass — never adopted from the server; the
@@ -319,12 +319,14 @@ const RETIRED_UI_KEYS = new Set([
   'bttvBadges',
   'ffzBadges',
   'chatterinoBadges',
+  'automodRegex',
+  'automodAllCaps',
+  'keywordHighlights',
 ])
 // registry key → chrome.storage.local key name — must match src/lib/utils.js
 // OVERFLOW_MIRROR_KEYS exactly (parity-checked at build time).
 const OVERFLOW_MIRROR_KEYS = {
   platformFilters: 'platform_filters',
-  keywordHighlights: 'keyword_highlights',
   chatFilterRules: 'chat_filter_rules',
 }
 // Per-key cap for blocklist keys riding the server channel — must match
@@ -7303,9 +7305,9 @@ function handleWSMessage(msg) {
         // client and is fanning out the full state. Mirror into chrome.storage
         // .sync.ui_settings so the existing storage.onChanged listener applies
         // every key live (zebra/timestamps/avatars/active tab/etc). Large
-        // blocklist prefs (keywordHighlights/chatFilterRules) split off into
+        // blocklist prefs (chatFilterRules) split off into
         // their chrome.storage.local overflow keys instead — the SAME onChanged
-        // listener already reacts to those (keyword_highlights/chat_filter_rules)
+        // listener already reacts to those (chat_filter_rules)
         // for the local-mirror write path, so no new plumbing is needed.
         // Sanitize the patch first — never trust server-fanned-out state. A
         // single malformed payload here will otherwise corrupt every client of

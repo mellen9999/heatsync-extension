@@ -363,17 +363,13 @@ describe('UI_SYNC_BLOCKLIST', () => {
     expect(UI_SYNC_BLOCKLIST.has('platformFilters')).toBe(true)
   })
 
-  test('contains keywordHighlights (free-form text — too large for sync quota)', () => {
-    expect(UI_SYNC_BLOCKLIST.has('keywordHighlights')).toBe(true)
-  })
-
   test('contains chatFilterRules (JSON array — too large for sync quota)', () => {
     expect(UI_SYNC_BLOCKLIST.has('chatFilterRules')).toBe(true)
   })
 
   test('has exactly the documented entries (no silent additions)', () => {
     // guards against accidental expansion; update this test if blocklist grows
-    expect(UI_SYNC_BLOCKLIST.size).toBe(3)
+    expect(UI_SYNC_BLOCKLIST.size).toBe(2)
   })
 })
 
@@ -466,9 +462,9 @@ describe('sanitizeUiSettings', () => {
     expect(out.ok).toBe(1)
   })
 
-  test('strips keywordHighlights (blocklisted)', () => {
-    const out = sanitizeUiSettings({ keywordHighlights: 'mellen', ok: 1 })
-    expect(out).not.toHaveProperty('keywordHighlights')
+  test('strips chatFilterRules (blocklisted)', () => {
+    const out = sanitizeUiSettings({ chatFilterRules: '[]', ok: 1 })
+    expect(out).not.toHaveProperty('chatFilterRules')
     expect(out.ok).toBe(1)
   })
 

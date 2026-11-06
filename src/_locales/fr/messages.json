@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "contour orange sur le premier message par session"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "surligner par mot-clé"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "colorise en orange les messages correspondants. un par ligne, insensible à la casse, mot entier"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "un mot-clé par ligne"
-  },
   "mc_settings_auto_claim": {
     "message": "réclamer les points automatiquement"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "une par ligne — affichées en puces à choisir dans la boîte de ban ; le choix part avec le ban"
   },
-  "mc_settings_automod_caps": {
-    "message": "masquer le spam en majuscules"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "masque les messages de plus de 10 caractères surtout en majuscules"
-  },
-  "mc_settings_automod_regex": {
-    "message": "filtre regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "un motif par ligne, insensible à la casse — les messages qui correspondent sont masqués"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "afficher les emotes sexuels"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "réduit les messages identiques consécutifs (vagues de spam) au premier"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "mots-clés muets"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "un terme par ligne — les messages qui en contiennent un sont masqués. à part des mises en évidence par mot-clé."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "règles de filtre"

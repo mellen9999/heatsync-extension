@@ -70,7 +70,6 @@ const PIPELINE = [
   'isSentEcho', // own-send dedup
   'peekSentHost', // ownership → badge/platform attribution
   'restoreOwnReplyBar', // reply bar on our own echo
-  'shouldAutomod', // automod gate
   'evaluateFilterRules', // user filter rules
   'playFilterRuleSound', // highlight rule audio cue
   'isMention', // mention detection

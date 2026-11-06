@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "每次工作階段首則訊息顯示橙色邊框"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "關鍵字醒目提示"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "將相符訊息染成橙色。每行一個，不區分大小寫，完整單詞"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "每行一個關鍵字"
-  },
   "mc_settings_auto_claim": {
     "message": "自動領取頻道點數"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "每行一個 — 在封鎖對話框中顯示為可選標籤；所選原因會隨封鎖一併送出"
   },
-  "mc_settings_automod_caps": {
-    "message": "隱藏全大寫洗版"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "隱藏超過 10 個字元且大部分為大寫的訊息"
-  },
-  "mc_settings_automod_regex": {
-    "message": "過濾正規表示式"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "每行一個模式，不分大小寫 — 符合的訊息會被隱藏"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "顯示色情 emote"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "把連續的相同訊息（洗版潮）摺疊為第一則"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "封鎖關鍵字"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "每行一個詞 — 包含其中任一個的訊息會被隱藏。與關鍵字醒目提示不同。"
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "劇透\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "過濾規則"

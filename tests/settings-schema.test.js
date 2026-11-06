@@ -30,7 +30,7 @@ test('storage keys are verbatim legacy keys (no renames)', () => {
     'avatars',
     'showPlatformBadges',
     'firstChatterGlow',
-    'keywordHighlights',
+    'chatFilterRules',
     'hiddenTabs',
     'crashTelemetry',
     'fontFamily',
@@ -39,8 +39,6 @@ test('storage keys are verbatim legacy keys (no renames)', () => {
     'mentionTitleFlash',
     'mentionSoundVolume',
     'crossFollowKick',
-    'automodAllCaps',
-    'automodRegex',
     'hs_emote_size',
     'hs_emoji_size',
     'hs_auto_claim_points',
@@ -203,7 +201,7 @@ test('basic view: every everyday toggle, none of the tuning', () => {
   ]) {
     expect(keys.has(k), `${k} is an everyday setting`).toBe(true)
   }
-  for (const k of ['debugLogging', 'crashTelemetry', 'subsystems', 'chatFilterRules', 'automodRegex', 'activeTab']) {
+  for (const k of ['debugLogging', 'crashTelemetry', 'subsystems', 'chatFilterRules', 'activeTab']) {
     expect(keys.has(k), `${k} is tuning/internal`).toBe(false)
   }
 })

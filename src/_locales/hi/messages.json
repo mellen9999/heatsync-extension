@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "प्रति सेशन पहले संदेश पर नारंगी बॉर्डर"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "कीवर्ड हाइलाइट"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "मेल खाने वाले संदेश नारंगी रंग में। एक प्रति लाइन, केस-इनसेंसिटिव, पूरा शब्द"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "प्रति पंक्ति एक कीवर्ड"
-  },
   "mc_settings_auto_claim": {
     "message": "चैनल पॉइंट ऑटो-क्लेम"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "हर पंक्ति में एक — बैन डायलॉग में चुनने लायक चिप की तरह दिखते हैं; चुना हुआ कारण बैन के साथ जाता है"
   },
-  "mc_settings_automod_caps": {
-    "message": "ALL-CAPS स्पैम छिपाओ"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "10 अक्षरों से लंबे, ज़्यादातर बड़े अक्षरों वाले मैसेज छिपाओ"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex फ़िल्टर"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "हर पंक्ति में एक पैटर्न, केस-इनसेंसिटिव — मैच होने वाले मैसेज छिप जाते हैं"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "यौन emotes दिखाओ"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "लगातार आने वाले एक जैसे मैसेज (स्पैम की लहरें) पहले वाले में समेट दो"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "कीवर्ड म्यूट करो"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "हर पंक्ति में एक शब्द — जिन मैसेज में कोई भी हो वे छिप जाते हैं। कीवर्ड हाइलाइट से अलग।"
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "फ़िल्टर नियम"

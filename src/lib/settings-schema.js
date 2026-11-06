@@ -899,28 +899,7 @@ const SETTINGS = [
     alias: 'dimtimeouts',
     runtimeVar: 'dimTimeouts',
   },
-  {
-    key: 'keywordHighlights',
-    basic: true,
-    type: 'text',
-    default: '',
-    scope: 'local-mirror',
-    mirrorKey: 'keyword_highlights',
-    legacySyncFallback: true,
-    category: 'chat',
-    section: 'messages',
-    sectionKey: 'lib_sec_messages',
-    labelKey: 'mc_settings_keyword_highlights',
-    tipKey: 'mc_settings_keyword_highlights_desc',
-    placeholderKey: 'mc_settings_keyword_highlights_placeholder',
-    control: 'textarea',
-    alias: 'keywordhighlights',
-    runtimeVar: 'keywordHighlights',
-    apply: 'keywordRegex',
-    applyOnLoad: true,
-    rerender: true,
-    maxLen: 65536,
-  },
+
 
   // ── chat / privacy ────────────────────────────────────────────────────
   {
@@ -1295,38 +1274,8 @@ const SETTINGS = [
     applyOnLoad: true,
   },
 
-  // ── mod / automod ─────────────────────────────────────────────────────
-  {
-    key: 'automodAllCaps',
-    type: 'bool',
-    default: false,
-    scope: 'sync',
-    category: 'mod',
-    section: 'automod',
-    sectionKey: 'mc_ms_cell_automod',
-    labelKey: 'mc_settings_automod_caps',
-    tipKey: 'mc_settings_automod_caps_desc',
-    control: 'pill',
-    apply: 'automod',
-    applyOnLoad: true,
-  },
-  {
-    key: 'automodRegex',
-    type: 'text',
-    default: '',
-    scope: 'sync',
-    category: 'mod',
-    section: 'automod',
-    sectionKey: 'mc_ms_cell_automod',
-    labelKey: 'mc_settings_automod_regex',
-    tipKey: 'mc_settings_automod_regex_desc',
-    placeholderKey: 'mc_settings_automod_regex_placeholder',
-    control: 'textarea',
-    alias: 'automodregex',
-    apply: 'automod',
-    applyOnLoad: true,
-    maxLen: 4096,
-  },
+
+
 
   // ── filters / content — per-viewer content-warning emote filters ──────
   // local bool + server PATCH with rollback; every category is hidden
@@ -1456,24 +1405,7 @@ const SETTINGS = [
     control: 'pill',
     rerender: true,
   },
-  {
-    key: 'hs_mute_keywords',
-    basic: true,
-    type: 'text',
-    default: '',
-    scope: 'local',
-    category: 'filters',
-    section: 'messages',
-    sectionKey: 'lib_sec_messages',
-    labelKey: 'mc_settings_mute_keywords',
-    tipKey: 'mc_settings_mute_keywords_desc',
-    placeholderKey: 'mc_settings_mute_keywords_placeholder',
-    control: 'textarea',
-    apply: 'muteKeywords',
-    applyOnLoad: true,
-    rerender: true,
-    maxLen: 65536,
-  },
+
 
   // ── filters / rules — per-rule highlight/hide engine ─────────────────
   // Stored as a JSON string in chrome.storage.local (array can be large).

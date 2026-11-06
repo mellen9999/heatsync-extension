@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "πορτοκαλί περίγραμμα στο πρώτο μήνυμα ανά session"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "επισημάνσεις λέξεων-κλειδιών"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "χρωματίζει τα αντίστοιχα μηνύματα πορτοκαλί. ένα ανά γραμμή, χωρίς διάκριση πεζών/κεφαλαίων, ολόκληρη λέξη"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "μία λέξη-κλειδί ανά γραμμή"
-  },
   "mc_settings_auto_claim": {
     "message": "αυτόματη συλλογή channel points"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "ένας ανά γραμμή — εμφανίζονται ως chips επιλογής στο παράθυρο ban· η επιλογή στέλνεται με το ban"
   },
-  "mc_settings_automod_caps": {
-    "message": "απόκρυψη spam με κεφαλαία"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "κρύβει μηνύματα άνω των 10 χαρακτήρων που είναι κυρίως κεφαλαία"
-  },
-  "mc_settings_automod_regex": {
-    "message": "φίλτρο regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "ένα μοτίβο ανά γραμμή, χωρίς διάκριση πεζών/κεφαλαίων — τα μηνύματα που ταιριάζουν κρύβονται"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "εμφάνιση σεξουαλικών emotes"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "συμπτύσσει ίδια διαδοχικά μηνύματα (κύματα spam) στο πρώτο"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "σίγαση λέξεων-κλειδιών"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "ένας όρος ανά γραμμή — τα μηνύματα που περιέχουν κάποιον κρύβονται. ξεχωριστό από τα keyword highlights."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "κανόνες φίλτρου"

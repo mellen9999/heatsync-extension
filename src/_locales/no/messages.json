@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "oransje kant på første melding per økt"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "nøkkelords-highlights"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "farger samsvarende meldinger oransje. én per linje, uten hensyn til store/små bokstaver, helt ord"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "ett nøkkelord per linje"
-  },
   "mc_settings_auto_claim": {
     "message": "hent kanalpoeng automatisk"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "én per linje — vises som valgbare chips i ban-dialogen; valget sendes med bannet"
   },
-  "mc_settings_automod_caps": {
-    "message": "skjul caps-spam"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "skjul meldinger over 10 tegn som for det meste er store bokstaver"
-  },
-  "mc_settings_automod_regex": {
-    "message": "filter-regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "ett mønster per linje, ufølsomt for store/små bokstaver — treff skjules"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "vis seksuelle emotes"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "slå sammen identiske meldinger på rad (spambølger) til den første"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "demp nøkkelord"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "ett ord per linje — meldinger som inneholder noen av dem skjules. skiller seg fra nøkkelord-highlights."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "filterregler"

@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "margine portocalie pe primul mesaj per sesiune"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "evidențiere cuvinte cheie"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "colorează mesajele corespunzătoare în portocaliu. unul pe linie, fără diferență majuscule, cuvânt întreg"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "un cuvânt cheie pe linie"
-  },
   "mc_settings_auto_claim": {
     "message": "revendică automat punctele de canal"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "câte unul pe rând — apar ca chip-uri alese în dialogul de ban; alegerea pleacă odată cu ban-ul"
   },
-  "mc_settings_automod_caps": {
-    "message": "ascunde spamul cu majuscule"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "ascunde mesajele de peste 10 caractere scrise mai ales cu majuscule"
-  },
-  "mc_settings_automod_regex": {
-    "message": "filtru regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "un tipar pe rând, fără diferență între majuscule și minuscule — mesajele care se potrivesc sunt ascunse"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "arată emote-uri sexuale"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "restrânge mesajele identice consecutive (valuri de spam) la primul"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "dă mute la cuvinte-cheie"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "un termen pe rând — mesajele care conțin oricare sunt ascunse. diferit de evidențierea cuvintelor-cheie."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "reguli de filtrare"

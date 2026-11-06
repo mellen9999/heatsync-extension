@@ -553,14 +553,14 @@ function ytHasModItems(items) {
 // 8 KB QUOTA_BYTES_PER_ITEM ceiling. These move to chrome.storage.local
 // (we hold the unlimitedStorage permission) instead.
 //
-// NOT all of them are device-local, though — keywordHighlights and
-// chatFilterRules are real cross-device preferences (chatterino's #1 sync
-// complaint is exactly "my highlight words don't follow me"), just too big
-// for chrome.storage.sync. They DO ride the server-backed ws ui-state
+// NOT all of them are device-local, though — chatFilterRules is a real
+// cross-device preference (chatterino's #1 sync complaint is exactly "my
+// highlight words don't follow me"), just too big for chrome.storage.sync.
+// It DOES ride the server-backed ws ui-state
 // channel (which has no 8 KB ceiling), size-capped per key — see
 // LARGE_KEY_SYNC_MAX. Only DEVICE_LOCAL_KEYS below are excluded from that
 // channel too.
-const UI_SYNC_BLOCKLIST = new Set(['platformFilters', 'keywordHighlights', 'chatFilterRules'])
+const UI_SYNC_BLOCKLIST = new Set(['platformFilters', 'chatFilterRules'])
 
 // Subset of UI_SYNC_BLOCKLIST that is genuinely per-device UI state, not a
 // preference — platformFilters is keyed by this device's own multichat tab
@@ -587,6 +587,9 @@ const RETIRED_UI_KEYS = new Set([
   'bttvBadges',
   'ffzBadges',
   'chatterinoBadges',
+  'automodRegex',
+  'automodAllCaps',
+  'keywordHighlights',
 ])
 
 // registry key → chrome.storage.local key name, for every UI_SYNC_BLOCKLIST
@@ -594,7 +597,6 @@ const RETIRED_UI_KEYS = new Set([
 // background.js route a synced/received value to the same local slot.
 const OVERFLOW_MIRROR_KEYS = {
   platformFilters: 'platform_filters',
-  keywordHighlights: 'keyword_highlights',
   chatFilterRules: 'chat_filter_rules',
 }
 
@@ -639,7 +641,7 @@ function namePaintsOn(v) {
  * or echoing into localStorage. Strips:
  *   - numeric-string keys (corruption marker)
  *   - prototype pollution keys
- *   - blocklist keys (platformFilters, keywordHighlights — too big for sync)
+ *   - blocklist keys (platformFilters, chatFilterRules — too big for sync)
  *   - oversized strings (>4 KB) and oversized values (JSON >6 KB)
  *   - non-data values (function/symbol)
  * Returns a fresh plain object — never mutates input.

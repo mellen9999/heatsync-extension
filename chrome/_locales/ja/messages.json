@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "セッション初回メッセージにオレンジの縁取り"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "キーワードハイライト"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "一致するメッセージをオレンジ色に。1行1キーワード、大文字小文字を区別しない、完全一致"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "1行に1キーワード"
-  },
   "mc_settings_auto_claim": {
     "message": "チャンネルポイントを自動取得"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "1行に1つ — ban ダイアログで選べるチップとして表示。選んだ内容は ban と一緒に送られる"
   },
-  "mc_settings_automod_caps": {
-    "message": "全大文字スパムを隠す"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "10文字を超えて大半が大文字のメッセージを隠す"
-  },
-  "mc_settings_automod_regex": {
-    "message": "フィルタ regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "1行に1パターン、大文字小文字は区別しない — 一致したメッセージを隠す"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "性的 emote を表示"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "連続する同一メッセージ (スパムの波) を最初の1件にまとめる"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "キーワードをミュート"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "1行に1語 — どれかを含むメッセージを隠す。キーワードハイライトとは別。"
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "ネタバレ\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "フィルタルール"

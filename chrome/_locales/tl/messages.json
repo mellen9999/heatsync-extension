@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "orange na gilid sa unang mensahe bawat session"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "mga naka-highlight na keyword"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "nagkulay ng orange sa mga mensaheng tumutugma. isa bawat linya, hindi case-sensitive, buong salita"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "isang keyword bawat linya"
-  },
   "mc_settings_auto_claim": {
     "message": "auto-claim ng channel points"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "isa kada linya — lalabas bilang mapipiling chip sa ban dialog; kasama ng ban ang napili"
   },
-  "mc_settings_automod_caps": {
-    "message": "itago ang all-caps na spam"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "itago ang mga mensaheng lampas 10 character na halos malalaking titik"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex filter"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "isang pattern kada linya, hindi sensitibo sa laki ng titik — itatago ang mga tumutugmang mensahe"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "ipakita ang sexual emotes"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "pagsamahin sa una ang magkakasunod na magkaparehong mensahe (alon ng spam)"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "i-mute ang mga keyword"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "isang termino kada linya — itatago ang mga mensaheng may alinman. iba ito sa keyword highlight."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "mga filter rule"

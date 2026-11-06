@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "ขอบสีส้มบนข้อความแรกของแต่ละเซสชัน"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "ไฮไลต์คำสำคัญ"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "ทำให้ข้อความที่ตรงกันเป็นสีส้ม หนึ่งคำต่อบรรทัด ไม่แยกตัวพิมพ์ ทั้งคำ"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "หนึ่งคำต่อบรรทัด"
-  },
   "mc_settings_auto_claim": {
     "message": "เก็บพอยต์ช่องอัตโนมัติ"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "บรรทัดละหนึ่งข้อ — แสดงเป็นชิปให้เลือกในกล่องแบน ตัวเลือกจะส่งไปพร้อมการแบน"
   },
-  "mc_settings_automod_caps": {
-    "message": "ซ่อนสแปมตัวพิมพ์ใหญ่"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "ซ่อนข้อความยาวเกิน 10 ตัวอักษรที่ส่วนใหญ่เป็นตัวพิมพ์ใหญ่"
-  },
-  "mc_settings_automod_regex": {
-    "message": "ตัวกรอง regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "หนึ่งแพตเทิร์นต่อบรรทัด ไม่สนตัวพิมพ์เล็กใหญ่ — ข้อความที่ตรงจะถูกซ่อน"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "แสดง emotes ทางเพศ"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "ย่อข้อความเหมือนกันที่ติดกัน (คลื่นสแปม) เหลือข้อความแรก"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "ปิดเสียงคำสำคัญ"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "หนึ่งคำต่อบรรทัด — ข้อความที่มีคำใดคำหนึ่งจะถูกซ่อน แยกจากการไฮไลต์คำสำคัญ"
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "สปอยล์\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "กฎตัวกรอง"

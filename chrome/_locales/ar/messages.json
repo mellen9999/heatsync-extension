@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "حافة برتقالية على أول رسالة لكل جلسة"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "تمييز الكلمات المفتاحية"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "يصبغ الرسائل المطابقة باللون البرتقالي. سطر واحد لكل كلمة، غير حساس لحالة الأحرف، كلمة كاملة"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "كلمة مفتاحية لكل سطر"
-  },
   "mc_settings_auto_claim": {
     "message": "جمع تلقائي لنقاط القناة"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "سبب في كل سطر — تظهر كرقاقات قابلة للاختيار في نافذة الحظر؛ والاختيار يُرسل مع الحظر"
   },
-  "mc_settings_automod_caps": {
-    "message": "إخفاء spam الأحرف الكبيرة"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "إخفاء الرسائل التي تزيد عن 10 أحرف وأغلبها بأحرف كبيرة"
-  },
-  "mc_settings_automod_regex": {
-    "message": "فلتر regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "نمط في كل سطر، دون حساسية لحالة الأحرف — تُخفى الرسائل المطابقة"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "عرض emotes جنسية"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "دمج الرسائل المتطابقة المتتالية (موجات spam) في الأولى"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "كتم الكلمات المفتاحية"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "مصطلح في كل سطر — الرسائل التي تحتوي أيًّا منها تُخفى. منفصل عن تمييز الكلمات المفتاحية."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "قواعد الفلاتر"

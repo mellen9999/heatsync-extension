@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "oturum başına ilk mesajda turuncu çerçeve"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "anahtar kelime vurgusu"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "eşleşen mesajları turuncuya boyar. satır başına bir, büyük/küçük harf duyarsız, tam kelime"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "satır başına bir anahtar kelime"
-  },
   "mc_settings_auto_claim": {
     "message": "kanal puanlarını otomatik al"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "satır başına bir tane — ban penceresinde seçilebilir çipler olarak görünür; seçim banla birlikte gider"
   },
-  "mc_settings_automod_caps": {
-    "message": "tamamı büyük harf spamını gizle"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "çoğu büyük harf olan 10 karakterden uzun mesajları gizle"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex filtresi"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "satır başına bir desen, büyük/küçük harf duyarsız — eşleşen mesajlar gizlenir"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "cinsel emotes'ları göster"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "art arda gelen aynı mesajları (spam dalgaları) ilkine indir"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "anahtar kelimeleri sustur"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "satır başına bir terim — herhangi birini içeren mesajlar gizlenir. anahtar kelime vurgulamadan ayrıdır."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "filtre kuralları"

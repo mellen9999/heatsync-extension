@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "orange kant på første besked pr. session"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "nøgleords-highlights"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "farver matchende beskeder orange. én per linje, ufølsom for store/små bogstaver, hele ord"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "ét nøgleord per linje"
-  },
   "mc_settings_auto_claim": {
     "message": "auto-hent kanalpoint"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "én pr. linje — vises som valgbare chips i ban-dialogen; valget sendes med banet"
   },
-  "mc_settings_automod_caps": {
-    "message": "skjul caps-spam"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "skjul beskeder over 10 tegn, der mest er store bogstaver"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex-filter"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "ét mønster pr. linje, ikke versalfølsomt — matchende beskeder skjules"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "vis seksuelle emotes"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "slå identiske på hinanden følgende beskeder (spambølger) sammen til den første"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "gør nøgleord lydløse"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "ét udtryk pr. linje — beskeder med et af dem skjules. adskilt fra nøgleordsfremhævning."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "filterregler"

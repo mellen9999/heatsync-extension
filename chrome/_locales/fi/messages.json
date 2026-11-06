@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "oranssi reuna ensimmäisessä viestissä per sessio"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "avainsanahighlightit"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "värittää vastaavat viestit oranssiksi. yksi per rivi, ei kirjainkokoherkkyyttä, koko sana"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "yksi avainsana per rivi"
-  },
   "mc_settings_auto_claim": {
     "message": "automaattinen kanavapisteiden kerääminen"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "yksi per rivi — näytetään valittavina laattoina bannidialogissa; valinta lähtee bannin mukana"
   },
-  "mc_settings_automod_caps": {
-    "message": "piilota kokonaan isoilla kirjoitettu spämmi"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "piilota yli 10 merkin viestit, jotka ovat enimmäkseen isoja kirjaimia"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex-suodatin"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "yksi kuvio per rivi, kirjainkoosta riippumaton — täsmäävät viestit piilotetaan"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "näytä seksuaaliset emotet"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "tiivistä peräkkäiset identtiset viestit (spämmiaallot) ensimmäiseen"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "mykistä avainsanat"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "yksi termi per rivi — viestit, joissa on jokin niistä, piilotetaan. eri asia kuin avainsanakorostukset."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "suodatussäännöt"

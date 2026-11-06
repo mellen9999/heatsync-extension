@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "оранжев контур на първото съобщение за сесия"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "осветяване на ключови думи"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "оцветява съвпадащите съобщения в оранжево. по един на ред, без значение на регистъра, цяла дума"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "една ключова дума на ред"
-  },
   "mc_settings_auto_claim": {
     "message": "автоматично взимане на channel points"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "по една на ред — показват се като избираеми чипове в диалога за бан; изборът се изпраща с бана"
   },
-  "mc_settings_automod_caps": {
-    "message": "скрий caps спам"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "скрива съобщения над 10 знака, които са предимно с главни букви"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex филтър"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "по един шаблон на ред, без значение на регистъра — съвпадащите съобщения се скриват"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "показвай сексуални emotes"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "свива еднакви последователни съобщения (спам вълни) до първото"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "заглуши ключови думи"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "по един израз на ред — съобщения, съдържащи някой от тях, се скриват. различно от подчертаването на ключови думи."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "спойлер\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "правила за филтри"

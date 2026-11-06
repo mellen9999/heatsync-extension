@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "viền cam trên tin nhắn đầu tiên mỗi phiên"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "làm nổi từ khoá"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "tô màu cam các tin nhắn khớp. một dòng một từ, không phân biệt hoa thường, từ đầy đủ"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "một từ khoá mỗi dòng"
-  },
   "mc_settings_auto_claim": {
     "message": "tự nhận điểm kênh"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "mỗi dòng một lý do — hiện thành chip chọn được trong hộp thoại cấm; lựa chọn được gửi cùng lệnh cấm"
   },
-  "mc_settings_automod_caps": {
-    "message": "ẩn spam viết hoa"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "ẩn tin nhắn dài hơn 10 ký tự mà phần lớn là chữ hoa"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex lọc"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "mỗi dòng một mẫu, không phân biệt hoa thường — tin nhắn khớp sẽ bị ẩn"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "hiện emote nhạy cảm tình dục"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "gộp các tin nhắn giống hệt liên tiếp (đợt spam) về tin đầu tiên"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "tắt tiếng từ khóa"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "mỗi dòng một từ — tin nhắn chứa bất kỳ từ nào sẽ bị ẩn. khác với làm nổi bật từ khóa."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "quy tắc lọc"

@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "Oranger Rand auf erster Nachricht pro Session"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "Keyword-Highlights"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "Färbt übereinstimmende Nachrichten orange. Eines pro Zeile, Groß-/Kleinschreibung egal, ganzes Wort"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "ein Keyword pro Zeile"
-  },
   "mc_settings_auto_claim": {
     "message": "channel points automatisch einlösen"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "einer pro Zeile — als wählbare Chips im Ban-Dialog angezeigt; die Auswahl wird mit dem Ban gesendet"
   },
-  "mc_settings_automod_caps": {
-    "message": "caps-Spam ausblenden"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "blendet Nachrichten über 10 Zeichen aus, die überwiegend Großbuchstaben sind"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex-Filter"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "ein Muster pro Zeile, Groß-/Kleinschreibung egal — passende Nachrichten werden ausgeblendet"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "sexuelle Emotes zeigen"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "fasst identische aufeinanderfolgende Nachrichten (Spam-Wellen) auf die erste zusammen"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "keywords stummschalten"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "ein Begriff pro Zeile — Nachrichten, die einen enthalten, werden ausgeblendet. getrennt von Keyword-Highlights."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "filterregeln"

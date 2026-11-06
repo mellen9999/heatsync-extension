@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "narancssárga keret az első üzeneten munkamenetenként"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "kulcsszó-kiemelések"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "narancsra színezi az egyező üzeneteket. soronként egy, kis- és nagybetű-független, teljes szó"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "egy kulcsszó soronként"
-  },
   "mc_settings_auto_claim": {
     "message": "channel pointok auto-begyűjtése"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "soronként egy — kiválasztható chipként jelennek meg a ban ablakban; a választás a bannal együtt megy"
   },
-  "mc_settings_automod_caps": {
-    "message": "csupa nagybetűs spam elrejtése"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "elrejti a 10 karakternél hosszabb, főleg nagybetűs üzeneteket"
-  },
-  "mc_settings_automod_regex": {
-    "message": "szűrő regex"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "soronként egy minta, kis/nagybetű nem számít — az egyező üzenetek elrejtődnek"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "szexuális emote-ok mutatása"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "egymás utáni azonos üzenetek (spamhullámok) összevonása az elsőre"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "kulcsszavak némítása"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "soronként egy kifejezés — bármelyiket tartalmazó üzenet elrejtődik. nem azonos a kulcsszó kiemeléssel."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "szűrőszabályok"

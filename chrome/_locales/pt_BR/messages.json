@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "borda laranja na primeira mensagem por sessão"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "destacar por palavra-chave"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "coloriza mensagens correspondentes de laranja. um por linha, sem distinção de maiúsculas, palavra inteira"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "uma palavra-chave por linha"
-  },
   "mc_settings_auto_claim": {
     "message": "coletar pontos automaticamente"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "um por linha — aparecem como chips selecionáveis no diálogo de banimento; a escolha vai junto com o banimento"
   },
-  "mc_settings_automod_caps": {
-    "message": "ocultar spam em maiúsculas"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "oculta mensagens com mais de 10 caracteres que são quase todas em maiúsculas"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex de filtro"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "um padrão por linha, sem diferenciar maiúsculas — mensagens que combinam são ocultadas"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "mostrar emotes sexuais"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "colapsa mensagens idênticas consecutivas (ondas de spam) na primeira"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "silenciar palavras-chave"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "um termo por linha — mensagens que contenham algum são ocultadas. diferente dos destaques por palavra-chave."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "regras de filtro"

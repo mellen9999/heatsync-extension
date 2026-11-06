@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "orange kant på första meddelandet per session"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "nyckelords-highlights"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "färgar matchande meddelanden orange. ett per rad, skiftlägesokänsligt, hela ord"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "ett nyckelord per rad"
-  },
   "mc_settings_auto_claim": {
     "message": "auto-claima channel points"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "ett per rad — visas som valbara chips i ban-rutan; valet skickas med bannen"
   },
-  "mc_settings_automod_caps": {
-    "message": "dölj versalspam"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "dölj meddelanden över 10 tecken som mest är versaler"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex-filter"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "ett mönster per rad, skiftlägesokänsligt — matchande meddelanden döljs"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "visa sexuella emotes"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "slå ihop identiska meddelanden i rad (spamvågor) till det första"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "tysta nyckelord"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "en term per rad — meddelanden som innehåller någon döljs. skilt från nyckelordsmarkering."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "filterregler"

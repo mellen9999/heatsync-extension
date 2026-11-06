@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "оранжевая рамка на первом сообщении за сессию"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "подсветка ключевых слов"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "окрашивает совпавшие сообщения в оранжевый. по одному на строку, без учёта регистра, целое слово"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "одно слово на строку"
-  },
   "mc_settings_auto_claim": {
     "message": "авто-сбор каналпоинтов"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "по одной на строку — показываются выбираемыми плашками в окне бана; выбор уходит вместе с баном"
   },
-  "mc_settings_automod_caps": {
-    "message": "скрывать капс-спам"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "скрывать сообщения длиннее 10 символов, где в основном заглавные"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex-фильтр"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "по одному шаблону на строку, без учёта регистра — подходящие сообщения скрываются"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "показывать сексуальные emotes"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "сворачивать одинаковые подряд сообщения (волны спама) до первого"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "заглушённые слова"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "по одному слову на строку — сообщения с любым из них скрываются. не то же самое, что подсветка ключевых слов."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "спойлер\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "правила фильтров"

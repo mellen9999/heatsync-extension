@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "oranžový okraj na první zprávě za sezení"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "zvýraznění klíčových slov"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "obarví shodné zprávy oranžově. jeden na řádek, bez rozlišení velikosti, celé slovo"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "jedno klíčové slovo na řádek"
-  },
   "mc_settings_auto_claim": {
     "message": "auto-sběr channel pointů"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "jeden na řádek — zobrazí se jako volitelné čipy v dialogu banu; volba se odešle s banem"
   },
-  "mc_settings_automod_caps": {
-    "message": "skrýt spam velkými písmeny"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "skryje zprávy delší než 10 znaků, které jsou většinou velkými písmeny"
-  },
-  "mc_settings_automod_regex": {
-    "message": "regex filtr"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "jeden vzor na řádek, bez ohledu na velikost písmen — odpovídající zprávy se skryjí"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "zobrazit sexuální emotes"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "sloučí stejné po sobě jdoucí zprávy (spamové vlny) na první"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "ztlumit klíčová slova"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "jeden výraz na řádek — zprávy, které nějaký obsahují, se skryjí. odlišné od zvýraznění klíčových slov."
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "spoiler\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "pravidla filtrů"

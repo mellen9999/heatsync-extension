@@ -726,15 +726,6 @@
   "mc_settings_first_chatter_desc": {
     "message": "每次会话首条消息显示橙色边框"
   },
-  "mc_settings_keyword_highlights": {
-    "message": "关键词高亮"
-  },
-  "mc_settings_keyword_highlights_desc": {
-    "message": "将匹配消息染成橙色。每行一个，不区分大小写，完整单词"
-  },
-  "mc_settings_keyword_highlights_placeholder": {
-    "message": "每行一个关键词"
-  },
   "mc_settings_auto_claim": {
     "message": "自动领取频道积分"
   },
@@ -1398,21 +1389,6 @@
   "mc_settings_ban_reasons_desc": {
     "message": "每行一个 — 在封禁对话框中显示为可选标签；所选原因会随封禁一并发送"
   },
-  "mc_settings_automod_caps": {
-    "message": "隐藏全大写刷屏"
-  },
-  "mc_settings_automod_caps_desc": {
-    "message": "隐藏超过 10 个字符且大部分为大写的消息"
-  },
-  "mc_settings_automod_regex": {
-    "message": "过滤正则"
-  },
-  "mc_settings_automod_regex_desc": {
-    "message": "每行一个模式，不区分大小写 — 匹配的消息会被隐藏"
-  },
-  "mc_settings_automod_regex_placeholder": {
-    "message": "bit\\.ly\nfree\\s+v[\\-]?bucks"
-  },
   "mc_settings_show_sexual": {
     "message": "显示色情 emote"
   },
@@ -1460,15 +1436,6 @@
   },
   "mc_settings_hide_duplicates_desc": {
     "message": "把连续的相同消息（刷屏潮）折叠为第一条"
-  },
-  "mc_settings_mute_keywords": {
-    "message": "屏蔽关键词"
-  },
-  "mc_settings_mute_keywords_desc": {
-    "message": "每行一个词 — 包含其中任意一个的消息会被隐藏。与关键词高亮不同。"
-  },
-  "mc_settings_mute_keywords_placeholder": {
-    "message": "剧透\n!drops"
   },
   "mc_settings_filter_rules": {
     "message": "过滤规则"

@@ -1636,7 +1636,8 @@ const SETTING_HOSTS = ['twitch', 'kick', 'youtube']
  */
 function settingShowsOnHost(def, host) {
   if (!def || !def.hosts || !host) return true
-  return def.hosts.includes(host === 'yt' ? 'youtube' : host)
+  const h = /** @type {'twitch' | 'kick' | 'youtube'} */ (host === 'yt' ? 'youtube' : host)
+  return def.hosts.includes(h)
 }
 
 /**
@@ -1647,7 +1648,7 @@ function settingShowsOnHost(def, host) {
  * @returns {Record<string, boolean>}
  */
 function userSubsystemGates(stored) {
-  const def = SETTINGS.find((d) => d.key === 'subsystems')
+  const def = /** @type {SettingDef} */ (SETTINGS.find((d) => d.key === 'subsystems'))
   return coerceSettingValue(def, stored && typeof stored === 'object' ? stored : {}) || { ...def.default }
 }
 

@@ -2722,9 +2722,6 @@
         document.body.classList.toggle('hs-yt-shelves', !!v)
       } catch (_) {}
     },
-    keywordRegex: () => {
-      rebuildKeywordRegex()
-    },
     filterRules: () => {
       let rules = []
       try {

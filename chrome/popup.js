@@ -123,12 +123,17 @@ const browser = globalThis.browser || chrome
     pick.addEventListener('click', async (e) => {
       const b = e.target.closest('.plat')
       if (!b) return
-      const ui = await read()
-      const subs = { ...(ui.subsystems || {}) }
-      const nowOff = subs[b.dataset.gate] !== false
-      subs[b.dataset.gate] = !nowOff
-      await browser.storage.sync.set({ ui_settings: { ...ui, subsystems: subs } })
+      const nowOff = (await read()).subsystems?.[b.dataset.gate] !== false
+      // through the service worker: it stores the switch and tells the server,
+      // or the next boot's server merge would switch it straight back
+      const r = await browser.runtime
+        .sendMessage({ type: 'site_overlay_set', gate: b.dataset.gate, on: !nowOff })
+        .catch(() => null)
       await paint()
+      if (!r?.ok) {
+        note.textContent = 'not saved — try again'
+        return
+      }
       note.textContent = nowOff
         ? t('popup_site_note_off', [b.textContent]) || `${b.textContent}: the site's own chat is back`
         : t('popup_site_note_on', [b.textContent]) || `${b.textContent}: heatsync chat is back`

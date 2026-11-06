@@ -328,8 +328,12 @@ const _hsT = (key, subs) => {
 
   // The per-site "heatsync chat on" switch (the popup's, the settings page's): off hands the page its own
   // chat back, decided at the next load. `on` false turns heatsync chat off for that site. Resolves once
-  // stored, so the caller may reload right after.
+  // stored, so the caller may reload right after. The service worker stores it AND tells the server — a
+  // storage-only write is undone at the next boot, when the server's ui_state wins the merge.
   async function setSiteOverlay(gate, on) {
+    const r = await browser.runtime.sendMessage({ type: 'site_overlay_set', gate, on: !!on }).catch(() => null)
+    if (r?.ok) return
+    // service worker unreachable (extension reloaded under the page): keep the switch on this device
     const ui = (await browser.storage.sync.get('ui_settings'))?.ui_settings || {}
     const subsystems = { ...(ui.subsystems || {}), [gate]: !!on }
     await browser.storage.sync.set({ ui_settings: { ...ui, subsystems } })

@@ -379,6 +379,15 @@ function splitIncomingUiState(obj) {
   return { sync: sanitizeUiSettings(sync), overflow }
 }
 
+// The per-site overlay switches (popup, the page's way back, the overlay's own
+// hs-off). Returns the next ui_settings with one site flipped, or null for
+// anything that is not one of these gates.
+const SITE_OVERLAY_GATES = ['overlay-twitch', 'overlay-kick', 'overlay-youtube']
+function siteOverlayMerge(ui, gate, on) {
+  if (!SITE_OVERLAY_GATES.includes(gate)) return null
+  return { ...ui, subsystems: { ...(ui?.subsystems || {}), [gate]: !!on } }
+}
+
 // Serialized read-modify-write for ui_settings in sync storage.
 // Three message handlers (ui-state:sync/update, settings:patch, settings:delete)
 // can race on concurrent WS events. Chain all writes through this so each sees
@@ -9380,6 +9389,27 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     uiSettingsRmw((ui) => sanitizeUiSettings({ ...ui, ...patch }))
       .then((r) => sendResponse(r?.ok ? { ok: true } : { ok: false, error: r?.error || 'write failed' }))
       .catch((err) => sendResponse({ ok: false, error: String(err?.message || err) }))
+    return true
+  }
+
+  // A per-site overlay switch. Stored through the same serialized rmw, then
+  // sent as the same ui-state:sync patch the settings page's writes ride — a
+  // storage-only write was reverted at the next boot, when the server's
+  // ui_state (which never heard of it) won the merge.
+  if (message.type === 'site_overlay_set') {
+    if (!SITE_OVERLAY_GATES.includes(message.gate)) {
+      sendResponse({ ok: false, error: 'unknown gate' })
+      return true
+    }
+    let subsystems = null
+    uiSettingsRmw((ui) => {
+      const next = siteOverlayMerge(ui, message.gate, message.on)
+      subsystems = next.subsystems
+      return sanitizeUiSettings(next)
+    }).then((r) => {
+      if (r?.ok) wsSend({ type: 'ui-state:sync', patch: { subsystems } })
+      sendResponse(r?.ok ? { ok: true } : { ok: false, error: r?.error || 'write failed' })
+    })
     return true
   }
 

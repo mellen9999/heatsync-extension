@@ -193,6 +193,30 @@ function updateTwitchSideNavWidth() {
   }
 }
 
+// Page zoom and window resizes change how wide the chat may be. applyChatWidth
+// re-fits it (and gives back a width an earlier, narrower viewport took); push
+// the result to everything that reads chatWidth.
+let _twitchChatRefitTimer = null
+function scheduleTwitchChatRefit() {
+  if (hostPlatform !== 'twitch') return
+  if (_twitchChatRefitTimer) cleanup.clearTimeout(_twitchChatRefitTimer)
+  _twitchChatRefitTimer = cleanup.setTimeout(() => {
+    _twitchChatRefitTimer = null
+    const before = chatWidth
+    try {
+      applyChatWidth()
+    } catch (_) {}
+    if (chatWidth === before) return
+    setRootVar('--hs-chat-w', `${chatWidth}px`)
+    try {
+      positionChatResizeHandle()
+    } catch (_) {}
+    try {
+      _updateMcLayout()
+    } catch (_) {}
+  }, 80)
+}
+
 let _twitchTopNavObs = null
 // Twitch's top nav (.top-nav) is 50px tall and lives in a sibling DOM tree
 // that paints above HS's chat container — even though HS has z-index 9999,

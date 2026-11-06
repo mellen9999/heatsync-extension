@@ -229,7 +229,14 @@ function setupTwitchSideNavObserver() {
   }
   if (!_twitchSideNavWinHooked) {
     _twitchSideNavWinHooked = true
-    window.addEventListener('resize', () => updateTwitchSideNavWidth(), { passive: true, signal: mcSignal })
+    window.addEventListener(
+      'resize',
+      () => {
+        updateTwitchSideNavWidth()
+        scheduleTwitchChatRefit()
+      },
+      { passive: true, signal: mcSignal },
+    )
   }
   updateTwitchSideNavWidth()
 }

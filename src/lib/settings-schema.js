@@ -1918,6 +1918,9 @@ const SETTINGS = [
     tip: 'users whose name paint you have hidden — toggle via right-click on their name',
     control: 'custom',
     maxLen: 3000,
+    // people, not a preference — a display reset must not wipe it (and the
+    // wipe would sync to heatsync.org)
+    noReset: true,
   },
   {
     key: 'customPresets',

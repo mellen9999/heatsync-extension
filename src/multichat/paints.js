@@ -1001,8 +1001,12 @@ function readHsGlyphBox(el) {
   if (!font || !(h > 0)) return null
   // The EXACT ratio, capped — a resampled letterform is a soft one, and a 4x
   // phone rasterising four times the pixels buys nothing visible at 13px.
-  const dpr = Math.min(3, Math.max(1, (typeof window !== 'undefined' && window.devicePixelRatio) || 1))
-  return { font, h, dpr }
+  return { font, h, dpr: hsGlyphDpr() }
+}
+
+/** The ratio masks are rastered at, capped: a 4x phone buys nothing visible at 13px. */
+function hsGlyphDpr() {
+  return Math.min(3, Math.max(1, (typeof window !== 'undefined' && window.devicePixelRatio) || 1))
 }
 
 /** The composited plan for whatever `hsp-` class `el` wears, or undefined. */
@@ -1026,6 +1030,9 @@ function applyHsGlyphMasks(el, plan) {
   const box = el?.querySelector?.(`.${NAME_BOX_CLASS}`)
   if (!box || box.classList.contains(MASKED_CLASS)) return
   const probe = box.querySelector?.(':scope > span') || box
+  // The cached box carries the dpr its masks are rastered at: page zoom changes
+  // it, and a mask drawn at 1x on a 3x screen is a soft letterform.
+  if (hsGlyphBox && hsGlyphBox.dpr !== hsGlyphDpr()) hsGlyphBox = null
   if (!hsGlyphBox) hsGlyphBox = readHsGlyphBox(probe)
   if (!hsGlyphBox) return
   const geom = hsGlyphBox
@@ -1078,6 +1085,19 @@ function remountAllHsFillLayers() {
 // Webfonts landed: every mask was drawn with the wrong face. Guarded exactly
 // like setLoggerOnGlyphMask above — a standalone import has neither binding.
 if (typeof setOnReady === 'function') setOnReady(remountAllHsFillLayers)
+
+// Page zoom changes devicePixelRatio and fires `resize`. Masks already mounted
+// were drawn for the old ratio; redraw them when it differs.
+let hsGlyphDprSeen = hsGlyphDpr()
+function hsGlyphDprChanged() {
+  const d = hsGlyphDpr()
+  if (d === hsGlyphDprSeen) return
+  hsGlyphDprSeen = d
+  remountAllHsFillLayers()
+}
+if (typeof cleanup !== 'undefined' && typeof cleanup.addEventListener === 'function') {
+  cleanup.addEventListener(window, 'resize', hsGlyphDprChanged, { passive: true })
+}
 
 // ── the crowd dial ──────────────────────────────────────────────────────────
 //

@@ -1,5 +1,11 @@
 # changelog
 
+## [1.7.121] — 2026-11-06
+
+### fixed
+- **went live** — one line and one desktop notification per streamer: a simulcast's kick or youtube channel coming up, or its biggest platform changing as viewers shift, no longer says they went live again.
+- **page zoom** — twitch chat no longer collapses to a thin strip when zoomed in, hover cards stay visible at 200%+, and painted names redraw sharp after a zoom change.
+
 ## [1.7.120] — 2026-11-05
 
 ### fixed

@@ -571,31 +571,26 @@ const SETTINGS = [
     rerender: true,
   },
   {
-    key: 'bttvBadges',
+    // one switch for other tools' badges on chatters (bttv, ffz, chatterino)
+    key: 'thirdPartyBadges',
     type: 'bool',
     default: true,
     scope: 'sync',
     category: 'display',
     section: 'cosmetics',
     sectionKey: 'btn_settings_cosmetics',
-    labelKey: 'mc_settings_bttv_badges',
-    tipKey: 'mc_settings_bttv_badges_desc',
+    labelKey: 'mc_settings_third_party_badges',
+    tipKey: 'mc_settings_third_party_badges_desc',
     control: 'pill',
     rerender: true,
+    // the three retired per-provider switches: any turned off carries over as off
+    legacy: (ui) =>
+      ['bttvBadges', 'ffzBadges', 'chatterinoBadges'].some((k) => typeof ui[k] === 'boolean')
+        ? ui.bttvBadges !== false && ui.ffzBadges !== false && ui.chatterinoBadges !== false
+        : undefined,
   },
-  {
-    key: 'ffzBadges',
-    type: 'bool',
-    default: true,
-    scope: 'sync',
-    category: 'display',
-    section: 'cosmetics',
-    sectionKey: 'btn_settings_cosmetics',
-    labelKey: 'mc_settings_ffz_badges',
-    tipKey: 'mc_settings_ffz_badges_desc',
-    control: 'pill',
-    rerender: true,
-  },
+
+
   {
     key: 'animateEmotes',
     basic: true,
@@ -655,19 +650,7 @@ const SETTINGS = [
       { value: 'never', label: 'never', labelKey: 'lib_opt_never' },
     ],
   },
-  {
-    key: 'chatterinoBadges',
-    type: 'bool',
-    default: true,
-    scope: 'sync',
-    category: 'display',
-    section: 'cosmetics',
-    sectionKey: 'btn_settings_cosmetics',
-    labelKey: 'mc_settings_chatterino_badges',
-    tipKey: 'mc_settings_chatterino_badges_desc',
-    control: 'pill',
-    rerender: true,
-  },
+
   // name marks (name-marks.js): sub flair, 🔥, heat bar before a twitch chatter's name
   {
     key: 'subFlair',

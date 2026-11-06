@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "ألوان الأسماء وشارات 7tv عند المستخدمين"
   },
-  "mc_settings_bttv_badges": {
-    "message": "شارات bttv"
+  "mc_settings_third_party_badges": {
+    "message": "شارات bttv · ffz · chatterino"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "شارات betterttv عند المستخدمين"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "شارات ffz"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "شارات frankerfacez عند المستخدمين"
+  "mc_settings_third_party_badges_desc": {
+    "message": "شارات bttv/ffz/chatterino عند المستخدمين"
   },
   "mc_settings_animate_emotes": {
     "message": "تحريك emotes"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "التوقعات والاستطلاعات"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "شارات chatterino"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "شارات chatterino عند المستخدمين"
   },
   "mc_settings_sub_flair": {
     "message": "وسم المشترك"

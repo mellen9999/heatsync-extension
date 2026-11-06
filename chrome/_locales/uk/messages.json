@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "name paints і бейджі 7tv у чатерів"
   },
-  "mc_settings_bttv_badges": {
-    "message": "бейджі bttv"
+  "mc_settings_third_party_badges": {
+    "message": "бейджі bttv · ffz · chatterino"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "бейджі betterttv у чатерів"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "бейджі ffz"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "бейджі frankerfacez у чатерів"
+  "mc_settings_third_party_badges_desc": {
+    "message": "бейджі bttv/ffz/chatterino у чатерів"
   },
   "mc_settings_animate_emotes": {
     "message": "анімувати emotes"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "прогнози й опитування"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "бейджі chatterino"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "бейджі chatterino у чатерів"
   },
   "mc_settings_sub_flair": {
     "message": "значок сабу"

@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "name paint và huy hiệu 7tv trên người chat"
   },
-  "mc_settings_bttv_badges": {
-    "message": "huy hiệu bttv"
+  "mc_settings_third_party_badges": {
+    "message": "huy hiệu bttv · ffz · chatterino"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "huy hiệu betterttv trên người chat"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "huy hiệu ffz"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "huy hiệu frankerfacez trên người chat"
+  "mc_settings_third_party_badges_desc": {
+    "message": "huy hiệu bttv/ffz/chatterino trên người chat"
   },
   "mc_settings_animate_emotes": {
     "message": "hoạt ảnh emote"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "dự đoán & thăm dò"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "huy hiệu chatterino"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "huy hiệu chatterino trên người chat"
   },
   "mc_settings_sub_flair": {
     "message": "huy hiệu sub"

@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "barvy jmen a 7tv odznaky u chatterů"
   },
-  "mc_settings_bttv_badges": {
-    "message": "bttv odznaky"
+  "mc_settings_third_party_badges": {
+    "message": "bttv · ffz · chatterino odznaky"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "betterttv odznaky u chatterů"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "ffz odznaky"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "frankerfacez odznaky u chatterů"
+  "mc_settings_third_party_badges_desc": {
+    "message": "bttv/ffz/chatterino odznaky u chatterů"
   },
   "mc_settings_animate_emotes": {
     "message": "animovat emotes"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "predikce a ankety"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "chatterino odznaky"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "chatterino odznaky u chatterů"
   },
   "mc_settings_sub_flair": {
     "message": "sub ozdoba"

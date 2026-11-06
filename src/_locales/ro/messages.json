@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "culori de nume și insigne 7tv la chatteri"
   },
-  "mc_settings_bttv_badges": {
-    "message": "insigne bttv"
+  "mc_settings_third_party_badges": {
+    "message": "insigne bttv · ffz · chatterino"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "insigne betterttv la chatteri"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "insigne ffz"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "insigne frankerfacez la chatteri"
+  "mc_settings_third_party_badges_desc": {
+    "message": "insigne bttv/ffz/chatterino la chatteri"
   },
   "mc_settings_animate_emotes": {
     "message": "animează emote-urile"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "predicții și sondaje"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "insigne chatterino"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "insigne chatterino la chatteri"
   },
   "mc_settings_sub_flair": {
     "message": "podoabă sub"

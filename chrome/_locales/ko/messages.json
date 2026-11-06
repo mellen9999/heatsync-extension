@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "채터의 이름 페인트와 7tv 배지"
   },
-  "mc_settings_bttv_badges": {
-    "message": "bttv 배지"
+  "mc_settings_third_party_badges": {
+    "message": "bttv · ffz · chatterino 배지"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "채터의 betterttv 배지"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "ffz 배지"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "채터의 frankerfacez 배지"
+  "mc_settings_third_party_badges_desc": {
+    "message": "채터의 bttv/ffz/chatterino 배지"
   },
   "mc_settings_animate_emotes": {
     "message": "emote 애니메이션"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "예측 & 투표"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "chatterino 배지"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "채터의 chatterino 배지"
   },
   "mc_settings_sub_flair": {
     "message": "구독 장식"

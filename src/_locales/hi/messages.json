@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "चैटर पर name paints और 7tv बैज"
   },
-  "mc_settings_bttv_badges": {
-    "message": "bttv बैज"
+  "mc_settings_third_party_badges": {
+    "message": "bttv · ffz · chatterino बैज"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "चैटर पर betterttv बैज"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "ffz बैज"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "चैटर पर frankerfacez बैज"
+  "mc_settings_third_party_badges_desc": {
+    "message": "चैटर पर bttv/ffz/chatterino बैज"
   },
   "mc_settings_animate_emotes": {
     "message": "emotes एनिमेट करो"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "प्रेडिक्शन और पोल"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "chatterino बैज"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "चैटर पर chatterino बैज"
   },
   "mc_settings_sub_flair": {
     "message": "सब फ्लेयर"

@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "kolory nicków i odznaki 7tv przy czatujących"
   },
-  "mc_settings_bttv_badges": {
-    "message": "odznaki bttv"
+  "mc_settings_third_party_badges": {
+    "message": "odznaki bttv · ffz · chatterino"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "odznaki betterttv przy czatujących"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "odznaki ffz"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "odznaki frankerfacez przy czatujących"
+  "mc_settings_third_party_badges_desc": {
+    "message": "odznaki bttv/ffz/chatterino przy czatujących"
   },
   "mc_settings_animate_emotes": {
     "message": "animuj emotki"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "predykcje i ankiety"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "odznaki chatterino"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "odznaki chatterino przy czatujących"
   },
   "mc_settings_sub_flair": {
     "message": "ozdoba suba"

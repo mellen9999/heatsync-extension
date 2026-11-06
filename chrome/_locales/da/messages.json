@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "navnemaling og 7tv-badges på chattere"
   },
-  "mc_settings_bttv_badges": {
-    "message": "bttv-badges"
+  "mc_settings_third_party_badges": {
+    "message": "bttv · ffz · chatterino-badges"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "betterttv-badges på chattere"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "ffz-badges"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "frankerfacez-badges på chattere"
+  "mc_settings_third_party_badges_desc": {
+    "message": "bttv/ffz/chatterino-badges på chattere"
   },
   "mc_settings_animate_emotes": {
     "message": "animér emotes"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "forudsigelser og afstemninger"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "chatterino-badges"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "chatterino-badges på chattere"
   },
   "mc_settings_sub_flair": {
     "message": "sub-pynt"

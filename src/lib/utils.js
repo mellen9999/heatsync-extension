@@ -584,6 +584,9 @@ const RETIRED_UI_KEYS = new Set([
   'highlightMentions',
   'showCosmetics',
   'lineHeight',
+  'bttvBadges',
+  'ffzBadges',
+  'chatterinoBadges',
 ])
 
 // registry key → chrome.storage.local key name, for every UI_SYNC_BLOCKLIST

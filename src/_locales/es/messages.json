@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "name paints y badges de 7tv en los chatters"
   },
-  "mc_settings_bttv_badges": {
-    "message": "badges de bttv"
+  "mc_settings_third_party_badges": {
+    "message": "badges de bttv · ffz · chatterino"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "badges de betterttv en los chatters"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "badges de ffz"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "badges de frankerfacez en los chatters"
+  "mc_settings_third_party_badges_desc": {
+    "message": "badges de bttv/ffz/chatterino en los chatters"
   },
   "mc_settings_animate_emotes": {
     "message": "animar emotes"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "predicciones y encuestas"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "badges de chatterino"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "badges de chatterino en los chatters"
   },
   "mc_settings_sub_flair": {
     "message": "distintivo sub"

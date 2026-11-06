@@ -857,10 +857,7 @@ function updateCosmeticsInPlace(userIds) {
 function updateThirdPartyBadgesInPlace() {
   try {
     if (!document.getElementById('hs-mc-messages')) return
-    const wantBttv = getSetting('bttvBadges')
-    const wantFfz = getSetting('ffzBadges')
-    const wantChat = getSetting('chatterinoBadges')
-    if (!wantBttv && !wantFfz && !wantChat) return
+    if (!getSetting('thirdPartyBadges')) return
     const mkBadge = (cls, url, title, bg) => {
       const safe = safeUrl(url)
       if (!safe) return null
@@ -879,9 +876,9 @@ function updateThirdPartyBadgesInPlace() {
       return img
     }
     for (const [uid, divSet] of _uidIndex) {
-      const bttv = wantBttv ? mcBttvBadgeMap.get(uid) : null
-      const ffzList = wantFfz ? mcFfzBadgeMap.get(uid) : null
-      const chat = wantChat ? mcChatterinoBadgeMap.get(uid)?.at(-1) : null
+      const bttv = mcBttvBadgeMap.get(uid)
+      const ffzList = mcFfzBadgeMap.get(uid)
+      const chat = mcChatterinoBadgeMap.get(uid)?.at(-1)
       if (!bttv && !ffzList && !chat) continue
       for (const div of divSet) {
         const anchor =

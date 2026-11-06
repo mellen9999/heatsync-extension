@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "用户的 7tv 名字涂装和徽章"
   },
-  "mc_settings_bttv_badges": {
-    "message": "bttv 徽章"
+  "mc_settings_third_party_badges": {
+    "message": "bttv · ffz · chatterino 徽章"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "用户的 betterttv 徽章"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "ffz 徽章"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "用户的 frankerfacez 徽章"
+  "mc_settings_third_party_badges_desc": {
+    "message": "用户的 bttv/ffz/chatterino 徽章"
   },
   "mc_settings_animate_emotes": {
     "message": "动画 emote"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "预测与投票"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "chatterino 徽章"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "用户的 chatterino 徽章"
   },
   "mc_settings_sub_flair": {
     "message": "订阅装饰"

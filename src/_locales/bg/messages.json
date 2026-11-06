@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "цветове на имена и 7tv значки на чатъри"
   },
-  "mc_settings_bttv_badges": {
-    "message": "bttv значки"
+  "mc_settings_third_party_badges": {
+    "message": "bttv · ffz · chatterino значки"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "betterttv значки на чатъри"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "ffz значки"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "frankerfacez значки на чатъри"
+  "mc_settings_third_party_badges_desc": {
+    "message": "bttv/ffz/chatterino значки на чатъри"
   },
   "mc_settings_animate_emotes": {
     "message": "анимирай emotes"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "прогнози и анкети"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "chatterino значки"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "chatterino значки на чатъри"
   },
   "mc_settings_sub_flair": {
     "message": "знак за абонат"

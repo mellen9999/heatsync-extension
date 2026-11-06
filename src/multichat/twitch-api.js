@@ -4302,18 +4302,19 @@ function renderThirdPartyBadges(userId) {
   // updateThirdPartyBadgesInPlace dedup against rows already carrying the badge,
   // so a late bulk-map arrival patches cold rows in place instead of forcing a
   // full rebuild (the "loads then shifts" flash on channel switch).
-  const bttv = getSetting('bttvBadges') ? mcBttvBadgeMap.get(userId) : null
+  const thirdParty = getSetting('thirdPartyBadges')
+  const bttv = thirdParty ? mcBttvBadgeMap.get(userId) : null
   if (bttv) {
     html += `<img class="hs-mc-badge-img hs-mc-bttv-badge" src="${escapeHtml(safeUrl(bttv.url) || '')}" alt="${escapeHtml(bttv.description)}" title="${escapeHtml(bttv.description)}" decoding="async" width="18" height="18" style="width:18px;height:18px;">`
   }
-  const ffzList = getSetting('ffzBadges') ? mcFfzBadgeMap.get(userId) : null
+  const ffzList = thirdParty ? mcFfzBadgeMap.get(userId) : null
   if (ffzList) {
     for (const b of ffzList) {
       const safeColor = /^#[0-9a-fA-F]{3,8}$/.test(b.color) ? b.color : ''
       html += `<img class="hs-mc-badge-img hs-mc-ffz-badge" src="${escapeHtml(safeUrl(b.url) || '')}" alt="${escapeHtml(b.title)}" title="${escapeHtml(b.title)}" decoding="async" width="18" height="18" style="width:18px;height:18px;${safeColor ? `background:${safeColor};` : ''}">`
     }
   }
-  const chat = getSetting('chatterinoBadges') ? mcChatterinoBadgeMap.get(userId)?.at(-1) : null
+  const chat = thirdParty ? mcChatterinoBadgeMap.get(userId)?.at(-1) : null
   if (chat) {
     html += `<img class="hs-mc-badge-img hs-mc-chatterino-badge" src="${escapeHtml(safeUrl(chat.url) || '')}" alt="Chatterino" title="${escapeHtml(chat.tooltip || 'Chatterino')}" decoding="async" width="18" height="18" style="width:18px;height:18px;">`
   }

@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "warna nama dan lencana 7tv pada pengsembang"
   },
-  "mc_settings_bttv_badges": {
-    "message": "lencana bttv"
+  "mc_settings_third_party_badges": {
+    "message": "lencana bttv · ffz · chatterino"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "lencana betterttv pada pengsembang"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "lencana ffz"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "lencana frankerfacez pada pengsembang"
+  "mc_settings_third_party_badges_desc": {
+    "message": "lencana bttv/ffz/chatterino pada pengsembang"
   },
   "mc_settings_animate_emotes": {
     "message": "animasikan emote"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "ramalan & undian"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "lencana chatterino"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "lencana chatterino pada pengsembang"
   },
   "mc_settings_sub_flair": {
     "message": "hiasan sub"

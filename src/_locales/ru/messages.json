@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "name paints и значки 7tv у чаттеров"
   },
-  "mc_settings_bttv_badges": {
-    "message": "значки bttv"
+  "mc_settings_third_party_badges": {
+    "message": "значки bttv · ffz · chatterino"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "значки betterttv у чаттеров"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "значки ffz"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "значки frankerfacez у чаттеров"
+  "mc_settings_third_party_badges_desc": {
+    "message": "значки bttv/ffz/chatterino у чаттеров"
   },
   "mc_settings_animate_emotes": {
     "message": "анимация emotes"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "предсказания и опросы"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "значки chatterino"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "значки chatterino у чаттеров"
   },
   "mc_settings_sub_flair": {
     "message": "значок сабa"

@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "name paints และป้าย 7tv บนคนแชท"
   },
-  "mc_settings_bttv_badges": {
-    "message": "ป้าย bttv"
+  "mc_settings_third_party_badges": {
+    "message": "ป้าย bttv · ffz · chatterino"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "ป้าย betterttv บนคนแชท"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "ป้าย ffz"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "ป้าย frankerfacez บนคนแชท"
+  "mc_settings_third_party_badges_desc": {
+    "message": "ป้าย bttv/ffz/chatterino บนคนแชท"
   },
   "mc_settings_animate_emotes": {
     "message": "เล่น emotes เคลื่อนไหว"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "การทำนายและโพล"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "ป้าย chatterino"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "ป้าย chatterino บนคนแชท"
   },
   "mc_settings_sub_flair": {
     "message": "เครื่องประดับซับ"

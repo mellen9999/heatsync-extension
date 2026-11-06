@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "name paints at 7tv badge sa mga chatter"
   },
-  "mc_settings_bttv_badges": {
-    "message": "bttv badge"
+  "mc_settings_third_party_badges": {
+    "message": "bttv · ffz · chatterino badge"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "betterttv badge sa mga chatter"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "ffz badge"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "frankerfacez badge sa mga chatter"
+  "mc_settings_third_party_badges_desc": {
+    "message": "bttv/ffz/chatterino badge sa mga chatter"
   },
   "mc_settings_animate_emotes": {
     "message": "i-animate ang emotes"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "mga prediction at poll"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "chatterino badge"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "chatterino badge sa mga chatter"
   },
   "mc_settings_sub_flair": {
     "message": "palamuti ng sub"

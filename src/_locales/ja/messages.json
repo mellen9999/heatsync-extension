@@ -1218,17 +1218,11 @@
   "mc_settings_seventv_paints_desc": {
     "message": "チャッターのネームペイントと 7tv バッジ"
   },
-  "mc_settings_bttv_badges": {
-    "message": "bttv バッジ"
+  "mc_settings_third_party_badges": {
+    "message": "bttv · ffz · chatterino バッジ"
   },
-  "mc_settings_bttv_badges_desc": {
-    "message": "チャッターの betterttv バッジ"
-  },
-  "mc_settings_ffz_badges": {
-    "message": "ffz バッジ"
-  },
-  "mc_settings_ffz_badges_desc": {
-    "message": "チャッターの frankerfacez バッジ"
+  "mc_settings_third_party_badges_desc": {
+    "message": "チャッターの bttv/ffz/chatterino バッジ"
   },
   "mc_settings_animate_emotes": {
     "message": "emote をアニメ再生"
@@ -1244,12 +1238,6 @@
   },
   "mc_predview_title": {
     "message": "予想と投票"
-  },
-  "mc_settings_chatterino_badges": {
-    "message": "chatterino バッジ"
-  },
-  "mc_settings_chatterino_badges_desc": {
-    "message": "チャッターの chatterino バッジ"
   },
   "mc_settings_sub_flair": {
     "message": "サブ装飾"

@@ -2651,7 +2651,7 @@
     }
 
     // heatsync name paints follow their own switch, not the third-party gate
-    hsPaintsEnabled = settings.showNamePaints !== false
+    hsPaintsEnabled = namePaintsOn(settings.showNamePaints)
 
     // Cosmetics toggle — legacy showCosmetics key OR the cosmetics subsystem gate
     if (settings.showCosmetics === false || settings.subsystems?.cosmetics === false) {

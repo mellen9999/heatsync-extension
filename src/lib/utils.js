@@ -607,6 +607,13 @@ function isLargeKeySyncEligible(key, value) {
   return UI_SYNC_BLOCKLIST.has(key) && !DEVICE_LOCAL_KEYS.has(key) && estimateSettingSize(value) <= LARGE_KEY_SYNC_MAX
 }
 
+// showNamePaints: the extension stores on/off, heatsync.org a mode
+// (full/static/off). Either shape can arrive here (sync from the site, an
+// old blob), and !!'off' is true — so only false and 'off' mean off.
+function namePaintsOn(v) {
+  return v !== false && v !== 'off'
+}
+
 /**
  * Sanitize a ui_settings-shaped object before merging into chrome.storage.sync
  * or echoing into localStorage. Strips:
@@ -1334,6 +1341,7 @@ const utils = {
   sortedInsert,
 
   // Storage hygiene
+  namePaintsOn,
   sanitizeUiSettings,
   UI_SYNC_BLOCKLIST,
   DEVICE_LOCAL_KEYS,
@@ -1391,6 +1399,7 @@ export {
   resolveVolumeWheelStep,
   resolveYtLiveLabel,
   safeUrl,
+  namePaintsOn,
   sanitizeUiSettings,
   sortedInsert,
   stepVolume,

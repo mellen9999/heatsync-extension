@@ -4,6 +4,7 @@
 // file (see readLib in build.js), while `bun test` imports it for real.
 import { ALL_SIZES, sizesFor } from './font-grid.js'
 import { HS_PLAT_COLORS } from './palette.js'
+import { namePaintsOn } from './utils.js'
 
 // settings registry — every multichat setting as one declarative entry.
 // pure data + pure validators only: no DOM, no chrome.*, no i18n calls.
@@ -564,6 +565,8 @@ const SETTINGS = [
     control: 'pill',
     rerender: true,
     apply: 'namePaints',
+    // the site's modes (full/static/off) map without inverting
+    coerce: (v) => (typeof v === 'string' ? namePaintsOn(v) : v),
   },
   {
     key: 'sevenTvPaints',

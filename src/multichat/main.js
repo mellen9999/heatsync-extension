@@ -2786,9 +2786,7 @@
     // density — pure CSS vars, no re-render needed
     density: () => {
       const pad = getSetting('messageDensity') === 'cozy' ? '5px 8px' : '2px 4px'
-      const root = document.documentElement
-      root.style.setProperty('--hs-mc-row-pad', pad)
-      root.style.setProperty('--hs-mc-row-lh', `${getSetting('lineHeight')}px`)
+      document.documentElement.style.setProperty('--hs-mc-row-pad', pad)
     },
     // render cap — debounced re-render (range fires per step)
     renderCap: (() => {

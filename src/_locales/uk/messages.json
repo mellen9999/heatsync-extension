@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "відступи рядків — compact це класичний щільний вигляд"
   },
-  "mc_settings_line_height": {
-    "message": "висота рядка"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "висота рядка чату в px — 18 тримає bitmap-шрифти на піксельній сітці"
-  },
   "mc_settings_max_visible_messages": {
     "message": "макс. видимих повідомлень"
   },

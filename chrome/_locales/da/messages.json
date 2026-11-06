@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "rækkeafstand — compact er det klassiske stramme look"
   },
-  "mc_settings_line_height": {
-    "message": "linjehøjde"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "chatrækkens linjehøjde i px — 18 holder bitmap-skrifttyper på pixelgitteret"
-  },
   "mc_settings_max_visible_messages": {
     "message": "maks. synlige beskeder"
   },

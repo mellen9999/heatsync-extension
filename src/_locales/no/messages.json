@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "radmarg — compact er det klassiske tette utseendet"
   },
-  "mc_settings_line_height": {
-    "message": "linjehøyde"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "linjehøyde for chatrader i px — 18 holder bitmap-skrifter på pikselrutenettet"
-  },
   "mc_settings_max_visible_messages": {
     "message": "maks synlige meldinger"
   },

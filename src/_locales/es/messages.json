@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "relleno de filas — compacto es el look apretado de siempre"
   },
-  "mc_settings_line_height": {
-    "message": "altura de línea"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "altura de línea del chat en px — 18 mantiene las fuentes bitmap alineadas a la cuadrícula de píxeles"
-  },
   "mc_settings_max_visible_messages": {
     "message": "máx. de mensajes visibles"
   },

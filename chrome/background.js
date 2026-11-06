@@ -315,6 +315,7 @@ const RETIRED_UI_KEYS = new Set([
   'compactChatInput',
   'highlightMentions',
   'showCosmetics',
+  'lineHeight',
 ])
 // registry key → chrome.storage.local key name — must match src/lib/utils.js
 // OVERFLOW_MIRROR_KEYS exactly (parity-checked at build time).

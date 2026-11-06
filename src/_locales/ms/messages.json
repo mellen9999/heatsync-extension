@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "lapik baris — compact ialah rupa rapat klasik"
   },
-  "mc_settings_line_height": {
-    "message": "tinggi baris"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "tinggi baris sembang dalam px — 18 kekalkan fon bitmap pada grid piksel"
-  },
   "mc_settings_max_visible_messages": {
     "message": "maks mesej kelihatan"
   },

@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "行内边距 — 紧凑是经典的紧密样式"
   },
-  "mc_settings_line_height": {
-    "message": "行高"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "聊天行高（px）— 18 可让位图字体对齐像素网格"
-  },
   "mc_settings_max_visible_messages": {
     "message": "最大可见消息数"
   },

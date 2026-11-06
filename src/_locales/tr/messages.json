@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "satır boşluğu — compact klasik sıkı görünümdür"
   },
-  "mc_settings_line_height": {
-    "message": "satır yüksekliği"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "sohbet satırı yüksekliği, px cinsinden — 18 bitmap yazı tiplerini piksel ızgarasında tutar"
-  },
   "mc_settings_max_visible_messages": {
     "message": "en çok görünen mesaj"
   },

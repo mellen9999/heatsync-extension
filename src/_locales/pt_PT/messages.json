@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "espaçamento das linhas — compact é o visual apertado clássico"
   },
-  "mc_settings_line_height": {
-    "message": "altura da linha"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "altura da linha do chat em px — 18 mantém as fontes bitmap na grelha de píxeis"
-  },
   "mc_settings_max_visible_messages": {
     "message": "máx. de mensagens visíveis"
   },

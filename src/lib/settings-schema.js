@@ -515,30 +515,14 @@ const SETTINGS = [
     control: 'sizebtns',
     apply: 'density',
     applyOnLoad: true,
+    // the retired lineHeight knob did the same job: a taller line reads as cozy
+    legacy: (ui) => (ui.lineHeight === '22' || ui.lineHeight === '26' ? 'cozy' : undefined),
     options: [
       { value: 'compact', label: 'compact', labelKey: 'lib_opt_compact' },
       { value: 'cozy', label: 'cozy', labelKey: 'lib_opt_cozy' },
     ],
   },
-  {
-    key: 'lineHeight',
-    type: 'enum',
-    default: '20',
-    scope: 'sync',
-    category: 'display',
-    section: 'density',
-    sectionKey: 'lib_sec_density',
-    labelKey: 'mc_settings_line_height',
-    tipKey: 'mc_settings_line_height_desc',
-    control: 'sizebtns',
-    apply: 'density',
-    applyOnLoad: true,
-    options: [
-      { value: '20', label: '20' },
-      { value: '22', label: '22' },
-      { value: '26', label: '26' },
-    ],
-  },
+
   {
     key: 'hs_dom_render_cap',
     type: 'range',

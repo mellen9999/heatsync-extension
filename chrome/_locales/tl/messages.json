@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "padding ng row — compact ang klasikong siksik na itsura"
   },
-  "mc_settings_line_height": {
-    "message": "taas ng linya"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "taas ng linya ng row ng chat sa px — pinananatili ng 18 ang bitmap font sa pixel grid"
-  },
   "mc_settings_max_visible_messages": {
     "message": "pinakamaraming nakikitang mensahe"
   },

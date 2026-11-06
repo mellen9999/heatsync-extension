@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "行の余白 — compact は従来の詰めた見た目"
   },
-  "mc_settings_line_height": {
-    "message": "行の高さ"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "チャット行の高さ (px) — 18 ならビットマップフォントがピクセルグリッドに合う"
-  },
   "mc_settings_max_visible_messages": {
     "message": "最大表示メッセージ数"
   },

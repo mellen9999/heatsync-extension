@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "zeilenabstand — compact ist der klassische enge Look"
   },
-  "mc_settings_line_height": {
-    "message": "zeilenhöhe"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "zeilenhöhe der Chatzeilen in px — 18 hält Bitmap-Schriften auf dem Pixelraster"
-  },
   "mc_settings_max_visible_messages": {
     "message": "max. sichtbare Nachrichten"
   },

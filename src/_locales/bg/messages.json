@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "отстъп на редовете — compact е класическият плътен вид"
   },
-  "mc_settings_line_height": {
-    "message": "височина на реда"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "височина на реда в чата в px — 18 държи bitmap шрифтовете върху пикселната мрежа"
-  },
   "mc_settings_max_visible_messages": {
     "message": "макс. видими съобщения"
   },

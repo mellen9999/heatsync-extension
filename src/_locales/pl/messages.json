@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "odstępy wierszy — compact to klasyczny ciasny wygląd"
   },
-  "mc_settings_line_height": {
-    "message": "wysokość wiersza"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "wysokość wiersza czatu w px — 18 trzyma czcionki bitmapowe na siatce pikseli"
-  },
   "mc_settings_max_visible_messages": {
     "message": "maks. widocznych wiadomości"
   },

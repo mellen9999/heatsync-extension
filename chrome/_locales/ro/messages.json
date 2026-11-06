@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "spațiere rânduri — compact e look-ul clasic, strâns"
   },
-  "mc_settings_line_height": {
-    "message": "înălțime rând"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "înălțimea rândului din chat în px — 18 ține fonturile bitmap pe grila de pixeli"
-  },
   "mc_settings_max_visible_messages": {
     "message": "max mesaje vizibile"
   },

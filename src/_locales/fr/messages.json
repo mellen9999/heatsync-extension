@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "marge des lignes — compact est le look serré classique"
   },
-  "mc_settings_line_height": {
-    "message": "hauteur de ligne"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "hauteur des lignes du chat en px — 18 garde les polices bitmap sur la grille de pixels"
-  },
   "mc_settings_max_visible_messages": {
     "message": "messages visibles max"
   },

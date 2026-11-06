@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "rivien täyte — compact on klassinen tiivis ulkoasu"
   },
-  "mc_settings_line_height": {
-    "message": "rivinkorkeus"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "chatin rivinkorkeus pikseleinä — 18 pitää bittikarttafontit pikseliruudukossa"
-  },
   "mc_settings_max_visible_messages": {
     "message": "näkyviä viestejä enintään"
   },

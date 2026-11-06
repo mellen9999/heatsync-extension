@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "पंक्ति पैडिंग — compact वही क्लासिक कसा हुआ लुक है"
   },
-  "mc_settings_line_height": {
-    "message": "लाइन हाइट"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "चैट पंक्ति की लाइन हाइट px में — 18 बिटमैप फ़ॉन्ट को पिक्सल ग्रिड पर रखता है"
-  },
   "mc_settings_max_visible_messages": {
     "message": "ज़्यादा से ज़्यादा दिखने वाले मैसेज"
   },

@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "regelmarge — compact is de klassieke strakke look"
   },
-  "mc_settings_line_height": {
-    "message": "regelhoogte"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "regelhoogte van chatrijen in px — 18 houdt bitmaplettertypes op het pixelraster"
-  },
   "mc_settings_max_visible_messages": {
     "message": "max zichtbare berichten"
   },

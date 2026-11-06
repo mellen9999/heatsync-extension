@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "줄 여백 — compact가 예전의 촘촘한 모양"
   },
-  "mc_settings_line_height": {
-    "message": "줄 높이"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "채팅 줄 높이(px) — 18이면 비트맵 글꼴이 픽셀 격자에 맞아"
-  },
   "mc_settings_max_visible_messages": {
     "message": "최대 표시 메시지"
   },

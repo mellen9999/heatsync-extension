@@ -1201,12 +1201,6 @@
   "mc_settings_message_density_desc": {
     "message": "row padding — compact is the classic tight look"
   },
-  "mc_settings_line_height": {
-    "message": "line height"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "chat row line height in px — 18 keeps bitmap fonts on the pixel grid"
-  },
   "mc_settings_max_visible_messages": {
     "message": "max visible messages"
   },

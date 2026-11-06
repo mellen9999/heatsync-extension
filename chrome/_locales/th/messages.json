@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "ระยะห่างแถว — compact คือแบบแน่นคลาสสิก"
   },
-  "mc_settings_line_height": {
-    "message": "ความสูงบรรทัด"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "ความสูงบรรทัดแชทเป็น px — 18 ทำให้ฟอนต์บิตแมปตรงกริดพิกเซล"
-  },
   "mc_settings_max_visible_messages": {
     "message": "ข้อความที่เห็นสูงสุด"
   },

@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "odsazení řádků — compact je klasický těsný vzhled"
   },
-  "mc_settings_line_height": {
-    "message": "výška řádku"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "výška řádku chatu v px — 18 drží bitmapová písma na pixelové mřížce"
-  },
   "mc_settings_max_visible_messages": {
     "message": "max. viditelných zpráv"
   },

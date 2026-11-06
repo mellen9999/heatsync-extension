@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "отступы строк — compact это классический плотный вид"
   },
-  "mc_settings_line_height": {
-    "message": "высота строки"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "высота строки чата в px — 18 держит растровые шрифты на пиксельной сетке"
-  },
   "mc_settings_max_visible_messages": {
     "message": "макс. видимых сообщений"
   },

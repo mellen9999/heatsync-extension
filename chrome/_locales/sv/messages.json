@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "radavstånd — compact är det klassiska täta utseendet"
   },
-  "mc_settings_line_height": {
-    "message": "radhöjd"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "chattradens höjd i px — 18 håller bitmappstypsnitt på pixelrutnätet"
-  },
   "mc_settings_max_visible_messages": {
     "message": "max synliga meddelanden"
   },

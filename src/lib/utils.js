@@ -583,6 +583,7 @@ const RETIRED_UI_KEYS = new Set([
   'compactChatInput',
   'highlightMentions',
   'showCosmetics',
+  'lineHeight',
 ])
 
 // registry key → chrome.storage.local key name, for every UI_SYNC_BLOCKLIST

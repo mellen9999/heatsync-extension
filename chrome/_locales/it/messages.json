@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "spaziatura delle righe — compact è il classico look stretto"
   },
-  "mc_settings_line_height": {
-    "message": "altezza riga"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "altezza delle righe di chat in px — 18 tiene i font bitmap sulla griglia dei pixel"
-  },
   "mc_settings_max_visible_messages": {
     "message": "max messaggi visibili"
   },

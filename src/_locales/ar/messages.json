@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "حشوة الأسطر — compact هو المظهر الضيق الكلاسيكي"
   },
-  "mc_settings_line_height": {
-    "message": "ارتفاع السطر"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "ارتفاع سطر الدردشة بالـ px — 18 يُبقي خطوط bitmap على شبكة البكسل"
-  },
   "mc_settings_max_visible_messages": {
     "message": "أقصى رسائل ظاهرة"
   },

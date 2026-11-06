@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "ריווח שורות — compact הוא המראה הצפוף הקלאסי"
   },
-  "mc_settings_line_height": {
-    "message": "גובה שורה"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "גובה שורת צ'אט ב-px — 18 שומר גופני bitmap על רשת הפיקסלים"
-  },
   "mc_settings_max_visible_messages": {
     "message": "מקסימום הודעות גלויות"
   },

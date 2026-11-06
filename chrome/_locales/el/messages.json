@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "padding γραμμών — το compact είναι το κλασικό σφιχτό look"
   },
-  "mc_settings_line_height": {
-    "message": "ύψος γραμμής"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "ύψος γραμμής chat σε px — το 18 κρατά τις bitmap γραμματοσειρές στο pixel grid"
-  },
   "mc_settings_max_visible_messages": {
     "message": "μέγιστα ορατά μηνύματα"
   },

@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "sorok kitöltése — a compact a klasszikus szoros kinézet"
   },
-  "mc_settings_line_height": {
-    "message": "sormagasság"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "chatsor magassága px-ben — a 18 a bitmap betűket a pixelrácson tartja"
-  },
   "mc_settings_max_visible_messages": {
     "message": "látható üzenetek max."
   },

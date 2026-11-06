@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "padding baris — compact adalah tampilan rapat klasik"
   },
-  "mc_settings_line_height": {
-    "message": "tinggi baris"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "tinggi baris chat dalam px — 18 menjaga font bitmap tetap di grid piksel"
-  },
   "mc_settings_max_visible_messages": {
     "message": "maks pesan terlihat"
   },

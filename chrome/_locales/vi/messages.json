@@ -1200,12 +1200,6 @@
   "mc_settings_message_density_desc": {
     "message": "khoảng đệm dòng — gọn là kiểu chật cổ điển"
   },
-  "mc_settings_line_height": {
-    "message": "chiều cao dòng"
-  },
-  "mc_settings_line_height_desc": {
-    "message": "chiều cao dòng chat tính bằng px — 18 giữ phông bitmap khớp lưới pixel"
-  },
   "mc_settings_max_visible_messages": {
     "message": "số tin nhắn hiển thị tối đa"
   },

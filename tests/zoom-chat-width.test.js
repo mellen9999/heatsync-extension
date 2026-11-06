@@ -60,10 +60,11 @@ describe('wiring', () => {
 })
 
 describe('hover card under page zoom', () => {
-  test('the narrow-viewport peek hide is only for touch: a zoomed mouse keeps its hover card', () => {
-    const css = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'styles', '09-tooltips-menus.css'), 'utf8')
-    expect(css).toMatch(
-      /@media \(max-width: 768px\) and \(not \(pointer: coarse\)\) \{\s*\.hs-card\.hs-card-peek \{ display: flex; \}/,
-    )
+  // page zoom narrows a desktop viewport below 768 css px; a width query that
+  // hides the peek hid it from a mouse at 200%. only touch may hide it.
+  test('the peek is hidden by touch alone, never by viewport width', () => {
+    const css = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'styles', '20-card.css'), 'utf8')
+    const hides = [...css.matchAll(/@media ([^{]+)\{[^@]*?\.hs-card-peek\s*\{\s*display:\s*none/g)].map(m => m[1].trim())
+    expect(hides).toEqual(['(pointer: coarse)'])
   })
 })

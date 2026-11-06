@@ -817,9 +817,6 @@
     height: 44px;
     font-size: 26px; /* bitmap grid — 13px/26px only */
   }
-  .hs-card-peek {
-    display: none; /* no ambient hover on touch — peek never opens (see card-time/card-model host wiring) */
-  }
   /* The full-screen card used to scroll hero+body+actions as ONE column —
    * a short profile left the actions row floating mid-screen with a dead
    * gap below it, since nothing told it to sit at the bottom. margin-top:
@@ -841,6 +838,13 @@
     min-height: 44px !important; /* real touch target, not the desktop 24px */
   }
 }
+/* no ambient hover on touch — the peek never opens there (see card-time /
+ * card-model host wiring). Touch only, not width: page zoom narrows a desktop
+ * viewport below 768px, and a mouse at 200% still hovers. */
+@media (pointer: coarse) {
+  .hs-card-peek { display: none; }
+}
+
 
 /* Host toggles this on <html> while a phone full-screen card is open —
  * the card scrolls internally; the page underneath must not (iOS rubber-

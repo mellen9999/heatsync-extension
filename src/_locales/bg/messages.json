@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "подробни логове в конзолата от всички heatsync скриптове — важат при следващо зареждане на страницата"
   },
-  "mc_settings_preset_minimal": {
-    "message": "минимален"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "напреднал"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "модератор"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "малко ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "копирането не успя"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "грешка при парсване"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "вече съвпада с $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "приложено $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "preset изтрит"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "preset-ът иска име"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "preset запазен: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "хранилището за preset-и е пълно — първо изтрий един"
   },
   "mc_settingsui_reset_all": {
     "message": "всички настройки са върнати по подразбиране"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(логът не може да се прочете)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "изключени: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "всички включени"
-  },
   "mc_set_fmt_none": {
     "message": "никакви"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "изтрий пресет…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "изтрий $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "изтрий пресет"
-  },
-  "mc_set_preset_save_as": {
-    "message": "запази текущите като…"
-  },
-  "mc_set_preset_undo": {
-    "message": "отмени: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "пресети"
-  },
-  "mc_set_preset_save_title": {
-    "message": "запази текущите като пресет"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "име на пресета"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "снима всяка настройка, различна от стандартната — споделя се чрез експорт на настройките"
-  },
-  "mc_set_preset_nochange": {
-    "message": "вече съвпада — няма какво да се променя"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "приложи пресет: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "приложи"
   },
   "mc_set_h_search": {
     "message": "търсене"

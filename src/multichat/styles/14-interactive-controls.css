@@ -1159,7 +1159,6 @@
       flex-shrink: 0;
     }
     .hs-mc-set-scope-btn,
-    .hs-mc-set-presets-btn,
     .hs-mc-pagedefaults-btn {
       background: var(--hs-dim);
       color: #000;
@@ -1171,7 +1170,6 @@
       flex-shrink: 0;
     }
     .hs-mc-set-scope-btn:hover,
-    .hs-mc-set-presets-btn:hover,
     .hs-mc-pagedefaults-btn:hover {
       background: #fff;
       color: #000;

@@ -444,7 +444,7 @@ describe('single-definition colours', () => {
       '.hs-cl-ch',
       '.hs-mc-emote-stack.expanded .hs-mc-emote-wrapper.hs-state-blocked::before',
       '.hs-mc-msg.hs-mc-msg-cleared .hs-mc-text, .hs-mc-msg.hs-mc-msg-cleared .hs-mc-text *',
-      '.hs-mc-set-scope-btn, .hs-mc-set-presets-btn, .hs-mc-pagedefaults-btn',
+      '.hs-mc-set-scope-btn, .hs-mc-pagedefaults-btn',
       '.hs-mc-reply-ctx',
       '.hs-mc-set-range',
       '.hs-mc-set-range::-moz-range-track',

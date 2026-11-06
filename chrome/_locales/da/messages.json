@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "udførlig konsollogning fra alle heatsync-scripts — gælder ved næste sideindlæsning"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimal"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "superbruger"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderator"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "lav ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "kopiering mislykkedes"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "parse-fejl"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "matcher allerede $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "anvendte $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "preset slettet"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "preset skal have et navn"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "gemte preset: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "preset-lageret er fuldt — slet en først"
   },
   "mc_settingsui_reset_all": {
     "message": "alle indstillinger gendannet til standard"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(kan ikke læse loggen)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "fra: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "alle til"
-  },
   "mc_set_fmt_none": {
     "message": "ingen"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "slet en preset…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "slet $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "slet preset"
-  },
-  "mc_set_preset_save_as": {
-    "message": "gem nuværende som…"
-  },
-  "mc_set_preset_undo": {
-    "message": "fortryd: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "presets"
-  },
-  "mc_set_preset_save_title": {
-    "message": "gem nuværende som preset"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "preset-navn"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "tager et øjebliksbillede af alle indstillinger, der afviger fra standard — kan deles via eksportér indstillinger"
-  },
-  "mc_set_preset_nochange": {
-    "message": "matcher allerede — intet at ændre"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "anvend preset: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "anvend"
   },
   "mc_set_h_search": {
     "message": "søg"

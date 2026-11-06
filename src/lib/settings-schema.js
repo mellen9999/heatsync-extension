@@ -20,7 +20,7 @@ import { namePaintsOn } from './utils.js'
 //              subkeys, each with {value, default, color, tag?, label(/Key)?,
 //              tip(/Key)?}; coercion merges partial stored maps over default
 //              json = structured array/object stored raw (state blobs like
-//              customPresets); validated as JSON-serializable, size-capped
+//              hiddenPaintUsers); validated as JSON-serializable, size-capped
 //              via maxLen (stringified length)
 //   default    value assumed when storage is empty; written by reset
 //   scope      'sync'         → ui_settings.<key> in chrome.storage.sync
@@ -1862,7 +1862,7 @@ const SETTINGS = [
   // not in the system subtab's rendered-sections list). declared so the
   // registry stays the single source of truth for every ui_settings key.
   // noReset: these are session state / user data, not preferences — "reset
-  // to defaults" must not close the user's tab or wipe their presets.
+  // to defaults" must not close the user's tab.
   {
     key: 'activeTab',
     type: 'text',
@@ -1931,100 +1931,6 @@ const SETTINGS = [
     // people, not a preference — a display reset must not wipe it (and the
     // wipe would sync to heatsync.org)
     noReset: true,
-  },
-  {
-    key: 'customPresets',
-    type: 'json',
-    default: [],
-    scope: 'sync',
-    category: 'system',
-    section: 'state',
-    label: 'custom presets',
-    tip: 'user-saved settings presets — diff-vs-defaults snapshots, managed from the presets bar',
-    control: 'custom',
-    maxLen: 6000,
-    noReset: true,
-  },
-]
-
-// ── presets ("builds") — sparse diffs over registry defaults ──────────────
-// Composite keys (boolmap/multiselect) carry whole values. Anything not in
-// a diff stays untouched, so presets compose with user tweaks and survive
-// new settings. A preset reads "active" only when ALL its diff keys match.
-const SETTINGS_PRESETS = [
-  {
-    id: 'minimal',
-    label: 'minimal',
-    labelKey: 'mc_settings_preset_minimal',
-    tip: 'just chat — no cosmetics, feed, stats or extra chrome',
-    diff: {
-      avatars: false,
-      zebra: false,
-      firstChatterGlow: false,
-      showPlatformBadges: false,
-      linkPreviewsEnabled: false,
-      hiddenTabs: ['feed', 'whispers', 'mentions', 'pinned'],
-      subsystems: {
-        'overlay-twitch': true,
-        'overlay-kick': true,
-        'overlay-youtube': true,
-        'irc-twitch': true,
-        'chat-kick': true,
-        'chat-youtube': true,
-        cosmetics: false,
-        feed: false,
-        whispers: false,
-        mentions: false,
-        'stream-stats': false,
-      },
-    },
-  },
-  {
-    id: 'power-user',
-    label: 'power user',
-    labelKey: 'mc_settings_preset_power_user',
-    tip: 'every tab on, timestamps, vi keys',
-    diff: {
-      viMode: true,
-      timestamps: true,
-      hiddenTabs: [],
-    },
-  },
-  {
-    id: 'moderator',
-    label: 'moderator',
-    labelKey: 'mc_settings_preset_moderator',
-    tip: 'timestamps + readable names + all-caps automod',
-    diff: {
-      timestamps: true,
-      automodAllCaps: true,
-      hs_readable_names: true,
-    },
-  },
-  {
-    id: 'low-ram',
-    label: 'low ram',
-    labelKey: 'mc_settings_preset_low_ram',
-    tip: 'cosmetics, feed, whispers, stats and previews off; 1x emotes',
-    diff: {
-      hs_emote_size: 1,
-      hs_emoji_size: 1,
-      avatars: false,
-      linkPreviewsEnabled: false,
-      subsystems: {
-        'overlay-twitch': true,
-        'overlay-kick': true,
-        'overlay-youtube': true,
-        'irc-twitch': true,
-        'chat-kick': true,
-        'chat-youtube': true,
-        cosmetics: false,
-        feed: false,
-        whispers: false,
-        mentions: true,
-        'stream-stats': false,
-      },
-    },
   },
 ]
 
@@ -2245,32 +2151,6 @@ function lintSettings(syncBlocklist) {
   // 8 KB sync quota headroom — defaults must leave room for user values
   var size = JSON.stringify(syncDefaults).length
   if (size > 7000) problems.push(`sync defaults too large: ${size} bytes`)
-  // preset diffs must reference real keys with valid values
-  var presetIds = new Set()
-  for (var p = 0; p < SETTINGS_PRESETS.length; p++) {
-    var preset = SETTINGS_PRESETS[p]
-    if (presetIds.has(preset.id)) problems.push(`duplicate preset id: ${preset.id}`)
-    presetIds.add(preset.id)
-    for (var dk in preset.diff) {
-      var target = SETTINGS.find((d) => d.key === dk)
-      if (!target) {
-        problems.push(`preset ${preset.id} references unknown key: ${dk}`)
-        continue
-      }
-      if (!validateSettingValue(target, preset.diff[dk])) {
-        problems.push(`preset ${preset.id} has invalid value for: ${dk}`)
-      }
-      // boolmap diffs must carry every option key — coerce merges partial
-      // maps over defaults, silently reverting user-toggled missing keys
-      if (target.type === 'boolmap') {
-        for (var bk in target.default) {
-          if (!(bk in preset.diff[dk])) {
-            problems.push(`preset ${preset.id} boolmap diff missing key: ${dk}.${bk}`)
-          }
-        }
-      }
-    }
-  }
   return problems
 }
 
@@ -2278,7 +2158,6 @@ function lintSettings(syncBlocklist) {
 if (typeof window !== 'undefined') {
   window.heatsyncSettingsSchema = {
     SETTINGS,
-    SETTINGS_PRESETS,
     validateSettingValue,
     coerceSettingValue,
     lintSettings,
@@ -2301,7 +2180,6 @@ export {
   coerceSettingValue,
   lintSettings,
   SETTINGS,
-  SETTINGS_PRESETS,
   SUBSYSTEMS_ALWAYS_ON,
   settingShowsOnHost,
   validateSettingValue,

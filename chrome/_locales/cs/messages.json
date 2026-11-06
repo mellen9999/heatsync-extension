@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "podrobné logování do konzole ze všech skriptů heatsync — projeví se při dalším načtení stránky"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimální"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "pokročilý"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderátor"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "málo ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "kopírování selhalo"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "chyba parsování"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "už odpovídá $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "použito $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "preset smazán"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "preset potřebuje jméno"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "preset uložen: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "úložiště presetů je plné — nejdřív jeden smaž"
   },
   "mc_settingsui_reset_all": {
     "message": "všechna nastavení vrácena na výchozí"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(log nelze přečíst)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "vypnuto: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "vše zapnuto"
-  },
   "mc_set_fmt_none": {
     "message": "nic"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "smazat preset…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "smazat $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "smazat preset"
-  },
-  "mc_set_preset_save_as": {
-    "message": "uložit aktuální jako…"
-  },
-  "mc_set_preset_undo": {
-    "message": "vrátit: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "presety"
-  },
-  "mc_set_preset_save_title": {
-    "message": "uložit aktuální jako preset"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "název presetu"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "uloží každé nastavení, které se liší od výchozího — sdílitelné přes export nastavení"
-  },
-  "mc_set_preset_nochange": {
-    "message": "už odpovídá — není co měnit"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "použít preset: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "použít"
   },
   "mc_set_h_search": {
     "message": "hledat"

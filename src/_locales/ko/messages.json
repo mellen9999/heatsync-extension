@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "모든 heatsync 스크립트의 상세 콘솔 로그 — 다음 페이지 로드부터 적용"
   },
-  "mc_settings_preset_minimal": {
-    "message": "최소"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "파워 유저"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "mod"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "저 ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "복사 실패"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "파싱 오류"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "이미 $LABEL$과 같음",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "$LABEL$ 적용함 — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "프리셋 삭제됨"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "프리셋에 이름이 필요해"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "프리셋 저장됨: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "프리셋 저장소가 가득 참 — 하나 먼저 지워"
   },
   "mc_settingsui_reset_all": {
     "message": "모든 설정을 기본값으로 복원함"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(로그를 읽을 수 없음)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "꺼짐: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "전부 켜짐"
-  },
   "mc_set_fmt_none": {
     "message": "없음"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "프리셋 삭제…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "$NAME$ 삭제",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "프리셋 삭제"
-  },
-  "mc_set_preset_save_as": {
-    "message": "현재 설정 저장…"
-  },
-  "mc_set_preset_undo": {
-    "message": "실행 취소: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "프리셋"
-  },
-  "mc_set_preset_save_title": {
-    "message": "현재 설정을 프리셋으로 저장"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "프리셋 이름"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "기본값과 다른 모든 설정을 저장 — 설정 내보내기로 공유 가능"
-  },
-  "mc_set_preset_nochange": {
-    "message": "이미 같아 — 바꿀 것 없음"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "프리셋 적용: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "적용"
   },
   "mc_set_h_search": {
     "message": "검색"

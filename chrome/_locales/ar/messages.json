@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "سجلات وحدة تحكم مفصّلة من كل نصوص heatsync — تسري عند تحميل الصفحة التالي"
   },
-  "mc_settings_preset_minimal": {
-    "message": "الحد الأدنى"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "مستخدم متقدم"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "مشرف"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "ram منخفضة"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "فشل النسخ"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "خطأ في التحليل"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "مطابق بالفعل لـ $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "طُبّق $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "حُذف preset"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "preset يحتاج اسمًا"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "حُفظ preset: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "تخزين presets ممتلئ — احذف واحدًا أولاً"
   },
   "mc_settingsui_reset_all": {
     "message": "أُعيدت كل الإعدادات إلى الافتراضي"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(تعذّرت قراءة السجل)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "متوقف: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "الكل مفعّل"
-  },
   "mc_set_fmt_none": {
     "message": "لا شيء"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "حذف إعداد مسبق…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "حذف $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "حذف الإعداد المسبق"
-  },
-  "mc_set_preset_save_as": {
-    "message": "حفظ الحالي باسم…"
-  },
-  "mc_set_preset_undo": {
-    "message": "تراجع: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "إعدادات مسبقة"
-  },
-  "mc_set_preset_save_title": {
-    "message": "حفظ الحالي كإعداد مسبق"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "اسم الإعداد المسبق"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "يلتقط كل إعداد يختلف عن الافتراضي — قابل للمشاركة عبر تصدير الإعدادات"
-  },
-  "mc_set_preset_nochange": {
-    "message": "مطابق بالفعل — لا شيء للتغيير"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "تطبيق الإعداد المسبق: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "تطبيق"
   },
   "mc_set_h_search": {
     "message": "بحث"

@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "log คอนโซลแบบละเอียดจากสคริปต์ heatsync ทั้งหมด — มีผลเมื่อโหลดหน้าครั้งถัดไป"
   },
-  "mc_settings_preset_minimal": {
-    "message": "น้อยสุด"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "ผู้ใช้ขั้นสูง"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "ม็อด"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "ram ต่ำ"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "คัดลอกไม่สำเร็จ"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "อ่านไฟล์ไม่ได้"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "ตรงกับ $LABEL$ อยู่แล้ว",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "ใช้ $LABEL$ แล้ว — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "ลบพรีเซ็ตแล้ว"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "พรีเซ็ตต้องมีชื่อ"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "บันทึกพรีเซ็ตแล้ว: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "ที่เก็บพรีเซ็ตเต็ม — ลบอันหนึ่งก่อน"
   },
   "mc_settingsui_reset_all": {
     "message": "คืนค่าการตั้งค่าทั้งหมดเป็นค่าเริ่มต้นแล้ว"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(อ่านล็อกไม่ได้)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "ปิด: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "เปิดทั้งหมด"
-  },
   "mc_set_fmt_none": {
     "message": "ไม่มี"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "ลบพรีเซ็ต…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "ลบ $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "ลบพรีเซ็ต"
-  },
-  "mc_set_preset_save_as": {
-    "message": "บันทึกปัจจุบันเป็น…"
-  },
-  "mc_set_preset_undo": {
-    "message": "เลิกทำ: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "พรีเซ็ต"
-  },
-  "mc_set_preset_save_title": {
-    "message": "บันทึกปัจจุบันเป็นพรีเซ็ต"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "ชื่อพรีเซ็ต"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "เก็บทุกการตั้งค่าที่ต่างจากค่าเริ่มต้น — แชร์ได้ผ่านส่งออกการตั้งค่า"
-  },
-  "mc_set_preset_nochange": {
-    "message": "ตรงกันอยู่แล้ว — ไม่มีอะไรต้องเปลี่ยน"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "ใช้พรีเซ็ต: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "ใช้"
   },
   "mc_set_h_search": {
     "message": "ค้นหา"

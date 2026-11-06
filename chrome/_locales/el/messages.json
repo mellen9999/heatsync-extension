@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "αναλυτικό logging στην κονσόλα από όλα τα scripts του heatsync — ισχύει στην επόμενη φόρτωση σελίδας"
   },
-  "mc_settings_preset_minimal": {
-    "message": "ελάχιστο"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "προχωρημένος χρήστης"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "συντονιστής"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "χαμηλή ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "η αντιγραφή απέτυχε"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "σφάλμα ανάλυσης"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "ήδη ίδιο με το $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "εφαρμόστηκε το $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "το preset διαγράφηκε"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "το preset θέλει όνομα"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "αποθηκεύτηκε preset: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "ο χώρος των presets γέμισε — διέγραψε ένα πρώτα"
   },
   "mc_settingsui_reset_all": {
     "message": "όλες οι ρυθμίσεις επανήλθαν στις προεπιλογές"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(αδυναμία ανάγνωσης log)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "ανενεργά: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "όλα ενεργά"
-  },
   "mc_set_fmt_none": {
     "message": "κανένα"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "διαγραφή preset…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "διαγραφή $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "διαγραφή preset"
-  },
-  "mc_set_preset_save_as": {
-    "message": "αποθήκευση τρέχοντος ως…"
-  },
-  "mc_set_preset_undo": {
-    "message": "αναίρεση: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "presets"
-  },
-  "mc_set_preset_save_title": {
-    "message": "αποθήκευση τρέχοντος ως preset"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "όνομα preset"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "αποθηκεύει κάθε ρύθμιση που διαφέρει από τις προεπιλογές — κοινοποιήσιμο μέσω εξαγωγής ρυθμίσεων"
-  },
-  "mc_set_preset_nochange": {
-    "message": "ήδη ταιριάζει — τίποτα προς αλλαγή"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "εφαρμογή preset: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "εφαρμογή"
   },
   "mc_set_h_search": {
     "message": "αναζήτηση"

@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "verbose na console logging mula sa lahat ng heatsync script — may bisa sa susunod na load ng page"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimal"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "power user"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderator"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "mababang ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "hindi nakopya"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "error sa pag-parse"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "tugma na sa $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "inilapat ang $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "nabura ang preset"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "kailangan ng pangalan ng preset"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "nai-save ang preset: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "puno na ang storage ng mga preset — magbura muna ng isa"
   },
   "mc_settingsui_reset_all": {
     "message": "naibalik sa default ang lahat ng settings"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(hindi mabasa ang log)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "naka-off: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "lahat naka-on"
-  },
   "mc_set_fmt_none": {
     "message": "wala"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "magbura ng preset…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "burahin ang $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "burahin ang preset"
-  },
-  "mc_set_preset_save_as": {
-    "message": "i-save ang kasalukuyan bilang…"
-  },
-  "mc_set_preset_undo": {
-    "message": "i-undo: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "mga preset"
-  },
-  "mc_set_preset_save_title": {
-    "message": "i-save ang kasalukuyan bilang preset"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "pangalan ng preset"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "kinukuha ang bawat setting na iba sa default — maibabahagi sa pamamagitan ng export settings"
-  },
-  "mc_set_preset_nochange": {
-    "message": "pareho na — walang babaguhin"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "ilapat ang preset: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "ilapat"
   },
   "mc_set_h_search": {
     "message": "hanap"

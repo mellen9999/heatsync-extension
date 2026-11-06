@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "לוג מפורט בקונסולה מכל סקריפטי heatsync — נכנס לתוקף בטעינת הדף הבאה"
   },
-  "mc_settings_preset_minimal": {
-    "message": "מינימלי"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "משתמש מתקדם"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "מנחה"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "ram נמוך"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "ההעתקה נכשלה"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "שגיאת פענוח"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "כבר תואם ל-$LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "הוחל $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "ה-preset נמחק"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "ל-preset צריך שם"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "preset נשמר: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "אחסון ה-presets מלא — מחק אחד קודם"
   },
   "mc_settingsui_reset_all": {
     "message": "כל ההגדרות שוחזרו לברירת מחדל"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(לא ניתן לקרוא את הלוג)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "כבוי: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "הכל פעיל"
-  },
   "mc_set_fmt_none": {
     "message": "אין"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "מחק פריסט…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "מחק $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "מחק פריסט"
-  },
-  "mc_set_preset_save_as": {
-    "message": "שמור נוכחי בשם…"
-  },
-  "mc_set_preset_undo": {
-    "message": "בטל: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "פריסטים"
-  },
-  "mc_set_preset_save_title": {
-    "message": "שמור נוכחי כפריסט"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "שם הפריסט"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "שומר כל הגדרה ששונה מברירת המחדל — ניתן לשיתוף דרך ייצוא הגדרות"
-  },
-  "mc_set_preset_nochange": {
-    "message": "כבר תואם — אין מה לשנות"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "החל פריסט: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "החל"
   },
   "mc_set_h_search": {
     "message": "חיפוש"

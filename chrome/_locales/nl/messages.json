@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "uitgebreide console-logging van alle heatsync-scripts — geldt bij de volgende paginalading"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimaal"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "gevorderd"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderator"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "laag ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "kopiëren mislukt"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "leesfout"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "komt al overeen met $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "$LABEL$ toegepast — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "preset verwijderd"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "preset heeft een naam nodig"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "preset opgeslagen: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "presetopslag vol — verwijder er eerst een"
   },
   "mc_settingsui_reset_all": {
     "message": "alle instellingen hersteld naar standaard"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(log onleesbaar)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "uit: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "alles aan"
-  },
   "mc_set_fmt_none": {
     "message": "geen"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "preset verwijderen…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "$NAME$ verwijderen",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "preset verwijderen"
-  },
-  "mc_set_preset_save_as": {
-    "message": "huidige opslaan als…"
-  },
-  "mc_set_preset_undo": {
-    "message": "ongedaan maken: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "presets"
-  },
-  "mc_set_preset_save_title": {
-    "message": "huidige opslaan als preset"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "presetnaam"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "bewaart elke instelling die afwijkt van de standaard — deelbaar via instellingen exporteren"
-  },
-  "mc_set_preset_nochange": {
-    "message": "komt al overeen — niets te wijzigen"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "preset toepassen: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "toepassen"
   },
   "mc_set_h_search": {
     "message": "zoeken"

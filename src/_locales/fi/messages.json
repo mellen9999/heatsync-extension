@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "laaja konsolilokitus kaikista heatsync-skripteistä — astuu voimaan seuraavalla sivun latauksella"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimaalinen"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "tehokäyttäjä"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderaattori"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "vähän ramia"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "kopiointi epäonnistui"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "jäsennysvirhe"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "vastaa jo esiasetusta $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "otettu käyttöön $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "esiasetus poistettu"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "esiasetus tarvitsee nimen"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "esiasetus tallennettu: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "esiasetusten tila täynnä — poista ensin yksi"
   },
   "mc_settingsui_reset_all": {
     "message": "kaikki asetukset palautettu oletuksiin"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(lokia ei voi lukea)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "pois: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "kaikki päällä"
-  },
   "mc_set_fmt_none": {
     "message": "ei mitään"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "poista preset…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "poista $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "poista preset"
-  },
-  "mc_set_preset_save_as": {
-    "message": "tallenna nykyinen nimellä…"
-  },
-  "mc_set_preset_undo": {
-    "message": "kumoa: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "presetit"
-  },
-  "mc_set_preset_save_title": {
-    "message": "tallenna nykyinen presetiksi"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "presetin nimi"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "tallentaa jokaisen oletuksesta poikkeavan asetuksen — jaettavissa vie asetukset -toiminnolla"
-  },
-  "mc_set_preset_nochange": {
-    "message": "jo sama — ei muutettavaa"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "käytä presetti: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "käytä"
   },
   "mc_set_h_search": {
     "message": "haku"

@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "log konsol terperinci daripada semua skrip heatsync — berkuat kuasa pada muat halaman seterusnya"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimum"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "pengguna mahir"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderator"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "ram rendah"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "gagal menyalin"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "ralat bacaan"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "sudah sepadan dengan $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "$LABEL$ digunakan — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "pratetap dipadam"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "pratetap perlukan nama"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "pratetap disimpan: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "storan pratetap penuh — padam satu dulu"
   },
   "mc_settingsui_reset_all": {
     "message": "semua tetapan dipulihkan ke lalai"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(tak dapat baca log)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "mati: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "semua hidup"
-  },
   "mc_set_fmt_none": {
     "message": "tiada"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "padam pratetap…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "padam $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "padam pratetap"
-  },
-  "mc_set_preset_save_as": {
-    "message": "simpan semasa sebagai…"
-  },
-  "mc_set_preset_undo": {
-    "message": "buat asal: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "pratetap"
-  },
-  "mc_set_preset_save_title": {
-    "message": "simpan semasa sebagai pratetap"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "nama pratetap"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "simpan setiap tetapan yang berbeza daripada lalai — boleh dikongsi melalui eksport tetapan"
-  },
-  "mc_set_preset_nochange": {
-    "message": "sudah sepadan — tiada yang perlu diubah"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "guna pratetap: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "guna"
   },
   "mc_set_h_search": {
     "message": "cari"

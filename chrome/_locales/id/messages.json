@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "log konsol detail dari semua skrip heatsync — berlaku saat halaman dimuat ulang"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimal"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "pengguna mahir"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "mod"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "ram hemat"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "gagal menyalin"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "error parse"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "sudah sama dengan $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "$LABEL$ diterapkan — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "preset dihapus"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "preset butuh nama"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "preset disimpan: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "penyimpanan preset penuh — hapus satu dulu"
   },
   "mc_settingsui_reset_all": {
     "message": "semua pengaturan dikembalikan ke default"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(log tidak bisa dibaca)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "mati: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "semua aktif"
-  },
   "mc_set_fmt_none": {
     "message": "tidak ada"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "hapus preset…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "hapus $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "hapus preset"
-  },
-  "mc_set_preset_save_as": {
-    "message": "simpan saat ini sebagai…"
-  },
-  "mc_set_preset_undo": {
-    "message": "urungkan: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "preset"
-  },
-  "mc_set_preset_save_title": {
-    "message": "simpan saat ini sebagai preset"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "nama preset"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "menyimpan setiap pengaturan yang berbeda dari default — bisa dibagikan lewat ekspor pengaturan"
-  },
-  "mc_set_preset_nochange": {
-    "message": "sudah sama — tidak ada yang berubah"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "terapkan preset: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "terapkan"
   },
   "mc_set_h_search": {
     "message": "cari"

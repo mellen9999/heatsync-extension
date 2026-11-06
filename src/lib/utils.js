@@ -569,6 +569,13 @@ const UI_SYNC_BLOCKLIST = new Set(['platformFilters', 'keywordHighlights', 'chat
 // sent to, or adopted from, the server ui-state channel.
 const DEVICE_LOCAL_KEYS = new Set(['platformFilters'])
 
+// Keys the 2026-11 settings pass retired. Old builds, the server's ui_state
+// and chrome.storage.sync blobs written before the update keep carrying them
+// for months: they are never adopted from the server, and the stored blob
+// drops them once this device has migrated their values (retireSettings in
+// main.js) — they would only eat the 8 KB sync quota.
+const RETIRED_UI_KEYS = new Set(['customPresets'])
+
 // registry key → chrome.storage.local key name, for every UI_SYNC_BLOCKLIST
 // entry. Single source for the overflow-bucket names so main.js and
 // background.js route a synced/received value to the same local slot.
@@ -1346,6 +1353,7 @@ const utils = {
   UI_SYNC_BLOCKLIST,
   DEVICE_LOCAL_KEYS,
   OVERFLOW_MIRROR_KEYS,
+  RETIRED_UI_KEYS,
   LARGE_KEY_SYNC_MAX,
   estimateSettingSize,
   isLargeKeySyncEligible,
@@ -1388,6 +1396,7 @@ export {
   NAME_STRIPE,
   OVERFLOW_MIRROR_KEYS,
   ordOf,
+  RETIRED_UI_KEYS,
   outsideTags,
   parseYoutubeChannel,
   parseYoutubeChannelType,

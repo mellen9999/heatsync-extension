@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "ausführliches Konsolen-Logging aller heatsync-Skripte — gilt ab dem nächsten Seitenaufruf"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimal"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "power-User"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderator"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "wenig ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "kopieren fehlgeschlagen"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "parse-Fehler"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "entspricht schon $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "$LABEL$ angewendet — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "preset gelöscht"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "preset braucht einen Namen"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "preset gespeichert: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "preset-Speicher voll — lösch zuerst eins"
   },
   "mc_settingsui_reset_all": {
     "message": "alle Einstellungen auf Standard zurückgesetzt"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(log nicht lesbar)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "aus: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "alle an"
-  },
   "mc_set_fmt_none": {
     "message": "keine"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "preset löschen…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "$NAME$ löschen",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "preset löschen"
-  },
-  "mc_set_preset_save_as": {
-    "message": "aktuelle als preset speichern…"
-  },
-  "mc_set_preset_undo": {
-    "message": "rückgängig: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "presets"
-  },
-  "mc_set_preset_save_title": {
-    "message": "aktuelle als preset speichern"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "preset-name"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "sichert jede einstellung, die vom standard abweicht — teilbar über einstellungen exportieren"
-  },
-  "mc_set_preset_nochange": {
-    "message": "stimmt bereits überein — nichts zu ändern"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "preset anwenden: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "anwenden"
   },
   "mc_set_h_search": {
     "message": "suchen"

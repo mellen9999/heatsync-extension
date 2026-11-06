@@ -480,6 +480,7 @@ function checkUiSyncBlocklistParity() {
   const checks = [
     ['UI_SYNC_BLOCKLIST', extractSet(utilsSrc, 'UI_SYNC_BLOCKLIST'), extractSet(bgSrc, 'UI_SYNC_BLOCKLIST')],
     ['DEVICE_LOCAL_KEYS', extractSet(utilsSrc, 'DEVICE_LOCAL_KEYS'), extractSet(bgSrc, 'DEVICE_LOCAL_KEYS')],
+    ['RETIRED_UI_KEYS', extractSet(utilsSrc, 'RETIRED_UI_KEYS'), extractSet(bgSrc, 'RETIRED_UI_KEYS')],
     [
       'OVERFLOW_MIRROR_KEYS',
       extractObjectLiteral(utilsSrc, 'OVERFLOW_MIRROR_KEYS'),

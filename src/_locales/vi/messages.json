@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "log chi tiết trong console từ mọi script heatsync — áp dụng ở lần tải trang sau"
   },
-  "mc_settings_preset_minimal": {
-    "message": "tối giản"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "người dùng nâng cao"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "người kiểm duyệt"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "ít ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "sao chép thất bại"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "lỗi phân tích"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "đã khớp $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "đã áp dụng $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "đã xóa preset"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "preset cần có tên"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "đã lưu preset: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "bộ nhớ preset đầy — xóa một cái trước"
   },
   "mc_settingsui_reset_all": {
     "message": "đã khôi phục mọi cài đặt về mặc định"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(không đọc được nhật ký)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "tắt: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "bật tất cả"
-  },
   "mc_set_fmt_none": {
     "message": "không có"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "xóa một bộ cài sẵn…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "xóa $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "xóa bộ cài sẵn"
-  },
-  "mc_set_preset_save_as": {
-    "message": "lưu hiện tại thành…"
-  },
-  "mc_set_preset_undo": {
-    "message": "hoàn tác: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "bộ cài sẵn"
-  },
-  "mc_set_preset_save_title": {
-    "message": "lưu hiện tại thành bộ cài sẵn"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "tên bộ cài sẵn"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "chụp lại mọi cài đặt khác mặc định — chia sẻ được qua xuất cài đặt"
-  },
-  "mc_set_preset_nochange": {
-    "message": "đã khớp sẵn — không có gì để đổi"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "áp dụng bộ cài sẵn: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "áp dụng"
   },
   "mc_set_h_search": {
     "message": "tìm kiếm"

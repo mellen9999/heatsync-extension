@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "detaljert konsoll-logging fra alle heatsync-skript — gjelder ved neste sidelasting"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimal"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "avansert bruker"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderator"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "lite ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "kopiering feilet"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "lesefeil"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "samsvarer allerede med $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "brukte $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "preset slettet"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "preset trenger et navn"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "lagret preset: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "preset-lagringen er full — slett en først"
   },
   "mc_settingsui_reset_all": {
     "message": "alle innstillinger tilbakestilt til standard"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(kan ikke lese loggen)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "av: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "alle på"
-  },
   "mc_set_fmt_none": {
     "message": "ingen"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "slett en forhåndsinnstilling…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "slett $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "slett forhåndsinnstilling"
-  },
-  "mc_set_preset_save_as": {
-    "message": "lagre gjeldende som…"
-  },
-  "mc_set_preset_undo": {
-    "message": "angre: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "forhåndsinnstillinger"
-  },
-  "mc_set_preset_save_title": {
-    "message": "lagre gjeldende som forhåndsinnstilling"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "navn på forhåndsinnstilling"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "tar et øyeblikksbilde av alle innstillinger som avviker fra standard — kan deles via eksporter innstillinger"
-  },
-  "mc_set_preset_nochange": {
-    "message": "samsvarer allerede — ingenting å endre"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "bruk forhåndsinnstilling: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "bruk"
   },
   "mc_set_h_search": {
     "message": "søk"

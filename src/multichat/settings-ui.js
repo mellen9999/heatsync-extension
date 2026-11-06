@@ -1,5 +1,5 @@
 // settings tab UI — split out of main.js (2026-07-04).
-// Sub-tab bar, search/filter rows, category panes, presets panel, help overlay,
+// Sub-tab bar, search/filter rows, category panes, help overlay,
 // crash-log/backup blocks, and the settings-tab-only keyboard nav. The settings
 // ENGINE (getSetting/setSetting, schema wiring, storage sync/broadcast) stays in
 // main.js — this file only builds and drives the tab's DOM.
@@ -1054,8 +1054,7 @@ function _renderCategoryPaneInner(cat) {
 // Export: dumps ui_settings (sync) + all hs_*/viewer_* keys and registry
 // local-mirror keys (local) into a single JSON. Import: file picker → JSON parse → schema-validate → merge into
 // storage. Both areas restored. Errors toast, don't throw.
-// Private stores that must NEVER ride an export (the preset panel calls
-// exports "sharable"): mention/chat buffers, per-user notes, whispers, crash
+// Private stores that must NEVER ride an export: mention/chat buffers, per-user notes, whispers, crash
 // ring ("captured locally only"). Import skips the same set so a crafted file
 // can't overwrite them either.
 var _SETTINGS_PRIVATE_KEY_RE = /^hs_(mentions_v2|user_notes|errors|irc_|kick_|yt_|whisper)/
@@ -1216,213 +1215,6 @@ async function _loadCrashLog() {
   }
 }
 
-// ─── presets ("builds") — sparse diffs over defaults ─────────────────
-// Built-ins live in settings-schema.js (SETTINGS_PRESETS); customs are
-// diff-vs-defaults snapshots in ui_settings.customPresets (synced, and
-// sharable via the existing settings export/import). Applying always
-// goes through a diff-confirm panel; one-shot undo restores the prior
-// values of exactly the keys the preset touched.
-let _customPresets = []
-let _lastPresetUndo = null
-let _presetPending = null // {label, diff} or {savePrompt:true}
-
-function _presetIsActive(p) {
-  return Object.keys(p.diff).every((k) => JSON.stringify(getSetting(k)) === JSON.stringify(p.diff[k]))
-}
-function _presetChanges(diff) {
-  const out = []
-  for (const k in diff) {
-    const def = _SETTINGS_BY_KEY.get(k)
-    if (!def) continue
-    const from = getSetting(k)
-    if (JSON.stringify(from) !== JSON.stringify(diff[k])) out.push({ key: k, def: def, from: from, to: diff[k] })
-  }
-  return out
-}
-function _fmtPresetVal(def, v) {
-  if (def.type === 'bool') return v ? t('mc_cm_on') : t('mc_cm_off')
-  if (def.type === 'boolmap') {
-    const offs = Object.keys(v).filter((k) => v[k] === false)
-    return offs.length ? t('mc_set_fmt_off_list', [offs.join(', ')]) : t('mc_set_fmt_all_on')
-  }
-  if (def.type === 'multiselect') return v.length ? v.join(', ') : t('mc_set_fmt_none')
-  return String(v)
-}
-function _applyPresetDiff(label, diff) {
-  const changes = _presetChanges(diff)
-  _presetPending = null
-  if (!changes.length) {
-    showToast(t('mc_settingsui_preset_already_matching', [label]), 'info')
-    renderSettingsTab()
-    return
-  }
-  const undo = {}
-  for (const c of changes) undo[c.key] = c.from
-  _lastPresetUndo = { label: label, diff: undo }
-  for (const c of changes) setSetting(c.key, c.to)
-  const changeCount = `${changes.length} change${changes.length === 1 ? '' : 's'}`
-  showToast(t('mc_settingsui_preset_applied', [label, changeCount]), 'info')
-  renderSettingsTab()
-}
-function _saveCustomPreset(name) {
-  name = (name || '').trim().slice(0, 24)
-  if (!name) {
-    showToast(t('mc_settingsui_preset_needs_name'), 'error')
-    return
-  }
-  const diff = {}
-  for (const def of SETTINGS) {
-    if (def.noReset) continue
-    const cur = getSetting(def.key)
-    if (JSON.stringify(cur) !== JSON.stringify(def.default)) diff[def.key] = cur
-  }
-  const entry = { id: `c_${Date.now().toString(36)}`, name: name, diff: diff, createdAt: Date.now() }
-  const next = _customPresets
-    .filter((p) => p.name !== name)
-    .concat(entry)
-    .slice(-8)
-  if (JSON.stringify(next).length > 5000) {
-    showToast(t('mc_settingsui_presets_storage_full'), 'error')
-    return
-  }
-  _customPresets = next
-  saveUiSetting('customPresets', next)
-  _presetPending = null
-  showToast(t('mc_settingsui_preset_saved', [name]), 'info')
-  renderSettingsTab()
-}
-function _deleteCustomPreset(id) {
-  _customPresets = _customPresets.filter((p) => p.id !== id)
-  saveUiSetting('customPresets', _customPresets)
-  showToast(t('mc_settingsui_preset_deleted'), 'info')
-}
-function _openPresetMenu(anchorEl) {
-  const r = anchorEl.getBoundingClientRect()
-  const items = []
-  for (const p of SETTINGS_PRESETS) {
-    const pLabel = p.labelKey ? t(p.labelKey) : p.label
-    items.push({
-      label: (_presetIsActive(p) ? '■ ' : '□ ') + pLabel,
-      fn: ((preset, lbl) => () => {
-        _presetPending = { label: lbl, diff: preset.diff }
-        renderSettingsTab()
-      })(p, pLabel),
-    })
-  }
-  if (_customPresets.length) {
-    items.push('sep')
-    for (const p of _customPresets) {
-      items.push({
-        label: (_presetIsActive(p) ? '■ ' : '□ ') + p.name,
-        fn: ((preset) => () => {
-          _presetPending = { label: preset.name, diff: preset.diff }
-          renderSettingsTab()
-        })(p),
-      })
-    }
-    items.push({
-      label: t('mc_set_preset_delete_menu'),
-      danger: true,
-      fn: () => {
-        const delItems = _customPresets.map((p) => ({
-          label: t('mc_set_preset_delete_one', [p.name]),
-          danger: true,
-          fn: () => {
-            _deleteCustomPreset(p.id)
-          },
-        }))
-        showHsCtxMenu(r.left, r.bottom + 4, t('mc_set_preset_delete_title'), delItems)
-      },
-    })
-  }
-  items.push('sep')
-  items.push({
-    label: t('mc_set_preset_save_as'),
-    fn: () => {
-      _presetPending = { savePrompt: true }
-      renderSettingsTab()
-    },
-  })
-  if (_lastPresetUndo) {
-    items.push({
-      label: t('mc_set_preset_undo', [_lastPresetUndo.label]),
-      fn: () => {
-        const u = _lastPresetUndo
-        _lastPresetUndo = null
-        _applyPresetDiff(`undo ${u.label}`, u.diff)
-      },
-    })
-  }
-  showHsCtxMenu(r.left, r.bottom + 4, t('mc_set_presets'), items)
-}
-function _renderPresetPanel() {
-  if (_presetPending.savePrompt) {
-    return (
-      '<div class="hs-mc-settings-group">' +
-      '<div class="hs-mc-settings-group-title">' +
-      t('mc_set_preset_save_title') +
-      '</div>' +
-      '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
-      '<input class="hs-mc-set-text-input" id="hs-preset-name" type="text" placeholder="' +
-      escapeHtml(t('mc_set_preset_name_ph')) +
-      '" maxlength="24" style="flex:1">' +
-      '<div style="display:flex;gap:4px">' +
-      '<button class="hs-mc-settings-btn" data-preset-action="save-custom" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
-      t('mc_mr_save') +
-      '</button>' +
-      '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
-      t('mc_mr_cancel') +
-      '</button>' +
-      '</div>' +
-      '</div>' +
-      '<div class="hs-mc-set-keyhint">' +
-      t('mc_set_preset_save_hint') +
-      '</div>' +
-      '</div>'
-    )
-  }
-  const changes = _presetChanges(_presetPending.diff)
-  let rows = ''
-  if (!changes.length) {
-    rows =
-      '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">' +
-      t('mc_set_preset_nochange') +
-      '</div>'
-  }
-  for (const c of changes) {
-    rows +=
-      '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
-      '<span class="hs-mc-setting-label">' +
-      escapeHtml(_setLabel(c.def)) +
-      '</span>' +
-      '<span style="font-size:13px;flex-shrink:0"><span style="color:#ffffff">' +
-      escapeHtml(_fmtPresetVal(c.def, c.from)) +
-      '</span>' +
-      ' → <span style="color:#fff">' +
-      escapeHtml(_fmtPresetVal(c.def, c.to)) +
-      '</span></span>' +
-      '</div>'
-  }
-  return (
-    '<div class="hs-mc-settings-group">' +
-    '<div class="hs-mc-settings-group-title">' +
-    escapeHtml(t('mc_set_preset_apply_title', [_presetPending.label])) +
-    '</div>' +
-    rows +
-    '<div class="hs-mc-setting-row" style="justify-content:flex-end;gap:4px">' +
-    (changes.length
-      ? '<button class="hs-mc-settings-btn" data-preset-action="apply" style="background:#fff;color:#000;border:none;padding:2px 12px;font-size:13px;cursor:pointer;font-family:inherit">' +
-        t('mc_set_apply') +
-        '</button>'
-      : '') +
-    '<button class="hs-mc-settings-btn" data-preset-action="cancel" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
-    t('mc_mr_cancel') +
-    '</button>' +
-    '</div>' +
-    '</div>'
-  )
-}
-
 // settings › help — the one help: keys for this pane, then the slash commands.
 // Esc (or ?) goes back to the cell it was opened from.
 const _SET_HELP_KEYS = [
@@ -1441,7 +1233,6 @@ const _SET_HELP_VIM = [
   ['gg G', 'mc_set_h_first_last'],
   ['za', 'mc_set_h_fold'],
   ['d', 'mc_set_h_reset_row'],
-  ['p', 'mc_set_presets'],
   ['H L', 'mc_set_h_prev_next'],
 ]
 function _renderHelpPane() {
@@ -1677,14 +1468,6 @@ function _bindSettingsKeyboard() {
         _setRowReset(rows[idx])
         return
       }
-      if (k === 'p') {
-        const btn = msgsEl.querySelector('.hs-mc-set-presets-btn')
-        if (btn) {
-          e.preventDefault()
-          _openPresetMenu(btn)
-        }
-        return
-      }
       if (k === 'z') {
         _setPendingKey = 'z'
         return
@@ -1717,7 +1500,7 @@ function renderSettingsTab() {
   // (the panel grows inside it); keep its scroll across re-renders of
   // the same logical pane (toggle/applier-triggered rebuilds)
   var hadPanel = !!msgsEl.querySelector('.hs-mc-settings-panel')
-  var paneCtx = `${_settingsSubtab}|${_setQuery}|${!!_presetPending}`
+  var paneCtx = `${_settingsSubtab}|${_setQuery}`
   // The panel is position:absolute inset:0 and ONLY .hs-mc-set-subtab-body
   // scrolls — #hs-mc-messages itself never does, so preserving its scrollTop was
   // always 0 and every toggle reset the view to the top. Capture the inner body.
@@ -1727,9 +1510,7 @@ function renderSettingsTab() {
   var searchActive = _setQueryTokens().length > 0
   var bodyContent
   var countLabel = ''
-  if (_presetPending) {
-    bodyContent = _renderPresetPanel()
-  } else if (searchActive) {
+  if (searchActive) {
     var res = _renderSearchResults()
     bodyContent = res.html
     countLabel = `${res.count}/${res.total}`
@@ -1754,9 +1535,6 @@ function renderSettingsTab() {
     (_setShowAll ? t('mc_set_scope_all_tip') : t('mc_set_scope_basic_tip')) +
     '">' +
     (_setShowAll ? t('mc_set_scope_all') : t('mc_set_scope_basic')) +
-    '</button>' +
-    '<button class="hs-mc-set-presets-btn">' +
-    t('mc_set_presets') +
     '</button>' +
     '</div>' +
     '<div class="hs-mc-set-subtab-body">' +
@@ -1830,23 +1608,6 @@ function renderSettingsTab() {
       return
     }
 
-    // Presets dropdown + diff-confirm actions
-    var presetsBtn = e.target.closest('.hs-mc-set-presets-btn')
-    if (presetsBtn) {
-      _openPresetMenu(presetsBtn)
-      return
-    }
-    var presetAction = e.target.closest('[data-preset-action]')
-    if (presetAction) {
-      var pAct = presetAction.dataset.presetAction
-      if (pAct === 'apply' && _presetPending) _applyPresetDiff(_presetPending.label, _presetPending.diff)
-      else if (pAct === 'save-custom') _saveCustomPreset(msgsEl.querySelector('#hs-preset-name')?.value)
-      else if (pAct === 'cancel') {
-        _presetPending = null
-        renderSettingsTab()
-      }
-      return
-    }
 
     // Section fold/unfold
     var foldTitle = e.target.closest('.hs-mc-settings-group-title[data-set-fold]')

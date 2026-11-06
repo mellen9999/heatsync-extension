@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "所有 heatsync 脚本的详细控制台日志 — 下次加载页面时生效"
   },
-  "mc_settings_preset_minimal": {
-    "message": "极简"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "高级用户"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "管理员"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "低 ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "复制失败"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "解析错误"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "已与 $LABEL$ 一致",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "已应用 $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "预设已删除"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "预设需要名称"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "已保存预设：$NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "预设存储已满 — 请先删除一个"
   },
   "mc_settingsui_reset_all": {
     "message": "所有设置已恢复默认"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "（无法读取日志）"
   },
-  "mc_set_fmt_off_list": {
-    "message": "关闭：$LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "全部开启"
-  },
   "mc_set_fmt_none": {
     "message": "无"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "删除预设…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "删除 $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "删除预设"
-  },
-  "mc_set_preset_save_as": {
-    "message": "将当前另存为…"
-  },
-  "mc_set_preset_undo": {
-    "message": "撤销：$LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "预设"
-  },
-  "mc_set_preset_save_title": {
-    "message": "将当前另存为预设"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "预设名称"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "快照所有与默认值不同的设置 — 可通过导出设置分享"
-  },
-  "mc_set_preset_nochange": {
-    "message": "已一致 — 无需更改"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "应用预设：$LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "应用"
   },
   "mc_set_h_search": {
     "message": "搜索"

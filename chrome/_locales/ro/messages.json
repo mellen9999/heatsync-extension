@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "loguri detaliate în consolă de la toate scripturile heatsync — se aplică la următoarea încărcare a paginii"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimal"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "utilizator avansat"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderator"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "ram puțin"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "copierea a eșuat"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "eroare de citire"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "deja identic cu $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "aplicat $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "preset șters"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "presetul are nevoie de un nume"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "preset salvat: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "stocarea presetelor e plină — șterge unul întâi"
   },
   "mc_settingsui_reset_all": {
     "message": "toate setările readuse la implicit"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(logul nu poate fi citit)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "oprit: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "toate pornite"
-  },
   "mc_set_fmt_none": {
     "message": "niciuna"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "șterge un preset…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "șterge $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "șterge presetul"
-  },
-  "mc_set_preset_save_as": {
-    "message": "salvează curent ca…"
-  },
-  "mc_set_preset_undo": {
-    "message": "anulează: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "presetări"
-  },
-  "mc_set_preset_save_title": {
-    "message": "salvează curent ca preset"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "nume preset"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "salvează fiecare setare diferită de implicit — se poate distribui prin exportă setările"
-  },
-  "mc_set_preset_nochange": {
-    "message": "deja identic — nimic de schimbat"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "aplică presetul: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "aplică"
   },
   "mc_set_h_search": {
     "message": "căutare"

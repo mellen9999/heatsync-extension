@@ -304,6 +304,9 @@ const UI_SYNC_BLOCKLIST = new Set(['platformFilters', 'keywordHighlights', 'chat
 // are real prefs and DO ride the server ui-state channel (size-capped);
 // platformFilters is per-device tab-layout state and never does.
 const DEVICE_LOCAL_KEYS = new Set(['platformFilters'])
+// Retired by the 2026-11 settings pass — never adopted from the server; the
+// stored blob drops them on the overlay's request. Must match src/lib/utils.js.
+const RETIRED_UI_KEYS = new Set(['customPresets'])
 // registry key → chrome.storage.local key name — must match src/lib/utils.js
 // OVERFLOW_MIRROR_KEYS exactly (parity-checked at build time).
 const OVERFLOW_MIRROR_KEYS = {
@@ -362,7 +365,7 @@ function splitIncomingUiState(obj) {
   if (obj && typeof obj === 'object') {
     for (const key in obj) {
       if (!Object.hasOwn(obj, key)) continue
-      if (DEVICE_LOCAL_KEYS.has(key)) continue
+      if (DEVICE_LOCAL_KEYS.has(key) || RETIRED_UI_KEYS.has(key)) continue
       if (UI_SYNC_BLOCKLIST.has(key)) {
         const mirrorKey = OVERFLOW_MIRROR_KEYS[key]
         // string-only: both large keys are serialized strings on the wire
@@ -9386,7 +9389,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ ok: false, error: 'patch must be a plain object' })
       return true
     }
-    uiSettingsRmw((ui) => sanitizeUiSettings({ ...ui, ...patch }))
+    // dropRetired: the overlay has migrated this device's retired keys — clear them from the blob
+    uiSettingsRmw((ui) => {
+      const next = { ...ui, ...patch }
+      if (message.dropRetired === true) for (const k of RETIRED_UI_KEYS) delete next[k]
+      return sanitizeUiSettings(next)
+    })
       .then((r) => sendResponse(r?.ok ? { ok: true } : { ok: false, error: r?.error || 'write failed' }))
       .catch((err) => sendResponse({ ok: false, error: String(err?.message || err) }))
     return true

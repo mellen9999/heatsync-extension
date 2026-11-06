@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "所有 heatsync 腳本的詳細主控台日誌 — 下次載入頁面時生效"
   },
-  "mc_settings_preset_minimal": {
-    "message": "極簡"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "進階使用者"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "管理員"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "低 ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "複製失敗"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "解析錯誤"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "已與 $LABEL$ 一致",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "已套用 $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "預設已刪除"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "預設需要名稱"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "已儲存預設：$NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "預設儲存空間已滿 — 請先刪除一個"
   },
   "mc_settingsui_reset_all": {
     "message": "所有設定已還原預設"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "（無法讀取日誌）"
   },
-  "mc_set_fmt_off_list": {
-    "message": "關閉：$LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "全部開啟"
-  },
   "mc_set_fmt_none": {
     "message": "無"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "刪除預設組…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "刪除 $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "刪除預設組"
-  },
-  "mc_set_preset_save_as": {
-    "message": "將目前設定另存為…"
-  },
-  "mc_set_preset_undo": {
-    "message": "復原：$LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "預設組"
-  },
-  "mc_set_preset_save_title": {
-    "message": "將目前設定另存為預設組"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "預設組名稱"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "快照所有與預設值不同的設定 — 可透過匯出設定分享"
-  },
-  "mc_set_preset_nochange": {
-    "message": "已一致 — 無需變更"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "套用預設組：$LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "套用"
   },
   "mc_set_h_search": {
     "message": "搜尋"

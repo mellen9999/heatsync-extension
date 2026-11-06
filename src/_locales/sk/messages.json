@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "podrobné logovanie do konzoly zo všetkých skriptov heatsync — platí od ďalšieho načítania stránky"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimálne"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "pokročilý"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderátor"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "nízky ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "kopírovanie zlyhalo"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "chyba spracovania"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "už zodpovedá $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "použité $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "predvoľba odstránená"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "predvoľba potrebuje názov"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "predvoľba uložená: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "úložisko predvolieb je plné — najprv jednu odstráň"
   },
   "mc_settingsui_reset_all": {
     "message": "všetky nastavenia vrátené na predvolené"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(log sa nepodarilo prečítať)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "vypnuté: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "všetko zapnuté"
-  },
   "mc_set_fmt_none": {
     "message": "nič"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "zmazať predvoľbu…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "zmazať $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "zmazať predvoľbu"
-  },
-  "mc_set_preset_save_as": {
-    "message": "uložiť aktuálne ako…"
-  },
-  "mc_set_preset_undo": {
-    "message": "späť: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "predvoľby"
-  },
-  "mc_set_preset_save_title": {
-    "message": "uložiť aktuálne ako predvoľbu"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "názov predvoľby"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "uloží každé nastavenie, ktoré sa líši od predvoleného — zdieľateľné cez exportovať nastavenia"
-  },
-  "mc_set_preset_nochange": {
-    "message": "už sa zhoduje — nič na zmenu"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "použiť predvoľbu: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "použiť"
   },
   "mc_set_h_search": {
     "message": "hľadať"

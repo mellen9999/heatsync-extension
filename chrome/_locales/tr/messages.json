@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "tüm heatsync betiklerinden ayrıntılı konsol günlüğü — sonraki sayfa yüklemesinde geçerli"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimal"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "ileri kullanıcı"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderatör"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "düşük ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "kopyalanamadı"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "ayrıştırma hatası"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "zaten $LABEL$ ile eşleşiyor",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "$LABEL$ uygulandı — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "ön ayar silindi"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "ön ayarın bir adı olmalı"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "ön ayar kaydedildi: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "ön ayar depolaması dolu — önce birini sil"
   },
   "mc_settingsui_reset_all": {
     "message": "tüm ayarlar varsayılana döndü"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(günlük okunamadı)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "kapalı: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "hepsi açık"
-  },
   "mc_set_fmt_none": {
     "message": "yok"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "bir ön ayarı sil…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "$NAME$ sil",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "ön ayarı sil"
-  },
-  "mc_set_preset_save_as": {
-    "message": "mevcudu şu adla kaydet…"
-  },
-  "mc_set_preset_undo": {
-    "message": "geri al: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "ön ayarlar"
-  },
-  "mc_set_preset_save_title": {
-    "message": "mevcudu ön ayar olarak kaydet"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "ön ayar adı"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "varsayılandan farklı her ayarın anlık görüntüsünü alır — ayarları dışa aktar ile paylaşılabilir"
-  },
-  "mc_set_preset_nochange": {
-    "message": "zaten aynı — değişecek bir şey yok"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "ön ayarı uygula: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "uygula"
   },
   "mc_set_h_search": {
     "message": "ara"

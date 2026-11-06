@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "utförlig konsolloggning från alla heatsync-skript — gäller vid nästa sidladdning"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimal"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "avancerad användare"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderator"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "lågt ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "kopiering misslyckades"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "tolkningsfel"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "matchar redan $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "tillämpade $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "förinställning raderad"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "förinställningen behöver ett namn"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "sparade förinställning: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "förinställningslagringen är full — radera en först"
   },
   "mc_settingsui_reset_all": {
     "message": "alla inställningar återställda till standard"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(kan inte läsa loggen)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "av: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "alla på"
-  },
   "mc_set_fmt_none": {
     "message": "inga"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "ta bort en förinställning…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "ta bort $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "ta bort förinställning"
-  },
-  "mc_set_preset_save_as": {
-    "message": "spara nuvarande som…"
-  },
-  "mc_set_preset_undo": {
-    "message": "ångra: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "förinställningar"
-  },
-  "mc_set_preset_save_title": {
-    "message": "spara nuvarande som förinställning"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "namn på förinställning"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "sparar varje inställning som skiljer sig från standard — delbart via exportera inställningar"
-  },
-  "mc_set_preset_nochange": {
-    "message": "matchar redan — inget att ändra"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "använd förinställning: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "använd"
   },
   "mc_set_h_search": {
     "message": "sök"

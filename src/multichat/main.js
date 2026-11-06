@@ -3157,13 +3157,6 @@
       cachedUiOverflow().catch(() => ({})),
     ])
     const ui = synced?.ui_settings || {}
-    // custom presets ride along in ui_settings (declared in the registry as
-    // system/state json; the shape filter below owns the semantics)
-    _customPresets = Array.isArray(ui.customPresets)
-      ? ui.customPresets.filter(
-          (p) => p && typeof p === 'object' && p.id && p.name && p.diff && typeof p.diff === 'object',
-        )
-      : []
     // applier id → def; dedupes shared ids (the three font keys all map to
     // 'fonts'). Only applyOnLoad entries run here — set-time-only effects
     // (rebuildInput, notification permission, ping preview) never fire on init.
@@ -3257,6 +3250,23 @@
     }
 
     _settingsHydrated = true
+  }
+
+  // The settings pass retired keys (RETIRED_UI_KEYS). Runs after the boot seed
+  // — the server's ui_state is written over local storage there, so anything
+  // migrated before it could be overwritten. A retired key's value was adopted
+  // at hydration (schema `legacy`); here the stored blob lets go of it. Skipped
+  // when hydration timed out: the values stay put for the next boot.
+  async function retireSettings() {
+    if (!_settingsHydrated) return
+    try {
+      const ui = (await browser.storage.sync.get('ui_settings'))?.ui_settings || {}
+      if (!Object.keys(ui).some((k) => RETIRED_UI_KEYS.has(k))) return
+      await safeSendMessage({ type: 'ui_settings_rmw', patch: {}, dropRetired: true })
+      invalidateUiSettingsCache()
+    } catch (e) {
+      warn('retiring old settings failed:', e?.message)
+    }
   }
 
   // Registry-derived reset — every entry returns to its default through the
@@ -13328,7 +13338,6 @@
           }
           if (def.rerender) needsRender = true
         }
-        if (Array.isArray(ns.customPresets)) _customPresets = ns.customPresets
 
         if (needsRender) {
           bumpRenderEpoch() // insert-only diff: existing rows need the epoch
@@ -14388,7 +14397,7 @@
         const localOverflow = {}
         for (const k in remote) {
           if (!Object.hasOwn(remote, k)) continue
-          if (DEVICE_LOCAL_KEYS.has(k)) continue
+          if (DEVICE_LOCAL_KEYS.has(k) || RETIRED_UI_KEYS.has(k)) continue
           if (UI_SYNC_BLOCKLIST.has(k)) {
             const mirrorKey = OVERFLOW_MIRROR_KEYS[k]
             // string-only, mirroring splitIncomingUiState (background.js) — the
@@ -14416,6 +14425,8 @@
         }
       } catch (e) {
         log('ui-state seed failed:', e?.message)
+      } finally {
+        retireSettings()
       }
     })()
 

@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "bőbeszédű konzolnapló az összes heatsync szkriptből — a következő oldalbetöltéskor lép életbe"
   },
-  "mc_settings_preset_minimal": {
-    "message": "minimális"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "haladó"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "mod"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "kevés ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "a másolás nem sikerült"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "értelmezési hiba"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "már megegyezik: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "alkalmazva: $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "preset törölve"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "a presetnek név kell"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "preset mentve: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "tele a preset tár — előbb törölj egyet"
   },
   "mc_settingsui_reset_all": {
     "message": "minden beállítás visszaállítva az alapokra"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(a napló nem olvasható)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "ki: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "mind be"
-  },
   "mc_set_fmt_none": {
     "message": "nincs"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "előbeállítás törlése…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "$NAME$ törlése",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "előbeállítás törlése"
-  },
-  "mc_set_preset_save_as": {
-    "message": "jelenlegi mentése mint…"
-  },
-  "mc_set_preset_undo": {
-    "message": "visszavonás: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "előbeállítások"
-  },
-  "mc_set_preset_save_title": {
-    "message": "jelenlegi mentése előbeállításként"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "előbeállítás neve"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "elmenti az alaptól eltérő összes beállítást — megosztható a beállítások exportálásával"
-  },
-  "mc_set_preset_nochange": {
-    "message": "már egyezik — nincs mit változtatni"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "előbeállítás alkalmazása: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "alkalmaz"
   },
   "mc_set_h_search": {
     "message": "keresés"

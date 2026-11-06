@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "सभी heatsync स्क्रिप्ट से कंसोल में विस्तृत लॉग — अगले पेज लोड पर लागू होता है"
   },
-  "mc_settings_preset_minimal": {
-    "message": "मिनिमल"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "पावर यूज़र"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "मॉडरेटर"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "कम ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "कॉपी नहीं हुआ"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "पार्स एरर"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "पहले से $LABEL$ जैसा है",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "$LABEL$ लागू हुआ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "प्रीसेट हटा"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "प्रीसेट को नाम चाहिए"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "प्रीसेट सेव हुआ: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "प्रीसेट स्टोरेज भरी है — पहले एक हटाओ"
   },
   "mc_settingsui_reset_all": {
     "message": "सारी सेटिंग डिफ़ॉल्ट पर लौटीं"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(लॉग पढ़ नहीं पाए)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "बंद: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "सब चालू"
-  },
   "mc_set_fmt_none": {
     "message": "कोई नहीं"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "प्रीसेट हटाओ…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "$NAME$ हटाओ",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "प्रीसेट हटाओ"
-  },
-  "mc_set_preset_save_as": {
-    "message": "मौजूदा को ऐसे सेव करो…"
-  },
-  "mc_set_preset_undo": {
-    "message": "वापस करो: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "प्रीसेट"
-  },
-  "mc_set_preset_save_title": {
-    "message": "मौजूदा को प्रीसेट के रूप में सेव करो"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "प्रीसेट का नाम"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "डिफ़ॉल्ट से अलग हर सेटिंग का स्नैपशॉट — सेटिंग्स एक्सपोर्ट से शेयर हो सकता है"
-  },
-  "mc_set_preset_nochange": {
-    "message": "पहले से यही है — बदलने को कुछ नहीं"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "प्रीसेट लगाओ: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "लगाओ"
   },
   "mc_set_h_search": {
     "message": "खोज"

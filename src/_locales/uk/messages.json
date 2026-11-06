@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "докладні логи в консолі від усіх скриптів heatsync — застосовується при наступному завантаженні сторінки"
   },
-  "mc_settings_preset_minimal": {
-    "message": "мінімум"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "просунутий"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "модератор"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "мало ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "не вдалося копіювати"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "помилка розбору"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "уже відповідає $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "застосовано $LABEL$ — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "пресет видалено"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "пресету потрібна назва"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "пресет збережено: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "сховище пресетів заповнене — спершу видали один"
   },
   "mc_settingsui_reset_all": {
     "message": "усі налаштування скинуто до стандартних"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(не вдалося прочитати лог)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "вимк: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "усе ввімкнено"
-  },
   "mc_set_fmt_none": {
     "message": "немає"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "видалити пресет…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "видалити $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "видалити пресет"
-  },
-  "mc_set_preset_save_as": {
-    "message": "зберегти поточні як…"
-  },
-  "mc_set_preset_undo": {
-    "message": "скасувати: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "пресети"
-  },
-  "mc_set_preset_save_title": {
-    "message": "зберегти поточні як пресет"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "назва пресету"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "знімок кожного налаштування, що відрізняється від типового — ділитися можна через експорт налаштувань"
-  },
-  "mc_set_preset_nochange": {
-    "message": "вже збігається — нічого міняти"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "застосувати пресет: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "застосувати"
   },
   "mc_set_h_search": {
     "message": "пошук"

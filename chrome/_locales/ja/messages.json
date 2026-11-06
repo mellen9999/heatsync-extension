@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "すべての heatsync スクリプトの詳細コンソールログ — 次のページ読み込みから有効"
   },
-  "mc_settings_preset_minimal": {
-    "message": "最小"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "パワーユーザー"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "mod"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "低 ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "コピー失敗"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "解析エラー"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "すでに $LABEL$ と同じ",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "$LABEL$ を適用 — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "プリセットを削除した"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "プリセットには名前が必要"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "プリセットを保存: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "プリセットの保存領域がいっぱい — 先に1つ削除して"
   },
   "mc_settingsui_reset_all": {
     "message": "すべての設定を既定に戻した"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(ログを読み取れない)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "オフ: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "すべてオン"
-  },
   "mc_set_fmt_none": {
     "message": "なし"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "プリセットを削除…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "$NAME$ を削除",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "プリセットを削除"
-  },
-  "mc_set_preset_save_as": {
-    "message": "現在の設定を保存…"
-  },
-  "mc_set_preset_undo": {
-    "message": "元に戻す: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "プリセット"
-  },
-  "mc_set_preset_save_title": {
-    "message": "現在の設定をプリセットとして保存"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "プリセット名"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "既定と異なる設定をすべて保存 — 設定のエクスポートで共有可能"
-  },
-  "mc_set_preset_nochange": {
-    "message": "すでに一致 — 変更なし"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "プリセットを適用: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "適用"
   },
   "mc_set_h_search": {
     "message": "検索"

@@ -1656,18 +1656,6 @@
   "mc_settings_debug_logging_desc": {
     "message": "logs detalhados na consola de todos os scripts heatsync — aplica-se no próximo carregamento da página"
   },
-  "mc_settings_preset_minimal": {
-    "message": "mínimo"
-  },
-  "mc_settings_preset_power_user": {
-    "message": "utilizador avançado"
-  },
-  "mc_settings_preset_moderator": {
-    "message": "moderador"
-  },
-  "mc_settings_preset_low_ram": {
-    "message": "pouca ram"
-  },
   "mc_chatlogs_copy_failed": {
     "message": "falha ao copiar"
   },
@@ -2797,42 +2785,6 @@
   },
   "mc_settingsui_parse_error": {
     "message": "erro de leitura"
-  },
-  "mc_settingsui_preset_already_matching": {
-    "message": "já igual a $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_preset_applied": {
-    "message": "$LABEL$ aplicado — $CHANGES$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      },
-      "changes": {
-        "content": "$2"
-      }
-    }
-  },
-  "mc_settingsui_preset_deleted": {
-    "message": "preset apagado"
-  },
-  "mc_settingsui_preset_needs_name": {
-    "message": "o preset precisa de um nome"
-  },
-  "mc_settingsui_preset_saved": {
-    "message": "preset guardado: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_settingsui_presets_storage_full": {
-    "message": "armazenamento de presets cheio — apaga um primeiro"
   },
   "mc_settingsui_reset_all": {
     "message": "todas as definições repostas para o predefinido"
@@ -5666,70 +5618,8 @@
   "mc_set_crash_unreadable": {
     "message": "(não deu para ler o registo)"
   },
-  "mc_set_fmt_off_list": {
-    "message": "desligado: $LIST$",
-    "placeholders": {
-      "list": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_fmt_all_on": {
-    "message": "tudo ligado"
-  },
   "mc_set_fmt_none": {
     "message": "nenhum"
-  },
-  "mc_set_preset_delete_menu": {
-    "message": "apagar uma predefinição…"
-  },
-  "mc_set_preset_delete_one": {
-    "message": "apagar $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_preset_delete_title": {
-    "message": "apagar predefinição"
-  },
-  "mc_set_preset_save_as": {
-    "message": "guardar atual como…"
-  },
-  "mc_set_preset_undo": {
-    "message": "anular: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_presets": {
-    "message": "predefinições"
-  },
-  "mc_set_preset_save_title": {
-    "message": "guardar atual como predefinição"
-  },
-  "mc_set_preset_name_ph": {
-    "message": "nome da predefinição"
-  },
-  "mc_set_preset_save_hint": {
-    "message": "guarda todas as definições que diferem do predefinido — partilhável via exportar definições"
-  },
-  "mc_set_preset_nochange": {
-    "message": "já coincide — nada a alterar"
-  },
-  "mc_set_preset_apply_title": {
-    "message": "aplicar predefinição: $LABEL$",
-    "placeholders": {
-      "label": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_set_apply": {
-    "message": "aplicar"
   },
   "mc_set_h_search": {
     "message": "pesquisar"

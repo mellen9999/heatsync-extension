@@ -9430,13 +9430,10 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // storage-only write was reverted at the next boot, when the server's
   // ui_state (which never heard of it) won the merge.
   if (message.type === 'site_overlay_set') {
-    if (!SITE_OVERLAY_GATES.includes(message.gate)) {
-      sendResponse({ ok: false, error: 'unknown gate' })
-      return true
-    }
     let subsystems = null
     uiSettingsRmw((ui) => {
       const next = siteOverlayMerge(ui, message.gate, message.on)
+      if (!next) throw new Error('unknown gate')
       subsystems = next.subsystems
       return sanitizeUiSettings(next)
     }).then((r) => {

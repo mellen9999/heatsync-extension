@@ -286,10 +286,7 @@
       log('Failed to parse extension settings:', e)
     }
     // Defaults match main heatsync app
-    return {
-      emoteWysiwyg: true,
-      emoteSpaceAfter: true,
-    }
+    return { wysiwygEnabled: true }
   }
 
   // Listen for settings changes from the panel (postMessage crosses content/page boundary)
@@ -1649,8 +1646,8 @@
 
     // Get settings early for deletion behavior
     const settings = getExtensionSettings()
-    const useWysiwyg = settings.emoteWysiwyg !== false // default true
-    const addSpace = settings.emoteSpaceAfter !== false // default true
+    const useWysiwyg = settings.wysiwygEnabled !== false // default true
+    const addSpace = true // a space always follows a completed emote
     log(' [autocomplete-hook] INSERTION - useWysiwyg:', useWysiwyg, 'addSpace:', addSpace, 'emote:', matchedEmote.name)
 
     if (isCycling) {
@@ -2221,8 +2218,7 @@
             if (nextEmote.isEmoji || nextEmote.isUser) {
               const insertStr = nextEmote.isEmoji ? nextEmote.emoji : nextEmote.name
               const slateEditor = inst?.chatInputRef?.state?.slateEditor
-              const settings = getExtensionSettings()
-              const addSpace = settings.emoteSpaceAfter !== false
+              const addSpace = true
               if (slateEditor) {
                 const endPt = slateEditor.end([])
                 slateEditor.select(endPt)
@@ -2328,8 +2324,7 @@
             if (prevEmote.isEmoji) {
               const slateEditor = inst?.chatInputRef?.state?.slateEditor
               if (slateEditor) {
-                const settings = getExtensionSettings()
-                const addSpace = settings.emoteSpaceAfter !== false
+                const addSpace = true
                 const endPt = slateEditor.end([])
                 slateEditor.select(endPt)
                 const prevEmoji = cycleState.lastCycledEmote
@@ -3069,7 +3064,7 @@
     slateEditor.normalizeNode = function (entry) {
       const settings = getExtensionSettings()
       // If WYSIWYG is OFF, skip ALL emote normalization (Twitch + ours)
-      if (settings.emoteWysiwyg === false) {
+      if (settings.wysiwygEnabled === false) {
         const [node, _path] = entry
         // Block normalization of text nodes - prevents ALL emote conversions
         if (node.text) {

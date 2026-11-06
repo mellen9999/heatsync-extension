@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "obróć pozycję paska zakładek"
   },
-  "btn_settings_title": {
-    "message": "ustawienia"
-  },
   "btn_no_emotes": {
     "message": "brak emotek"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "skopiowano"
   },
-  "btn_settings_tab_completion": {
-    "message": "autouzupełnianie tab"
-  },
-  "btn_settings_chat_ui": {
-    "message": "interfejs czatu"
-  },
   "btn_settings_input": {
     "message": "wprowadzanie"
   },
-  "btn_settings_wysiwyg": {
-    "message": "emotki wysiwyg"
-  },
-  "btn_settings_space_after": {
-    "message": "spacja po emotce"
-  },
-  "btn_settings_hide_header": {
-    "message": "ukryj nagłówek"
-  },
-  "btn_settings_always_popout": {
-    "message": "(zawsze włączone w osobnym oknie)"
-  },
-  "btn_settings_compact_input": {
-    "message": "kompaktowy input"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "podświetl wzmianki"
-  },
-  "btn_settings_platform_badges": {
-    "message": "odznaki platform"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "[T] [K] [Y] na wiadomościach"
-  },
   "btn_settings_cosmetics": {
     "message": "kosmetyki"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "paint + odznaki 7TV/BTTV/FFZ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "tryb vi"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "skróty vim do wprowadzania w czacie"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← czat heatsync"
-  },
-  "hsbtn_rcb_label": {
-    "message": "blokada prawym klikiem"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "natychmiast blokuje od razu · menu pokazuje zablokuj/anuluj · wył. wyłącza"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "natychmiast"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "menu"
-  },
-  "hsbtn_rcb_off": {
-    "message": "wył"
   },
   "hsbtn_search_ph": {
     "message": "szukaj emotek…"

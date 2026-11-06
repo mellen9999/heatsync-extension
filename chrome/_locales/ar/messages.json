@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "تدوير موضع شريط التبويبات"
   },
-  "btn_settings_title": {
-    "message": "الإعدادات"
-  },
   "btn_no_emotes": {
     "message": "لا إيموتس"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "تم النسخ"
   },
-  "btn_settings_tab_completion": {
-    "message": "إكمال بـ Tab"
-  },
-  "btn_settings_chat_ui": {
-    "message": "واجهة الدردشة"
-  },
   "btn_settings_input": {
     "message": "الإدخال"
   },
-  "btn_settings_wysiwyg": {
-    "message": "إيموتس wysiwyg"
-  },
-  "btn_settings_space_after": {
-    "message": "مسافة بعد الإيموت"
-  },
-  "btn_settings_hide_header": {
-    "message": "إخفاء الرأس"
-  },
-  "btn_settings_always_popout": {
-    "message": "(دائمًا في النافذة المنفصلة)"
-  },
-  "btn_settings_compact_input": {
-    "message": "إدخال مدمج"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "تمييز الإشارات"
-  },
-  "btn_settings_platform_badges": {
-    "message": "شارات المنصة"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "[T] [K] [Y] على الرسائل"
-  },
   "btn_settings_cosmetics": {
     "message": "تجميل"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "paints + شارات 7TV/BTTV/FFZ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "وضع vi"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "اختصارات vim لإدخال الدردشة"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "→ دردشة heatsync"
-  },
-  "hsbtn_rcb_label": {
-    "message": "حظر بالنقر يمينًا"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "فوري يحظر مباشرة · القائمة تعرض حظر/إلغاء · إيقاف يعطّله"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "فوري"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "قائمة"
-  },
-  "hsbtn_rcb_off": {
-    "message": "إيقاف"
   },
   "hsbtn_search_ph": {
     "message": "بحث في الإيموتس…"

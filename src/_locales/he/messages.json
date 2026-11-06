@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "סובב מיקום סרגל הלשוניות"
   },
-  "btn_settings_title": {
-    "message": "הגדרות"
-  },
   "btn_no_emotes": {
     "message": "אין אימוג'ים"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "הועתק"
   },
-  "btn_settings_tab_completion": {
-    "message": "השלמת Tab"
-  },
-  "btn_settings_chat_ui": {
-    "message": "ממשק צ'אט"
-  },
   "btn_settings_input": {
     "message": "קלט"
   },
-  "btn_settings_wysiwyg": {
-    "message": "אימוג'ים wysiwyg"
-  },
-  "btn_settings_space_after": {
-    "message": "רווח אחרי אימוג'י"
-  },
-  "btn_settings_hide_header": {
-    "message": "הסתר כותרת"
-  },
-  "btn_settings_always_popout": {
-    "message": "(תמיד פעיל בחלון נפרד)"
-  },
-  "btn_settings_compact_input": {
-    "message": "קלט קומפקטי"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "הדגש אזכורים"
-  },
-  "btn_settings_platform_badges": {
-    "message": "תגי פלטפורמה"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "[T] [K] [Y] על ההודעות"
-  },
   "btn_settings_cosmetics": {
     "message": "קוסמטיקה"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "paint + תגים 7TV/BTTV/FFZ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "מצב vi"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "קיצורי vim עבור קלט הצ'אט"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← צ'אט heatsync"
-  },
-  "hsbtn_rcb_label": {
-    "message": "חסימה בקליק ימני"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "instant חוסם מיד · menu מציג חסום/בטל · off מכבה"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "מיידי"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "תפריט"
-  },
-  "hsbtn_rcb_off": {
-    "message": "כבוי"
   },
   "hsbtn_search_ph": {
     "message": "חיפוש אימוטים…"

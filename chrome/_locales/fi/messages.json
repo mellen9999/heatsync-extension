@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "käännä välilehtipalkin sijainti"
   },
-  "btn_settings_title": {
-    "message": "asetukset"
-  },
   "btn_no_emotes": {
     "message": "ei emotia"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "kopioitu"
   },
-  "btn_settings_tab_completion": {
-    "message": "sarkaintäydennys"
-  },
-  "btn_settings_chat_ui": {
-    "message": "chatin käyttöliittymä"
-  },
   "btn_settings_input": {
     "message": "syöttö"
   },
-  "btn_settings_wysiwyg": {
-    "message": "wysiwyg-emotet"
-  },
-  "btn_settings_space_after": {
-    "message": "välilyönti emoten jälkeen"
-  },
-  "btn_settings_hide_header": {
-    "message": "piilota otsikko"
-  },
-  "btn_settings_always_popout": {
-    "message": "(aina päällä erillisessä ikkunassa)"
-  },
-  "btn_settings_compact_input": {
-    "message": "tiivis syöttö"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "korosta maininnat"
-  },
-  "btn_settings_platform_badges": {
-    "message": "alustamerkit"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "[T] [K] [Y] viesteissä"
-  },
   "btn_settings_cosmetics": {
     "message": "kosmetiikka"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "paint + merkit 7TV/BTTV/FFZ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "vi-tila"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "vim-pikanäppäimet chat-syöttöön"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← heatsync-chat"
-  },
-  "hsbtn_rcb_label": {
-    "message": "esto oikealla klikkauksella"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "heti estää välittömästi · valikko näyttää estä/peruuta · pois poistaa käytöstä"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "heti"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "valikko"
-  },
-  "hsbtn_rcb_off": {
-    "message": "pois"
   },
   "hsbtn_search_ph": {
     "message": "hae emotejä…"

@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "탭 바 위치 전환"
   },
-  "btn_settings_title": {
-    "message": "설정"
-  },
   "btn_no_emotes": {
     "message": "이모트 없음"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "복사됨"
   },
-  "btn_settings_tab_completion": {
-    "message": "탭 완성"
-  },
-  "btn_settings_chat_ui": {
-    "message": "채팅 ui"
-  },
   "btn_settings_input": {
     "message": "입력"
   },
-  "btn_settings_wysiwyg": {
-    "message": "wysiwyg 이모트"
-  },
-  "btn_settings_space_after": {
-    "message": "이모트 뒤 공백"
-  },
-  "btn_settings_hide_header": {
-    "message": "헤더 숨기기"
-  },
-  "btn_settings_always_popout": {
-    "message": "(팝아웃에서 항상 켜짐)"
-  },
-  "btn_settings_compact_input": {
-    "message": "컴팩트 입력"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "멘션 강조"
-  },
-  "btn_settings_platform_badges": {
-    "message": "플랫폼 뱃지"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "메시지에 [T] [K] [Y] 표시"
-  },
   "btn_settings_cosmetics": {
     "message": "코스메틱"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "7TV/BTTV/FFZ 페인트 + 뱃지"
-  },
-  "btn_settings_vi_mode": {
-    "message": "vi 모드"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "채팅 입력용 vim 키바인딩"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← heatsync 채팅"
-  },
-  "hsbtn_rcb_label": {
-    "message": "우클릭 차단"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "즉시: 바로 차단 · 메뉴: 차단/취소 표시 · 끔: 사용 안 함"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "즉시"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "메뉴"
-  },
-  "hsbtn_rcb_off": {
-    "message": "끔"
   },
   "hsbtn_search_ph": {
     "message": "emote 검색…"

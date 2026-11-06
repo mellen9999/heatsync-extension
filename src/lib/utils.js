@@ -574,7 +574,16 @@ const DEVICE_LOCAL_KEYS = new Set(['platformFilters'])
 // for months: they are never adopted from the server, and the stored blob
 // drops them once this device has migrated their values (retireSettings in
 // main.js) — they would only eat the 8 KB sync quota.
-const RETIRED_UI_KEYS = new Set(['customPresets'])
+const RETIRED_UI_KEYS = new Set([
+  'customPresets',
+  'emoteWysiwyg',
+  'emoteSpaceAfter',
+  'rightClickBlockMode',
+  'hideChatHeader',
+  'compactChatInput',
+  'highlightMentions',
+  'showCosmetics',
+])
 
 // registry key → chrome.storage.local key name, for every UI_SYNC_BLOCKLIST
 // entry. Single source for the overflow-bucket names so main.js and

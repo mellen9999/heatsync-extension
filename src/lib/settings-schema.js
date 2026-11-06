@@ -818,6 +818,8 @@ const SETTINGS = [
     runtimeVar: 'wysiwygEnabled',
     apply: 'rebuildInput',
     migrate: 'wysiwygDefaultOn_v1',
+    // the emote picker's retired panel stored the same switch as emoteWysiwyg
+    legacy: (ui) => (typeof ui.emoteWysiwyg === 'boolean' ? ui.emoteWysiwyg : undefined),
   },
   {
     key: 'viMode',

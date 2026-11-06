@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "завърти позицията на лентата с табове"
   },
-  "btn_settings_title": {
-    "message": "настройки"
-  },
   "btn_no_emotes": {
     "message": "няма emotes"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "копирано"
   },
-  "btn_settings_tab_completion": {
-    "message": "автодовършване с tab"
-  },
-  "btn_settings_chat_ui": {
-    "message": "интерфейс на чата"
-  },
   "btn_settings_input": {
     "message": "вход"
   },
-  "btn_settings_wysiwyg": {
-    "message": "wysiwyg emotes"
-  },
-  "btn_settings_space_after": {
-    "message": "интервал след emote"
-  },
-  "btn_settings_hide_header": {
-    "message": "скрий заглавието"
-  },
-  "btn_settings_always_popout": {
-    "message": "(винаги вкл. в отделен прозорец)"
-  },
-  "btn_settings_compact_input": {
-    "message": "компактен вход"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "осветли споменавания"
-  },
-  "btn_settings_platform_badges": {
-    "message": "значки на платформа"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "[T] [K] [Y] на съобщенията"
-  },
   "btn_settings_cosmetics": {
     "message": "козметика"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "paint + значки 7TV/BTTV/FFZ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "vi режим"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "vim клавиши за чат вход"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← heatsync чат"
-  },
-  "hsbtn_rcb_label": {
-    "message": "блок с десен клик"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "instant блокира веднага · menu показва блокирай/отказ · off го изключва"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "веднага"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "меню"
-  },
-  "hsbtn_rcb_off": {
-    "message": "изкл."
   },
   "hsbtn_search_ph": {
     "message": "търсене на emotes…"

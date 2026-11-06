@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "повернути позицію смуги вкладок"
   },
-  "btn_settings_title": {
-    "message": "налаштування"
-  },
   "btn_no_emotes": {
     "message": "немає emotes"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "скопійовано"
   },
-  "btn_settings_tab_completion": {
-    "message": "автодоповнення Tab"
-  },
-  "btn_settings_chat_ui": {
-    "message": "інтерфейс чату"
-  },
   "btn_settings_input": {
     "message": "введення"
   },
-  "btn_settings_wysiwyg": {
-    "message": "wysiwyg-emotes"
-  },
-  "btn_settings_space_after": {
-    "message": "пробіл після emote"
-  },
-  "btn_settings_hide_header": {
-    "message": "сховати заголовок"
-  },
-  "btn_settings_always_popout": {
-    "message": "(завжди ввімкнено в окремому вікні)"
-  },
-  "btn_settings_compact_input": {
-    "message": "компактне введення"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "виділяти згадки"
-  },
-  "btn_settings_platform_badges": {
-    "message": "значки платформ"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "[T] [K] [Y] на повідомленнях"
-  },
   "btn_settings_cosmetics": {
     "message": "косметика"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "paint + значки 7TV/BTTV/FFZ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "vi режим"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "vim комбінації для введення в чат"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← чат heatsync"
-  },
-  "hsbtn_rcb_label": {
-    "message": "блок правим кліком"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "миттєво блокує одразу · меню показує блок/скасувати · вимк. вимикає"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "миттєво"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "меню"
-  },
-  "hsbtn_rcb_off": {
-    "message": "вимк."
   },
   "hsbtn_search_ph": {
     "message": "пошук emotes…"

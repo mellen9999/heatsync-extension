@@ -306,7 +306,16 @@ const UI_SYNC_BLOCKLIST = new Set(['platformFilters', 'keywordHighlights', 'chat
 const DEVICE_LOCAL_KEYS = new Set(['platformFilters'])
 // Retired by the 2026-11 settings pass — never adopted from the server; the
 // stored blob drops them on the overlay's request. Must match src/lib/utils.js.
-const RETIRED_UI_KEYS = new Set(['customPresets'])
+const RETIRED_UI_KEYS = new Set([
+  'customPresets',
+  'emoteWysiwyg',
+  'emoteSpaceAfter',
+  'rightClickBlockMode',
+  'hideChatHeader',
+  'compactChatInput',
+  'highlightMentions',
+  'showCosmetics',
+])
 // registry key → chrome.storage.local key name — must match src/lib/utils.js
 // OVERFLOW_MIRROR_KEYS exactly (parity-checked at build time).
 const OVERFLOW_MIRROR_KEYS = {

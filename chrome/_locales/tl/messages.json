@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "iikot ang posisyon ng tab bar"
   },
-  "btn_settings_title": {
-    "message": "settings"
-  },
   "btn_no_emotes": {
     "message": "walang emotes"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "kinopya"
   },
-  "btn_settings_tab_completion": {
-    "message": "tab completion"
-  },
-  "btn_settings_chat_ui": {
-    "message": "chat interface"
-  },
   "btn_settings_input": {
     "message": "input"
   },
-  "btn_settings_wysiwyg": {
-    "message": "wysiwyg emotes"
-  },
-  "btn_settings_space_after": {
-    "message": "space pagkatapos ng emote"
-  },
-  "btn_settings_hide_header": {
-    "message": "itago ang header"
-  },
-  "btn_settings_always_popout": {
-    "message": "(palaging on sa hiwalay na window)"
-  },
-  "btn_settings_compact_input": {
-    "message": "siksik na input"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "i-highlight ang mentions"
-  },
-  "btn_settings_platform_badges": {
-    "message": "mga badge ng platform"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "[T] [K] [Y] sa mga messages"
-  },
   "btn_settings_cosmetics": {
     "message": "mga cosmetic"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "paint + badges 7TV/BTTV/FFZ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "vi mode"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "vim shortcuts para sa chat input"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← heatsync chat"
-  },
-  "hsbtn_rcb_label": {
-    "message": "right-click block"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "instant — nagba-block agad · menu — may block/cancel · off — naka-disable"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "agad"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "menu"
-  },
-  "hsbtn_rcb_off": {
-    "message": "off"
   },
   "hsbtn_search_ph": {
     "message": "maghanap ng emote…"

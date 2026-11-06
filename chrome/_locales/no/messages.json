@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "roter fanelinjens posisjon"
   },
-  "btn_settings_title": {
-    "message": "innstillinger"
-  },
   "btn_no_emotes": {
     "message": "ingen emotes"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "kopiert"
   },
-  "btn_settings_tab_completion": {
-    "message": "tab-fullføring"
-  },
-  "btn_settings_chat_ui": {
-    "message": "chat-grensesnitt"
-  },
   "btn_settings_input": {
     "message": "input"
   },
-  "btn_settings_wysiwyg": {
-    "message": "wysiwyg-emotes"
-  },
-  "btn_settings_space_after": {
-    "message": "mellomrom etter emote"
-  },
-  "btn_settings_hide_header": {
-    "message": "skjul header"
-  },
-  "btn_settings_always_popout": {
-    "message": "(alltid på i eget vindu)"
-  },
-  "btn_settings_compact_input": {
-    "message": "kompakt input"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "fremhev omtaler"
-  },
-  "btn_settings_platform_badges": {
-    "message": "plattformbadges"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "[T] [K] [Y] på meldinger"
-  },
   "btn_settings_cosmetics": {
     "message": "kosmetikk"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "paint + badges 7TV/BTTV/FFZ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "vi-modus"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "vim-snarveier for chat-input"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← heatsync-chat"
-  },
-  "hsbtn_rcb_label": {
-    "message": "høyreklikk-blokkering"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "direkte blokkerer med en gang · meny viser blokker/avbryt · av slår det av"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "direkte"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "meny"
-  },
-  "hsbtn_rcb_off": {
-    "message": "av"
   },
   "hsbtn_search_ph": {
     "message": "søk etter emotes…"

@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "otočit pozici lišty záložek"
   },
-  "btn_settings_title": {
-    "message": "nastavení"
-  },
   "btn_no_emotes": {
     "message": "žádné emotky"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "zkopírováno"
   },
-  "btn_settings_tab_completion": {
-    "message": "doplňování tabem"
-  },
-  "btn_settings_chat_ui": {
-    "message": "rozhraní chatu"
-  },
   "btn_settings_input": {
     "message": "vstup"
   },
-  "btn_settings_wysiwyg": {
-    "message": "wysiwyg emotky"
-  },
-  "btn_settings_space_after": {
-    "message": "mezera za emotkou"
-  },
-  "btn_settings_hide_header": {
-    "message": "skrýt hlavičku"
-  },
-  "btn_settings_always_popout": {
-    "message": "(vždy zapnuto v samostatném okně)"
-  },
-  "btn_settings_compact_input": {
-    "message": "kompaktní vstup"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "zvýraznit zmínky"
-  },
-  "btn_settings_platform_badges": {
-    "message": "odznaky platforem"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "[T] [K] [Y] u zpráv"
-  },
   "btn_settings_cosmetics": {
     "message": "kosmetika"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "paint + odznaky 7TV/BTTV/FFZ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "vi režim"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "vim klávesy pro vstup chatu"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← chat heatsync"
-  },
-  "hsbtn_rcb_label": {
-    "message": "blok pravým klikem"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "instant blokuje hned · menu nabídne blokovat/zrušit · off vypne"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "okamžitě"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "menu"
-  },
-  "hsbtn_rcb_off": {
-    "message": "vypnuto"
   },
   "hsbtn_search_ph": {
     "message": "hledat emotky…"

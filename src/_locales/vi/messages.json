@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "xoay vị trí thanh tab"
   },
-  "btn_settings_title": {
-    "message": "cài đặt"
-  },
   "btn_no_emotes": {
     "message": "không có emote"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "đã sao chép"
   },
-  "btn_settings_tab_completion": {
-    "message": "hoàn thành bằng tab"
-  },
-  "btn_settings_chat_ui": {
-    "message": "giao diện chat"
-  },
   "btn_settings_input": {
     "message": "nhập"
   },
-  "btn_settings_wysiwyg": {
-    "message": "emote wysiwyg"
-  },
-  "btn_settings_space_after": {
-    "message": "khoảng trắng sau emote"
-  },
-  "btn_settings_hide_header": {
-    "message": "ẩn header"
-  },
-  "btn_settings_always_popout": {
-    "message": "(luôn bật ở cửa sổ riêng)"
-  },
-  "btn_settings_compact_input": {
-    "message": "ô nhập nhỏ gọn"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "làm nổi tin nhắc"
-  },
-  "btn_settings_platform_badges": {
-    "message": "huy hiệu nền tảng"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "[T] [K] [Y] trên tin nhắn"
-  },
   "btn_settings_cosmetics": {
     "message": "trang trí"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "paint + huy hiệu 7TV/BTTV/FFZ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "chế độ vi"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "phím tắt vim cho ô chat"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← chat heatsync"
-  },
-  "hsbtn_rcb_label": {
-    "message": "chặn bằng chuột phải"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "tức thì: chặn ngay · menu: hiện chặn/hủy · tắt: vô hiệu hóa"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "tức thì"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "menu"
-  },
-  "hsbtn_rcb_off": {
-    "message": "tắt"
   },
   "hsbtn_search_ph": {
     "message": "tìm emote…"

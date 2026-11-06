@@ -73,8 +73,7 @@ describe('subsystem switches', () => {
   // The other direction, which matters just as much: a gate whose id is not a
   // declared switch can never be turned off, so the branch behind it is dead
   // and its "subsystem gate" comment is false. `right-click-block` is the one
-  // known case — content.js gates on it, nothing declares it, and the real
-  // control is heatsync-button.js's `rightClickBlockMode` setting.
+  // known case — content.js gates on it and nothing declares it.
   const KNOWN_UNDECLARED = ['right-click-block']
 
   test('no gate names a switch that does not exist', () => {

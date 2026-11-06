@@ -114,9 +114,6 @@
   "btn_rotate_title": {
     "message": "タブバーの位置を切り替え"
   },
-  "btn_settings_title": {
-    "message": "設定"
-  },
   "btn_no_emotes": {
     "message": "エモートなし"
   },
@@ -165,50 +162,11 @@
   "btn_toast_copied": {
     "message": "コピーしました"
   },
-  "btn_settings_tab_completion": {
-    "message": "タブ補完"
-  },
-  "btn_settings_chat_ui": {
-    "message": "チャットui"
-  },
   "btn_settings_input": {
     "message": "入力"
   },
-  "btn_settings_wysiwyg": {
-    "message": "wysiwygエモート"
-  },
-  "btn_settings_space_after": {
-    "message": "エモート後のスペース"
-  },
-  "btn_settings_hide_header": {
-    "message": "ヘッダーを非表示"
-  },
-  "btn_settings_always_popout": {
-    "message": "(ポップアウトでは常にオン)"
-  },
-  "btn_settings_compact_input": {
-    "message": "コンパクト入力"
-  },
-  "btn_settings_highlight_mentions": {
-    "message": "メンションをハイライト"
-  },
-  "btn_settings_platform_badges": {
-    "message": "プラットフォームバッジ"
-  },
-  "btn_settings_platform_badges_desc": {
-    "message": "メッセージに [T] [K] [Y] を表示"
-  },
   "btn_settings_cosmetics": {
     "message": "コスメティック"
-  },
-  "btn_settings_cosmetics_desc": {
-    "message": "7TV/BTTV/FFZ ペイント + バッジ"
-  },
-  "btn_settings_vi_mode": {
-    "message": "viモード"
-  },
-  "btn_settings_vi_mode_desc": {
-    "message": "チャット入力用vimキーバインド"
   },
   "btn_size_1x": {
     "message": "1x"
@@ -6225,21 +6183,6 @@
   },
   "hsbtn_back_arrow_chat": {
     "message": "← heatsync チャット"
-  },
-  "hsbtn_rcb_label": {
-    "message": "右クリックでブロック"
-  },
-  "hsbtn_rcb_desc": {
-    "message": "即時はすぐブロック · メニューはブロック/キャンセルを表示 · オフで無効"
-  },
-  "hsbtn_rcb_instant": {
-    "message": "即時"
-  },
-  "hsbtn_rcb_menu": {
-    "message": "メニュー"
-  },
-  "hsbtn_rcb_off": {
-    "message": "オフ"
   },
   "hsbtn_search_ph": {
     "message": "エモートを検索…"

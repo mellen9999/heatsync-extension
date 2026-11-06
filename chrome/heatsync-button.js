@@ -2,7 +2,7 @@
  * Heatsync Chat Button - FFZ-style button injection
  *
  * Injects a Heatsync button next to Twitch's emote picker button.
- * Opens panel for: importing channel emotes, quick picker, settings.
+ * Opens panel for: importing channel emotes, quick picker.
  *
  * Reference: FrankerFaceZ/src/sites/twitch-twilight/modules/chat/input.jsx
  */
@@ -798,12 +798,6 @@
         min-height: 0;
       }
 
-      /* Settings view - no min height, compact */
-      .heatsync-emote-grid:has(.heatsync-settings) {
-        min-height: auto;
-        contain: none;
-      }
-
       .heatsync-emote-row {
         display: flex;
         flex-wrap: wrap;
@@ -1348,48 +1342,6 @@
         border-bottom: 1px solid #ffffff;
       }
 
-      /* Settings view - compact */
-      .heatsync-settings {
-        padding: 12px;
-        overflow-y: auto;
-      }
-
-      .heatsync-setting-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: none;
-      }
-
-      .heatsync-setting-row:last-child {
-        border-bottom: none;
-      }
-
-      .heatsync-setting-label {
-        color: #fff;
-        font-size: 13px;
-      }
-
-      /* Square red/green toggle — identical to the overlay's .hs-mc-toggle-pill
-         so toggles look the same in both modes. Square, ANSI red=off/green=on,
-         no sliding knob (the slider was the only trendy-motion control left). */
-      .heatsync-toggle {
-        width: 16px;
-        height: 16px;
-        background: #ff0000;
-        border: none;
-        border-radius: 0;
-        cursor: pointer;
-        padding: 0;
-        transition: none;
-        flex-shrink: 0;
-      }
-
-      .heatsync-toggle.active {
-        background: #00ff00;
-      }
-
       /* Emote hover preview tooltip */
       .heatsync-emote-hover-preview {
         position: fixed;
@@ -1416,19 +1368,6 @@
         color: #fff;
         margin-top: 4px;
         font-weight: 600;
-      }
-
-      .heatsync-settings-section {
-        margin-bottom: 20px;
-      }
-
-      .heatsync-settings-section-title {
-        color: #fff;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 8px;
       }
 
       /* Auth banner - shown when not logged in */
@@ -1763,8 +1702,9 @@
     // UI hiding CSS (Chatterino-style)
     let uiHidingStyle = null
 
-    function applyUiHidingSettings(settings) {
-      log(' applyUiHidingSettings called with:', settings)
+    // Static: the picker's own settings panel is gone, and its compact-input +
+    // mention-highlight tweaks were always on unless switched off there.
+    function applyUiHidingSettings() {
 
       // Remove existing style (check both variable AND DOM in case of extension reload)
       if (uiHidingStyle) {
@@ -1779,7 +1719,7 @@
       // hideChatHeader is handled by content.js - don't duplicate here
       // This prevents CSS conflicts and layout bugs
 
-      if (settings.compactChatInput) {
+      {
         // Compact chat input - inline useful buttons, hide useless ones
         const nuke =
           'display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; margin: 0 !important; padding: 0 !important;'
@@ -1812,7 +1752,7 @@
         rules.push('#heatsync-fire-button { order: 999 !important; margin-left: auto !important; }')
       }
 
-      if (settings.highlightMentions) {
+      {
         // Chatterino-style: Red background on ENTIRE message line when mentioned
         log(' 🔴 INJECTING RED BACKGROUND CSS FOR MENTIONS')
 
@@ -1856,237 +1796,29 @@
       }
     }
 
-    // Cached settings (loaded async on init, updated on change)
-    let cachedSettings = {
-      emoteWysiwyg: true,
-      emoteSpaceAfter: true,
-      hideChatHeader: true,
-      compactChatInput: true,
-      highlightMentions: true,
-      viMode: false, // Vim keybindings for chat input
-      showPlatformBadges: true, // Show [T]/[K]/[YT] badges on messages
-      // 'menu'=rich context menu (default — open-on-provider, copy, block, +add),
-      // 'instant'=block immediately on right-click (no menu), 'off'=disabled.
-      rightClickBlockMode: 'menu',
+    // ui_settings mirrored into localStorage for the page-world scripts
+    // (autocomplete-hook.js reads wysiwygEnabled, vi-mode.js reads viMode).
+    function mirrorUiSettings(ui) {
+      try {
+        localStorage.setItem('heatsync-extension-settings', JSON.stringify(sanitizeUiSettings(ui)))
+      } catch (err) {
+        console.error('[heatsync-button] Failed to sync to localStorage:', err)
+      }
     }
-
-    // Get extension settings (sync - returns cached)
-    function getExtensionSettings() {
-      return { ...cachedSettings }
-    }
-
-    // Load settings from chrome.storage.local (async)
     async function loadExtensionSettings() {
       try {
-        const stored = await browser.storage.sync.get('ui_settings')
-        if (stored.ui_settings) {
-          cachedSettings = { ...cachedSettings, ...sanitizeUiSettings(stored.ui_settings) }
-        }
-        // ALSO sync to localStorage for autocomplete-hook.js (page context)
-        try {
-          localStorage.setItem('heatsync-extension-settings', JSON.stringify(cachedSettings))
-        } catch (err) {
-          console.error('[heatsync-button] Failed to sync to localStorage:', err)
-        }
-        log('Loaded settings from storage:', cachedSettings)
+        mirrorUiSettings((await browser.storage.sync.get('ui_settings')).ui_settings || {})
       } catch (e) {
         log('Failed to load extension settings:', e)
       }
-      return cachedSettings
     }
-
-    // Save extension settings to chrome.storage.local
-    function saveExtensionSettings(settings) {
-      log(' saveExtensionSettings called with:', settings)
-      try {
-        cachedSettings = { ...sanitizeUiSettings(settings) }
-        // Route through the SW's serialized ui_settings rmw chain — writing the
-        // whole blob from here would clobber any key the SW/another tab changed
-        // since cachedSettings was loaded. Direct write only if the SW is
-        // unreachable (context invalidated).
-        chrome.runtime
-          .sendMessage({ type: 'ui_settings_rmw', patch: cachedSettings })
-          .then((resp) => {
-            if (resp?.ok === true) {
-              log(' Settings saved to storage')
-              return
-            }
-            return browser.storage.sync.set({ ui_settings: cachedSettings })
-          })
-          .catch(() => {
-            browser.storage.sync.set({ ui_settings: cachedSettings }).catch((err) => {
-              console.error('[heatsync-button] Failed to save to storage:', err)
-            })
-          })
-        // ALSO save to localStorage so autocomplete-hook.js (page context) can read it
-        try {
-          localStorage.setItem('heatsync-extension-settings', JSON.stringify(settings))
-        } catch (err) {
-          console.error('[heatsync-button] Failed to save to localStorage:', err)
-        }
-        // Notify autocomplete-hook.js of settings change (postMessage crosses content/page boundary)
-        window.postMessage({ type: 'heatsync-settings-changed', settings: settings }, location.origin)
-        // Apply UI hiding immediately
-        applyUiHidingSettings(settings)
-        log('Saved settings:', settings)
-      } catch (e) {
-        console.error('[heatsync-button] Failed to save extension settings:', e)
-        log('Failed to save extension settings:', e)
-      }
-    }
-
-    // Listen for settings changes from popup.js or other tabs.
-    // Settings are stored in chrome.storage.sync (browser-account synced),
-    // not local — gate area check accordingly.
     function _onStorageChanged(changes, area) {
-      if (area === 'sync' && changes.ui_settings) {
-        const newSettings = changes.ui_settings.newValue
-        if (newSettings) {
-          cachedSettings = { ...cachedSettings, ...sanitizeUiSettings(newSettings) }
-          // ALSO sync to localStorage for autocomplete-hook.js (page context)
-          try {
-            localStorage.setItem('heatsync-extension-settings', JSON.stringify(cachedSettings))
-          } catch (err) {
-            console.error('[heatsync-button] Failed to sync to localStorage:', err)
-          }
-          applyUiHidingSettings(cachedSettings)
-          log('Settings updated from storage:', cachedSettings)
-        }
-      }
+      if (area === 'sync' && changes.ui_settings?.newValue) mirrorUiSettings(changes.ui_settings.newValue)
     }
     chrome.storage.onChanged.addListener(_onStorageChanged)
     btnSignal.addEventListener('abort', () => {
       chrome.storage.onChanged.removeListener(_onStorageChanged)
     })
-
-    // Render settings view
-    function renderSettings() {
-      log(' renderSettings called')
-      const grid = document.getElementById('heatsync-emote-grid')
-      if (!grid) {
-        log(' Grid not found!')
-        return
-      }
-
-      const settings = getExtensionSettings()
-      log(' Rendering settings with:', settings)
-
-      grid.innerHTML = `
-      <div class="heatsync-settings">
-        <div class="heatsync-settings-section">
-          <div class="heatsync-settings-section-title">${t('btn_settings_tab_completion')}</div>
-
-          <div class="heatsync-setting-row">
-            <div>
-              <div class="heatsync-setting-label">${t('btn_settings_wysiwyg')}</div>
-            </div>
-            <div class="heatsync-toggle ${settings.emoteWysiwyg ? 'active' : ''}" data-setting="emoteWysiwyg"></div>
-          </div>
-
-          <div class="heatsync-setting-row">
-            <div>
-              <div class="heatsync-setting-label">${t('btn_settings_space_after')}</div>
-            </div>
-            <div class="heatsync-toggle ${settings.emoteSpaceAfter ? 'active' : ''}" data-setting="emoteSpaceAfter"></div>
-          </div>
-
-          <div class="heatsync-setting-row">
-            <div>
-              <div class="heatsync-setting-label">${t('hsbtn_rcb_label')}</div>
-              <div class="heatsync-setting-desc">${t('hsbtn_rcb_desc')}</div>
-            </div>
-            <div class="heatsync-rcb-segmented" style="display:inline-flex;border:1px solid #ffffff;font-family:monospace;font-size:13px">
-              ${['instant', 'menu', 'off'].map((v) => `<button type="button" class="heatsync-rcb-opt" data-rcb="${v}" style="background:${(settings.rightClickBlockMode || 'menu') === v ? '#fff' : 'transparent'};color:${(settings.rightClickBlockMode || 'menu') === v ? '#000' : '#fff'};border:none;cursor:pointer;padding:4px 10px;font-family:inherit;font-size:13px">${{ instant: t('hsbtn_rcb_instant'), menu: t('hsbtn_rcb_menu'), off: t('hsbtn_rcb_off') }[v]}</button>`).join('')}
-            </div>
-          </div>
-        </div>
-
-        <div class="heatsync-settings-section">
-          <div class="heatsync-settings-section-title">${t('btn_settings_chat_ui')}</div>
-
-          <div class="heatsync-setting-row">
-            <div>
-              <div class="heatsync-setting-label">${t('btn_settings_hide_header')} <span style="color:#ffffff;font-size:11px">${t('btn_settings_always_popout')}</span></div>
-            </div>
-            <div class="heatsync-toggle ${settings.hideChatHeader ? 'active' : ''}" data-setting="hideChatHeader"></div>
-          </div>
-
-          <div class="heatsync-setting-row">
-            <div>
-              <div class="heatsync-setting-label">${t('btn_settings_compact_input')}</div>
-            </div>
-            <div class="heatsync-toggle ${settings.compactChatInput ? 'active' : ''}" data-setting="compactChatInput"></div>
-          </div>
-
-          <div class="heatsync-setting-row">
-            <div>
-              <div class="heatsync-setting-label">${t('btn_settings_highlight_mentions')}</div>
-            </div>
-            <div class="heatsync-toggle ${settings.highlightMentions ? 'active' : ''}" data-setting="highlightMentions"></div>
-          </div>
-
-          <div class="heatsync-setting-row">
-            <div>
-              <div class="heatsync-setting-label">${t('btn_settings_platform_badges')}</div>
-              <div class="heatsync-setting-desc">${t('btn_settings_platform_badges_desc')}</div>
-            </div>
-            <div class="heatsync-toggle ${settings.showPlatformBadges ? 'active' : ''}" data-setting="showPlatformBadges"></div>
-          </div>
-
-          <div class="heatsync-setting-row">
-            <div>
-              <div class="heatsync-setting-label">${t('btn_settings_cosmetics')}</div>
-              <div class="heatsync-setting-desc">${t('btn_settings_cosmetics_desc')}</div>
-            </div>
-            <div class="heatsync-toggle ${settings.showCosmetics !== false ? 'active' : ''}" data-setting="showCosmetics"></div>
-          </div>
-        </div>
-
-        <div class="heatsync-settings-section">
-          <div class="heatsync-settings-section-title">${t('btn_settings_input')}</div>
-
-          <div class="heatsync-setting-row">
-            <div>
-              <div class="heatsync-setting-label">${t('btn_settings_vi_mode')}</div>
-              <div class="heatsync-setting-desc">${t('btn_settings_vi_mode_desc')}</div>
-            </div>
-            <div class="heatsync-toggle ${settings.viMode ? 'active' : ''}" data-setting="viMode"></div>
-          </div>
-        </div>
-      </div>
-    `
-
-      // Add click handlers for toggles
-      const toggles = grid.querySelectorAll('.heatsync-toggle')
-      toggles.forEach((toggle) => {
-        toggle.addEventListener('click', () => {
-          const settingKey = toggle.dataset.setting
-          if (!settingKey) return // e.g. the overlay toggle below has its own handler
-          const currentSettings = getExtensionSettings()
-          currentSettings[settingKey] = !currentSettings[settingKey]
-          saveExtensionSettings(currentSettings)
-          toggle.classList.toggle('active')
-          log(' Setting changed:', settingKey, '=', currentSettings[settingKey])
-        })
-      })
-
-      // Right-click block segmented control
-      const rcbButtons = grid.querySelectorAll('.heatsync-rcb-opt')
-      rcbButtons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const value = btn.dataset.rcb
-          const currentSettings = getExtensionSettings()
-          currentSettings.rightClickBlockMode = value
-          saveExtensionSettings(currentSettings)
-          rcbButtons.forEach((b) => {
-            const sel = b.dataset.rcb === value
-            b.style.background = sel ? '#fff' : 'transparent'
-            b.style.color = sel ? '#000' : '#fff'
-          })
-          log(' rightClickBlockMode →', value)
-        })
-      })
-    }
 
     // Handle button click - toggle panel
     function handleButtonClick(e) {
@@ -2348,9 +2080,6 @@
               <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7.11 8.53L5.7 7.11C4.8 8.27 4.24 9.61 4.07 11h2.02c.14-.87.49-1.72 1.02-2.47zM6.09 13H4.07c.17 1.39.72 2.73 1.62 3.89l1.41-1.42c-.52-.75-.88-1.6-1.01-2.47zM7.1 18.32c1.16.9 2.51 1.44 3.9 1.61V17.9c-.87-.15-1.71-.49-2.46-1.03L7.1 18.32zM13 4.07V1l-4 4 4 4V6.09c2.84.48 5 2.94 5 5.91s-2.16 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93s-3.05-7.44-7-7.93z"/></svg>
             </button>
             <button class="heatsync-settings-cog" id="heatsync-rotate-chat-btn" title="${t('hsbtn_rotate_chat_title')}" style="font-weight:700;font-size:13px;font-family:monospace;">C</button>
-            <button class="heatsync-settings-cog" id="heatsync-settings-btn" title="${t('btn_settings_title')}">
-              <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-            </button>
           </div>
         </div>
       </div>
@@ -2413,29 +2142,8 @@
           btn.classList.add('active')
           localStorage.setItem('heatsync-emote-size', currentSize)
           // Re-render to load appropriate resolution images
-          if (currentTab !== 'settings') {
-            renderEmoteGrid()
-          }
-        })
-      })
-
-      // Settings button handler (in header)
-      const settingsBtn = panel.querySelector('#heatsync-settings-btn')
-      settingsBtn?.addEventListener('click', () => {
-        // Toggle settings view
-        if (currentTab === 'settings') {
-          // Go back to previous tab (default to channel)
-          currentTab = 'channel'
-          panel.querySelectorAll('.heatsync-tab').forEach((t) => t.classList.remove('active'))
-          panel.querySelector('.heatsync-tab[data-tab="channel"]')?.classList.add('active')
-          settingsBtn?.classList.remove('active')
           renderEmoteGrid()
-        } else {
-          currentTab = 'settings'
-          panel.querySelectorAll('.heatsync-tab').forEach((t) => t.classList.remove('active'))
-          settingsBtn?.classList.add('active')
-          renderSettings()
-        }
+        })
       })
 
       // Undo/redo buttons
@@ -2511,7 +2219,6 @@
           }
           panel.querySelectorAll('.heatsync-tab').forEach((t) => t.classList.remove('active'))
           tab.classList.add('active')
-          settingsBtn.classList.remove('active')
           renderEmoteGrid()
         })
       })
@@ -3146,10 +2853,7 @@
           }
         })
 
-        // Context menu delegation — branches on rightClickBlockMode:
-        //   'menu'    → existing block/cancel popup (default)
-        //   'instant' → block immediately, no menu
-        //   'off'     → preventDefault, do nothing (no native browser menu either)
+        // Context menu delegation — block/cancel popup on right-click.
         grid.addEventListener('contextmenu', (evt) => {
           const wrap = evt.target.closest('.heatsync-emote-wrap')
           if (!wrap) return
@@ -3165,35 +2869,6 @@
             if (!e) return
           }
 
-          const mode = cachedSettings.rightClickBlockMode || 'instant'
-          if (mode === 'off') {
-            evt.preventDefault()
-            return
-          }
-          if (mode === 'instant' && currentTab !== 'mine') {
-            evt.preventDefault()
-            const hash = e.hash || e.id || btoa(e.url || e.pickerUrl || '').slice(0, 24)
-            if (_blockedHashSet.has(hash)) {
-              chrome.runtime
-                .sendMessage({ type: 'unblock_emote', hash })
-                .then((result) => {
-                  if (result?.success) {
-                    _blockedHashSet.delete(hash)
-                    renderEmoteGrid()
-                    showPickerToast(t('btn_toast_unblocked'))
-                  } else {
-                    showPickerToast(result?.error || t('hsbtn_unblock_failed'))
-                  }
-                })
-                .catch((err) => log('Unblock failed:', err.message))
-            } else {
-              // blockEmote returns whether it stuck; toast the truth (a 500 /
-              // rate-limit / expired token blocks nothing) — matches the ctx-menu
-              // block path. Was fire-and-forget with an unconditional 'blocked'.
-              blockEmote(e).then((ok) => showPickerToast(t(ok ? 'btn_toast_blocked' : 'btn_toast_block_failed')))
-            }
-            return
-          }
           showContextMenu(evt, e, currentTab)
         })
       }
@@ -5297,9 +4972,8 @@
       injectPreconnectHints()
       injectStyles()
 
-      // Load and apply UI hiding settings on load (async)
-      const settings = await loadExtensionSettings()
-      applyUiHidingSettings(settings)
+      await loadExtensionSettings()
+      applyUiHidingSettings()
 
       // Start background preloading immediately (don't wait for button)
       setTimeout(() => {

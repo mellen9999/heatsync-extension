@@ -2496,16 +2496,6 @@
     log(' Header hiding CSS injected')
   }
 
-  function disableHeaderHiding() {
-    if (!headerHidingStyle) return // Already disabled
-
-    log(' Disabling header hiding...')
-
-    headerHidingStyle.remove()
-    headerHidingStyle = null
-    log(' Header hiding CSS removed')
-  }
-
   // =============================================================================
   // END HEADER HIDING
   // =============================================================================
@@ -2517,7 +2507,6 @@
     showClearedMessages: false,
     showPredictionsChip: true,
     anonChat: false,
-    highlightMentions: true,
   }
 
   function applyUiSettings(settings) {
@@ -2532,8 +2521,7 @@
     // overlay hides entirely — so their per-element toggles were dead UI clutter and
     // were removed from the settings schema. Force-hide them unconditionally: this
     // still guards each element during the brief cold-boot / SPA-nav flash before
-    // hs-native-hidden engages, at zero settings-UI cost. (hideChatHeader stays
-    // default-on via its own `!== false` gate below.)
+    // hs-native-hidden engages, at zero settings-UI cost.
     for (const k of [
       'hideChannelPoints',
       'hideHypeTrain',
@@ -2568,15 +2556,9 @@
     // Build CSS for enabled settings
     const rules = []
 
-    // Popout: always hide (no collapse arrow, bar is useless)
-    // Normal: default to hidden (collapse arrow is separate DOM element, survives)
-    // Only show header if user explicitly set hideChatHeader to false
-    const isPopout = /^\/(popout|embed)\//.test(location.pathname)
-    if (isPopout || settings.hideChatHeader !== false) {
-      enableHeaderHiding()
-    } else {
-      disableHeaderHiding()
-    }
+    // The native chat header is always hidden (popout: the bar is useless; normal:
+    // the collapse arrow is a separate element and survives).
+    enableHeaderHiding()
 
     // ─── anti-features pack — Twitch UI noise toggles ─────────────────────────
     // Each toggle adds one or more selectors to the hide rules block. Pure CSS,
@@ -2653,8 +2635,8 @@
     // heatsync name paints follow their own switch, not the third-party gate
     hsPaintsEnabled = namePaintsOn(settings.showNamePaints)
 
-    // Cosmetics toggle — legacy showCosmetics key OR the cosmetics subsystem gate
-    if (settings.showCosmetics === false || settings.subsystems?.cosmetics === false) {
+    // Cosmetics — the cosmetics subsystem gate
+    if (settings.subsystems?.cosmetics === false) {
       cosmeticsEnabled = false
       // Remove existing cosmetic badges from DOM
       document.querySelectorAll('.hs-cosmetic-badge').forEach((b) => b.remove())
@@ -5652,7 +5634,7 @@
     }
 
     // Highlight mentions of current user (FFZ-style red background on entire line)
-    if (_uiPrefs.highlightMentions) highlightUserMentions(messageElement, usernameElement, textElements)
+    highlightUserMentions(messageElement, usernameElement, textElements)
 
     // Highlight custom keywords (BTTV/FFZ-style custom highlight list)
     highlightKeywords(messageElement)
@@ -9069,10 +9051,7 @@
               }
               for (const msg of visible) {
                 msg.dataset.heatsyncUsernamesColored = '1'
-                // Gate on the setting — processMessage's own call is gated, but
-                // this observer path ran unconditionally, so turning
-                // highlightMentions off had no effect (dead toggle).
-                if (_uiPrefs.highlightMentions) highlightUserMentions(msg)
+                highlightUserMentions(msg)
                 colorUsernameMentions(msg)
                 if (msg.dataset.heatsyncGeneration !== emoteGeneration) {
                   stackAdjacentOverlayEmotes(msg, allEmotes)
@@ -10209,8 +10188,8 @@
   //
   // right-click-block has NO registry entry, so nothing can ever set it false
   // and its gate is permanently on. The user-facing control for that behaviour
-  // is `rightClickBlockMode` (instant/menu/off) in heatsync-button.js — a
-  // separate setting. Kept as the live-update shape in case it is ever
+  // is the picker's right-click menu in heatsync-button.js. Kept as the
+  // live-update shape in case it is ever
   // promoted; tests/subsystem-switches-enforced.js records it as the one
   // known gate id with no switch behind it.
   const HS_GATES = { 'emote-render': true, 'tab-complete': true, 'right-click-block': true }

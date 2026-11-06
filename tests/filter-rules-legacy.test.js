@@ -56,6 +56,14 @@ test('highlight words highlight whole words in the mention colour', () => {
   expect(verdict(rules, 'pogchamp').hide).toBe(false)
 })
 
+test('highlight words split on commas too, as the site documented them; patterns and muted words do not', () => {
+  const hl = legacyFilterRules({ keywordHighlights: 'foo, bar\nbaz,,' })
+  expect(hl.map((r) => r.match.value)).toEqual(['\\bfoo\\b', '\\bbar\\b', '\\bbaz\\b'])
+  expect(verdict(hl, 'say bar now').highlight).toBe('#ffff00')
+  const rx = legacyFilterRules({ automodRegex: 'a{1,3}b', muteKeywords: 'x, y' })
+  expect(rx.map((r) => r.match.value)).toEqual(['a{1,3}b', 'x, y'])
+})
+
 test('every rule is well-formed with a unique id', () => {
   const rules = legacyFilterRules({
     automodRegex: 'x',

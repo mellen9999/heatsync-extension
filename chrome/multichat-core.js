@@ -15431,7 +15431,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '98df0776a7d0' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '07ab997afe4a' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -22009,6 +22009,13 @@ function injectStyles() {
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled { cursor: not-allowed; }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled:hover { background: none; color: inherit; }
     .hs-mc-ctx .hs-mc-em-sep { height: 1px; background: #000000; margin: 2px 0; }
+    /* Page zoom narrows the css viewport, and 20-card.css hides the hover peek
+     * at max-width:768px as a phone rule. A mouse at 200% is not a phone: keep
+     * the peek wherever there is no touch pointer. (20-card.css is a byte copy
+     * of the site's, so the fix lives here, with more specificity.) */
+    @media (max-width: 768px) and (not (pointer: coarse)) {
+      .hs-card.hs-card-peek { display: flex; }
+    }
     /* #hs-user-tooltip is a bare positioning/show-hide shell now — the actual
      * card (src/lib/card-render.js's .hs-card-peek output, appended as its
      * child) carries its OWN position:fixed + all visual chrome from the
@@ -70369,8 +70376,12 @@ function readHsGlyphBox(el) {
   if (!font || !(h > 0)) return null
   // The EXACT ratio, capped — a resampled letterform is a soft one, and a 4x
   // phone rasterising four times the pixels buys nothing visible at 13px.
-  const dpr = Math.min(3, Math.max(1, (typeof window !== 'undefined' && window.devicePixelRatio) || 1))
-  return { font, h, dpr }
+  return { font, h, dpr: hsGlyphDpr() }
+}
+
+/** The ratio masks are rastered at, capped: a 4x phone buys nothing visible at 13px. */
+function hsGlyphDpr() {
+  return Math.min(3, Math.max(1, (typeof window !== 'undefined' && window.devicePixelRatio) || 1))
 }
 
 /** The composited plan for whatever `hsp-` class `el` wears, or undefined. */
@@ -70394,6 +70405,9 @@ function applyHsGlyphMasks(el, plan) {
   const box = el?.querySelector?.(`.${NAME_BOX_CLASS}`)
   if (!box || box.classList.contains(MASKED_CLASS)) return
   const probe = box.querySelector?.(':scope > span') || box
+  // The cached box carries the dpr its masks are rastered at: page zoom changes
+  // it, and a mask drawn at 1x on a 3x screen is a soft letterform.
+  if (hsGlyphBox && hsGlyphBox.dpr !== hsGlyphDpr()) hsGlyphBox = null
   if (!hsGlyphBox) hsGlyphBox = readHsGlyphBox(probe)
   if (!hsGlyphBox) return
   const geom = hsGlyphBox
@@ -70446,6 +70460,19 @@ function remountAllHsFillLayers() {
 // Webfonts landed: every mask was drawn with the wrong face. Guarded exactly
 // like setLoggerOnGlyphMask above — a standalone import has neither binding.
 if (typeof setOnReady === 'function') setOnReady(remountAllHsFillLayers)
+
+// Page zoom changes devicePixelRatio and fires `resize`. Masks already mounted
+// were drawn for the old ratio; redraw them when it differs.
+let hsGlyphDprSeen = hsGlyphDpr()
+function hsGlyphDprChanged() {
+  const d = hsGlyphDpr()
+  if (d === hsGlyphDprSeen) return
+  hsGlyphDprSeen = d
+  remountAllHsFillLayers()
+}
+if (typeof cleanup !== 'undefined' && typeof cleanup.addEventListener === 'function') {
+  cleanup.addEventListener(window, 'resize', hsGlyphDprChanged, { passive: true })
+}
 
 // ── the crowd dial ──────────────────────────────────────────────────────────
 //
@@ -76504,10 +76531,32 @@ function getTwitchMaxChatWidth() {
   if (hostPlatform !== 'twitch') return MAX_CHAT_WIDTH
   const vw = window.innerWidth || document.documentElement.clientWidth || 1280
   const tabStrip = tabPosition === 'left' || tabPosition === 'right' ? 90 : 0
-  const floor = chatPosition && chatPosition !== 'right' ? 300 : TWITCH_MIN_MAIN_WIDTH
+  let floor = chatPosition && chatPosition !== 'right' ? 300 : TWITCH_MIN_MAIN_WIDTH
   const navW = typeof _twitchSideNavW === 'number' && _twitchSideNavW > 0 ? _twitchSideNavW : TWITCH_SIDE_NAV_WIDTH
+  // Page zoom shrinks the CSS viewport (1280px at 300% is 426px). A fixed 600px
+  // floor then leaves the chat 10px wide: the page is past twitch's narrow
+  // breakpoint whatever we do, so holding the floor only deletes the chat.
+  // Past that point the player and the chat split what is left.
+  floor = Math.min(floor, Math.floor((vw - navW - tabStrip) / 2))
   const max = vw - navW - floor - tabStrip
   return Math.max(MIN_CHAT_WIDTH, Math.min(MAX_CHAT_WIDTH, max))
+}
+
+// A width the viewport squeezed (zoom, a narrower window) is not a width the
+// user chose. Clamp it, remember what it was, and give it back when the
+// viewport widens again. A drag in between changes chatWidth, which drops the
+// memory. Returns the width to use.
+let _chatWidthSqueezedFrom = 0
+let _chatWidthSqueezedTo = 0
+function fitChatWidth(max) {
+  if (_chatWidthSqueezedFrom && chatWidth === _chatWidthSqueezedTo) chatWidth = _chatWidthSqueezedFrom
+  _chatWidthSqueezedFrom = 0
+  if (chatWidth > max) {
+    _chatWidthSqueezedFrom = chatWidth
+    _chatWidthSqueezedTo = max
+    chatWidth = max
+  }
+  return chatWidth
 }
 
 /**
@@ -76655,6 +76704,7 @@ function applyChatWidth(cachedRightCol) {
   // it so twilight-main reclaims the width — otherwise users see a 306px
   // gap between page content and the floating chat.
   if (document.body.classList.contains('hs-twitch-no-channel')) {
+    fitChatWidth(MAX_CHAT_WIDTH) // nothing squeezes a fixed overlay: give back any earlier squeeze
     rightCol.style.setProperty('width', '0', 'important')
     rightCol.style.setProperty('min-width', '0', 'important')
     rightCol.style.setProperty('max-width', '0', 'important')
@@ -76663,6 +76713,7 @@ function applyChatWidth(cachedRightCol) {
   // C button took chat off the right edge — don't restore native width here
   // or the right-column reclaims its 340px and the player snaps back.
   if (chatPosition && chatPosition !== 'right') {
+    fitChatWidth(MAX_CHAT_WIDTH)
     rightCol.style.setProperty('width', '0', 'important')
     rightCol.style.setProperty('min-width', '0', 'important')
     rightCol.style.setProperty('max-width', '0', 'important')
@@ -76698,7 +76749,7 @@ function applyChatWidth(cachedRightCol) {
   // .channel-root__main below Twitch's narrow-layout threshold and
   // teleport the persistent-player off-screen.
   const tMax = getTwitchMaxChatWidth()
-  if (chatWidth > tMax) chatWidth = tMax
+  fitChatWidth(tMax)
   const isVertical = tabPosition === 'left' || tabPosition === 'right'
   const colWidth = chatWidth + (isVertical ? 90 : 0)
 
@@ -77264,7 +77315,8 @@ function applyYouTubeChatWidth() {
   // here would un-hide it and render two orange bars.
   // Full freedom — only clamp to viewport so the chat can't escape it.
   const ytMax = Math.max(MIN_CHAT_WIDTH, window.innerWidth - 10)
-  chatWidth = Math.min(ytMax, Math.max(MIN_CHAT_WIDTH, chatWidth))
+  fitChatWidth(ytMax)
+  chatWidth = Math.max(MIN_CHAT_WIDTH, chatWidth)
   secondary.style.setProperty('width', `${chatWidth}px`, 'important')
   secondary.style.setProperty('min-width', `${chatWidth}px`, 'important')
   secondary.style.setProperty('max-width', `${chatWidth}px`, 'important')
@@ -77520,7 +77572,14 @@ function setupTwitchSideNavObserver() {
   }
   if (!_twitchSideNavWinHooked) {
     _twitchSideNavWinHooked = true
-    window.addEventListener('resize', () => updateTwitchSideNavWidth(), { passive: true, signal: mcSignal })
+    window.addEventListener(
+      'resize',
+      () => {
+        updateTwitchSideNavWidth()
+        scheduleTwitchChatRefit()
+      },
+      { passive: true, signal: mcSignal },
+    )
   }
   updateTwitchSideNavWidth()
 }
@@ -83016,6 +83075,30 @@ function updateTwitchSideNavWidth() {
       applyPlatformPositionOverrides()
     } catch (_) {}
   }
+}
+
+// Page zoom and window resizes change how wide the chat may be. applyChatWidth
+// re-fits it (and gives back a width an earlier, narrower viewport took); push
+// the result to everything that reads chatWidth.
+let _twitchChatRefitTimer = null
+function scheduleTwitchChatRefit() {
+  if (hostPlatform !== 'twitch') return
+  if (_twitchChatRefitTimer) cleanup.clearTimeout(_twitchChatRefitTimer)
+  _twitchChatRefitTimer = cleanup.setTimeout(() => {
+    _twitchChatRefitTimer = null
+    const before = chatWidth
+    try {
+      applyChatWidth()
+    } catch (_) {}
+    if (chatWidth === before) return
+    setRootVar('--hs-chat-w', `${chatWidth}px`)
+    try {
+      positionChatResizeHandle()
+    } catch (_) {}
+    try {
+      _updateMcLayout()
+    } catch (_) {}
+  }, 80)
 }
 
 let _twitchTopNavObs = null

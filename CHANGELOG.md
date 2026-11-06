@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.120] — 2026-11-05
+
+### fixed
+- **live updates** — blocks, unblocks, deleted settings, whispers, plus, notifications read, bookmarks, mention rules and flair changed on heatsync.org or another device apply at once, no reload.
+
 ## [1.7.119] — 2026-11-05
 
 ### added

@@ -1342,8 +1342,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "pronoundb.org pronouns on the profile card + hover tooltip (twitch only)"
   },
-  "mc_settings_anon_chat": {
-    "message": "anonymous presence"
+  "mc_settings_anon_chat_twitch": {
+    "message": "anonymous presence on twitch"
   },
   "mc_settings_anon_chat_desc": {
     "message": "don't broadcast typing/presence signals to the platform"

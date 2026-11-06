@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "zájmena z pronoundb.org na profilové kartě + v tooltipu (jen twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "anonymní přítomnost"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: anonymní přítomnost"
   },
   "mc_settings_anon_chat_desc": {
     "message": "nevysílej platformě signály psaní/přítomnosti"

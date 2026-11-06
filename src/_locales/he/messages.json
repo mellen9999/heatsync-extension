@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "כינויי גוף מ-pronoundb.org בכרטיס הפרופיל + בטולטיפ במעבר עכבר (twitch בלבד)"
   },
-  "mc_settings_anon_chat": {
-    "message": "נוכחות אנונימית"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: נוכחות אנונימית"
   },
   "mc_settings_anon_chat_desc": {
     "message": "אל תשדר לפלטפורמה אותות הקלדה/נוכחות"

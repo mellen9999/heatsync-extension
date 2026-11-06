@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "資料卡和懸停提示中顯示 pronoundb.org 的代名詞（僅 twitch）"
   },
-  "mc_settings_anon_chat": {
-    "message": "匿名線上狀態"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: 匿名線上狀態"
   },
   "mc_settings_anon_chat_desc": {
     "message": "不向平台廣播輸入/在線訊號"

@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "pronombres de pronoundb.org en la tarjeta de perfil y el tooltip al pasar el cursor (solo twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "presencia anónima"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: presencia anónima"
   },
   "mc_settings_anon_chat_desc": {
     "message": "no envía señales de escritura/presencia a la plataforma"

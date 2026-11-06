@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "pronoundb.org-pronominit profiilikortissa + hover-vihjeessä (vain twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "anonyymi läsnäolo"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: anonyymi läsnäolo"
   },
   "mc_settings_anon_chat_desc": {
     "message": "älä lähetä kirjoitus-/läsnäolosignaaleja alustalle"

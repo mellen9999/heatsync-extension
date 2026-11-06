@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "pronomen från pronoundb.org på profilkortet + hover-tooltip (bara twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "anonym närvaro"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: anonym närvaro"
   },
   "mc_settings_anon_chat_desc": {
     "message": "skicka inte skriv- och närvarosignaler till plattformen"

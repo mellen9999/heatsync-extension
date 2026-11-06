@@ -64,6 +64,8 @@ import { namePaintsOn } from './utils.js'
 //   noReset    excluded from resetSettingsToDefaults (server-coupled prefs)
 //   reloadApply  value fully applies only after a page reload — renderer
 //              shows a [reload] chip when current differs from boot
+//   hosts      ['twitch'|'kick'|'youtube'] — the sites the row affects; the
+//              settings page shows it only there (absent = every site)
 //   cw         {stateKey, serverBody, noun} — per-viewer content-warning
 //              filter: local bool + server PATCH /api/user/settings with
 //              rollback; main.js derives CW_CATS from these
@@ -114,6 +116,7 @@ import { namePaintsOn } from './utils.js'
  * @property {boolean} [noReset]
  * @property {boolean} [reloadApply]
  * @property {number} [displayScale]
+ * @property {('twitch'|'kick'|'youtube')[]} [hosts] sites the row affects
  * @property {{stateKey:string,serverBody:string,noun:string}} [cw]
  */
 
@@ -446,6 +449,7 @@ const SETTINGS = [
   },
   {
     key: 'ytShowSuggestions',
+    hosts: ['youtube'],
     type: 'bool',
     default: false,
     scope: 'sync',
@@ -460,6 +464,7 @@ const SETTINGS = [
   },
   {
     key: 'ytChatOnNonLive',
+    hosts: ['youtube'],
     type: 'bool',
     default: false,
     // default is OFF: panel shows only on a page's own live stream (or a
@@ -951,6 +956,8 @@ const SETTINGS = [
   // ── chat / privacy ────────────────────────────────────────────────────
   {
     key: 'anonChat',
+    // twitch's gql typing/presence is the only signal it suppresses
+    hosts: ['twitch'],
     basic: true,
     type: 'bool',
     default: false,
@@ -958,7 +965,7 @@ const SETTINGS = [
     category: 'chat',
     section: 'privacy',
     sectionKey: 'welcome_privacy',
-    labelKey: 'mc_settings_anon_chat',
+    labelKey: 'mc_settings_anon_chat_twitch',
     tipKey: 'mc_settings_anon_chat_desc',
     control: 'pill',
   },
@@ -2057,6 +2064,20 @@ export function resolveOptions(def, get) {
   return /** @type {SettingOption[]} */ (def && def.options) || []
 }
 
+const SETTING_HOSTS = ['twitch', 'kick', 'youtube']
+
+/**
+ * Does this row belong on the current site? `host` is the overlay's
+ * hostPlatform ('twitch' | 'kick' | 'yt'); unknown/absent shows everything.
+ * @param {SettingDef} def
+ * @param {string} [host]
+ * @returns {boolean}
+ */
+function settingShowsOnHost(def, host) {
+  if (!def || !def.hosts || !host) return true
+  return def.hosts.includes(host === 'yt' ? 'youtube' : host)
+}
+
 function validateSettingValue(def, v) {
   if (!def) return false
   switch (def.type) {
@@ -2212,6 +2233,9 @@ function lintSettings(syncBlocklist) {
     if (def.cw && (!def.cw.stateKey || !def.cw.serverBody || !def.cw.noun)) {
       problems.push(`cw sub-shape incomplete: ${def.key}`)
     }
+    if (def.hosts && (!def.hosts.length || !def.hosts.every((h) => SETTING_HOSTS.includes(h)))) {
+      problems.push(`bad hosts: ${def.key}`)
+    }
     if (def.dependsOn) {
       const depKey = def.dependsOn.key
       if (!SETTINGS.some((d) => d.key === depKey)) problems.push(`dependsOn unknown key: ${def.key}`)
@@ -2252,7 +2276,14 @@ function lintSettings(syncBlocklist) {
 
 // Global export (IIFE bundle path — mirrors utils.js)
 if (typeof window !== 'undefined') {
-  window.heatsyncSettingsSchema = { SETTINGS, SETTINGS_PRESETS, validateSettingValue, coerceSettingValue, lintSettings }
+  window.heatsyncSettingsSchema = {
+    SETTINGS,
+    SETTINGS_PRESETS,
+    validateSettingValue,
+    coerceSettingValue,
+    lintSettings,
+    settingShowsOnHost,
+  }
 }
 
 const SUBSYSTEMS_ALWAYS_ON = [
@@ -2266,4 +2297,12 @@ const SUBSYSTEMS_ALWAYS_ON = [
   'automod-queue',
 ]
 
-export { coerceSettingValue, lintSettings, SETTINGS, SETTINGS_PRESETS, SUBSYSTEMS_ALWAYS_ON, validateSettingValue }
+export {
+  coerceSettingValue,
+  lintSettings,
+  SETTINGS,
+  SETTINGS_PRESETS,
+  SUBSYSTEMS_ALWAYS_ON,
+  settingShowsOnHost,
+  validateSettingValue,
+}

@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "местоимения от pronoundb.org на профилната карта + в tooltip при посочване (само twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "анонимно присъствие"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: анонимно присъствие"
   },
   "mc_settings_anon_chat_desc": {
     "message": "не изпраща сигнали за писане/присъствие към платформата"

@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "займенники з pronoundb.org на картці профілю й у підказці при наведенні (лише twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "анонімна присутність"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: анонімна присутність"
   },
   "mc_settings_anon_chat_desc": {
     "message": "не передавати платформі сигнали набору/присутності"

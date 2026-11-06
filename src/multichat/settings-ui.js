@@ -135,6 +135,12 @@ function _setLabelSpan(def, extraHtml) {
   return `<span class="hs-mc-setting-label"${tipAttr}>${extraHtml || ''}${escapeHtml(_setLabel(def))}</span>`
 }
 
+// Is the row shown at all? Only on the sites it affects, and only while the
+// setting it depends on allows it.
+function _rowApplies(def) {
+  return settingShowsOnHost(def, typeof hostPlatform !== 'undefined' ? hostPlatform : undefined) && _depSatisfied(def)
+}
+
 function _depSatisfied(def) {
   if (!def.dependsOn) return true
   var v = getSetting(def.dependsOn.key)
@@ -437,7 +443,7 @@ function _regSections(cat, only) {
   var sections = []
   var byTitle = new Map()
   for (const def of SETTINGS) {
-    if (def.category !== cat || !_depSatisfied(def)) continue
+    if (def.category !== cat || !_rowApplies(def)) continue
     // Basic view: only the day-one rows. Search always searches EVERYTHING
     // (_renderSearchResults has its own path) — hiding a setting from a
     // search for its own name would be the bad kind of simple.
@@ -490,7 +496,7 @@ function _renderSearchResults() {
   var total = 0
   var count = 0
   for (const def of SETTINGS) {
-    if (!_depSatisfied(def)) continue
+    if (!_rowApplies(def)) continue
     var rows = _rowsForDef(def)
     total += rows.length
     var matched = rows.filter((r) => _rowMatches(r.hay, tokens))
@@ -1006,7 +1012,7 @@ function _renderPageDefaultsRow(cat) {
 // hidden and where it went, every pane, every time.
 function _basicHint(cat) {
   if (_setShowAll) return ''
-  var hidden = SETTINGS.filter((d) => d.category === cat && !d.basic && _depSatisfied(d)).length
+  var hidden = SETTINGS.filter((d) => d.category === cat && !d.basic && _rowApplies(d)).length
   if (!hidden) return ''
   return (
     '<div class="hs-mc-set-keyhint" data-set-scope-hint="1">' +

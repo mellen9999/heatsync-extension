@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "प्रोफ़ाइल कार्ड + होवर टूलटिप में pronoundb.org प्रोनाउन (सिर्फ़ twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "गुप्त उपस्थिति"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: गुप्त उपस्थिति"
   },
   "mc_settings_anon_chat_desc": {
     "message": "प्लेटफ़ॉर्म को टाइपिंग/उपस्थिति के संकेत मत भेजो"

@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "mga panghalip mula sa pronoundb.org sa profile card + hover tooltip (twitch lang)"
   },
-  "mc_settings_anon_chat": {
-    "message": "anonymous na presensya"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: anonymous na presensya"
   },
   "mc_settings_anon_chat_desc": {
     "message": "huwag magpadala ng typing/presence signal sa platform"

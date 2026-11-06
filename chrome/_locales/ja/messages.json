@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "プロフィールカードとホバーのツールチップに pronoundb.org の代名詞を表示 (twitch のみ)"
   },
-  "mc_settings_anon_chat": {
-    "message": "匿名プレゼンス"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: 匿名プレゼンス"
   },
   "mc_settings_anon_chat_desc": {
     "message": "入力中/プレゼンスの信号をプラットフォームに送らない"

@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "kata ganti dari pronoundb.org di kartu profil + tooltip hover (hanya twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "kehadiran anonim"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: kehadiran anonim"
   },
   "mc_settings_anon_chat_desc": {
     "message": "jangan kirim sinyal mengetik/kehadiran ke platform"

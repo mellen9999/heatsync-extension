@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "สรรพนามจาก pronoundb.org บนการ์ดโปรไฟล์ + tooltip ตอนชี้ (เฉพาะ twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "การมีอยู่แบบนิรนาม"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: การมีอยู่แบบนิรนาม"
   },
   "mc_settings_anon_chat_desc": {
     "message": "ไม่ส่งสัญญาณกำลังพิมพ์/ออนไลน์ไปยังแพลตฟอร์ม"

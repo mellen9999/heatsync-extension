@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "pronoms pronoundb.org sur la carte de profil + l'infobulle au survol (twitch seulement)"
   },
-  "mc_settings_anon_chat": {
-    "message": "présence anonyme"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: présence anonyme"
   },
   "mc_settings_anon_chat_desc": {
     "message": "n'envoie pas de signaux de saisie/présence à la plateforme"

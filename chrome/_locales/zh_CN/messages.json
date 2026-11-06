@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "资料卡和悬停提示中显示 pronoundb.org 的代词（仅 twitch）"
   },
-  "mc_settings_anon_chat": {
-    "message": "匿名在线状态"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: 匿名在线状态"
   },
   "mc_settings_anon_chat_desc": {
     "message": "不向平台广播输入/在线信号"

@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "đại từ từ pronoundb.org trên thẻ hồ sơ và tooltip khi rê chuột (chỉ twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "ẩn hiện diện"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: ẩn hiện diện"
   },
   "mc_settings_anon_chat_desc": {
     "message": "không gửi tín hiệu đang gõ/hiện diện lên nền tảng"

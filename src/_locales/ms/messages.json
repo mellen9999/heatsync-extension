@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "kata ganti nama pronoundb.org pada kad profil + tooltip hover (twitch sahaja)"
   },
-  "mc_settings_anon_chat": {
-    "message": "kehadiran tanpa nama"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: kehadiran tanpa nama"
   },
   "mc_settings_anon_chat_desc": {
     "message": "jangan siarkan isyarat menaip/kehadiran kepada platform"

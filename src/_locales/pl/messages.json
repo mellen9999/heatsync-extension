@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "zaimki z pronoundb.org na karcie profilu + w tooltipie (tylko twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "anonimowa obecność"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: anonimowa obecność"
   },
   "mc_settings_anon_chat_desc": {
     "message": "nie wysyłaj do platformy sygnałów pisania/obecności"

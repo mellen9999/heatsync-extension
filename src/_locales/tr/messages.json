@@ -1341,8 +1341,8 @@
   "mc_settings_show_pronouns_desc": {
     "message": "profil kartında + üzerine gelince çıkan ipucunda pronoundb.org zamirleri (sadece twitch)"
   },
-  "mc_settings_anon_chat": {
-    "message": "anonim varlık"
+  "mc_settings_anon_chat_twitch": {
+    "message": "twitch: anonim varlık"
   },
   "mc_settings_anon_chat_desc": {
     "message": "platforma yazıyor/çevrimiçi sinyalleri yollama"

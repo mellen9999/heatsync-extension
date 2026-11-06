@@ -1319,15 +1319,6 @@ function isGhostChannelKey(key) {
   return !ch || RESERVED_PATHS.has(ch)
 }
 
-// Get the most recently set channel owner from any tab
-function _getActiveChannelOwner() {
-  let latest = null
-  for (const entry of tabChannels.values()) {
-    if (entry.channelOwner) latest = entry.channelOwner
-  }
-  return latest
-}
-
 // Get the channel string for a specific tab
 function getTabChannel(tabId) {
   return tabChannels.get(tabId)?.channel || null
@@ -2498,7 +2489,8 @@ const LIVE_NOTIFY_THROTTLE_MS = 30 * 60 * 1000 // 30 min between notifications f
 const LIVE_FETCH_TIMEOUT_MS = 8000
 let _liveFollowedCount = 0
 let _liveStatusInitialized = false
-let _liveStatusState = { lastSeenLive: {}, lastNotifiedAt: {} }
+// keyed per leg (`platform:name`); peers: leg -> its card's legs
+let _liveStatusState = { lastSeenLive: {}, lastNotifiedAt: {}, peers: {} }
 const _liveNotificationUrls = new Map() // notification id → url for click handler
 let _livePollInflight = false
 
@@ -2509,6 +2501,7 @@ async function loadLiveStatusState() {
       _liveStatusState = {
         lastSeenLive: data[LIVE_STATE_KEY].lastSeenLive || {},
         lastNotifiedAt: data[LIVE_STATE_KEY].lastNotifiedAt || {},
+        peers: data[LIVE_STATE_KEY].peers || {},
       }
       _liveStatusInitialized = !!data[LIVE_STATE_KEY].initialized
     }
@@ -2532,6 +2525,71 @@ async function saveLiveStatusState() {
 // + future "next channel" suggestion). Refreshed on every poll cycle.
 let _liveFollowedSnapshot = [] // [{username, platform, viewers, displayName, profileImageUrl, key, profile}]
 
+const LIVE_PLATFORMS = ['twitch', 'kick', 'youtube']
+
+// A card's live legs as `platform:name`: primary first (its biggest leg, which
+// changes hands), then platformUsernames and secondaryLegs. One card = one person.
+function liveLegKeys(card) {
+  const keys = []
+  const add = (platform, name) => {
+    const p = String(platform || '').toLowerCase()
+    if (!LIVE_PLATFORMS.includes(p) || typeof name !== 'string' || !name || name.length > 100) return
+    const k = `${p}:${name.toLowerCase()}`
+    if (!keys.includes(k) && keys.length < 8) keys.push(k)
+  }
+  add(card?.platform, card?.username)
+  const named = card?.platformUsernames
+  if (named && typeof named === 'object') for (const p of LIVE_PLATFORMS) add(p, named[p])
+  if (Array.isArray(card?.secondaryLegs)) for (const l of card.secondaryLegs.slice(0, 8)) add(l?.platform, l?.username)
+  return keys
+}
+
+// Keys for the same person: the same name on every platform (the server merges
+// those) plus the legs of its last-polled card (zackrawrr / asmongold).
+function samePersonKeys(key, peers) {
+  const name = key.slice(key.indexOf(':') + 1)
+  const out = new Set([key])
+  for (const p of LIVE_PLATFORMS) out.add(`${p}:${name}`)
+  const legs = peers?.[key]
+  if (Array.isArray(legs)) for (const k of legs) if (typeof k === 'string') out.add(k)
+  return [...out]
+}
+
+// One poll's go-lives, per card: news only if none of its legs was live last
+// poll or announced inside the throttle (a new leg or a primary flip is not).
+function liveTransitions(cards, state, now, firstPoll) {
+  const transitions = []
+  const seen = new Set()
+  const peers = {}
+  for (const s of cards) {
+    const username = String(s?.username || '').toLowerCase()
+    const platform = String(s?.platform || '').toLowerCase()
+    const legs = liveLegKeys(s)
+    if (legs[0] !== `${platform}:${username}`) continue
+    const wasLive = legs.some((k) => state.lastSeenLive[k])
+    const person = [...new Set(legs.flatMap((k) => samePersonKeys(k, state.peers)))]
+    const recent = person.some((k) => now - (state.lastNotifiedAt[k] || 0) <= LIVE_NOTIFY_THROTTLE_MS)
+    for (const k of legs) {
+      seen.add(k)
+      state.lastSeenLive[k] = true
+      peers[k] = legs
+    }
+    if (firstPoll || wasLive || recent) continue
+    for (const k of person) state.lastNotifiedAt[k] = now
+    transitions.push({ username, platform, stream: s })
+  }
+  state.peers = peers
+  return { transitions, seen }
+}
+
+// A pushed go-live: is its person live elsewhere already, does it notify.
+function pushedGoLive(liveKey, state, now) {
+  const person = samePersonKeys(liveKey, state.peers)
+  const peerLive = person.some((k) => k !== liveKey && state.lastSeenLive[k])
+  const recent = person.some((k) => now - (state.lastNotifiedAt[k] || 0) <= LIVE_NOTIFY_THROTTLE_MS)
+  return { person, peerLive, notify: !peerLive && !recent }
+}
+
 async function pollFollowedLive() {
   if (_livePollInflight) return
   _livePollInflight = true
@@ -2549,9 +2607,6 @@ async function pollFollowedLive() {
     const wasFirstPoll = !_liveStatusInitialized
 
     // ONE call to /api/live/following replaces the per-user /api/profile loop.
-    // Server returns one row per (user, platform) live combination so a creator
-    // streaming on twitch+kick simultaneously appears twice — that's correct,
-    // we want both rows for accurate platform-aware notifications.
     let streams = []
     try {
       const resp = await fetchWithTimeout(
@@ -2570,8 +2625,8 @@ async function pollFollowedLive() {
       return
     }
 
-    const transitions = [] // { username, platform, stream }
-    const seen = new Set()
+    if (!Array.isArray(streams)) streams = []
+    const { transitions, seen } = liveTransitions(streams, _liveStatusState, Date.now(), wasFirstPoll)
     const snapshot = []
 
     for (const s of streams) {
@@ -2579,10 +2634,6 @@ async function pollFollowedLive() {
       const platform = String(s?.platform || '').toLowerCase()
       if (!username || !platform) continue
       const key = `${platform}:${username}`
-      seen.add(key)
-      const wasLive = !!_liveStatusState.lastSeenLive?.[key]
-      _liveStatusState.lastSeenLive[key] = true
-
       const viewers = Number(s.viewerCount || s.viewer_count || 0) || 0
       snapshot.push({
         username,
@@ -2593,15 +2644,6 @@ async function pollFollowedLive() {
         key,
         stream: s,
       })
-
-      // Off→on transition: fire notification (skipping cold-start)
-      if (!wasFirstPoll && !wasLive) {
-        const lastNotif = _liveStatusState.lastNotifiedAt?.[key] || 0
-        if (Date.now() - lastNotif > LIVE_NOTIFY_THROTTLE_MS) {
-          transitions.push({ username, platform, stream: s })
-          _liveStatusState.lastNotifiedAt[key] = Date.now()
-        }
-      }
     }
 
     // Anything in lastSeenLive but not in current snapshot: stream ended or
@@ -2715,8 +2757,8 @@ function removeLiveSnapshotEntry(platform, username) {
 }
 
 // Handle a WS follow:stream:* event: 60s in-mem dedup + persistent lastSeenLive
-// gate, then cache + broadcast. This is the FAST PATH for Twitch (the only
-// platform the server currently pushes stream events for) — it drives the
+// gate, then cache + broadcast. This is the FAST PATH for Twitch and Kick (the
+// platforms the server pushes stream events for) — it drives the
 // same badge/snapshot/notification pipeline pollFollowedLive does, so the
 // 2-min poll alarm only needs to be a reconcile backstop. The in-mem dedup
 // is cleared on SW eviction, so we additionally suppress online events for
@@ -2737,9 +2779,14 @@ function handleFollowStreamEvent(msg) {
   const platform = String(msg.platform || '').toLowerCase()
   const channel = String(msg.channel || '').toLowerCase()
   const liveKey = `${platform}:${channel}`
+  // a simulcast's second leg: no notification, fresh:false drops the page line
+  let peerLive = false
   if (msg.type === 'follow:stream:online') {
     if (_liveStatusState.lastSeenLive?.[liveKey]) return
     if (!_liveStatusState.lastSeenLive) _liveStatusState.lastSeenLive = {}
+    if (!_liveStatusState.lastNotifiedAt) _liveStatusState.lastNotifiedAt = {}
+    const push = pushedGoLive(liveKey, _liveStatusState, now)
+    peerLive = push.peerLive
     _liveStatusState.lastSeenLive[liveKey] = true
     saveLiveStatusState().catch(() => {})
 
@@ -2758,15 +2805,11 @@ function handleFollowStreamEvent(msg) {
     // before persisted state has loaded (cold SW boot) — otherwise a burst
     // of "already live" pushes on first connect would fire a notification
     // storm for everything, same guard as pollFollowedLive's wasFirstPoll.
-    if (_liveStatusInitialized) {
-      const lastNotif = _liveStatusState.lastNotifiedAt?.[liveKey] || 0
-      if (now - lastNotif > LIVE_NOTIFY_THROTTLE_MS) {
-        if (!_liveStatusState.lastNotifiedAt) _liveStatusState.lastNotifiedAt = {}
-        _liveStatusState.lastNotifiedAt[liveKey] = now
-        fireLiveNotificationFromStream({ title: msg.title || '', game: msg.game || '' }, channel, platform).catch(
-          () => {},
-        )
-      }
+    if (_liveStatusInitialized && push.notify) {
+      for (const k of push.person) _liveStatusState.lastNotifiedAt[k] = now
+      fireLiveNotificationFromStream({ title: msg.title || '', game: msg.game || '' }, channel, platform).catch(
+        () => {},
+      )
     }
   } else if (msg.type === 'follow:stream:offline') {
     if (_liveStatusState.lastSeenLive?.[liveKey]) {
@@ -2808,7 +2851,7 @@ function handleFollowStreamEvent(msg) {
     // know the channel (the early return above): a real off->on transition.
     // The page cannot work that out itself — the snapshot broadcast just above
     // already put the channel in its live set.
-    fresh: msg.type === 'follow:stream:online',
+    fresh: msg.type === 'follow:stream:online' && !peerLive,
   })
 }
 
@@ -2829,10 +2872,14 @@ function handleFollowLiveSnapshot(msg) {
     const username = String(s?.username || '').toLowerCase()
     const platform = String(s?.platform || '').toLowerCase()
     if (!username || !platform) continue
-    const key = `${platform}:${username}`
-    if (!_liveStatusState.lastSeenLive[key]) {
-      _liveStatusState.lastSeenLive[key] = true
-      changed = true
+    const legs = liveLegKeys(s)
+    for (const key of legs) {
+      if (!_liveStatusState.peers) _liveStatusState.peers = {}
+      _liveStatusState.peers[key] = legs
+      if (!_liveStatusState.lastSeenLive[key]) {
+        _liveStatusState.lastSeenLive[key] = true
+        changed = true
+      }
     }
     upsertLiveSnapshotEntry({
       username,
@@ -14657,7 +14704,6 @@ async function bgYtReplayToTab(tabId, channelId) {
 // primary delivers again. One poller at a time (YT_TAP_MAX_POLLERS) — this is
 // a last-resort backstop, not a third standing transport.
 const YT_TAP_SILENCE_MS = 300000 // 5 min — after the 180s watchdog escalation exhausts itself
-const YT_TAP_CHECK_MS = 30000 // rides the keepalive alarm (30s is chrome.alarms' minimum period)
 const YT_TAP_POLL_MS = 6000
 const YT_TAP_FETCH_TIMEOUT_MS = 10000
 const YT_TAP_MAX_ERRORS = 5

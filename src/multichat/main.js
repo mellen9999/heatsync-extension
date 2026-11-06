@@ -1692,8 +1692,13 @@
           markAllHsCosmeticsStale()
           return
         }
+        if (msg?.type === 'bookmark_changed') return void feedOnBookmarkPush(msg)
+        if (msg?.type === 'mention_rules_changed') return void mrOnPush()
         if (msg?.type !== 'cosmetic_changed') return
         invalidateHsCosmetics(msg.ids)
+        // the same push covers flair, badges, display name and avatar
+        hsMarksRefreshIds(msg.ids)
+        pcRefreshCardFor(msg.ids)
       })
     } catch {}
   }

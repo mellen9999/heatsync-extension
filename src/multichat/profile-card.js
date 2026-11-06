@@ -413,6 +413,42 @@ function pcMountDestRow(items) {
   hsPaneMountRow(items)
 }
 
+// A cosmetic push (flair, badges, display name, avatar) named these account ids:
+// drop the card payloads held for them, and re-read the open card if it is one of
+// them. Merged over the card's data so kick/yt enrichment it carries survives.
+function pcRefreshCardFor(ids) {
+  const want = new Set((Array.isArray(ids) ? ids.slice(0, 200) : []).map(String))
+  if (!want.size) return 0
+  let dropped = 0
+  if (typeof _cardCache !== 'undefined') {
+    for (const [k, v] of _cardCache) {
+      if (v?.payload?.profile?.id != null && want.has(String(v.payload.profile.id))) {
+        _cardCache.delete(k)
+        dropped++
+      }
+    }
+  }
+  if (typeof _profileCache !== 'undefined') {
+    for (const [k, v] of _profileCache) {
+      if (v?.profile?.id != null && want.has(String(v.profile.id))) {
+        _profileCache.delete(k)
+        dropped++
+      }
+    }
+  }
+  const open = activeProfileCard
+  if (open?.data && !open.data.error && open.data.id != null && want.has(String(open.data.id))) {
+    fetchCardPayload(open.platform || 'twitch', open.username, open.followageChannel)
+      .then((p) => {
+        if (activeProfileCard !== open || !p?.profile) return
+        Object.assign(open.data, p.profile)
+        renderProfileCardView()
+      })
+      .catch(() => {})
+  }
+  return dropped
+}
+
 function closeProfileCard() {
   if (!activeProfileCard) return
   const { floating, openerEl } = activeProfileCard

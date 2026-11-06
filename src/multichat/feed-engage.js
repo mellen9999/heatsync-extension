@@ -25,6 +25,15 @@ function feedBookmarkSet(id, on) {
   while (feedBookmarks.size > FEED_BOOKMARKS_MAX) feedBookmarks.delete(feedBookmarks.keys().next().value)
 }
 
+// A bookmark flipped on another client (the `bookmarks:changed` push). The id is
+// hostile input: only a plain base36 post id and a real boolean are taken.
+function feedOnBookmarkPush(msg) {
+  const id = msg?.id
+  if (typeof id !== 'string' || !/^[0-9a-z]{1,12}$/i.test(id) || typeof msg.on !== 'boolean') return false
+  feedBookmarkSet(id, msg.on)
+  return true
+}
+
 function feedVoteOptimistic(m) {
   const snap = { user_vote: m.user_vote ?? null, vote_score: Number(m.vote_score) || 0 }
   const on = snap.user_vote !== 1

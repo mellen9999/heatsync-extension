@@ -102,7 +102,6 @@ const NOT_FOR_EXTENSION = new Map([
   ['dm:sent', 'site DM compose echo'],
   ['presence:count', 'site presence counter'],
   ['emote:inventory', 'site inventory page; the ext syncs over http'],
-  ['whisper:new', 'the ext receives whispers directly from twitch eventsub'],
   // protocol plumbing, not features
   ['batch', 'declared in the union but never emitted — no send site exists'],
   ['pong', 'keepalive, consumed by the socket layer'],

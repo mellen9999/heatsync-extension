@@ -6270,6 +6270,85 @@ function persistBlockedUsers() {
   browser.storage.local.set({ blocked_users: Array.from(blockedUsers) }).catch(() => {})
 }
 
+// Pure frame validators for the live-update pushes (every field is hostile):
+// each returns a clean value or an empty/null result, never throws.
+
+// user:blocked / user:unblocked carry the other account's id, nothing else
+function blockFrameId(msg) {
+  const id = String(msg?.blocked_user_id ?? '')
+  return /^[\w-]{1,64}$/.test(id) ? id : ''
+}
+
+// notifications:read -> the unread count to show, or -1 when the field is junk
+function unreadFromFrame(msg) {
+  const n = msg?.unread
+  return Number.isFinite(n) ? Math.min(Math.max(Math.floor(n), 0), 99999) : -1
+}
+
+// bookmarks:changed -> { id, on } or null; ids are the feed's base36 post ids
+function bookmarkFrame(msg) {
+  return typeof msg?.id === 'string' && /^[0-9a-z]{1,12}$/i.test(msg.id) && typeof msg.on === 'boolean'
+    ? { id: msg.id, on: msg.on }
+    : null
+}
+
+// settings:delete -> the ui_settings key to drop ('' = none); the sanitizer
+// that follows the delete drops proto/numeric keys like it does for a patch
+function settingsDeleteKey(msg) {
+  const k = msg?.key
+  return typeof k === 'string' && k.length <= 64 ? k : ''
+}
+
+// whisper:new -> the dm_new twitch shape the overlay already dedups, or null
+function shapeWhisperFrame(f) {
+  const s = (k, n) =>
+    String(f?.[k] ?? '')
+      .replace(/[\u0000-\u001f\u007f]/g, ' ')
+      .slice(0, n)
+  const at = new Date(s('created_at', 40)).getTime()
+  const out = {
+    platform: 'twitch',
+    id: s('id', 40),
+    external_message_id: s('external_message_id', 80),
+    from_twitch_id: s('from_twitch_id', 20),
+    from_twitch_login: s('from_twitch_login', 40),
+    from_display_name: s('from_display_name', 60),
+    from_color: s('from_color', 7),
+    content: s('content', 2000).trim(),
+    created_at: Number.isFinite(at) ? new Date(at).toISOString() : '',
+  }
+  return out.content && out.from_twitch_login ? out : null
+}
+
+// Plus changed: re-read the account, then have the overlay re-resolve your own
+// cosmetics (the ids your own paint lookups use) so plus-only ones appear or go.
+let _plusRefreshTimer = null
+function refreshPlusState() {
+  clearTimeout(_plusRefreshTimer)
+  _plusRefreshTimer = setTimeout(async () => {
+    await fetchUserInfo()
+    const { user_info: me } = await browser.storage.local.get('user_info')
+    const ids = [
+      me?.id,
+      me?.twitch_id,
+      me?.kick_id && `kick_${me.kick_id}`,
+      me?.youtube_channel_id && `yt_${me.youtube_channel_id}`,
+    ]
+    const own = ids.filter(Boolean)
+    for (const id of own) _paintsCache.delete(id)
+    if (own.length) broadcastToTabs({ type: 'cosmetic_changed', ids: own })
+    broadcastToTabs({ type: 'account_changed' })
+  }, 500)
+}
+
+// Set the toolbar badge's notification count straight to n (server truth).
+function setUnreadNotifCount(n) {
+  if (n === unreadNotifCount) return
+  unreadNotifCount = n
+  browser.storage.session?.set({ unread_notif_count: n }).catch(() => {})
+  updateExtensionBadge()
+}
+
 // Fetch server-side mute list on first auth — merges with any locally-stored
 // mutes so cross-device mutes (set on heatsync.org) take effect immediately.
 // Gracefully no-ops if not logged in, server is unreachable, or returns 401.
@@ -6320,8 +6399,11 @@ async function fetchServerMutes() {
 // blocks so cross-device blocks (set on heatsync.org) take effect immediately.
 // Gracefully no-ops if not logged in, server is unreachable, or returns 401.
 let _serverBlocksFetched = false
-async function fetchServerBlocks() {
-  if (_serverBlocksFetched) return
+// heatsync account id -> blockedUsers key, learned from the server list, so a
+// user:unblocked push (which carries only the id) knows which entry to drop
+const blockedIdToKey = new Map()
+async function fetchServerBlocks(force = false) {
+  if (_serverBlocksFetched && !force) return
   _serverBlocksFetched = true
   try {
     const res = await fetch('https://heatsync.org/api/user/blocks', {
@@ -6341,11 +6423,9 @@ async function fetchServerBlocks() {
     if (!list) return
     let changed = false
     for (const entry of list) {
-      const u = (entry.username || '').toLowerCase()
-      if (!u) continue
-      const platform = entry.platform || null
-      const key = userKey(u, platform)
+      const key = userKey(entry.username, entry.platform || null)
       if (!key) continue
+      if (entry.id != null) blockedIdToKey.set(String(entry.id), key)
       if (!blockedUsers.has(key)) {
         blockedUsers.add(key)
         broadcastToTabs({ type: 'user_blocked', username: key })
@@ -6954,6 +7034,24 @@ function handleWSMessage(msg) {
         broadcastToTabs({ type: 'account_changed' }).catch(() => {})
         break
 
+      // blocked / unblocked on heatsync.org or another device. The frame has only
+      // the account id: a block re-reads the list (learns the name), an unblock
+      // drops the entry that id was learned under.
+      case 'user:blocked':
+        if (blockFrameId(msg)) fetchServerBlocks(true).catch(() => {})
+        break
+
+      case 'user:unblocked': {
+        const id = blockFrameId(msg)
+        const key = id ? blockedIdToKey.get(id) : ''
+        if (!key) break
+        blockedIdToKey.delete(id)
+        if (!blockedUsers.delete(key)) break
+        persistBlockedUsers()
+        broadcastToTabs({ type: 'user_unblocked', username: key })
+        break
+      }
+
       case 'server:shutdown':
         // Server is restarting and asking clients to spread reconnects across a
         // window so 10k+ extensions don't dogpile the freshly-restarted box.
@@ -7086,8 +7184,12 @@ function handleWSMessage(msg) {
         // then let content scripts repaint the rows already on screen.
         const changedIds = Array.isArray(msg.ids) ? msg.ids.filter((i) => typeof i === 'string') : []
         if (!changedIds.length) break
-        for (const id of changedIds) _paintsCache.delete(id)
-        broadcastToTabs({ type: 'cosmetic_changed', ids: changedIds })
+        // The same push now also covers flair, badges, display name and avatar:
+        // the overlay re-asks for those too (name marks + open profile card).
+        // Bounded: the frame is hostile and the list is only ever ids.
+        const bounded = changedIds.slice(0, 200).map((i) => i.slice(0, 80))
+        for (const id of bounded) _paintsCache.delete(id)
+        broadcastToTabs({ type: 'cosmetic_changed', ids: bounded })
         break
       }
 
@@ -7314,9 +7416,21 @@ function handleWSMessage(msg) {
         })
         break
 
+      // A twitch whisper the server received for you. The ext also hears it from
+      // eventsub; the overlay dedups on the external id, so this only fills the
+      // gap when that path is down (or the overlay is on a kick/yt tab).
+      case 'whisper:new': {
+        const data = shapeWhisperFrame(msg)
+        if (data) broadcastToTabs({ type: 'dm_new', data })
+        break
+      }
+
       case 'seen:update':
         // Cross-surface unread sync: another client (web, other ext) bumped a
         // tab's seen-at. Forward to all multichat tabs so they clear the dot.
+        // Mentions/inbox seen = the heatsync notifications were read: the
+        // toolbar badge clears with them, not at the next reconnect.
+        if (msg.surface === 'mentions' || msg.surface === 'inbox') setUnreadNotifCount(0)
         broadcastToTabs({
           type: 'seen_update',
           surface: msg.surface,
@@ -7327,6 +7441,30 @@ function handleWSMessage(msg) {
       case 'tabseen:update':
         // A channel tab was read on another client — clear its red state here.
         broadcastToTabs({ type: 'tabseen_update', tab: msg.tab, at: msg.at })
+        break
+
+      // follows changed on another client / the site: re-read the list now
+      case 'follows:changed':
+        fetchFollowedUsers().catch(() => {})
+        break
+
+      // notifications read elsewhere: the server says how many are still unread
+      case 'notifications:read': {
+        const n = unreadFromFrame(msg)
+        if (n >= 0) setUnreadNotifCount(n)
+        break
+      }
+
+      // a post was bookmarked / unbookmarked on another client
+      case 'bookmarks:changed': {
+        const b = bookmarkFrame(msg)
+        if (b) broadcastToTabs({ type: 'bookmark_changed', id: b.id, on: b.on })
+        break
+      }
+
+      // mention rules edited elsewhere: the settings editor reloads its list
+      case 'mention-rules:changed':
+        broadcastToTabs({ type: 'mention_rules_changed' })
         break
 
       case 'kick-chat-message':
@@ -7782,6 +7920,21 @@ function handleWSMessage(msg) {
         break
       }
 
+      // A setting was reset on another device. Same serialized RMW as the patch
+      // above; only ui_settings keys the sanitizer would keep can be named, so a
+      // hostile key can never reach any other storage key.
+      case 'settings:delete': {
+        const key = settingsDeleteKey(msg)
+        if (key) {
+          uiSettingsRmw((ui) => {
+            const next = { ...ui }
+            delete next[key]
+            return sanitizeUiSettings(next)
+          })
+        }
+        break
+      }
+
       // v1.6 cross-device sync for column-stored prefs (PATCH /api/user/settings).
       // Server broadcasts this to every WS-connected device for the user, so a
       // toggle flipped in tab A mirrors instantly in tab B / desktop 2 / phone,
@@ -7821,6 +7974,11 @@ function handleWSMessage(msg) {
           browser.storage.local.set({ viewer_show_hate: viewerShowHate }).catch(() => {})
           settingsChanged = true
         }
+        // Plus started, lapsed or was extended (billing sync): re-read the
+        // account so identity-derived state follows, and have the overlay drop
+        // the paints / plus tenure it holds for you so plus-only cosmetics
+        // appear or go away at once.
+        if (typeof msg.plus === 'boolean' || 'plus_expires_at' in msg) refreshPlusState()
         if (settingsChanged) {
           // Invalidate cross-user batch caches + refetch own inventory so the
           // chat repaints with the new filter immediately, not at the next

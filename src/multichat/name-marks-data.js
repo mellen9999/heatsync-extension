@@ -96,6 +96,24 @@ function hsMarksForgetSelf() {
   _hsmFlush()
 }
 
+/** a cosmetic push named these ids (flair set or cleared): every flair held under one is asked again, and a
+ * row whose answer changed repaints when it lands. ids this pane never held are ignored — a push reaches
+ * every open chat, and it must not turn into a fetch per chat. */
+function hsMarksRefreshIds(ids) {
+  const s = _hsmSets.flair
+  let n = 0
+  for (const raw of Array.isArray(ids) ? ids.slice(0, 200) : []) {
+    const id = String(raw)
+    const e = s.map.get(id)
+    if (!e) continue
+    e.at = 0
+    s.q.add(id)
+    n++
+  }
+  if (n) _hsmFlush()
+  return n
+}
+
 /** the server's heat push: new scores for logins we hold (a push never grows the cache) */
 function hsMarksOnHeatPush(updates) {
   if (!Array.isArray(updates)) return

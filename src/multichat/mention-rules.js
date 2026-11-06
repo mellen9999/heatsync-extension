@@ -280,6 +280,15 @@ async function mrLoad() {
   if (currentTab === 'settings') renderSettingsTab()
 }
 
+// The `mention-rules:changed` push: the list was edited on another client. Reload
+// it, unless it was never opened (it loads on open) or a rule is mid-edit here
+// (saving that rule reloads the list anyway, and a re-render must not eat it).
+function mrOnPush() {
+  if (!hsAuthToken || !mrState.loaded || mrState.loading || mrState.draft || mrState.editId !== null) return false
+  mrLoad()
+  return true
+}
+
 // Pull what's typed in the form back into state, so a re-render (status, edit,
 // chip) never eats a half-written rule.
 function mrReadForm(form) {

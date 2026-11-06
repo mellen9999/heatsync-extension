@@ -15431,7 +15431,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '66e85e1929aa' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '98df0776a7d0' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -50513,6 +50513,15 @@ function feedBookmarkSet(id, on) {
   while (feedBookmarks.size > FEED_BOOKMARKS_MAX) feedBookmarks.delete(feedBookmarks.keys().next().value)
 }
 
+// A bookmark flipped on another client (the `bookmarks:changed` push). The id is
+// hostile input: only a plain base36 post id and a real boolean are taken.
+function feedOnBookmarkPush(msg) {
+  const id = msg?.id
+  if (typeof id !== 'string' || !/^[0-9a-z]{1,12}$/i.test(id) || typeof msg.on !== 'boolean') return false
+  feedBookmarkSet(id, msg.on)
+  return true
+}
+
 function feedVoteOptimistic(m) {
   const snap = { user_vote: m.user_vote ?? null, vote_score: Number(m.vote_score) || 0 }
   const on = snap.user_vote !== 1
@@ -66707,6 +66716,42 @@ function pcMountDestRow(items) {
   hsPaneMountRow(items)
 }
 
+// A cosmetic push (flair, badges, display name, avatar) named these account ids:
+// drop the card payloads held for them, and re-read the open card if it is one of
+// them. Merged over the card's data so kick/yt enrichment it carries survives.
+function pcRefreshCardFor(ids) {
+  const want = new Set((Array.isArray(ids) ? ids.slice(0, 200) : []).map(String))
+  if (!want.size) return 0
+  let dropped = 0
+  if (typeof _cardCache !== 'undefined') {
+    for (const [k, v] of _cardCache) {
+      if (v?.payload?.profile?.id != null && want.has(String(v.payload.profile.id))) {
+        _cardCache.delete(k)
+        dropped++
+      }
+    }
+  }
+  if (typeof _profileCache !== 'undefined') {
+    for (const [k, v] of _profileCache) {
+      if (v?.profile?.id != null && want.has(String(v.profile.id))) {
+        _profileCache.delete(k)
+        dropped++
+      }
+    }
+  }
+  const open = activeProfileCard
+  if (open?.data && !open.data.error && open.data.id != null && want.has(String(open.data.id))) {
+    fetchCardPayload(open.platform || 'twitch', open.username, open.followageChannel)
+      .then((p) => {
+        if (activeProfileCard !== open || !p?.profile) return
+        Object.assign(open.data, p.profile)
+        renderProfileCardView()
+      })
+      .catch(() => {})
+  }
+  return dropped
+}
+
 function closeProfileCard() {
   if (!activeProfileCard) return
   const { floating, openerEl } = activeProfileCard
@@ -72503,6 +72548,24 @@ function hsMarksForgetSelf() {
     s.q.add(k)
   }
   _hsmFlush()
+}
+
+/** a cosmetic push named these ids (flair set or cleared): every flair held under one is asked again, and a
+ * row whose answer changed repaints when it lands. ids this pane never held are ignored — a push reaches
+ * every open chat, and it must not turn into a fetch per chat. */
+function hsMarksRefreshIds(ids) {
+  const s = _hsmSets.flair
+  let n = 0
+  for (const raw of Array.isArray(ids) ? ids.slice(0, 200) : []) {
+    const id = String(raw)
+    const e = s.map.get(id)
+    if (!e) continue
+    e.at = 0
+    s.q.add(id)
+    n++
+  }
+  if (n) _hsmFlush()
+  return n
 }
 
 /** the server's heat push: new scores for logins we hold (a push never grows the cache) */
@@ -80927,6 +80990,15 @@ async function mrLoad() {
   if (currentTab === 'settings') renderSettingsTab()
 }
 
+// The `mention-rules:changed` push: the list was edited on another client. Reload
+// it, unless it was never opened (it loads on open) or a rule is mid-edit here
+// (saving that rule reloads the list anyway, and a re-render must not eat it).
+function mrOnPush() {
+  if (!hsAuthToken || !mrState.loaded || mrState.loading || mrState.draft || mrState.editId !== null) return false
+  mrLoad()
+  return true
+}
+
 // Pull what's typed in the form back into state, so a re-render (status, edit,
 // chip) never eats a half-written rule.
 function mrReadForm(form) {
@@ -85650,8 +85722,13 @@ const STORAGE_KEY = 'heatsync_multichat'
           markAllHsCosmeticsStale()
           return
         }
+        if (msg?.type === 'bookmark_changed') return void feedOnBookmarkPush(msg)
+        if (msg?.type === 'mention_rules_changed') return void mrOnPush()
         if (msg?.type !== 'cosmetic_changed') return
         invalidateHsCosmetics(msg.ids)
+        // the same push covers flair, badges, display name and avatar
+        hsMarksRefreshIds(msg.ids)
+        pcRefreshCardFor(msg.ids)
       })
     } catch {}
   }

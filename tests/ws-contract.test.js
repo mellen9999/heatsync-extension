@@ -102,7 +102,10 @@ const NOT_FOR_EXTENSION = new Map([
   ['dm:sent', 'site DM compose echo'],
   ['presence:count', 'site presence counter'],
   ['emote:inventory', 'site inventory page; the ext syncs over http'],
-  ['site-settings:patch', "the site's own setting names; the ext gets its keys translated through settings-bridge as ui-state:update"],
+  [
+    'site-settings:patch',
+    "the site's own setting names; the ext gets its keys translated through settings-bridge as ui-state:update",
+  ],
   // protocol plumbing, not features
   ['batch', 'declared in the union but never emitted — no send site exists'],
   ['pong', 'keepalive, consumed by the socket layer'],

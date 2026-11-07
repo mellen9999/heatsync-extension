@@ -10641,7 +10641,8 @@
     const _msgsForMod = document.getElementById('hs-mc-messages')
     if (_msgsForMod && !_msgsForMod._hsModToolbarWired) wireModToolbarHover(_msgsForMod)
     // Pre-fetch isMod for the active channel so first hover is instant.
-    if (typeof id === 'string' && /^[a-z0-9_]{2,40}$/i.test(id)) prefetchModFor(id)
+    // (a built-in tab — feed, live, add — is not a twitch login)
+    if (typeof id === 'string' && /^[a-z0-9_]{2,40}$/i.test(id) && !mcChromeTabIds().includes(id)) prefetchModFor(id)
     // Symmetric kick warm-up — so the first kick right-click/hover surfaces mod
     // actions without a cold-cache miss (resolve the linked kick slug for this tab).
     const _chForMod = typeof getChannelById === 'function' ? getChannelById(id) : null

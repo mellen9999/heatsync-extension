@@ -57,3 +57,27 @@ describe('feed first paint', () => {
     expect(calls).toEqual([])
   })
 })
+
+describe('feed fill', () => {
+  const run = (el) => {
+    const calls = []
+    new Function(
+      'calls',
+      'el',
+      `
+      const mcSignal = null, activeThread = null, document = { getElementById: () => el }
+      let currentTab = 'feed'
+      const requestAnimationFrame = () => {}
+      const feedMore = () => { calls.push('more'); return true }
+      ${fn('feedFillPane')}
+      feedFillPane()
+    `,
+    )(calls, el)
+    return calls
+  }
+  const el = (clientHeight, scrollHeight) => ({ clientHeight, scrollHeight, querySelector: () => ({}) })
+
+  test('a pane with no height builds nothing (hidden or collapsed)', () => expect(run(el(0, 0))).toEqual([]))
+  test('a tall pane with room left builds more rows', () => expect(run(el(600, 400))).toEqual(['more']))
+  test('a pane already overflowing waits for the scroll', () => expect(run(el(300, 900))).toEqual([]))
+})

@@ -430,6 +430,7 @@ const FEED_STALE_MS = 120000 // 2 minutes
 
 // Feed scroll state — handler ref for teardown only, infinite-scroll trigger
 let _feedVirtualScrollHandler = null
+let _feedFillObserver = null // asks for more rows when the pane grows taller than the rows built
 
 // Stream events injected inline into per-channel buffers (no dedicated tab)
 const activityEvents = []
@@ -2034,6 +2035,8 @@ function _feedVirtualTeardown(msgsEl) {
     msgsEl.removeEventListener('scroll', _feedVirtualScrollHandler)
   }
   _feedVirtualScrollHandler = null
+  _feedFillObserver?.disconnect()
+  _feedFillObserver = null
 }
 
 function renderFeed() {
@@ -2152,8 +2155,12 @@ function renderFeed() {
     }, 200)
   }
   msgsEl.addEventListener('scroll', _feedVirtualScrollHandler, { signal: mcSignal, passive: true })
-  // a tall panel can hold the first rows without a scrollbar: nothing would scroll to ask for more
-  requestAnimationFrame(feedFillPane)
+  // a tall pane can hold the first rows without a scrollbar, so nothing would scroll to ask for
+  // more; a pane with no height yet (hidden, collapsed) builds nothing until it has one
+  if (typeof ResizeObserver === 'function') {
+    _feedFillObserver = new ResizeObserver(feedFillPane)
+    _feedFillObserver.observe(msgsEl)
+  }
 }
 
 /** More rows: build the next of the buffer, and only when it is all on screen ask the server. */
@@ -2172,7 +2179,7 @@ function feedMore() {
 function feedFillPane() {
   if (mcSignal?.aborted || currentTab !== 'feed' || activeThread) return
   const el = document.getElementById('hs-mc-messages')
-  if (!el || !el.querySelector('.hs-feed-loader') || el.scrollHeight - el.clientHeight >= 100) return
+  if (!el?.clientHeight || !el.querySelector('.hs-feed-loader') || el.scrollHeight - el.clientHeight >= 100) return
   if (feedMore()) requestAnimationFrame(feedFillPane)
 }
 

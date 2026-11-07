@@ -459,8 +459,9 @@
     .hs-mc-stream-event .hs-mc-user:hover { text-decoration: underline; }
     .hs-mc-stream-event .hs-evt-game { color: #fff; font-style: normal; }
     .hs-mc-stream-event.event-update  { --evt: var(--hs-warn); }
-    .hs-mc-stream-event.event-online  { --evt: var(--hs-live); }
-    .hs-mc-stream-event.event-online .hs-evt-game { color: #fff; }
+    .hs-mc-stream-event.event-online  { --evt: var(--hs-warn); }
+    .hs-mc-stream-event.event-update .hs-evt-game,
+    .hs-mc-stream-event.event-online .hs-evt-game { color: var(--evt); }
     .hs-mc-stream-event.event-offline { --evt: #ffffff; }
     .hs-mc-stream-event.event-raid    { --evt: var(--hs-plat-twitch); }
     .hs-mc-stream-event.event-hype    { --evt: var(--hs-reply); }
@@ -470,6 +471,14 @@
     .hs-mc-stream-event.event-pred    { --evt: var(--hs-gold); }
     .hs-mc-stream-event.event-poll    { --evt: var(--hs-info); }
     .hs-mc-stream-event.event-follow  { }
+    /* switched-to + went-live rows: yellow text boxed in a 1px yellow border so
+       they never read as chat. Padding gives back the border (row height same). */
+    .hs-mc-stream-event.event-update,
+    .hs-mc-stream-event.event-online {
+      --evt: var(--hs-warn);
+      border: 1px solid var(--evt);
+      padding: 1px 3px 2px 7px;
+    }
     /* YouTube event banners — superchat/sticker default to the amount-tier gold;
        m.scColor (inline style, set in main.js) overrides with the real per-message
        tier color from YouTube's own renderer when present. */

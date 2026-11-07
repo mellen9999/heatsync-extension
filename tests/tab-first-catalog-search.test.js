@@ -131,14 +131,13 @@ describe('auto-add-on-send registry scope', () => {
     expect(recentRemoteCompletions.get('kap').source).toBe('7tv')
   })
 
-  test('exact-name match is case-insensitive, like emote names are in practice', async () => {
-    const { recentRemoteCompletions, fetch } = build({
-      matches: [],
-      search: 'sadge',
-      stv: async () => [stvEmote('Sadge')],
-    })
-    await fetch('sadge')
-    expect([...recentRemoteCompletions.keys()]).toEqual(['Sadge'])
+  test('exact-name match is case-exact: a case twin is offered but not registered as typed (rule 5)', async () => {
+    const twin = build({ matches: [], search: 'sadge', stv: async () => [stvEmote('Sadge')] })
+    await twin.fetch('sadge')
+    expect([...twin.recentRemoteCompletions.keys()]).toEqual([])
+    const same = build({ matches: [], search: 'Sadge', stv: async () => [stvEmote('Sadge')] })
+    await same.fetch('Sadge')
+    expect([...same.recentRemoteCompletions.keys()]).toEqual(['Sadge'])
   })
 })
 

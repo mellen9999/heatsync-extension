@@ -15176,7 +15176,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '48f37bba1261' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '86b226bb66f1' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -45943,28 +45943,28 @@ async function fetchRemoteEmoteMatches(search) {
     const catalogNames = new Set()
     for (const m of acState.matches) {
       if (m.type !== 'emote' || !m.name) continue
-      const l = m.name.toLowerCase()
+      const l = m.name
       if (!picsByName.has(l)) picsByName.set(l, new Set())
       picsByName.get(l).add(_acPicKey(m.url))
       if (m.remote) catalogNames.add(l)
     }
     // A local emote that answers to the name typed in full: sending that name
     // means THAT one. A catalog variant is taken only by tabbing onto it.
-    const typedHasLocal = acState.matches.some(
-      (m) => m.type === 'emote' && !m.remote && (m.name || '').toLowerCase() === searchLower,
-    )
+    const typedHasLocal = acState.matches.some((m) => m.type === 'emote' && !m.remote && (m.name || '') === search)
     let exactRegistered = false
     const add = []
     for (const it of items) {
       if (!it.name) continue
-      const lower = it.name.toLowerCase()
+      // dedupe on the EXACT name: KEKW and kekw are two emotes; only the prefix test is case-blind
+      const lower = it.name
       const pic = _acPicKey(it.url)
       if (pic && picsByName.get(lower)?.has(pic)) continue
-      if (lower !== searchLower && catalogNames.has(lower)) continue
+      // ("typed in full" is judged case-blind: idk + Tab still lists every IDK upload)
+      if (it.name.toLowerCase() !== searchLower && catalogNames.has(lower)) continue
       // Substring is fine — the providers already relevance-matched the query;
       // requiring a literal prefix dropped the suffix-named families users
       // actually mean. Drop only fuzzy hits that don't contain the query.
-      if (!lower.includes(searchLower)) continue
+      if (!it.name.toLowerCase().includes(searchLower)) continue
       // A blocked name must never surface from the remote catalog either —
       // same leak as the local pool, just a different source.
       if (typeof _hsAcEmoteBlocked === 'function' && _hsAcEmoteBlocked(it.name, null)) continue
@@ -46000,7 +46000,7 @@ async function fetchRemoteEmoteMatches(search) {
       // search this session got silently added to the viewer's inventory —
       // hundreds of names the user never saw, burning finite slots. Harmless
       // while the fetch was lazy; not once it fires on the first Tab.
-      if (lower === searchLower && !exactRegistered) {
+      if (lower === search && !exactRegistered) {
         exactRegistered = true
         // ...unless something local already answers to that name (the channel's
         // IDK): the box shows that one, so registering the catalog's IDK would
@@ -46015,7 +46015,7 @@ async function fetchRemoteEmoteMatches(search) {
       }
     }
     if (add.length) {
-      _acMergeRemoteMatches(add, searchLower)
+      _acMergeRemoteMatches(add, searchLower, search)
       break // got new content; the next page fetches as the user nears the new end
     }
     // all duplicates — chase the next page
@@ -46039,11 +46039,11 @@ async function fetchRemoteEmoteMatches(search) {
 // Append-only: existing entries never move, so N/M only ever grows forward;
 // the new block is ordered internally (exact match first, then fetch order:
 // FFZ-by-uses → BTTV → 7TV, pages in sequence via the persistent _ai).
-function _acMergeRemoteMatches(add, searchLower) {
+function _acMergeRemoteMatches(add, searchLower, typed) {
   const wasEmpty = acState.matches.length === 0
   add.sort((a, b) => {
-    const ax = (a.name || '').toLowerCase() === searchLower ? 0 : 1
-    const bx = (b.name || '').toLowerCase() === searchLower ? 0 : 1
+    const ax = (a.name || '') === typed ? 0 : (a.name || '').toLowerCase() === searchLower ? 1 : 2
+    const bx = (b.name || '') === typed ? 0 : (b.name || '').toLowerCase() === searchLower ? 1 : 2
     if (ax !== bx) return ax - bx
     return (a._ai || 0) - (b._ai || 0)
   })
@@ -50106,7 +50106,7 @@ function scanAndApplyModifiersInInput(input) {
 //   4. recency for @user matches            (who just talked beats name length)
 //   5. shorter prefix-match > longer        (Kap → Kappa before KappaPride),
 //      then alpha
-function compareAcMatches(a, b, searchLower, frecency) {
+function compareAcMatches(a, b, searchLower, frecency, typed) {
   const an = a.name || '',
     bn = b.name || ''
   // Exact-name match wins over EVERYTHING — even above the local/remote split.
@@ -50122,6 +50122,9 @@ function compareAcMatches(a, b, searchLower, frecency) {
   // Two emotes that are both the typed word in different casing (kek / KEK):
   // the channel's own is what everyone in this chat reads as that word, so it
   // leads — a habit or a global lookalike of the same name must not outrank it.
+  // Case twins (KEKW / kekw) are two emotes and both stay candidates; the one spelled like
+  // the typed word leads (rule 5). Prefix matching stays case-insensitive.
+  if (ae === 0 && typed && (an === typed) !== (bn === typed)) return an === typed ? -1 : 1
   if (ae === 0 && (a.tier === 0) !== (b.tier === 0)) return a.tier === 0 ? -1 : 1
   const al = a.remote ? 1 : 0,
     bl = b.remote ? 1 : 0
@@ -50481,7 +50484,7 @@ function findEmoteMatches(search) {
   }
 
   const _frec = typeof loadEmoteFrecency === 'function' ? loadEmoteFrecency() : new Map()
-  matches.sort((a, b) => compareAcMatches(a, b, searchLower, _frec))
+  matches.sort((a, b) => compareAcMatches(a, b, searchLower, _frec, search))
 
   // Recent chatters (prefix, most-recent-first) lead the cycle, above all
   // emotes — see comment at recentChatters above.

@@ -5198,7 +5198,9 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
           // the raw push in the else branch below). Escaping again turned a
           // url's &amp; into &amp;amp;: corrupted href params + visible &amp;
           // in the link text. Entities inside an href attr decode correctly.
-          result.push(`<a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="hs-mc-link hs-link">${word}</a>`)
+          result.push(
+            `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="hs-mc-link hs-link">${word}</a>`,
+          )
         } else {
           result.push(word)
         }

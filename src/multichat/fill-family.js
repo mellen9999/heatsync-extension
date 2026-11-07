@@ -19,21 +19,34 @@ function eventFill(eventClass) {
   return ''
 }
 
-const NAVY_NOTICES = /\bhs-mc-notice-(?:sub|gift|bits|milestone|watchstreak|charity|mod-anniversary)\b|\bhs-mc-kicks\b|\bhs-mc-superchat\b/
+const NAVY_NOTICES =
+  /\bhs-mc-notice-(?:sub|gift|bits|milestone|watchstreak|charity|mod-anniversary)\b|\bhs-mc-kicks\b|\bhs-mc-superchat\b/
 
 /** the fill a chat / system row wears ('' = a plain row) */
 function rowFill(el) {
   const k = el.classList
   if (k.contains('hs-row-mention')) return 'red' // a mention / reply to you: the red fill, filled like the rest (no stripe)
   if (k.contains('hs-mc-rule-highlight')) return 'rule'
-  if (k.contains('hs-mc-notice-raid') || k.contains('hs-mc-user-intro') || k.contains('hs-mc-first-msg')) return 'purple'
-  if (k.contains('hs-mc-notice-announce') || k.contains('hs-mc-redeemed') || k.contains('hs-mc-highlighted') || k.contains('hs-mc-animated')) return 'teal'
+  if (k.contains('hs-mc-notice-raid') || k.contains('hs-mc-user-intro') || k.contains('hs-mc-first-msg'))
+    return 'purple'
+  if (
+    k.contains('hs-mc-notice-announce') ||
+    k.contains('hs-mc-redeemed') ||
+    k.contains('hs-mc-highlighted') ||
+    k.contains('hs-mc-animated')
+  )
+    return 'teal'
   if (k.contains('hs-mc-automod') || k.contains('hs-mc-notice-error')) return 'red'
   return NAVY_NOTICES.test(el.className) ? 'navy' : ''
 }
 
 /** a rule's highlight colour -> the token the row's fill reads (the zebra grey when it is not one of the eight) */
 function ruleFillVar(color) {
-  const name = RULE_FILL[String(color || '').trim().toLowerCase()]
+  const name =
+    RULE_FILL[
+      String(color || '')
+        .trim()
+        .toLowerCase()
+    ]
   return name && name !== 'zebra' ? `var(--brand-fill-${name})` : 'var(--brand-zebra)'
 }

@@ -15230,7 +15230,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd951a67d9ab3' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'c0c6c59fd5a5' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -29872,7 +29872,9 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
           // the raw push in the else branch below). Escaping again turned a
           // url's &amp; into &amp;amp;: corrupted href params + visible &amp;
           // in the link text. Entities inside an href attr decode correctly.
-          result.push(`<a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="hs-mc-link hs-link">${word}</a>`)
+          result.push(
+            `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="hs-mc-link hs-link">${word}</a>`,
+          )
         } else {
           result.push(word)
         }
@@ -60950,22 +60952,35 @@ function eventFill(eventClass) {
   return ''
 }
 
-const NAVY_NOTICES = /\bhs-mc-notice-(?:sub|gift|bits|milestone|watchstreak|charity|mod-anniversary)\b|\bhs-mc-kicks\b|\bhs-mc-superchat\b/
+const NAVY_NOTICES =
+  /\bhs-mc-notice-(?:sub|gift|bits|milestone|watchstreak|charity|mod-anniversary)\b|\bhs-mc-kicks\b|\bhs-mc-superchat\b/
 
 /** the fill a chat / system row wears ('' = a plain row) */
 function rowFill(el) {
   const k = el.classList
   if (k.contains('hs-row-mention')) return 'red' // a mention / reply to you: the red fill, filled like the rest (no stripe)
   if (k.contains('hs-mc-rule-highlight')) return 'rule'
-  if (k.contains('hs-mc-notice-raid') || k.contains('hs-mc-user-intro') || k.contains('hs-mc-first-msg')) return 'purple'
-  if (k.contains('hs-mc-notice-announce') || k.contains('hs-mc-redeemed') || k.contains('hs-mc-highlighted') || k.contains('hs-mc-animated')) return 'teal'
+  if (k.contains('hs-mc-notice-raid') || k.contains('hs-mc-user-intro') || k.contains('hs-mc-first-msg'))
+    return 'purple'
+  if (
+    k.contains('hs-mc-notice-announce') ||
+    k.contains('hs-mc-redeemed') ||
+    k.contains('hs-mc-highlighted') ||
+    k.contains('hs-mc-animated')
+  )
+    return 'teal'
   if (k.contains('hs-mc-automod') || k.contains('hs-mc-notice-error')) return 'red'
   return NAVY_NOTICES.test(el.className) ? 'navy' : ''
 }
 
 /** a rule's highlight colour -> the token the row's fill reads (the zebra grey when it is not one of the eight) */
 function ruleFillVar(color) {
-  const name = RULE_FILL[String(color || '').trim().toLowerCase()]
+  const name =
+    RULE_FILL[
+      String(color || '')
+        .trim()
+        .toLowerCase()
+    ]
   return name && name !== 'zebra' ? `var(--brand-fill-${name})` : 'var(--brand-zebra)'
 }
 
@@ -75200,7 +75215,10 @@ const STORAGE_KEY = 'heatsync_multichat'
     // density — pure CSS vars, no re-render needed
     density: () => {
       // the shared row layer's vertical gutter (brand tokens: compact 0, cozy 3px — as on the site)
-      document.documentElement.style.setProperty('--brand-row-pad-y', getSetting('messageDensity') === 'cozy' ? BRAND.row.padYCozy : BRAND.row.padY)
+      document.documentElement.style.setProperty(
+        '--brand-row-pad-y',
+        getSetting('messageDensity') === 'cozy' ? BRAND.row.padYCozy : BRAND.row.padY,
+      )
     },
     // rendered html is cached per message — a src change needs a cache
     // flush before the re-render or old animated imgs survive the toggle
@@ -82396,8 +82414,8 @@ const STORAGE_KEY = 'heatsync_multichat'
       const want = filled
         ? false
         : prev
-        ? zebraEnabled && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
-        : zebraEnabled && el.classList.contains('hs-mc-zebra')
+          ? zebraEnabled && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
+          : zebraEnabled && el.classList.contains('hs-mc-zebra')
       if (el.classList.contains('hs-mc-zebra') !== want) {
         el.classList.toggle('hs-mc-zebra', want)
         el.classList.toggle('hs-zebra', want)
@@ -82410,7 +82428,10 @@ const STORAGE_KEY = 'heatsync_multichat'
   function zebraOfInsert(m, prevDiv) {
     // the video player sits in the list but is not a row — stripe off the row before it
     // ...and neither does a notice row: stripe off the last row that was counted
-    while (prevDiv && (prevDiv.id === 'hs-mc-embed-player' || prevDiv.dataset?.hsNotice || prevDiv.classList?.contains('hs-filled'))) {
+    while (
+      prevDiv &&
+      (prevDiv.id === 'hs-mc-embed-player' || prevDiv.dataset?.hsNotice || prevDiv.classList?.contains('hs-filled'))
+    ) {
       prevDiv = prevDiv.previousElementSibling
     }
     if (!zebraEnabled || !prevDiv) return false

@@ -95,9 +95,19 @@ describe('zebra parity', () => {
   })
 
   test('a live insert after a notice stripes off the last counted row', () => {
-    const rowOf = (z) => ({ id: '', dataset: {}, classList: { contains: (c) => c === 'hs-mc-zebra' && z }, previousElementSibling: null })
+    const rowOf = (z) => ({
+      id: '',
+      dataset: {},
+      classList: { contains: (c) => c === 'hs-mc-zebra' && z },
+      previousElementSibling: null,
+    })
     const counted = rowOf(true)
-    const notice = { id: '', dataset: { hsNz: '1', hsNotice: '1' }, classList: { contains: () => false }, previousElementSibling: counted }
+    const notice = {
+      id: '',
+      dataset: { hsNz: '1', hsNotice: '1' },
+      classList: { contains: () => false },
+      previousElementSibling: counted,
+    }
     expect(zebraOfInsert({ type: 'chat' }, notice)).toBe(false) // after a striped row: plain
     counted.classList = { contains: () => false }
     expect(zebraOfInsert({ type: 'chat' }, notice)).toBe(true)
@@ -117,8 +127,18 @@ describe('zebra parity', () => {
   })
 
   test('a live insert after a filled row stripes off the last normal row', () => {
-    const counted = { id: '', dataset: {}, classList: { contains: (c) => c === 'hs-mc-zebra' }, previousElementSibling: null }
-    const filled = { id: '', dataset: {}, classList: { contains: (c) => c === 'hs-filled' }, previousElementSibling: counted }
+    const counted = {
+      id: '',
+      dataset: {},
+      classList: { contains: (c) => c === 'hs-mc-zebra' },
+      previousElementSibling: null,
+    }
+    const filled = {
+      id: '',
+      dataset: {},
+      classList: { contains: (c) => c === 'hs-filled' },
+      previousElementSibling: counted,
+    }
     expect(zebraOfInsert({ type: 'chat' }, filled)).toBe(false)
     expect(zebraOfInsert({ type: 'chat', isFirstMsg: true }, counted)).toBe(false)
   })

@@ -2717,7 +2717,10 @@
     // density — pure CSS vars, no re-render needed
     density: () => {
       // the shared row layer's vertical gutter (brand tokens: compact 0, cozy 3px — as on the site)
-      document.documentElement.style.setProperty('--brand-row-pad-y', getSetting('messageDensity') === 'cozy' ? BRAND.row.padYCozy : BRAND.row.padY)
+      document.documentElement.style.setProperty(
+        '--brand-row-pad-y',
+        getSetting('messageDensity') === 'cozy' ? BRAND.row.padYCozy : BRAND.row.padY,
+      )
     },
     // rendered html is cached per message — a src change needs a cache
     // flush before the re-render or old animated imgs survive the toggle
@@ -9913,8 +9916,8 @@
       const want = filled
         ? false
         : prev
-        ? zebraEnabled && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
-        : zebraEnabled && el.classList.contains('hs-mc-zebra')
+          ? zebraEnabled && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
+          : zebraEnabled && el.classList.contains('hs-mc-zebra')
       if (el.classList.contains('hs-mc-zebra') !== want) {
         el.classList.toggle('hs-mc-zebra', want)
         el.classList.toggle('hs-zebra', want)
@@ -9927,7 +9930,10 @@
   function zebraOfInsert(m, prevDiv) {
     // the video player sits in the list but is not a row — stripe off the row before it
     // ...and neither does a notice row: stripe off the last row that was counted
-    while (prevDiv && (prevDiv.id === 'hs-mc-embed-player' || prevDiv.dataset?.hsNotice || prevDiv.classList?.contains('hs-filled'))) {
+    while (
+      prevDiv &&
+      (prevDiv.id === 'hs-mc-embed-player' || prevDiv.dataset?.hsNotice || prevDiv.classList?.contains('hs-filled'))
+    ) {
       prevDiv = prevDiv.previousElementSibling
     }
     if (!zebraEnabled || !prevDiv) return false

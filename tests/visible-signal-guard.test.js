@@ -45,68 +45,38 @@ describe('a signal must differ from the surface it sits on', () => {
     expect(hits[0], 'the mention fill is the whole signal — the surface colour is no signal').not.toBe(SURFACE)
   })
 
-  // Both mention renderers (multichat + social feed), and a mention that also
-  // matched a highlight rule — that row once went black with no edge at all.
-  for (const sel of ['.hs-mc-msg.mention,', '.hs-mc-msg.mention.hs-mc-rule-highlight,']) {
-    test(`${sel.replace(/,$/, '')} is filled with the mention red`, () => {
-      const body = block(rows, sel)
-      expect(body, `${sel} is gone — the mention row stopped being styled at all`).toBeTruthy()
-      expect(body, 'an @-mention of you is pixel-identical to every other row').toMatch(
-        /background:\s*var\(--hs-mention-bg\)/,
-      )
-    })
-  }
-
-  test('a mention on a zebra row is the lighter mention red, never the gray stripe', () => {
-    const stripe = palette.match(/--hs-mention-bg-stripe:\s*([^;]+);/)?.[1].trim()
-    const fill = palette.match(/--hs-mention-bg:\s*([^;]+);/)?.[1].trim()
-    expect(stripe, '--hs-mention-bg-stripe is gone').toBeTruthy()
-    expect(stripe, 'a run of mentions would read as one block').not.toBe(fill)
-    expect(stripe).not.toBe(SURFACE)
-    for (const sel of ['.hs-mc-msg.mention.hs-mc-zebra,', '.hs-mc-msg.mention.hs-mc-rule-highlight.hs-mc-zebra,']) {
-      expect(block(rows, sel), `${sel} must fill with --hs-mention-bg-stripe`).toMatch(
-        /background:\s*var\(--hs-mention-bg-stripe\)/,
-      )
-    }
-    expect(strip(rows), 'a gray stripe on .mention erases the signal').not.toMatch(
-      /\.mention[^{]*\{[^}]*var\(--hs-zebra\)/,
+  // The mention row is a shared filled row (hs-filled hs-fill-red) from the brand
+  // layer: one red, one place, no striping — so a run of mentions is split by the
+  // 1px black gap between touching filled rows, not by a lighter stripe red.
+  test('the shared mention row is filled with the brand red, never the surface', () => {
+    const brand = strip(css('21-brand-rows.css'))
+    const tokens = strip(css('01-brand-tokens.css'))
+    const red = tokens.match(/--brand-fill-red:\s*([^;]+);/)?.[1].trim()
+    expect(red, '--brand-fill-red is gone').toBeTruthy()
+    expect(red, 'the mention fill is the whole signal — the surface colour is no signal').not.toBe(SURFACE)
+    expect(brand, 'an @-mention of you is pixel-identical to every other row').toMatch(
+      /\.hs-row-mention\s*\{\s*background:\s*var\(--brand-fill-red\)/,
     )
+    expect(block(brand, '.hs-fill-red'), '.hs-fill-red lost its fill').toMatch(/background:\s*var\(--brand-fill-red\)/)
+    expect(
+      block(rows, '.hs-mc-msg.mention {'),
+      'a per-repo mention fill is back — the brand layer owns it',
+    ).not.toMatch(/background/)
   })
 
-  // 2026-10-29: the event rows moved off a left rail onto a whole-row ring —
-  // a rail alone made the eye hunt the gutter. Session-first stays an edge: it
-  // marks most rows of a big chat, and ringing those buries the rare ones.
-  test('event rows ring the whole row; session-first and mod notices stay edges', () => {
-    const flat = strip(rows)
-    const ring = flat.match(/\.hs-mc-msg:is\(([^)]*)\)\s*\{[^}]*box-shadow:\s*inset 0 0 0 1px var\(--hs-row-ring\)/)
-    expect(ring, 'nothing draws --hs-row-ring').toBeTruthy()
-    for (const cls of [
-      'hs-mc-first-msg',
-      'hs-mc-highlighted',
-      'hs-mc-redeemed',
-      'hs-mc-user-intro',
-      'hs-mc-notice-sub',
-      'hs-mc-notice-gift',
-      'hs-mc-notice-raid',
-      'hs-mc-notice-watchstreak',
-      'hs-mc-notice-announce',
-    ]) {
-      expect(ring[1], `.${cls} is not in the ring list`).toContain(`.${cls}`)
-      expect(flat, `.${cls} declares no ring colour`).toMatch(
-        new RegExp(`\\.hs-mc-msg\\.${cls}\\s*\\{\\s*--hs-row-ring:`),
-      )
-      expect(flat, `.${cls} went back to a rail`).not.toMatch(
-        new RegExp(`\\.hs-mc-msg\\.${cls}\\s*\\{[^}]*border-left`),
-      )
+  test('event rows are solid fills from the brand set — no ring, no rail', () => {
+    const brand = strip(css('21-brand-rows.css'))
+    for (const f of ['olive', 'purple', 'navy', 'teal', 'red']) {
+      const body = block(brand, `.hs-fill-${f}`)
+      expect(body, `.hs-fill-${f} is gone`).toMatch(new RegExp(`background:\\s*var\\(--brand-fill-${f}\\)`))
     }
-    expect(ring[1], 'session-first ringed — most rows of a big chat').not.toContain('.hs-first-msg')
-    for (const cls of ['hs-mc-notice-ban', 'hs-mc-notice-timeout', 'hs-mc-notice-delete']) {
-      expect(ring[1], `.${cls} ringed — mod notices come in bursts`).not.toContain(`.${cls}`)
-    }
+    expect(strip(rows), 'a ring is back on event rows').not.toContain('--hs-row-ring')
   })
 
   test('--hs-zebra is declared and is not the surface', () => {
-    const zebra = palette.match(/--hs-zebra:\s*([^;]+);/)?.[1].trim()
+    const zebra = css('01-brand-tokens.css')
+      .match(/--brand-zebra:\s*([^;]+);/)?.[1]
+      .trim()
     expect(zebra, '--hs-zebra is gone').toBeTruthy()
     expect(zebra, 'the stripe is the same black as the row — there is no stripe').not.toBe(SURFACE)
   })

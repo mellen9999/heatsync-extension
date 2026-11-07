@@ -75,7 +75,7 @@ describe('the page keeps the event platform end to end', () => {
     expect(branch).toContain("{ twitch: 'twitch', kick: 'kick', youtube: 'yt' }[evtPlat]")
     expect(branch).toContain('hs-mc-pb-${evtBadge}')
     expect(branch).toContain('color:${PLAT_COLORS[evtBadge]}')
-    expect(branch).toContain('${tsSpan}${platBadge}${userLink}')
+    expect(branch).toContain('${tsSpan}${platBadge}${nameBlock}')
     expect(branch).not.toContain('isYtEvent && (platformBadgesEnabled')
   })
 })

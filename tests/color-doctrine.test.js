@@ -53,8 +53,14 @@ const EXEMPT_FILES = new Map([
   ['src/lib/animation-phase.js', 'name-paint compiler, byte-synced from the site'],
   ['src/lib/fill-layers.js', 'name-paint compiler, byte-synced from the site'],
   ['src/lib/glyph-mask.js', 'name-paint compiler, byte-synced from the site'],
-  ['src/lib/brand-tokens.js', 'the shared brand tokens, generated on the site from shared/brand/tokens.json — the site palette guard owns the values'],
-  ['src/multichat/styles/01-brand-tokens.css', 'the shared brand tokens, generated on the site from shared/brand/tokens.json — the site palette guard owns the values'],
+  [
+    'src/lib/brand-tokens.js',
+    'the shared brand tokens, generated on the site from shared/brand/tokens.json — the site palette guard owns the values',
+  ],
+  [
+    'src/multichat/styles/01-brand-tokens.css',
+    'the shared brand tokens, generated on the site from shared/brand/tokens.json — the site palette guard owns the values',
+  ],
   ['src/lib/plus-tenure.js', 'byte-synced from the site (sync-paint-compiler.sh)'],
   ['src/lib/stv-paint-css.js', '7TV paint colours — paid/user content, byte-synced from the site'],
   ['src/multichat/paints.js', 'HS_USERNAME_PALETTE — user name colours, byte-identical with the site'],
@@ -126,8 +132,7 @@ const FILES = [...walk(join(ROOT, 'src')), ...walk(join(ROOT, 'chrome'))]
 /** Drop inline `hs-exempt-start … hs-exempt-end` regions (user-chosen colour pickers), then comments. */
 function code(text, rel) {
   // the zebra stripe and the mention fill are the allowed off-palette values, and only as these tokens
-  let t = text
-    .replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
+  let t = text.replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
   t = t.replace(/\/\*[\s\S]*?\*\//g, '')
   if (!rel.endsWith('.css')) t = t.replace(/(^|[^:'"`(\\])\/\/[^\n]*/g, '$1')
   if (rel.endsWith('.html')) t = t.replace(/<!--[\s\S]*?-->/g, '')

@@ -70,7 +70,7 @@ const SOME_HS_PAINT = { cls: 'hsp-abc123', html: '<span>@</span><span>m</span>',
 describe('buildFeedQuoteUserLink — inline feed-post quote row username anchor', () => {
   test('no uid, no paint: falls back to plain per-post color, name escaped', () => {
     const html = buildFeedQuoteUserLink('mellen', '', null, '', '#ff8700')
-    expect(html).toContain('class="hs-mc-user hs-mc-mention"')
+    expect(html).toContain('class="hs-mc-user hs-mc-mention hs-mention"')
     expect(html).not.toContain('data-uid')
     expect(html).toContain('style="color:#ff8700"')
     expect(html).toContain('>mellen<')
@@ -85,7 +85,7 @@ describe('buildFeedQuoteUserLink — inline feed-post quote row username anchor'
 
   test('HeatSync paint resolved: wins over color, adds the hsp-* class, clears inline style, uses paint html', () => {
     const html = buildFeedQuoteUserLink('mellen', '73266147', SOME_HS_PAINT, '', '#ff8700')
-    expect(html).toContain('class="hs-mc-user hs-mc-mention hsp-abc123"')
+    expect(html).toContain('class="hs-mc-user hs-mc-mention hs-mention hsp-abc123"')
     expect(html).toContain('data-uid="73266147"')
     expect(html).toContain(' data-hs-paint-split="1"')
     expect(html).toContain('style="--hsp-t:1720000000.000s;--hs-name-c:#ff8700;"')

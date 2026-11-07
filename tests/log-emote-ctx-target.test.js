@@ -39,7 +39,8 @@ test('a card still opens anonymously when the stored heatsync token is rejected 
 test('zebra: zebraOfInsert walks past the embed player to the real previous row', () => {
   const main = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
   const fn = main.slice(main.indexOf('function zebraOfInsert'), main.indexOf('// ─── Multistream auto-detect'))
-  expect(fn).toMatch(/while \(prevDiv\?\.id === 'hs-mc-embed-player'\) prevDiv = prevDiv\.previousElementSibling/)
+  expect(fn).toMatch(/while \(\s*prevDiv &&\s*\(prevDiv\.id === 'hs-mc-embed-player'/)
+  expect(fn).toMatch(/prevDiv = prevDiv\.previousElementSibling/)
 })
 
 test('tab-complete: empty cycle still shows searching / no match', () => {

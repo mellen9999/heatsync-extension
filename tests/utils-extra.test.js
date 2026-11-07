@@ -210,8 +210,8 @@ describe('boostReadability', () => {
   })
 
   test('the stripe constant is the palette stripe', () => {
-    const palette = readFileSync(join(import.meta.dir, '../src/multichat/styles/00-palette.css'), 'utf8')
-    expect(palette.match(/--hs-zebra:\s*(#[0-9a-f]{6})/i)?.[1].toLowerCase()).toBe(NAME_STRIPE)
+    const palette = readFileSync(join(import.meta.dir, '../src/multichat/styles/01-brand-tokens.css'), 'utf8')
+    expect(palette.match(/--brand-zebra:\s*(#[0-9a-f]{6})/i)?.[1].toLowerCase()).toBe(NAME_STRIPE)
   })
 })
 

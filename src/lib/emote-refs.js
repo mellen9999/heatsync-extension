@@ -22,13 +22,41 @@
 // emotes like ")))". This is the one correct implementation; every send path
 // must call it so a fix lands everywhere at once.
 
+// Case is exact (rule 5): KEKW and kekw are two emotes. The ONE exception is the
+// user's own caseInsensitiveEmotes setting, which the renderer honours too — so
+// every lowercase fallback below goes through these and asks the probe first.
+// The probe is injected (the site wires its settingsManager; the extension keeps
+// the exact-case default), so this file imports nothing and stays byte-mirrored.
+let caseInsensitive = () => false
+
+/** Wire the user's case setting: fn() -> true only when they turned it on. */
+export function setCaseInsensitiveProbe(fn) {
+  caseInsensitive = typeof fn === 'function' ? () => fn() === true : () => false
+}
+
+/** map.get(word), then — only with the setting on — the lowercase key. */
+function getByName(map, word) {
+  const hit = map?.get(word)
+  if (hit !== undefined || !caseInsensitive()) return hit
+  return map?.get(word.toLowerCase())
+}
+
+/** Same for a registry keyed by the emote's exact name. */
+function getRegistered(registry, word) {
+  const hit = registry.get(word)
+  if (hit !== undefined || !caseInsensitive()) return hit
+  const lower = word.toLowerCase()
+  for (const [key, val] of registry) if (key.toLowerCase() === lower) return val
+  return undefined
+}
+
 // Session registry of catalog emotes ("7tv search" Tab completions). They
 // live in NO map — not inventory, channel, or global — so the emotesMap
 // lookup below can never find them and the sent message degraded to plain
 // text for every viewer, sender included. A url-only ref (no hash) is fully
 // valid: the server gate (emote-refs-sanitize.ts) requires url + CDN
 // allowlist and treats hash as optional passthrough, and SSR
-// (applyEmoteTokens) renders from url alone. Keyed lowercase; capped FIFO so
+// (applyEmoteTokens) renders from url alone. Keyed by exact name; capped FIFO so
 // a marathon session can't grow it unbounded.
 const remoteCompleted = new Map()
 const REMOTE_COMPLETED_MAX = 200
@@ -39,7 +67,7 @@ const REMOTE_COMPLETED_MAX = 200
  */
 export function registerRemoteEmoteRef(emote) {
   if (!emote?.name || !emote?.url) return
-  const key = emote.name.toLowerCase()
+  const key = emote.name
   if (!remoteCompleted.has(key) && remoteCompleted.size >= REMOTE_COMPLETED_MAX) {
     remoteCompleted.delete(remoteCompleted.keys().next().value)
   }
@@ -63,7 +91,7 @@ export function registerRemoteEmoteRef(emote) {
 // chose, but a send rebuilt refs from the name alone and the owned entry won,
 // so the post carried a different emote than the preview. A chip insert pins
 // the exact record it drew; buildEmoteRefs honours the pin before any map.
-// Keyed lowercase, last pick wins, capped FIFO like remoteCompleted.
+// Keyed by exact name, last pick wins, capped FIFO like remoteCompleted.
 const pickedEmotes = new Map()
 
 /**
@@ -74,7 +102,7 @@ export function pinPickedEmote(emote) {
   if (!emote?.name || !emote?.url) return
   // a synthesized "name0" overlay variant resolves through its base word
   if (emote.zeroWidth && emote.name.length > 1 && emote.name.endsWith('0')) return
-  const key = emote.name.toLowerCase()
+  const key = emote.name
   // The pin is the final word on this name. A Tab cycle registers every
   // catalog step it passes through, so an earlier same-named step (an FFZ
   // "LICK" on the way to the room's 7tv one) would otherwise survive in the
@@ -94,6 +122,39 @@ export function pinPickedEmote(emote) {
     ...(typeof emote.animated === 'boolean' ? { animated: emote.animated } : {}),
     ...naturalSize(emote),
   })
+}
+
+/**
+ * Drop the pin on `name`. With a hash, only a pin of THAT emote goes — a newer
+ * pick of a different emote under the same word stays. Called when an emote is
+ * removed or swapped away: the word then resolves by the normal order (rule 8).
+ * @param {string} name
+ * @param {{hash?:string}} [opts]
+ */
+export function forgetPickedEmote(name, { hash } = {}) {
+  if (!name) return
+  const pin = pickedEmotes.get(name)
+  if (pin && (!hash || pin.hash === hash)) pickedEmotes.delete(name)
+}
+
+/**
+ * Drop every pin of an inventory emote that is no longer in your set — the
+ * catch-all after a reload (another tab removed it, or a restore failed).
+ * @param {(hash:string) => boolean} isOwned
+ */
+export function prunePinsNotOwned(isOwned) {
+  for (const [key, pin] of pickedEmotes) {
+    if (pin.hash && pin.provider === 'inventory' && !isOwned(pin.hash)) pickedEmotes.delete(key)
+  }
+}
+
+/**
+ * The record the sender last picked for exactly this word (Tab, picker or chip),
+ * or undefined. The composer chip asks it so the chip draws what will send.
+ * @param {string} word
+ */
+export function lookupPickedEmote(word) {
+  return word ? getRegistered(pickedEmotes, word) : undefined
 }
 
 /**
@@ -125,11 +186,11 @@ function naturalSize(src) {
  * @returns {{name:string, ref:any}|null}
  */
 export function matchEmoteWord(word, lookup) {
-  let ref = lookup(word) || lookup(word.toLowerCase())
+  let ref = lookup(word) || (caseInsensitive() ? lookup(word.toLowerCase()) : undefined)
   if (ref) return { name: word, ref }
   if (word.endsWith('0') && word.length > 1) {
     const clean = word.slice(0, -1)
-    ref = lookup(clean) || lookup(clean.toLowerCase())
+    ref = lookup(clean) || (caseInsensitive() ? lookup(clean.toLowerCase()) : undefined)
     if (ref) return { name: clean, ref }
   }
   return null
@@ -155,16 +216,17 @@ export function buildEmoteRefs(content, emotesMap, channelMap) {
     // the full word is NOT itself a real emote, so an emote literally named
     // "lerolero0" keeps its own ref and the renderer resolves it identically.
     // an explicit pick beats whatever the maps say the name means
-    const pick = pickedEmotes.get(word.toLowerCase())
+    const pick = getRegistered(pickedEmotes, word)
     if (pick) {
-      emote_refs[pick.name] = { ...pick }
+      // keyed by the word as typed — the renderer looks refs up by that
+      emote_refs[word] = { ...pick }
       continue
     }
     let clean = word
-    let ed = emotesMap?.get(word) || emotesMap?.get(word.toLowerCase())
+    let ed = getByName(emotesMap, word)
     if (!ed && word.endsWith('0') && word.length > 1) {
       clean = word.slice(0, -1)
-      ed = emotesMap?.get(clean) || emotesMap?.get(clean.toLowerCase())
+      ed = getByName(emotesMap, clean)
     }
     // hash is the primary render key; keep url/name/provider so a deleted or
     // unowned emote still renders for other viewers, and zeroWidth so overlay
@@ -185,7 +247,7 @@ export function buildEmoteRefs(content, emotesMap, channelMap) {
     // hit therefore yields to a room emote of the same name; a bare map entry
     // never outranks the channel.
     const roomHit = ed?.hash && ed.provider !== 'inventory'
-      && (channelMap?.get(clean)?.url || channelMap?.get(clean.toLowerCase())?.url)
+      && getByName(channelMap, clean)?.url
     if (ed?.hash && !roomHit) {
       emote_refs[clean] = {
         hash: ed.hash,
@@ -198,11 +260,11 @@ export function buildEmoteRefs(content, emotesMap, channelMap) {
       continue
     }
     // Catalog fallback — same full-name-first / strip-0 order as above.
-    let r = remoteCompleted.get(word.toLowerCase())
+    let r = getRegistered(remoteCompleted, word)
     let rClean = word
     if (!r && word.endsWith('0') && word.length > 1) {
       rClean = word.slice(0, -1)
-      r = remoteCompleted.get(rClean.toLowerCase())
+      r = getRegistered(remoteCompleted, rClean)
     }
     if (r) {
       emote_refs[rClean] = {
@@ -219,11 +281,11 @@ export function buildEmoteRefs(content, emotesMap, channelMap) {
     // Room emotes typed by heart. Not in inventory or the catalog, so without
     // this the post carried no image and only viewers whose own room set
     // happened to load saw it.
-    let ch = channelMap?.get(word) || channelMap?.get(word.toLowerCase())
+    let ch = getByName(channelMap, word)
     let chClean = word
     if (!ch && word.endsWith('0') && word.length > 1) {
       chClean = word.slice(0, -1)
-      ch = channelMap?.get(chClean) || channelMap?.get(chClean.toLowerCase())
+      ch = getByName(channelMap, chClean)
     }
     if (ch?.url) {
       emote_refs[chClean] = {
@@ -254,9 +316,9 @@ export function buildEmoteRefs(content, emotesMap, channelMap) {
  */
 export function lookupRemoteEmoteRef(word) {
   if (!word) return undefined
-  let r = remoteCompleted.get(word.toLowerCase())
+  let r = getRegistered(remoteCompleted, word)
   if (!r && word.endsWith('0') && word.length > 1) {
-    r = remoteCompleted.get(word.slice(0, -1).toLowerCase())
+    r = getRegistered(remoteCompleted, word.slice(0, -1))
   }
   return r
 }

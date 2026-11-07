@@ -92,11 +92,7 @@ function mcRerenderSearch(query) {
   mcRemoteEmoteIndex.clear()
   if (!query) {
     _mcSearchRenderedQuery = ''
-    const allMap = new Map()
-    for (const [k, v] of viewerPersonalEmotes) allMap.set(k, v)
-    for (const cc of activeTabEmotePools()) for (const [k, v] of cc) if (!allMap.has(k)) allMap.set(k, v)
-    for (const [k, v] of emoteCache) if (!allMap.has(k)) allMap.set(k, v)
-    grid.innerHTML = renderEmoteSections(groupEmotes(allMap))
+    grid.innerHTML = renderEmoteSections(groupEmotes(pickerBaseEmotes()))
     attachChunkObserver(grid)
     markPickerDirty()
     return
@@ -1238,11 +1234,23 @@ let _pickerCloseHandler = null
 let _pickerBuiltKey = null
 let _pickerPrebuildScheduled = false
 
+// What the picker grid lists with no query: your set first (so 'owned' shows on top), then
+// every channel pool this tab covers (a merged or yt tab spans several; the raw tab key
+// finds none of them), then globals. The same pools search and Tab read.
+function pickerBaseEmotes() {
+  const all = new Map()
+  for (const [k, v] of viewerPersonalEmotes) all.set(k, v)
+  for (const pool of activeTabEmotePools()) for (const [k, v] of pool) if (!all.has(k)) all.set(k, v)
+  for (const [k, v] of emoteCache) if (!all.has(k)) all.set(k, v)
+  return all
+}
+
 function pickerCacheKey() {
   // pickerTab is intentionally NOT in the key — switching the active tab
   // (emotes ↔ twitch) just toggles display, no rebuild needed.
   const ch = currentTab || getCurrentChannel() || '_'
-  const chSize = channelEmoteCaches[ch]?.size || channelEmoteCaches[getCurrentChannel()]?.size || 0
+  let chSize = 0
+  for (const pool of activeTabEmotePools()) chSize += pool.size
   // _blockedRev: a cross-device block/unblock (applyBlockedHashDelta) changes
   // no size here — without it a rebuild triggered by an unrelated key change
   // would be the only thing correcting a stale cached picker DOM.
@@ -1330,13 +1338,7 @@ function showEmotePicker(tab = null) {
   // Cache miss → build full DOM synchronously (no chunks, no popping).
   // Merge channel emotes first (keeps 'channel' state), then globals.
   // All names/urls are pre-sanitized via escapeHtml in render helpers.
-  const allEmotes = new Map()
-  // Picker priority: viewer's personal inventory FIRST so 'owned' state shows on top
-  for (const [k, v] of viewerPersonalEmotes) allEmotes.set(k, v)
-  const chCache = channelEmoteCaches[currentTab] || channelEmoteCaches[getCurrentChannel()]
-  if (chCache) for (const [k, v] of chCache) if (!allEmotes.has(k)) allEmotes.set(k, v)
-  for (const [k, v] of emoteCache) if (!allEmotes.has(k)) allEmotes.set(k, v)
-  const sections = groupEmotes(allEmotes)
+  const sections = groupEmotes(pickerBaseEmotes())
   picker.innerHTML = `
       <div class="hs-mc-tab-content" id="hs-mc-tab-emotes" style="display: ${pickerTab === 'emotes' ? 'flex' : 'none'}; flex-direction: column;">
         <div class="hs-mc-picker-header">
@@ -5170,6 +5172,7 @@ export {
   mergeSenderEmotes,
   pastOwnership,
   pastOwnershipAt,
+  pickerBaseEmotes,
   processEmotes,
   reapHsIdleEmoteRows,
   rememberBlockedEmote,

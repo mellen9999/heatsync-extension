@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: o relay está cheio, a tentar de novo mais tarde"
+  },
+  "mc_settings_hover_reply": {
+    "message": "botão de responder ao passar o rato"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "mostra um botão de responder na linha do chat sob o rato. responder está sempre no menu da linha (clique direito, toque longo)"
   }
 }

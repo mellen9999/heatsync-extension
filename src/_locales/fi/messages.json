@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: relay on täynnä, yritetään myöhemmin"
+  },
+  "mc_settings_hover_reply": {
+    "message": "vastauspainike osoitettaessa"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "näytä vastauspainike hiiren alla olevalla chat-rivillä. vastaus on aina rivivalikossa (oikea klikkaus, pitkä painallus kosketuksella)"
   }
 }

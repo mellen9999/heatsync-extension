@@ -6624,5 +6624,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: relay is full, retrying later"
+  },
+  "mc_settings_hover_reply": {
+    "message": "reply button on hover"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "show a reply button on the chat row under your mouse. reply is always in the row menu (right-click, long-press on touch)"
   }
 }

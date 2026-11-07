@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: relay er full, prøver igjen senere"
+  },
+  "mc_settings_hover_reply": {
+    "message": "svarknapp ved hover"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "vis en svarknapp på chatraden under musen. svar finnes alltid i radmenyen (høyreklikk, langt trykk på touch)"
   }
 }

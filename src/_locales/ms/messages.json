@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: relay penuh, cuba lagi nanti"
+  },
+  "mc_settings_hover_reply": {
+    "message": "butang balas semasa hover"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "papar butang balas pada baris sembang di bawah tetikus. balas sentiasa ada dalam menu baris (klik kanan, tekan lama pada skrin sentuh)"
   }
 }

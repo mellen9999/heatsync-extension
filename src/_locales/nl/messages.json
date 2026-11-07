@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: relay is vol, later opnieuw proberen"
+  },
+  "mc_settings_hover_reply": {
+    "message": "antwoordknop bij hover"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "toon een antwoordknop op de chatregel onder je muis. antwoorden zit altijd in het regelmenu (rechtsklik, lang drukken op touch)"
   }
 }

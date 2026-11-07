@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: relay je plné, zkusíme to později"
+  },
+  "mc_settings_hover_reply": {
+    "message": "tlačítko odpovědi při najetí"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "zobrazí tlačítko odpovědi na řádku pod myší. odpověď je vždy v nabídce řádku (pravé tlačítko, dlouhý stisk na dotyku)"
   }
 }

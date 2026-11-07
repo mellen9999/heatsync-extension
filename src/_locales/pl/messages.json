@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: relay pełny, spróbujemy później"
+  },
+  "mc_settings_hover_reply": {
+    "message": "przycisk odpowiedzi po najechaniu"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "pokazuje przycisk odpowiedzi na wierszu czatu pod myszą. odpowiedź jest zawsze w menu wiersza (prawy przycisk, długie przytrzymanie na dotyku)"
   }
 }

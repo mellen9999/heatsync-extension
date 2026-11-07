@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: a relay tele van, később újrapróbáljuk"
+  },
+  "mc_settings_hover_reply": {
+    "message": "válasz gomb ráhúzáskor"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "válasz gombot mutat az egér alatti chatsoron. a válasz mindig elérhető a sormenüben (jobb klikk, hosszú érintés)"
   }
 }

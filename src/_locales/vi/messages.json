@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: relay đã đầy, sẽ thử lại sau"
+  },
+  "mc_settings_hover_reply": {
+    "message": "nút trả lời khi rê chuột"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "hiện nút trả lời trên dòng chat dưới con trỏ. trả lời luôn có trong menu dòng (chuột phải, nhấn giữ trên cảm ứng)"
   }
 }

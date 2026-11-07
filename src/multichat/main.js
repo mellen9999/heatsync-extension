@@ -2474,6 +2474,13 @@
         pronounsEnabled = v
       },
     },
+    hoverReplyEnabled: {
+      get: () => hoverReplyEnabled,
+      set: (v) => {
+        hoverReplyEnabled = v
+        if (!v) hoverReplyOff()
+      },
+    },
     zebraEnabled: {
       get: () => zebraEnabled,
       set: (v) => {
@@ -4195,6 +4202,9 @@
   // Inline media embeds in chat — images/gifs/video/link-cards rendered below
   // the message (never live iframes; see extractChatEmbed). Default on.
   let mediaEmbedsEnabled = true
+
+  // Opt-in hover reply button on chat rows (default off) — hover-reply.js
+  let hoverReplyEnabled = false
 
   // Vi mode for chat input (default off)
   let viModeEnabled = false

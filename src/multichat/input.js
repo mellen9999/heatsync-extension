@@ -2263,6 +2263,8 @@ function initInput() {
     )
   }
 
+  if (typeof initHoverReply === 'function') initHoverReply()
+
   // The held-for-approval row's x: a mod can leave a hold open for good, so the sender decides when
   // it goes. Retired on the buffered notice itself, so a re-render or a tab switch keeps it gone.
   if (!_onceGuardsInput.heldDismissHandler) {
@@ -2486,17 +2488,9 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // Row actions in the rust app's order (reply, op to feed, copy name, copy
   // message, copy link, copy → input). Reply and copy link live ONLY here: the
   // rows carry no hover buttons for them.
-  if (msg?.dataset?.msgId) {
-    items.push({
-      label: t('mc_input_reply'),
-      fn: () =>
-        setReplyState({
-          msgId: msg.dataset.msgId,
-          user: msg.dataset.msgUser || username,
-          channel: msg.dataset.msgChannel || '',
-          platform: msg.dataset.msgPlatform || '',
-        }),
-    })
+  const replyState = rowReplyState(msg, username)
+  if (replyState) {
+    items.push({ label: t('mc_input_reply'), fn: () => setReplyState(replyState) })
   }
   // Op this message to the heatsync feed — posting emerges from chat, where the
   // moment actually happens, quoting the author with @attribution.

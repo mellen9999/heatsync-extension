@@ -277,6 +277,37 @@
     .hs-mc-msg[data-msg-id]:hover .hs-mc-thread-btn {
       display: block;
     }
+    /* hoverReply (opt-in): one ↪ moved into the hovered row by hover-reply.js.
+       Absolute at the right edge, so no row shift; the thread chip and mod bar
+       slide left to make room. hover/active = white bg, black text. */
+    .hs-mc-hover-reply {
+      position: absolute;
+      top: 1px;
+      right: 2px;
+      box-sizing: border-box;
+      width: 20px;
+      background: #000;
+      border: 1px solid var(--hs-border);
+      color: #fff;
+      font-family: var(--hs-mc-font, monospace);
+      font-size: 13px;
+      padding: 0;
+      cursor: pointer;
+      line-height: 18px;
+      text-align: center;
+      z-index: 10;
+    }
+    .hs-mc-hover-reply:hover,
+    .hs-mc-hover-reply:active {
+      color: #000;
+      background: #fff;
+    }
+    .hs-mc-msg[data-hs-hover-reply] > .hs-mc-thread-btn {
+      right: 22px;
+    }
+    .hs-mc-msg[data-hs-hover-reply] > .hs-mod-toolbar {
+      right: 42px;
+    }
     /* whisper rows have no data-msg-id, so the rule above never matches —
        mirror it for the whisper-row marker class instead */
     .hs-whisper-msg {

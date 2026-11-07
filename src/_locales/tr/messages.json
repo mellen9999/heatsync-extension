@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: relay dolu, sonra tekrar denenecek"
+  },
+  "mc_settings_hover_reply": {
+    "message": "üzerine gelince yanıt düğmesi"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "fare altındaki sohbet satırında yanıt düğmesi gösterir. yanıt her zaman satır menüsünde (sağ tık, dokunmatikte uzun basma)"
   }
 }

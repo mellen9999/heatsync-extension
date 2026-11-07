@@ -15230,7 +15230,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: 'd0b1a31f8b02' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '20c9a768be43' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -69681,6 +69681,82 @@ function mcLayoutLink(channels) {
 }
 
 
+// --- multichat/seed-legs.js ---
+// seed-legs.js — the first-run channel seed gets the same-name other leg.
+//
+// A twitch page seeds {twitch:x}, a kick page {kick:x}. Left single-leg the
+// panel shows one platform, and the two hosts' entries (same id) overwrote each
+// other. Mirror of the site's tab heal (client/managers/chat-tabs-manager.js):
+// adopt the same-name other platform only when heatsync says the channel
+// EXISTS (live or offline). Never on a guess — a negative or failed probe
+// leaves the entry single-leg. twitch<->kick only; youtube has no such probe.
+// Pure and fetch-injected so it is unit-tested alone.
+
+const MC_SEED_INFO_PATH = '/api/live/info'
+
+/** The missing leg's name when heatsync confirms it exists, else ''. */
+async function mcSeedProbeLeg(platform, name, doFetch) {
+  if ((platform !== 'twitch' && platform !== 'kick') || !name) return ''
+  try {
+    // doFetch(path) -> the parsed body or null. In the ext it is the background's
+    // api_fetch relay: a content script's own fetch is blocked by CORS.
+    const info = await doFetch(`${MC_SEED_INFO_PATH}?platform=${platform}&channel=${encodeURIComponent(name)}`)
+    return info?.exists || info?.isLive ? name : ''
+  } catch {
+    return ''
+  }
+}
+
+/** Fill the entry's empty twitch/kick leg(s) in place; returns the legs added. */
+async function mcSeedAdoptLegs(entry, doFetch) {
+  const added = []
+  const name = entry?.twitch || entry?.kick
+  if (!name || (entry.twitch && entry.kick)) return added
+  const missing = entry.twitch ? 'kick' : 'twitch'
+  const found = await mcSeedProbeLeg(missing, name, doFetch)
+  if (found && !entry[missing]) {
+    entry[missing] = found
+    added.push(missing)
+  }
+  return added
+}
+
+/**
+ * Merge storage's copy of an entry into ours without losing a leg another tab
+ * added. A leg we blank on purpose stays blank: it is only taken from `theirs`
+ * when it differs from what we last persisted (`prev`), i.e. someone else set it.
+ */
+function mcMergeLegs(mine, theirs, prev) {
+  for (const leg of ['twitch', 'kick', 'youtube']) {
+    if (!mine[leg] && theirs?.[leg] && (!prev || theirs[leg] !== prev[leg])) mine[leg] = theirs[leg]
+  }
+  return mine
+}
+
+/**
+ * Heal-on-load: run `adopt(entry)` once per session for every saved entry that
+ * holds exactly one of twitch/kick (what the old seed left behind), at most
+ * `cap` probes in flight. `attempted` (a Set of ids) is the once-per-session memory.
+ */
+async function mcHealEntries(entries, adopt, attempted, cap = 3) {
+  const todo = (Array.isArray(entries) ? entries : []).filter(
+    (e) => e && typeof e === 'object' && !!e.twitch !== !!e.kick && !attempted.has(e.id),
+  )
+  for (const e of todo) attempted.add(e.id)
+  let i = 0
+  const worker = async () => {
+    while (i < todo.length) {
+      const e = todo[i++]
+      try {
+        await adopt(e)
+      } catch {}
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(cap, todo.length) }, worker))
+  return todo.length
+}
+
+
 // --- multichat/channel-mgmt.js ---
 // channel add/edit/remove UI — split out of main.js (2026-07-04).
 // renderAddChannelForm/removeChannel/showEditChannelForm/showEditLivePlatforms +
@@ -84758,6 +84834,27 @@ const STORAGE_KEY = 'heatsync_multichat'
   // STORAGE
   // ============================================
 
+  // First-run seed, second half: adopt the same-name other leg when heatsync
+  // confirms the channel exists (never on a guess). Fire-and-forget; a failed
+  // probe leaves the entry single-leg.
+  const _healAttempted = new Set()
+  async function _adoptSeedLegs(entry) {
+    try {
+      const added = await mcSeedAdoptLegs(entry, async (path) => {
+        const r = await safeSendMessage({ type: 'api_fetch', path })
+        return r?.ok ? (r.data ?? r) : null
+      })
+      if (!added.length) return
+      _channelLookup = null
+      saveConfig()
+      if (added.includes('twitch') && isEnabled('irc-twitch')) {
+        irc?.join(entry.twitch)
+        safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: entry.twitch })
+      }
+      if (added.includes('kick') && isEnabled('chat-kick')) kickChat?.join(entry.kick)
+    } catch (_) {}
+  }
+
   async function loadConfig() {
     try {
       const s = await browser.storage.local.get([STORAGE_KEY])
@@ -84804,10 +84901,14 @@ const STORAGE_KEY = 'heatsync_multichat'
                   : { id: cur, twitch: cur, kick: '', youtube: '' },
               ]
               saveConfig()
+              _adoptSeedLegs(config.channels[0])
             }
           }
         } catch (_) {}
       }
+      // Heal saved single-leg entries (the old seed left every existing user
+      // twitch-only or kick-only): same probe, once per session, 3 at a time.
+      void mcHealEntries(config.channels, _adoptSeedLegs, _healAttempted)
       // Subscribe per-channel YouTube links
       for (const ch of config.channels) {
         if (ch.youtube) {
@@ -84826,6 +84927,7 @@ const STORAGE_KEY = 'heatsync_multichat'
   // Snapshot of what we last wrote, so the cross-tab union below can tell
   // "another tab added this" from "we deliberately removed this".
   let _lastPersistedChannelKeys = null
+  let _lastPersistedLegs = null
   // Serializes saveConfig bodies — two rapid saves must not interleave their
   // read-then-write halves (the same lost-update the union above prevents
   // cross-tab, but within one tab). Mirrors the ui_settings write mutex.
@@ -84860,12 +84962,25 @@ const STORAGE_KEY = 'heatsync_multichat'
           // A channel we deliberately removed this session must stay removed —
           // only adopt entries that appeared after our last known snapshot.
           const removed = _lastPersistedChannelKeys
+          const prevById = _lastPersistedLegs
           for (const c of theirs) {
             const k = key(c)
             if (!mine.has(k) && !removed?.has(k)) persistable.channels.push(c)
+            else if (mine.has(k)) {
+              // same channel, maybe another tab added a leg (kick tab seeding a
+              // twitch entry): merge it in, never replace
+              const m = persistable.channels.find((x) => key(x) === k)
+              if (m && typeof c === 'object') mcMergeLegs(m, c, prevById?.get(k))
+            }
           }
         }
       } catch {}
+      _lastPersistedLegs = new Map(
+        persistable.channels.map((c) => [
+          `${c?.platform || 'twitch'}:${(c?.id || c?.twitch || c?.name || '').toLowerCase()}`,
+          { twitch: c?.twitch || '', kick: c?.kick || '', youtube: c?.youtube || '' },
+        ]),
+      )
       _lastPersistedChannelKeys = new Set(
         persistable.channels.map(
           (c) => `${c?.platform || 'twitch'}:${(c?.id || c?.twitch || c?.name || '').toLowerCase()}`,
@@ -85948,6 +86063,18 @@ const STORAGE_KEY = 'heatsync_multichat'
                 ytSubscribe(id, ch.youtube, id)
               }
             }
+          }
+
+          // A leg another tab added to a channel we already show (kick page
+          // seeding the twitch entry's partner) joins here too.
+          for (const ch of newChannels) {
+            const was = oldChannels.find((c) => c.id === ch.id)
+            if (!was) continue
+            if (ch.twitch && !was.twitch && isEnabled('irc-twitch')) {
+              irc?.join(ch.twitch)
+              safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: ch.twitch })
+            }
+            if (ch.kick && !was.kick && isEnabled('chat-kick')) kickChat?.join(ch.kick)
           }
 
           // Update config and UI

@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: puno ang relay, susubukan ulit mamaya"
+  },
+  "mc_settings_hover_reply": {
+    "message": "reply button kapag nag-hover"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "magpakita ng reply button sa chat row sa ilalim ng mouse. laging nasa row menu ang reply (right-click, matagal na pindot sa touch)"
   }
 }

@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: le relais est plein, nouvel essai plus tard"
+  },
+  "mc_settings_hover_reply": {
+    "message": "bouton répondre au survol"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "affiche un bouton répondre sur la ligne du chat sous la souris. répondre reste toujours dans le menu de la ligne (clic droit, appui long au toucher)"
   }
 }

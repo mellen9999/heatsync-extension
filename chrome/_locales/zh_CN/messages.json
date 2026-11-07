@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: 中继已满，稍后重试"
+  },
+  "mc_settings_hover_reply": {
+    "message": "悬停显示回复按钮"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "在鼠标所在的聊天行显示回复按钮。回复始终在行菜单中（右键，触屏长按）"
   }
 }

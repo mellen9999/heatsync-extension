@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: 릴레이가 가득 찼어요, 나중에 다시 시도해요"
+  },
+  "mc_settings_hover_reply": {
+    "message": "호버 시 답장 버튼"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "마우스 아래의 채팅 줄에 답장 버튼을 표시합니다. 답장은 항상 줄 메뉴에 있습니다 (오른쪽 클릭, 터치는 길게 누르기)"
   }
 }

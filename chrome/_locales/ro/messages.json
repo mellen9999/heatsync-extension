@@ -6607,5 +6607,11 @@
   },
   "mc_social_yt_no_slot": {
     "message": "youtube: relay-ul e plin, reîncerc mai târziu"
+  },
+  "mc_settings_hover_reply": {
+    "message": "buton de răspuns la hover"
+  },
+  "mc_settings_hover_reply_desc": {
+    "message": "afișează un buton de răspuns pe rândul de chat de sub mouse. răspunsul e mereu în meniul rândului (clic dreapta, apăsare lungă pe touch)"
   }
 }

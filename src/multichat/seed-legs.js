@@ -8,17 +8,15 @@
 // leaves the entry single-leg. twitch<->kick only; youtube has no such probe.
 // Pure and fetch-injected so it is unit-tested alone.
 
-const MC_SEED_INFO_URL = 'https://heatsync.org/api/live/info'
+const MC_SEED_INFO_PATH = '/api/live/info'
 
 /** The missing leg's name when heatsync confirms it exists, else ''. */
 export async function mcSeedProbeLeg(platform, name, doFetch) {
   if ((platform !== 'twitch' && platform !== 'kick') || !name) return ''
   try {
-    const res = await doFetch(`${MC_SEED_INFO_URL}?platform=${platform}&channel=${encodeURIComponent(name)}`, {
-      credentials: 'omit',
-    })
-    if (!res || !res.ok) return ''
-    const info = await res.json()
+    // doFetch(path) -> the parsed body or null. In the ext it is the background's
+    // api_fetch relay: a content script's own fetch is blocked by CORS.
+    const info = await doFetch(`${MC_SEED_INFO_PATH}?platform=${platform}&channel=${encodeURIComponent(name)}`)
     return info?.exists || info?.isLive ? name : ''
   } catch {
     return ''
@@ -49,4 +47,27 @@ export function mcMergeLegs(mine, theirs, prev) {
     if (!mine[leg] && theirs?.[leg] && (!prev || theirs[leg] !== prev[leg])) mine[leg] = theirs[leg]
   }
   return mine
+}
+
+/**
+ * Heal-on-load: run `adopt(entry)` once per session for every saved entry that
+ * holds exactly one of twitch/kick (what the old seed left behind), at most
+ * `cap` probes in flight. `attempted` (a Set of ids) is the once-per-session memory.
+ */
+export async function mcHealEntries(entries, adopt, attempted, cap = 3) {
+  const todo = (Array.isArray(entries) ? entries : []).filter(
+    (e) => e && typeof e === 'object' && !!e.twitch !== !!e.kick && !attempted.has(e.id),
+  )
+  for (const e of todo) attempted.add(e.id)
+  let i = 0
+  const worker = async () => {
+    while (i < todo.length) {
+      const e = todo[i++]
+      try {
+        await adopt(e)
+      } catch {}
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(cap, todo.length) }, worker))
+  return todo.length
 }

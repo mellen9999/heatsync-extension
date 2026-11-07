@@ -12263,9 +12263,13 @@
   // First-run seed, second half: adopt the same-name other leg when heatsync
   // confirms the channel exists (never on a guess). Fire-and-forget; a failed
   // probe leaves the entry single-leg.
+  const _healAttempted = new Set()
   async function _adoptSeedLegs(entry) {
     try {
-      const added = await mcSeedAdoptLegs(entry, (u, o) => fetch(u, o))
+      const added = await mcSeedAdoptLegs(entry, async (path) => {
+        const r = await safeSendMessage({ type: 'api_fetch', path })
+        return r?.ok ? (r.data ?? r) : null
+      })
       if (!added.length) return
       _channelLookup = null
       saveConfig()
@@ -12328,6 +12332,9 @@
           }
         } catch (_) {}
       }
+      // Heal saved single-leg entries (the old seed left every existing user
+      // twitch-only or kick-only): same probe, once per session, 3 at a time.
+      void mcHealEntries(config.channels, _adoptSeedLegs, _healAttempted)
       // Subscribe per-channel YouTube links
       for (const ch of config.channels) {
         if (ch.youtube) {

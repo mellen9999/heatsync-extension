@@ -30,12 +30,12 @@
 /* Contrast rule, once, no per-colour maths: on ANY filled row (and the red mention row) the body text, links, dim / reply-context
    text and @mentions are white; links are underlined, mentions bold (VT320 emphasis, never a colour).
    Only the row label (above) keeps its family colour; the name keeps its black cutout. */
-:is(.hs-filled, .hs-row-mention) :is(a, .chat-link, .hs-mc-link, .mention, .hs-mc-mention, .chat-reply-ctx, .chat-reply-ctx *, .hs-mc-reply-ctx, .hs-mc-reply-ctx *):not(.hs-name-cut *, .hs-row-label) {
+:is(.hs-filled, .hs-row-mention) :is(.hs-link, .hs-mention, .hs-reply-ctx, .hs-reply-ctx *):not(.hs-name-cut *, .hs-row-label) {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
 }
-:is(.hs-filled, .hs-row-mention) :is(a, .chat-link, .hs-mc-link):not(.hs-name-cut *, .hs-row-label) { text-decoration: underline !important; }
-:is(.hs-filled, .hs-row-mention) :is(.mention, .hs-mc-mention):not(.hs-name-cut *) { font-weight: 700; }
+:is(.hs-filled, .hs-row-mention) .hs-link:not(.hs-name-cut *, .hs-row-label) { text-decoration: underline !important; }
+:is(.hs-filled, .hs-row-mention) .hs-mention:not(.hs-name-cut *) { font-weight: 700; }
 .hs-fill-olive.hs-row-alert { --hs-label: #ff0000; }
 .hs-name-cut {
     display: inline-block;

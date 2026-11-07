@@ -2498,7 +2498,7 @@ function renderFeedContent(content, emoteRefs) {
       // href param + visible &amp;). The regex excludes <"/space so it's
       // attribute-safe verbatim. Only add the protocol for a bare domain.
       const url = /^https?:\/\//i.test(match) ? match : `https://${match}`
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="hs-mc-link">${match}</a>`
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="hs-mc-link hs-link">${match}</a>`
     })
     // Partial/defanged links ("watch?v=…", "heatsync (dot) org") — same
     // post-pass chat rows use; skips the anchors built above.

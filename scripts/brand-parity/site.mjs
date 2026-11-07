@@ -31,7 +31,7 @@ await p.evaluate(async () => {
   R(ev('event-update', 'kripp switched to Just Chatting')); R(ev('event-poll', 'kripp poll: best game?'))
   R(ev('event-raid', 'kripp raided friend with 12')); R(ev('event-sub', 'gifter gifted 5 subs'))
   R(sys('bitsbadgetier', 'cheerer cheered 100 bits')); R(sys('kicks', 'kicker gifted 100 kicks')); R(sys('superchat', 'payer sent a super chat'))
-  R(mk('ruler', 'this has ruletrigger in it', { color: '#00ff00' })); R(mk('pinger', 'hi @probeuser', { color: '#ffff00' })); R(mk('pinger2', 'hi again @probeuser', { color: '#ffff00' }))
+  R(mk('ruler', 'this has ruletrigger in it', { color: '#00ff00' })); R(mk('pinger', 'hi @probeuser https://example.com/x', { color: '#ffff00' })); R(mk('pinger2', 'hi again @probeuser https://example.com/y', { color: '#ffff00' }))
   R(mk('viewer4', 'a fourth normal message', { color: '#ffffff' })); R(mk('viewer5', 'a fifth normal message', { color: '#ffffff' })); R(ev('event-online', 'kripp went live — Elden Ring')) 
 })
 await p.evaluate(inject, ['#c', 'chat-message'])

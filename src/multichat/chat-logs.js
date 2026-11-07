@@ -738,7 +738,7 @@ function appendLoggedText(host, text) {
   const raw = String(text == null ? '' : text)
   if (typeof linksEnabled === 'undefined' || !linksEnabled || !raw) return appendTextWithHashtags(host, raw)
   let html = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-  html = html.replace(/https?:\/\/[^\s<]+/gi, (m) => `<a href="${m}" class="hs-mc-link">${m}</a>`)
+  html = html.replace(/https?:\/\/[^\s<]+/gi, (m) => `<a href="${m}" class="hs-mc-link hs-link">${m}</a>`)
   html = linkifyPartialLinks(html)
   if (!html.includes('<a ')) return appendTextWithHashtags(host, raw)
   const tpl = document.createElement('template')
@@ -746,7 +746,7 @@ function appendLoggedText(host, text) {
   for (const n of tpl.content.childNodes) {
     if (n.nodeName === 'A' && /^https?:\/\//i.test(n.getAttribute('href') || '')) {
       const a = document.createElement('a')
-      a.className = 'hs-mc-link hs-cl-link'
+      a.className = 'hs-mc-link hs-link hs-cl-link'
       a.href = n.getAttribute('href')
       a.target = '_blank'
       a.rel = 'noopener noreferrer'

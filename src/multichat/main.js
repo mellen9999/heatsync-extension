@@ -7684,7 +7684,7 @@
   function buildFeedQuoteUserLink(feedUser, uid, hsPaint, paintStyle, color) {
     const name = feedUser || 'anon'
     const lower = name.toLowerCase()
-    const cls = `hs-mc-user hs-mc-mention${hsPaint ? ` ${hsPaint.cls}` : ''}`
+    const cls = `hs-mc-user hs-mc-mention hs-mention${hsPaint ? ` ${hsPaint.cls}` : ''}`
     const uidAttr = uid ? ` data-uid="${escapeHtml(uid)}"` : ''
     const splitAttr = hsPaint ? hsPaint.splitAttr : ''
     // Mount stamp (not a color decl) when painted — phase-locks this copy to
@@ -8604,7 +8604,7 @@
     // with no name, no text, no profile link.
     const replyBlocked = m.replyTo?.user && isUserBlocked(m.replyTo.user, m.platform)
     const replyBar = replyBlocked
-      ? `<span class="hs-mc-reply-ctx">&#8618;[blocked]</span> `
+      ? `<span class="hs-mc-reply-ctx hs-reply-ctx">&#8618;[blocked]</span> `
       : m.replyTo?.user
         ? // role/tabindex/aria make the pill the control it always was. Clicking
           // it has opened the thread stack for a long time, but nothing SAID so:
@@ -8612,7 +8612,7 @@
           // already knew. The trailing caret is the affordance, aria-expanded is
           // the state, and both the universal hover invert and keyboard
           // activation come free once it is a button.
-          `<span class="hs-mc-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}" data-platform="${escapeHtml(m.platform || 'twitch')}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}${m.replyTo.text ? `<span class="hs-mc-reply-snippet">: ${escapeHtml(m.replyTo.text)}</span>` : ''}</span> `
+          `<span class="hs-mc-reply-ctx hs-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}" data-platform="${escapeHtml(m.platform || 'twitch')}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}${m.replyTo.text ? `<span class="hs-mc-reply-snippet">: ${escapeHtml(m.replyTo.text)}</span>` : ''}</span> `
         : ''
     // Redeem label — look up reward title from Hermes cache
     let redeemLabel = ''
@@ -9048,7 +9048,7 @@
         if (!uid && platform === 'twitch') resolveMentionColor(lower)
         let style = `color:${color}`
         let uidAttr = ''
-        let mentionCls = 'hs-mc-user hs-mc-mention'
+        let mentionCls = 'hs-mc-user hs-mc-mention hs-mention'
         let splitAttr = ''
         let inner = `${at}${safeName}`
         if (uid) {

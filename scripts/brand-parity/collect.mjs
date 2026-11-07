@@ -29,9 +29,9 @@ export function collect(sel) {
     const cut = el.querySelector('.hs-name-cut')
     const ccs = cut && getComputedStyle(cut)
     const body = el.querySelector('.chat-content, .hs-mc-text, [data-fx-body]')
-    const link = body && body.querySelector('a[href]:not(.mention, .hs-mc-mention)')
-    const men = body && body.querySelector('.mention, .hs-mc-mention')
-    const rep = el.querySelector('.chat-reply-ctx, .hs-mc-reply-ctx')
+    const link = body && body.querySelector('.hs-link')
+    const men = body && body.querySelector('.hs-mention')
+    const rep = el.querySelector('.hs-reply-ctx')
     const col = (n) => (n ? getComputedStyle(n).color : null)
     out[k] = {
       bg: cs.backgroundColor,
@@ -64,7 +64,7 @@ export function inject([sel, baseClass]) {
     d.className = `${baseClass} hs-filled hs-fill-${fill}`
     d.dataset.fx = name
     if (style) d.setAttribute('style', style.slice(7, -1))
-    d.innerHTML = `<span class="hs-row-label">\u25c6 ${name}</span> <span class="hs-name-cut"><span style="color:#0000ff">viewer</span></span> <span data-fx-body>hello <a href="https://example.com/x">example.com/x</a> <span class="mention">@probeuser</span></span><div class="chat-reply-ctx hs-mc-reply-ctx">\u21b3 earlier message</div>`
+    d.innerHTML = `<span class="hs-row-label">\u25c6 ${name}</span> <span class="hs-name-cut"><span style="color:#0000ff">viewer</span></span> <span data-fx-body>hello <a class="hs-link" href="https://example.com/x">example.com/x</a> <span class="hs-mention">@probeuser</span></span><div class="hs-reply-ctx">\u21b3 earlier message</div>`
     host.appendChild(d)
   }
 }

@@ -5187,7 +5187,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
         // outcome titles (twitch-api.js) — the only processEmotes() callers
         // that don't pass skipMentions=true — so twitch is not a guess here.
         result.push(
-          `<a href="https://heatsync.org/user/${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer" class="hs-mc-user hs-mc-mention" data-username="${name}" data-platform="twitch" style="color:${color};font-weight:bold">${word}</a>`,
+          `<a href="https://heatsync.org/user/${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer" class="hs-mc-user hs-mc-mention hs-mention" data-username="${name}" data-platform="twitch" style="color:${color};font-weight:bold">${word}</a>`,
         )
       } else if (linksEnabled && LINK_RE.test(word)) {
         // Validate URL protocol before creating link (block javascript:, data:, etc.)
@@ -5198,7 +5198,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
           // the raw push in the else branch below). Escaping again turned a
           // url's &amp; into &amp;amp;: corrupted href params + visible &amp;
           // in the link text. Entities inside an href attr decode correctly.
-          result.push(`<a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="hs-mc-link">${word}</a>`)
+          result.push(`<a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="hs-mc-link hs-link">${word}</a>`)
         } else {
           result.push(word)
         }

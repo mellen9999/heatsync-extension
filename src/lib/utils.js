@@ -764,9 +764,9 @@ function rankEmotePool(list, tier) {
     return i === -1 ? order.length : i
   }
   return (list || [])
-    .map((e, i) => [e, i])
-    .sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1])
-    .map((p) => p[0])
+    .map((e, i) => ({ e, i, r: rank(e) }))
+    .sort((a, b) => a.r - b.r || a.i - b.i)
+    .map((p) => p.e)
 }
 
 /**

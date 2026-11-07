@@ -8,6 +8,7 @@
 //   bun scripts/publish.js --firefox-only --publish
 //   bun scripts/publish.js --cws-auth                # one-time: mint a CWS_REFRESH_TOKEN
 //   bun scripts/publish.js --sync-summaries --publish   # push _locales summaries to AMO only
+//   bun scripts/publish.js --sync-previews <dir> --publish  # replace AMO screenshots with <dir>/*.png
 //
 // safe by default: without --publish, nothing is ever uploaded — every network
 // call to a store api is skipped and logged instead. --dry-run forces that same
@@ -53,6 +54,7 @@ function parseArgs(argv) {
     cwsAuth: flags.has('--cws-auth'),
     setCreds: flags.has('--set-creds'),
     syncSummaries: flags.has('--sync-summaries'),
+    syncPreviews: value('sync-previews'),
   }
   if (opts.chromeOnly && opts.firefoxOnly) {
     console.error('error: --chrome-only and --firefox-only are mutually exclusive')
@@ -729,6 +731,38 @@ function printSummary(ver, results, willPublish) {
   if (!willPublish) console.log('\nnothing was uploaded — re-run with --publish for a real release')
 }
 
+// Screenshots are addon-level too. Upload the new set first, then delete the
+// old one, so a failure halfway leaves extra shots on the listing, never none.
+// Files go up in name order (01-…, 02-…), which AMO keeps as display order.
+function readPreviewFiles(dir) {
+  if (!existsSync(dir)) throw new Error(`no such dir: ${dir}`)
+  const files = readdirSync(dir)
+    .filter((f) => f.toLowerCase().endsWith('.png'))
+    .sort()
+  if (!files.length) throw new Error(`no .png files in ${dir}`)
+  return files.map((f) => join(dir, f))
+}
+
+async function amoReplacePreviews(creds, files) {
+  const base = `https://addons.mozilla.org/api/v5/addons/addon/${AMO_SLUG}/`
+  const current = await amoRequest('GET', base, creds)
+  if (!current.ok) throw new Error(`firefox: read addon ${current.status}`)
+  const oldIds = ((await current.json()).previews || []).map((p) => p.id)
+  for (const [i, file] of files.entries()) {
+    const form = new FormData()
+    form.append('image', new Blob([readFileSync(file)], { type: 'image/png' }), basename(file))
+    form.append('position', String(i))
+    const res = await amoRequest('POST', `${base}previews/`, creds, { body: form })
+    if (!res.ok) throw new Error(`firefox: upload ${basename(file)} ${res.status} ${await res.text()}`)
+    console.log(`  firefox: uploaded ${basename(file)}`)
+  }
+  for (const id of oldIds) {
+    const res = await amoRequest('DELETE', `${base}previews/${id}/`, creds)
+    if (!res.ok) throw new Error(`firefox: delete old preview ${id} ${res.status}`)
+  }
+  console.log(`  firefox: listing now shows ${files.length} screenshots (${oldIds.length} old removed)`)
+}
+
 // ── main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -743,6 +777,14 @@ async function main() {
       return
     }
     return amoUpdateLocaleSummaries(loadCreds(REQUIRED_KEYS.filter((k) => k.startsWith('AMO_'))))
+  }
+  if (opts.syncPreviews) {
+    const files = readPreviewFiles(opts.syncPreviews)
+    if (!opts.publish || opts.dryRun) {
+      console.log(`[dry-run] would replace AMO screenshots with: ${files.map((f) => basename(f)).join(', ')} (pass --publish)`)
+      return
+    }
+    return amoReplacePreviews(loadCreds(REQUIRED_KEYS.filter((k) => k.startsWith('AMO_'))), files)
   }
 
   // Only demand the keys for the store(s) actually being published — a

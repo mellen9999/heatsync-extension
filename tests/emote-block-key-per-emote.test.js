@@ -66,3 +66,27 @@ test('two blocked emotes with one name keep two records; unblocking one leaves t
   expect(em.blockedFallbacksForName('W').find((r) => r.url === A2).hash).toBe('hashA')
   em.blockedEmoteFallback.clear()
 })
+
+test('tab-complete and the composer judge a blocked name per emote', async () => {
+  const em = await import('../src/multichat/emotes.js')
+  const { readFileSync } = await import('node:fs')
+  const input = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
+  const i = input.indexOf('function _hsAcEmoteBlocked(')
+  const fn = input.slice(i, input.indexOf('\n}\n', i) + 3)
+  const acBlocked = new Function(
+    'emoteIsBlocked',
+    'blockedEmoteNames',
+    `const hsEmoteHiddenForViewer = () => false, hsChannelNsfwHidden = () => false, unescapeHtml = (x) => x\n${fn}; return _hsAcEmoteBlocked`,
+  )(em.emoteIsBlocked, em.blockedEmoteNames)
+  globalThis.cleanup = { ...globalThis.cleanup, setTimeout: () => 0 }
+  em.blockedEmoteFallback.clear()
+  em.blockedEmoteNames.add('W')
+  em.rememberBlockedEmote('W', 'https://cdn.7tv.app/emote/AAAA/2x.webp', '7tv', false, 'hashA')
+  try {
+    expect(acBlocked('W', { hash: 'hashA', url: 'https://cdn.7tv.app/emote/AAAA/2x.webp' })).toBe(true)
+    expect(acBlocked('W', { hash: 'hashB', url: 'https://cdn.betterttv.net/emote/BBBB/2x.webp' })).toBe(false)
+  } finally {
+    em.blockedEmoteFallback.clear()
+    em.blockedEmoteNames.delete('W')
+  }
+})

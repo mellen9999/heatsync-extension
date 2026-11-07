@@ -662,8 +662,10 @@ function clEmoteImg(host, src, alt) {
 // Fail open on neither set existing yet (never blocked before boot finishes)
 // since that mirrors every other blocked-check callsite's `typeof !== undefined` guard.
 function clEmoteBlocked(name, idOrHash) {
-  if (typeof blockedEmoteNames !== 'undefined' && name && blockedEmoteNames.has(name)) return true
   if (typeof blockedEmoteHashes !== 'undefined' && idOrHash && blockedEmoteHashes.has(String(idOrHash))) return true
+  // by name only where no key tells the emotes apart (rule 9)
+  if (typeof blockedEmoteNames !== 'undefined' && name && blockedEmoteNames.has(name))
+    return typeof emoteIsBlocked === 'function' ? emoteIsBlocked(name, { hash: idOrHash }) : true
   return false
 }
 

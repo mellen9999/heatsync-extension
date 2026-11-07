@@ -4053,7 +4053,7 @@ function imagifyValidWordsInTextNode(textNode) {
     // Blocked emotes must stay plain text here — keep them out of the chip
     // builder so a blocked emote reaching a text node (paste/undo/recall/
     // unwrap) can't render as a live image and defeat the block.
-    if (typeof blockedEmoteNames !== 'undefined' && blockedEmoteNames.has(part)) {
+    if (typeof blockedEmoteNames !== 'undefined' && emoteIsBlocked(part, lookupEmoteRenderOrder(part))) {
       replacements.push(document.createTextNode(part))
       continue
     }
@@ -4439,7 +4439,7 @@ function handleInputChange(_e) {
             // that collides with a blocked owned emote name (e.g. "emote")
             // must stay plain text, not convert to the blocked-placeholder
             // chip (1×1 gif + dashed rect that reads as a broken emote).
-            if (resolved && blockedEmoteNames.has(word)) resolved = null
+            if (resolved && emoteIsBlocked(word, resolved.emote)) resolved = null
             if (resolved) {
               const wordStart = cursor - match[0].length
               if (deflectAdjacentChip(node, wordStart)) return
@@ -4526,7 +4526,7 @@ function handleInputChange(_e) {
                   if (!cm) break
                   const cName = cm[1]
                   const cResolved = lookupEmoteWithOverlay(cName, { ownedOnly: true })
-                  if (!cResolved || cResolved.isOverlay || blockedEmoteNames.has(cName)) break
+                  if (!cResolved || cResolved.isOverlay || emoteIsBlocked(cName, cResolved.emote)) break
                   const cImg = createInputEmoteImg(cName)
                   if (!cImg) break
                   parent.insertBefore(document.createTextNode('\u00A0'), afterNode)
@@ -5260,10 +5260,9 @@ function _hsAcEmoteBlocked(name, emote) {
   if (typeof hsEmoteHiddenForViewer === 'function' && hsEmoteHiddenForViewer(emote)) return true
   if (typeof hsChannelNsfwHidden === 'function' && hsChannelNsfwHidden(emote)) return true
   if (typeof blockedEmoteNames === 'undefined') return false
-  if (blockedEmoteNames.has(name)) return true
-  if (typeof unescapeHtml === 'function' && blockedEmoteNames.has(unescapeHtml(name))) return true
-  if (typeof blockedEmoteHashes !== 'undefined' && emote?.hash && blockedEmoteHashes.has(String(emote.hash)))
-    return true
+  // this exact emote (rule 9) — a blocked 7tv W does not drop the bttv W from the cycle
+  if (emoteIsBlocked(name, emote)) return true
+  if (typeof unescapeHtml === 'function' && emoteIsBlocked(unescapeHtml(name), emote)) return true
   return false
 }
 
@@ -5797,7 +5796,7 @@ function insertCompletionWysiwyg(match) {
       typeof blockedEmoteNames !== 'undefined' &&
       // synth trailing-0 overlays carry "name0" but the block set holds the
       // base name — check the stripped base too
-      (blockedEmoteNames.has(match.name) || (match._synthOverlay && blockedEmoteNames.has(match.name.slice(0, -1)))) &&
+      (emoteIsBlocked(match.name, match) || (match._synthOverlay && blockedEmoteNames.has(match.name.slice(0, -1)))) &&
       typeof markInputEmoteBlocked === 'function'
     ) {
       markInputEmoteBlocked(img, true)
@@ -8718,7 +8717,11 @@ function autoAddInputEmotes(text) {
     seen.add(word)
     const rec = recentRemoteCompletions.get(word)
     if (!rec) continue
-    if (typeof blockedEmoteNames !== 'undefined' && blockedEmoteNames.has(word)) continue
+    if (
+      typeof blockedEmoteNames !== 'undefined' &&
+      (typeof emoteIsBlocked === 'function' ? emoteIsBlocked(word, rec) : blockedEmoteNames.has(word))
+    )
+      continue
     let swap = false
     if (typeof inventoryEmotes !== 'undefined' && inventoryEmotes.has(word)) {
       const mine = typeof viewerPersonalEmotes !== 'undefined' ? viewerPersonalEmotes.get(word) : null

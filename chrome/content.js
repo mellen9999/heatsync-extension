@@ -2789,7 +2789,7 @@
 
     // Channel emotes (third-party only — BTTV/FFZ/7TV/Twitch).
     // Skip Twitch sub/follower/bits-tier emotes for the same reason as above.
-    channelEmotes.forEach((emote) => {
+    rankEmotePool(channelEmotes, 'channel').forEach((emote) => {
       if (!emote.source) return
       if (
         emote.source === 'twitch' &&
@@ -2803,7 +2803,7 @@
     })
 
     // Global emotes LAST (lowest priority, fallback only).
-    globalEmotes.forEach((emote) => {
+    rankEmotePool(globalEmotes, 'global').forEach((emote) => {
       _addVariant(emote, 'global')
     })
 
@@ -2819,15 +2819,15 @@
       const v = variants.find((x) => !x.inInventory)
       if (v) cachedNonInventoryEmotes.set(name, v)
     }
-    // cachedOwnEmotes: channel-first for own renders. Prefer a channel variant
-    // (non-inventory, non-global) so channel emotes win in their own channel just
-    // as they do for other chatters; fall back to variants[0] (inventory > global)
-    // for names the channel doesn't provide.
+    // cachedOwnEmotes: variants[0] = inventory > channel > global, the sender's choice.
     cachedOwnEmotes = new Map()
     cachedChannelEmotes = new Map()
     for (const [name, variants] of cachedAllEmoteVariants) {
       const channelV = variants.find((x) => !x.inInventory && !x.isGlobal)
-      cachedOwnEmotes.set(name, channelV || variants[0])
+      // Your own line is YOUR pick (rule 6: inventory → channel → globals), the same picture
+      // the composer chip showed when you sent it — variants[0] is the inventory copy when
+      // you hold the name. Channel emotes only fill names you don't hold.
+      cachedOwnEmotes.set(name, variants[0])
       if (channelV) cachedChannelEmotes.set(name, channelV)
     }
 
@@ -4656,6 +4656,26 @@
   }
 
   // Get current user's username from Twitch DOM
+  // First layer that has the name wins (null layers skipped). Order IS the precedence.
+  function layeredEmoteMap(layers) {
+    const live = layers.filter(Boolean)
+    return {
+      get(name) {
+        for (const m of live) {
+          const e = m.get(name)
+          if (e) return e
+        }
+        return undefined
+      },
+      has(name) {
+        return live.some((m) => m.has(name))
+      },
+      get size() {
+        return live.reduce((n, m) => n + m.size, 0)
+      },
+    }
+  }
+
   // Drop owner-tier entries (no `source`) the inventory no longer holds; every sourced entry stays.
   function pruneOwnerTier(channelList, inventory) {
     const held = new Set(inventory.map((e) => e.hash))
@@ -5614,36 +5634,12 @@
       // Fast path — no overlays, no Map alloc.
       allEmotes = baseMap
     } else {
-      // Precedence: live broadcast > channel (authoritative in its own channel) >
-      // sender's persistent set > global. cachedChannelEmotes sits ABOVE senderSet
-      // so a channel emote isn't shadowed by a sender's colliding personal emote —
-      // without it, others' messages diverged from the viewer's own (own renders
-      // via cachedOwnEmotes, channel-first). baseMap still backstops with globals +
-      // any name the channel doesn't carry. Own messages never reach this branch
-      // (no broadcast/senderSet) → fast path, cachedOwnEmotes.
-      allEmotes = {
-        get(name) {
-          return (
-            userBroadcasts?.get(name) || cachedChannelEmotes?.get(name) || senderSet?.get(name) || baseMap.get(name)
-          )
-        },
-        has(name) {
-          return (
-            !!userBroadcasts?.has(name) ||
-            !!cachedChannelEmotes?.has(name) ||
-            !!senderSet?.has(name) ||
-            baseMap.has(name)
-          )
-        },
-        get size() {
-          return (
-            baseMap.size +
-            (userBroadcasts ? userBroadcasts.size : 0) +
-            (cachedChannelEmotes ? cachedChannelEmotes.size : 0) +
-            (senderSet ? senderSet.size : 0)
-          )
-        },
-      }
+      // Precedence (rule 2, same as multichat's _lookup): live broadcast > the sender's
+      // persistent set > channel > globals. The sender's pick is the line's pick, so a
+      // chatter's same-name emote beats the room's; baseMap still backstops with channel +
+      // globals for every name the sender doesn't carry. Own messages never reach this
+      // branch (no broadcast/senderSet) → fast path, cachedOwnEmotes (inventory first).
+      allEmotes = layeredEmoteMap([userBroadcasts, senderSet, cachedChannelEmotes, baseMap])
     }
 
     // Process ALL text fragments with overlay stacking support
@@ -6663,9 +6659,13 @@
     // imgs with lazy src. Right-clicking to block the active variant then swaps
     // to the next non-blocked sibling in-place — no DOM rebuild, no fetch round-trip
     // (subsequent swaps are instant once the variant img loads once).
-    const variants = cachedAllEmoteVariants?.get(emote.name)
+    // Your inventory copy is only a fallback on a line that is already drawing YOUR emote.
+    // On anyone else's line it would be the next pick when their emote is blocked — your W
+    // drawn on their line (rules 4, 10).
+    const variants = cachedAllEmoteVariants?.get(emote.name)?.filter((v) => emote.inInventory || !v.inInventory)
     if (variants && variants.length > 1) {
       wrapper.dataset.hasVariants = '1'
+      wrapper.dataset.primaryHash = emote.hash
       // Tag the primary img with its priority index + classification so
       // pickActiveVariant can sort + categorize it on later state changes.
       const primaryIdx = variants.findIndex((v) => v.hash === emote.hash)
@@ -7001,7 +7001,14 @@
     if (imgs.length <= 1) return
 
     // Priority order is encoded in data-variant-index (0 = highest).
-    imgs.sort((a, b) => (+a.dataset.variantIndex || 0) - (+b.dataset.variantIndex || 0))
+    // The line's own pick (what it was drawn with) leads: re-picking after a block elsewhere
+    // must never swap a line to a different same-name emote it wasn't drawn with.
+    const primary = wrapper.dataset.primaryHash
+    imgs.sort(
+      (a, b) =>
+        (b.dataset.emoteHash === primary) - (a.dataset.emoteHash === primary) ||
+        (+a.dataset.variantIndex || 0) - (+b.dataset.variantIndex || 0),
+    )
 
     // First non-blocked, non-stale variant wins. Stale = an `inventory` variant
     // whose hash is no longer in inventoryHashSet (user removed it from their set).
@@ -7080,7 +7087,11 @@
     log(` Updating emote "${emoteName}" to state: ${state}, hash: ${hash}`)
 
     // Query by hash OR name (handles old vs normalized hash mismatch)
-    const selector = `[data-emote-hash="${hash}"], [data-emote-name="${emoteName}"]`
+    // Exact emote only (rule 9/10): a block or remove of one W never touches another W of the
+    // same name. The name stands in only when no hash is known (or on elements that carry none).
+    const selector = hash
+      ? `[data-emote-hash="${hash}"], [data-emote-name="${emoteName}"]:not([data-emote-hash])`
+      : `[data-emote-name="${emoteName}"]`
     const elements = (findChatContainer() || document).querySelectorAll(selector)
     log(` updateEmoteState found ${elements.length} elements for selector:`, selector)
 

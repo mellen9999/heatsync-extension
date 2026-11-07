@@ -11,7 +11,7 @@
 
 import { beforeEach, describe, expect, test } from 'bun:test'
 import * as mods from '../src/lib/modifiers.js'
-import { emoteProviderOrder, resolveEmoteProviderWinner } from '../src/lib/utils.js'
+import { emoteProviderOrder, emoteTierOrder, resolveEmoteProviderWinner } from '../src/lib/utils.js'
 
 globalThis.cleanup = { setIntervalIfVisible: () => {}, persistInterval: () => {} }
 globalThis.HS_MOD_TOKENS = mods.HS_MOD_TOKENS
@@ -27,6 +27,7 @@ globalThis.getLiveChannel = () => 'chan-a'
 // resolveEmoteProviderWinner is concatenated in from src/lib/utils.js by the
 // real bundle (build.js) — stub it here, same as the HS_MOD_* bridge above.
 globalThis.resolveEmoteProviderWinner = resolveEmoteProviderWinner
+globalThis.emoteTierOrder = emoteTierOrder
 
 const { _buildChannelEmoteCache, channelEmoteCaches, inventoryEmotes } = await import('../src/multichat/emotes.js')
 

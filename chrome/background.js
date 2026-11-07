@@ -4550,14 +4550,10 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
       })
 
     // Store emotes for this specific channel (prune old entries to bound memory)
-    const emotes = [
-      ...heatsyncEmotes,
-      ...bttvEmotes,
-      ...ffzEmotes,
-      ...sevenTVEmotes,
-      ...twitchChannelEmotes,
-      ...kickChannelEmotes,
-    ]
+    const emotes = rankEmotePool(
+      [...heatsyncEmotes, ...bttvEmotes, ...ffzEmotes, ...sevenTVEmotes, ...twitchChannelEmotes, ...kickChannelEmotes],
+      'channel',
+    )
     const anyFailed = failed.bttv || failed.ffz || failed.sevenTV || failed.twitch || failed.kick
     await stampThirdPartyFlags(emotes, channelName, platform)
     channelEmotesMap[key] = emotes
@@ -4877,6 +4873,27 @@ async function fetchKickChannelEmotes(channelName) {
   }
 }
 
+// Rule 3, winner first (bare word, no sender ref): a channel's set is ffz, 7tv, bttv; globals are
+// 7tv, bttv, ffz, twitch. Mirrors EMOTE_TIER_ORDER / rankEmotePool in src/lib/utils.js (this file
+// can't import lib — tests/emote-tier-order.test.js pins the two together). Entries with no
+// `source` (the channel owner's heatsync set) stay in front.
+const EMOTE_TIER_ORDER = {
+  channel: ['ffz', '7tv', 'bttv', 'twitch', 'kick'],
+  global: ['7tv', 'bttv', 'ffz', 'twitch'],
+}
+function rankEmotePool(list, tier) {
+  const order = EMOTE_TIER_ORDER[tier] || EMOTE_TIER_ORDER.global
+  const rank = (e) => {
+    if (!e?.source) return tier === 'channel' ? -1 : order.length
+    const i = order.indexOf(e.source)
+    return i === -1 ? order.length : i
+  }
+  return (list || [])
+    .map((e, i) => [e, i])
+    .sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1])
+    .map((p) => p[0])
+}
+
 function fetchGlobalEmotes() {
   if (globalEmotesFetchPromise) return globalEmotesFetchPromise
   globalEmotesFetchPromise = (async () => {
@@ -4907,24 +4924,13 @@ function fetchGlobalEmotes() {
         log('📥 Fetching Twitch + 7TV globals separately...')
         const [twitchGlobals, seventvGlobals] = await Promise.all([fetchTwitchGlobalEmotes(), fetch7TVEmotes()])
 
-        // Rebuild merged array (prevents duplicate accumulation on reconnects)
-        // 7TV globals override server emotes (server cache lacks zeroWidth flags)
+        // Rebuild merged array (prevents duplicate accumulation on reconnects).
+        // One name keeps ONE entry — the winner of the rule-3 global order (7tv, bttv, ffz,
+        // twitch). 7TV's own fetch leads, so its authoritative zeroWidth flags beat the
+        // server cache's.
         const seen = new Set()
         const merged = []
-        // 7TV first (has authoritative zeroWidth flags), then Twitch, then server emotes
-        for (const e of seventvGlobals) {
-          if (!seen.has(e.name)) {
-            seen.add(e.name)
-            merged.push(e)
-          }
-        }
-        for (const e of twitchGlobals) {
-          if (!seen.has(e.name)) {
-            seen.add(e.name)
-            merged.push(e)
-          }
-        }
-        for (const e of globalEmotes) {
+        for (const e of rankEmotePool([...seventvGlobals, ...twitchGlobals, ...globalEmotes], 'global')) {
           if (!seen.has(e.name)) {
             seen.add(e.name)
             merged.push(e)
@@ -4956,7 +4962,7 @@ function fetchGlobalEmotes() {
         fetchTwitchGlobalEmotes(),
       ])
 
-      globalEmotes = [...bttv, ...ffz, ...sevenTV, ...twitchGlobal]
+      globalEmotes = rankEmotePool([...bttv, ...ffz, ...sevenTV, ...twitchGlobal], 'global')
       log(' Loaded', globalEmotes.length, 'global emotes (fallback)')
       broadcastToTabs({ type: 'global_emotes_update', emotes: globalEmotes })
     } catch (error) {

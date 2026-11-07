@@ -2467,7 +2467,7 @@ function renderFeedEmote(name, url, source, hash, cwCat) {
   }
   // Blocked → dashed box (transparent px), never the real image. Matches chat's
   // blocked branch so the block actually hides the emote on re-render.
-  if (typeof blockedEmoteNames !== 'undefined' && blockedEmoteNames.has(name)) {
+  if (typeof emoteIsBlocked === 'function' ? emoteIsBlocked(name, { hash, url }) : blockedEmoteNames.has(name)) {
     return `<span class="hs-mc-emote-wrapper hs-state-blocked" data-emote-name="${dn}" data-state="blocked" data-source="heatsync"><img src="${HS_TRANSPARENT_PX}" alt="${dn}" title="${dn}" class="hs-mc-emote hs-emote-blocked" style="width:var(--hs-emote-size,32px);height:var(--hs-emote-size,32px)" data-emote-name="${dn}" data-state="blocked" data-source="heatsync"></span>`
   }
   const sanitizedUrl = escapeHtml(safeUrl(url))
@@ -2607,16 +2607,19 @@ function renderFeedContent(content, emoteRefs) {
           // the bare form when the qualified token misses.
           const bare = word.replace(/\([^)\s]*\)$/, '')
           if (bare !== word && refNames?.has(bare)) return word // handled by emote_refs pass
-          // Blocked emote dropped from caches — still box it, don't leak the name.
+          // Another author's bare word: channel + globals only. lookupEmote leads with the
+          // viewer's own inventory, which would draw MY emote on THEIR post (rule 4).
+          const em = lookupPublicEmote(word) || (bare !== word ? lookupPublicEmote(bare) : null)
+          // A blocked emote the caches no longer hold is still boxed (don't leak the name). One
+          // they do hold is judged by its own key in renderFeedEmote, so blocking one W never
+          // boxes another.
           if (
+            !em &&
             typeof blockedEmoteNames !== 'undefined' &&
             (blockedEmoteNames.has(word) || blockedEmoteNames.has(bare))
           ) {
             return renderFeedEmote(word, '', 'heatsync', '')
           }
-          // Another author's bare word: channel + globals only. lookupEmote leads with the
-          // viewer's own inventory, which would draw MY emote on THEIR post (rule 4).
-          const em = lookupPublicEmote(word) || (bare !== word ? lookupPublicEmote(bare) : null)
           // Own-inventory cwCats gate (viewer_show_* toggles) — lookupEmote's
           // first hit is viewerPersonalEmotes, which carries cwCats the same
           // way processEmotes' hsOwnCwHiddenCat check does for chat.

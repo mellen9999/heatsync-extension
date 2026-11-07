@@ -62,6 +62,14 @@
   let lastInventory = []
   let lastGlobals = []
 
+  // The key a right-click toggles: the ONE emote under the cursor (rule 9). Blocking 7tv W leaves
+  // the bttv W and a friend's W alone — the next version of the name simply shows. `was` = the
+  // click is an unblock, which only has a key to flip if that emote is actually blocked.
+  function ytBlockKeys(emote, was) {
+    const key = emote?.hash || emote?.name
+    return key && blockedEmotes.has(key) === was ? [key] : []
+  }
+
   function rebuildEmoteMap(inventory, globals) {
     lastInventory = inventory || []
     lastGlobals = globals || []
@@ -1853,10 +1861,7 @@
       const emote = renderMap.get(img.alt) || renderBlockedByName.get(img.alt)
       if (!emote) return
       const was = img.hasAttribute('data-hs-blocked')
-      // the name, wherever it comes from: twitch and kick key their blocks by the version they show
-      const hashes = [
-        ...new Set((variantsByName.get(emote.name) || [emote]).map((v) => v.hash).filter(Boolean)),
-      ].filter((h) => blockedEmotes.has(h) === was)
+      const hashes = ytBlockKeys(emote, was)
       if (!hashes.length) return
       const apply = (on) => {
         for (const h of hashes) {

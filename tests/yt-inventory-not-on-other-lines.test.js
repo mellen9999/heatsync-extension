@@ -45,3 +45,15 @@ test('feed fallback reads channel + globals, not the viewer inventory', () => {
   expect(social).toContain('lookupPublicEmote(word)')
   expect(social).not.toMatch(/=\s*lookupEmote\(word\)/)
 })
+
+test('youtube right-click blocks only the emote under the cursor, not every version of the name', () => {
+  const k = yt.indexOf('  function ytBlockKeys(')
+  const fn = yt.slice(k, yt.indexOf('\n  }\n', k) + 4)
+  const keys = new Function('blockedEmotes', `${fn}; return ytBlockKeys`)(new Set(['stv-hash']))
+  const shown = { name: 'W', hash: 'bttv-hash' }
+  expect(keys(shown, false)).toEqual(['bttv-hash'])
+  expect(keys(shown, true)).toEqual([]) // not blocked, nothing to unblock
+  expect(keys({ name: 'W', hash: 'stv-hash' }, true)).toEqual(['stv-hash'])
+  expect(keys({ name: 'W' }, false)).toEqual(['W']) // hashless emote keys by name
+  expect(yt).not.toContain('variantsByName.get(emote.name)')
+})

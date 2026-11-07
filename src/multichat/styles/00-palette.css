@@ -14,7 +14,6 @@
     :root {
       --hs-brand: #ffffff;    /* logo, focus, admin — CTAs are reverse video, bold */
       --hs-heat: #ffff00;     /* heat numerals — the ladder steps via weight/reverse */
-      --hs-stripe-mention: var(--brand-fill-red-stripe); /* the shared mention row's stripe hook (brand-rows.css): stripes are on whenever the class is there */
       --hs-mention: #ffff00;  /* @-mentions, unseen-mention, search hit */
       --hs-warn: #ffff00;     /* warn toasts, announce, NSFW */
       --hs-ok: #00ff00;       /* success, online, toggle-on, unban */

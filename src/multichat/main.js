@@ -8642,8 +8642,6 @@
     // filled rows skip striping and carry the name on a black cutout (see fill-family.js)
     const rowFillName = rowFill(div)
     const filledRow = !!rowFillName
-    // a mention / reply-to-me row is not a filled row for striping, but its name still sits on the black cutout
-    const cutRow = filledRow || div.classList.contains('hs-row-mention')
     if (filledRow) div.classList.add('hs-filled', `hs-fill-${rowFillName}`)
     // a notice's whole line is its label (as on the site); a chat row keeps a label line above its message
     if (filledRow && div.classList.contains('hs-mc-system')) div.classList.add('hs-row-label')
@@ -8668,8 +8666,8 @@
         : m.type === 'notice'
           ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', t('mc_main_dismiss'), `title="${t('mc_main_dismiss')}"`) : ''}`
           : m.isAction
-            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${cutRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
-            : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${cutRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
+            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${filledRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
+            : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${filledRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
     div.innerHTML = `${replyBar}${msgBody}`
     // Correct emote states based on current inventory + blocked (cached HTML
     // may have stale states). String-includes gate skips the querySelectorAll

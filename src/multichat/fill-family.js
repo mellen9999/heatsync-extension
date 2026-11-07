@@ -24,7 +24,8 @@ const NAVY_NOTICES = /\bhs-mc-notice-(?:sub|gift|bits|milestone|watchstreak|char
 /** the fill a chat / system row wears ('' = a plain row) */
 function rowFill(el) {
   const k = el.classList
-  if (k.contains('hs-mc-rule-highlight') && !k.contains('mention')) return 'rule'
+  if (k.contains('hs-row-mention')) return 'red' // a mention / reply to you: the red fill, filled like the rest (no stripe)
+  if (k.contains('hs-mc-rule-highlight')) return 'rule'
   if (k.contains('hs-mc-notice-raid') || k.contains('hs-mc-user-intro') || k.contains('hs-mc-first-msg')) return 'purple'
   if (k.contains('hs-mc-notice-announce') || k.contains('hs-mc-redeemed') || k.contains('hs-mc-highlighted') || k.contains('hs-mc-animated')) return 'teal'
   if (k.contains('hs-mc-automod') || k.contains('hs-mc-notice-error')) return 'red'

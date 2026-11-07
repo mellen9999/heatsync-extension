@@ -5,7 +5,7 @@ export function collect(sel) {
   const kind = (el) => {
     const c = el.className
     if (el.dataset.fx) return `fx-${el.dataset.fx}`
-    if (/hs-row-mention/.test(c)) return /zebra/.test(c) ? 'mention-stripe' : 'mention'
+    if (/hs-row-mention/.test(c)) return 'mention'
     if (/hs-row-seen/.test(c) && !/hs-filled/.test(c)) return 'plain+seen'
     if (/user-intro/.test(c)) return 'user-intro'
     if (!/hs-filled/.test(c)) return /zebra/.test(c) ? 'plain-stripe' : 'plain'
@@ -36,6 +36,7 @@ export function collect(sel) {
     out[k] = {
       bg: cs.backgroundColor,
       edge: cs.boxShadow,
+      striped: /hs-zebra/.test(el.className),
       fillClass: (/hs-fill-[a-z]+/.exec(el.className) || [''])[0],
       height: Math.round(el.getBoundingClientRect().height),
       padTop: px(cs.paddingTop), padBottom: px(cs.paddingBottom), padLeft: px(cs.paddingLeft), padRight: px(cs.paddingRight),

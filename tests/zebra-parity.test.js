@@ -27,7 +27,7 @@ const zebraRepaint = new Function('zebraEnabled', `${sliceFn('zebraRepaint')}; r
 // minimal linked-list DOM: rows with classList + sibling pointers
 function fakeList(types) {
   const els = types.map((t, i) => {
-    const z = new Set(t === 'first' ? ['hs-filled'] : [])
+    const z = new Set(t === 'first' || t === 'mention' ? ['hs-filled'] : [])
     return {
       id: '',
       dataset: { ...(NO_ZEBRA.has(t) ? { hsNz: '1' } : {}), ...(t === 'stream-event' ? { hsNotice: '1' } : {}) },
@@ -108,6 +108,12 @@ describe('zebra parity', () => {
     zebraRepaint(msgsEl, null)
     // chat rows (0,2,4,6) alternate plain/stripe/plain/stripe; filled rows stay plain
     expect(els.map((e) => e.classList.contains('hs-mc-zebra'))).toEqual([false, false, true, false, false, false, true])
+  })
+
+  test('mention / reply-to-me rows are filled rows too: they never take part in striping', () => {
+    const { els, msgsEl } = fakeList(['chat', 'mention', 'chat', 'mention', 'chat', 'chat'])
+    zebraRepaint(msgsEl, null)
+    expect(els.map((e) => e.classList.contains('hs-mc-zebra'))).toEqual([false, false, true, false, false, true])
   })
 
   test('a live insert after a filled row stripes off the last normal row', () => {

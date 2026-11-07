@@ -129,6 +129,7 @@ function code(text, rel) {
     .replace(/--hs-mention-bg:\s*#5f0000;/g, '')
     .replace(/--hs-mention-bg-stripe:\s*#870000;/g, '')
     .replace(/--hs-notice-bg:\s*#808000;/g, '')
+    .replace(/--hs-first-bg:\s*#800080;/g, '')
     .replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
   t = t.replace(/\/\*[\s\S]*?\*\//g, '')
   if (!rel.endsWith('.css')) t = t.replace(/(^|[^:'"`(\\])\/\/[^\n]*/g, '$1')
@@ -385,6 +386,7 @@ describe('colour doctrine — 8 colours', () => {
         '--hs-plat-twitch': TWITCH,
         '--hs-zebra': '444444',
         '--hs-notice-bg': '808000',
+        '--hs-first-bg': '800080',
         '--hs-mention-bg': '5f0000',
         '--hs-mention-bg-stripe': '870000',
         '--hs-plat-hs': ORANGE,

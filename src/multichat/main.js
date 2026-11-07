@@ -8665,8 +8665,8 @@
         : m.type === 'notice'
           ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', t('mc_main_dismiss'), `title="${t('mc_main_dismiss')}"`) : ''}`
           : m.isAction
-            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
-            : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
+            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${m.isFirstMsg ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
+            : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${m.isFirstMsg ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
     div.innerHTML = `${replyBar}${msgBody}`
     // Correct emote states based on current inventory + blocked (cached HTML
     // may have stale states). String-includes gate skips the querySelectorAll

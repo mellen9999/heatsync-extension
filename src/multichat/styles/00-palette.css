@@ -53,6 +53,8 @@
       --hs-mention-bg-stripe: #870000;
       /* the fill behind switched-to / went-live rows — mellen's pick (2026-11-07), those two rows only */
       --hs-notice-bg: #808000;
+      /* the user's first-message fill (2026-11-07): a twitch first-msg-ever row, solid, no ring */
+      --hs-first-bg: #800080;
       --hs-zebra: #444444; /* alternating-row stripe — owner pick for visible stripes; red/dim text on it is ~2.4:1 by choice */
       /* THE CURSOR INVERT — one token, mirroring the site's --sel-bg.
          white bg = the POINTER is on a control (:hover/:active).

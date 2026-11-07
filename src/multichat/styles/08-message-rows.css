@@ -516,8 +516,18 @@
     /* Errors / rejections = dim maroon */
     .hs-mc-msg.hs-mc-notice-error     { border-left-color: var(--hs-danger-dim) !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-error     .hs-mc-system-text { color: #ff0000; }
-    /* First-time chatter (Twitch first-msg=1) — magenta ring, see the row-ring block */
-    .hs-mc-msg.hs-mc-first-msg { background: #000000; }
+    /* First message ever (Twitch first-msg=1): a solid --hs-first-bg row (the stripe does
+       not tint it). The name sits on a cutout of the ground the row would have had, so it
+       reads exactly as in chat; the label, text and emotes keep their colours. */
+    .hs-mc-msg.hs-mc-first-msg,
+    .hs-mc-msg.hs-mc-first-msg.hs-mc-zebra { background: var(--hs-first-bg); }
+    .hs-mc-first-msg .hs-name-cut {
+      display: inline-block;
+      vertical-align: top;
+      padding: 0 4px;
+      background: var(--hs-bg);
+    }
+    .hs-mc-first-msg.hs-mc-zebra .hs-name-cut { background: var(--hs-zebra); }
     /* n/N search-match cursor (live-tab filter) — HeatSync orange left-accent,
        no animation, wins over notice-type coloring (same specificity, later
        in source order) so the current match is always identifiable. */
@@ -596,11 +606,11 @@
       font-weight: 600;
     }
     /* First-message labels — same primitive as the redeem/highlight labels
-       above. Each one is the SAME colour as its row ring, so the ring and the
+       above. Each one is the SAME colour as its row ring (the first-message one is white: magenta would vanish on the fill), so the ring and the
        words are one signal instead of two: the colour stays for scanning a fast
        chat, the words are there the first time you meet it. */
     .hs-mc-first-label {
-      color: #ff00ff;
+      color: #fff;
       font-size: 13px;
       font-style: normal;
       font-weight: 600;
@@ -723,7 +733,6 @@
     .hs-mc-msg.hs-mc-notice-mod-anniversary { --hs-row-ring: var(--hs-gold); }
     .hs-mc-msg.hs-mc-animated { --hs-row-ring: var(--hs-thread-dim); }
     .hs-mc-msg.hs-mc-user-intro { --hs-row-ring: var(--hs-thread); }
-    .hs-mc-msg.hs-mc-first-msg { --hs-row-ring: #ff00ff; }
     .hs-mc-msg.hs-mc-redeemed { --hs-row-ring: var(--hs-plat-twitch); }
     .hs-mc-msg.hs-mc-highlighted { --hs-row-ring: var(--hs-gold); }
     .hs-mc-msg.hs-mc-rule-highlight { --hs-row-ring: var(--hs-rule-hl, #fff); }
@@ -732,7 +741,7 @@
       border-left: 0;
       padding: var(--hs-mc-row-pad, 2px 4px);
     }
-    .hs-mc-msg:is(.hs-mc-notice-sub, .hs-mc-notice-gift, .hs-mc-notice-raid, .hs-mc-notice-bits, .hs-mc-kicks, .hs-mc-notice-announce, .hs-mc-notice-milestone, .hs-mc-notice-watchstreak, .hs-mc-notice-charity, .hs-mc-notice-mod-anniversary, .hs-mc-animated, .hs-mc-user-intro, .hs-mc-first-msg, .hs-mc-redeemed, .hs-mc-highlighted, .hs-mc-rule-highlight) {
+    .hs-mc-msg:is(.hs-mc-notice-sub, .hs-mc-notice-gift, .hs-mc-notice-raid, .hs-mc-notice-bits, .hs-mc-kicks, .hs-mc-notice-announce, .hs-mc-notice-milestone, .hs-mc-notice-watchstreak, .hs-mc-notice-charity, .hs-mc-notice-mod-anniversary, .hs-mc-animated, .hs-mc-user-intro, .hs-mc-redeemed, .hs-mc-highlighted, .hs-mc-rule-highlight) {
       box-shadow: inset 0 0 0 1px var(--hs-row-ring);
     }
     /* Filter-rule highlight — color driven by per-rule CSS custom property */

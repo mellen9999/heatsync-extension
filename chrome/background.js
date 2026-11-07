@@ -4888,10 +4888,8 @@ function rankEmotePool(list, tier) {
     const i = order.indexOf(e.source)
     return i === -1 ? order.length : i
   }
-  return (list || [])
-    .map((e, i) => [e, i])
-    .sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1])
-    .map((p) => p[0])
+  // Array.prototype.sort is stable: equal ranks keep their input order
+  return [...(list || [])].sort((a, b) => rank(a) - rank(b))
 }
 
 function fetchGlobalEmotes() {

@@ -3709,7 +3709,7 @@ function _buildChannelEmoteCache(ch, emotes, platform) {
     // emoteProviderPriority decides the winner instead of plain array-order
     // last-write-wins. Every other pairing (heatsync, twitch, kick, or a
     // same-provider refresh) is untouched — see resolveEmoteProviderWinner.
-    chCache.set(e.name, resolveEmoteProviderWinner(chCache.get(e.name), entry, emoteTierOrder('channel')))
+    chCache.set(e.name, resolveEmoteProviderWinner(chCache.get(e.name), entry, EMOTE_TIER_ORDER.channel))
     if (e.hash) {
       emoteHashes.set(e.name, e.hash)
       hashToName.set(e.hash, e.name)
@@ -3865,7 +3865,7 @@ async function loadEmotes() {
           }
           // See _buildChannelEmoteCache — same 7tv/bttv/ffz collision rule
           // applied to the global-tier pool.
-          emoteCache.set(e.name, resolveEmoteProviderWinner(emoteCache.get(e.name), entry, emoteTierOrder('global')))
+          emoteCache.set(e.name, resolveEmoteProviderWinner(emoteCache.get(e.name), entry, EMOTE_TIER_ORDER.global))
           while (emoteCache.size > 2000) {
             emoteCache.delete(emoteCache.keys().next().value)
           }

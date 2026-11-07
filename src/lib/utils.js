@@ -742,14 +742,6 @@ const EMOTE_TIER_ORDER = {
 }
 
 /**
- * @param {'channel'|'global'} tier
- * @returns {string[]} winner-first provider order for that tier
- */
-function emoteTierOrder(tier) {
-  return [...(EMOTE_TIER_ORDER[tier] || EMOTE_TIER_ORDER.global)]
-}
-
-/**
  * Stable re-rank of a pool array so index 0 is the winner for every name: in a channel,
  * entries with no `source` (the owner's heatsync set) stay in front, then providers by tier
  * order, unknown providers last. Returns a new array; the input is untouched.
@@ -763,10 +755,8 @@ function rankEmotePool(list, tier) {
     const i = order.indexOf(e.source)
     return i === -1 ? order.length : i
   }
-  return (list || [])
-    .map((e, i) => ({ e, i, r: rank(e) }))
-    .sort((a, b) => a.r - b.r || a.i - b.i)
-    .map((p) => p.e)
+  // Array.prototype.sort is stable: equal ranks keep their input order
+  return [...(list || [])].sort((a, b) => rank(a) - rank(b))
 }
 
 /**
@@ -1400,7 +1390,6 @@ const utils = {
   EMOTE_THIRD_PARTY_PROVIDERS,
   EMOTE_TIER_ORDER,
   emoteProviderOrder,
-  emoteTierOrder,
   rankEmotePool,
   resolveEmoteProviderWinner,
 
@@ -1445,7 +1434,6 @@ export {
   EMOTE_THIRD_PARTY_PROVIDERS,
   EMOTE_TIER_ORDER,
   emoteProviderOrder,
-  emoteTierOrder,
   error,
   escapeHtml,
   estimateSettingSize,

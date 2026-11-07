@@ -3156,12 +3156,13 @@
               : '(unchanged)',
           )
 
-          // If on own channel, sync channel emotes with inventory (remove stale ones)
-          // Channel emotes for owner = their personal inventory, so keep them in sync
-          if (channelEmotes.length > 0) {
-            const inventoryHashes = new Set(emoteInventory.map((e) => e.hash))
+          // On YOUR OWN channel the owner tier is your inventory, so drop owner entries you
+          // no longer hold. Only those: the channel's ffz/7tv/bttv/twitch/kick emotes (they
+          // carry a `source`) are not in your inventory and must survive every poll, and on
+          // anyone else's channel the owner tier is theirs, not yours.
+          if (channelEmotes.length > 0 && isOwnChannelPage()) {
             const before = channelEmotes.length
-            channelEmotes = channelEmotes.filter((e) => inventoryHashes.has(e.hash))
+            channelEmotes = pruneOwnerTier(channelEmotes, emoteInventory)
             if (channelEmotes.length !== before) {
               log(' 🔄 Synced channel emotes with inventory:', before, '→', channelEmotes.length)
             }
@@ -4655,6 +4656,19 @@
   }
 
   // Get current user's username from Twitch DOM
+  // Drop owner-tier entries (no `source`) the inventory no longer holds; every sourced entry stays.
+  function pruneOwnerTier(channelList, inventory) {
+    const held = new Set(inventory.map((e) => e.hash))
+    return channelList.filter((e) => e.source || held.has(e.hash))
+  }
+
+  // true when this tab is the viewer's own channel (the only place the owner tier == inventory)
+  function isOwnChannelPage() {
+    const me = (getCurrentUsername() || '').toLowerCase()
+    const page = (getPageChannel() || '').toLowerCase()
+    return !!me && !!page && me === page
+  }
+
   function getCurrentUsername() {
     // Return cached value if we already found it
     if (cachedUsername) {

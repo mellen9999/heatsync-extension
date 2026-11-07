@@ -28,7 +28,7 @@ try {
   const id = sw.url().match(/chrome-extension:\/\/([a-p]+)\//)?.[1]!
   const seed = await c.newPage(); await seed.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
   await seed.evaluate(async () => { // @ts-ignore
-    await chrome.storage.local.set({ heatsync_multichat: { channels: [{ id: 'probechan', twitch: 'probechan', kick: '', youtube: '' }] }, user_info: { username: 'probeuser' } }) })
+    await chrome.storage.local.set({ chat_filter_rules: JSON.stringify([{ id: 'r1', enabled: true, action: 'highlight', color: '#ff0000', scope: 'all', match: { type: 'keyword', value: 'ruletrigger' } }]), heatsync_multichat: { channels: [{ id: 'probechan', twitch: 'probechan', kick: '', youtube: '' }] }, user_info: { username: 'probeuser' } }) })
   await seed.close()
   const p = await c.newPage()
   await p.goto('https://www.twitch.tv/probechan', { waitUntil: 'domcontentloaded' })
@@ -52,6 +52,11 @@ try {
   un('probechan', '#00FF00', 'a1', 'announcement', 'announcement', '', ';msg-param-color=PRIMARY'); await sleep(300)
   msg('pointer', '#FFFFFF', 'p1', 'redeemed thing', ';custom-reward-id=abc-123'); await sleep(300)
   msg('shouty', '#00FFFF', 'h1', 'this is highlighted', ';msg-id=highlighted-message'); await sleep(300)
+  un('cheerer', '#8888FF', 'b1', 'bitsbadgetier', 'cheerer cheered 100 bits', '', ''); await sleep(300)
+  msg('ruler', '#00FF00', 'rr', 'this has ruletrigger in it'); await sleep(300)
+  msg('pinger', '#FFFF00', 'pg', 'hi @probeuser'); await sleep(300)
+  msg('pinger2', '#FFFF00', 'pg2', 'hi again @probeuser'); await sleep(300)
+  msg('introer', '#00FF00', 'in', 'hi everyone', ';msg-id=user-intro'); await sleep(300)
   await ev({ type: 'stream_event', eventType: 'stream:update', channel: 'probechan', game: 'Just Chatting', prevGame: 'Elden Ring', color: '#8888ff' }); await sleep(400)
   await ev({ type: 'stream_event', eventType: 'stream:poll-start', channel: 'probechan', title: 'best game?' }); await sleep(300)
   await ev({ type: 'stream_event', eventType: 'stream:raid-in', channel: 'probechan', from: 'friend', viewers: 12 }); await sleep(300)
@@ -61,6 +66,7 @@ try {
   console.log('waiting out the 90s went-live grace…'); await sleep(95000)
   await ev({ type: 'stream_event', eventType: 'stream:online', channel: 'probechan', game: 'Elden Ring', color: '#8888ff' }); await sleep(800)
   msg('viewersix', '#00FF00', 'm7', 'a sixth normal message'); await sleep(1500)
+  writeFileSync(`${process.argv[2]}.classes.txt`, (await p.evaluate(() => [...document.querySelectorAll('#hs-mc-messages > *')].map((e: any) => `${e.className} | ${(e.textContent || '').trim().slice(0, 40)}`))).join('\n'))
   await p.evaluate(inject, ['#hs-mc-messages', 'hs-mc-msg'])
   writeFileSync(process.argv[2], JSON.stringify(await p.evaluate(collect, '#hs-mc-messages > *'), null, 1))
   const box = await p.evaluate(() => { const m = document.getElementById('hs-mc-messages')!; const r = m.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height } })

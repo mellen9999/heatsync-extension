@@ -16,6 +16,7 @@
     line-height: var(--brand-row-line);
     color: #ffffff; /* contrast rule: every fill is dim, so ALL body text on one is white */
 }
+.hs-row-mention { color: #ffffff; }
 /* a label that is its own line above the message: the row's size, the label's line */
 .hs-filled .hs-row-label { font-size: inherit; line-height: var(--brand-label-line); }
 .hs-filled + .hs-filled { border-top: var(--brand-row-gap) solid #000000; }
@@ -26,15 +27,15 @@
 .hs-fill-red    { background: var(--brand-fill-red);    --hs-label: var(--brand-label-red); }
 .hs-fill-rule   { background: var(--hs-rule-bg, var(--brand-zebra)); --hs-label: #ffffff; }
 .hs-row-label   { color: var(--hs-label); }
-/* Contrast rule, once, no per-colour maths: on ANY filled row the body text, links, dim / reply-context
+/* Contrast rule, once, no per-colour maths: on ANY filled row (and the red mention row) the body text, links, dim / reply-context
    text and @mentions are white; links are underlined, mentions bold (VT320 emphasis, never a colour).
    Only the row label (above) keeps its family colour; the name keeps its black cutout. */
-.hs-filled :is(a, .chat-link, .hs-mc-link, .mention, .chat-reply-ctx, .chat-reply-ctx *, .hs-mc-reply-ctx, .hs-mc-reply-ctx *):not(.hs-name-cut *, .hs-row-label) {
+:is(.hs-filled, .hs-row-mention) :is(a, .chat-link, .hs-mc-link, .mention, .hs-mc-mention, .chat-reply-ctx, .chat-reply-ctx *, .hs-mc-reply-ctx, .hs-mc-reply-ctx *):not(.hs-name-cut *, .hs-row-label) {
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
 }
-.hs-filled :is(a, .chat-link, .hs-mc-link):not(.hs-name-cut *, .hs-row-label) { text-decoration: underline !important; }
-.hs-filled .mention:not(.hs-name-cut *) { font-weight: 700; }
+:is(.hs-filled, .hs-row-mention) :is(a, .chat-link, .hs-mc-link):not(.hs-name-cut *, .hs-row-label) { text-decoration: underline !important; }
+:is(.hs-filled, .hs-row-mention) :is(.mention, .hs-mc-mention):not(.hs-name-cut *) { font-weight: 700; }
 .hs-fill-olive.hs-row-alert { --hs-label: #ff0000; }
 .hs-name-cut {
     display: inline-block;
@@ -42,3 +43,13 @@
     padding: 0 var(--brand-cut-pad-x);
     background: #000000;
 }
+
+/* The mention row: the dark red fill IS the "you were pinged" signal (a mention or a reply to you).
+   On a stripe it takes the lighter red instead of the grey, so a run of mentions alternates and
+   never goes grey. The stripe marker is the one surface-named class left in this file (.zebra-even
+   on the site, .hs-mc-zebra in the extension); --hs-stripe-mention is the named hook that says
+   whether stripes are on (the site sets it under body.alternating-lines; the extension always). */
+.hs-row-mention { background: var(--brand-fill-red) !important; }
+:is(.zebra-even, .hs-mc-zebra).hs-row-mention { background: var(--hs-stripe-mention, var(--brand-fill-red)) !important; }
+/* the session-first edge: a chatter you have not seen since this tab opened — a yellow bar on the left */
+.hs-row-seen { box-shadow: inset 2px 0 0 var(--brand-yellow); }

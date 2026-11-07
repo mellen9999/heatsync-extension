@@ -610,14 +610,13 @@
     /* The dark red fill is the whole "you got mentioned" signal, same as the
        site's --mention-bg. On a zebra row it takes the lighter red instead of
        the gray stripe, so a run of mentions alternates and never goes gray. */
-    .hs-mc-msg.mention,
     .hs-feed-msg.mention {
       background: var(--hs-mention-bg);
     }
-    .hs-mc-msg.mention.hs-mc-zebra,
     .hs-feed-msg.mention.hs-mc-zebra {
       background: var(--hs-mention-bg-stripe);
     }
+    /* (chat rows: the shared .hs-row-mention in styles/21-brand-rows.css) */
     /* Row base color white for non-colored text (gray timestamps, plain
        message body) — inline user colors override naturally. No star-cascade
        so colored names breathe. */
@@ -630,17 +629,7 @@
       color: #ffffff !important;
       -webkit-text-fill-color: #ffffff !important;
     }
-    .hs-mc-msg.hs-first-msg {
-      /* Session-first glow — "first time YOU have seen them since this tab
-         opened". YELLOW, per the palette above: yellow(11)=first-seen,
-         magenta(13)=first-msg-EVER. It was magenta, which made every regular's
-         first line of the session look identical to twitch's real first-message
-         announcement — so the one row that means something was buried under
-         dozens that didn't. Magenta is now exclusively .hs-mc-first-msg.
-         Bar + inset glow (the setting is called "glow", so it glows); an
-         earlier 0.30 alpha at -2px spread read as nothing on this background. */
-      box-shadow: inset 2px 0 0 var(--hs-mention);
-    }
+    /* session-first edge: the shared .hs-row-seen (styles/21-brand-rows.css) */
     /* Mention red wins over a highlight rule when a row is both — "you got
        pinged" is the stronger signal. Higher specificity guarantees the
        override regardless of source order; drops the rule's ring too. */

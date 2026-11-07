@@ -15,6 +15,11 @@ await p.evaluate(async () => {
   const mk = (u, t, extra = {}) => ({ type: 'chat', platform: 'twitch', username: u, displayName: u, content: t, timestamp: Date.now(), id: u + Math.random(), color: '#8888ff', ...extra })
   const sys = (subType, text) => ({ type: 'system', subType, systemMessage: text, platform: 'twitch', timestamp: Date.now(), id: 's' + Math.random() })
   const ev = (cls, txt) => ({ type: 'stream-event', eventClass: cls, content: txt, channel: 'kripp', platform: 'twitch', color: '#8888ff', userId: '', displayName: '', timestamp: Date.now(), id: 'e' + Math.random() })
+  vm.app = { user: { username: 'probeuser', displayName: 'probeuser' } }
+  // the SAME settings instance live-chat.js imported (vite may serve a second URL for it)
+  const smUrl = performance.getEntriesByType('resource').map((r) => r.name).find((n) => /\/client\/settings-manager\.js/.test(n)) || '/client/settings-manager.js'
+  const sm = (await import(smUrl)).settingsManager
+  sm.set('chatFilterRules', JSON.stringify([{ id: 'r1', enabled: true, action: 'highlight', color: '#ff0000', scope: 'all', match: { type: 'keyword', value: 'ruletrigger' } }]))
   const warm = document.createElement('div'); warm.dataset.activeTabId = 't'
   for (const u of ['a', 'b', 'c', 'd', 'e', 'f']) comp._renderChatMessageBulk(warm, mk(u, 'x'))
   const R = (m) => comp._renderChatMessageBulk(c, m)
@@ -22,8 +27,11 @@ await p.evaluate(async () => {
   R(mk('newbie', 'hello chat, first time here', { isFirstMsg: true, color: '#0000ff' })); R(mk('viewer3', 'a third normal message', { color: '#ff00ff' }))
   R(sys('sub', 'subber subscribed with Prime')); R(sys('subgift', 'gifter gifted a Tier 1 sub to bob')); R(sys('raid', '42 raiders from raider have joined')); R(sys('announcement', 'welcome to the stream'))
   R(mk('pointer', 'redeemed thing', { isRedemption: true, color: '#ffffff' })); R(mk('shouty', 'this is highlighted', { isHighlighted: true, color: '#00ffff' }))
+  R(mk('spacer1', 'a plain row', { color: '#ffffff' }))
   R(ev('event-update', 'kripp switched to Just Chatting')); R(ev('event-poll', 'kripp poll: best game?'))
   R(ev('event-raid', 'kripp raided friend with 12')); R(ev('event-sub', 'gifter gifted 5 subs'))
+  R(sys('bitsbadgetier', 'cheerer cheered 100 bits')); R(sys('kicks', 'kicker gifted 100 kicks')); R(sys('superchat', 'payer sent a super chat'))
+  R(mk('ruler', 'this has ruletrigger in it', { color: '#00ff00' })); R(mk('pinger', 'hi @probeuser', { color: '#ffff00' })); R(mk('pinger2', 'hi again @probeuser', { color: '#ffff00' }))
   R(mk('viewer4', 'a fourth normal message', { color: '#ffffff' })); R(mk('viewer5', 'a fifth normal message', { color: '#ffffff' })); R(ev('event-online', 'kripp went live — Elden Ring')) 
 })
 await p.evaluate(inject, ['#c', 'chat-message'])

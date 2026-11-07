@@ -8255,7 +8255,7 @@
     }
     const cls =
       tabId === 'mentions'
-        ? 'hs-mc-msg mention'
+        ? 'hs-mc-msg mention hs-row-mention'
         : isKicksEvent
           ? 'hs-mc-msg hs-mc-system hs-mc-kicks'
           : isMembership
@@ -8269,7 +8269,7 @@
                   : isSuperChat
                     ? 'hs-mc-msg hs-mc-superchat'
                     : isMention(m)
-                      ? 'hs-mc-msg mention'
+                      ? 'hs-mc-msg mention hs-row-mention'
                       : 'hs-mc-msg'
     const channelSpan = showChannel && m.channel ? `<span class="hs-mc-channel">${escapeHtml(m.channel)}</span>` : ''
     // Render badges — YouTube sends array of {type,label,url}, Twitch/Kick send IRC badge string
@@ -8523,7 +8523,7 @@
       // but channel-first (purple hs-mc-first-msg) outranks session-first — don't glow yellow over it.
       const sessionFirst = markChatterSeen(m.channel, m.user)
       if (sessionFirst && !m.isFirstMsg) {
-        div.classList.add('hs-first-msg')
+        div.classList.add('hs-first-msg', 'hs-row-seen')
       }
     }
     // Twitch first-msg flag — brand new user to the channel (not just this session)

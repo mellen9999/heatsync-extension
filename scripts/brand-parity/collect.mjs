@@ -5,6 +5,9 @@ export function collect(sel) {
   const kind = (el) => {
     const c = el.className
     if (el.dataset.fx) return `fx-${el.dataset.fx}`
+    if (/hs-row-mention/.test(c)) return /zebra/.test(c) ? 'mention-stripe' : 'mention'
+    if (/hs-row-seen/.test(c) && !/hs-filled/.test(c)) return 'plain+seen'
+    if (/user-intro/.test(c)) return 'user-intro'
     if (!/hs-filled/.test(c)) return /zebra/.test(c) ? 'plain-stripe' : 'plain'
     let m = /(?:chat|hs-mc)-notice-([a-z-]+)/.exec(c)
     if (m) return `notice-${m[1]}`
@@ -26,12 +29,13 @@ export function collect(sel) {
     const cut = el.querySelector('.hs-name-cut')
     const ccs = cut && getComputedStyle(cut)
     const body = el.querySelector('.chat-content, .hs-mc-text, [data-fx-body]')
-    const link = body && body.querySelector('a[href]')
-    const men = body && body.querySelector('.mention')
+    const link = body && body.querySelector('a[href]:not(.mention, .hs-mc-mention)')
+    const men = body && body.querySelector('.mention, .hs-mc-mention')
     const rep = el.querySelector('.chat-reply-ctx, .hs-mc-reply-ctx')
     const col = (n) => (n ? getComputedStyle(n).color : null)
     out[k] = {
       bg: cs.backgroundColor,
+      edge: cs.boxShadow,
       fillClass: (/hs-fill-[a-z]+/.exec(el.className) || [''])[0],
       height: Math.round(el.getBoundingClientRect().height),
       padTop: px(cs.paddingTop), padBottom: px(cs.paddingBottom), padLeft: px(cs.paddingLeft), padRight: px(cs.paddingRight),
@@ -53,8 +57,7 @@ export function collect(sel) {
 // css and the surface's base css meet exactly as they do on a real row. Self-contained (serialised).
 export function inject([sel, baseClass]) {
   const host = document.querySelector(sel)
-  const FX = [['rule', 'rule', 'style="--hs-rule-bg:var(--brand-fill-maroon)"'], ['cheer', 'navy', ''], ['user-intro', 'purple', ''],
-    ['kicks', 'navy', ''], ['superchat', 'navy', ''], ['redeem', 'teal', ''], ['offline', 'olive', '']]
+  const FX = [['user-intro', 'purple', ''], ['kicks', 'navy', ''], ['superchat', 'navy', ''], ['redeem', 'teal', ''], ['offline', 'olive', '']]
   const sp = document.createElement('div'); sp.className = baseClass; sp.textContent = 'spacer'; host.appendChild(sp) // a plain row, so no fixture's gap depends on what came before
   for (const [name, fill, style] of FX) {
     const d = document.createElement('div')

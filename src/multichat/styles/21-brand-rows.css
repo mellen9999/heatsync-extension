@@ -13,7 +13,10 @@
 .hs-filled {
     border-left: 0;
     padding: var(--brand-row-pad-y) var(--brand-row-pad-x);
+    line-height: var(--brand-row-line);
 }
+/* a label that is its own line above the message: the row's size, the label's line */
+.hs-filled .hs-row-label { font-size: inherit; line-height: var(--brand-label-line); }
 .hs-filled + .hs-filled { border-top: var(--brand-row-gap) solid #000000; }
 .hs-fill-olive  { background: var(--brand-fill-olive);  --hs-label: var(--brand-label-olive); }
 .hs-fill-purple { background: var(--brand-fill-purple); --hs-label: var(--brand-label-purple); }

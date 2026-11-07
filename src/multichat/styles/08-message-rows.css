@@ -389,11 +389,13 @@
     .hs-mc-muted > :not(.hs-mc-user):not(.hs-mc-badge-img):not(.hs-mc-timestamp) {
       display: none !important;
     }
-    .hs-mc-msg.hs-mc-system {
+    .hs-mc-msg.hs-mc-system:not(.hs-filled) {
       border-left: 3px solid var(--hs-plat-twitch);
       padding-left: 8px;
       background: #000000;
     }
+    /* a filled notice IS its label: the text runs inline in the row's own type and colour */
+    .hs-mc-system.hs-filled .hs-mc-system-text { display: inline; color: inherit; font-size: inherit; line-height: inherit; }
     .hs-mc-system-text {
       color: #ffffff;
       font-size: 13px;
@@ -678,11 +680,6 @@
        One ring per row: later colour wins. Keyword and filter rule outrank the
        events because those rows carry no label — the event's label still says
        "first message" inside a yellow keyword ring. */
-    /* a ringed notice drops the system rail and its gutter: back to the row's own padding */
-    .hs-mc-msg.hs-mc-system:is(.hs-mc-notice-sub, .hs-mc-notice-gift, .hs-mc-notice-raid, .hs-mc-notice-bits, .hs-mc-kicks, .hs-mc-notice-announce, .hs-mc-notice-milestone, .hs-mc-notice-watchstreak, .hs-mc-notice-charity, .hs-mc-notice-mod-anniversary) {
-      border-left: 0;
-      padding: var(--brand-row-pad-y) var(--brand-row-pad-x);
-    }
     /* Filter-rule highlight — color driven by per-rule CSS custom property */
     .hs-mc-msg.tweet {
       background: #000000;

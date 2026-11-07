@@ -33,6 +33,7 @@ export const BRAND = {
   "row": {
     "font": "15px",
     "line": "20px",
+    "labelLine": "16px",
     "padY": "0px",
     "padYCozy": "3px",
     "padX": "10px",

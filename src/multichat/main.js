@@ -8244,11 +8244,11 @@
         div.className = `hs-mc-msg hs-mc-system ${noticeKind}`.trim()
         // .hs-mc-system-text span so the per-kind text-color rules apply
         const span = document.createElement('span')
-        span.className = 'hs-mc-system-text hs-row-label'
+        span.className = 'hs-mc-system-text'
         span.textContent = m.systemMsg || m.text || ''
         div.appendChild(span)
         const sysFill = rowFill(div)
-        if (sysFill) div.classList.add('hs-filled', `hs-fill-${sysFill}`)
+        if (sysFill) div.classList.add('hs-filled', `hs-fill-${sysFill}`, 'hs-row-label')
         return div
       }
       return null
@@ -8643,13 +8643,15 @@
     const rowFillName = rowFill(div)
     const filledRow = !!rowFillName
     if (filledRow) div.classList.add('hs-filled', `hs-fill-${rowFillName}`)
+    // a notice's whole line is its label (as on the site); a chat row keeps a label line above its message
+    if (filledRow && div.classList.contains('hs-mc-system')) div.classList.add('hs-row-label')
     let firstMsgLabel = ''
     if (m.isFirstMsg) {
       firstMsgLabel = `<span class="hs-mc-system-text hs-row-label hs-mc-first-label">\u25C7 ${t('mc_main_first_msg')}</span>`
     }
     // USERNOTICE system line (all values go through escapeHtml — same pattern as existing innerHTML above)
     const systemLine =
-      (m.systemMsg ? `<span class="hs-mc-system-text hs-row-label">${escapeHtml(m.systemMsg)}</span>` : '') +
+      (m.systemMsg ? `<span class="hs-mc-system-text">${escapeHtml(m.systemMsg)}</span>` : '') +
       redeemLabel +
       firstMsgLabel
     // Skip the date-format work entirely when the timestamp won't render —

@@ -87,8 +87,10 @@
     let _inventoryNames = new Set()
     let _inventoryHashes = new Set()
     let _inventoryIds = new Set()
+    let _inventoryByName = new Map()
     function rebuildInventoryIndex() {
       _inventoryNames = new Set(inventoryEmotesCache.map((e) => e.name))
+      _inventoryByName = new Map(inventoryEmotesCache.map((e) => [e.name, e]))
       _inventoryHashes = new Set(inventoryEmotesCache.filter((e) => e.hash).map((e) => e.hash))
       _inventoryIds = new Set(inventoryEmotesCache.filter((e) => e.id).map((e) => e.id))
     }
@@ -2397,10 +2399,12 @@
     // Check if emote is in user's inventory
     function isInInventory(emote) {
       if (!inventoryEmotesCache || inventoryEmotesCache.length === 0) return false
+      // Same name is yours only when it is the same emote: a channel W beside a different W you
+      // own is not "in your set" (rule 4/10). Name decides only when either side has no hash.
+      const mine = _inventoryByName.get(emote.name)
+      const sameNameIsMine = !!mine && !(mine.hash && emote.hash && mine.hash !== emote.hash)
       return (
-        _inventoryNames.has(emote.name) ||
-        (emote.hash && _inventoryHashes.has(emote.hash)) ||
-        (emote.id && _inventoryIds.has(emote.id))
+        sameNameIsMine || (emote.hash && _inventoryHashes.has(emote.hash)) || (emote.id && _inventoryIds.has(emote.id))
       )
     }
 
@@ -3392,7 +3396,7 @@
 
       const q = searchQuery
       const seen = new Set()
-      const keyOf = (e) => e.hash || `_n_${(e.name || '').toLowerCase()}`
+      const keyOf = (e) => e.hash || `_n_${e.name || ''}`
       const localMatches = []
 
       // Local matches (channel + global + mine) always included — they're what

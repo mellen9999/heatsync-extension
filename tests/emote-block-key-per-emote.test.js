@@ -44,3 +44,9 @@ test('the picker button files the same per-emote key (no 24-byte url prefix left
   expect(src).not.toMatch(/btoa\([^)]*\)\.slice\(0, ?24\)/)
   expect(src).toContain('function emoteBlockKey')
 })
+
+test('picker button: owned means the same emote, and name dedupe is case-exact', () => {
+  const src = readFileSync(join(import.meta.dir, '..', 'chrome', 'heatsync-button.js'), 'utf8')
+  expect(src).toContain('mine.hash !== emote.hash')
+  expect(src).not.toContain("_n_${(e.name || '').toLowerCase()}")
+})

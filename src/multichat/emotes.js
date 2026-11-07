@@ -4436,7 +4436,11 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     // AYAYA, the 7tv variant someone collected), and the one the sender
     // picked is the only one that is not a guess. Ungated by _sGate — it's
     // current by construction.
-    let e = msgRefs?.get(name)
+    // A platform token (twitch IRC emotes= tag) is exact by position (rule 1): it is
+    // what the line literally carries, so nothing with the same name replaces it.
+    let e = extraCache?.get(name)
+    if (e) return { e, inv: false }
+    e = msgRefs?.get(name)
     if (e) return { e, inv: true }
     // The SENDER's own set next, before the channel: the ref above is just a
     // precomputed lookup of this same inventory, so a line with no ref (the first
@@ -4448,7 +4452,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     if (e) return { e, inv: true }
     e = channel ? channelEmoteCaches[channel]?.get(raw) : null
     if (e) return { e, inv: false }
-    e = extraCache?.get(name) || emoteCache.get(raw)
+    e = emoteCache.get(raw)
     if (e) return { e, inv: false }
     e = _rfGate(_rf?.get(raw)) || (_rf ? pastOwnershipAt(raw, msgTime) : null)
     return e ? { e, inv: true } : null
@@ -4626,9 +4630,17 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const kickUrl = `https://files.kick.com/emotes/${emoteId}/fullsize`
       // _lookup applies the inventory-time gate here too (sender path was
       // previously ungated on kick tokens — an oversight vs the twitch path).
+      // The token is exact (rule 1): only the SAME kick emote's richer copy (its hash is
+      // the kick id, or its url is that id's file) may stand in for it; a same-name
+      // 7tv/bttv/ffz emote is a different picture and never replaces it.
       const _kickHit = _lookup(emoteName)
-      const cached = _kickHit?.e
-      const cachedInv = !!_kickHit?.inv
+      const _kickHitE = _kickHit?.e
+      const _isThisKick =
+        !!_kickHitE &&
+        (String(_kickHitE.hash) === String(emoteId) ||
+          (typeof _kickHitE.url === 'string' && _kickHitE.url.includes(`/emotes/${emoteId}/`)))
+      const cached = _isThisKick ? _kickHitE : null
+      const cachedInv = _isThisKick && !!_kickHit?.inv
       const useCachedUrl = !!(cached?.url && !/^https?:\/\/files\.kick\.com\//i.test(cached.url))
       const finalUrl = useCachedUrl ? cached.url : kickUrl
       const provider = cached?.source || 'kick'

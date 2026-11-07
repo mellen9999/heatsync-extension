@@ -488,6 +488,9 @@
       padding: 2px 4px;
       background: var(--hs-bg);
     }
+    /* a notice row takes no stripe, but its cutout wears the ground a normal row would
+       have at that spot (main.js noticeStripe sets this class from the same stripe state) */
+    .hs-mc-stream-event.hs-mc-notice-z .hs-evt-cut { background: var(--hs-zebra); }
     /* YouTube event banners — superchat/sticker default to the amount-tier gold;
        m.scColor (inline style, set in main.js) overrides with the real per-message
        tier color from YouTube's own renderer when present. */

@@ -9888,6 +9888,14 @@
   function stampZebra(div, m, prevDiv) {
     if (_NO_ZEBRA_TYPES.has(m.type)) div.dataset.hsNz = '1'
     div.classList.toggle('hs-mc-zebra', zebraOfInsert(m, prevDiv))
+    if (div.dataset.hsNz) div.classList.toggle('hs-mc-notice-z', noticeStripe(prevDiv))
+  }
+  // A notice row (went live / switched to) takes no stripe itself, but its name
+  // cutout wears the ground a counted row would have at that spot: the stripe
+  // when the row above is a counted, unstriped row, else black.
+  function noticeStripe(prev) {
+    while (prev?.id === 'hs-mc-embed-player') prev = prev.previousElementSibling
+    return zebraEnabled && !!prev && !prev.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
   }
   // Re-derive every stripe from `from` onward. A row inserted mid-list (a kick
   // line landing between twitch lines by timestamp) used to leave everything
@@ -9902,6 +9910,7 @@
         ? zebraEnabled && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
         : zebraEnabled && el.classList.contains('hs-mc-zebra')
       if (el.classList.contains('hs-mc-zebra') !== want) el.classList.toggle('hs-mc-zebra', want)
+      if (el.dataset.hsNz) el.classList.toggle('hs-mc-notice-z', noticeStripe(prev))
       prev = el
     }
   }

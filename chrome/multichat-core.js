@@ -13155,6 +13155,15 @@ function pinPickedEmote(emote) {
 }
 
 /**
+ * Forget a catalog pick (a swap for it was refused, so the line must not keep
+ * sending the one you didn't get).
+ * @param {string} name
+ */
+function forgetRemoteEmoteRef(name) {
+  if (name) remoteCompleted.delete(name)
+}
+
+/**
  * Drop the pin on `name`. With a hash, only a pin of THAT emote goes — a newer
  * pick of a different emote under the same word stays. Called when an emote is
  * removed or swapped away: the word then resolves by the normal order (rule 8).
@@ -15176,7 +15185,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '86b226bb66f1' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '48e53056ec70' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the

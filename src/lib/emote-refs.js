@@ -125,6 +125,15 @@ export function pinPickedEmote(emote) {
 }
 
 /**
+ * Forget a catalog pick (a swap for it was refused, so the line must not keep
+ * sending the one you didn't get).
+ * @param {string} name
+ */
+export function forgetRemoteEmoteRef(name) {
+  if (name) remoteCompleted.delete(name)
+}
+
+/**
  * Drop the pin on `name`. With a hash, only a pin of THAT emote goes — a newer
  * pick of a different emote under the same word stays. Called when an emote is
  * removed or swapped away: the word then resolves by the normal order (rule 8).

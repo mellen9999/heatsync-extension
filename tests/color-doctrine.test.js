@@ -420,7 +420,7 @@ describe('single-definition colours', () => {
     const css = readFileSync(join(STYLES, '00-palette.css'), 'utf8')
     expect(css.match(/#00ad03/gi)).toHaveLength(1)
     expect(readFileSync(join(STYLES, '01-brand-tokens.css'), 'utf8').match(/#808080/gi)).toHaveLength(1) // dim gray: spelled once, in the shared brand tokens
-    expect(css.match(/#bcbcbc/gi)).toHaveLength(1)
+    expect(readFileSync(join(STYLES, '01-brand-tokens.css'), 'utf8').match(/#bcbcbc/gi)).toHaveLength(1)
     const js = readFileSync(join(ROOT, 'src', 'lib', 'palette.js'), 'utf8')
     expect(js).toMatch(/HS_MOD_GREEN = '#00ad03'/)
   })

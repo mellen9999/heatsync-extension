@@ -1266,7 +1266,7 @@ function syntaxCheck(outDir, browser) {
 
 // Build a source zip suitable for AMO source-code review:
 // - everything needed to reproduce the build (chrome/, src/, build.js, lockfile, package.json)
-// - reviewer-facing docs (README, CHANGELOG, LICENSE, TESTER-GUIDE, etc.)
+// - reviewer-facing docs (README, CHANGELOG, LICENSE, etc.)
 // - excludes generated multichat.js (regenerated from src/multichat/), dist/, node_modules/, .git/
 function buildSourceZip() {
   const version = getVersion()
@@ -1285,7 +1285,6 @@ function buildSourceZip() {
     'CONTRIBUTING.md',
     'LICENSE',
     'SECURITY.md',
-    'TESTER-GUIDE.md',
   ].filter((p) => existsSync(join(__dirname, p)))
 
   const excludes = ['chrome/multichat-core.js', 'dist/*', 'node_modules/*', '.git/*', '*/.DS_Store']

@@ -31,7 +31,7 @@ heatsync.org (every 5 min + on startup) sends a rotating install id (changes
 daily, cannot be joined across days), extension version, a rough install-age range (first day/week/month/older,
 computed on-device), and which of
 multichat/feed/dm/mentions were opened — merged server-side into a HyperLogLog
-and discarded, aggregate counts kept 90 days. Full detail in PRIVACY.md
+and discarded, aggregate counts kept 90 days. Full detail in the privacy policy (https://heatsync.org/legal/privacy)
 ("health / kill-switch poll"). The user's emote inventory, preferences,
 blocked-emote list, channel/tab list, and an ENCRYPTED auth token are stored
 locally in browser.storage.local. Session cookies are read locally and never
@@ -69,7 +69,7 @@ the emote inventory, sign in with the free Twitch/Kick OAuth at heatsync.org.
 | `kick.com`, `*.kick.com` | read public Kick chat, send chat/mod actions, render emotes. |
 | `www.youtube.com` (incl. `/live_chat*`) | read public YouTube live-chat DOM for the multichat panel and fetch public oEmbed metadata to route chat to the correct tab. No YouTube cookies/auth used. |
 | `heatsync.org` | sync the user's own emote inventory + account, and first-party proxy for recent-message history, chat-log archives and chatterino badges (so those requests aren't made from the user's IP). |
-| `7tv.io`, `api.7tv.app`, `api.betterttv.net`, `api.frankerfacez.com` | read-only public APIs for emote sets, paints, and badges. Only emote names and numeric user ids are sent (see PRIVACY.md). |
+| `7tv.io`, `api.7tv.app`, `api.betterttv.net`, `api.frankerfacez.com` | read-only public APIs for emote sets, paints, and badges. Only emote names and numeric user ids are sent (see the privacy policy). |
 | `pronoundb.org` | self-declared pronouns for the profile card (Twitch numeric id only; toggle in settings → display → pronouns). |
 
 ---
@@ -78,4 +78,4 @@ the emote inventory, sign in with the free Twitch/Kick OAuth at heatsync.org.
 - [ ] `src/manifests/firefox.json` version == the version being submitted (build.js guards this).
 - [ ] attach `dist/heatsync-source-X.Y.Z.zip` (produced by `bun run build.js --package`).
 - [ ] permissions in the tables above still match both manifests.
-- [ ] data-collection form: MUST match `src/manifests/firefox.json` → `data_collection_permissions` (declares `authenticationInfo`). Declare **authentication info collected + transmitted** to first-party heatsync.org for emote/account sync, plus synced account data (emote inventory, blocked emotes, channel names, ui prefs). Do NOT declare "no data collected" — the extension transmits the heatsync account token + inventory to heatsync.org and retains it server-side (see PRIVACY.md / table above, heatsync.org row). Also declare **technical and interaction data** (optional in the manifest) for the rotating-id health/kill-switch check-in (PRIVACY.md "health / kill-switch poll") — first-party, not shared. No third-party sharing, no third-party analytics/telemetry. Twitch/Kick cookies are read locally for identity and never sent to us.
+- [ ] data-collection form: MUST match `src/manifests/firefox.json` → `data_collection_permissions` (declares `authenticationInfo`). Declare **authentication info collected + transmitted** to first-party heatsync.org for emote/account sync, plus synced account data (emote inventory, blocked emotes, channel names, ui prefs). Do NOT declare "no data collected" — the extension transmits the heatsync account token + inventory to heatsync.org and retains it server-side (see the privacy policy). Also declare **technical and interaction data** (optional in the manifest) for the rotating-id health/kill-switch check-in (privacy policy, "the extension check-in") — first-party, not shared. No third-party sharing, no third-party analytics/telemetry. Twitch/Kick cookies are read locally for identity and never sent to us.

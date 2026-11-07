@@ -19,7 +19,7 @@ because a nonce cannot be kept secret in a realm shared with the page, the init 
 
 ## scope
 
-extension-side processing happens locally in the browser tab. the extension communicates with heatsync.org (emote sync, plus first-party proxying of username→id, recent-messages, and chatterino-badge lookups), directly with 7TV / FFZ / BTTV for cosmetics, and with pusher (`wss://ws-us2.pusher.com`) for kick's live-chat transport — see [docs/PRIVACY.md](docs/PRIVACY.md) for the full data flow.
+extension-side processing happens locally in the browser tab. the extension communicates with heatsync.org (emote sync, plus first-party proxying of username→id, recent-messages, and chatterino-badge lookups), directly with 7TV / FFZ / BTTV for cosmetics, and with pusher (`wss://ws-us2.pusher.com`) for kick's live-chat transport — see [the privacy policy](https://heatsync.org/legal/privacy) for the full data flow.
 
 ## permissions — and what we deliberately don't request
 

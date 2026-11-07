@@ -1871,7 +1871,10 @@ function initInput() {
     // blocked emote, remove an inventory one, block anything else — so for an
     // inventory emote this menu is where 'block' (keeps the set) lives.
     if (state === 'blocked') {
-      items.push({ label: t('mc_input_unblock'), fn: () => unblockEmote(emoteName) })
+      items.push({
+        label: t('mc_input_unblock'),
+        fn: () => unblockEmote(emoteName, { hash: wrapper?.dataset?.emoteHash || undefined }),
+      })
     } else {
       items.push({
         label: t('content_card_block'),
@@ -2025,7 +2028,7 @@ function initInput() {
         // emote promises), anything else → block. Blocking an owned emote is the
         // shift menu's 'block' — it keeps the server row, removal does not.
         if (state === 'blocked') {
-          unblockEmote(emoteName)
+          unblockEmote(emoteName, { hash: wrapper?.dataset?.emoteHash || undefined })
         } else if (state === 'owned' && inventoryEmotes.has(emoteName)) {
           removeEmoteFromInventory(emoteName, e.target)
         } else {

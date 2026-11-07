@@ -34,6 +34,7 @@ globalThis.getSetting = () => undefined
 
 const {
   blockedEmoteFallback,
+  blockedFallbackForName,
   blockedEmoteNames,
   emoteCache,
   processEmotes,
@@ -75,12 +76,12 @@ describe('the fallback carries the hash the block was filed under', () => {
   test('remembered hash survives a re-remember without one', () => {
     rememberBlockedEmote('Lash', URL, 'heatsync', false, 'abc123def456')
     rememberBlockedEmote('Lash', URL, 'heatsync', false)
-    expect(blockedEmoteFallback.get('Lash').hash).toBe('abc123def456')
+    expect(blockedFallbackForName('Lash').hash).toBe('abc123def456')
   })
 
   test('no hash given and none known → empty, never undefined', () => {
     rememberBlockedEmote('Other', URL, 'heatsync', false)
-    expect(blockedEmoteFallback.get('Other').hash).toBe('')
+    expect(blockedFallbackForName('Other').hash).toBe('')
   })
 })
 

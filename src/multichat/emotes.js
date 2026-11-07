@@ -732,15 +732,17 @@ function emoteIsBlocked(rawName, emote) {
   if (hash && blockedEmoteHashes.has(hash)) return true
   if (urlKey && blockedEmoteHashes.has(urlKey)) return true
   if (!blockedEmoteNames.has(rawName)) return false
-  const fb = blockedEmoteFallback.get(rawName)
-  const fbKey = fb?.hash && fb.hash !== rawName ? String(fb.hash) : ''
-  if (fbKey) {
-    if (hash && hash === fbKey) return true
-    if (fb.url && emote?.url) return emoteAssetKey(fb.url) === emoteAssetKey(emote.url)
-    return !hash && !urlKey
+  const recs = blockedFallbacksForName(rawName)
+  if (!recs.length) return !hash // no record of which emote was blocked: a hashed one the set doesn't list is not it
+  for (const fb of recs) {
+    const fbKey = fb.hash && fb.hash !== rawName ? String(fb.hash) : ''
+    if (hash && fbKey && hash === fbKey) return true
+    if (fb.url && emote?.url) {
+      if (emoteAssetKey(fb.url) === emoteAssetKey(emote.url)) return true
+    } else if (!hash && !urlKey) return true
+    else if (!fbKey && !hash) return true
   }
-  // no exact record of which emote was blocked: a hashed emote the set doesn't list is not it
-  return !hash
+  return false
 }
 
 // Is this rendered wrapper the SAME emote as (hash, url)? A block or unblock repaints only the
@@ -1777,7 +1779,7 @@ function rebuildBlockedNames() {
   }
   // Names persisted at block time — survive refresh even when hashToName can't
   // map the hash (blocked emote removed from set / not in any loaded cache).
-  for (const name of blockedEmoteFallback.keys()) blockedEmoteNames.add(name)
+  for (const [key, rec] of blockedEmoteFallback) blockedEmoteNames.add(rec.name || key)
   log(
     'Blocked names rebuilt:',
     blockedEmoteNames.size,
@@ -1887,7 +1889,7 @@ function applyBlockedHashDelta(newHashesArr) {
     // Drop the persisted fallback too, else rebuildBlockedNames re-seeds this
     // name from blockedEmoteFallback on the next reload and the emote re-blocks
     // itself. Mirrors unblockEmote's cleanup; persist is debounced.
-    if (blockedEmoteFallback.delete(name)) persistBlockedFallback()
+    if (forgetBlockedFallback(name, hash)) persistBlockedFallback()
     const emote = lookupEmote(name)
     const realUrl = emote?.url || ''
     // 2-state model: block never dropped this from the set (server preserves
@@ -2567,15 +2569,27 @@ function unblockEmote(emoteName, opts) {
   if (!emoteName) return
 
   // Update local tracking
-  blockedEmoteNames.delete(emoteName)
   // The fallback remembers the hash the block was filed under; read it before
-  // the entry is dropped. After a refresh nothing else can name this emote.
-  const _bfEmote = blockedEmoteFallback.get(emoteName)
-  const hash = emoteHashes.get(emoteName) || _bfEmote?.hash || emoteBlockKey(emoteName, lookupEmote(emoteName)?.url)
+  // the entry is dropped. After a refresh nothing else can name this emote. The clicked
+  // emote's own key (opts.hash) picks THE record when a name has several blocked emotes.
+  const _bfEmote =
+    (opts?.hash && blockedFallbacksForName(emoteName).find((r) => String(r.hash) === String(opts.hash))) ||
+    blockedFallbackForName(emoteName)
+  const hash =
+    opts?.hash ||
+    _bfEmote?.hash ||
+    (_bfEmote?.url ? emoteBlockKey(emoteName, _bfEmote.url) : '') ||
+    emoteHashes.get(emoteName) ||
+    emoteBlockKey(emoteName, lookupEmote(emoteName)?.url)
   blockedEmoteHashes.delete(hash)
   // Drop the persisted block fallback so it can't re-seed blockedEmoteNames on
   // the next refresh (which would re-hide an emote the user just unblocked).
-  if (blockedEmoteFallback.delete(emoteName)) persistBlockedFallback()
+  if (_bfEmote) {
+    for (const [k, r] of blockedEmoteFallback) if (r === _bfEmote) blockedEmoteFallback.delete(k)
+    persistBlockedFallback()
+  }
+  // the name stays blocked while another emote of that name is
+  if (!blockedFallbacksForName(emoteName).length) blockedEmoteNames.delete(emoteName)
 
   // Sync to heatsync.org API via background.js. Toast + optimistic-rollback
   // live in syncBlockToAPI (see blockEmote). Carry the fallback url/source so a
@@ -2702,7 +2716,7 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
       blockedEmoteNames.delete(emoteName)
       // No longer "removed" or blocked — drop the stale render fallback entries.
       if (removedEmoteFallback.delete(emoteName)) persistRemovedFallback()
-      if (blockedEmoteFallback.delete(emoteName)) persistBlockedFallback()
+      if (forgetBlockedFallback(emoteName, response.hash || emoteHash)) persistBlockedFallback()
       localRemovals.delete(emoteName)
       const serverHash = response.hash || emoteHash
       inventoryEmotes.add(emoteName)
@@ -2973,7 +2987,10 @@ function rememberRemovedEmote(name, url, source, zeroWidth) {
 // the blocked-box render branch never fires and the token leaks as raw text. This
 // bounded, persisted map keeps the NAME (and url/source, for inline unblock-restore)
 // so the 2px dashed box survives refresh. Mirror of removedEmoteFallback.
-const blockedEmoteFallback = new Map() // Map<name, {url, source, zeroWidth, hash}>
+// Keyed by the emote's own block key (its hash, else btoa(url)) — NOT by name — so blocking two
+// different W keeps both records (rule 9). A record: {name, url, source, zeroWidth, hash}. A
+// record with no `name` is a legacy name-keyed one: its key is the name.
+const blockedEmoteFallback = new Map()
 const BLOCKED_FALLBACK_CAP = 1000
 let _blockedFallbackPersistTimer = null
 function persistBlockedFallback() {
@@ -2981,20 +2998,60 @@ function persistBlockedFallback() {
   _blockedFallbackPersistTimer = cleanup.setTimeout(() => {
     _blockedFallbackPersistTimer = null
     const obj = {}
-    for (const [name, e] of blockedEmoteFallback) obj[name] = e
+    for (const [key, e] of blockedEmoteFallback) obj[key] = e
     try {
       chrome.storage.local.set({ hs_blocked_emote_fallback: obj })
     } catch {}
   }, 1000)
+}
+// Every record for a name, oldest first.
+function blockedFallbacksForName(name) {
+  const out = []
+  if (!blockedEmoteFallback.size) return out
+  for (const [key, rec] of blockedEmoteFallback) if ((rec.name || key) === name) out.push(rec)
+  return out
+}
+// The newest record for a name (what name-only lookups — the dashed box, a url to restore — need).
+function blockedFallbackForName(name) {
+  const all = blockedFallbacksForName(name)
+  return all.length ? all[all.length - 1] : undefined
+}
+// Drop one emote's record by key; or, with no key, the name's newest. True if something went.
+function forgetBlockedFallback(name, key) {
+  if (key && blockedEmoteFallback.delete(String(key))) return true
+  if (key) {
+    for (const [k, rec] of blockedEmoteFallback) {
+      if ((rec.name || k) === name && rec.hash && String(rec.hash) === String(key))
+        return blockedEmoteFallback.delete(k)
+    }
+    return false
+  }
+  const rec = blockedFallbackForName(name)
+  if (!rec) return false
+  for (const [k, r] of blockedEmoteFallback) if (r === rec) return blockedEmoteFallback.delete(k)
+  return false
 }
 function rememberBlockedEmote(name, url, source, zeroWidth, hash) {
   if (!name) return // url optional — a name with no resolvable url still needs the box
   // hash: the exact id the server holds this block under. After a refresh the
   // emote is in no live cache, so unblock can't re-derive it — without it the
   // DELETE goes out under the bare name, the server refuses, and the block sticks.
-  const keep = hash || blockedEmoteFallback.get(name)?.hash || ''
-  blockedEmoteFallback.delete(name) // re-insert to refresh LRU position
-  blockedEmoteFallback.set(name, { url: url || '', source: source || 'heatsync', zeroWidth: !!zeroWidth, hash: keep })
+  let key = hash ? String(hash) : ''
+  let keep = key
+  if (!key) {
+    // no key given: the same picture already on file keeps its key
+    const same = blockedFallbacksForName(name).find((r) => r.url && url && emoteAssetKey(r.url) === emoteAssetKey(url))
+    keep = same?.hash || ''
+    key = keep || (url ? emoteBlockKey(name, url) : name)
+  }
+  blockedEmoteFallback.delete(key) // re-insert to refresh LRU position
+  blockedEmoteFallback.set(key, {
+    name,
+    url: url || '',
+    source: source || 'heatsync',
+    zeroWidth: !!zeroWidth,
+    hash: keep,
+  })
   while (blockedEmoteFallback.size > BLOCKED_FALLBACK_CAP) {
     blockedEmoteFallback.delete(blockedEmoteFallback.keys().next().value)
   }
@@ -3387,7 +3444,7 @@ function lookupEmote(name) {
     emoteCache.get(name) ||
     activeTabChannelEmote(name) ||
     removedEmoteFallback.get(name) ||
-    blockedEmoteFallback.get(name)
+    blockedFallbackForName(name)
   )
 }
 // Kick-native emotes only exist on the wire as [emote:<id>:<name>]. Sending
@@ -3432,7 +3489,7 @@ function lookupEmoteRenderOrder(name) {
     activeTabChannelEmote(name) ||
     emoteCache.get(name) ||
     removedEmoteFallback.get(name) ||
-    blockedEmoteFallback.get(name)
+    blockedFallbackForName(name)
   )
 }
 // Someone else's bare word (a feed post, a line with no ref): channel, then globals — never
@@ -3448,7 +3505,7 @@ function lookupEmoteWireOrder(name) {
     viewerPersonalEmotes.get(name) ||
     emoteCache.get(name) ||
     removedEmoteFallback.get(name) ||
-    blockedEmoteFallback.get(name)
+    blockedFallbackForName(name)
   )
 }
 // True if ANY cache knows this emote name is 7TV zero-width. The owned set
@@ -3731,9 +3788,10 @@ async function loadEmotes() {
       blockedEmoteFallback.clear()
       const bf = stored.hs_blocked_emote_fallback
       if (bf && typeof bf === 'object') {
-        for (const [name, e] of Object.entries(bf)) {
+        for (const [key, e] of Object.entries(bf)) {
           if (e)
-            blockedEmoteFallback.set(name, {
+            blockedEmoteFallback.set(key, {
+              name: typeof e.name === 'string' && e.name ? e.name : key,
               url: e.url || '',
               source: e.source || 'heatsync',
               zeroWidth: !!e.zeroWidth,
@@ -4834,7 +4892,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       // common case), and word.indexOf('&') === -1 (no specials) means the
       // raw form is identical — skip the redundant unescape + second .get.
       const _bf =
-        blockedEmoteFallback.get(word) || (word.indexOf('&') !== -1 && blockedEmoteFallback.get(unescapeHtml(word)))
+        blockedFallbackForName(word) || (word.indexOf('&') !== -1 && blockedFallbackForName(unescapeHtml(word)))
       if (_bf?.url) emote = _bf
     }
     if (emote) {
@@ -5197,6 +5255,8 @@ export {
   _buildChannelEmoteCache,
   blockedEmoteFallback,
   blockedEmoteNames,
+  blockedFallbackForName,
+  blockedFallbacksForName,
   bumpEmoteFrecency,
   channelEmoteCaches,
   deriveStaticEmoteSrc,

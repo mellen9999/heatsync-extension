@@ -50,3 +50,19 @@ test('picker button: owned means the same emote, and name dedupe is case-exact',
   expect(src).toContain('mine.hash !== emote.hash')
   expect(src).not.toContain("_n_${(e.name || '').toLowerCase()}")
 })
+
+test('two blocked emotes with one name keep two records; unblocking one leaves the other', async () => {
+  const em = await import('../src/multichat/emotes.js')
+  globalThis.cleanup = { ...globalThis.cleanup, setTimeout: () => 0 } // the persist debounce is not under test
+  em.blockedEmoteFallback.clear()
+  const A2 = 'https://cdn.7tv.app/emote/01AAAAAAAAAAAAAAAAAAAAAAAA/2x.webp'
+  const B2 = 'https://cdn.betterttv.net/emote/bbbb/2x.webp'
+  em.rememberBlockedEmote('W', A2, '7tv', false, 'hashA')
+  em.rememberBlockedEmote('W', B2, 'bttv', false, 'hashB')
+  expect(em.blockedFallbacksForName('W').map((r) => r.hash)).toEqual(['hashA', 'hashB'])
+  // the same picture re-remembered with no key keeps its key instead of making a third record
+  em.rememberBlockedEmote('W', A2, '7tv', false)
+  expect(em.blockedFallbacksForName('W').length).toBe(2)
+  expect(em.blockedFallbacksForName('W').find((r) => r.url === A2).hash).toBe('hashA')
+  em.blockedEmoteFallback.clear()
+})

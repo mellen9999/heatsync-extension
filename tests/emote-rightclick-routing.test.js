@@ -39,7 +39,7 @@ describe('plain right-click: unblock / remove from inventory / block', () => {
 
   test('blocked → unblock, inventory → remove, everything else → block', () => {
     expect(HANDLER).toContain("if (state === 'blocked')")
-    expect(HANDLER).toContain('unblockEmote(emoteName)')
+    expect(HANDLER).toContain('unblockEmote(emoteName, {')
     expect(HANDLER).toContain("state === 'owned' && inventoryEmotes.has(emoteName)")
     expect(HANDLER).toContain('removeEmoteFromInventory(emoteName, e.target)')
     expect(HANDLER).toContain('blockEmote(emoteName, emoteUrl, source, {')

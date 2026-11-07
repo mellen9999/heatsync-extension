@@ -12,5 +12,3 @@ twitch, kick, youtube, 7tv, bttv, and ffz names/logos referenced in this repo
 belong to their respective owners and are used nominatively — to describe
 compatibility, nothing more. heatsync isn't affiliated with or endorsed by
 any of them.
-
-kick brand assets in `store-assets/` come from kick's official brand kit.

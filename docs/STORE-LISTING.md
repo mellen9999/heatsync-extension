@@ -1,53 +1,27 @@
-# Store listing — source of truth (CWS + AMO)
+# store listing — source of truth (CWS + AMO)
 
-Paste-ready copy + the per-store gotchas. Keep in sync with `chrome/_locales/en/messages.json`
-(`manifest_name`, `manifest_description`) and the live dashboards. See
-[AMO-REVIEW-NOTES.md](./AMO-REVIEW-NOTES.md) for reviewer notes + permission justifications.
-Competitive claims (slots, size, platform gaps vs 7tv/bttv/ffz) come from
-[POSITIONING.md](./POSITIONING.md) — verified facts only, recheck externals before use.
+paste-ready copy and per-store limits. `scripts/amo-update-listing.js` reads the two fenced blocks below, so keep their headings. permission justifications and reviewer notes: [AMO-REVIEW-NOTES.md](./AMO-REVIEW-NOTES.md).
 
-## Positioning rule (2026-07-25) — multichat leads, always
-Store search is keyword-driven off name + short description. "heatsync" alone matches nothing
-anyone types. Every listing field now carries `twitch`, `kick`, `youtube`, `chat`.
+## rules
+- lead with multichat: it pays off for one user alone on install. portable emotes are partly social, so they come second.
+- every field carries `twitch`, `kick`, `youtube`, `chat` — store search reads the name and short description.
+- never market permissions, code quality or security. trust copy stays a footer line.
+- no versions, dates or counts that drift.
 
-Multichat leads because it is the only claim that pays off **with zero coordination** — one
-user alone gets the full value on install. Portable emotes are real but partly social: an
-emote only you can see is worth less than one the room sees, so it cannot carry the headline.
-Multichat is also the one thing 7tv's extension does not do at all (see POSITIONING.md).
-
-**Never market permissions, code quality, or security.** We lose that comparison on the only
-surface a user sees — see POSITIONING.md "permission surface". Trust copy stays a footer line.
-
-## Name (localized — `manifest_name`, all 34 locales, CWS max 75)
-
-In source since 2026-09-28 (`src/_locales/*/messages.json`, all 34 locales),
-**live only once a release clears review** — check the CWS update endpoint and the
-AMO listing, not this file. Before it, the name was bare `heatsync`, which no store
-search matches.
-
-Max 50 chars in every locale (AMO's cap; CWS allows 75). Platform names stay
-untranslated. Toolbar/UI name stays bare `heatsync` via manifest `short_name`
-and `action.default_title` — the long name is store-facing only.
-
-```
-heatsync — twitch, kick + youtube in one chat
-```
-
-## Short description (localized — `manifest_description`, 120 chars)
-Used as the Chrome Web Store short description (CWS limit 132 — this fits) and the
-Firefox add-on manifest description. **Current en value:**
+## name and short description (localized, `manifest_name` + `manifest_description`, all 34 locales)
+- name: bare `heatsync` (en value). the toolbar name is the same via `short_name`.
+- short description (CWS limit 132, AMO manifest description), en value:
 ```
 one panel for twitch, kick + youtube live chat. plus a free 5,000-slot emote inventory that follows you into any channel
 ```
 
-## AMO Summary (dashboard, ≤250 — 224 chars, paste-ready)
+## AMO Summary (dashboard, ≤250, paste-ready)
 ```
 twitch, kick + youtube live chat in one tabbed panel — per-channel tabs, mentions, whispers, no account needed to read. plus your own emotes in any channel: 5,000 free slots, one-click 7tv/bttv/ffz import. free, open source.
 ```
 
-## AMO / CWS Description (long — timeless; identical for both stores. refined 2026-07-11, paste-ready)
-No versions, sizes, or dates in copy — only claims that hold across releases
-(5,000 comes from `src/lib/config.js`, stable). Verified against POSITIONING.md.
+## AMO / CWS Description (long, identical for both stores, paste-ready)
+No versions, sizes or dates in copy. 5,000 is `MAX_EMOTES_PER_SOURCE` in `src/lib/config.js`, guarded by `tests/config.test.js`.
 ```
 twitch, kick + youtube live chat in one panel — read every stream you follow and reply into any of them without alt-tabbing. nobody else has to install anything. plus your own emotes in any channel: 5,000 free slots, no sub, no streamer setup. free.
 
@@ -64,53 +38,14 @@ twitch, kick + youtube live chat in one panel — read every stream you follow a
 free · open source (MIT) · no ads, no third-party analytics · your emotes stay yours
 ```
 
-## Tags / categories
-- Category: Social & Communication
-- **Tags — add `kick`, `emotes`, `7tv` (kick is a core platform but is currently missing):**
-```
-chat, streaming, twitch, kick, youtube, emotes, 7tv
-```
+## tags / categories
+- cws category: social & communication
+- cws tags: `chat, streaming, twitch, kick, youtube, emotes, 7tv`
+- amo tags are a fixed vocabulary (`kick`, `emotes`, `7tv` don't exist): `chat, social media, streaming, twitch, youtube`
 
-## Known issues / decisions
-- **AMO listing APPROVED + live; copy applied 2026-07-11:** refined en-US summary +
-  description above are LIVE on the public page (verified). Tags = `chat, social media,
-  streaming, twitch, youtube` — AMO tags are a fixed vocabulary; `kick`/`emotes`/`7tv`
-  don't exist, this is the best available set. Non-en AMO summaries still carry the older
-  framing (only en-US updated).
-
-  **RESOLVED 2026-08-25 — the two paragraphs that used to sit here were both stale
-  and one of them cost an audit a false finding. Do not reinstate them.**
-
-  This said "listed version still 1.6.8". It is not. The live AMO API reports the
-  listed add-on `heatsync-chat` on **1.7.64**, matching the shipped manifest:
-
-  ```
-  curl -s "https://addons.mozilla.org/api/v5/addons/search/?q=heatsync&app=firefox"
-  # heatsync-chat | ver 1.7.64 | users 2 | ratings 0
-  ```
-
-  It also carried a **GOTCHA** claiming release.yml burns the clean version number
-  on the unlisted channel so it "can never become the listed version". release.yml
-  has since been reworked to prevent exactly that — it signs the self-distributed
-  build as `X.Y.Z.1` specifically to reserve `X.Y.Z` for the listed channel
-  (see its own comment block). Nothing is blocking a listed submission.
-
-  **What is actually true:** the listing is current, and it is not the problem —
-  2 average daily users and 0 ratings against a correct, up-to-date store page is a
-  reach problem, not a listing one. That is what Act III exists to fix; see
-  `heatsync/docs/shelf-submissions.md`.
-- **Repositioned multichat-first (2026-07-25):** all 34 locales' `manifest_name` +
-  `manifest_description` rewritten to lead with multichat (was emote-first). Each verified
-  ≤132 chars (name ≤75), valid JSON, brand tokens present (Twitch/Kick/YouTube/5000).
-  Machine-authored from each locale's existing vocabulary — a native spot-check on the
-  non-Latin scripts (ar, he, hi, th) before the tag is prudent but not blocking.
-  `manifest_name` is no longer bare "heatsync": store search reads the name field, and the
-  toolbar/UI name is already pinned to "heatsync" by `short_name` in both MV3 and MV2, so the
-  long name costs nothing in-product. Supersedes the 2026-06-23 "leave it bare" call.
-  Non-en AMO/CWS dashboard summaries still carry the old emote-first framing — en only.
-- AMO listed version is behind: submit **current release** (1.7.21 as of 2026-07-11; listing was on 1.6.8).
-
-## Pre-release / pre-submit checklist
-- [ ] `bun run build.js --package` green (build + node --check + zips + source zip + tests) — verified 1.7.5: 552 tests pass.
-- [ ] CWS: short description auto-from manifest (118 chars, OK); paste long description above; set tags.
-- [ ] AMO: submit 1.7.5; attach `dist/heatsync-source-1.7.5.zip`; paste AMO-REVIEW-NOTES "Notes for Reviewers"; add `kick`/`emotes`/`7tv` tags; data form must MATCH the manifest `data_collection_permissions` (declares `authenticationInfo`) — declare **authentication info collected + transmitted** to first-party heatsync.org for emote/account sync; plus the synced account data (emote inventory, blocked emotes, channel names, ui prefs). NOT "no data collected" — that contradicts the manifest + PRIVACY.md (server-side retention). also declare **technical and interaction data** for the rotating-id health/kill-switch check-in (id, version, rough install-age range, opened surfaces; PRIVACY.md "health / kill-switch poll") — required, not third-party. no third-party sharing, no third-party analytics/telemetry. twitch/kick cookies are read locally and never sent to us.
+## submit checklist
+- [ ] `bun run build.js --package` green (build, `node --check`, zips, source zip, tests)
+- [ ] cws: short description comes from the manifest; paste the long description; set tags
+- [ ] amo: attach `dist/heatsync-source-X.Y.Z.zip`; paste the reviewer notes from AMO-REVIEW-NOTES
+- [ ] amo data form must match the manifest `data_collection_permissions`: authentication info (collected + transmitted to heatsync.org for emote/account sync, plus the synced account data), and technical and interaction data (optional) for the rotating-id health check-in (see [PRIVACY.md](./PRIVACY.md)). never "no data collected". no third-party sharing or analytics. twitch/kick cookies are read locally and never sent to us.
+- non-en amo summaries are pushed separately: `bun scripts/publish.js --sync-summaries --publish`

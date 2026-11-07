@@ -2,7 +2,7 @@
 
 twitch, kick and youtube live chat in one panel — read every stream you follow and reply into any of them without alt-tabbing. nobody else has to install anything. plus your own emotes in any channel: 5,000 free slots, no streamer setup needed.
 
-**no trackers, no analytics, no third-party telemetry** — emotes and settings sync through heatsync's own servers, never to google, sentry, or any analytics company. it does talk to 7tv, bttv, ffz and pronoundb, because that is where those cosmetics live; `docs/PRIVACY.md` lists exactly what goes to each.
+**no ad trackers, no third-party analytics or telemetry** — emotes and settings sync through heatsync's own servers, never to google, sentry, or any analytics company. it does talk to 7tv, bttv, ffz and pronoundb, because that is where those cosmetics live; `docs/PRIVACY.md` lists exactly what goes to each.
 
 ## features
 
@@ -13,8 +13,8 @@ twitch, kick and youtube live chat in one panel — read every stream you follow
 - **moderation + profiles** — a hover mod toolbar (`/ban` `/timeout` `/unban` `/delete`), client-side automod, and mute-or-block that carries a user across twitch and kick. profile cards with socials, badges, and a paginated chat-log archive a click away. one-click twitch clips.
 - **stream events + whispers** — inline banners for going live, offline, game switches, raids, hype trains, gift subs, redeems, predictions and polls, each one toggleable. twitch whispers, a desktop notification on a mention, and a seen-state that follows you across tabs and devices. a refresh brings back the last 15 minutes of game switches and go-offlines, worded the same as heatsync.org.
 - **native chat cleanup** — toggles that hide channel points, hype trains, bits, drops and upsells, and auto-claim for channel points.
-- **yours to tune** — settings presets (minimal, power-user, moderator, low-ram), and 34 languages including right-to-left.
-- **light on your machine** — vanilla js, zero runtime dependencies. a capped message buffer and dom render cap hold memory steady through long sessions. the render cap is adjustable down for weak or passively-cooled hardware.
+- **localized** — every ui string translated, right-to-left included.
+- **light on your machine** — vanilla js, zero runtime dependencies. a capped message buffer and dom render cap hold memory steady through long sessions; the render cap is adjustable for weak hardware.
 
 ## install
 
@@ -47,11 +47,9 @@ every build runs the test suite first, then `node --check` on the output. add `-
 
 a few files are byte-for-byte copies of heatsync.org's own modules — the user card, the stream event wording, the gif search layer, the emote-refs builder, the name-paint compiler. edit them on the site, then run `scripts/sync-site-copies.sh` (paint compiler: `scripts/sync-paint-compiler.sh`). the build and a parity test on each side fail if a copy drifts.
 
-## release process
-
-push a `v*` tag and `.github/workflows/release.yml` does the rest — build, package, attach versioned zips + versionless aliases + source zip to a new GitHub release. README install links resolve to the latest tag automatically.
-
 ## releasing
+
+pushing a `v*` tag runs `.github/workflows/release.yml`: build, package, and attach versioned zips, versionless aliases and the source zip to a github release. the install links above resolve to the latest tag.
 
 `scripts/publish.js` is the one-command publisher for the chrome web store and amo (firefox, listed channel). safe by default: without `--publish`, nothing is ever uploaded.
 

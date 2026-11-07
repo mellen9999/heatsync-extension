@@ -53,6 +53,8 @@ const EXEMPT_FILES = new Map([
   ['src/lib/animation-phase.js', 'name-paint compiler, byte-synced from the site'],
   ['src/lib/fill-layers.js', 'name-paint compiler, byte-synced from the site'],
   ['src/lib/glyph-mask.js', 'name-paint compiler, byte-synced from the site'],
+  ['src/lib/brand-tokens.js', 'the shared brand tokens, generated on the site from shared/brand/tokens.json — the site palette guard owns the values'],
+  ['src/multichat/styles/01-brand-tokens.css', 'the shared brand tokens, generated on the site from shared/brand/tokens.json — the site palette guard owns the values'],
   ['src/lib/plus-tenure.js', 'byte-synced from the site (sync-paint-compiler.sh)'],
   ['src/lib/stv-paint-css.js', '7TV paint colours — paid/user content, byte-synced from the site'],
   ['src/multichat/paints.js', 'HS_USERNAME_PALETTE — user name colours, byte-identical with the site'],
@@ -125,10 +127,6 @@ const FILES = [...walk(join(ROOT, 'src')), ...walk(join(ROOT, 'chrome'))]
 function code(text, rel) {
   // the zebra stripe and the mention fill are the allowed off-palette values, and only as these tokens
   let t = text
-    .replace(/--hs-zebra:\s*#444444;/g, '')
-    .replace(/--hs-mention-bg:\s*#5f0000;/g, '')
-    .replace(/--hs-mention-bg-stripe:\s*#870000;/g, '')
-    .replace(/--hs-fill-(?:olive|purple|navy|teal|maroon|green):\s*#[0-9a-f]{6};/g, '')
     .replace(/hs-exempt-start[\s\S]*?hs-exempt-end/g, '')
   t = t.replace(/\/\*[\s\S]*?\*\//g, '')
   if (!rel.endsWith('.css')) t = t.replace(/(^|[^:'"`(\\])\/\/[^\n]*/g, '$1')
@@ -383,19 +381,8 @@ describe('colour doctrine — 8 colours', () => {
       const h = expand(m[2].slice(1))
       const ONE = {
         '--hs-plat-twitch': TWITCH,
-        '--hs-zebra': '444444',
-        '--hs-fill-olive': '808000',
-        '--hs-fill-purple': '800080',
-        '--hs-fill-navy': '000080',
-        '--hs-fill-teal': '008080',
-        '--hs-fill-maroon': '800000',
-        '--hs-fill-green': '008000',
-        '--hs-mention-bg': '5f0000',
-        '--hs-mention-bg-stripe': '870000',
         '--hs-plat-hs': ORANGE,
         '--hs-mod': '00ad03',
-        '--hs-dim': '808080',
-        '--hs-dim-stripe': 'bcbcbc',
       }
       if (m[1] in ONE ? h !== ONE[m[1]] : !PALETTE.has(h)) bad.push(`${m[1]}: ${m[2]}`)
     }
@@ -432,7 +419,7 @@ describe('single-definition colours', () => {
   test('mod green and dim gray are each spelled exactly once per layer', () => {
     const css = readFileSync(join(STYLES, '00-palette.css'), 'utf8')
     expect(css.match(/#00ad03/gi)).toHaveLength(1)
-    expect(css.match(/#808080/gi)).toHaveLength(1)
+    expect(readFileSync(join(STYLES, '01-brand-tokens.css'), 'utf8').match(/#808080/gi)).toHaveLength(1) // dim gray: spelled once, in the shared brand tokens
     expect(css.match(/#bcbcbc/gi)).toHaveLength(1)
     const js = readFileSync(join(ROOT, 'src', 'lib', 'palette.js'), 'utf8')
     expect(js).toMatch(/HS_MOD_GREEN = '#00ad03'/)

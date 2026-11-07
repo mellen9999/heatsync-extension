@@ -26,6 +26,10 @@
 # card.css lands as a numbered styles/ fragment (see src/multichat/styles.js)
 # rather than src/lib/ — it's CSS, not a JS module the bundle concatenates.
 #
+# shared/brand/tokens.gen.js + public/css/brand-tokens.css + public/css/modules/brand-rows.css are the
+# ONE brand layer (palette, fills, row metrics, the filled-row styles) — generated from the site's
+# shared/brand/tokens.json; the site and the extension render rows from the same bytes.
+#
 # tests/site-copy-parity.test.js (and the site's mirror of it) is what makes
 # this stick; biome.json leaves these files unformatted so a formatter pass
 # cannot break byte parity.
@@ -43,7 +47,10 @@ for pair in \
   client/card/card-time.js:src/lib/card-time.js \
   client/card/card-model.js:src/lib/card-model.js \
   client/card/card-render.js:src/lib/card-render.js \
-  public/css/modules/card.css:src/multichat/styles/20-card.css
+  public/css/modules/card.css:src/multichat/styles/20-card.css \
+  public/css/brand-tokens.css:src/multichat/styles/01-brand-tokens.css \
+  public/css/modules/brand-rows.css:src/multichat/styles/21-brand-rows.css \
+  shared/brand/tokens.gen.js:src/lib/brand-tokens.js
 do
   src_rel="${pair%%:*}"
   dst_rel="${pair##*:}"

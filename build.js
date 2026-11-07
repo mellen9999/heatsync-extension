@@ -276,6 +276,7 @@ function checkScopeCollisions() {
     // The one user-card model/renderer/formatter (client/card/*.js on the
     // site) — multichat-only for now (tooltips.js/profile-card.js consume
     // hsCardModel/hsCardHtml), same embed point as gif-search-remote.js above.
+    'brand-tokens.js',
     'card-time.js',
     'card-model.js',
     'card-render.js',
@@ -969,7 +970,7 @@ function readMultichatModules() {
   // concatenated scope resolve it). tooltips.js (peek) and profile-card.js
   // (panel) call hsCardModel/hsCardHtml, so this must land before the modules
   // loop below.
-  for (const mod of ['card-time.js', 'card-model.js', 'card-render.js']) {
+  for (const mod of ['brand-tokens.js', 'card-time.js', 'card-model.js', 'card-render.js']) {
     const p = join(SRC_DIR, 'lib', mod)
     if (existsSync(p)) {
       combined += `\n// --- lib/${mod} ---\n${stripExports(readFileSync(p, 'utf8'))}\n`

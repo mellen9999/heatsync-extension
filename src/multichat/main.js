@@ -2716,8 +2716,8 @@
     },
     // density — pure CSS vars, no re-render needed
     density: () => {
-      const pad = getSetting('messageDensity') === 'cozy' ? '5px 8px' : '2px 4px'
-      document.documentElement.style.setProperty('--hs-mc-row-pad', pad)
+      // the shared row layer's vertical gutter (brand tokens: compact 0, cozy 3px — as on the site)
+      document.documentElement.style.setProperty('--brand-row-pad-y', getSetting('messageDensity') === 'cozy' ? BRAND.row.padYCozy : BRAND.row.padY)
     },
     // rendered html is cached per message — a src change needs a cache
     // flush before the re-render or old animated imgs survive the toggle
@@ -7768,7 +7768,8 @@
       const hkey = evtMap[last]
       if (hkey && hermesToggles?.[hkey] === false) return null
       const div = document.createElement('div')
-      div.className = `hs-mc-stream-event ${m.eventClass || ''}${FILLED_EVENT.test(m.eventClass || '') ? ' hs-filled' : ''}`
+      const evFill = eventFill(m.eventClass)
+      div.className = `hs-mc-stream-event ${m.eventClass || ''}${evFill ? ` hs-filled hs-fill-${evFill} hs-row-label${/event-online\b/.test(m.eventClass) ? ' hs-row-alert' : ''}` : ''}`
       const tsVal = timestampsEnabled && m.time ? formatTimeFromTs(m.time) : ''
       const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
       const isYtEvent = m.platform === 'youtube'
@@ -7827,9 +7828,9 @@
         /(switched to |now playing |went live \u2014 )(.+)$/,
         '$1<span class="hs-evt-game">$2</span>',
       )
-      // switched-to / went-live rows: the name sits on a black cutout (.hs-evt-cut) so it
+      // switched-to / went-live rows: the name sits on a black cutout (.hs-name-cut) so it
       // reads exactly as in chat, whatever its colour or paint
-      const nameBlock = FILLED_EVENT.test(m.eventClass || '') ? `<span class="hs-evt-cut">${userLink}</span>` : userLink
+      const nameBlock = evFill ? `<span class="hs-name-cut">${userLink}</span>` : userLink
       div.innerHTML = `${tsSpan}${platBadge}${nameBlock} ${actionHtml}`
       // The whole row is a shortcut to that channel's page. Clicks that land on
       // the username (or any link/emote) are left alone so the existing
@@ -8123,7 +8124,7 @@
     // nothing here touches the raw sender/text/terms payload.
     if (m.type === 'automod-hold') {
       const div = document.createElement('div')
-      div.className = 'hs-mc-msg hs-mc-automod'
+      div.className = 'hs-mc-msg hs-mc-automod hs-filled hs-fill-red'
       div.dataset.msgId = m.msgId
       div.dataset.msgChannel = m.broadcasterLogin || ''
       const tsVal = timestampsEnabled ? formatTimeFromTs(m.heldAt) : ''
@@ -8243,9 +8244,11 @@
         div.className = `hs-mc-msg hs-mc-system ${noticeKind}`.trim()
         // .hs-mc-system-text span so the per-kind text-color rules apply
         const span = document.createElement('span')
-        span.className = 'hs-mc-system-text'
+        span.className = 'hs-mc-system-text hs-row-label'
         span.textContent = m.systemMsg || m.text || ''
         div.appendChild(span)
+        const sysFill = rowFill(div)
+        if (sysFill) div.classList.add('hs-filled', `hs-fill-${sysFill}`)
         return div
       }
       return null
@@ -8616,10 +8619,10 @@
     if (m.redeemed && m.rewardId) {
       const reward = redeemTitleMap.get(m.rewardId)
       redeemLabel = reward
-        ? `<span class="hs-mc-system-text hs-mc-redeem-label">\u25C6 ${escapeHtml(reward.title)} \u00B7 ${t('mc_main_redeem_pts', [Number(reward.cost).toLocaleString()])}</span>`
-        : `<span class="hs-mc-system-text hs-mc-redeem-label">\u25C6 ${t('mc_main_redeem_label')}</span>`
+        ? `<span class="hs-mc-system-text hs-row-label hs-mc-redeem-label">\u25C6 ${escapeHtml(reward.title)} \u00B7 ${t('mc_main_redeem_pts', [Number(reward.cost).toLocaleString()])}</span>`
+        : `<span class="hs-mc-system-text hs-row-label hs-mc-redeem-label">\u25C6 ${t('mc_main_redeem_label')}</span>`
     } else if (m.isHighlighted) {
-      redeemLabel = `<span class="hs-mc-system-text hs-mc-highlight-label">\u2728 ${t('mc_main_highlighted')}</span>`
+      redeemLabel = `<span class="hs-mc-system-text hs-row-label hs-mc-highlight-label">\u2728 ${t('mc_main_highlighted')}</span>`
     }
     // First-message rows said what they were with COLOUR ALONE — a magenta bar
     // for a channel-first, a faint inset glow for a session-first. Nobody can
@@ -8637,15 +8640,16 @@
     // the chatter, it is a fact about your tab, and labelling it competed with
     // the one that matters.
     // filled rows skip striping and carry the name on a black cutout (see fill-family.js)
-    const filledRow = div.matches(FILL_SELECTOR)
-    if (filledRow) div.classList.add('hs-filled')
+    const rowFillName = rowFill(div)
+    const filledRow = !!rowFillName
+    if (filledRow) div.classList.add('hs-filled', `hs-fill-${rowFillName}`)
     let firstMsgLabel = ''
     if (m.isFirstMsg) {
-      firstMsgLabel = `<span class="hs-mc-system-text hs-mc-first-label">\u25C7 ${t('mc_main_first_msg')}</span>`
+      firstMsgLabel = `<span class="hs-mc-system-text hs-row-label hs-mc-first-label">\u25C7 ${t('mc_main_first_msg')}</span>`
     }
     // USERNOTICE system line (all values go through escapeHtml — same pattern as existing innerHTML above)
     const systemLine =
-      (m.systemMsg ? `<span class="hs-mc-system-text">${escapeHtml(m.systemMsg)}</span>` : '') +
+      (m.systemMsg ? `<span class="hs-mc-system-text hs-row-label">${escapeHtml(m.systemMsg)}</span>` : '') +
       redeemLabel +
       firstMsgLabel
     // Skip the date-format work entirely when the timestamp won't render —

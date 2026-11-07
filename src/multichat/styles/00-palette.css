@@ -49,19 +49,9 @@
          outline"). #ff0000 itself drowns red names and red text, so the fill
          is the one dark red every colour still reads on. On a zebra stripe row
          it is the lighter #870000 instead of the gray stripe. */
-      --hs-mention-bg: #5f0000;
-      --hs-mention-bg-stripe: #870000;
-      /* Filled-row grounds: the dim ANSI twin of each notification's meaning colour (mellen, 2026-11-07).
-         olive = stream events · purple = new people · navy = support · teal = channel points + the
-         broadcaster's voice; maroon / green are the dim twins of a rule highlight's red / green
-         (white's twin is --hs-zebra). */
-      --hs-fill-olive: #808000;
-      --hs-fill-purple: #800080;
-      --hs-fill-navy: #000080;
-      --hs-fill-teal: #008080;
-      --hs-fill-maroon: #800000;
-      --hs-fill-green: #008000;
-      --hs-zebra: #444444; /* alternating-row stripe — owner pick for visible stripes; red/dim text on it is ~2.4:1 by choice */
+      --hs-mention-bg: var(--brand-fill-red);
+      --hs-mention-bg-stripe: var(--brand-fill-red-stripe);
+      --hs-zebra: var(--brand-zebra); /* alternating-row stripe — owner pick for visible stripes; red/dim text on it is ~2.4:1 by choice */
       /* THE CURSOR INVERT — one token, mirroring the site's --sel-bg.
          white bg = the POINTER is on a control (:hover/:active).
          --hs-sel bg = the KEYBOARD CURSOR is here (arrow-key/jk rows, the
@@ -78,9 +68,9 @@
       --hs-mod: #00ad03;
       /* dim gray: exactly two roles — the reply-context line above a threaded message,
          and a chat tab with nothing unread */
-      --hs-dim: #808080;
+      --hs-dim: var(--brand-dim);
       /* the reply-context line inside a zebra stripe row: this light gray is 5.1:1 on the stripe (the plain dim is not) */
-      --hs-dim-stripe: #bcbcbc;
+      --hs-dim-stripe: var(--brand-dim-stripe);
       /* structural */
       --hs-fg: #fff;
       --hs-bg: #000;

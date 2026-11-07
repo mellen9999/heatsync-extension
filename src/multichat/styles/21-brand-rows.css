@@ -1,0 +1,31 @@
+/* Filled rows — the ONE row layer for every heatsync surface (site + extension: the
+   extension mirrors this file byte for byte). Written against the shared vocabulary the
+   renderers emit:
+     hs-filled            a row that wears a fill; never takes part in striping
+     hs-fill-<name>       olive stream events · purple new people · navy support ·
+                          teal channel points + the broadcaster's voice · red needs you ·
+                          rule: the dim twin of the colour a rule chose (--hs-rule-bg)
+     hs-row-label         the label text of a filled row (colour = the fill's label colour)
+     hs-row-alert         a label that is an alert (went live: red)
+     hs-name-cut          the sender's name on a plain black cutout, so it reads as in chat
+   Tokens: brand-tokens.css (generated from shared/brand/tokens.json). A surface that must
+   differ sets ONE token (--brand-row-pad-x, …) with a comment saying why. */
+.hs-filled {
+    border-left: 0;
+    padding: var(--brand-row-pad-y) var(--brand-row-pad-x);
+}
+.hs-filled + .hs-filled { border-top: var(--brand-row-gap) solid #000000; }
+.hs-fill-olive  { background: var(--brand-fill-olive);  --hs-label: var(--brand-label-olive); }
+.hs-fill-purple { background: var(--brand-fill-purple); --hs-label: var(--brand-label-purple); }
+.hs-fill-navy   { background: var(--brand-fill-navy);   --hs-label: var(--brand-label-navy); }
+.hs-fill-teal   { background: var(--brand-fill-teal);   --hs-label: var(--brand-label-teal); }
+.hs-fill-red    { background: var(--brand-fill-red);    --hs-label: var(--brand-label-red); }
+.hs-fill-rule   { background: var(--hs-rule-bg, var(--brand-zebra)); --hs-label: #ffffff; }
+.hs-row-label   { color: var(--hs-label); }
+.hs-fill-olive.hs-row-alert { --hs-label: #ff0000; }
+.hs-name-cut {
+    display: inline-block;
+    vertical-align: top;
+    padding: 0 var(--brand-cut-pad-x);
+    background: #000000;
+}

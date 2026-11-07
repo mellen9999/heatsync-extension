@@ -1,37 +1,38 @@
-// Filled rows: the notification rows that wear a solid fill (the dim ANSI twin of the
-// row's meaning colour — olive, purple, navy, teal; the CSS owns which class gets which).
-// The ONE place that says which rows are filled: the stripe skips them, the name sits
-// on a black cutout, and two touching filled rows are split by a gap.
+// Filled rows: which fill a notification row wears. The palette, labels and the
+// rule-colour map are the site's shared/brand/tokens.json (mirrored as lib/brand-tokens.js);
+// the CSS that paints them is styles/21-brand-rows.css, also a byte copy. This file only
+// classifies THIS renderer's rows into the shared vocabulary:
+//   hs-filled hs-fill-<olive|purple|navy|teal|red|rule> hs-row-label hs-name-cut
 // Mirrors the site's client/chat/fill-family.js.
 
-/** Chat / system rows that are filled (stream-event rows are matched by FILLED_EVENT). */
-const FILL_SELECTOR =
-  '.hs-mc-notice-sub, .hs-mc-notice-gift, .hs-mc-notice-raid, .hs-mc-notice-bits, .hs-mc-notice-announce, ' +
-  '.hs-mc-notice-milestone, .hs-mc-notice-watchstreak, .hs-mc-notice-charity, .hs-mc-notice-mod-anniversary, ' +
-  '.hs-mc-kicks, .hs-mc-user-intro, .hs-mc-animated, .hs-mc-redeemed, .hs-mc-highlighted, .hs-mc-rule-highlight, ' +
-  '.hs-mc-first-msg, .hs-mc-superchat'
+const EVENT_FILL = [
+  [/event-(?:update|online|offline|hype|poll|pred|emote)\b/, 'olive'],
+  [/event-raid\b/, 'purple'],
+  [/event-(?:sub|yt-superchat|yt-supersticker|yt-membership|yt-milestone|yt-gift)\b/, 'navy'],
+  [/event-redeem\b/, 'teal'],
+]
 
-/** The stream-event classes that are filled. */
-const FILLED_EVENT =
-  /event-(?:update|online|offline|hype|poll|pred|emote|raid|sub|redeem|yt-superchat|yt-supersticker|yt-membership|yt-milestone|yt-gift)\b/
+/** the fill a stream-event row wears ('' = not a filled event) */
+function eventFill(eventClass) {
+  const c = eventClass || ''
+  for (const [re, fill] of EVENT_FILL) if (re.test(c)) return fill
+  return ''
+}
 
-// A rule highlight is the dim twin of the colour the rule chose. Exact ANSI hexes only;
-// anything else falls back to the stripe grey.
-const RULE_FILL = new Map([
-  ['#ff0000', 'var(--hs-fill-maroon)'],
-  ['#00ff00', 'var(--hs-fill-green)'],
-  ['#ffff00', 'var(--hs-fill-olive)'],
-  ['#8888ff', 'var(--hs-fill-navy)'],
-  ['#ff00ff', 'var(--hs-fill-purple)'],
-  ['#00ffff', 'var(--hs-fill-teal)'],
-  ['#ffffff', 'var(--hs-zebra)'],
-])
+const NAVY_NOTICES = /\bhs-mc-notice-(?:sub|gift|bits|milestone|watchstreak|charity|mod-anniversary)\b|\bhs-mc-kicks\b|\bhs-mc-superchat\b/
 
-/**
- * The fill a rule's highlight colour becomes (a token reference).
- * @param {string} color a #rrggbb the rule chose
- * @returns {string}
- */
+/** the fill a chat / system row wears ('' = a plain row) */
+function rowFill(el) {
+  const k = el.classList
+  if (k.contains('hs-mc-rule-highlight') && !k.contains('mention')) return 'rule'
+  if (k.contains('hs-mc-notice-raid') || k.contains('hs-mc-user-intro') || k.contains('hs-mc-first-msg')) return 'purple'
+  if (k.contains('hs-mc-notice-announce') || k.contains('hs-mc-redeemed') || k.contains('hs-mc-highlighted') || k.contains('hs-mc-animated')) return 'teal'
+  if (k.contains('hs-mc-automod') || k.contains('hs-mc-notice-error')) return 'red'
+  return NAVY_NOTICES.test(el.className) ? 'navy' : ''
+}
+
+/** a rule's highlight colour -> the token the row's fill reads (the zebra grey when it is not one of the eight) */
 function ruleFillVar(color) {
-  return RULE_FILL.get(String(color || '').trim().toLowerCase()) || 'var(--hs-zebra)'
+  const name = RULE_FILL[String(color || '').trim().toLowerCase()]
+  return name && name !== 'zebra' ? `var(--brand-fill-${name})` : 'var(--brand-zebra)'
 }

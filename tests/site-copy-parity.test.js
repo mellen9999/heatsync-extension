@@ -47,6 +47,9 @@ const FILES = [
   ['client/card/card-model.js', 'src/lib/card-model.js'],
   ['client/card/card-render.js', 'src/lib/card-render.js'],
   ['public/css/modules/card.css', 'src/multichat/styles/20-card.css'],
+  ['public/css/brand-tokens.css', 'src/multichat/styles/01-brand-tokens.css'],
+  ['public/css/modules/brand-rows.css', 'src/multichat/styles/21-brand-rows.css'],
+  ['shared/brand/tokens.gen.js', 'src/lib/brand-tokens.js'],
 ]
 
 describe('site-copy parity', () => {

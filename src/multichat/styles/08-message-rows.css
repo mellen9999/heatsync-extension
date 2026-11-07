@@ -37,7 +37,7 @@
     .hs-mc-msg {
       /* density vars set by the registry density applier; defaults keep the
          classic compact look */
-      padding: var(--hs-mc-row-pad, 2px 4px);
+      padding: var(--brand-row-pad-y) var(--brand-row-pad-x);
       border-radius: 0;
       font-size: var(--hs-chat-font, 15px) !important;
       line-height: 20px !important;
@@ -394,11 +394,6 @@
       padding-left: 8px;
       background: #000000;
     }
-    .hs-mc-msg.hs-mc-kicks { background: #000000; }
-    .hs-mc-kicks .hs-mc-system-text {
-      color: #ffff00;
-      font-weight: 700;
-    }
     .hs-mc-system-text {
       color: #ffffff;
       font-size: 13px;
@@ -434,17 +429,10 @@
     .hs-mc-msg.hs-mc-notice-mode      { border-left-color: var(--hs-reply) !important; background: var(--hs-reply-tint) !important; }
     .hs-mc-msg.hs-mc-notice-mode      .hs-mc-system-text { color: var(--hs-reply); font-weight: 600; }
     /* Sub + gift events = magenta, ring and text alike */
-    .hs-mc-msg.hs-mc-notice-sub       { background: #000000 !important; }
-    .hs-mc-msg.hs-mc-notice-sub       .hs-mc-system-text { color: #ff00ff; font-weight: 600; }
-    .hs-mc-msg.hs-mc-notice-gift      { background: #000000 !important; }
-    .hs-mc-msg.hs-mc-notice-gift      .hs-mc-system-text { color: #ff00ff; font-weight: 600; }
     /* Raid = magenta (ANSI 13) — special event family */
-    .hs-mc-msg.hs-mc-notice-raid      { background: var(--hs-thread-tint) !important; }
-    .hs-mc-msg.hs-mc-notice-raid      .hs-mc-system-text { color: var(--hs-thread); font-weight: 700; }
     /* Announce = broadcaster speaking: yellow ring (see the row-ring block),
        bold yellow text and an "announce" chip — the chip is what makes it the
        loudest of the ringed notices. */
-    .hs-mc-msg.hs-mc-notice-announce  { background: var(--hs-warn-bg) !important; }
     .hs-mc-msg.hs-mc-notice-announce::before {
       content: 'announce';
       color: var(--hs-warn);
@@ -453,25 +441,15 @@
       padding: 0 4px;
       margin-right: 6px;
     }
-    .hs-mc-msg.hs-mc-notice-announce  .hs-mc-system-text { color: var(--hs-warn); font-weight: 700; }
     /* Bits = gold/amber (distinct from raid orange and announce yellow) */
-    .hs-mc-msg.hs-mc-notice-bits      { background: #000000 !important; }
-    .hs-mc-msg.hs-mc-notice-bits      .hs-mc-system-text { color: var(--hs-gold); font-weight: 600; }
     /* viewermilestone (sub anniversary, etc.) = teal */
-    .hs-mc-msg.hs-mc-notice-milestone { background: #000000 !important; }
-    .hs-mc-msg.hs-mc-notice-milestone .hs-mc-system-text { color: var(--hs-reply); font-weight: 600; }
     /* Watch-streak = brand white — engagement, distinct from raid magenta */
-    .hs-mc-msg.hs-mc-notice-watchstreak { background: #000000 !important; }
-    .hs-mc-msg.hs-mc-notice-watchstreak .hs-mc-system-text { color: var(--hs-brand); font-weight: 600; }
     /* Charity donation = gold (generosity family, same as bits/gifts) */
-    .hs-mc-msg.hs-mc-notice-charity { background: var(--hs-gold-tint) !important; }
-    .hs-mc-msg.hs-mc-notice-charity .hs-mc-system-text { color: var(--hs-gold); font-weight: 600; }
     /* Pinned-message notice = gold (pin is a mod act, matches pinned-row gold) */
     .hs-mc-msg.hs-mc-notice-pin { border-left-color: var(--hs-gold) !important; background: var(--hs-gold-tint) !important; }
     .hs-mc-msg.hs-mc-notice-pin .hs-mc-system-text { color: var(--hs-gold); font-weight: 700; }
     /* "new to chat" intro (msg-id=user-intro, + legacy ritual usernotice) =
        thread/event magenta with a chip — a person arriving is a community moment */
-    .hs-mc-msg.hs-mc-user-intro { background: var(--hs-thread-tint); }
     .hs-mc-msg.hs-mc-user-intro::before {
       content: 'new here';
       color: var(--hs-thread);
@@ -511,24 +489,8 @@
     }
     /* Mod-anniversary = gold (authority family — a celebration of mod status,
        distinct from the routine info-blue grant-mod notice) */
-    .hs-mc-msg.hs-mc-notice-mod-anniversary { background: var(--hs-gold-tint) !important; }
-    .hs-mc-msg.hs-mc-notice-mod-anniversary .hs-mc-system-text { color: var(--hs-gold); font-weight: 700; }
     /* Errors / rejections = dim maroon */
-    .hs-mc-msg.hs-mc-notice-error     { border-left-color: var(--hs-danger-dim) !important; background: #000000 !important; }
-    .hs-mc-msg.hs-mc-notice-error     .hs-mc-system-text { color: #ff0000; }
-    /* Filled rows (.hs-filled: the olive notices, the purple first message) never take
-       part in striping — normal rows alternate black / zebra among themselves. The name
-       sits on a plain black cutout so it reads exactly as in chat; the label, text and
-       emotes keep their colours. */
-    .hs-mc-msg.hs-mc-first-msg { background: var(--hs-fill-purple); }
-    /* two filled rows that touch are split by a black hairline */
-    .hs-filled + .hs-filled { border-top: 1px solid var(--hs-bg); }
-    .hs-filled .hs-name-cut {
-      display: inline-block;
-      vertical-align: top;
-      padding: 0 4px;
-      background: var(--hs-bg);
-    }
+    /* Filled rows (fills, labels, name cutout, gap) are the shared layer: styles/21-brand-rows.css. */
     /* n/N search-match cursor (live-tab filter) — HeatSync orange left-accent,
        no animation, wins over notice-type coloring (same specificity, later
        in source order) so the current match is always identifiable. */
@@ -555,9 +517,6 @@
        carries a mutable status + button pair instead of static system text. */
     .hs-mc-msg.hs-mc-automod {
       display: block;
-      border-left: 3px solid var(--hs-gold);
-      background: var(--hs-gold-tint);
-      padding: 4px 8px;
     }
     .hs-mc-msg.hs-mc-automod.hs-mc-automod-resolved { }
     .hs-mc-automod-badge {
@@ -598,8 +557,6 @@
     .hs-mc-automod-btn:active { background: #fff; color: #000; }
     .hs-mc-automod-status { font-size: 13px; color: var(--hs-gold); }
     .hs-mc-automod-status.hs-mc-automod-err { color: var(--hs-danger); }
-    .hs-mc-msg.hs-mc-redeemed { background: #000000; }
-    .hs-mc-msg.hs-mc-highlighted { background: var(--hs-gold-tint); }
     .hs-mc-redeem-label {
       color: var(--hs-plat-twitch);
       font-size: 13px;
@@ -724,7 +681,7 @@
     /* a ringed notice drops the system rail and its gutter: back to the row's own padding */
     .hs-mc-msg.hs-mc-system:is(.hs-mc-notice-sub, .hs-mc-notice-gift, .hs-mc-notice-raid, .hs-mc-notice-bits, .hs-mc-kicks, .hs-mc-notice-announce, .hs-mc-notice-milestone, .hs-mc-notice-watchstreak, .hs-mc-notice-charity, .hs-mc-notice-mod-anniversary) {
       border-left: 0;
-      padding: var(--hs-mc-row-pad, 2px 4px);
+      padding: var(--brand-row-pad-y) var(--brand-row-pad-x);
     }
     /* Filter-rule highlight — color driven by per-rule CSS custom property */
     .hs-mc-msg.tweet {
@@ -1204,46 +1161,8 @@
       cursor: pointer;
     }
 
-    /* ── Filled rows: every notification wears the dim twin of its meaning colour ──
-       olive = stream events · purple = new people · navy = support · teal = channel
-       points + the broadcaster's voice · red = needs you (automod, errors).
-       Labels ride the system text; the fill rules set no text colour. The row's own
-       padding, no rail; the name sits on a black cutout (fill-family.js). */
-    .hs-mc-msg.hs-filled { border-left: 0 !important; padding: var(--hs-mc-row-pad, 2px 4px); }
-    .hs-mc-msg.hs-mc-notice-raid,
-    .hs-mc-msg.hs-mc-user-intro { background: var(--hs-fill-purple) !important; }
-    .hs-mc-msg.hs-mc-notice-raid .hs-mc-system-text { color: #ffffff; font-weight: 700; }
-    .hs-mc-msg.hs-mc-user-intro::before { color: #ffffff; border-color: #ffffff; background: #000000; }
-    .hs-mc-msg.hs-mc-notice-sub,
-    .hs-mc-msg.hs-mc-notice-gift,
-    .hs-mc-msg.hs-mc-notice-bits,
-    .hs-mc-msg.hs-mc-kicks,
-    .hs-mc-msg.hs-mc-notice-charity,
-    .hs-mc-msg.hs-mc-notice-mod-anniversary,
-    .hs-mc-msg.hs-mc-notice-milestone,
-    .hs-mc-msg.hs-mc-notice-watchstreak,
-    .hs-mc-msg.hs-mc-superchat { background: var(--hs-fill-navy) !important; }
-    .hs-mc-msg.hs-mc-notice-sub .hs-mc-system-text,
-    .hs-mc-msg.hs-mc-notice-gift .hs-mc-system-text,
-    .hs-mc-msg.hs-mc-notice-bits .hs-mc-system-text,
-    .hs-mc-msg.hs-mc-kicks .hs-mc-system-text,
-    .hs-mc-msg.hs-mc-notice-charity .hs-mc-system-text,
-    .hs-mc-msg.hs-mc-notice-mod-anniversary .hs-mc-system-text,
-    .hs-mc-msg.hs-mc-notice-milestone .hs-mc-system-text,
-    .hs-mc-msg.hs-mc-notice-watchstreak .hs-mc-system-text { color: #8888ff; font-weight: 700; }
-    .hs-mc-msg.hs-mc-redeemed,
-    .hs-mc-msg.hs-mc-highlighted,
-    .hs-mc-msg.hs-mc-animated,
-    .hs-mc-msg.hs-mc-notice-announce { background: var(--hs-fill-teal) !important; }
-    .hs-mc-msg.hs-mc-redeemed .hs-mc-system-text,
-    .hs-mc-msg.hs-mc-highlighted .hs-mc-system-text,
-    .hs-mc-msg.hs-mc-notice-announce .hs-mc-system-text { color: #00ffff; font-weight: 700; }
-    .hs-mc-msg.hs-mc-notice-announce::before,
-    .hs-mc-msg.hs-mc-animated::before { color: #00ffff; background: #000000; border: 1px solid #00ffff; }
-    .hs-mc-msg.hs-mc-rule-highlight { background: var(--hs-rule-bg, var(--hs-zebra)); }
-    .hs-mc-msg.hs-mc-automod,
-    .hs-mc-msg.hs-mc-notice-error { background: var(--hs-mention-bg) !important; border-left: 0 !important; padding: var(--hs-mc-row-pad, 2px 4px); }
-    .hs-mc-msg.hs-mc-notice-error .hs-mc-system-text { color: #ffffff; }
+    /* chips on a filled row take the fill's label colour, on a black plate */
+    .hs-mc-msg.hs-filled::before { color: var(--hs-label); background: #000000; border: 1px solid var(--hs-label); }
     /* mod actions are history, not alerts: no fill, no rail, dim text */
     .hs-mc-msg:is(.hs-mc-notice-ban, .hs-mc-notice-timeout, .hs-mc-notice-unban, .hs-mc-notice-untimeout, .hs-mc-notice-mod-add, .hs-mc-notice-mod-remove, .hs-mc-notice-vip-add, .hs-mc-notice-vip-remove, .hs-mc-notice-delete, .hs-mc-notice-mode) {
       background: #000000 !important;

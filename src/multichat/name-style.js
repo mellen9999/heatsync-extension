@@ -147,9 +147,7 @@ function hsNameParts(o) {
       hsNameResolveLogin(login)
     }
   }
-  let colour = hsNameColour({ colour: colourIn, platform, login, uid, name })
-  // a notice row's fill is olive: a solid colour too dim on it reads white (paints keep their own fill)
-  if (o.notice) colour = noticeNameColour(colour)
+  const colour = hsNameColour({ colour: colourIn, platform, login, uid, name })
   const hs = uid ? hsPaintRender(uid, name) : null
   const stv = !hs && uid && plat === 'twitch' ? getMcPaintStyle(uid, colour) : ''
   const style = hs ? `--hsp-t:${paintPhaseNow()};${hsNameColourDecl(colour)}` : stv || `color:${colour}`
@@ -197,14 +195,13 @@ function hsNameRefresh(el) {
   if (!el) return
   const uid = el.dataset.hsNuid || ''
   const ncol = el.dataset.hsNcol
-  let colour = hsNameColour({
+  const colour = hsNameColour({
     colour: ncol === undefined ? undefined : ncol === '-' ? null : ncol,
     platform: el.dataset.hsNsrc || '',
     login: el.dataset.hsNlogin,
     uid,
     name: el.textContent || '',
   })
-  if (el.closest?.('.hs-mc-stream-event.event-update, .hs-mc-stream-event.event-online')) colour = noticeNameColour(colour)
   if (uid && hasResolvedHsPaint(uid)) {
     // a painted name owns the fill; the colour rides --hs-name-c for underlays
     el.style.color = colour

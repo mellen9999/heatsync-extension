@@ -7806,7 +7806,6 @@
         login: isYtEvent ? '' : chLc,
         resolve: !isYtEvent,
         exact: true,
-        notice: /event-(?:update|online)/.test(m.eventClass || ''),
       })
       // the badges keyed to the streamer's twitch id, before the name like a chat row
       const evtBadges = evtPlat === 'twitch' ? hsNameBadges(evt) : ''

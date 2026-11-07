@@ -5,7 +5,7 @@ const src = readFileSync(new URL('../chrome/youtube-content.js', import.meta.url
 
 // a blocked emote must stay in chat as a placeholder, or right-click can never unblock it
 test('yt keeps blocked emotes as placeholders and toggles block on right-click', () => {
-  expect(src).toMatch(/blockedByName\.get\(word\)/)
+  expect(src).toMatch(/renderBlockedByName\.get\(word\)/)
   expect(src).toMatch(/dataset\.hsBlocked/)
   expect(src).toMatch(/type: was \? 'unblock_emote' : 'block_emote', hash/)
   // the same emote has a different hash per source: a block covers every version of the name

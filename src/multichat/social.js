@@ -2594,7 +2594,7 @@ function renderFeedContent(content, emoteRefs) {
   // Local emote fallback: render 7TV/BTTV/FFZ/channel emotes the server can't
   // resolve (not in emote_refs — site only knows heatsync emotes). The extension
   // augments with the viewer's full local emote set, matching chat-tile rendering.
-  if (typeof lookupEmote === 'function') {
+  if (typeof lookupPublicEmote === 'function') {
     const refNames = emoteRefs && typeof emoteRefs === 'object' ? new Set(Object.keys(emoteRefs)) : null
     const parts = html.split(/(<[^>]+>)/)
     html = parts
@@ -2614,7 +2614,9 @@ function renderFeedContent(content, emoteRefs) {
           ) {
             return renderFeedEmote(word, '', 'heatsync', '')
           }
-          const em = lookupEmote(word) || (bare !== word ? lookupEmote(bare) : null)
+          // Another author's bare word: channel + globals only. lookupEmote leads with the
+          // viewer's own inventory, which would draw MY emote on THEIR post (rule 4).
+          const em = lookupPublicEmote(word) || (bare !== word ? lookupPublicEmote(bare) : null)
           // Own-inventory cwCats gate (viewer_show_* toggles) — lookupEmote's
           // first hit is viewerPersonalEmotes, which carries cwCats the same
           // way processEmotes' hsOwnCwHiddenCat check does for chat.

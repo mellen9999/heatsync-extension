@@ -38,7 +38,11 @@
 
   // ─── Emote Inventory ─────────────────────────────────────────────────────────
 
-  let emoteMap = new Map() // name → { name, url, hash, ... }
+  let emoteMap = new Map() // name → { name, url, hash, ... } — everything you can type (autocomplete, composer)
+  // What other people's words draw as: channel + globals only. Your inventory is yours (rule 4) — a
+  // yt row carries no sender emote data, so a bare word never becomes YOUR emote on someone's line.
+  let renderMap = new Map()
+  let renderBlockedByName = new Map()
   let blockedEmotes = new Set()
   let blockedByName = new Map() // name → emote, for the placeholder a blocked emote leaves in chat
   let inventoryLoaded = false
@@ -77,10 +81,10 @@
       }
     }
     for (const [owner, ownerEmotes] of Object.entries(channelEmotesByOwner)) {
-      if (ownedByMe(owner) && Array.isArray(ownerEmotes)) take(ownerEmotes, 0)
+      if (ownedByMe(owner) && Array.isArray(ownerEmotes)) take(rankEmotePool(ownerEmotes, 'channel'), 0)
     }
     take(inventory, 1)
-    take(globals, 2)
+    take(rankEmotePool(globals, 'global'), 2)
     const map = new Map()
     const hidden = new Map()
     for (const [name, all] of versions) {
@@ -88,6 +92,17 @@
       if (shown) map.set(name, shown)
       else hidden.set(name, all[0])
     }
+    const rMap = new Map()
+    const rHidden = new Map()
+    for (const [name, all] of versions) {
+      const pub = all.filter((e) => e._ytTier !== 1)
+      if (!pub.length) continue
+      const shown = pub.find((e) => !blockedEmotes.has(e.hash || e.name))
+      if (shown) rMap.set(name, shown)
+      else rHidden.set(name, pub[0])
+    }
+    renderMap = rMap
+    renderBlockedByName = rHidden
     variantsByName = versions
     blockedByName = hidden
     emoteMap = map
@@ -101,7 +116,7 @@
     for (const el of document.querySelectorAll('yt-live-chat-text-message-renderer #message'))
       replaceEmotesInElement(el)
     for (const img of document.querySelectorAll('img.heatsync-emote-yt')) {
-      img.toggleAttribute('data-hs-blocked', blockedByName.has(img.alt) && !emoteMap.has(img.alt))
+      img.toggleAttribute('data-hs-blocked', renderBlockedByName.has(img.alt) && !renderMap.has(img.alt))
     }
   }
 
@@ -280,7 +295,7 @@
   }
 
   function replaceEmotesInElement(messageEl) {
-    if (!messageEl || (emoteMap.size === 0 && blockedByName.size === 0)) return
+    if (!messageEl || (renderMap.size === 0 && renderBlockedByName.size === 0)) return
 
     const walker = document.createTreeWalker(messageEl, NodeFilter.SHOW_TEXT)
     const textNodes = []
@@ -293,7 +308,7 @@
       const words = text.split(/(\s+)/)
       let hasEmote = false
       for (const w of words) {
-        if (emoteMap.has(w) || blockedByName.has(w)) {
+        if (renderMap.has(w) || renderBlockedByName.has(w)) {
           hasEmote = true
           break
         }
@@ -323,12 +338,12 @@
           gap = ''
           continue
         }
-        const emote = emoteMap.get(word) || blockedByName.get(word)
+        const emote = renderMap.get(word) || renderBlockedByName.get(word)
         if (emote) {
           const img = document.createElement('img')
           img.src = emote.url
           img.alt = emote.name
-          if (!emoteMap.has(word)) img.dataset.hsBlocked = '1'
+          if (!renderMap.has(word)) img.dataset.hsBlocked = '1'
           if (emote.hash) img.dataset.emoteHash = emote.hash
           img.className = 'heatsync-emote-yt'
           img.loading = 'lazy'
@@ -1835,7 +1850,7 @@
       if (img?.nodeName !== 'IMG' || !img.classList.contains('heatsync-emote-yt')) return
       e.preventDefault()
       e.stopImmediatePropagation()
-      const emote = emoteMap.get(img.alt) || blockedByName.get(img.alt)
+      const emote = renderMap.get(img.alt) || renderBlockedByName.get(img.alt)
       if (!emote) return
       const was = img.hasAttribute('data-hs-blocked')
       // the name, wherever it comes from: twitch and kick key their blocks by the version they show

@@ -3389,6 +3389,11 @@ function lookupEmoteRenderOrder(name) {
     blockedEmoteFallback.get(name)
   )
 }
+// Someone else's bare word (a feed post, a line with no ref): channel, then globals — never
+// your inventory, which is yours alone (rule 4).
+function lookupPublicEmote(name) {
+  return activeTabChannelEmote(name) || emoteCache.get(name)
+}
 // Wire order for kick: channel > inventory > global, so a kick channel emote that shares a name
 // with one you own still goes out as the kick-native token every kick viewer can see.
 function lookupEmoteWireOrder(name) {
@@ -5169,6 +5174,7 @@ export {
   lookupEmoteWireOrder,
   lookupEmoteWithOverlay,
   lookupOwnedEmote,
+  lookupPublicEmote,
   mergeSenderEmotes,
   pastOwnership,
   pastOwnershipAt,

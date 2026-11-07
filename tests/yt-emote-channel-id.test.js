@@ -56,8 +56,8 @@ test('a bare handle is used directly', async () => {
 // ── native chat emotes stay on this chat's channel ──────────────────────────
 const yc = readFileSync(new URL('../chrome/youtube-content.js', import.meta.url), 'utf8')
 
-test('native yt chat merges only its own channel owner set', () => {
-  expect(yc).toContain('if (ownedByMe(owner) && Array.isArray(ownerEmotes)) take(ownerEmotes, 0)')
+  expect(yc).toContain("if (ownedByMe(owner) && Array.isArray(ownerEmotes)) take(rankEmotePool(ownerEmotes, 'channel'), 0)")
+  expect(yc).toContain('if (ownedByMe(owner) && Array.isArray(ownerEmotes)) take(rankEmotePool(ownerEmotes, 'channel'), 0)')
   expect(yc).not.toContain('Object.values(channelEmotesByOwner)')
 })
 

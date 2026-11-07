@@ -27,7 +27,7 @@ describe('feed append render', () => {
   const appendSrc = sliceFn('renderFeedAppend')
 
   test('fetchFeed append path calls renderFeedAppend, not full renderFeed', () => {
-    expect(fetchFeedSrc).toMatch(/if \(append\) renderFeedAppend\(appendStart\)/)
+    expect(fetchFeedSrc).toMatch(/if \(append\) renderFeedAppend\(feedRendered\)/)
     expect(fetchFeedSrc).toMatch(/else renderFeed\(\)/)
   })
 

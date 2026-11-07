@@ -414,6 +414,11 @@ let feedMessages = []
 let feedLoaded = false
 let feedLoading = false
 let feedPage = 1
+// Rows on screen: a fresh feed paints one screenful, the rest of the buffer is built when
+// the reader scrolls to it (a channel-less page opens on the feed and nobody asked for 30 posts)
+const FEED_FIRST_PAINT = 8
+const FEED_REVEAL_STEP = 12
+let feedRendered = 0
 let feedHasMore = true
 let feedLastFetch = 0 // Timestamp of last feed fetch
 let feedFromHotFallback = false // true when /following was empty + we showed /hot instead
@@ -1875,9 +1880,7 @@ async function fetchFeed(append = false) {
     } catch (_) {}
   }
 
-  let appendStart = 0
   if (append) {
-    appendStart = feedMessages.length
     feedMessages.push(...msgs)
     feedPage = page
   } else {
@@ -1891,6 +1894,7 @@ async function fetchFeed(append = false) {
       feedMessages = msgs
     }
     feedPage = 1
+    feedRendered = 0
     feedFromHotFallback = usedHotFallback
     feedFallbackIsCold = hotWasCold
   }
@@ -1918,7 +1922,7 @@ async function fetchFeed(append = false) {
   }
   feedBookmarksLoad(msgs)
   if (currentTab === 'feed') {
-    if (append) renderFeedAppend(appendStart)
+    if (append) renderFeedAppend(feedRendered)
     else renderFeed()
   }
 }
@@ -2086,7 +2090,8 @@ function renderFeed() {
   // per-item height measurement (cumulative offsets, not i*h).
   _feedVirtualTeardown(msgsEl)
 
-  const items = feedMessages
+  const items = feedMessages.slice(0, Math.max(feedRendered, FEED_FIRST_PAINT))
+  feedRendered = items.length
   isProgrammaticScroll = true
   msgsEl.textContent = ''
   msgsEl.style.position = ''
@@ -2118,7 +2123,7 @@ function renderFeed() {
   }
   msgsEl.appendChild(frag)
 
-  if (feedHasMore) {
+  if (feedHasMore || feedRendered < feedMessages.length) {
     const loader = document.createElement('div')
     loader.className = 'hs-mc-empty hs-feed-loader'
     loader.textContent = t('mc_social_scroll_more')
@@ -2143,23 +2148,46 @@ function renderFeed() {
     _feedInfiniteTimer = cleanup.setTimeout(() => {
       _feedInfiniteTimer = null
       const { scrollTop, scrollHeight, clientHeight } = msgsEl
-      if (scrollHeight - scrollTop - clientHeight < 100) fetchFeed(true)
+      if (scrollHeight - scrollTop - clientHeight < 100) feedMore()
     }, 200)
   }
   msgsEl.addEventListener('scroll', _feedVirtualScrollHandler, { signal: mcSignal, passive: true })
+  // a tall panel can hold the first rows without a scrollbar: nothing would scroll to ask for more
+  requestAnimationFrame(feedFillPane)
+}
+
+/** More rows: build the next of the buffer, and only when it is all on screen ask the server. */
+function feedMore() {
+  if (feedRendered < feedMessages.length) {
+    renderFeedAppend(feedRendered, FEED_REVEAL_STEP)
+    return true
+  }
+  if (feedHasMore && !feedLoading) {
+    fetchFeed(true)
+    return true
+  }
+  return false
+}
+
+function feedFillPane() {
+  if (mcSignal?.aborted || currentTab !== 'feed' || activeThread) return
+  const el = document.getElementById('hs-mc-messages')
+  if (!el || !el.querySelector('.hs-feed-loader') || el.scrollHeight - el.clientHeight >= 100) return
+  if (feedMore()) requestAnimationFrame(feedFillPane)
 }
 
 // Append-only render for infinite scroll. A full renderFeed() here rebuilt all
 // 150 rows (tearing down and re-fetching every embed iframe) and reset
 // scrollTop to 0 — yanking the reader to the top on every "load more". Only
 // the newly-fetched rows get built; scroll position is never touched.
-function renderFeedAppend(startIndex) {
+function renderFeedAppend(startIndex, step = Infinity) {
   if (typeof imgViewOpen === 'function' && imgViewOpen()) return // a full-size picture owns the pane
   if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   if (activeThread) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
-  const newItems = feedMessages.slice(startIndex)
+  const newItems = feedMessages.slice(startIndex, startIndex + step)
+  feedRendered = startIndex + newItems.length
   msgsEl.querySelector('.hs-feed-loader')?.remove()
   if (newItems.length > 0) {
     const frag = document.createDocumentFragment()
@@ -2171,7 +2199,7 @@ function renderFeedAppend(startIndex) {
     }
     msgsEl.appendChild(frag)
   }
-  if (feedHasMore) {
+  if (feedHasMore || feedRendered < feedMessages.length) {
     const loader = document.createElement('div')
     loader.className = 'hs-mc-empty hs-feed-loader'
     loader.textContent = t('mc_social_scroll_more')

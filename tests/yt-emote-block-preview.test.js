@@ -8,8 +8,9 @@ test('yt keeps blocked emotes as placeholders and toggles block on right-click',
   expect(src).toMatch(/renderBlockedByName\.get\(word\)/)
   expect(src).toMatch(/dataset\.hsBlocked/)
   expect(src).toMatch(/type: was \? 'unblock_emote' : 'block_emote', hash/)
-  // the same emote has a different hash per source: a block covers every version of the name
-  expect(src).toMatch(/variantsByName\.get\(emote\.name\)/)
+  // rule 9: a block is the one emote under the cursor, never every version of the name
+  expect(src).toMatch(/ytBlockKeys\(emote, was\)/)
+  expect(src).not.toMatch(/variantsByName\.get\(emote\.name\)/)
   expect(src).not.toMatch(/emoteHash: emote\.hash/)
 })
 

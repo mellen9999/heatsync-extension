@@ -688,7 +688,6 @@
     .hs-mc-msg.mention.hs-mc-rule-highlight,
     .hs-feed-msg.mention.hs-mc-rule-highlight {
       background: var(--hs-mention-bg);
-      box-shadow: none;
     }
     .hs-mc-msg.mention.hs-mc-rule-highlight.hs-mc-zebra,
     .hs-feed-msg.mention.hs-mc-rule-highlight.hs-mc-zebra {
@@ -722,33 +721,12 @@
        One ring per row: later colour wins. Keyword and filter rule outrank the
        events because those rows carry no label — the event's label still says
        "first message" inside a yellow keyword ring. */
-    .hs-mc-msg.hs-mc-notice-sub { --hs-row-ring: #ff00ff; }
-    .hs-mc-msg.hs-mc-notice-gift { --hs-row-ring: #ff00ff; }
-    .hs-mc-msg.hs-mc-notice-raid { --hs-row-ring: var(--hs-thread); }
-    .hs-mc-msg.hs-mc-notice-bits { --hs-row-ring: var(--hs-gold); }
-    .hs-mc-msg.hs-mc-kicks { --hs-row-ring: #ffff00; }
-    .hs-mc-msg.hs-mc-notice-announce { --hs-row-ring: var(--hs-warn); }
-    .hs-mc-msg.hs-mc-notice-milestone { --hs-row-ring: var(--hs-reply); }
-    .hs-mc-msg.hs-mc-notice-watchstreak { --hs-row-ring: var(--hs-brand); }
-    .hs-mc-msg.hs-mc-notice-charity { --hs-row-ring: var(--hs-gold); }
-    .hs-mc-msg.hs-mc-notice-mod-anniversary { --hs-row-ring: var(--hs-gold); }
-    .hs-mc-msg.hs-mc-animated { --hs-row-ring: var(--hs-thread-dim); }
-    .hs-mc-msg.hs-mc-user-intro { --hs-row-ring: var(--hs-thread); }
-    .hs-mc-msg.hs-mc-redeemed { --hs-row-ring: var(--hs-plat-twitch); }
-    .hs-mc-msg.hs-mc-highlighted { --hs-row-ring: var(--hs-gold); }
-    .hs-mc-msg.hs-mc-rule-highlight { --hs-row-ring: var(--hs-rule-hl, #fff); }
     /* a ringed notice drops the system rail and its gutter: back to the row's own padding */
     .hs-mc-msg.hs-mc-system:is(.hs-mc-notice-sub, .hs-mc-notice-gift, .hs-mc-notice-raid, .hs-mc-notice-bits, .hs-mc-kicks, .hs-mc-notice-announce, .hs-mc-notice-milestone, .hs-mc-notice-watchstreak, .hs-mc-notice-charity, .hs-mc-notice-mod-anniversary) {
       border-left: 0;
       padding: var(--hs-mc-row-pad, 2px 4px);
     }
-    .hs-mc-msg:is(.hs-mc-notice-sub, .hs-mc-notice-gift, .hs-mc-notice-raid, .hs-mc-notice-bits, .hs-mc-kicks, .hs-mc-notice-announce, .hs-mc-notice-milestone, .hs-mc-notice-watchstreak, .hs-mc-notice-charity, .hs-mc-notice-mod-anniversary, .hs-mc-animated, .hs-mc-user-intro, .hs-mc-redeemed, .hs-mc-highlighted, .hs-mc-rule-highlight) {
-      box-shadow: inset 0 0 0 1px var(--hs-row-ring);
-    }
     /* Filter-rule highlight — color driven by per-rule CSS custom property */
-    .hs-mc-msg.hs-mc-rule-highlight {
-      background: color-mix(in srgb, var(--hs-rule-hl, #fff) 12%, transparent);
-    }
     .hs-mc-msg.tweet {
       background: #000000;
     }
@@ -1224,4 +1202,53 @@
        and clicking it opens the thread stack. No caret, no transition. */
     .hs-mc-reply-ctx {
       cursor: pointer;
+    }
+
+    /* ── Filled rows: every notification wears the dim twin of its meaning colour ──
+       olive = stream events · purple = new people · navy = support · teal = channel
+       points + the broadcaster's voice · red = needs you (automod, errors).
+       Labels ride the system text; the fill rules set no text colour. The row's own
+       padding, no rail; the name sits on a black cutout (fill-family.js). */
+    .hs-mc-msg.hs-filled { border-left: 0 !important; padding: var(--hs-mc-row-pad, 2px 4px); }
+    .hs-mc-msg.hs-mc-notice-raid,
+    .hs-mc-msg.hs-mc-user-intro { background: var(--hs-fill-purple) !important; }
+    .hs-mc-msg.hs-mc-notice-raid .hs-mc-system-text { color: #ffffff; font-weight: 700; }
+    .hs-mc-msg.hs-mc-user-intro::before { color: #ffffff; border-color: #ffffff; background: #000000; }
+    .hs-mc-msg.hs-mc-notice-sub,
+    .hs-mc-msg.hs-mc-notice-gift,
+    .hs-mc-msg.hs-mc-notice-bits,
+    .hs-mc-msg.hs-mc-kicks,
+    .hs-mc-msg.hs-mc-notice-charity,
+    .hs-mc-msg.hs-mc-notice-mod-anniversary,
+    .hs-mc-msg.hs-mc-notice-milestone,
+    .hs-mc-msg.hs-mc-notice-watchstreak,
+    .hs-mc-msg.hs-mc-superchat { background: var(--hs-fill-navy) !important; }
+    .hs-mc-msg.hs-mc-notice-sub .hs-mc-system-text,
+    .hs-mc-msg.hs-mc-notice-gift .hs-mc-system-text,
+    .hs-mc-msg.hs-mc-notice-bits .hs-mc-system-text,
+    .hs-mc-msg.hs-mc-kicks .hs-mc-system-text,
+    .hs-mc-msg.hs-mc-notice-charity .hs-mc-system-text,
+    .hs-mc-msg.hs-mc-notice-mod-anniversary .hs-mc-system-text,
+    .hs-mc-msg.hs-mc-notice-milestone .hs-mc-system-text,
+    .hs-mc-msg.hs-mc-notice-watchstreak .hs-mc-system-text { color: #8888ff; font-weight: 700; }
+    .hs-mc-msg.hs-mc-redeemed,
+    .hs-mc-msg.hs-mc-highlighted,
+    .hs-mc-msg.hs-mc-animated,
+    .hs-mc-msg.hs-mc-notice-announce { background: var(--hs-fill-teal) !important; }
+    .hs-mc-msg.hs-mc-redeemed .hs-mc-system-text,
+    .hs-mc-msg.hs-mc-highlighted .hs-mc-system-text,
+    .hs-mc-msg.hs-mc-notice-announce .hs-mc-system-text { color: #00ffff; font-weight: 700; }
+    .hs-mc-msg.hs-mc-notice-announce::before,
+    .hs-mc-msg.hs-mc-animated::before { color: #00ffff; background: #000000; border: 1px solid #00ffff; }
+    .hs-mc-msg.hs-mc-rule-highlight { background: var(--hs-rule-bg, var(--hs-zebra)); }
+    .hs-mc-msg.hs-mc-automod,
+    .hs-mc-msg.hs-mc-notice-error { background: var(--hs-mention-bg) !important; border-left: 0 !important; padding: var(--hs-mc-row-pad, 2px 4px); }
+    .hs-mc-msg.hs-mc-notice-error .hs-mc-system-text { color: #ffffff; }
+    /* mod actions are history, not alerts: no fill, no rail, dim text */
+    .hs-mc-msg:is(.hs-mc-notice-ban, .hs-mc-notice-timeout, .hs-mc-notice-unban, .hs-mc-notice-untimeout, .hs-mc-notice-mod-add, .hs-mc-notice-mod-remove, .hs-mc-notice-vip-add, .hs-mc-notice-vip-remove, .hs-mc-notice-delete, .hs-mc-notice-mode) {
+      background: #000000 !important;
+      border-left: 0 !important;
+    }
+    .hs-mc-msg:is(.hs-mc-notice-ban, .hs-mc-notice-timeout, .hs-mc-notice-unban, .hs-mc-notice-untimeout, .hs-mc-notice-mod-add, .hs-mc-notice-mod-remove, .hs-mc-notice-vip-add, .hs-mc-notice-vip-remove, .hs-mc-notice-delete, .hs-mc-notice-mode) .hs-mc-system-text {
+      color: var(--hs-dim); font-weight: 400;
     }

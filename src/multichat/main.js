@@ -7769,9 +7769,6 @@
       if (hkey && hermesToggles?.[hkey] === false) return null
       const div = document.createElement('div')
       div.className = `hs-mc-stream-event ${m.eventClass || ''}${FILLED_EVENT.test(m.eventClass || '') ? ' hs-filled' : ''}`
-      // Superchat/sticker tier color rides per-message (m.scColor, extracted from
-      // YouTube's own renderer background) — overrides the eventClass default.
-      if (m.scColor) div.style.setProperty('--evt', sanitizeColor(m.scColor))
       const tsVal = timestampsEnabled && m.time ? formatTimeFromTs(m.time) : ''
       const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
       const isYtEvent = m.platform === 'youtube'
@@ -8509,12 +8506,6 @@
     // (data-uid stays twitch-id-space only). Lets a kick-namespaced
     // HS paint resolution find this row in-place (updateHsPaintsInPlace).
     if (m.hsPaintUid) div.dataset.hsPaintUid = m.hsPaintUid
-    if (isSuperChat && m.scColor) {
-      const safeBg = sanitizeColor(m.scColor)
-      div.style.background = `${safeBg}22`
-      div.style.borderLeft = `3px solid ${safeBg}`
-      div.style.paddingLeft = '4px'
-    }
     // First-time chatter highlight (this session, per channel)
     if (
       firstChatterGlow &&
@@ -8575,6 +8566,7 @@
     if (_frHL.highlight) {
       div.classList.add('hs-mc-rule-highlight')
       div.style.setProperty('--hs-rule-hl', _frHL.highlight)
+      div.style.setProperty('--hs-rule-bg', ruleFillVar(_frHL.highlight))
     }
     // Reply context bar (Chatterino-style) — all values escaped via escapeHtml
     const replyLower = m.replyTo?.user ? m.replyTo.user.toLowerCase() : ''

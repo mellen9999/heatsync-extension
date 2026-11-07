@@ -438,7 +438,7 @@ describe('single-definition colours', () => {
     expect(js).toMatch(/HS_MOD_GREEN = '#00ad03'/)
   })
 
-  test("dim gray is used for exactly these roles: reply-context, fully-read tabs, the settings panel (inactive buttons, scrollbar track), a log line's #channel tag, a mod-cleared row's text, a blocked emote's dashed box in an expanded stack", () => {
+  test("dim gray is used for exactly these roles: reply-context, fully-read tabs, the settings panel (inactive buttons, scrollbar track), a log line's #channel tag, a mod-cleared row's text, a mod-action line's text, a blocked emote's dashed box in an expanded stack", () => {
     const users = []
     for (const f of readdirSync(STYLES).filter((x) => x.endsWith('.css'))) {
       const css = readFileSync(join(STYLES, f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
@@ -452,6 +452,7 @@ describe('single-definition colours', () => {
       '.hs-mc-emote-stack.expanded .hs-mc-emote-wrapper.hs-state-blocked::before',
       '.hs-mc-msg.hs-mc-msg-cleared .hs-mc-text, .hs-mc-msg.hs-mc-msg-cleared .hs-mc-text *',
       '.hs-mc-set-scope-btn, .hs-mc-pagedefaults-btn',
+      '.hs-mc-msg:is(.hs-mc-notice-ban, .hs-mc-notice-timeout, .hs-mc-notice-unban, .hs-mc-notice-untimeout, .hs-mc-notice-mod-add, .hs-mc-notice-mod-remove, .hs-mc-notice-vip-add, .hs-mc-notice-vip-remove, .hs-mc-notice-delete, .hs-mc-notice-mode) .hs-mc-system-text',
       '.hs-mc-reply-ctx',
       '.hs-mc-set-range',
       '.hs-mc-set-range::-moz-range-track',

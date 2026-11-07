@@ -473,7 +473,16 @@
     /* switched-to + went-live rows: olive fill (--hs-fill-olive), yellow / red text, so
        they never read as chat. No border; the stripe goes transparent, padding unchanged. */
     .hs-mc-stream-event.event-update,
-    .hs-mc-stream-event.event-online {
+    .hs-mc-stream-event.event-online,
+    .hs-mc-stream-event.event-offline,
+    .hs-mc-stream-event.event-hype,
+    .hs-mc-stream-event.event-poll,
+    .hs-mc-stream-event.event-pred,
+    .hs-mc-stream-event.event-emote,
+    .hs-mc-stream-event.event-raid,
+    .hs-mc-stream-event.event-sub,
+    .hs-mc-stream-event.event-redeem,
+    .hs-mc-stream-event[class*="event-yt-"] {
       background: var(--hs-fill-olive);
       border-left: 0;          /* the fill is the signal, not the stripe */
       border-bottom-width: 0;  /* chat rows draw no bottom rule */
@@ -627,3 +636,14 @@
     .hs-tabs-right #hs-mc-subrow { flex: 0 0 auto; flex-direction: column; }
     .hs-tabs-left .hs-mc-right-cluster,
     .hs-tabs-right .hs-mc-right-cluster { order: 1; }
+    /* fill family for stream events: olive default (above); purple raid, navy support, teal points.
+       Labels: yellow on olive (went-live keeps its red), white on purple, #8888ff on navy, cyan on teal. */
+    .hs-mc-stream-event.event-offline,
+    .hs-mc-stream-event.event-hype,
+    .hs-mc-stream-event.event-poll,
+    .hs-mc-stream-event.event-pred,
+    .hs-mc-stream-event.event-emote { --evt: #ffff00; }
+    .hs-mc-stream-event.event-raid { background: var(--hs-fill-purple); --evt: #ffffff; }
+    .hs-mc-stream-event.event-sub,
+    .hs-mc-stream-event[class*="event-yt-"] { background: var(--hs-fill-navy); --evt: #8888ff; }
+    .hs-mc-stream-event.event-redeem { background: var(--hs-fill-teal); --evt: #00ffff; }

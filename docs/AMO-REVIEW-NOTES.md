@@ -36,6 +36,10 @@ and discarded, aggregate counts kept 90 days. Full detail in the privacy policy 
 blocked-emote list, channel/tab list, and an ENCRYPTED auth token are stored
 locally in browser.storage.local. Session cookies are read locally and never
 transmitted to anyone other than their originating first party.
+Also first-party: a chat link you hover or click is sent to heatsync.org
+(/api/link-preview?url=), which fetches it server-side so your IP never reaches
+the linked site. The extension also tells heatsync.org which channels are open
+(twitch:chat:relay {channel}) so the public chat archive knows what to record.
 
 WHY THE PERMISSIONS (summary; details below):
 - cookies: read the user's EXISTING twitch.tv / kick.com / heatsync.org session

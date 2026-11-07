@@ -2743,7 +2743,6 @@
   // O(1) lookup sets — rebuilt when arrays change (via allEmotesDirty flag)
   let inventoryHashSet = new Set()
   let cachedEmotesByHash = new Map() // hash → emote, O(1) lookup for hover previews
-  let inventoryNameSet = new Set()
   let globalNameSet = new Set()
 
   // Rebuild combined emote map eagerly (called from event handlers + fallback in processMessage)
@@ -2834,8 +2833,6 @@
     // Rebuild O(1) lookup sets
     inventoryHashSet = new Set()
     for (const e of emoteInventory) inventoryHashSet.add(e.hash)
-    inventoryNameSet = new Set()
-    for (const e of emoteInventory) inventoryNameSet.add(e.name)
     globalNameSet = new Set()
     for (const e of globalEmotes) globalNameSet.add(e.name)
     // Index every variant hash so hover preview / tooltip can resolve a swapped-in
@@ -5250,7 +5247,7 @@
                 if (isBlocked) return // Skip blocked emotes — don't insert or add
                 const imgEl = wrapper.querySelector('img')
                 const emoteUrl = imgEl?.src || ''
-                const inInv = inventoryHashSet.has(hash) || inventoryNameSet.has(emoteName)
+                const inInv = inventoryHashSet.has(hash)
                 const isGlobalEmote = wrapper.classList.contains('emote-overlay-global') || globalNameSet.has(emoteName)
                 // Add to inventory: only own heatsync emotes (have hash, not third-party global)
                 if (!inInv && hash && !isGlobalEmote) {
@@ -5269,7 +5266,6 @@
                       .then((result) => {
                         if (result?.success) {
                           inventoryHashSet.add(result.hash || hash)
-                          inventoryNameSet.add(emoteName)
                           updateEmoteState(hash, emoteName, 'added')
                           return emoteName
                         }
@@ -5364,7 +5360,7 @@
 
           const isBlocked = blockedEmotes.has(hash)
           const isGlobalEmote = wrapper.classList.contains('emote-overlay-global') || globalNameSet.has(emoteName)
-          const inInv = inventoryHashSet.has(hash) || inventoryNameSet.has(emoteName)
+          const inInv = inventoryHashSet.has(hash)
           if (isBlocked) {
             const restoredState = isGlobalEmote ? 'global' : 'neutral'
             blockedEmotes.delete(hash)
@@ -5960,7 +5956,7 @@
       const emote = matchedEmote || { name: alt, hash: alt, url: src }
 
       const blocked = blockedEmotes.has(emote.hash)
-      const inInventory = inventoryHashSet.has(emote.hash) || inventoryNameSet.has(emote.name)
+      const inInventory = inventoryHashSet.has(emote.hash)
 
       // Third-party CDN emotes (7tv, bttv, ffz, twitch) are all "global" - can only block, not add to inventory
       // Only heatsync.org emotes can be added to inventory (blue)
@@ -6518,7 +6514,7 @@
   // modColorHue: optional 0-359 deg from c!#hex
   function generateEmoteElement(emote, isOverlay, modifiers, modColorHue) {
     const blocked = blockedEmotes.has(emote.hash)
-    const inInventory = inventoryHashSet.has(emote.hash) || inventoryNameSet.has(emote.name)
+    const inInventory = inventoryHashSet.has(emote.hash)
 
     // Third-party CDN emotes are all "global" (gray) — flag precomputed in
     // rebuildEmoteMapIfDirty. Fall back to url scan only if missing (broadcast path).
@@ -7997,9 +7993,22 @@
       if (k.startsWith('kick:')) kickUsers.add(id)
       else twitchIds.add(id)
     }
+    // Rule 2: the sender's pick is the line's pick. A row drawn BEFORE their set arrived holds the
+    // channel/global twin of a name they carry; give those words back so the re-pass redraws them.
+    const reopenSenderWords = (el, key) => {
+      const set = senderHeatsyncEmotes.get(key)
+      if (!set || set.size === 0) return
+      for (const w of el.querySelectorAll('.heatsync-emote-wrapper')) {
+        if (w.closest('.heatsync-emote-stack')) continue
+        const mine = set.get(w.dataset.emoteName)
+        if (!mine || (mine.hash && w.dataset.emoteHash === mine.hash)) continue
+        w.replaceWith(document.createTextNode(w.dataset.emoteName))
+      }
+    }
     if (twitchIds.size) {
       container.querySelectorAll('[data-hs-cosmetic-user-id]').forEach((el) => {
         if (!twitchIds.has(el.dataset.hsCosmeticUserId)) return
+        reopenSenderWords(el, `twitch:${el.dataset.hsCosmeticUserId}`)
         el.dataset.heatsyncGeneration = ''
         processMessage(el)
       })
@@ -8007,6 +8016,7 @@
     if (kickUsers.size) {
       container.querySelectorAll('[data-hs-cosmetic-kick-user]').forEach((el) => {
         if (!kickUsers.has(el.dataset.hsCosmeticKickUser)) return
+        reopenSenderWords(el, `kick:${el.dataset.hsCosmeticKickUser}`)
         el.dataset.heatsyncGeneration = ''
         processMessage(el)
       })
@@ -8658,7 +8668,7 @@
         emoteUrl.includes('cdn.frankerfacez.com') ||
         emoteUrl.includes('static-cdn.jtvnw.net')
 
-      const inInventory = inventoryHashSet.has(hash) || inventoryNameSet.has(emoteName)
+      const inInventory = inventoryHashSet.has(hash)
       const isGlobalEmote = globalNameSet.has(emoteName)
 
       const targetClass = inInventory

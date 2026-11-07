@@ -1,7 +1,7 @@
 // node site.mjs <out.json> — the SITE renderer (real live-chat.js + real css via vite dev on :5199)
 import { createRequire } from 'node:module'
 import { writeFileSync } from 'node:fs'
-import { collect } from './collect.mjs'
+import { collect, inject } from './collect.mjs'
 const { chromium } = createRequire(import.meta.url)(process.env.HS_PW || 'playwright-core')
 const b = await chromium.launch(), p = await b.newPage({ viewport: { width: 1920, height: 1080 } })
 await p.goto('http://127.0.0.1:5199/robots.txt')
@@ -26,6 +26,7 @@ await p.evaluate(async () => {
   R(ev('event-raid', 'kripp raided friend with 12')); R(ev('event-sub', 'gifter gifted 5 subs'))
   R(mk('viewer4', 'a fourth normal message', { color: '#ffffff' })); R(mk('viewer5', 'a fifth normal message', { color: '#ffffff' })); R(ev('event-online', 'kripp went live — Elden Ring')) 
 })
+await p.evaluate(inject, ['#c', 'chat-message'])
 writeFileSync(process.argv[2], JSON.stringify(await p.evaluate(collect, '#c > *'), null, 1))
 await p.screenshot({ path: process.argv[3] || '/tmp/claude-1000/brand-site.png', clip: { x: 0, y: 0, width: 740, height: 520 } })
 await b.close()

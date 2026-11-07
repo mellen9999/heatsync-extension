@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { writeFileSync } from 'node:fs'
-import { collect } from './collect.mjs'
+import { collect, inject } from './collect.mjs'
 import { launchWithExtension } from '../lib/chromium'
 
 const certDir = mkdtempSync(join(tmpdir(), 'hs-ext-irc-cert-'))
@@ -61,6 +61,7 @@ try {
   console.log('waiting out the 90s went-live grace…'); await sleep(95000)
   await ev({ type: 'stream_event', eventType: 'stream:online', channel: 'probechan', game: 'Elden Ring', color: '#8888ff' }); await sleep(800)
   msg('viewersix', '#00FF00', 'm7', 'a sixth normal message'); await sleep(1500)
+  await p.evaluate(inject, ['#hs-mc-messages', 'hs-mc-msg'])
   writeFileSync(process.argv[2], JSON.stringify(await p.evaluate(collect, '#hs-mc-messages > *'), null, 1))
   const box = await p.evaluate(() => { const m = document.getElementById('hs-mc-messages')!; const r = m.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height } })
   await p.screenshot({ path: process.argv[3] || '/tmp/claude-1000/brand-ext.png', clip: { x: box.x, y: box.y, width: Math.min(box.w, 760), height: Math.min(box.h, 800) } })

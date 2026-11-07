@@ -516,18 +516,17 @@
     /* Errors / rejections = dim maroon */
     .hs-mc-msg.hs-mc-notice-error     { border-left-color: var(--hs-danger-dim) !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-error     .hs-mc-system-text { color: #ff0000; }
-    /* First message ever (Twitch first-msg=1): a solid --hs-first-bg row (the stripe does
-       not tint it). The name sits on a cutout of the ground the row would have had, so it
-       reads exactly as in chat; the label, text and emotes keep their colours. */
-    .hs-mc-msg.hs-mc-first-msg,
-    .hs-mc-msg.hs-mc-first-msg.hs-mc-zebra { background: var(--hs-first-bg); }
+    /* Filled rows (.hs-filled: the olive notices, the purple first message) never take
+       part in striping — normal rows alternate black / zebra among themselves. The name
+       sits on a plain black cutout so it reads exactly as in chat; the label, text and
+       emotes keep their colours. */
+    .hs-mc-msg.hs-mc-first-msg { background: var(--hs-first-bg); }
     .hs-mc-first-msg .hs-name-cut {
       display: inline-block;
       vertical-align: top;
       padding: 0 4px;
       background: var(--hs-bg);
     }
-    .hs-mc-first-msg.hs-mc-zebra .hs-name-cut { background: var(--hs-zebra); }
     /* n/N search-match cursor (live-tab filter) — HeatSync orange left-accent,
        no animation, wins over notice-type coloring (same specificity, later
        in source order) so the current match is always identifiable. */

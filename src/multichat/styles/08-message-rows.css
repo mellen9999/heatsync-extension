@@ -520,8 +520,10 @@
        part in striping — normal rows alternate black / zebra among themselves. The name
        sits on a plain black cutout so it reads exactly as in chat; the label, text and
        emotes keep their colours. */
-    .hs-mc-msg.hs-mc-first-msg { background: var(--hs-first-bg); }
-    .hs-mc-first-msg .hs-name-cut {
+    .hs-mc-msg.hs-mc-first-msg { background: var(--hs-fill-purple); }
+    /* two filled rows that touch are split by a black hairline */
+    .hs-filled + .hs-filled { border-top: 1px solid var(--hs-bg); }
+    .hs-filled .hs-name-cut {
       display: inline-block;
       vertical-align: top;
       padding: 0 4px;

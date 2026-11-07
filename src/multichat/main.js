@@ -7768,7 +7768,7 @@
       const hkey = evtMap[last]
       if (hkey && hermesToggles?.[hkey] === false) return null
       const div = document.createElement('div')
-      div.className = `hs-mc-stream-event ${m.eventClass || ''}${/event-(?:update|online)/.test(m.eventClass || '') ? ' hs-filled' : ''}`
+      div.className = `hs-mc-stream-event ${m.eventClass || ''}${FILLED_EVENT.test(m.eventClass || '') ? ' hs-filled' : ''}`
       // Superchat/sticker tier color rides per-message (m.scColor, extracted from
       // YouTube's own renderer background) — overrides the eventClass default.
       if (m.scColor) div.style.setProperty('--evt', sanitizeColor(m.scColor))
@@ -7832,7 +7832,7 @@
       )
       // switched-to / went-live rows: the name sits on a black cutout (.hs-evt-cut) so it
       // reads exactly as in chat, whatever its colour or paint
-      const nameBlock = /event-(?:update|online)/.test(m.eventClass || '') ? `<span class="hs-evt-cut">${userLink}</span>` : userLink
+      const nameBlock = FILLED_EVENT.test(m.eventClass || '') ? `<span class="hs-evt-cut">${userLink}</span>` : userLink
       div.innerHTML = `${tsSpan}${platBadge}${nameBlock} ${actionHtml}`
       // The whole row is a shortcut to that channel's page. Clicks that land on
       // the username (or any link/emote) are left alone so the existing
@@ -8534,7 +8534,7 @@
     }
     // Twitch first-msg flag — brand new user to the channel (not just this session)
     if (m.isFirstMsg) {
-      div.classList.add('hs-mc-first-msg', 'hs-filled')
+      div.classList.add('hs-mc-first-msg')
     }
     // Returning chatter — chatted before, back after a long absence (twitch tag).
     if (m.isReturningChatter) div.classList.add('is-returning')
@@ -8644,6 +8644,9 @@
     // opened") and mellen does not want it announced — it is not a fact about
     // the chatter, it is a fact about your tab, and labelling it competed with
     // the one that matters.
+    // filled rows skip striping and carry the name on a black cutout (see fill-family.js)
+    const filledRow = div.matches(FILL_SELECTOR)
+    if (filledRow) div.classList.add('hs-filled')
     let firstMsgLabel = ''
     if (m.isFirstMsg) {
       firstMsgLabel = `<span class="hs-mc-system-text hs-mc-first-label">\u25C7 ${t('mc_main_first_msg')}</span>`
@@ -8665,8 +8668,8 @@
         : m.type === 'notice'
           ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', t('mc_main_dismiss'), `title="${t('mc_main_dismiss')}"`) : ''}`
           : m.isAction
-            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${m.isFirstMsg ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
-            : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${m.isFirstMsg ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
+            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${filledRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
+            : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${filledRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
     div.innerHTML = `${replyBar}${msgBody}`
     // Correct emote states based on current inventory + blocked (cached HTML
     // may have stale states). String-includes gate skips the querySelectorAll
@@ -9890,7 +9893,7 @@
     // a notice row (went live / switched to) does not count: the stripe alternates
     // across it, against the last row that was counted (same as the site)
     if (m.type === 'stream-event') div.dataset.hsNotice = '1'
-    div.classList.toggle('hs-mc-zebra', zebraOfInsert(m, prevDiv))
+    div.classList.toggle('hs-mc-zebra', !div.classList.contains('hs-filled') && zebraOfInsert(m, prevDiv))
   }
   // Re-derive every stripe from `from` onward. A row inserted mid-list (a kick
   // line landing between twitch lines by timestamp) used to leave everything

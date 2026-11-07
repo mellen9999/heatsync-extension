@@ -470,11 +470,11 @@
     .hs-mc-stream-event.event-pred    { --evt: var(--hs-gold); }
     .hs-mc-stream-event.event-poll    { --evt: var(--hs-info); }
     .hs-mc-stream-event.event-follow  { }
-    /* switched-to + went-live rows: olive fill (--hs-notice-bg), yellow / red text, so
+    /* switched-to + went-live rows: olive fill (--hs-fill-olive), yellow / red text, so
        they never read as chat. No border; the stripe goes transparent, padding unchanged. */
     .hs-mc-stream-event.event-update,
     .hs-mc-stream-event.event-online {
-      background: var(--hs-notice-bg);
+      background: var(--hs-fill-olive);
       border-left: 0;          /* the fill is the signal, not the stripe */
       border-bottom-width: 0;  /* chat rows draw no bottom rule */
       padding: var(--hs-mc-row-pad, 2px 4px); /* a chat row's own gutter */

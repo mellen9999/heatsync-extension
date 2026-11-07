@@ -1,5 +1,16 @@
 # changelog
 
+## [1.7.123] — 2026-11-07
+
+### changed
+- **notification rows** — went live, switched to, first messages, subs, channel points, mentions and announcements get a solid colour fill instead of an outline, the same look as heatsync.org. names sit on a black cutout so every name colour stays readable.
+
+### fixed
+- **same-name emotes** — when two emotes share a name, chat shows the right one everywhere: twitch and kick tokens first, then the sender's pick, then the channel's (ffz, 7tv, bttv), then globals. your inventory no longer draws someone else's word.
+- **blocking** — a block hides only that exact emote, never every emote with the same name, and survives a reload when logged out.
+- **right-click** — acts on the exact emote under the cursor.
+- **case** — KEKW and kekw are two emotes in tab-complete, search and the picker.
+
 ## [1.7.122] — 2026-11-06
 
 ### added

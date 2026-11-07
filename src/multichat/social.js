@@ -2130,7 +2130,7 @@ function renderFeed() {
   let zebraCount = 0
   for (let i = 0; i < items.length; i++) {
     const div = buildFeedMessageDiv(items[i])
-    if (zebraEnabled && ++zebraCount % 2 === 0) div.classList.add('hs-mc-zebra')
+    if (zebraEnabled && ++zebraCount % 2 === 0) div.classList.add('hs-mc-zebra', 'hs-zebra')
     frag.appendChild(div)
   }
   msgsEl.appendChild(frag)
@@ -2210,7 +2210,7 @@ function renderFeedAppend(startIndex, step = Infinity) {
     for (let i = 0; i < newItems.length; i++) {
       const div = buildFeedMessageDiv(newItems[i])
       // Continue the full render's 1-based zebra parity from startIndex.
-      if (zebraEnabled && (startIndex + i + 1) % 2 === 0) div.classList.add('hs-mc-zebra')
+      if (zebraEnabled && (startIndex + i + 1) % 2 === 0) div.classList.add('hs-mc-zebra', 'hs-zebra')
       frag.appendChild(div)
     }
     msgsEl.appendChild(frag)
@@ -2816,7 +2816,7 @@ function renderThreadView(msgsEl) {
   if (at.op) {
     const opDiv = buildFeedMessageDiv(at.op, at.op?.username)
     opDiv.classList.add('hs-thread-op')
-    if (zebraEnabled && ++zebraCount % 2 === 0) opDiv.classList.add('hs-mc-zebra')
+    if (zebraEnabled && ++zebraCount % 2 === 0) opDiv.classList.add('hs-mc-zebra', 'hs-zebra')
     frag.appendChild(opDiv)
   }
 
@@ -2847,7 +2847,7 @@ function renderThreadView(msgsEl) {
       const replyDiv = buildFeedMessageDiv(r, at.op?.username)
       replyDiv.classList.add('hs-thread-reply')
       if (r.is_thread_op) replyDiv.classList.add('is-thread-op')
-      if (zebraEnabled && ++zebraCount % 2 === 0) replyDiv.classList.add('hs-mc-zebra')
+      if (zebraEnabled && ++zebraCount % 2 === 0) replyDiv.classList.add('hs-mc-zebra', 'hs-zebra')
       container.appendChild(replyDiv)
     }
   }

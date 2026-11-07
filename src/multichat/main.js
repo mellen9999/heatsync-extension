@@ -8642,6 +8642,8 @@
     // filled rows skip striping and carry the name on a black cutout (see fill-family.js)
     const rowFillName = rowFill(div)
     const filledRow = !!rowFillName
+    // a mention / reply-to-me row is not a filled row for striping, but its name still sits on the black cutout
+    const cutRow = filledRow || div.classList.contains('hs-row-mention')
     if (filledRow) div.classList.add('hs-filled', `hs-fill-${rowFillName}`)
     // a notice's whole line is its label (as on the site); a chat row keeps a label line above its message
     if (filledRow && div.classList.contains('hs-mc-system')) div.classList.add('hs-row-label')
@@ -8666,8 +8668,8 @@
         : m.type === 'notice'
           ? `${tsHtml}<span class="hs-mc-text">${processedText}</span>${m.noticeType === 'msg_rejected' ? hsXButtonHtml('hs-x-inline hs-mc-held-x', t('mc_main_dismiss'), `title="${t('mc_main_dismiss')}"`) : ''}`
           : m.isAction
-            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${filledRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
-            : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${filledRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
+            ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${cutRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
+            : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${cutRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
     div.innerHTML = `${replyBar}${msgBody}`
     // Correct emote states based on current inventory + blocked (cached HTML
     // may have stale states). String-includes gate skips the querySelectorAll
@@ -9891,7 +9893,11 @@
     // a notice row (went live / switched to) does not count: the stripe alternates
     // across it, against the last row that was counted (same as the site)
     if (m.type === 'stream-event') div.dataset.hsNotice = '1'
-    div.classList.toggle('hs-mc-zebra', !div.classList.contains('hs-filled') && zebraOfInsert(m, prevDiv))
+    {
+      const stripe = !div.classList.contains('hs-filled') && zebraOfInsert(m, prevDiv)
+      div.classList.toggle('hs-mc-zebra', stripe)
+      div.classList.toggle('hs-zebra', stripe) // the shared stripe marker (styles/21-brand-rows.css)
+    }
   }
   // Re-derive every stripe from `from` onward. A row inserted mid-list (a kick
   // line landing between twitch lines by timestamp) used to leave everything
@@ -9911,7 +9917,10 @@
         : prev
         ? zebraEnabled && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
         : zebraEnabled && el.classList.contains('hs-mc-zebra')
-      if (el.classList.contains('hs-mc-zebra') !== want) el.classList.toggle('hs-mc-zebra', want)
+      if (el.classList.contains('hs-mc-zebra') !== want) {
+        el.classList.toggle('hs-mc-zebra', want)
+        el.classList.toggle('hs-zebra', want)
+      }
       // a notice or filled row is not a row for parity: the next one alternates against `prev`
       if (el.dataset.hsNotice || filled) continue
       prev = el
@@ -11253,10 +11262,9 @@
             else {
               if (_NO_ZEBRA_TYPES.has(_rm.type)) nd.dataset.hsNz = '1'
               if (_rm.type === 'stream-event') nd.dataset.hsNotice = '1'
-              nd.classList.toggle(
-                'hs-mc-zebra',
-                zebraEnabled && !nd.dataset.hsNz && existing.classList.contains('hs-mc-zebra'),
-              )
+              const keepStripe = zebraEnabled && !nd.dataset.hsNz && existing.classList.contains('hs-mc-zebra')
+              nd.classList.toggle('hs-mc-zebra', keepStripe)
+              nd.classList.toggle('hs-zebra', keepStripe)
             }
             _unindexMessageDiv(existing)
             msgsEl.replaceChild(nd, existing)

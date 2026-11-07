@@ -697,7 +697,7 @@ function renderWhispersTab() {
     else if (m.status === 'failed') cls += ' hs-whisper-failed'
     div.className = cls
     if (m.sendId) div.dataset.sendId = m.sendId
-    if (zebraEnabled && ++zebraCount % 2 === 0) div.classList.add('hs-mc-zebra')
+    if (zebraEnabled && ++zebraCount % 2 === 0) div.classList.add('hs-mc-zebra', 'hs-zebra')
 
     const ts = formatTimeFromTs(m.time)
     const tsHtml = ts ? `<span class="hs-mc-ts">${ts}</span>` : ''

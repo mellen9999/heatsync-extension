@@ -1,5 +1,17 @@
 # changelog
 
+## [1.7.122] — 2026-11-06
+
+### added
+- **hover reply** — an optional reply button on each chat row when you hover it (settings, off by default). reply stays in the row menu either way.
+
+### changed
+- **fewer settings** — one chat filter (muted words, highlight words, all-caps and automod patterns fold into it once, nothing lost), one third-party badges switch, one density knob, one reset instead of presets; developer and tuning knobs are gone.
+
+### fixed
+- **settings sync** — per-site switches and name-paint mode set on heatsync.org stick instead of switching back; rows show only on the sites they affect.
+- **memory** — a twitch page with no stream open no longer loads the feed nobody can see; the feed builds one screenful at a time.
+
 ## [1.7.121] — 2026-11-06
 
 ### fixed

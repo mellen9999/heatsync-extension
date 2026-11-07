@@ -37,6 +37,8 @@ const SINGLE = new Map([
   ['00ad03', new Set(['src/multichat/styles/00-palette.css', 'src/lib/palette.js'])],
   ['808080', new Set(['src/multichat/styles/00-palette.css'])],
   ['bcbcbc', new Set(['src/multichat/styles/00-palette.css'])],
+  // the notice-row fill (--hs-notice-bg) and the JS twin the name-contrast check measures against
+  ['808000', new Set(['src/multichat/styles/00-palette.css', 'src/lib/utils.js'])],
 ])
 const TWITCH_FILES = new Set([
   'src/multichat/styles/00-palette.css',

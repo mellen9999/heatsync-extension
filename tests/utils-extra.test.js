@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import {
   boostReadability,
+  noticeNameColour,
   debounce,
   escapeHtml,
   NAME_STRIPE,
@@ -537,5 +538,21 @@ describe('truncateSafe', () => {
     for (let n = 1; n <= 20; n++) {
       expect(truncateSafe(s, n).isWellFormed()).toBe(true)
     }
+  })
+})
+
+// ── noticeNameColour ──────────────────────────────────────────────────────────
+// Names on the olive switched-to / went-live rows: a solid colour under 3:1 on
+// #808000 reads white (mirrors the site's helper; NOTICE_BG = --hs-notice-bg).
+describe('noticeNameColour', () => {
+  test('too dim on the olive → white', () => {
+    for (const c of ['#8888ff', '#ff0000', '#0000ff', '#f00']) expect(noticeNameColour(c)).toBe('#ffffff')
+  })
+  test('readable → kept', () => {
+    for (const c of ['#00ffff', '#ffffff', '#00ff00']) expect(noticeNameColour(c)).toBe(c)
+  })
+  test('not a plain hex → untouched', () => {
+    expect(noticeNameColour('')).toBe('')
+    expect(noticeNameColour('var(--x)')).toBe('var(--x)')
   })
 })

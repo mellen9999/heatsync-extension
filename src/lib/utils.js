@@ -280,6 +280,25 @@ function hexLuminance(h6) {
 const NAME_STRIPE = '#444444'
 const NAME_MIN_RATIO = (3 * (hexLuminance(NAME_STRIPE.slice(1)) + 0.05)) / 0.05
 
+/** The fill behind switched-to / went-live rows (--hs-notice-bg in 00-palette.css). */
+const NOTICE_BG = '#808000'
+
+/**
+ * A name colour on a notice row: a solid colour under 3:1 against the olive fill
+ * reads white instead; anything readable (or not a plain hex, like a paint) stays.
+ * Mirrors the site's noticeNameColour (client/utils/color-utils.js).
+ * @param {string} color
+ * @returns {string}
+ */
+function noticeNameColour(color) {
+  const c = String(color || '').trim()
+  if (!/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)) return c
+  const h6 = c.length === 4 ? [...c.slice(1)].map((x) => x + x).join('') : c.slice(1)
+  const a = hexLuminance(h6)
+  const b = hexLuminance(NOTICE_BG.slice(1))
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) >= 3 ? c : '#ffffff'
+}
+
 /**
  * Lift a name colour until it reads on the chat background, stripe included.
  * Real relative luminance; hue and saturation kept, only HSL lightness rises,
@@ -1348,6 +1367,7 @@ const utils = {
 
   // Color
   boostReadability,
+  noticeNameColour,
 
   // YouTube live chat event classification
   classifyYtRendererType,
@@ -1425,6 +1445,7 @@ if (typeof window !== 'undefined') {
 export {
   _resetVisualNow,
   boostReadability,
+  noticeNameColour,
   classifyYtMembership,
   classifyYtRendererType,
   composerNeedsLogin,

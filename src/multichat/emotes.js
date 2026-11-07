@@ -709,6 +709,24 @@ function hsWantedRung() {
   return Math.min(4, emoteSize * dpr)
 }
 
+// One block key per emote (rule 9): the emote's own id/hash when a pool knows it, else the
+// FULL base64 of its url (what content.js files natively) — never a prefix of the url,
+// which was the same 24-32 bytes for every emote on one cdn and so blocked a whole
+// provider. Keys stored by older builds are such prefixes: they can't be mapped back to an
+// emote, so they simply stop matching anything (the name-keyed fallback keeps the hidden
+// word hidden until the user unblocks it, which files a correct key from then on).
+function emoteBlockKey(name, url, hash) {
+  if (hash) return String(hash)
+  if (typeof url === 'string' && url) {
+    try {
+      return btoa(url)
+    } catch {
+      return btoa(unescape(encodeURIComponent(url)))
+    }
+  }
+  return name
+}
+
 // The picture behind an emote url, with the size file dropped (…/ID/2x.webp → …/ID),
 // so one emote fetched at two rungs compares equal and two emotes never do.
 function emoteAssetKey(url) {
@@ -2402,7 +2420,7 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
   const capturedUrl = _httpOk(clickedUrl) ? clickedUrl : _httpOk(_be?.url) ? _be.url : ''
   // Hash for API - prefer known hash, then url-derived (capturedUrl covers
   // the case lookupEmote misses), last resort the name.
-  const hash = opts?.hash || emoteHashes.get(emoteName) || (capturedUrl ? btoa(capturedUrl).slice(0, 32) : emoteName)
+  const hash = opts?.hash || emoteHashes.get(emoteName) || emoteBlockKey(emoteName, capturedUrl)
   rememberBlockedEmote(emoteName, capturedUrl, _be?.source || clickedSource, _be?.zeroWidth, hash)
 
   // 2-state model: block is a render-preference, not an inventory mutation.
@@ -2507,10 +2525,7 @@ function unblockEmote(emoteName, opts) {
   // The fallback remembers the hash the block was filed under; read it before
   // the entry is dropped. After a refresh nothing else can name this emote.
   const _bfEmote = blockedEmoteFallback.get(emoteName)
-  const hash =
-    emoteHashes.get(emoteName) ||
-    _bfEmote?.hash ||
-    (lookupEmote(emoteName)?.url ? btoa(lookupEmote(emoteName).url).slice(0, 32) : emoteName)
+  const hash = emoteHashes.get(emoteName) || _bfEmote?.hash || emoteBlockKey(emoteName, lookupEmote(emoteName)?.url)
   blockedEmoteHashes.delete(hash)
   // Drop the persisted block fallback so it can't re-seed blockedEmoteNames on
   // the next refresh (which would re-hide an emote the user just unblocked).
@@ -2745,10 +2760,7 @@ async function syncBlockToAPI(emoteName, block, ctx) {
   let resp
   try {
     // Background script expects message.hash - use emoteHashes (most complete mapping)
-    const hash =
-      ctx?.hash ||
-      emoteHashes.get(emoteName) ||
-      (lookupEmote(emoteName)?.url ? btoa(lookupEmote(emoteName).url).slice(0, 32) : emoteName)
+    const hash = ctx?.hash || emoteHashes.get(emoteName) || emoteBlockKey(emoteName, lookupEmote(emoteName)?.url)
     resp = await browser.runtime.sendMessage({
       type: block ? 'block_emote' : 'unblock_emote',
       hash: hash,
@@ -5138,6 +5150,7 @@ export {
   deriveStaticEmoteSrc,
   detectEmoteSource,
   dropEmoteFromAllSenders,
+  emoteBlockKey,
   emoteCache,
   ensureHsEmoteIdleObserver,
   getEmoteState,

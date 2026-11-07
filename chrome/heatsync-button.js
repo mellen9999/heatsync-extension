@@ -27,6 +27,20 @@
     )
   }
 
+  // mirrors emoteBlockKey in src/multichat/emotes.js and content.js's native filing: the emote's
+  // own id/hash, else the FULL base64 of its url. A url prefix is the same for every emote on
+  // one cdn (it blocked a whole provider); keys older builds stored that way match nothing now.
+  function emoteBlockKey(e) {
+    if (e?.hash || e?.id) return String(e.hash || e.id)
+    const url = e?.url || e?.pickerUrl || ''
+    if (!url) return null
+    try {
+      return btoa(url)
+    } catch {
+      return btoa(unescape(encodeURIComponent(url)))
+    }
+  }
+
   // Wait for shared-utils.js to expose window.HS before starting
   function waitForHS(cb, attempts = 0) {
     if (window.HS) return cb()
@@ -2685,7 +2699,7 @@
         // Mark blocked: keeps the emote in its slot with the dashed-outline style
         // (CSS at .heatsync-emote-wrap.blocked img). Without this, blockEmote
         // filtered the cache and surrounding emotes shifted into the empty slot.
-        const _hash = e.hash || e.id || (e.url ? btoa(e.url || e.pickerUrl || '').slice(0, 24) : null)
+        const _hash = emoteBlockKey(e)
         if (_hash && _blockedHashSet.has(_hash)) {
           wrap.classList.add('blocked')
           wrap.dataset.blockedHash = _hash
@@ -3522,7 +3536,7 @@
         const e = items[idx]
         if (!e) return
         // Blocked result: left-click unblocks and restores it, mirroring the grid.
-        const hash = e.hash || e.id || btoa(e.url || e.pickerUrl || '').slice(0, 24)
+        const hash = emoteBlockKey(e)
         if (_blockedHashSet.has(hash)) {
           chrome.runtime
             .sendMessage({ type: 'unblock_emote', hash })
@@ -3550,7 +3564,7 @@
         // Reflect blocked state — same hash derivation as the grid/block path.
         // Without this the search list looked unchanged after a block, reading
         // as "not saving" even though the server-side block persisted fine.
-        const _hash = e.hash || e.id || btoa(e.url || e.pickerUrl || '').slice(0, 24)
+        const _hash = emoteBlockKey(e)
         if (_hash && _blockedHashSet.has(_hash)) item.classList.add('blocked')
 
         // Server can return relative paths like '/uploads/abc.webp' — absolutize
@@ -3828,7 +3842,7 @@
     // Block emote (hide from view)
     async function blockEmote(emote) {
       try {
-        const hash = emote.hash || emote.id || btoa(emote.url || emote.pickerUrl).slice(0, 24)
+        const hash = emoteBlockKey(emote)
 
         // Send message to background script (handles both logged in and anonymous)
         const result = await browser.runtime.sendMessage({
@@ -3945,7 +3959,7 @@
       menu.className = 'hs-emote-ctx'
       _ctxMenu = menu
 
-      const hash = emote.hash || emote.id || btoa(emote.url || emote.pickerUrl || '').slice(0, 24)
+      const hash = emoteBlockKey(emote)
       const inInv = isInInventory(emote)
       const isBlocked = _blockedHashSet.has(hash)
 

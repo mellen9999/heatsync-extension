@@ -12260,6 +12260,23 @@
   // STORAGE
   // ============================================
 
+  // First-run seed, second half: adopt the same-name other leg when heatsync
+  // confirms the channel exists (never on a guess). Fire-and-forget; a failed
+  // probe leaves the entry single-leg.
+  async function _adoptSeedLegs(entry) {
+    try {
+      const added = await mcSeedAdoptLegs(entry, (u, o) => fetch(u, o))
+      if (!added.length) return
+      _channelLookup = null
+      saveConfig()
+      if (added.includes('twitch') && isEnabled('irc-twitch')) {
+        irc?.join(entry.twitch)
+        safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: entry.twitch })
+      }
+      if (added.includes('kick') && isEnabled('chat-kick')) kickChat?.join(entry.kick)
+    } catch (_) {}
+  }
+
   async function loadConfig() {
     try {
       const s = await browser.storage.local.get([STORAGE_KEY])
@@ -12306,6 +12323,7 @@
                   : { id: cur, twitch: cur, kick: '', youtube: '' },
               ]
               saveConfig()
+              _adoptSeedLegs(config.channels[0])
             }
           }
         } catch (_) {}
@@ -12328,6 +12346,7 @@
   // Snapshot of what we last wrote, so the cross-tab union below can tell
   // "another tab added this" from "we deliberately removed this".
   let _lastPersistedChannelKeys = null
+  let _lastPersistedLegs = null
   // Serializes saveConfig bodies — two rapid saves must not interleave their
   // read-then-write halves (the same lost-update the union above prevents
   // cross-tab, but within one tab). Mirrors the ui_settings write mutex.
@@ -12362,12 +12381,25 @@
           // A channel we deliberately removed this session must stay removed —
           // only adopt entries that appeared after our last known snapshot.
           const removed = _lastPersistedChannelKeys
+          const prevById = _lastPersistedLegs
           for (const c of theirs) {
             const k = key(c)
             if (!mine.has(k) && !removed?.has(k)) persistable.channels.push(c)
+            else if (mine.has(k)) {
+              // same channel, maybe another tab added a leg (kick tab seeding a
+              // twitch entry): merge it in, never replace
+              const m = persistable.channels.find((x) => key(x) === k)
+              if (m && typeof c === 'object') mcMergeLegs(m, c, prevById?.get(k))
+            }
           }
         }
       } catch {}
+      _lastPersistedLegs = new Map(
+        persistable.channels.map((c) => [
+          `${c?.platform || 'twitch'}:${(c?.id || c?.twitch || c?.name || '').toLowerCase()}`,
+          { twitch: c?.twitch || '', kick: c?.kick || '', youtube: c?.youtube || '' },
+        ]),
+      )
       _lastPersistedChannelKeys = new Set(
         persistable.channels.map(
           (c) => `${c?.platform || 'twitch'}:${(c?.id || c?.twitch || c?.name || '').toLowerCase()}`,
@@ -13450,6 +13482,18 @@
                 ytSubscribe(id, ch.youtube, id)
               }
             }
+          }
+
+          // A leg another tab added to a channel we already show (kick page
+          // seeding the twitch entry's partner) joins here too.
+          for (const ch of newChannels) {
+            const was = oldChannels.find((c) => c.id === ch.id)
+            if (!was) continue
+            if (ch.twitch && !was.twitch && isEnabled('irc-twitch')) {
+              irc?.join(ch.twitch)
+              safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: ch.twitch })
+            }
+            if (ch.kick && !was.kick && isEnabled('chat-kick')) kickChat?.join(ch.kick)
           }
 
           // Update config and UI

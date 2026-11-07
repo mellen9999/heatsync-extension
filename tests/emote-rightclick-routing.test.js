@@ -42,7 +42,7 @@ describe('plain right-click: unblock / remove from inventory / block', () => {
     expect(HANDLER).toContain('unblockEmote(emoteName)')
     expect(HANDLER).toContain("state === 'owned' && inventoryEmotes.has(emoteName)")
     expect(HANDLER).toContain('removeEmoteFromInventory(emoteName, e.target)')
-    expect(HANDLER).toContain('blockEmote(emoteName, emoteUrl, source)')
+    expect(HANDLER).toContain('blockEmote(emoteName, emoteUrl, source, {')
   })
 
   test('the inventory branch comes before the block fallback', () => {

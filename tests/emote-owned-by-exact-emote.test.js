@@ -55,3 +55,29 @@ test("another chatter's channel W is not stamped owned while you own a different
     delete channelEmoteCaches['chan-x']
   }
 })
+
+test('two heatsync-hosted uploads are two emotes (the file name is the identity there)', () => {
+  inventoryEmotes.add('KEKW')
+  viewerPersonalEmotes.set('KEKW', { url: 'https://cdn.heatsync.org/uploads/aaa.webp' })
+  try {
+    expect(isViewerEmote('KEKW', { url: 'https://cdn.heatsync.org/uploads/bbb.webp' })).toBe(false)
+    expect(isViewerEmote('KEKW', { url: 'https://cdn.heatsync.org/uploads/aaa.webp' })).toBe(true)
+  } finally {
+    inventoryEmotes.delete('KEKW')
+    viewerPersonalEmotes.delete('KEKW')
+  }
+})
+
+test("a sender-set W stamped 'owned' by name is not yours when your W is a different emote", () => {
+  inventoryEmotes.add('KEKW')
+  viewerPersonalEmotes.set('KEKW', { url: MINE, source: '7tv', state: 'owned', hash: 'mine' })
+  try {
+    const sender = new Map([['KEKW', { url: THEIRS, source: 'heatsync', state: 'owned', hash: 'theirs' }]])
+    const out = processEmotes('KEKW', 'chan-x', null, sender, undefined, true)
+    expect(out).toContain('01THEIRSKEKW')
+    expect(out).not.toContain('data-state="owned"')
+  } finally {
+    inventoryEmotes.delete('KEKW')
+    viewerPersonalEmotes.delete('KEKW')
+  }
+})

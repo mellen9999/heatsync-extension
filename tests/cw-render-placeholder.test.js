@@ -48,6 +48,8 @@ const renderEmoteHtml = new Function(
   '_hsEmoteOversize',
   'window',
   'getSetting',
+  'isViewerEmote',
+  'emoteIsBlocked',
   // emoteFromInv is declared upstream of the carved slice in processEmotes
   // (provenance flag for data-inv); default false here — attribution has its
   // own coverage in emote-inventory-gate.test.js.
@@ -72,6 +74,10 @@ function render(word, emote, overrides = {}) {
     () => 0,
     { _hsStaleEmotes: null },
     overrides.getSetting || (() => true),
+    (name) => (overrides.inventory || new Set()).has(name),
+    (name, e) =>
+      (overrides.blocked || new Set()).has(name) ||
+      !!(e?.hash && (overrides.blockedHashes || new Set()).has(String(e.hash))),
   )
 }
 

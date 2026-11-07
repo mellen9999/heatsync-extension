@@ -1863,7 +1863,7 @@ function initInput() {
     return null
   }
 
-  function openEmoteCtxMenu(x, y, { emoteName, emoteUrl, state, source, targetEl }) {
+  function openEmoteCtxMenu(x, y, { emoteName, emoteUrl, state, source, targetEl, wrapper }) {
     const hi = getHighResUrl(emoteUrl)
     const items = []
     // Block/unblock + remove-from-set live here so the shift menu is the
@@ -1873,7 +1873,10 @@ function initInput() {
     if (state === 'blocked') {
       items.push({ label: t('mc_input_unblock'), fn: () => unblockEmote(emoteName) })
     } else {
-      items.push({ label: t('content_card_block'), fn: () => blockEmote(emoteName, emoteUrl, source) })
+      items.push({
+        label: t('content_card_block'),
+        fn: () => blockEmote(emoteName, emoteUrl, source, { hash: wrapper?.dataset?.emoteHash || undefined }),
+      })
       if (state === 'owned' && inventoryEmotes.has(emoteName)) {
         items.push({ label: t('mc_input_remove_from_set'), fn: () => removeEmoteFromInventory(emoteName, targetEl) })
       }
@@ -2026,7 +2029,7 @@ function initInput() {
         } else if (state === 'owned' && inventoryEmotes.has(emoteName)) {
           removeEmoteFromInventory(emoteName, e.target)
         } else {
-          blockEmote(emoteName, emoteUrl, source)
+          blockEmote(emoteName, emoteUrl, source, { hash: wrapper?.dataset?.emoteHash || undefined })
         }
       },
       { capture: true, signal: mcSignal },

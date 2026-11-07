@@ -723,12 +723,44 @@ function emoteBlockKey(name, url, hash) {
   return name
 }
 
+// Is THIS emote blocked? Exact (rule 9): its own key is in the block set. A name-wide block
+// survives only where no key can be told apart — the stored block carries no real key, or this
+// emote has no hash and no url to key by. Blocking 7tv W never hides bttv W or a friend's W.
+function emoteIsBlocked(rawName, emote) {
+  const hash = emote?.hash ? String(emote.hash) : ''
+  const urlKey = emote?.url ? emoteBlockKey(rawName, emote.url) : ''
+  if (hash && blockedEmoteHashes.has(hash)) return true
+  if (urlKey && blockedEmoteHashes.has(urlKey)) return true
+  if (!blockedEmoteNames.has(rawName)) return false
+  const fb = blockedEmoteFallback.get(rawName)
+  const fbKey = fb?.hash && fb.hash !== rawName ? String(fb.hash) : ''
+  if (fbKey) {
+    if (hash && hash === fbKey) return true
+    if (fb.url && emote?.url) return emoteAssetKey(fb.url) === emoteAssetKey(emote.url)
+    return !hash && !urlKey
+  }
+  // no exact record of which emote was blocked: a hashed emote the set doesn't list is not it
+  return !hash
+}
+
+// Is this rendered wrapper the SAME emote as (hash, url)? A block or unblock repaints only the
+// emote that was acted on (rule 9/10) — never every wrapper that happens to share its name.
+// Bare log <img>s carry no identity, so they keep following the name.
+function wrapperIsEmote(w, hash, url) {
+  if (!w || w.tagName === 'IMG') return true
+  const wh = w.dataset?.emoteHash
+  if (wh && hash) return wh === String(hash)
+  const wu = w.dataset?.emoteUrl
+  if (wu && url) return emoteAssetKey(wu) === emoteAssetKey(url)
+  return true
+}
+
 // The picture behind an emote url, with the size file dropped (…/ID/2x.webp → …/ID),
 // so one emote fetched at two rungs compares equal and two emotes never do.
 function emoteAssetKey(url) {
   if (typeof url !== 'string' || !url) return ''
   const u = url.replace(/^https?:\/\//i, '').replace(/[?#].*$/, '')
-  return u.replace(/\/(?:\d+x?|default|fullsize|[\w-]+\.(?:webp|avif|png|gif))$/i, '')
+  return u.replace(/\/(?:\d+x?(?:\.(?:webp|avif|png|gif))?|default|fullsize)$/i, '')
 }
 
 // Is this resolved emote the one the viewer owns under that name? Same name alone
@@ -1814,7 +1846,7 @@ function applyBlockedHashDelta(newHashesArr) {
       rememberBlockedEmote(name, _u, _be?.source || 'heatsync', _be?.zeroWidth, hash)
     }
     queryEmoteWrappers(name).forEach((w) => {
-      if (w.classList.contains('hs-state-blocked')) return
+      if (w.classList.contains('hs-state-blocked') || !wrapperIsEmote(w, hash, '')) return
       hsPinLogEmoteSize(w, true)
       w.classList.remove(
         'hs-state-global',
@@ -1865,7 +1897,7 @@ function applyBlockedHashDelta(newHashesArr) {
     const src = emote?.source || 'heatsync'
     const newState = getEmoteState(name, src)
     queryEmoteWrappers(name).forEach((w) => {
-      if (w.classList.contains(`hs-state-${newState}`)) return
+      if (w.classList.contains(`hs-state-${newState}`) || !wrapperIsEmote(w, hash, '')) return
       w.classList.remove(
         'hs-state-global',
         'hs-state-channel',
@@ -2422,7 +2454,10 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
   const capturedUrl = _httpOk(clickedUrl) ? clickedUrl : _httpOk(_be?.url) ? _be.url : ''
   // Hash for API - prefer known hash, then url-derived (capturedUrl covers
   // the case lookupEmote misses), last resort the name.
-  const hash = opts?.hash || emoteHashes.get(emoteName) || emoteBlockKey(emoteName, capturedUrl)
+  // the clicked emote's own key; the name's last-registered hash may belong to ANOTHER emote
+  // of the same name (rule 9)
+  const hash =
+    opts?.hash || (capturedUrl ? emoteBlockKey(emoteName, capturedUrl) : emoteHashes.get(emoteName) || emoteName)
   rememberBlockedEmote(emoteName, capturedUrl, _be?.source || clickedSource, _be?.zeroWidth, hash)
 
   // 2-state model: block is a render-preference, not an inventory mutation.
@@ -2451,6 +2486,7 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
 
   // Instant DOM update - CSS visibility:hidden hides the img, no src swap needed
   queryEmoteWrappers(emoteName).forEach((w) => {
+    if (!wrapperIsEmote(w, hash, capturedUrl)) return
     hsPinLogEmoteSize(w, true)
     w.classList.remove(
       'hs-state-global',
@@ -2506,6 +2542,14 @@ function refreshEmoteWrappersState(emoteName) {
   const newState = emote ? getEmoteState(emoteName, emote.source) : 'unadded'
   queryEmoteWrappers(emoteName).forEach((w) => {
     if (w.classList.contains('hs-state-blocked')) return
+    // 'owned' is the exact emote you hold, not every wrapper sharing its name (rule 10): leave
+    // another emote's wrapper as the render drew it.
+    if (
+      newState === 'owned' &&
+      w.tagName !== 'IMG' &&
+      !isViewerEmoteUrl(emoteName, w.dataset?.emoteUrl, w.dataset?.emoteHash)
+    )
+      return
     w.classList.remove('hs-state-global', 'hs-state-channel', 'hs-state-owned', 'hs-state-unadded')
     w.closest?.('.hs-mc-emote-stack')?.classList.remove('hs-stack-hl')
     w.classList.add(`hs-state-${newState}`)
@@ -2553,6 +2597,7 @@ function unblockEmote(emoteName, opts) {
   const newState =
     typeof getEmoteState === 'function' ? getEmoteState(emoteName, emote?.source) : emote?.state || 'global'
   queryEmoteWrappers(emoteName).forEach((w) => {
+    if (!wrapperIsEmote(w, hash, _bfEmote?.url || realUrl)) return
     w.classList.remove(
       'hs-state-global',
       'hs-state-channel',
@@ -3589,6 +3634,7 @@ function _buildChannelEmoteCache(ch, emotes, platform) {
       animated: e.animated === true,
       os: e.os,
       _plat: platform,
+      hash: e.hash || undefined,
       nsfw: !!(e.flags & 65536),
       // heatsync's own scan (weapons/drugs/gore/hate/sexual), stamped on by the
       // background from /api/channel/:c/emotes — the render gate hides the
@@ -3748,6 +3794,7 @@ async function loadEmotes() {
             state,
             zeroWidth: !!e.zeroWidth,
             animated: e.animated === true,
+            hash: e.hash || undefined,
             nsfw: !!e.nsfw,
             os: e.os,
           }
@@ -3777,6 +3824,7 @@ async function loadEmotes() {
             state: 'owned',
             zeroWidth: !!(e.zero_width ?? e.zeroWidth),
             subscription: !!e.subscription,
+            hash: e.hash || undefined,
             slot: e.slot,
             nsfw: !!e.nsfw,
             // BG-normalized epoch ms (emoteAddedAtMs) — inventory-time render gate
@@ -4698,9 +4746,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       // hash check catches the same asset re-listed under a different alias —
       // the kick numeric id IS the stored hash (background.js hash: String(e.id)).
       const isBlocked =
-        blockedEmoteNames.has(emoteName) ||
-        blockedEmoteNames.has(rawEmoteName) ||
-        blockedEmoteHashes.has(String(emoteId))
+        blockedEmoteHashes.has(String(emoteId)) || emoteIsBlocked(rawEmoteName, { hash: cached?.hash, url: finalUrl })
       let state = isBlocked ? 'blocked' : cached?.state || 'channel'
       if (state === 'unadded' && (inventoryEmotes.has(emoteName) || inventoryEmotes.has(rawEmoteName))) state = 'owned'
       const safeName = escapeHtml(rawEmoteName)
@@ -4862,17 +4908,15 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       // different alias (7tv per-set alias, kick re-list) — name-only checks
       // miss that case entirely.
       const isBlocked =
-        blockedEmoteNames.has(word) ||
-        blockedEmoteNames.has(rawWord) ||
+        emoteIsBlocked(rawWord, emote) ||
         (overlayBaseName !== null &&
           (blockedEmoteNames.has(overlayBaseName) ||
-            (overlayBaseName.indexOf('&') !== -1 && blockedEmoteNames.has(unescapeHtml(overlayBaseName))))) ||
-        (emote.hash && blockedEmoteHashes.has(String(emote.hash)))
+            (overlayBaseName.indexOf('&') !== -1 && blockedEmoteNames.has(unescapeHtml(overlayBaseName)))))
       let state = isBlocked ? 'blocked' : emote.state || 'global'
-      // A cached entry (channel / global pool) can carry a stale 'owned' stamped
-      // while the name was in the set. Owned is your inventory (or a sub emote)
-      // right now — anything else resolves from its source, as getEmoteState does.
-      if (state === 'owned' && !emote.subscription && !inventoryEmotes.has(word) && !inventoryEmotes.has(rawWord))
+      // A cached entry (channel / global / sender pool) is stamped 'owned' by NAME when it
+      // is built, so another W beside the one you own carries the stamp too. Owned is the
+      // exact emote in your inventory (or a sub emote) right now — anything else resolves from its source, as getEmoteState does.
+      if (state === 'owned' && !emote.subscription && !isViewerEmote(rawWord, emote))
         state = emote.source === 'heatsync' ? 'unadded' : 'global'
       // Upgrade to 'owned' when the viewer actually has this name in their
       // inventory — whoever posted it and however it resolved (a sender's set

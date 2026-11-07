@@ -14,6 +14,7 @@
     "test": "bun test",
     "test:smoke": "bun run build.js chrome --minify && bun scripts/smoke-extension.ts",
     "test:render": "bun run build.js chrome --minify && bun scripts/render-extension.ts",
+    "test:emotes": "bun run build.js chrome --minify && bun scripts/render-emote-collisions.ts",
     "test:e2e-live": "bun run build.js chrome --minify && bun scripts/e2e-live.ts",
     "test:heap": "bun run build.js chrome --minify && bun scripts/heap-soak.ts",
     "test:heap-tabs": "bun run build.js chrome --minify && bun scripts/heap-tabs.ts",

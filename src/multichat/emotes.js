@@ -709,6 +709,32 @@ function hsWantedRung() {
   return Math.min(4, emoteSize * dpr)
 }
 
+// The picture behind an emote url, with the size file dropped (…/ID/2x.webp → …/ID),
+// so one emote fetched at two rungs compares equal and two emotes never do.
+function emoteAssetKey(url) {
+  if (typeof url !== 'string' || !url) return ''
+  const u = url.replace(/^https?:\/\//i, '').replace(/[?#].*$/, '')
+  return u.replace(/\/(?:\d+x?|default|fullsize|[\w-]+\.(?:webp|avif|png|gif))$/i, '')
+}
+
+// Is this resolved emote the one the viewer owns under that name? Same name alone
+// is not enough: the room's W and your W are two emotes (rule 10).
+function isViewerEmote(name, emote) {
+  if (!emote || !inventoryEmotes.has(name)) return false
+  const mine = viewerPersonalEmotes.get(name)
+  if (!mine) return true // inventory loaded, picture not yet — name is all there is
+  if (mine === emote) return true
+  if (mine.hash && emote.hash) return String(mine.hash) === String(emote.hash)
+  const a = emoteAssetKey(mine.url)
+  const b = emoteAssetKey(emote.url)
+  return !a || !b || a === b
+}
+
+// Wrapper-side form for the right-click path: a rendered wrapper carries its url and hash.
+function isViewerEmoteUrl(name, url, hash) {
+  return isViewerEmote(name, { url, hash })
+}
+
 let _resCacheSize = 1
 const _resCache = new Map()
 function getChatResUrl(url) {
@@ -4834,9 +4860,12 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       // resolves as 'global'). Visually identical under 2-state, but downstream
       // auto-add-on-send + cross-user rendering gates read dataset.state, and
       // the tooltip says "in your set" instead of a sender's provider.
+      // Ownership is the exact emote, never the name (rule 10): owning W must not make
+      // another chatter's channel W read as yours, or right-click removes YOUR W.
       if (
         (state === 'unadded' || state === 'global' || state === 'channel') &&
-        (inventoryEmotes.has(word) || inventoryEmotes.has(rawWord))
+        (inventoryEmotes.has(word) || inventoryEmotes.has(rawWord)) &&
+        isViewerEmote(rawWord, emote)
       )
         state = 'owned'
       const source = escapeHtml(emote.source || 'unknown')
@@ -5116,6 +5145,8 @@ export {
   hsSwapRowEmotesForIdle,
   hydrateEmoteBoxWidths,
   inventoryEmotes,
+  isViewerEmote,
+  isViewerEmoteUrl,
   loadEmoteFrecency,
   loadSenderEmoteSets,
   lookupEmote,

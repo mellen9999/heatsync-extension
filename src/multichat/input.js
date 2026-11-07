@@ -2003,7 +2003,13 @@ function initInput() {
           return
         }
 
-        const { emoteName, state, emoteUrl, source } = emoteInfo
+        const { emoteName, emoteUrl, source, wrapper } = emoteInfo
+        // Yours = this exact emote, not the name: another chatter's channel W under a W
+        // you own is blocked, never a removal of yours (rule 10).
+        const state =
+          emoteInfo.state === 'owned' && wrapper && !isViewerEmoteUrl(emoteName, emoteUrl, wrapper?.dataset?.emoteHash)
+            ? 'global'
+            : emoteInfo.state
 
         // Race-guard against rapid clicking
         if (pendingEmoteOps.has(emoteName)) return

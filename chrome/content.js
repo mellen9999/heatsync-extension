@@ -7015,8 +7015,10 @@
     // (e.g. 7TV channel) sibling that's still valid.
     // If everything fails both checks, fall back to primary so the standard blocked
     // rendering still applies (greyed-out highest-priority emote).
-    let activeImg = null
-    for (const img of imgs) {
+    // A blocked pick stays the pick and shows the blocked placeholder: falling through to another
+    // same-name picture would draw one the sender never chose (rules 2, 10).
+    let activeImg = imgs[0].dataset.emoteHash === primary && blockedEmotes.has(primary) ? imgs[0] : null
+    for (const img of activeImg ? [] : imgs) {
       const h = img.dataset.emoteHash
       if (blockedEmotes.has(h)) continue
       if (img.dataset.variantClass === 'inventory' && !inventoryHashSet.has(h)) continue

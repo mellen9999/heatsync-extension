@@ -177,19 +177,21 @@ try {
     await pg.close()
     return v
   }
-  // note: a native wrapper keeps every same-name picture as a hidden sibling, so after a block the
-  // line may fall to the next one (reported as a divergence from multichat's placeholder) - what
-  // rule 9 pins is WHICH key is stored, so that is what is asserted.
   await rc('alpha', 'alice')
   let bl = await blockedNow()
   check(bl.includes('ffzhash'), `right-click on alice's W stores that emote's own key (blocked: ${JSON.stringify(bl)})`)
   check(!bl.includes('bttvhash') && !bl.includes('invhash') && !bl.includes('senderhash'), 'no other W was blocked by it')
+  // the blocked emote shows the blocked placeholder; it never falls through to another same-name picture
+  const blockedA = await imgOf('alpha')
+  check(blockedA.state === 'blocked' && blockedA.src.includes('W_ffz'), `alice's blocked W stays the blocked ffz W, no fall-through (state ${blockedA.state}, src ${blockedA.src})`)
   const mid = await imgOf('beta')
   check(mid.src.includes('/555/'), 'the twitch emote still shows')
   await rc('gamma', 'carol')
   bl = await blockedNow()
   check(bl.includes('senderhash'), `right-click on carol's W (shares your W's name) blocks her emote (blocked: ${JSON.stringify(bl)})`)
   check(!bl.includes('invhash'), 'your own inventory W is not blocked')
+  const blockedC = await imgOf('gamma')
+  check(blockedC.state === 'blocked' && blockedC.src.includes('W_sender'), `carol's blocked W stays her sender-set W (state ${blockedC.state}, src ${blockedC.src})`)
   const dbg = await c.newPage()
   await dbg.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
   const invNames: string[] = await dbg.evaluate(async () => {

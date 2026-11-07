@@ -16,3 +16,7 @@ test('a late sender set re-opens plain wrappers of names the sender carries', ()
   expect(m[0]).toContain("w.closest('.heatsync-emote-stack')")
   expect(m[0]).toContain('w.dataset.emoteHash === mine.hash')
 })
+
+test('a blocked pick stays the pick: no fall-through to another same-name picture', () => {
+  expect(src).toContain('imgs[0].dataset.emoteHash === primary && blockedEmotes.has(primary)')
+})

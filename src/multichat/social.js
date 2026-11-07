@@ -2066,6 +2066,15 @@ function renderFeed() {
   if ((!feedLoaded || isStale) && !feedLoading) {
     _feedVirtualTeardown(msgsEl)
     msgsEl.textContent = ''
+    // a pane with no height (hidden, collapsed) is not being looked at: the first fetch waits
+    // for it to open, so a channel-less page that lands here costs nothing until then
+    if (!msgsEl.clientHeight && typeof ResizeObserver === 'function') {
+      _feedFillObserver = new ResizeObserver(() => {
+        if (msgsEl.clientHeight && currentTab === 'feed' && !mcSignal?.aborted) renderFeed()
+      })
+      _feedFillObserver.observe(msgsEl)
+      return
+    }
     const loading = document.createElement('div')
     loading.className = 'hs-mc-empty'
     loading.textContent = t('mc_social_loading_feed')

@@ -81,3 +81,15 @@ describe('feed fill', () => {
   test('a tall pane with room left builds more rows', () => expect(run(el(600, 400))).toEqual(['more']))
   test('a pane already overflowing waits for the scroll', () => expect(run(el(300, 900))).toEqual([]))
 })
+
+describe('feed first fetch', () => {
+  const src = fn('renderFeed')
+  test('a pane with no height waits for one before the first fetch', () => {
+    const wait = src.indexOf('!msgsEl.clientHeight')
+    expect(wait).toBeGreaterThan(-1)
+    expect(wait).toBeLessThan(src.indexOf('fetchFeed()'))
+    expect(src.slice(wait, src.indexOf('fetchFeed()'))).toMatch(
+      /new ResizeObserver[\s\S]*renderFeed\(\)[\s\S]*return\n/,
+    )
+  })
+})

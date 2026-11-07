@@ -4,6 +4,7 @@
  */
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mcMergeLegs } from '../src/multichat/seed-legs.js'
 
 const SRC = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
 
@@ -26,9 +27,11 @@ function run({ mine, theirs, lastPersisted }) {
     'browser',
     'STORAGE_KEY',
     '_lastPersistedChannelKeys',
+    '_lastPersistedLegs',
+    'mcMergeLegs',
     `return (async () => { ${UNION} ; return persistable.channels })()`,
   )
-  return fn(persistable, browser, 'cfg', lastPersisted)
+  return fn(persistable, browser, 'cfg', lastPersisted, null, mcMergeLegs)
 }
 
 const key = (c) => `${c.platform || 'twitch'}:${(c.id || c.twitch || c.name || '').toLowerCase()}`

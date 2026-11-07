@@ -7830,7 +7830,10 @@
         /(switched to |now playing |went live \u2014 )(.+)$/,
         '$1<span class="hs-evt-game">$2</span>',
       )
-      div.innerHTML = `${tsSpan}${platBadge}${userLink} ${actionHtml}`
+      // switched-to / went-live rows: the name sits on a black cutout (.hs-evt-cut) so it
+      // reads exactly as in chat, whatever its colour or paint
+      const nameBlock = /event-(?:update|online)/.test(m.eventClass || '') ? `<span class="hs-evt-cut">${userLink}</span>` : userLink
+      div.innerHTML = `${tsSpan}${platBadge}${nameBlock} ${actionHtml}`
       // The whole row is a shortcut to that channel's page. Clicks that land on
       // the username (or any link/emote) are left alone so the existing
       // profile-card / context-menu behaviour still wins there — only the empty

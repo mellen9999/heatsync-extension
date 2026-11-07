@@ -479,6 +479,15 @@
       border-bottom-width: 0;  /* the site's row draws no bottom rule */
       padding: 2px 8px;        /* the site's row padding */
     }
+    /* the streamer's name on a black cutout: full row height, same padding every row,
+       so the name renders as it does in chat whatever its colour or paint */
+    .hs-mc-stream-event .hs-evt-cut {
+      display: inline-block;
+      vertical-align: top;
+      margin: -2px 0;
+      padding: 2px 4px;
+      background: var(--hs-bg);
+    }
     /* YouTube event banners — superchat/sticker default to the amount-tier gold;
        m.scColor (inline style, set in main.js) overrides with the real per-message
        tier color from YouTube's own renderer when present. */

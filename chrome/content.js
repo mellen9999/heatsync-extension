@@ -2906,6 +2906,7 @@
         'global_emotes',
         'emote_inventory',
         'blocked_emotes',
+        'local_blocked_emotes',
         'channel_emotes_map',
         'blocked_users',
         'local_blocked_emote_names',
@@ -2922,7 +2923,8 @@
           ...e,
           url: normalizeEmoteUrl(e.url),
         }))
-        blockedEmotes = new Set(stored.blocked_emotes || [])
+        // server blocks + the ones filed while logged out (background persists them apart)
+        blockedEmotes = new Set([...(stored.blocked_emotes || []), ...(stored.local_blocked_emotes || [])])
         if (stored.blocked_users) blockedUsers = new Set(stored.blocked_users)
         // Load only THIS channel's emotes from the per-channel map
         const myChannel = getPageChannel()

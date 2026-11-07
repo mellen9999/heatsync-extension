@@ -112,9 +112,12 @@
         'emote_inventory',
         'global_emotes',
         'blocked_emotes',
+        'local_blocked_emotes',
         'channel_emotes_map',
       ])
-      if (stored.blocked_emotes) blockedEmotes = new Set(stored.blocked_emotes)
+      // server blocks + the ones filed while logged out (background persists them apart)
+      if (stored.blocked_emotes || stored.local_blocked_emotes)
+        blockedEmotes = new Set([...(stored.blocked_emotes || []), ...(stored.local_blocked_emotes || [])])
       if (stored.channel_emotes_map && typeof stored.channel_emotes_map === 'object') {
         channelEmotesByOwner = stored.channel_emotes_map
       }

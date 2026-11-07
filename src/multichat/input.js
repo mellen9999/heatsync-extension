@@ -787,7 +787,10 @@ if (/(^|\.)twitch\.tv$/.test(location.hostname)) {
       if (!NAME_RE.test(e.name) || typeof e.url !== 'string' || !CDN_RE.test(e.url)) continue
       if (e.source !== '7tv' && e.source !== 'bttv' && e.source !== 'ffz') continue
       recentRemoteCompletions.delete(e.name)
-      recentRemoteCompletions.set(e.name, { url: e.url, source: e.source, zeroWidth: !!e.zeroWidth })
+      // The hook only relays catalog picks the user Tabbed onto and then sent, so each one is a
+      // deliberate choice (rule 7): `variant` lets it swap a different picture you own under
+      // the name, exactly like the overlay composer's Tab pick does.
+      recentRemoteCompletions.set(e.name, { url: e.url, source: e.source, zeroWidth: !!e.zeroWidth, variant: true })
       names.push(e.name)
     }
     while (recentRemoteCompletions.size > REMOTE_COMPLETION_CAP) {

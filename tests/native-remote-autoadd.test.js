@@ -110,3 +110,12 @@ describe('flushRemoteCompletionsOnSend — presence-gated relay', () => {
     expect(posted.length).toBe(0)
   })
 })
+
+describe('native relay → overlay add (rule 7)', () => {
+  test('a relayed Tab pick is a deliberate variant, so it can swap a different emote you own', () => {
+    const input = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
+    const i = input.indexOf("event.data?.type !== 'heatsync-remote-completion-used'")
+    const block = input.slice(i, input.indexOf('autoAddInputEmotes(names.join', i))
+    expect(block).toMatch(/recentRemoteCompletions\.set\(e\.name, \{[^}]*variant: true/)
+  })
+})

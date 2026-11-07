@@ -15070,7 +15070,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '80649dfd513b' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '595c82f7f422' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -39447,6 +39447,11 @@ let feedMessages = []
 let feedLoaded = false
 let feedLoading = false
 let feedPage = 1
+// Rows on screen: a fresh feed paints one screenful, the rest of the buffer is built when
+// the reader scrolls to it (a channel-less page opens on the feed and nobody asked for 30 posts)
+const FEED_FIRST_PAINT = 8
+const FEED_REVEAL_STEP = 12
+let feedRendered = 0
 let feedHasMore = true
 let feedLastFetch = 0 // Timestamp of last feed fetch
 let feedFromHotFallback = false // true when /following was empty + we showed /hot instead
@@ -39458,6 +39463,7 @@ const FEED_STALE_MS = 120000 // 2 minutes
 
 // Feed scroll state — handler ref for teardown only, infinite-scroll trigger
 let _feedVirtualScrollHandler = null
+let _feedFillObserver = null // asks for more rows when the pane grows taller than the rows built
 
 // Stream events injected inline into per-channel buffers (no dedicated tab)
 const activityEvents = []
@@ -40908,9 +40914,7 @@ async function fetchFeed(append = false) {
     } catch (_) {}
   }
 
-  let appendStart = 0
   if (append) {
-    appendStart = feedMessages.length
     feedMessages.push(...msgs)
     feedPage = page
   } else {
@@ -40924,6 +40928,7 @@ async function fetchFeed(append = false) {
       feedMessages = msgs
     }
     feedPage = 1
+    feedRendered = 0
     feedFromHotFallback = usedHotFallback
     feedFallbackIsCold = hotWasCold
   }
@@ -40951,7 +40956,7 @@ async function fetchFeed(append = false) {
   }
   feedBookmarksLoad(msgs)
   if (currentTab === 'feed') {
-    if (append) renderFeedAppend(appendStart)
+    if (append) renderFeedAppend(feedRendered)
     else renderFeed()
   }
 }
@@ -41063,6 +41068,8 @@ function _feedVirtualTeardown(msgsEl) {
     msgsEl.removeEventListener('scroll', _feedVirtualScrollHandler)
   }
   _feedVirtualScrollHandler = null
+  _feedFillObserver?.disconnect()
+  _feedFillObserver = null
 }
 
 function renderFeed() {
@@ -41092,6 +41099,15 @@ function renderFeed() {
   if ((!feedLoaded || isStale) && !feedLoading) {
     _feedVirtualTeardown(msgsEl)
     msgsEl.textContent = ''
+    // a pane with no height (hidden, collapsed) is not being looked at: the first fetch waits
+    // for it to open, so a channel-less page that lands here costs nothing until then
+    if (!msgsEl.clientHeight && typeof ResizeObserver === 'function') {
+      _feedFillObserver = new ResizeObserver(() => {
+        if (msgsEl.clientHeight && currentTab === 'feed' && !mcSignal?.aborted) renderFeed()
+      })
+      _feedFillObserver.observe(msgsEl)
+      return
+    }
     const loading = document.createElement('div')
     loading.className = 'hs-mc-empty'
     loading.textContent = t('mc_social_loading_feed')
@@ -41119,7 +41135,8 @@ function renderFeed() {
   // per-item height measurement (cumulative offsets, not i*h).
   _feedVirtualTeardown(msgsEl)
 
-  const items = feedMessages
+  const items = feedMessages.slice(0, Math.max(feedRendered, FEED_FIRST_PAINT))
+  feedRendered = items.length
   isProgrammaticScroll = true
   msgsEl.textContent = ''
   msgsEl.style.position = ''
@@ -41151,7 +41168,7 @@ function renderFeed() {
   }
   msgsEl.appendChild(frag)
 
-  if (feedHasMore) {
+  if (feedHasMore || feedRendered < feedMessages.length) {
     const loader = document.createElement('div')
     loader.className = 'hs-mc-empty hs-feed-loader'
     loader.textContent = t('mc_social_scroll_more')
@@ -41176,23 +41193,50 @@ function renderFeed() {
     _feedInfiniteTimer = cleanup.setTimeout(() => {
       _feedInfiniteTimer = null
       const { scrollTop, scrollHeight, clientHeight } = msgsEl
-      if (scrollHeight - scrollTop - clientHeight < 100) fetchFeed(true)
+      if (scrollHeight - scrollTop - clientHeight < 100) feedMore()
     }, 200)
   }
   msgsEl.addEventListener('scroll', _feedVirtualScrollHandler, { signal: mcSignal, passive: true })
+  // a tall pane can hold the first rows without a scrollbar, so nothing would scroll to ask for
+  // more; a pane with no height yet (hidden, collapsed) builds nothing until it has one
+  if (typeof ResizeObserver === 'function') {
+    _feedFillObserver = new ResizeObserver(feedFillPane)
+    _feedFillObserver.observe(msgsEl)
+  }
+}
+
+/** More rows: build the next of the buffer, and only when it is all on screen ask the server. */
+function feedMore() {
+  if (feedRendered < feedMessages.length) {
+    renderFeedAppend(feedRendered, FEED_REVEAL_STEP)
+    return true
+  }
+  if (feedHasMore && !feedLoading) {
+    fetchFeed(true)
+    return true
+  }
+  return false
+}
+
+function feedFillPane() {
+  if (mcSignal?.aborted || currentTab !== 'feed' || activeThread) return
+  const el = document.getElementById('hs-mc-messages')
+  if (!el?.clientHeight || !el.querySelector('.hs-feed-loader') || el.scrollHeight - el.clientHeight >= 100) return
+  if (feedMore()) requestAnimationFrame(feedFillPane)
 }
 
 // Append-only render for infinite scroll. A full renderFeed() here rebuilt all
 // 150 rows (tearing down and re-fetching every embed iframe) and reset
 // scrollTop to 0 — yanking the reader to the top on every "load more". Only
 // the newly-fetched rows get built; scroll position is never touched.
-function renderFeedAppend(startIndex) {
+function renderFeedAppend(startIndex, step = Infinity) {
   if (typeof imgViewOpen === 'function' && imgViewOpen()) return // a full-size picture owns the pane
   if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   if (activeThread) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
-  const newItems = feedMessages.slice(startIndex)
+  const newItems = feedMessages.slice(startIndex, startIndex + step)
+  feedRendered = startIndex + newItems.length
   msgsEl.querySelector('.hs-feed-loader')?.remove()
   if (newItems.length > 0) {
     const frag = document.createDocumentFragment()
@@ -41204,7 +41248,7 @@ function renderFeedAppend(startIndex) {
     }
     msgsEl.appendChild(frag)
   }
-  if (feedHasMore) {
+  if (feedHasMore || feedRendered < feedMessages.length) {
     const loader = document.createElement('div')
     loader.className = 'hs-mc-empty hs-feed-loader'
     loader.textContent = t('mc_social_scroll_more')
@@ -82681,7 +82725,8 @@ const STORAGE_KEY = 'heatsync_multichat'
     const _msgsForMod = document.getElementById('hs-mc-messages')
     if (_msgsForMod && !_msgsForMod._hsModToolbarWired) wireModToolbarHover(_msgsForMod)
     // Pre-fetch isMod for the active channel so first hover is instant.
-    if (typeof id === 'string' && /^[a-z0-9_]{2,40}$/i.test(id)) prefetchModFor(id)
+    // (a built-in tab — feed, live, add — is not a twitch login)
+    if (typeof id === 'string' && /^[a-z0-9_]{2,40}$/i.test(id) && !mcChromeTabIds().includes(id)) prefetchModFor(id)
     // Symmetric kick warm-up — so the first kick right-click/hover surfaces mod
     // actions without a cold-cache miss (resolve the linked kick slug for this tab).
     const _chForMod = typeof getChannelById === 'function' ? getChannelById(id) : null

@@ -1208,7 +1208,7 @@ function emoteImgHtml([name, emote]) {
   // image — you still see that the emote is in your set, just not what it is.
   const hiddenCat = hsEmoteHiddenForViewer(emote)
   if (hiddenCat) return _hsCwBoxHtml(escapeHtml(hiddenCat), escapeHtml(name))
-  const isBlocked = blockedEmoteNames.has(name)
+  const isBlocked = emoteIsBlocked(name, emote) // this tile's emote, not every W of the name
   // 2-state picker: normal or blocked. `state` is still tracked on the img
   // dataset so findEmoteTarget can route blocked→unblock and the chat-row /
   // cross-user rendering pipelines that inspect it (lookupEmote, processEmotes)
@@ -2029,7 +2029,7 @@ function createInputEmoteImg(emoteName) {
     !lookupEmoteRenderOrder(emoteName) &&
     blockedEmoteNames.has(emoteName.slice(0, -1))
   const _chipBlockedByHash = !!(emote.hash && blockedEmoteHashes.has(String(emote.hash)))
-  if (blockedEmoteNames.has(emoteName) || _chipBlockedByBase || _chipBlockedByHash) markInputEmoteBlocked(img, true)
+  if (emoteIsBlocked(emoteName, emote) || _chipBlockedByBase || _chipBlockedByHash) markInputEmoteBlocked(img, true)
   if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(img)
   return img
 }

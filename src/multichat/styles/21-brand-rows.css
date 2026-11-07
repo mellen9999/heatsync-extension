@@ -46,10 +46,10 @@
 
 /* The mention row: the dark red fill IS the "you were pinged" signal (a mention or a reply to you).
    On a stripe it takes the lighter red instead of the grey, so a run of mentions alternates and
-   never goes grey. The stripe marker is the one surface-named class left in this file (.zebra-even
-   on the site, .hs-mc-zebra in the extension); --hs-stripe-mention is the named hook that says
+   never goes grey. The stripe marker is the shared hs-zebra (each surface stamps it beside its own stripe class);
+   --hs-stripe-mention is the named hook that says
    whether stripes are on (the site sets it under body.alternating-lines; the extension always). */
 .hs-row-mention { background: var(--brand-fill-red) !important; }
-:is(.zebra-even, .hs-mc-zebra).hs-row-mention { background: var(--hs-stripe-mention, var(--brand-fill-red)) !important; }
+.hs-zebra.hs-row-mention { background: var(--hs-stripe-mention, var(--brand-fill-red)) !important; }
 /* the session-first edge: a chatter you have not seen since this tab opened — a yellow bar on the left */
 .hs-row-seen { box-shadow: inset 2px 0 0 var(--brand-yellow); }

@@ -476,6 +476,8 @@
     .hs-mc-stream-event.event-online {
       background: var(--hs-notice-bg);
       border-left-color: transparent;
+      border-bottom-width: 0;  /* the site's row draws no bottom rule */
+      padding: 2px 8px;        /* the site's row padding */
     }
     /* YouTube event banners — superchat/sticker default to the amount-tier gold;
        m.scColor (inline style, set in main.js) overrides with the real per-message

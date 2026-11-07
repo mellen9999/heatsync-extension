@@ -22,7 +22,7 @@ const zebraOfInsert = new Function(
   '_NO_ZEBRA_TYPES',
   `${sliceFn('zebraOfInsert')}; return zebraOfInsert`,
 )(true, NO_ZEBRA)
-const zebraRepaint = new Function('zebraEnabled', `${sliceFn('zebraRepaint')}; return zebraRepaint`)(true)
+const zebraRepaint = new Function('zebraEnabled', `${sliceFn('noticeStripe')}; ${sliceFn('zebraRepaint')}; return zebraRepaint`)(true)
 
 // minimal linked-list DOM: rows with classList + sibling pointers
 function fakeList(types) {

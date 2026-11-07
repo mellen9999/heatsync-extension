@@ -379,6 +379,7 @@ describe('4b2. addEmoteToInventory carries replace to the background and names a
     const env = {
       mcRemoteEmoteIndex: new Map(),
       zeroWidthFromAnyCache: () => false,
+      emoteBlockKey: (n, u, h) => h || btoa(u),
       showToast: (text, kind) => toasts.push([text, kind]),
       t: (key, args) => `${key}:${args?.join(',')}`,
       pendingEmoteOps: new Set(),
@@ -524,5 +525,46 @@ describe('4c. removeEmoteFromInventory reports the outcome and can stay quiet', 
     expect(r.undone).toEqual(['undo'])
     expect(r.toasts).toEqual([['nope', 'error']])
     expect(r.env.pendingEmoteOps.size).toBe(0)
+  })
+})
+
+describe('4b3. an added emote carries the per-emote key, not a truncated url', () => {
+  test('the add message sends the full url key', async () => {
+    const sent = []
+    const url = `https://cdn.7tv.app/emote/${'a'.repeat(30)}/2x.webp`
+    const env = {
+      mcRemoteEmoteIndex: new Map(),
+      zeroWidthFromAnyCache: () => false,
+      emoteBlockKey: (n, u, h) => h || btoa(u),
+      showToast() {},
+      t: (k) => k,
+      pendingEmoteOps: new Set(),
+      chrome: {
+        runtime: { lastError: null, sendMessage: (m, cb) => (sent.push(m), cb({ success: true, hash: 'h', slot: 1 })) },
+      },
+      blockedEmoteNames: new Set(),
+      removedEmoteFallback: new Map(),
+      persistRemovedFallback() {},
+      blockedEmoteFallback: new Map(),
+      persistBlockedFallback() {},
+      localRemovals: new Map(),
+      inventoryEmotes: new Set(),
+      inventoryHashes: new Map(),
+      viewerPersonalEmotes: new Map(),
+      emoteCache: new Map(),
+      emoteHashes: new Map(),
+      hashToName: new Map(),
+      queryEmoteWrappers: () => [],
+      refreshEmoteTooltip() {},
+      flashAllEmotes() {},
+      log() {},
+    }
+    const names = Object.keys(env)
+    const { addEmoteToInventory } = new Function(...names, `${ADD}; return { addEmoteToInventory }`)(
+      ...names.map((k) => env[k]),
+    )
+    await addEmoteToInventory('IDK', url, '7tv', null, false, true)
+    expect(sent[0].emoteHash).toBe(btoa(url))
+    expect(sent[0].emoteHash.length).toBeGreaterThan(32)
   })
 })

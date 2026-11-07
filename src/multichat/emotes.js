@@ -2686,7 +2686,13 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
   pendingEmoteOps.add(emoteName)
   try {
     // Generate a hash from the URL for the API
-    const emoteHash = emoteUrl ? btoa(emoteUrl).slice(0, 32) : emoteName
+    // The same per-emote key as blocks and ownership (the emote's own hash, else the full url key);
+    // the server's sourceId allows 200 chars.
+    const emoteHash = emoteBlockKey(
+      emoteName,
+      emoteUrl,
+      _targetEl?.closest?.('[data-emote-hash]')?.dataset?.emoteHash,
+    ).slice(0, 200)
 
     // Send to background script for API call with auth
     const response = await new Promise((resolve) => {

@@ -2733,6 +2733,7 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
 
       // Update all wrappers in DOM (no full re-render)
       queryEmoteWrappers(emoteName).forEach((w) => {
+        if (!wrapperIsEmote(w, serverHash, emoteUrl)) return // the one just added, not every W
         // stale too: once it is in your set, the channel dropping its 7TV copy
         // no longer matters, and a leftover ghost class kept the row dimmed
         w.classList.remove('hs-state-global', 'hs-state-unadded', 'hs-state-blocked', 'hs-state-stale')
@@ -5203,6 +5204,7 @@ export {
   dropEmoteFromAllSenders,
   emoteBlockKey,
   emoteCache,
+  emoteIsBlocked,
   ensureHsEmoteIdleObserver,
   getEmoteState,
   getSenderEmotes,

@@ -154,6 +154,8 @@ try {
   const cc = await imgOf('gamma')
   check(cc.src.includes('W_sender'), `c. the sender-set W draws the sender's picture (got ${cc.src || 'nothing'})`)
 
+  check(a.state !== 'owned' && cc.state !== 'owned', `other chatters' W are not labelled yours (states ${a.state}, ${cc.state})`)
+
   // right-click alice's W: blocked, inventory untouched, other W emotes unaffected
   await p.evaluate(() => {
     const row = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes('alpha'))

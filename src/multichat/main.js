@@ -7548,7 +7548,14 @@
   function reconcileHeatsyncEmoteStates(root) {
     for (const w of root.querySelectorAll('.hs-mc-emote-wrapper[data-source="heatsync"]')) {
       const name = w.dataset.emoteName
-      const newState = blockedEmoteNames.has(name) ? 'blocked' : inventoryEmotes.has(name) ? 'owned' : 'global'
+      // judged per emote, not per name (rules 9, 10): a heatsync W beside the one you own is
+      // not yours, and blocking one W does not box another
+      const wEmote = { hash: w.dataset.emoteHash, url: w.dataset.emoteUrl }
+      const newState = emoteIsBlocked(name, wEmote)
+        ? 'blocked'
+        : isViewerEmoteUrl(name, w.dataset.emoteUrl, w.dataset.emoteHash)
+          ? 'owned'
+          : 'global'
       if (w.dataset.state !== newState) {
         w.classList.remove(
           'hs-state-owned',

@@ -1895,14 +1895,6 @@ const EMOTE_TIER_ORDER = {
 }
 
 /**
- * @param {'channel'|'global'} tier
- * @returns {string[]} winner-first provider order for that tier
- */
-function emoteTierOrder(tier) {
-  return [...(EMOTE_TIER_ORDER[tier] || EMOTE_TIER_ORDER.global)]
-}
-
-/**
  * Stable re-rank of a pool array so index 0 is the winner for every name: in a channel,
  * entries with no `source` (the owner's heatsync set) stay in front, then providers by tier
  * order, unknown providers last. Returns a new array; the input is untouched.
@@ -1916,10 +1908,8 @@ function rankEmotePool(list, tier) {
     const i = order.indexOf(e.source)
     return i === -1 ? order.length : i
   }
-  return (list || [])
-    .map((e, i) => [e, i])
-    .sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1])
-    .map((p) => p[0])
+  // Array.prototype.sort is stable: equal ranks keep their input order
+  return [...(list || [])].sort((a, b) => rank(a) - rank(b))
 }
 
 /**
@@ -2553,7 +2543,6 @@ const utils = {
   EMOTE_THIRD_PARTY_PROVIDERS,
   EMOTE_TIER_ORDER,
   emoteProviderOrder,
-  emoteTierOrder,
   rankEmotePool,
   resolveEmoteProviderWinner,
 
@@ -15185,7 +15174,7 @@ window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem
 // can't tell "known bug, fix not yet loaded" from "new failure in the fix".
-hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '48e53056ec70' })
+hsDiag('boot', { hidden: document.hidden, focus: document.hasFocus(), build: '6a883073dc20' })
 
 // Shared death handler for the detectors below (interval probe, port
 // onDisconnect, port reconnect failure). Tear down lifecycle, then defer the
@@ -28338,7 +28327,7 @@ function _buildChannelEmoteCache(ch, emotes, platform) {
     // emoteProviderPriority decides the winner instead of plain array-order
     // last-write-wins. Every other pairing (heatsync, twitch, kick, or a
     // same-provider refresh) is untouched — see resolveEmoteProviderWinner.
-    chCache.set(e.name, resolveEmoteProviderWinner(chCache.get(e.name), entry, emoteTierOrder('channel')))
+    chCache.set(e.name, resolveEmoteProviderWinner(chCache.get(e.name), entry, EMOTE_TIER_ORDER.channel))
     if (e.hash) {
       emoteHashes.set(e.name, e.hash)
       hashToName.set(e.hash, e.name)
@@ -28494,7 +28483,7 @@ async function loadEmotes() {
           }
           // See _buildChannelEmoteCache — same 7tv/bttv/ffz collision rule
           // applied to the global-tier pool.
-          emoteCache.set(e.name, resolveEmoteProviderWinner(emoteCache.get(e.name), entry, emoteTierOrder('global')))
+          emoteCache.set(e.name, resolveEmoteProviderWinner(emoteCache.get(e.name), entry, EMOTE_TIER_ORDER.global))
           while (emoteCache.size > 2000) {
             emoteCache.delete(emoteCache.keys().next().value)
           }

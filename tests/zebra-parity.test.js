@@ -23,6 +23,7 @@ const zebraOfInsert = new Function(
   `${sliceFn('zebraOfInsert')}; return zebraOfInsert`,
 )(true, NO_ZEBRA)
 const zebraRepaint = new Function('zebraEnabled', `${sliceFn('noticeStripe')}; ${sliceFn('zebraRepaint')}; return zebraRepaint`)(true)
+const noticeStripe = new Function('zebraEnabled', `${sliceFn('noticeStripe')}; return noticeStripe`)(true)
 
 // minimal linked-list DOM: rows with classList + sibling pointers
 function fakeList(types) {
@@ -30,7 +31,7 @@ function fakeList(types) {
     const z = new Set()
     return {
       id: '',
-      dataset: NO_ZEBRA.has(t) ? { hsNz: '1' } : {},
+      dataset: { ...(NO_ZEBRA.has(t) ? { hsNz: '1' } : {}), ...(t === 'stream-event' ? { hsNotice: '1' } : {}) },
       classList: {
         contains: (c) => z.has(c),
         toggle: (c, on) => (on ? z.add(c) : z.delete(c)),
@@ -81,10 +82,33 @@ describe('zebra parity', () => {
     expect(els.map((e) => e.classList.contains('hs-mc-zebra'))).toEqual([false, true, false, true, false])
   })
 
-  test('repaint keeps event rows plain and stripes the row after them', () => {
+  test('repaint keeps notice rows plain and does not count them: the next row alternates against the last counted one', () => {
     const { els, msgsEl } = fakeList(['chat', 'stream-event', 'chat', 'chat'])
     zebraRepaint(msgsEl, null)
     expect(els.map((e) => e.classList.contains('hs-mc-zebra'))).toEqual([false, false, true, false])
+  })
+
+  test('a notice row between two rows leaves the alternation as if it were not there', () => {
+    const { els, msgsEl } = fakeList(['chat', 'chat', 'stream-event', 'chat', 'chat'])
+    zebraRepaint(msgsEl, null)
+    // chat rows alternate 0,1,0,1 whatever sits between them
+    expect(els.map((e) => e.classList.contains('hs-mc-zebra'))).toEqual([false, true, false, false, true])
+  })
+
+  test('a live insert after a notice stripes off the last counted row', () => {
+    const rowOf = (z) => ({ id: '', dataset: {}, classList: { contains: (c) => c === 'hs-mc-zebra' && z }, previousElementSibling: null })
+    const counted = rowOf(true)
+    const notice = { id: '', dataset: { hsNz: '1', hsNotice: '1' }, classList: { contains: () => false }, previousElementSibling: counted }
+    expect(zebraOfInsert({ type: 'chat' }, notice)).toBe(false) // after a striped row: plain
+    counted.classList = { contains: () => false }
+    expect(zebraOfInsert({ type: 'chat' }, notice)).toBe(true)
+  })
+
+  test('a notice cutout takes the stripe only when the row above is a counted, unstriped row', () => {
+    const chat = (z) => ({ id: '', dataset: {}, classList: { contains: (c) => c === 'hs-mc-zebra' && z } })
+    expect(noticeStripe(chat(false))).toBe(true)
+    expect(noticeStripe(chat(true))).toBe(false)
+    expect(noticeStripe(null)).toBe(false)
   })
 
   test('the top row keeps its stripe when the window has slid', () => {

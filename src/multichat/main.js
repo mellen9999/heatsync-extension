@@ -9887,8 +9887,11 @@
   ])
   function stampZebra(div, m, prevDiv) {
     if (_NO_ZEBRA_TYPES.has(m.type)) div.dataset.hsNz = '1'
+    // a notice row (went live / switched to) does not count: the stripe alternates
+    // across it, against the last row that was counted (same as the site)
+    if (m.type === 'stream-event') div.dataset.hsNotice = '1'
     div.classList.toggle('hs-mc-zebra', zebraOfInsert(m, prevDiv))
-    if (div.dataset.hsNz) div.classList.toggle('hs-mc-notice-z', noticeStripe(prevDiv))
+    if (div.dataset.hsNotice) div.classList.toggle('hs-mc-notice-z', noticeStripe(prevDiv))
   }
   // A notice row (went live / switched to) takes no stripe itself, but its name
   // cutout wears the ground a counted row would have at that spot: the stripe
@@ -9903,6 +9906,8 @@
   // because each stripe was only computed against the row above at insert time.
   function zebraRepaint(msgsEl, from) {
     let prev = from ? from.previousElementSibling : null
+    // the row to alternate against is the last counted one: not the player, not a notice
+    while (prev && (prev.id === 'hs-mc-embed-player' || prev.dataset?.hsNotice)) prev = prev.previousElementSibling
     for (let el = from || msgsEl.firstElementChild; el; el = el.nextElementSibling) {
       if (el.id === 'hs-mc-embed-player') continue
       // the top row has no row above to alternate against — it keeps its stripe
@@ -9910,13 +9915,19 @@
         ? zebraEnabled && !el.dataset.hsNz && !prev.classList.contains('hs-mc-zebra')
         : zebraEnabled && el.classList.contains('hs-mc-zebra')
       if (el.classList.contains('hs-mc-zebra') !== want) el.classList.toggle('hs-mc-zebra', want)
-      if (el.dataset.hsNz) el.classList.toggle('hs-mc-notice-z', noticeStripe(prev))
+      if (el.dataset.hsNotice) {
+        el.classList.toggle('hs-mc-notice-z', noticeStripe(el.previousElementSibling))
+        continue // a notice row is not a row for parity: the next one alternates against `prev`
+      }
       prev = el
     }
   }
   function zebraOfInsert(m, prevDiv) {
     // the video player sits in the list but is not a row — stripe off the row before it
-    while (prevDiv?.id === 'hs-mc-embed-player') prevDiv = prevDiv.previousElementSibling
+    // ...and neither does a notice row: stripe off the last row that was counted
+    while (prevDiv && (prevDiv.id === 'hs-mc-embed-player' || prevDiv.dataset?.hsNotice)) {
+      prevDiv = prevDiv.previousElementSibling
+    }
     if (!zebraEnabled || !prevDiv) return false
     if (_NO_ZEBRA_TYPES.has(m.type)) return false
     return !prevDiv.classList.contains('hs-mc-zebra')
@@ -11246,6 +11257,7 @@
             if (above) stampZebra(nd, _rm, above)
             else {
               if (_NO_ZEBRA_TYPES.has(_rm.type)) nd.dataset.hsNz = '1'
+              if (_rm.type === 'stream-event') nd.dataset.hsNotice = '1'
               nd.classList.toggle(
                 'hs-mc-zebra',
                 zebraEnabled && !nd.dataset.hsNz && existing.classList.contains('hs-mc-zebra'),

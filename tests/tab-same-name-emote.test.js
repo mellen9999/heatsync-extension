@@ -149,12 +149,12 @@ describe('1. the cycle offers another emote under a name a local already has', (
     expect(r.acState.matches.map((m) => m.url)).toEqual([CHAN, OTHER])
   })
 
-  test('the same name in another case is another emote too, unless it is the same picture', async () => {
+  test('the same name in another case is another emote (dedupe is on the exact name)', async () => {
     const r = rig({ search: 'id', matches: [channelIdk()], stv: [hit('idk', CHAN), hit('idk', OTHER)] })
     await r.fetchRemoteEmoteMatches('id')
     expect(r.acState.matches.map((m) => [m.name, m.url])).toEqual([
       ['IDK', CHAN],
-      ['idk', OTHER],
+      ['idk', CHAN],
     ])
   })
 

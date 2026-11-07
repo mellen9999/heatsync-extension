@@ -176,6 +176,8 @@
       if (ax !== bx) return ax - bx
       // kek / KEK: the channel's own leads — a habit or a global lookalike of
       // the same name must not outrank it (parity with input.js)
+      // case twins (KEKW / kekw) both stay; the one spelled like the typed word leads
+      if (ax === 0 && (a.name === query) !== (b.name === query)) return a.name === query ? -1 : 1
       if (ax === 0 && (a.tier === 0) !== (b.tier === 0)) return a.tier === 0 ? -1 : 1
       const af = frec.get(a.name) || 0,
         bf = frec.get(b.name) || 0

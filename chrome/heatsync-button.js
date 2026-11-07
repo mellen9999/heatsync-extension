@@ -97,6 +97,7 @@
     let globalEmotesCache = []
     let currentTab = 'channel'
     let searchQuery = ''
+    let searchTyped = '' // the query as typed: case twins (KEKW / kekw) both match, the one spelled like it leads
     let emotesPreloaded = false
     let preloadingInProgress = false
     let recentEmotes = [] // LRU list of recently-used emote names
@@ -133,6 +134,7 @@
     // Fuzzy match scorer: sequential character match
     function fuzzyScore(query, name) {
       const lower = name.toLowerCase()
+      if (searchTyped && name === searchTyped && lower === query) return 3.5 // the twin spelled as typed leads
       if (lower.includes(query)) return 2 + query.length / lower.length // exact substring bonus
       let qi = 0
       for (let i = 0; i < lower.length && qi < query.length; i++) {
@@ -2009,6 +2011,7 @@
 
       currentChannel = channel
       searchQuery = ''
+      searchTyped = ''
       log(' Panel opened, detected channel:', channel, 'URL:', window.location.pathname)
 
       const iconUrl = getIconUrl()
@@ -2227,6 +2230,7 @@
             if (si?.value) {
               si.value = ''
               searchQuery = ''
+              searchTyped = ''
             }
           }
           panel.querySelectorAll('.heatsync-tab').forEach((t) => t.classList.remove('active'))
@@ -2257,6 +2261,7 @@
         if (e.target.closest('.hs-src-chip')) e.preventDefault()
       })
       searchInput?.addEventListener('input', (e) => {
+        searchTyped = e.target.value.trim()
         searchQuery = e.target.value.toLowerCase()
         focusedEmoteIndex = -1
         updateChipsVisibility()

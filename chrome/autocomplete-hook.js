@@ -769,8 +769,8 @@
     // new block is ordered internally (exact match first, then 7TV
     // TOP_ALL_TIME fetch order via the persistent _ai).
     add.sort((a, b) => {
-      const ax = (a.nameLower || '') === searchLower ? 0 : 1
-      const bx = (b.nameLower || '') === searchLower ? 0 : 1
+      const ax = (a.name || '') === search ? 0 : (a.nameLower || '') === searchLower ? 1 : 2
+      const bx = (b.name || '') === search ? 0 : (b.nameLower || '') === searchLower ? 1 : 2
       if (ax !== bx) return ax - bx
       return (a._ai || 0) - (b._ai || 0)
     })
@@ -1291,6 +1291,7 @@
           // NaM even if never used and the channel has a NAMarrive). Reverses
           // the old "tier beats never-used exact" call: precision wins.
           r._exact = r._sortKey === searchLower
+          r._spelled = name === search
         }
         // Same ranking as the multichat comparator (input.js compareAcMatches)
         // — keep the two in lockstep so native chat and the overlay never
@@ -1308,6 +1309,8 @@
           // Both are the typed word in different casing (kek / KEK): the
           // channel's own is what everyone here reads as that word, so it
           // leads — a habit or a global lookalike must not outrank it.
+          // Case twins (KEKW / kekw) are two candidates; the one spelled like the typed word leads.
+          if (a._exact && a._spelled !== b._spelled) return a._spelled ? -1 : 1
           if (a._exact && (a._tier === 0) !== (b._tier === 0)) return a._tier === 0 ? -1 : 1
 
           // Personal habit beats structure: an emote the user actually sends

@@ -476,8 +476,10 @@
     .hs-mc-stream-event.event-online {
       background: var(--hs-notice-bg);
       border-left: 0;          /* the fill is the signal, not the stripe */
-      border-bottom-width: 0;  /* the site's row draws no bottom rule */
+      border-bottom-width: 0;  /* chat rows draw no bottom rule */
       padding: var(--hs-mc-row-pad, 2px 4px); /* a chat row's own gutter */
+      font-size: var(--hs-chat-font, 15px); /* and its own type */
+      line-height: 20px;
     }
     /* the streamer's name on a black cutout: full row height, same padding every row,
        so the name renders as it does in chat whatever its colour or paint */

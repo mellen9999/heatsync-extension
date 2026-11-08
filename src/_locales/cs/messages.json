@@ -6918,5 +6918,101 @@
   },
   "mc_moment_permalink": {
     "message": "trvalý odkaz — klik otevře, shift-klik vloží do chatu"
+  },
+  "mc_kms_title": {
+    "message": "moderátorské nástroje kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "zakázaná slova"
+  },
+  "mc_kms_cell_filter": {
+    "message": "filtr zpráv"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k vybrat slovo · d odebrat · / přidat slovo"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k vybrat řádek · 0-3 nastaví úroveň"
+  },
+  "mc_kms_word_ph": {
+    "message": "přidej slovo nebo frázi a stiskni enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "zatím žádná zakázaná slova"
+  },
+  "mc_kms_word_added": {
+    "message": "zakázáno: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "povoleno: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "už je zakázáno: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "odebrat"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 vypnuto · 3 nejpřísnější · spam a nesmysly: 0 vypnuto, 1 zapnuto"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filtr uložen"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "sexuální obsah"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "nenávistné projevy"
+  },
+  "mc_kms_cat_violence": {
+    "message": "násilí"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "drogy"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "zbraně"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "nesmysly"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "přihlas se ke kicku v kartě prohlížeče a zkus to znovu"
+  },
+  "mc_kms_no_channel": {
+    "message": "nejdřív otevři kartu s kanálem na kicku"
+  },
+  "mc_kms_err": {
+    "message": "kick neodpovídá — zkus to znovu"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

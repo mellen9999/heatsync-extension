@@ -6918,5 +6918,101 @@
   },
   "mc_moment_permalink": {
     "message": "permalink — klik otwiera, shift-klik wkleja do czatu"
+  },
+  "mc_kms_title": {
+    "message": "narzędzia moderatora kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "zablokowane słowa"
+  },
+  "mc_kms_cell_filter": {
+    "message": "filtr wiadomości"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k wybierz słowo · d usuń · / dodaj słowo"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k wybierz wiersz · 0-3 ustawia poziom"
+  },
+  "mc_kms_word_ph": {
+    "message": "wpisz słowo lub frazę i naciśnij enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "brak zablokowanych słów"
+  },
+  "mc_kms_word_added": {
+    "message": "zablokowano: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "odblokowano: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "już zablokowane: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "usuń"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 wyłączone · 3 najostrzej · spam i bełkot: 0 wyłączone, 1 włączone"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filtr zapisany"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "treści seksualne"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "mowa nienawiści"
+  },
+  "mc_kms_cat_violence": {
+    "message": "przemoc"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "narkotyki"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "broń"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "bełkot"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "zaloguj się do kicka w karcie przeglądarki i spróbuj ponownie"
+  },
+  "mc_kms_no_channel": {
+    "message": "najpierw otwórz kartę kanału kick"
+  },
+  "mc_kms_err": {
+    "message": "nie udało się połączyć z kickiem — spróbuj ponownie"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

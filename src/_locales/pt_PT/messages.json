@@ -6918,5 +6918,101 @@
   },
   "mc_moment_permalink": {
     "message": "ligação permanente — clica para abrir, shift+clique para colar no chat"
+  },
+  "mc_kms_title": {
+    "message": "ferramentas de mod do kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "palavras bloqueadas"
+  },
+  "mc_kms_cell_filter": {
+    "message": "filtro de mensagens"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k escolher palavra · d remover · / adicionar palavra"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k escolher linha · 0-3 define o nível"
+  },
+  "mc_kms_word_ph": {
+    "message": "escreve uma palavra ou frase e prime enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "ainda não há palavras bloqueadas"
+  },
+  "mc_kms_word_added": {
+    "message": "bloqueada: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "desbloqueada: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "já bloqueada: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "remover"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 desligado · 3 mais rígido · spam e texto sem sentido: 0 desligado, 1 ligado"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filtro guardado"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "conteúdo sexual"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "discurso de ódio"
+  },
+  "mc_kms_cat_violence": {
+    "message": "violência"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "drogas"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "armas"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "texto sem sentido"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "inicia sessão no kick num separador do navegador e tenta de novo"
+  },
+  "mc_kms_no_channel": {
+    "message": "abre primeiro um separador de canal do kick"
+  },
+  "mc_kms_err": {
+    "message": "não foi possível contactar o kick — tenta de novo"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

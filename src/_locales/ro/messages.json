@@ -6918,5 +6918,101 @@
   },
   "mc_moment_permalink": {
     "message": "permalink — click pentru a deschide, shift+click pentru a lipi în chat"
+  },
+  "mc_kms_title": {
+    "message": "unelte de moderare kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "cuvinte blocate"
+  },
+  "mc_kms_cell_filter": {
+    "message": "filtru de mesaje"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k alege cuvânt · d elimină · / adaugă cuvânt"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k alege rând · 0-3 setează nivelul"
+  },
+  "mc_kms_word_ph": {
+    "message": "adaugă un cuvânt sau o frază, apoi enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "încă nu există cuvinte blocate"
+  },
+  "mc_kms_word_added": {
+    "message": "blocat: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "deblocat: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "deja blocat: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "elimină"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 oprit · 3 cel mai strict · spam și text fără sens: 0 oprit, 1 pornit"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filtru salvat"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "conținut sexual"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "discurs al urii"
+  },
+  "mc_kms_cat_violence": {
+    "message": "violență"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "droguri"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "arme"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "text fără sens"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "conectează-te la kick într-o filă a browserului și încearcă din nou"
+  },
+  "mc_kms_no_channel": {
+    "message": "deschide mai întâi o filă cu un canal kick"
+  },
+  "mc_kms_err": {
+    "message": "nu s-a putut contacta kick — încearcă din nou"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

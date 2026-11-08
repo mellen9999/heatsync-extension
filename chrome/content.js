@@ -3742,6 +3742,15 @@
     chrome.runtime.onMessage.addListener(_onMessageKickRelay)
   }
 
+  // A refused kick mod call in words a mod can act on; '' for anything else.
+  function explainKickMod(status) {
+    if (status === 401 || status === 403) return "you're not a mod on kick here (or your kick session expired)"
+    if (status === 404) return 'user or message not found on kick'
+    if (status === 429) return 'kick rate limited — wait a moment'
+    if (status >= 500) return `kick server error (${status})`
+    return ''
+  }
+
   // Kick mod relay — ban / timeout / unban / delete-message.
   // Runs on kick.com tab so X-XSRF-TOKEN + session cookies are same-origin.
   function _onMessageKickModRelay(message, _sender, sendResponse) {
@@ -3757,6 +3766,51 @@
     let url, method, body
     const slug = encodeURIComponent(String(message.slug || ''))
     const username = String(message.username || '').replace(/^@/, '')
+    if (message.web) {
+      // web.kick.com moderation (banned words, message-moderation levels,
+      // chatters). The background built this from a whitelist; the relay still
+      // refuses anything that is not that host + route. Kick's own client sends
+      // the bearer only (no xsrf, no cookies) to web.kick.com.
+      const w = message.web
+      if (
+        !message.sessionToken ||
+        (w.method !== 'GET' && w.method !== 'PUT') ||
+        !/^https:\/\/web\.kick\.com\/api\/v1\/channels\/\d+\/chat\/(?:banned-words|moderation-rules|active-chatters)$/.test(
+          w.url,
+        )
+      ) {
+        sendResponse({ ok: false, error: message.sessionToken ? 'unknown action' : 'kick_not_logged_in' })
+        return true
+      }
+      const headers = {
+        Accept: 'application/json',
+        Authorization: baseHeaders.Authorization,
+        'x-app-platform': 'web',
+      }
+      if (w.body) headers['Content-Type'] = 'application/json'
+      fetch(w.url, {
+        method: w.method,
+        headers,
+        body: w.body ? JSON.stringify(w.body) : undefined,
+        signal: AbortSignal.timeout(8000),
+      })
+        .then(async (r) => {
+          if (r.ok) {
+            const data = await r.json().catch(() => null)
+            sendResponse({ ok: true, data: data?.data ?? data ?? {} })
+          } else {
+            sendResponse({
+              ok: false,
+              status: r.status,
+              error: explainKickMod(r.status) || `kick refused it (${r.status})`,
+            })
+          }
+        })
+        .catch((e) =>
+          sendResponse({ ok: false, error: e.name === 'TimeoutError' ? 'kick request timed out' : e.message }),
+        )
+      return true
+    }
     if (message.action === 'ban') {
       url = `https://kick.com/api/v2/channels/${slug}/bans`
       method = 'POST'
@@ -3796,13 +3850,7 @@
     if (body) init.body = JSON.stringify(body)
     // Translate the raw HTTP status into something a moderator can act on, instead
     // of surfacing "403: {json blob}" in the toast.
-    const explain = (status, raw) => {
-      if (status === 401 || status === 403) return "you're not a mod on kick here (or your kick session expired)"
-      if (status === 404) return 'user or message not found on kick'
-      if (status === 429) return 'kick rate limited — wait a moment'
-      if (status >= 500) return `kick server error (${status})`
-      return `${status}: ${String(raw || '').slice(0, 160)}`
-    }
+    const explain = (status, raw) => explainKickMod(status) || `${status}: ${String(raw || '').slice(0, 160)}`
     fetch(url, init)
       .then((r) => {
         if (r.ok || r.status === 204) {

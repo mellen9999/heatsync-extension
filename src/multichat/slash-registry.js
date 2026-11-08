@@ -274,6 +274,14 @@ export const SLASH_REGISTRY = [
     does: 'twitch',
   },
   {
+    cmd: 'kickmod',
+    args: '',
+    desc: 'open kick mod tools: blocked words, message filter, chatters',
+    on: 'ext',
+    needs: 'mod',
+    does: 'kick',
+  },
+  {
     cmd: 'shield',
     args: '[on|off]',
     desc: 'turn shield mode on or off',
@@ -486,6 +494,7 @@ export const SLASH_SECTIONS = [
       'unmod',
       'blocked',
       'modtools',
+      'kickmod',
       'shield',
       'warn',
       'shoutout',

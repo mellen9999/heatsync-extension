@@ -842,6 +842,8 @@ const MULTICHAT_MODULES = [
   'blocked-terms.js',
   'mod-suite-calls.js',
   'mod-suite.js',
+  'kick-mod-calls.js',
+  'kick-mod-suite.js',
   'pin-bar.js',
   'tour.js',
   'hover-reply.js',

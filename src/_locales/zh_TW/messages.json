@@ -6918,5 +6918,101 @@
   },
   "mc_moment_permalink": {
     "message": "永久連結 — 點擊開啟，shift 點擊貼到聊天室"
+  },
+  "mc_kms_title": {
+    "message": "kick 管理工具"
+  },
+  "mc_kms_cell_words": {
+    "message": "封鎖詞"
+  },
+  "mc_kms_cell_filter": {
+    "message": "訊息過濾"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k 選詞 · d 移除 · / 新增詞"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k 選列 · 0-3 設定等級"
+  },
+  "mc_kms_word_ph": {
+    "message": "輸入詞或短語，然後按 enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "還沒有封鎖詞"
+  },
+  "mc_kms_word_added": {
+    "message": "已封鎖：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "已解除封鎖：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "已經封鎖：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "移除"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 關閉 · 3 最嚴格 · 垃圾訊息和亂碼：0 關閉，1 開啟"
+  },
+  "mc_kms_filter_saved": {
+    "message": "過濾設定已儲存"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "性內容"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "仇恨言論"
+  },
+  "mc_kms_cat_violence": {
+    "message": "暴力"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "毒品"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "武器"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "亂碼"
+  },
+  "mc_kms_cat_spam": {
+    "message": "垃圾訊息"
+  },
+  "mc_kms_signin": {
+    "message": "請先在瀏覽器分頁登入 kick，然後重試"
+  },
+  "mc_kms_no_channel": {
+    "message": "請先開啟一個 kick 頻道分頁"
+  },
+  "mc_kms_err": {
+    "message": "無法連線 kick — 請重試"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

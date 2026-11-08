@@ -6918,5 +6918,101 @@
   },
   "mc_moment_permalink": {
     "message": "permalink — clic per aprire, maiusc+clic per incollare in chat"
+  },
+  "mc_kms_title": {
+    "message": "strumenti mod di kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "parole bloccate"
+  },
+  "mc_kms_cell_filter": {
+    "message": "filtro messaggi"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k scegli parola · d rimuovi · / aggiungi parola"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k scegli riga · 0-3 imposta il livello"
+  },
+  "mc_kms_word_ph": {
+    "message": "scrivi una parola o frase e premi invio"
+  },
+  "mc_kms_words_empty": {
+    "message": "ancora nessuna parola bloccata"
+  },
+  "mc_kms_word_added": {
+    "message": "bloccata: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "sbloccata: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "già bloccata: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "rimuovi"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 spento · 3 più severo · spam e testo senza senso: 0 spento, 1 acceso"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filtro salvato"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "contenuti sessuali"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "discorsi d'odio"
+  },
+  "mc_kms_cat_violence": {
+    "message": "violenza"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "droghe"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "armi"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "testo senza senso"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "accedi a kick in una scheda del browser e riprova"
+  },
+  "mc_kms_no_channel": {
+    "message": "apri prima una scheda di un canale kick"
+  },
+  "mc_kms_err": {
+    "message": "impossibile raggiungere kick — riprova"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

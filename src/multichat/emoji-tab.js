@@ -66,7 +66,7 @@ function hsRenderEmoji() {
   for (const e of rows) {
     const b = document.createElement('button')
     b.type = 'button'
-    b.className = 'hs-mc-emoji'
+    b.className = 'hs-mc-emoji-tile'
     b.textContent = e.emoji
     b.title = `:${e.name}:`
     b.dataset.emoji = e.emoji
@@ -100,7 +100,7 @@ function hsWireEmojiTab(picker) {
     (e) => {
       if (e.key !== 'Enter') return
       e.preventDefault()
-      hsPickEmoji(grid.querySelector('.hs-mc-emoji')?.dataset.emoji)
+      hsPickEmoji(grid.querySelector('.hs-mc-emoji-tile')?.dataset.emoji)
     },
     'mc-emoji-enter',
   )
@@ -108,14 +108,14 @@ function hsWireEmojiTab(picker) {
   cleanup.addEventListener(
     grid,
     'mousedown',
-    (e) => e.target.closest('.hs-mc-emoji') && e.preventDefault(),
+    (e) => e.target.closest('.hs-mc-emoji-tile') && e.preventDefault(),
     'mc-emoji-nofocus',
   )
   cleanup.addEventListener(
     grid,
     'click',
     (e) => {
-      const b = e.target.closest('.hs-mc-emoji')
+      const b = e.target.closest('.hs-mc-emoji-tile')
       if (!b) return
       e.stopPropagation()
       hsPickEmoji(b.dataset.emoji)

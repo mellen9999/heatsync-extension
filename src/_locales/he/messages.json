@@ -6918,5 +6918,101 @@
   },
   "mc_moment_permalink": {
     "message": "קישור קבוע — לחץ לפתיחה, shift+לחיצה להדבקה בצ'אט"
+  },
+  "mc_kms_title": {
+    "message": "כלי מודרציה של kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "מילים חסומות"
+  },
+  "mc_kms_cell_filter": {
+    "message": "מסנן הודעות"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k בחירת מילה · d הסרה · / הוספת מילה"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k בחירת שורה · 0-3 קובע את הרמה"
+  },
+  "mc_kms_word_ph": {
+    "message": "הוסיפו מילה או ביטוי ולחצו enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "אין עדיין מילים חסומות"
+  },
+  "mc_kms_word_added": {
+    "message": "נחסם: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "החסימה הוסרה: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "כבר חסום: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "הסרה"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 כבוי · 3 מחמיר ביותר · ספאם וג'יבריש: 0 כבוי, 1 פועל"
+  },
+  "mc_kms_filter_saved": {
+    "message": "המסנן נשמר"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "תוכן מיני"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "דברי שנאה"
+  },
+  "mc_kms_cat_violence": {
+    "message": "אלימות"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "סמים"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "נשק"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "ג'יבריש"
+  },
+  "mc_kms_cat_spam": {
+    "message": "ספאם"
+  },
+  "mc_kms_signin": {
+    "message": "התחברו ל-kick בלשונית דפדפן ונסו שוב"
+  },
+  "mc_kms_no_channel": {
+    "message": "פתחו קודם לשונית של ערוץ kick"
+  },
+  "mc_kms_err": {
+    "message": "לא ניתן להגיע ל-kick — נסו שוב"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

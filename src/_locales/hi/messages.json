@@ -6918,5 +6918,101 @@
   },
   "mc_moment_permalink": {
     "message": "permalink — खोलने के लिए क्लिक करो, चैट में पेस्ट करने के लिए shift-क्लिक"
+  },
+  "mc_kms_title": {
+    "message": "kick मॉड टूल"
+  },
+  "mc_kms_cell_words": {
+    "message": "रोके गए शब्द"
+  },
+  "mc_kms_cell_filter": {
+    "message": "संदेश फ़िल्टर"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k शब्द चुनें · d हटाएँ · / शब्द जोड़ें"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k पंक्ति चुनें · 0-3 से स्तर तय करें"
+  },
+  "mc_kms_word_ph": {
+    "message": "कोई शब्द या वाक्यांश लिखें, फिर enter दबाएँ"
+  },
+  "mc_kms_words_empty": {
+    "message": "अभी कोई रोका हुआ शब्द नहीं"
+  },
+  "mc_kms_word_added": {
+    "message": "रोका गया: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "रोक हटाई गई: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "पहले से रोका हुआ: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "हटाएँ"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 बंद · 3 सबसे सख़्त · स्पैम और बेतुका लिखा: 0 बंद, 1 चालू"
+  },
+  "mc_kms_filter_saved": {
+    "message": "फ़िल्टर सहेजा गया"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "यौन सामग्री"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "नफ़रत भरी बातें"
+  },
+  "mc_kms_cat_violence": {
+    "message": "हिंसा"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "नशीले पदार्थ"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "हथियार"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "बेतुका लिखा"
+  },
+  "mc_kms_cat_spam": {
+    "message": "स्पैम"
+  },
+  "mc_kms_signin": {
+    "message": "ब्राउज़र टैब में kick पर लॉग इन करें, फिर दोबारा कोशिश करें"
+  },
+  "mc_kms_no_channel": {
+    "message": "पहले kick चैनल का टैब खोलें"
+  },
+  "mc_kms_err": {
+    "message": "kick तक नहीं पहुँच सका — फिर कोशिश करें"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

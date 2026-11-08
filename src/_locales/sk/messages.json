@@ -6918,5 +6918,101 @@
   },
   "mc_moment_permalink": {
     "message": "trvalý odkaz — klik otvorí, shift-klik vloží do chatu"
+  },
+  "mc_kms_title": {
+    "message": "moderátorské nástroje kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "zakázané slová"
+  },
+  "mc_kms_cell_filter": {
+    "message": "filter správ"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k vybrať slovo · d odstrániť · / pridať slovo"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k vybrať riadok · 0-3 nastaví úroveň"
+  },
+  "mc_kms_word_ph": {
+    "message": "pridaj slovo alebo frázu a stlač enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "zatiaľ žiadne zakázané slová"
+  },
+  "mc_kms_word_added": {
+    "message": "zakázané: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "povolené: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "už je zakázané: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "odstrániť"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 vypnuté · 3 najprísnejšie · spam a nezmysly: 0 vypnuté, 1 zapnuté"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filter uložený"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "sexuálny obsah"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "nenávistné prejavy"
+  },
+  "mc_kms_cat_violence": {
+    "message": "násilie"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "drogy"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "zbrane"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "nezmysly"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "prihlás sa do kicku v karte prehliadača a skús to znova"
+  },
+  "mc_kms_no_channel": {
+    "message": "najprv otvor kartu s kanálom na kicku"
+  },
+  "mc_kms_err": {
+    "message": "kick neodpovedá — skús to znova"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

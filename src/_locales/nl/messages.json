@@ -7436,5 +7436,112 @@
   },
   "mc_send_unknown": {
     "message": "onbekend"
+  },
+  "mc_modnotice_ban": {
+    "message": "$ACTOR$ heeft $TARGET$ verbannen",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_ban_anon": {
+    "message": "$TARGET$ is permanent verbannen",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_timeout": {
+    "message": "$ACTOR$ heeft $TARGET$ $SEC$s getimeout",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "sec": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modnotice_timeout_anon": {
+    "message": "$TARGET$ $SEC$s getimeout",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_unban": {
+    "message": "$ACTOR$ heeft $TARGET$ geunbanned",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_unban_anon": {
+    "message": "$TARGET$ is niet langer verbannen",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_from": {
+    "message": "$ACTOR$ heeft een bericht van $TARGET$ verwijderd",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_delete": {
+    "message": "$ACTOR$ heeft een bericht verwijderd",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_anon_target": {
+    "message": "bericht van $TARGET$ verwijderd",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_anon": {
+    "message": "bericht verwijderd"
+  },
+  "mc_tabmode_hint": {
+    "message": "$POS$/$TOTAL$ $LABEL$ · jk verplaats · enter open · JK herorden · d sluit · a voeg toe · esc",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "label": {
+        "content": "$3"
+      }
+    }
   }
 }

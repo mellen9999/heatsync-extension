@@ -7436,5 +7436,112 @@
   },
   "mc_send_unknown": {
     "message": "nedá sa zistiť"
+  },
+  "mc_modnotice_ban": {
+    "message": "$ACTOR$ zabanoval $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_ban_anon": {
+    "message": "$TARGET$ bol natrvalo zabanovaný",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_timeout": {
+    "message": "$ACTOR$ umlčal $TARGET$ na $SEC$s",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "sec": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modnotice_timeout_anon": {
+    "message": "$TARGET$ umlčaný na $SEC$s",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_unban": {
+    "message": "$ACTOR$ odbanoval $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_unban_anon": {
+    "message": "$TARGET$ už nie je zabanovaný",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_from": {
+    "message": "$ACTOR$ vymazal správu od $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_delete": {
+    "message": "$ACTOR$ vymazal správu",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_anon_target": {
+    "message": "správa od $TARGET$ vymazaná",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_anon": {
+    "message": "správa vymazaná"
+  },
+  "mc_tabmode_hint": {
+    "message": "$POS$/$TOTAL$ $LABEL$ · jk pohyb · enter otvoriť · JK poradie · d zavrieť · a pridať · esc",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "label": {
+        "content": "$3"
+      }
+    }
   }
 }

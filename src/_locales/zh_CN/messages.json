@@ -7436,5 +7436,112 @@
   },
   "mc_send_unknown": {
     "message": "不确定"
+  },
+  "mc_modnotice_ban": {
+    "message": "$ACTOR$ 封禁了 $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_ban_anon": {
+    "message": "$TARGET$ 已被永久封禁",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_timeout": {
+    "message": "$ACTOR$ 将 $TARGET$ 禁言 $SEC$ 秒",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "sec": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modnotice_timeout_anon": {
+    "message": "$TARGET$ 被禁言 $SEC$ 秒",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_unban": {
+    "message": "$ACTOR$ 解封了 $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_unban_anon": {
+    "message": "$TARGET$ 已不再被封禁",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_from": {
+    "message": "$ACTOR$ 删除了 $TARGET$ 的一条消息",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_delete": {
+    "message": "$ACTOR$ 删除了一条消息",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_anon_target": {
+    "message": "$TARGET$ 的消息已删除",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_anon": {
+    "message": "消息已删除"
+  },
+  "mc_tabmode_hint": {
+    "message": "$POS$/$TOTAL$ $LABEL$ · jk 移动 · enter 打开 · JK 排序 · d 关闭 · a 添加 · esc",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "label": {
+        "content": "$3"
+      }
+    }
   }
 }

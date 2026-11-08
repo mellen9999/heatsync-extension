@@ -7436,5 +7436,112 @@
   },
   "mc_send_unknown": {
     "message": "tidak tahu"
+  },
+  "mc_modnotice_ban": {
+    "message": "$ACTOR$ memblokir $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_ban_anon": {
+    "message": "$TARGET$ diblokir permanen",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_timeout": {
+    "message": "$ACTOR$ membisukan $TARGET$ selama $SEC$d",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "sec": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modnotice_timeout_anon": {
+    "message": "$TARGET$ dibisukan selama $SEC$d",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_unban": {
+    "message": "$ACTOR$ membuka blokir $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_unban_anon": {
+    "message": "$TARGET$ tidak lagi diblokir",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_from": {
+    "message": "$ACTOR$ menghapus pesan dari $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_delete": {
+    "message": "$ACTOR$ menghapus sebuah pesan",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_anon_target": {
+    "message": "pesan $TARGET$ dihapus",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_anon": {
+    "message": "pesan dihapus"
+  },
+  "mc_tabmode_hint": {
+    "message": "$POS$/$TOTAL$ $LABEL$ · jk pindah · enter buka · JK urutkan · d tutup · a tambah · esc",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "label": {
+        "content": "$3"
+      }
+    }
   }
 }

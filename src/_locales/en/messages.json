@@ -7453,5 +7453,112 @@
   },
   "mc_send_unknown": {
     "message": "can't tell"
+  },
+  "mc_modnotice_ban": {
+    "message": "$ACTOR$ banned $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_ban_anon": {
+    "message": "$TARGET$ was permanently banned",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_timeout": {
+    "message": "$ACTOR$ timed out $TARGET$ for $SEC$s",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      },
+      "sec": {
+        "content": "$3"
+      }
+    }
+  },
+  "mc_modnotice_timeout_anon": {
+    "message": "$TARGET$ timed out for $SEC$s",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "sec": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_unban": {
+    "message": "$ACTOR$ unbanned $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_unban_anon": {
+    "message": "$TARGET$ is no longer banned",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_from": {
+    "message": "$ACTOR$ deleted a message from $TARGET$",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      },
+      "target": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modnotice_delete": {
+    "message": "$ACTOR$ deleted a message",
+    "placeholders": {
+      "actor": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_anon_target": {
+    "message": "$TARGET$'s message deleted",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modnotice_delete_anon": {
+    "message": "message deleted"
+  },
+  "mc_tabmode_hint": {
+    "message": "$POS$/$TOTAL$ $LABEL$ · jk move · enter open · JK reorder · d close · a add · esc",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "label": {
+        "content": "$3"
+      }
+    }
   }
 }

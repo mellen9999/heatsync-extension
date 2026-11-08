@@ -2316,5 +2316,8 @@ document.addEventListener(
     const ok = isDigit ? jumpToTabIndex(Number(e.code.slice(5)) - 1) : cycleTab(e.code === 'BracketRight')
     if (ok) e.preventDefault()
   },
-  { signal: mcSignal },
+  // CAPTURE, because the composer's own keydown stops propagation of every key
+  // (handleInputKeydown): a bubbling listener never hears alt+anything typed
+  // from the composer, which is exactly where these are pressed from.
+  { signal: mcSignal, capture: true },
 )

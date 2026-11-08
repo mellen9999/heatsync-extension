@@ -120,6 +120,10 @@ export async function rowKeysCheck() {
       await p.waitForTimeout(120)
     }
 
+    // the socket must have joined the channel before anything is pushed down it
+    await until(p, async () => irc.frames.some((f: string) => /JOIN #probechan/i.test(f)), 25_000)
+    await p.waitForTimeout(500)
+
     // ── 1. row mode ─────────────────────────────────────────────────────────
     say('Alice', 'first line')
     say('Bob', 'second line')

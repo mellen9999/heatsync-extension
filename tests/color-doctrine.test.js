@@ -113,7 +113,7 @@ const EXEMPT_HEX = new Map([
 /** Built output and generated data — not source. */
 const SKIP = (rel) =>
   /(^|\/)(_locales|node_modules|dist|fonts)\//.test(rel) ||
-  /(^|\/)(multichat-core|multichat-twitch|emoji-data(\.iso)?)\.js$/.test(rel) ||
+  /(^|\/)(multichat-core|multichat-twitch|emoji-data(\.iso|\.main)?)\.js$/.test(rel) ||
   /\.(png|webp|json)$/.test(rel)
 
 function walk(dir, out = []) {

@@ -137,7 +137,7 @@
         "https://m.twitch.tv/*"
       ],
       "js": [
-        "emoji-data.js",
+        "emoji-data.main.js",
         "autocomplete-hook.js",
         "twitch-chat-intercept.js",
         "twitch-callout-token.js"

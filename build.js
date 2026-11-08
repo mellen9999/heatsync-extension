@@ -21,6 +21,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { transformSync } from 'esbuild'
 import { computeBuildStamp } from './scripts/lib/build-stamp.mjs'
+import { emojiPairsSource } from './scripts/lib/emoji-pairs.mjs'
 
 // Build stamp — swapped into bootstrap.js's '__HS_BUILD_STAMP__' literal so
 // every hs_diag_ring boot event names the code it ran. Needed because a tab
@@ -664,7 +665,6 @@ const COPY_FILES = [
   'yt-data-bridge.js',
   'platform-detector.js',
   'shared-utils.js',
-  'emoji-data.js',
   'welcome.html',
   'welcome.js',
   'injected-message.css',
@@ -1199,6 +1199,14 @@ function build(browser) {
   // un-loadable.
   if (browser === 'chrome') cpSync(join(chromeDir, 'emoji-data.js'), join(chromeDir, 'emoji-data.iso.js'))
 
+  // emoji-data.main.js: the PAGE-world copy (twitch only), cut to [name, emoji] —
+  // all autocomplete-hook.js reads. It used to load emoji-data.js whole, so every
+  // twitch page parsed the 118KB dataset twice. Plain emoji-data.js is not shipped
+  // at all now: it is the source both copies are made from. Same dev-load rule as above.
+  const emojiMain = emojiPairsSource(readFileSync(join(chromeDir, 'emoji-data.js'), 'utf8'))
+  writeFileSync(join(outDir, 'emoji-data.main.js'), emojiMain)
+  if (browser === 'chrome') writeFileSync(join(chromeDir, 'emoji-data.main.js'), emojiMain)
+
   // Copy assets
   for (const file of ASSETS) {
     const srcPath = join(chromeDir, file)
@@ -1357,9 +1365,15 @@ function minifyDistFile(outDir, file, extraDefines) {
 }
 
 function minifyDist(outDir) {
-  // emoji-data.iso.js is copied from emoji-data.js before this runs; minify it
-  // too so the two stay byte-identical (and both ASCII, see the guard below)
-  const targets = [...CONTENT_SCRIPTS, ...COPY_FILES.filter((f) => f.endsWith('.js')), 'emoji-data.iso.js']
+  // the two emoji files are written from emoji-data.js before this runs; they
+  // are the only emoji files shipped, so minify them too (and both stay ASCII,
+  // see the guard below)
+  const targets = [
+    ...CONTENT_SCRIPTS,
+    ...COPY_FILES.filter((f) => f.endsWith('.js')),
+    'emoji-data.iso.js',
+    'emoji-data.main.js',
+  ]
   let bytesBefore = 0,
     bytesAfter = 0
   for (const f of targets) {

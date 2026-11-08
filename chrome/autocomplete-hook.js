@@ -253,15 +253,12 @@
   })
 
   // Emoji shortcodes for :name: autocomplete (Discord/Slack style)
-  // Use comprehensive emoji dataset from emoji-data.js (loaded before this script)
+  // [name, emoji] pairs from emoji-data.main.js (loaded before this script) — this page-world
+  // copy carries only what is read here; the full dataset lives in the isolated world.
   // Build name→emoji map for quick lookup
+  const EMOJI_ENTRIES = typeof EMOJI_PAIRS !== 'undefined' ? EMOJI_PAIRS : []
   const EMOJI_MAP = {}
-  if (typeof EMOJI_DATA !== 'undefined') {
-    for (const entry of EMOJI_DATA) {
-      EMOJI_MAP[entry.name] = entry.emoji
-    }
-  }
-  const EMOJI_ENTRIES = typeof EMOJI_DATA !== 'undefined' ? EMOJI_DATA.map((e) => [e.name, e.emoji]) : []
+  for (const [name, emoji] of EMOJI_ENTRIES) EMOJI_MAP[name] = emoji
 
   // ========== Extension Settings ==========
   // Read settings from localStorage (synced with heatsync-button.js panel)

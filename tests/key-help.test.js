@@ -94,7 +94,7 @@ describe('nothing bound is undocumented', () => {
   // the alt-key handler in main-overlay.js, as the codes it reacts to
   const overlay = read('src', 'multichat', 'main-overlay.js')
   const start = overlay.indexOf('if (!e.altKey || e.ctrlKey || e.metaKey) return')
-  const handler = overlay.slice(start, overlay.indexOf('{ signal: mcSignal }', start))
+  const handler = overlay.slice(start, overlay.indexOf('{ signal: mcSignal, capture: true }', start))
   const codes = new Set([
     ...[...handler.matchAll(/e\.code === '(\w+)'/g)].map((m) => m[1]),
     ...[...handler.matchAll(/\/\^(Digit)\[1-9\]\$\//g)].map((m) => m[1]),
@@ -104,6 +104,12 @@ describe('nothing bound is undocumented', () => {
 
   test('the handler binds the keys we think it does (a new one fails here until it is listed)', () => {
     expect([...codes].sort()).toEqual(Object.keys(HELP_FOR).sort())
+  })
+
+  test('it listens in the CAPTURE phase: the composer stops propagation of every key, so a bubbling listener never hears alt+key typed there', () => {
+    expect(read('src', 'multichat', 'input.js')).toContain('e.stopPropagation()\n\n  // The whole body is wrapped')
+    expect(handler).toBeTruthy()
+    expect(overlay.slice(start, start + handler.length + 80)).toContain('{ signal: mcSignal, capture: true }')
   })
 
   test('every key it binds is in the help', () => {

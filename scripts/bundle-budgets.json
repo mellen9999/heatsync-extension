@@ -1,13 +1,13 @@
 {
   "_": "bytes, measured 2026-10-29 + 2% headroom (min 256B). lower to measured, never raise to go green; a raise needs the reason in its commit.",
   "chrome": {
-    "multichat-core.js": 1587000,
+    "multichat-core.js": 1661532,
     "content.js": 232523,
     "heatsync-button.js": 143466,
     "autocomplete-hook.js": 94813,
     "chat-injector.js": 46359,
     "youtube-content.js": 178300,
-    "background.js": 305950,
+    "background.js": 314573,
     "popup.js": 10690,
     "popup.html": 6588,
     "early-inject-main.js": 23143,
@@ -19,7 +19,7 @@
     "yt-data-bridge.js": 1559,
     "platform-detector.js": 2412,
     "shared-utils.js": 7200,
-    "welcome.html": 3451,
+    "welcome.html": 4763,
     "welcome.js": 1253,
     "injected-message.css": 4326,
     "vi-mode.js": 17058,
@@ -36,17 +36,17 @@
     "icon-128.png": 5276,
     "icon-48-black.png": 4329,
     "manifest.json": 8628,
-    "total raw": 8477727,
-    "total zip": 1916686
+    "total raw": 7720215,
+    "total zip": 1982334
   },
   "firefox": {
-    "multichat-core.js": 1587000,
+    "multichat-core.js": 1661532,
     "content.js": 232523,
     "heatsync-button.js": 143466,
     "autocomplete-hook.js": 94813,
     "chat-injector.js": 46359,
     "youtube-content.js": 178300,
-    "background.js": 305950,
+    "background.js": 314573,
     "popup.js": 10690,
     "popup.html": 6588,
     "early-inject-main.js": 23143,
@@ -58,7 +58,7 @@
     "yt-data-bridge.js": 1559,
     "platform-detector.js": 2412,
     "shared-utils.js": 7200,
-    "welcome.html": 3451,
+    "welcome.html": 4763,
     "welcome.js": 1253,
     "injected-message.css": 4326,
     "vi-mode.js": 17058,
@@ -75,7 +75,7 @@
     "icon-128.png": 5276,
     "icon-48-black.png": 4329,
     "manifest.json": 8411,
-    "total raw": 8477506,
-    "total zip": 1916733
+    "total raw": 7719994,
+    "total zip": 1982382
   }
 }

@@ -35,7 +35,6 @@ describe('send-status: the checklist', () => {
       'window',
       't',
       'escapeHtml',
-      'getTwitchAuthTokenAsync',
       'safeSendMessage',
       '_selfYtChip',
       'cleanup',
@@ -51,9 +50,9 @@ describe('send-status: the checklist', () => {
       },
       (k) => k,
       escapeHtml,
-      async () => reads.twitch(),
       async (msg) => {
         asked.push(msg.type)
+        if (msg.type === 'twitch_auth_status') return reads.twitch()
         if (msg.type === 'kick_session_status') return reads.kick()
         if (msg.type === 'yt_session_status') return reads.yt()
         throw new Error(`unexpected message ${msg.type}`)
@@ -79,7 +78,7 @@ describe('send-status: the checklist', () => {
     doc = win.document
     doc.body.innerHTML = '<div id="hs-mc-messages"></div>'
     reads = {
-      twitch: () => ({ token: 'tok', username: 'mellen' }),
+      twitch: () => ({ loggedIn: true, username: 'mellen' }),
       kick: () => ({ loggedIn: true, username: 'mellenkick' }),
       yt: () => ({ loggedIn: true }),
       chip: '',
@@ -120,7 +119,7 @@ describe('send-status: the checklist', () => {
   })
 
   test('a twitch with no token is a ✗ too', async () => {
-    reads.twitch = () => ({ token: null, username: null })
+    reads.twitch = () => ({ loggedIn: false, username: null })
     const m = load()
     pane().innerHTML = m.sendStatusGroupHtml()
     m.sendStatusFill(pane())
@@ -223,7 +222,7 @@ describe('send-status: the checklist', () => {
 
   describe('signing in', () => {
     test('each button opens that site’s own sign-in page in a new tab, with no opener', async () => {
-      reads.twitch = () => ({ token: null })
+      reads.twitch = () => ({ loggedIn: false })
       reads.kick = () => ({ loggedIn: false })
       reads.yt = () => ({ loggedIn: false })
       const m = load()

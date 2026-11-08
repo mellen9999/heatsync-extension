@@ -3,7 +3,7 @@
 // Sending to twitch, kick or youtube needs a login on THAT site (heatsync never holds it). Nothing told the
 // viewer which of the three were done, so "i typed and kick never got it" had no visible cause. This reads
 // what the extension already reads — no new permission, no network call:
-//   twitch   the auth-token cookie                          (getTwitchAuthTokenAsync)
+//   twitch   the background's login check, a yes/no + name  (twitch_auth_status)
 //   kick     the background's session check                 (kick_session_status)
 //   youtube  the name chip in youtube's chat frame when a youtube tab is up, else the background's
 //            check of youtube's login cookies                (yt_session_status)
@@ -40,9 +40,10 @@ function sendStatusProbe() {
   const bool = (r) => (typeof r?.loggedIn === 'boolean' ? r.loggedIn : null)
   return Promise.all([
     guard(async () => {
-      const { token, username } = await getTwitchAuthTokenAsync()
-      const name = username || (typeof currentUsername === 'string' ? currentUsername : '') || ''
-      return { in: !!token, name: token ? name : '' }
+      const r = await safeSendMessage({ type: 'twitch_auth_status' })
+      const signedIn = bool(r)
+      const name = r?.username || (typeof currentUsername === 'string' ? currentUsername : '') || ''
+      return { in: signedIn, name: signedIn ? name : '' }
     }),
     guard(async () => {
       const r = await safeSendMessage({ type: 'kick_session_status' })
@@ -65,11 +66,11 @@ function _sendStatusRow(site, s) {
   // not signed in AND not-sure both get the way in: a viewer who cannot tell still wants to look
   const go =
     state === 'out' || state === 'unknown'
-      ? `<button class="hs-mc-settings-btn hs-mc-send-go" data-action="send-login" data-plat="${site.id}">${escapeHtml(t('mc_sign_in'))}</button>`
+      ? `<button class="hs-mc-settings-btn hs-mc-send-go" data-action="send-login" data-plat="${escapeHtml(site.id)}">${escapeHtml(t('mc_sign_in'))}</button>`
       : ''
   return (
-    `<div class="hs-mc-setting-row hs-mc-setting-row-split hs-mc-send-row" data-send-row="${site.id}">` +
-    `<span class="hs-mc-setting-label">${site.id}</span>` +
+    `<div class="hs-mc-setting-row hs-mc-setting-row-split hs-mc-send-row" data-send-row="${escapeHtml(site.id)}">` +
+    `<span class="hs-mc-setting-label">${escapeHtml(site.id)}</span>` +
     `<span class="hs-mc-send-state ${state}">${glyph ? `${glyph} ` : ''}${escapeHtml(word)}${who}</span>${go}` +
     '</div>'
   )

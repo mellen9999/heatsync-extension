@@ -812,7 +812,6 @@ const MULTICHAT_MODULES = [
   'emote-rungs.js',
   'emotes.js',
   'emote-upload.js',
-  'picker-close.js',
   'gifs.js',
   'picker-nav.js',
   'card-l10n.js',

@@ -163,9 +163,26 @@ export async function tabCompleteCheck() {
     // slash decoy was first written as "opzorp" and landed between the channel
     // emote and the one you own. That is the ranking behaving correctly, and
     // it is exactly the kind of near-miss a fixture can hide.
-    await p.click('#hs-mc-input')
-    await p.keyboard.type('zorp')
-    await cycleStep(false, 'zorpChannel', 'the first Tab should land on the CHANNEL emote')
+    //
+    // The channel set arrives over the background wire after the composer
+    // mounts; on a loaded box the first Tab can beat it and (correctly) rank
+    // only own + global. So the first Tab is retried from a fresh "zorp" until
+    // the pool is complete, and the cycle it starts is the one walked below —
+    // re-typing the same prefix over a script-cleared input does not reliably
+    // restart the cycle, so a second fresh start would test the harness.
+    const poolReady = Date.now() + 20_000
+    let first = ''
+    for (;;) {
+      await resetInput()
+      await p.keyboard.type('zorp')
+      await p.keyboard.press('Tab')
+      await until(p, async () => (await readCycle()).value === 'zorpChannel', 1000)
+      first = (await readCycle()).value
+      if (first === 'zorpChannel' || Date.now() > poolReady) break
+    }
+    if (first !== 'zorpChannel') {
+      fail(`the first Tab should land on the CHANNEL emote: expected "zorpChannel", got ${JSON.stringify(first)}`)
+    }
     await cycleStep(false, 'zorpOwn', 'the second Tab should land on the emote you OWN')
     await cycleStep(false, 'zorpGlobal', 'the third Tab should land on the GLOBAL emote')
     ok('tab-complete ranks channel over own over global (zorpChannel → zorpOwn → zorpGlobal)')

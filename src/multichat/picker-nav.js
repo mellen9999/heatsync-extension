@@ -24,7 +24,6 @@ const HS_PICKER_TILE = '.hs-mc-picker-emote-wrap'
 const HS_PICKER_NAV_KEYS = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'])
 
 let _pickerCloseHandler = null
-let _pickerEscHandler = null
 let hsPickerSel = null
 let hsPickerOptSeq = 0
 let hsPickerGridObs = null
@@ -197,6 +196,16 @@ function hsPickerFocusSearch() {
   if (pickerTab === 'emotes' && input?.getClientRects().length) input.focus()
 }
 
+// ── close handlers ─────────────────────────────────────────────────────────
+// cleanup.addEventListener wraps a handler, so the handler itself is not what
+// sits on the document: taking it down means calling the remover
+// cleanup.addEventListener hands back. (removeEventListener(handler) matched
+// nothing, and a click + a keydown listener piled up on every open.)
+let _pickerEscHandler = null
+let _pickerCloseOff = null
+let _pickerEscOff = null
+let _pickerAttachTimer = null
+
 /** Give the composer back to a reader who was in the panel — if there still is one. */
 function hsFocusComposer() {
   if (!document.getElementById('hs-mc-inputbar')?.classList.contains('hs-hidden'))
@@ -205,10 +214,14 @@ function hsFocusComposer() {
 
 /** Take down the document-level close handlers. */
 function detachPickerCloseHandlers() {
-  if (_pickerCloseHandler) document.removeEventListener('click', _pickerCloseHandler)
-  if (_pickerEscHandler) document.removeEventListener('keydown', _pickerEscHandler)
+  if (_pickerAttachTimer != null) cleanup.clearTimeout(_pickerAttachTimer)
+  _pickerAttachTimer = null
+  if (_pickerCloseOff) _pickerCloseOff()
+  if (_pickerEscOff) _pickerEscOff()
   _pickerCloseHandler = null
   _pickerEscHandler = null
+  _pickerCloseOff = null
+  _pickerEscOff = null
 }
 
 /**
@@ -233,7 +246,8 @@ function closeEmotePickerPanel({ keepInput = false } = {}) {
 
 function attachPickerCloseHandler(picker) {
   detachPickerCloseHandlers()
-  cleanup.setTimeout(() => {
+  _pickerAttachTimer = cleanup.setTimeout(() => {
+    _pickerAttachTimer = null
     _pickerCloseHandler = (e) => {
       if (mcSignal?.aborted) return detachPickerCloseHandlers()
       if (!picker.contains(e.target) && !e.target.closest('#hs-mc-emote-btn')) closeEmotePickerPanel()
@@ -245,8 +259,8 @@ function attachPickerCloseHandler(picker) {
       closeEmotePickerPanel()
       if (inside) hsFocusComposer()
     }
-    cleanup.addEventListener(document, 'click', _pickerCloseHandler, 'mc-picker-close')
-    cleanup.addEventListener(document, 'keydown', _pickerEscHandler, 'mc-picker-esc')
+    _pickerCloseOff = cleanup.addEventListener(document, 'click', _pickerCloseHandler, 'mc-picker-close')
+    _pickerEscOff = cleanup.addEventListener(document, 'keydown', _pickerEscHandler, 'mc-picker-esc')
   }, 0)
 }
 

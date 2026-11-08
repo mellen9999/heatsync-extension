@@ -19,7 +19,7 @@ import { join } from 'node:path'
 
 const read = (f) => readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
 const BOOT = read('bootstrap.js')
-const CLOSE = read('picker-close.js')
+const NAV = read('picker-nav.js')
 
 function slice(src, from, to) {
   const a = src.indexOf(from)
@@ -35,7 +35,7 @@ const CLEANUP_ADD = slice(
   '  // For chrome.runtime.onMessage',
 )
 // the real attach/detach pair
-const PICKER = CLOSE.slice(CLOSE.indexOf('let _pickerEscHandler = null'))
+const PICKER = slice(NAV, '// ── close handlers', '// Exported for the tests')
 
 function harness() {
   const live = new Set() // every (event, fn) currently registered on the document

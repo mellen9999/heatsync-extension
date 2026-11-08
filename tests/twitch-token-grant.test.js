@@ -66,7 +66,7 @@ function load({ cookies = { 'auth-token': SECRET, name: 'Streamer' }, userInfo =
       if (message.type === '__none__') {
       ${GQL_BRANCH} }
     }
-    return { twitchSessionSenderOk, readTwitchSession, twitchHelix, branch, gqlBranch }`,
+    return { twitchGrantAllowed, twitchSessionSenderOk, readTwitchSession, twitchHelix, branch, gqlBranch }`,
   )
   return { ...make(browser, fetchWithTimeout), calls }
 }
@@ -169,6 +169,27 @@ describe('get_twitch_auth_token', () => {
       expect(h.calls.cookieReads).toBe(0)
     })
   }
+})
+
+describe('get_twitch_auth_token rate limit', () => {
+  test('7th grant in a minute to one tab is refused with no token and no cookie read', async () => {
+    const h = load()
+    for (let i = 0; i < 6; i++)
+      expect((await ask(h.branch, { type: 'get_twitch_auth_token' }, sender())).token).toBe(SECRET)
+    const reads = h.calls.cookieReads
+    const r = await ask(h.branch, { type: 'get_twitch_auth_token' }, sender())
+    expect(r).toEqual({ token: null, username: null, error: 'rate_limited' })
+    expect(h.calls.cookieReads).toBe(reads)
+  })
+
+  test('another tab is unaffected, and the window expires', () => {
+    const h = load()
+    const t0 = 1_000_000
+    for (let i = 0; i < 6; i++) expect(h.twitchGrantAllowed(sender(), t0)).toBe(true)
+    expect(h.twitchGrantAllowed(sender(), t0 + 1)).toBe(false)
+    expect(h.twitchGrantAllowed(sender({ tab: { id: 8, url: 'https://kick.com/x' } }), t0)).toBe(true)
+    expect(h.twitchGrantAllowed(sender(), t0 + 61_000)).toBe(true)
+  })
 })
 
 describe('twitch_auth_status — presence without the value', () => {
@@ -311,6 +332,25 @@ describe('twitch_gql_authed (runs a query as the twitch login)', () => {
       })
     }
     expect(h.calls.cookieReads).toBe(0)
+  })
+})
+
+describe('twitch_gql_authed op allowlist (end to end through the handler)', () => {
+  test('an unknown query is refused before the cookie is read or anything is sent', async () => {
+    const h = load()
+    const r = await ask(h.gqlBranch, { type: 'twitch_gql_authed', query: '{ currentUser { email } }' }, sender())
+    expect(r).toEqual({ ok: false, error: 'op_not_allowed' })
+    expect(h.calls.cookieReads).toBe(0)
+    expect(h.calls.fetches).toHaveLength(0)
+  })
+
+  test('a known shape goes through as the login', async () => {
+    const h = load({
+      fetchImpl: async () => ({ ok: true, status: 200, json: async () => ({ data: { currentUser: { login: 'x' } } }) }),
+    })
+    const r = await ask(h.gqlBranch, { type: 'twitch_gql_authed', query: '{ currentUser { login } }' }, sender())
+    expect(r.ok).toBe(true)
+    expect(h.calls.fetches[0].opts.headers.Authorization).toBe(`OAuth ${SECRET}`)
   })
 })
 

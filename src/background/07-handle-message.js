@@ -972,6 +972,10 @@ async function handleMessage(message, sender, sendResponse) {
       sendResponse({ token: null, username: null, error: 'unauthorized sender' })
       return true
     }
+    if (!twitchGrantAllowed(sender)) {
+      sendResponse({ token: null, username: null, error: 'rate_limited' })
+      return true
+    }
     readTwitchSession()
       .then((session) => sendResponse(session))
       .catch(() => sendResponse({ token: null, username: null }))
@@ -1242,6 +1246,11 @@ async function handleMessage(message, sender, sendResponse) {
     // iframe, not the popup.
     if (!twitchSessionSenderOk(sender)) {
       sendResponse({ ok: false, error: 'unauthorized sender' })
+      return true
+    }
+    // Only the fixed query shapes the overlay sends (see TWITCH_GQL_ALLOWED).
+    if (!twitchGqlAllowed(message.query)) {
+      sendResponse({ ok: false, error: 'op_not_allowed' })
       return true
     }
     ;(async () => {

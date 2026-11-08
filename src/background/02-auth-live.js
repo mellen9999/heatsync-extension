@@ -816,8 +816,19 @@ async function getAuthCookie({ fresh = false } = {}) {
 //     from the page's own WebSocket → get_twitch_auth_token, still handed out
 //     (that one job), but only to the overlay's top frame on a twitch / kick /
 //     youtube tab. Never to heatsync.org, a subframe, the popup or another
-//     extension. Moving that socket into this worker is the step that would
-//     make the value stay here for good.
+//     extension, and at most TWITCH_GRANT_MAX times a minute per tab.
+//
+// Why the socket is NOT moved into this worker (decided, not forgotten): that
+// socket is long-lived (whispers arrive on it, NOTICEs drive send toasts, join
+// acks gate sends, a reconnect queue holds unsent text). Chrome's worker stays
+// up only while frames flow and dies on any quiet stretch; firefox's event page
+// dies on idle regardless. A dying owner means a flapping socket: dropped
+// whispers, lost JOINs, sends that vanish with no NOTICE. On twitch.tv itself
+// the page already reads the cookie, so the move would only help kick/youtube,
+// at the cost of the send path's reliability. So the grant is narrowed instead:
+// a connect asks once and keeps the value in its own closure; reconnects reuse it,
+// so a legit page asks a handful of times a session, and a page that loops on
+// the call is cut off.
 const TWITCH_WEB_CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko'
 const TWITCH_SESSION_HOSTS = /^https:\/\/((?:[a-z0-9-]+\.)*twitch\.tv|(?:[a-z0-9-]+\.)*kick\.com|www\.youtube\.com)$/
 
@@ -835,6 +846,68 @@ function twitchSessionSenderOk(sender) {
   } catch {
     return false
   }
+}
+
+const TWITCH_GRANT_MAX = 6
+const TWITCH_GRANT_WINDOW_MS = 60_000
+const twitchGrantLog = new Map() // tabId -> recent grant timestamps
+
+// Count a token hand-out for this tab; false once it has had TWITCH_GRANT_MAX in
+// the last minute. Only called after twitchSessionSenderOk passed.
+function twitchGrantAllowed(sender, now = Date.now()) {
+  const id = sender.tab.id
+  const recent = (twitchGrantLog.get(id) || []).filter((t) => now - t < TWITCH_GRANT_WINDOW_MS)
+  if (recent.length >= TWITCH_GRANT_MAX) {
+    twitchGrantLog.set(id, recent)
+    return false
+  }
+  recent.push(now)
+  twitchGrantLog.set(id, recent)
+  if (twitchGrantLog.size > 64)
+    for (const [k, v] of twitchGrantLog) if (!v.some((t) => now - t < TWITCH_GRANT_WINDOW_MS)) twitchGrantLog.delete(k)
+  return true
+}
+
+// What the twitch_gql_authed bridge will run as the user's twitch login. The
+// content script sends the query text, so a compromised page could otherwise run
+// ANY query (or mutation) as the user. Instead: only the fixed shapes the overlay
+// actually sends. A query is compared with every quoted string folded to "_" and
+// whitespace squeezed, so the channel login / id the caller fills in is the only
+// part that varies. A new caller must add its shape here (tests/twitch-gql-allowlist
+// fails until it does). Mod mutations (predictions, bans) are not here: they go
+// through twitch_relay, which runs inside a real twitch tab.
+const TWITCH_GQL_PRED_FIELDS =
+  'id title status createdAt endedAt predictionWindowSeconds winningOutcome { id } outcomes { id title totalPoints totalUsers color } self { prediction { outcome { id } points } }'
+const TWITCH_GQL_POLL_FIELDS =
+  'id title status durationSeconds remainingDurationMilliseconds startedAt choices { id title totalVoters } totalVoters'
+function normalizeTwitchGql(q) {
+  return String(q)
+    .replace(/"(?:[^"\\]|\\.)*"/g, '"_"')
+    .replace(/\s+/g, '')
+}
+const TWITCH_GQL_ALLOWED = new Set(
+  [
+    // reads
+    '{ currentUser { login } }',
+    '{ user(login: "x") { self { isModerator } } }',
+    '{ user(login: "x") { chatColor } }',
+    '{ user(login: "x") { channel { socialMedias { name title url } } } }',
+    '{ user(login: "x") { id chatColor stream { type createdAt game { name } } } }',
+    '{ user(login: "x") { chatSettings { slowModeDurationSeconds followersOnlyDurationMinutes isEmoteOnlyModeEnabled isSubscribersOnlyModeEnabled isUniqueChatModeEnabled } } }',
+    '{ user(login: "x") { id displayName stream { id type viewersCount createdAt game { name } } broadcastSettings { title language } } }',
+    '{ user(login: "x") { broadcastBadges { imageURL(size: NORMAL) setID version title } } }',
+    '{ badges { imageURL(size: NORMAL) setID version title } }',
+    '{ user(id: "x") { channel { communityPointsSettings { automaticRewards { type cost } } } } }',
+    `{ user(login: "x") { id self { isModerator } channel { activePredictionEvents { ${TWITCH_GQL_PRED_FIELDS} } lockedPredictionEvents { ${TWITCH_GQL_PRED_FIELDS} } resolvedPredictionEvents(first: 1) { edges { node { ${TWITCH_GQL_PRED_FIELDS} } } } } } currentUser { id } channel(name: "x") { communityPointsSettings { image { url url2x } name } self { communityPoints { balance } } } }`,
+    // the chat-settings / colour / poll mutations the overlay sends off-twitch
+    'mutation($input: UpdateChatSettingsInput!) { updateChatSettings(input: $input) { __typename } }',
+    'mutation($input: UpdateChatColorInput!) { updateChatColor(input: $input) { __typename } }',
+    `mutation($input: CreatePollInput!) { createPoll(input: $input) { poll { ${TWITCH_GQL_POLL_FIELDS} } error { code } } }`,
+    `mutation($input: TerminatePollInput!) { terminatePoll(input: $input) { poll { ${TWITCH_GQL_POLL_FIELDS} } } }`,
+  ].map(normalizeTwitchGql),
+)
+function twitchGqlAllowed(query) {
+  return typeof query === 'string' && query.length < 4000 && TWITCH_GQL_ALLOWED.has(normalizeTwitchGql(query))
 }
 
 // The twitch cookie, read fresh each time (it rotates; a copy held for hours

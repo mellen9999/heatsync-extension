@@ -6571,6 +6571,10 @@ function getTwitchAuthToken() {
 async function getTwitchAuthTokenAsync() {
   const localToken = getTwitchAuthToken()
   if (localToken) return { token: localToken, username: null }
+  // A live socket already holds the login: reuse it, so the worker is asked
+  // only when a connect needs the value (it rate-limits the hand-out).
+  if (typeof authIrcAlive === 'function' && authIrcAlive() && authState.token && authState.nick)
+    return { token: authState.token, username: authState.nick }
   // Cross-domain: ask background.js to read Twitch cookies
   try {
     const resp = await safeSendMessage({ type: 'get_twitch_auth_token' })

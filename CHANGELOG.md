@@ -1,5 +1,14 @@
 # changelog
 
+## [1.7.124] — 2026-11-08
+
+### changed
+- **went live** — the went-live label is yellow like switched-to; red on the olive fill was unreadable.
+
+### fixed
+- **names on filled rows** — the black cutout and the name line up with the message text instead of riding high when an emote makes the line taller.
+- **multichat** — a channel live on both twitch and kick opens with both legs on the first run, and a saved one-platform entry heals on load.
+
 ## [1.7.123] — 2026-11-07
 
 ### changed

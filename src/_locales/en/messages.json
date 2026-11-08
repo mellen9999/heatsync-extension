@@ -6738,5 +6738,38 @@
   },
   "mc_sfx_none": {
     "message": "no file yet"
+  },
+  "mc_settings_remember_sent": {
+    "message": "remember sent messages"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "the up and down arrow keys bring back what you sent, even after a reload. stays on this device, never synced. off: only until you reload"
+  },
+  "mc_settings_spellcheck": {
+    "message": "spellcheck"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "underline misspelled words in the message box"
+  },
+  "mc_set_clear_sent": {
+    "message": "clear sent history"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "forget the messages the up and down arrow keys bring back, on this device"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "clear"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "sent history cleared"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "emote suggestions"
+  },
+  "mc_a11y_ac_names": {
+    "message": "name suggestions"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "command suggestions"
   }
 }

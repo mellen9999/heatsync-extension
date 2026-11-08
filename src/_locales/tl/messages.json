@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "wala pang file"
+  },
+  "mc_settings_remember_sent": {
+    "message": "tandaan ang mga naipadalang message"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "ibinabalik ng pataas at pababang arrow key ang mga naipadala, kahit pagkatapos mag-reload. nananatili sa device na ito at hindi kailanman sina-sync. naka-off: hanggang mag-reload lang"
+  },
+  "mc_settings_spellcheck": {
+    "message": "spellcheck"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "inuunderline ang mga maling baybay na salita sa message box"
+  },
+  "mc_set_clear_sent": {
+    "message": "i-clear ang history ng naipadala"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "kalimutan ang mga message na ibinabalik ng pataas at pababang arrow key, sa device na ito"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "i-clear"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "na-clear ang history ng naipadala"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "mga mungkahing emote"
+  },
+  "mc_a11y_ac_names": {
+    "message": "mga mungkahing pangalan"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "mga mungkahing command"
   }
 }

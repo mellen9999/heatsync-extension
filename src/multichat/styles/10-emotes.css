@@ -114,6 +114,20 @@
     .hs-mc-picker-emote-wrap.blocked img {
       visibility: hidden !important;
     }
+    /* The keyboard cursor (arrow keys in the search box) is the --hs-sel plate,
+       not the white one: white is where the pointer is, cyan is where Enter
+       lands. Same split as the gifs grid and every other list in the overlay. */
+    .hs-mc-picker-emote-wrap[aria-selected='true']::before {
+      opacity: 1;
+      background: var(--hs-sel);
+    }
+    .hs-mc-picker-emote-wrap[aria-selected='true']:not(.blocked) > img {
+      filter: brightness(0.2);
+    }
+    .hs-mc-picker-emote-wrap.blocked[aria-selected='true']::before {
+      background: none;
+      border-color: var(--hs-sel);
+    }
 
     .hs-mc-emoji {
       font-size: calc(1em * var(--hs-emoji-scale, 2));

@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "还没有文件"
+  },
+  "mc_settings_remember_sent": {
+    "message": "记住已发送的消息"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "上下方向键可调出发送过的消息，重新加载后也在。只存在这台设备上，不会同步。关闭：只保留到重新加载"
+  },
+  "mc_settings_spellcheck": {
+    "message": "拼写检查"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "在消息框里给拼错的词加下划线"
+  },
+  "mc_set_clear_sent": {
+    "message": "清除发送记录"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "忘掉这台设备上上下方向键调出的消息"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "清除"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "已清除发送记录"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "表情建议"
+  },
+  "mc_a11y_ac_names": {
+    "message": "名称建议"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "命令建议"
   }
 }

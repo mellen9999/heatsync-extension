@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "файлу ще немає"
+  },
+  "mc_settings_remember_sent": {
+    "message": "пам'ятати надіслані повідомлення"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "стрілки вгору і вниз повертають надіслане, навіть після перезавантаження. зберігається лише на цьому пристрої й не синхронізується. вимк.: лише до перезавантаження"
+  },
+  "mc_settings_spellcheck": {
+    "message": "перевірка правопису"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "підкреслює слова з помилками в полі повідомлення"
+  },
+  "mc_set_clear_sent": {
+    "message": "очистити історію надісланого"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "забути повідомлення, які повертають стрілки вгору і вниз, на цьому пристрої"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "очистити"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "історію надісланого очищено"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "підказки emotes"
+  },
+  "mc_a11y_ac_names": {
+    "message": "підказки імен"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "підказки команд"
   }
 }

@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "ainda sem ficheiro"
+  },
+  "mc_settings_remember_sent": {
+    "message": "memorizar mensagens enviadas"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "as setas para cima e para baixo trazem de volta as mensagens enviadas, mesmo após recarregar. fica neste dispositivo e nunca é sincronizado. desligado: só até recarregar"
+  },
+  "mc_settings_spellcheck": {
+    "message": "corretor ortográfico"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "sublinha as palavras mal escritas na caixa de mensagem"
+  },
+  "mc_set_clear_sent": {
+    "message": "limpar histórico de enviados"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "esquece as mensagens que as setas para cima e para baixo trazem, neste dispositivo"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "limpar"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "histórico de enviados limpo"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "sugestões de emotes"
+  },
+  "mc_a11y_ac_names": {
+    "message": "sugestões de nomes"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "sugestões de comandos"
   }
 }

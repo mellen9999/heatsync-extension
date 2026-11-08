@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "لا يوجد ملف بعد"
+  },
+  "mc_settings_remember_sent": {
+    "message": "تذكّر الرسائل المرسلة"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "مفتاحا السهم لأعلى ولأسفل يعيدان ما أرسلته، حتى بعد إعادة التحميل. يبقى على هذا الجهاز ولا يُزامَن أبدًا. إيقاف: حتى إعادة التحميل فقط"
+  },
+  "mc_settings_spellcheck": {
+    "message": "التدقيق الإملائي"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "ضع خطًا تحت الكلمات الخاطئة في مربع الرسالة"
+  },
+  "mc_set_clear_sent": {
+    "message": "مسح سجل الرسائل المرسلة"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "انسَ الرسائل التي يعيدها مفتاحا السهم لأعلى ولأسفل، على هذا الجهاز"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "مسح"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "تم مسح سجل الرسائل المرسلة"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "اقتراحات الإيموتس"
+  },
+  "mc_a11y_ac_names": {
+    "message": "اقتراحات الأسماء"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "اقتراحات الأوامر"
   }
 }

@@ -5,12 +5,6 @@
 // handlers dead until hard refresh
 const _onceGuardsInput = {}
 
-// Message history — up/down arrow recalls previously sent messages
-const mcMessageHistory = []
-const MC_HISTORY_MAX = 50
-let mcHistoryIndex = -1
-let mcHistoryDraft = ''
-
 // Broken-image recovery for input-area emote imgs. Browser negatively caches
 // failed image responses (proxy hiccup, CDN blip); without this hook the typed
 // word renders forever as a broken-image placeholder in the composer.
@@ -1147,7 +1141,7 @@ function rebuildInput() {
     div.id = 'hs-mc-input'
     div.contentEditable = 'true'
     div.setAttribute('data-placeholder', t('mc_input_send_message'))
-    div.spellcheck = false
+    div.spellcheck = hsSpellcheckOn()
     if (emoteBtn) bar.insertBefore(div, emoteBtn)
   } else {
     const input = document.createElement('input')
@@ -1155,7 +1149,7 @@ function rebuildInput() {
     input.id = 'hs-mc-input'
     input.placeholder = t('mc_input_send_message')
     input.autocomplete = 'off'
-    input.spellcheck = false
+    input.spellcheck = hsSpellcheckOn()
     if (emoteBtn) bar.insertBefore(input, emoteBtn)
   }
 
@@ -1182,8 +1176,8 @@ function createInputBar() {
   const iconBlackUrl = chrome.runtime.getURL('icon-48-black.png')
 
   const inputHtml = wysiwygEnabled
-    ? `<div id="hs-mc-input" contenteditable="true" data-placeholder="${t('mc_input_send_message')}" spellcheck="false"></div>`
-    : `<input type="text" id="hs-mc-input" placeholder="${t('mc_input_send_message')}" autocomplete="off" spellcheck="false">`
+    ? `<div id="hs-mc-input" contenteditable="true" data-placeholder="${t('mc_input_send_message')}" spellcheck="${hsSpellcheckOn()}"></div>`
+    : `<input type="text" id="hs-mc-input" placeholder="${t('mc_input_send_message')}" autocomplete="off" spellcheck="${hsSpellcheckOn()}">`
 
   bar.innerHTML = `
     <span id="hs-mc-send-tag" hidden></span>
@@ -1290,6 +1284,7 @@ function initInput() {
     setTimeout(initInput, 100)
     return
   }
+  hsComposerCombobox(input)
   // Mark input as initialized to avoid duplicate handlers. The mark is a
   // per-injection token, NOT a boolean: on firefox, same-principal expandos
   // outlive the sandbox that set them, so after an AMO auto-update reinjects
@@ -1550,6 +1545,8 @@ function initInput() {
         }
       } else {
         showEmotePicker()
+        // detail 0 = Enter/Space on the button: a keyboard reader, who lands in the search box
+        if (e.detail === 0) hsPickerFocusSearch()
       }
     })
   }
@@ -3633,28 +3630,13 @@ function handleInputKeydownInner(e, input) {
     }
   }
 
-  // Message history navigation (ArrowUp/ArrowDown)
+  // Message history navigation (ArrowUp/ArrowDown) — sent-history.js
   if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && !e.shiftKey && !e.ctrlKey && mcMessageHistory.length > 0) {
-    const currentText = getInputText().trim()
-    if (
-      mcHistoryIndex >= 0 ||
-      (e.key === 'ArrowUp' && currentText.length === 0) ||
-      (e.key === 'ArrowUp' && mcMessageHistory.includes(currentText))
-    ) {
+    const text = hsSentHistoryStep(e.key === 'ArrowUp' ? 1 : -1, getInputText().trim())
+    if (text !== null) {
       e.preventDefault()
-      if (e.key === 'ArrowUp') {
-        if (mcHistoryIndex < 0) mcHistoryDraft = currentText
-        mcHistoryIndex = Math.min(mcHistoryIndex + 1, mcMessageHistory.length - 1)
-      } else {
-        mcHistoryIndex--
-      }
-      const text = mcHistoryIndex < 0 ? mcHistoryDraft : mcMessageHistory[mcHistoryIndex]
-      if (wysiwygEnabled) {
-        restoreWysiwygText(input, text)
-      } else {
-        input.value = text
-      }
-      mcHistoryIndex = Math.max(mcHistoryIndex, -1)
+      if (wysiwygEnabled) restoreWysiwygText(input, text)
+      else input.value = text
       return
     }
   }
@@ -6244,6 +6226,7 @@ function showCycleTooltip() {
   if (!tt) {
     tt = document.createElement('div')
     tt.id = 'hs-mc-cycle-tooltip'
+    tt.setAttribute('role', 'status') // tab-complete draws no list; this is how its candidate is announced
     tt.style.cssText =
       'position:absolute;bottom:100%;left:8px;background:#000;color:#fff;padding:4px 8px;font-size:13px;border-radius:0;z-index:1003;margin-bottom:4px;white-space:nowrap;'
     document.getElementById('hs-mc-inputbar')?.appendChild(tt)
@@ -6394,6 +6377,7 @@ function showEmojiDropdown(matches, selectedIndex) {
     dd.id = 'hs-mc-emoji-dropdown'
     document.getElementById('hs-mc-inputbar')?.appendChild(dd)
   }
+  if (hsListboxReuse(dd, matches, selectedIndex)) return
   dd.textContent = ''
   matches.forEach((entry, i) => {
     const row = document.createElement('div')
@@ -6428,6 +6412,7 @@ function showEmojiDropdown(matches, selectedIndex) {
     dd.appendChild(row)
   })
   dd.style.display = 'block'
+  hsListboxSync(dd, matches, selectedIndex)
 }
 
 function hideEmojiDropdown() {
@@ -6436,7 +6421,7 @@ function hideEmojiDropdown() {
   emojiAcState.index = 0
   emojiAcState.query = ''
   const dd = document.getElementById('hs-mc-emoji-dropdown')
-  if (dd) dd.style.display = 'none'
+  if (dd) hsListboxHide(dd)
 }
 
 // Route the pick through the exact insertion path Tab-cycle uses (chip vs
@@ -6496,6 +6481,7 @@ function showMentionDropdown(matches, selectedIndex) {
     dd.id = 'hs-mc-mention-dropdown'
     document.getElementById('hs-mc-inputbar')?.appendChild(dd)
   }
+  if (hsListboxReuse(dd, matches, selectedIndex)) return
   dd.textContent = ''
   matches.forEach((entry, i) => {
     const row = document.createElement('div')
@@ -6522,6 +6508,7 @@ function showMentionDropdown(matches, selectedIndex) {
     dd.appendChild(row)
   })
   dd.style.display = 'block'
+  hsListboxSync(dd, matches, selectedIndex)
 }
 
 function hideMentionDropdown() {
@@ -6530,7 +6517,7 @@ function hideMentionDropdown() {
   mentionAcState.index = 0
   mentionAcState.query = ''
   const dd = document.getElementById('hs-mc-mention-dropdown')
-  if (dd) dd.style.display = 'none'
+  if (dd) hsListboxHide(dd)
 }
 
 function insertMentionFromDropdown(match) {
@@ -6815,6 +6802,7 @@ function showSlashDropdown(matches, idx) {
     dd.id = 'hs-mc-slash-dropdown'
     document.getElementById('hs-mc-inputbar')?.appendChild(dd)
   }
+  if (hsListboxReuse(dd, matches, idx)) return
   dd.textContent = ''
   matches.forEach((c, i) => {
     const row = document.createElement('div')
@@ -6839,6 +6827,7 @@ function showSlashDropdown(matches, idx) {
     dd.appendChild(row)
   })
   dd.style.display = 'block'
+  hsListboxSync(dd, matches, idx)
 }
 
 // localized /command description; falls back to the registry text (t returns the key when missing)
@@ -6853,7 +6842,7 @@ function hideSlashDropdown() {
   slashAcState.matches = []
   slashAcState.index = 0
   const dd = document.getElementById('hs-mc-slash-dropdown')
-  if (dd) dd.style.display = 'none'
+  if (dd) hsListboxHide(dd)
 }
 
 function insertSlashCommand(c) {
@@ -9194,12 +9183,7 @@ async function sendMessage() {
                 : hostPlatform
   trackSentMessage(restText, _echoHost, _synthId, _echoCount || 1, !!replyState?.msgId)
 
-  // Push to message history (dedup consecutive, cap at max)
-  if (mcMessageHistory[0] !== text) {
-    mcMessageHistory.unshift(text)
-    if (mcMessageHistory.length > MC_HISTORY_MAX) mcMessageHistory.length = MC_HISTORY_MAX
-  }
-  mcHistoryIndex = -1
+  hsSentHistoryRecord(text)
 
   const replyParentId = replyState?.msgId || null
   // A parent id belongs to the platform its row came from: twitch and kick each only

@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "brak pliku"
+  },
+  "mc_settings_remember_sent": {
+    "message": "pamiętaj wysłane wiadomości"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "strzałki w górę i w dół przywołują wysłane wiadomości, także po przeładowaniu. zostaje na tym urządzeniu i nigdy się nie synchronizuje. wyłączone: tylko do przeładowania"
+  },
+  "mc_settings_spellcheck": {
+    "message": "sprawdzanie pisowni"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "podkreśla błędnie napisane słowa w polu wiadomości"
+  },
+  "mc_set_clear_sent": {
+    "message": "wyczyść historię wysłanych"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "zapomina wiadomości przywoływane strzałkami w górę i w dół, na tym urządzeniu"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "wyczyść"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "historia wysłanych wyczyszczona"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "podpowiedzi emotek"
+  },
+  "mc_a11y_ac_names": {
+    "message": "podpowiedzi nazw"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "podpowiedzi poleceń"
   }
 }

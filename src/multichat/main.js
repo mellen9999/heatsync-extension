@@ -2585,9 +2585,8 @@
   // function's effects exactly. onLoad=true on the single init pass —
   // skips work that only makes sense on an interactive change.
   const _APPLIERS = {
-    rebuildInput: () => {
-      rebuildInput()
-    },
+    rebuildInput: () => rebuildInput(),
+    spellcheck: (v) => hsApplySpellcheck(v),
     // Repaint every tab and start/stop the heat ticker to match the new mode.
     tabCounter: () => {
       refreshTabCounters()

@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "還沒有檔案"
+  },
+  "mc_settings_remember_sent": {
+    "message": "記住已傳送的訊息"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "上下方向鍵可叫出傳送過的訊息，重新載入後也在。只存在這台裝置上，不會同步。關閉：只保留到重新載入"
+  },
+  "mc_settings_spellcheck": {
+    "message": "拼字檢查"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "在訊息框裡替拼錯的字加底線"
+  },
+  "mc_set_clear_sent": {
+    "message": "清除傳送紀錄"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "忘掉這台裝置上上下方向鍵叫出的訊息"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "清除"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "已清除傳送紀錄"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "表情建議"
+  },
+  "mc_a11y_ac_names": {
+    "message": "名稱建議"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "指令建議"
   }
 }

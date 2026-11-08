@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "zatím žádný soubor"
+  },
+  "mc_settings_remember_sent": {
+    "message": "pamatovat odeslané zprávy"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "šipky nahoru a dolů vrátí odeslané zprávy, i po opětovném načtení. zůstává v tomto zařízení, nikdy se nesynchronizuje. vypnuto: jen do opětovného načtení"
+  },
+  "mc_settings_spellcheck": {
+    "message": "kontrola pravopisu"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "podtrhne chybně napsaná slova v poli zprávy"
+  },
+  "mc_set_clear_sent": {
+    "message": "smazat historii odeslaného"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "zapomene zprávy, které šipky nahoru a dolů vracejí, v tomto zařízení"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "smazat"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "historie odeslaného smazána"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "návrhy emotek"
+  },
+  "mc_a11y_ac_names": {
+    "message": "návrhy jmen"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "návrhy příkazů"
   }
 }

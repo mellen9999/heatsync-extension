@@ -456,12 +456,14 @@ function _regSections(cat, only) {
     if (only && only.indexOf(def.section) === -1) continue
     var s = byTitle.get(title)
     if (!s) {
-      s = { title: title, rows: [] }
+      s = { title: title, id: def.section, rows: [] }
       byTitle.set(title, s)
       sections.push(s)
     }
     s.rows.push.apply(s.rows, _rowsForDef(def))
   }
+  // the clear button lives under the switch that decides whether anything is kept
+  for (const s of sections) if (cat === 'chat' && s.id === 'input') s.rows.push(_sentClearRow())
   return sections
     .map((s) => {
       var fold = _setCollapsed.has(`${_settingsSubtab}|${s.title}`)
@@ -554,6 +556,20 @@ function _renderSearchResults() {
       escapeHtml(_setCatLabel('help')) +
       '</div>' +
       helpHits.map((a) => a.html).join('') +
+      '</div>'
+  }
+  var clearRow = _sentClearRow()
+  total += 1
+  if (_rowMatches(clearRow.hay, tokens)) {
+    count += 1
+    html +=
+      '<div class="hs-mc-settings-group">' +
+      '<div class="hs-mc-set-search-hdr" data-set-jump="chat|' +
+      escapeHtml(t('btn_settings_input')) +
+      '">' +
+      escapeHtml(`${_setCatLabel('chat')} · ${t('btn_settings_input')}`) +
+      '</div>' +
+      clearRow.html +
       '</div>'
   }
   if (!count)
@@ -658,6 +674,25 @@ function _setHelpActionRows() {
         '</div>',
     },
   ]
+}
+
+// "clear sent history" — a button, not a setting. _regSections puts it in chat > input, under
+// "remember sent messages"; search finds it like the backup buttons.
+function _sentClearRow() {
+  return {
+    hay: 'clear sent history messages up down arrow recall forget privacy chat input',
+    html:
+      '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
+      '<span class="hs-mc-setting-label" data-tip="' +
+      escapeHtml(t('mc_set_clear_sent_tip')) +
+      '">' +
+      t('mc_set_clear_sent') +
+      '</span>' +
+      '<button class="hs-mc-settings-btn" data-action="clear-sent-history" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      t('mc_set_clear_sent_btn') +
+      '</button>' +
+      '</div>',
+  }
 }
 
 function _renderBackupGroup() {
@@ -1099,9 +1134,9 @@ function _renderCategoryPaneInner(cat) {
 // Private stores that must NEVER ride an export: mention/chat buffers, per-user notes, whispers, crash
 // ring ("captured locally only"), and the picked sound files (hs_sfx_*: up to
 // 256 kb each, per device by design — rules and the mention sound export only
-// the file's name). Import skips the same set so a crafted file can't overwrite
+// the file's name), and the sent-message history (hs_sent_history: what you typed, this device only). Import skips the same set so a crafted file can't overwrite
 // them either.
-var _SETTINGS_PRIVATE_KEY_RE = /^hs_(mentions_v2|user_notes|errors|irc_|kick_|yt_|whisper|sfx_)/
+var _SETTINGS_PRIVATE_KEY_RE = /^hs_(mentions_v2|user_notes|errors|irc_|kick_|yt_|whisper|sfx_|sent_history)/
 // local-mirror settings (keyword highlights, filter rules) live under
 // unprefixed mirror keys — allowlist them alongside the hs_/viewer_ namespaces
 // or the export silently drops them (derived from the registry, never hand-listed)
@@ -1582,6 +1617,8 @@ function renderSettingsTab() {
         _importAllSettings()
       } else if (action === 'show-tour' && typeof tourReopen === 'function') {
         tourReopen()
+      } else if (action === 'clear-sent-history') {
+        hsSentHistoryClear().then(() => showToast(t('mc_set_clear_sent_done'), 'info'))
       }
       return
     }

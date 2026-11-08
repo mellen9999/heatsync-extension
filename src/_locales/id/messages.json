@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "belum ada file"
+  },
+  "mc_settings_remember_sent": {
+    "message": "ingat pesan terkirim"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "tombol panah atas dan bawah memanggil lagi pesan yang terkirim, bahkan setelah dimuat ulang. tetap di perangkat ini dan tidak pernah disinkronkan. mati: hanya sampai dimuat ulang"
+  },
+  "mc_settings_spellcheck": {
+    "message": "pemeriksa ejaan"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "garis bawahi kata yang salah eja di kotak pesan"
+  },
+  "mc_set_clear_sent": {
+    "message": "hapus riwayat terkirim"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "lupakan pesan yang dipanggil tombol panah atas dan bawah, di perangkat ini"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "hapus"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "riwayat terkirim dihapus"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "saran emote"
+  },
+  "mc_a11y_ac_names": {
+    "message": "saran nama"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "saran perintah"
   }
 }

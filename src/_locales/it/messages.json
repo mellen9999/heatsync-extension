@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "nessun file"
+  },
+  "mc_settings_remember_sent": {
+    "message": "ricorda i messaggi inviati"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "le frecce su e giù richiamano i messaggi inviati, anche dopo un ricaricamento. resta su questo dispositivo e non viene mai sincronizzato. spento: solo fino al ricaricamento"
+  },
+  "mc_settings_spellcheck": {
+    "message": "correttore ortografico"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "sottolinea le parole scritte male nella casella del messaggio"
+  },
+  "mc_set_clear_sent": {
+    "message": "cancella cronologia inviati"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "dimentica i messaggi richiamati dalle frecce su e giù, su questo dispositivo"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "cancella"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "cronologia inviati cancellata"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "suggerimenti emote"
+  },
+  "mc_a11y_ac_names": {
+    "message": "suggerimenti nomi"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "suggerimenti comandi"
   }
 }

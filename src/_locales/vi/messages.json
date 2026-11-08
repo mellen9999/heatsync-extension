@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "chưa có tệp"
+  },
+  "mc_settings_remember_sent": {
+    "message": "nhớ tin nhắn đã gửi"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "phím mũi tên lên và xuống gọi lại tin đã gửi, kể cả sau khi tải lại. chỉ lưu trên thiết bị này, không bao giờ đồng bộ. tắt: chỉ đến khi tải lại"
+  },
+  "mc_settings_spellcheck": {
+    "message": "kiểm tra chính tả"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "gạch chân từ sai chính tả trong ô tin nhắn"
+  },
+  "mc_set_clear_sent": {
+    "message": "xóa lịch sử đã gửi"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "quên các tin nhắn mà phím mũi tên lên và xuống gọi lại, trên thiết bị này"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "xóa"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "đã xóa lịch sử đã gửi"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "gợi ý emote"
+  },
+  "mc_a11y_ac_names": {
+    "message": "gợi ý tên"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "gợi ý lệnh"
   }
 }

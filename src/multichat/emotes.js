@@ -1119,7 +1119,7 @@ function renderEmoteSections(sections, emptyMsg = t('mc_emote_no_loaded'), opts)
     return `<div class="hs-mc-picker-empty">${escapeHtml(emptyMsg)}</div>`
   }
   const noHeaders = !!opts?.noHeaders
-  return sections
+  const rows = sections
     .map((s, si) => {
       const chunks = []
       for (let i = 0; i < s.emotes.length; i += CHUNK_SIZE) {
@@ -1143,12 +1143,13 @@ function renderEmoteSections(sections, emptyMsg = t('mc_emote_no_loaded'), opts)
         ? ''
         : `<div class="hs-mc-picker-section-header">${escapeHtml(s.label)} <span class="hs-mc-picker-section-count">${s.emotes.length}</span></div>`
       return `
-      <div class="hs-mc-picker-section" data-section-key="${escapeHtml(s.key)}">
+      <div class="hs-mc-picker-section"${noHeaders ? '' : ` role="group" aria-label="${escapeHtml(s.label)}"`} data-section-key="${escapeHtml(s.key)}">
         ${header}
         ${chunksHtml}
       </div>`
     })
     .join('')
+  return `<div id="hs-mc-emote-list" role="listbox" aria-label="${escapeHtml(t('mc_emo_tab_emotes'))}">${rows}</div>`
 }
 
 // Empty-inventory cold-start: point a fresh/logged-out-of-emotes user straight
@@ -1231,7 +1232,7 @@ function emoteImgHtml([name, emote]) {
   // SCREEN needs and nothing else. Same reasoning as getChatResUrl: max-height
   // only shrinks, so a denser file changes the pixels and not the layout.
   const pickerUrl = hsRungUrl(emote.url, typeof devicePixelRatio === 'number' && devicePixelRatio >= 1.5 ? 2 : 1)
-  return `<span class="${wrapCls}" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}"${emote.variant ? ` data-variant="${escapeHtml(emote.variant)}"` : ''} data-source="${escapeHtml(emote.source)}" data-state="${state}" loading="lazy"></span>`
+  return `<span class="${wrapCls}" role="option" aria-selected="false" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}"${emote.variant ? ` data-variant="${escapeHtml(emote.variant)}"` : ''} data-source="${escapeHtml(emote.source)}" data-state="${state}" loading="lazy"></span>`
 }
 
 /**
@@ -1264,7 +1265,6 @@ function mcVisiblePickerTabs() {
 }
 
 let pickerTab = 'emotes'
-let _pickerCloseHandler = null
 let _pickerBuiltKey = null
 let _pickerPrebuildScheduled = false
 
@@ -1378,7 +1378,7 @@ function showEmotePicker(tab = null) {
         <div class="hs-mc-picker-header">
           <div class="hs-mc-search-wrap">
             <svg class="hs-mc-search-icon" width="14" height="14" viewBox="0 0 20 20"><path fill="#000" d="M13.74 12.33l4.04 4.04a1 1 0 01-1.42 1.42l-4.04-4.04a7 7 0 111.42-1.42zM9 14A5 5 0 109 4a5 5 0 000 10z"/></svg>
-            <input type="text" id="hs-mc-emote-search" placeholder="${t('mc_emote_search_placeholder')}" autocomplete="off">
+            <input type="text" id="hs-mc-emote-search" placeholder="${t('mc_emote_search_placeholder')}" autocomplete="off" role="combobox" aria-label="${t('mc_emote_search_placeholder')}" aria-controls="hs-mc-emote-list" aria-autocomplete="list">
           </div>
         </div>
         <div class="hs-mc-picker-scroll" id="hs-mc-emote-grid">
@@ -1501,6 +1501,7 @@ function showEmotePicker(tab = null) {
 
   hsWireGifTab(picker)
   hsWireEmojiTab(picker)
+  hsWirePickerNav(picker)
 
   // Emote size controls
   picker.querySelectorAll('.hs-mc-size-btn').forEach((btn) => {
@@ -1681,53 +1682,6 @@ function showEmotePicker(tab = null) {
   if (pickerTab === 'gifs') hsOnGifTabShown()
 
   attachPickerCloseHandler(picker)
-}
-
-let _pickerEscHandler = null
-
-/** Take down the document-level close handlers. */
-function detachPickerCloseHandlers() {
-  if (_pickerCloseHandler) document.removeEventListener('click', _pickerCloseHandler)
-  if (_pickerEscHandler) document.removeEventListener('keydown', _pickerEscHandler)
-  _pickerCloseHandler = null
-  _pickerEscHandler = null
-}
-
-/**
- * The one way to close the panel from code.
- *
- * Those document handlers self-remove when THEY close the picker, so anything
- * that closes it on its own has to take them down too — or the next Escape
- * still runs hideInputBar(), over a composer the reader is typing into. A gif
- * pick is the first close that does not go through them.
- *
- * `keepInput` is for exactly that case: the panel goes away, the composer does
- * not, because the reader is mid-send with a url already in the box.
- */
-function closeEmotePickerPanel({ keepInput = false } = {}) {
-  const picker = document.getElementById('hs-mc-emote-picker')
-  if (!picker) return
-  picker.classList.remove('visible')
-  if (!keepInput) hideInputBar()
-  stopPredictionPoll()
-  detachPickerCloseHandlers()
-}
-
-function attachPickerCloseHandler(picker) {
-  detachPickerCloseHandlers()
-  cleanup.setTimeout(() => {
-    _pickerCloseHandler = (e) => {
-      if (mcSignal?.aborted) return detachPickerCloseHandlers()
-      if (!picker.contains(e.target) && !e.target.closest('#hs-mc-emote-btn')) closeEmotePickerPanel()
-    }
-    _pickerEscHandler = (e) => {
-      if (e.key !== 'Escape') return
-      if (mcSignal?.aborted) return detachPickerCloseHandlers()
-      closeEmotePickerPanel()
-    }
-    cleanup.addEventListener(document, 'click', _pickerCloseHandler, 'mc-picker-close')
-    cleanup.addEventListener(document, 'keydown', _pickerEscHandler, 'mc-picker-esc')
-  }, 0)
 }
 
 /** Size the open picker to exactly the message list's box.

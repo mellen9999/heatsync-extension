@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "файла пока нет"
+  },
+  "mc_settings_remember_sent": {
+    "message": "помнить отправленные сообщения"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "стрелки вверх и вниз возвращают отправленное, даже после перезагрузки. хранится только на этом устройстве и не синхронизируется. выкл: только до перезагрузки"
+  },
+  "mc_settings_spellcheck": {
+    "message": "проверка орфографии"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "подчёркивает слова с ошибками в поле сообщения"
+  },
+  "mc_set_clear_sent": {
+    "message": "очистить историю отправленного"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "забыть сообщения, которые возвращают стрелки вверх и вниз, на этом устройстве"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "очистить"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "история отправленного очищена"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "подсказки эмоутов"
+  },
+  "mc_a11y_ac_names": {
+    "message": "подсказки имён"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "подсказки команд"
   }
 }

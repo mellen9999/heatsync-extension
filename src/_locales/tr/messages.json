@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "henüz dosya yok"
+  },
+  "mc_settings_remember_sent": {
+    "message": "gönderilen mesajları hatırla"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "yukarı ve aşağı ok tuşları gönderilen mesajları geri getirir, yeniden yüklemeden sonra bile. bu cihazda kalır ve asla eşitlenmez. kapalı: yalnızca yeniden yüklemeye kadar"
+  },
+  "mc_settings_spellcheck": {
+    "message": "yazım denetimi"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "mesaj kutusunda yanlış yazılan kelimelerin altını çizer"
+  },
+  "mc_set_clear_sent": {
+    "message": "gönderilenler geçmişini temizle"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "bu cihazda yukarı ve aşağı ok tuşlarının geri getirdiği mesajları unutur"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "temizle"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "gönderilenler geçmişi temizlendi"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "emote önerileri"
+  },
+  "mc_a11y_ac_names": {
+    "message": "isim önerileri"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "komut önerileri"
   }
 }

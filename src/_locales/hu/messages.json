@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "még nincs fájl"
+  },
+  "mc_settings_remember_sent": {
+    "message": "elküldött üzenetek megjegyzése"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "a fel és le nyíl visszahozza az elküldött üzeneteket, újratöltés után is. ezen az eszközön marad, és soha nem szinkronizálódik. ki: csak az újratöltésig"
+  },
+  "mc_settings_spellcheck": {
+    "message": "helyesírás-ellenőrzés"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "aláhúzza a hibásan írt szavakat az üzenetmezőben"
+  },
+  "mc_set_clear_sent": {
+    "message": "elküldött előzmények törlése"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "elfelejti azokat az üzeneteket, amiket a fel és le nyíl visszahoz, ezen az eszközön"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "törlés"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "elküldött előzmények törölve"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "emote-javaslatok"
+  },
+  "mc_a11y_ac_names": {
+    "message": "névjavaslatok"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "parancsjavaslatok"
   }
 }

@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "ingen fil än"
+  },
+  "mc_settings_remember_sent": {
+    "message": "kom ihåg skickade meddelanden"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "pil upp och pil ner hämtar tillbaka skickade meddelanden, även efter omladdning. stannar på den här enheten och synkas aldrig. av: bara tills sidan laddas om"
+  },
+  "mc_settings_spellcheck": {
+    "message": "stavningskontroll"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "stryker under felstavade ord i meddelanderutan"
+  },
+  "mc_set_clear_sent": {
+    "message": "rensa skickad historik"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "glöm meddelandena som pil upp och pil ner hämtar tillbaka, på den här enheten"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "rensa"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "skickad historik rensad"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "emote-förslag"
+  },
+  "mc_a11y_ac_names": {
+    "message": "namnförslag"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "kommandoförslag"
   }
 }

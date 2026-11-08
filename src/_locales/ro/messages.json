@@ -6721,5 +6721,38 @@
   },
   "mc_sfx_none": {
     "message": "niciun fișier încă"
+  },
+  "mc_settings_remember_sent": {
+    "message": "ține minte mesajele trimise"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "săgețile sus și jos readuc mesajele trimise, chiar și după reîncărcare. rămâne pe acest dispozitiv și nu se sincronizează niciodată. oprit: doar până la reîncărcare"
+  },
+  "mc_settings_spellcheck": {
+    "message": "verificare ortografică"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "subliniază cuvintele scrise greșit în caseta de mesaj"
+  },
+  "mc_set_clear_sent": {
+    "message": "șterge istoricul trimiselor"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "uită mesajele pe care le readuc săgețile sus și jos, pe acest dispozitiv"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "șterge"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "istoricul trimiselor a fost șters"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "sugestii de emotes"
+  },
+  "mc_a11y_ac_names": {
+    "message": "sugestii de nume"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "sugestii de comenzi"
   }
 }

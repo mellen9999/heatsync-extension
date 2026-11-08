@@ -2,10 +2,11 @@
 // IRC WHISPER delivery is deprecated/silently dropped since Feb 2023;
 // the only documented path is EventSub user.whisper.message.
 
+// The socket is anonymous; the two helix calls that need the twitch login (own
+// user id, the whisper subscription) are made by the background (twitchHelixViaBg),
+// so this file never holds the token — and never reuses a stale copy across a
+// reconnect.
 const ESW_URL = 'wss://eventsub.wss.twitch.tv/ws'
-const ESW_HELIX_SUBS = 'https://api.twitch.tv/helix/eventsub/subscriptions'
-const ESW_HELIX_USERS = 'https://api.twitch.tv/helix/users'
-const ESW_CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko'
 
 const eswState = {
   ws: null,
@@ -37,62 +38,37 @@ function eswMarkSeen(id) {
   return false
 }
 
-async function eswFetchSelfUserId(token) {
+async function eswFetchSelfUserId() {
   if (eswState.selfUserId) return eswState.selfUserId
-  try {
-    const resp = await fetch(ESW_HELIX_USERS, {
-      headers: { 'Client-Id': ESW_CLIENT_ID, Authorization: `Bearer ${token}` },
-      signal: AbortSignal.timeout(8000),
-    })
-    if (!resp.ok) {
-      log('EventSub: /helix/users failed', resp.status)
-      return null
-    }
-    const data = await resp.json()
-    const id = data?.data?.[0]?.id
-    if (id) eswState.selfUserId = id
-    return id || null
-  } catch (e) {
-    log('EventSub: self id fetch failed:', e.message)
+  const r = await twitchHelixViaBg('self_id')
+  if (!r.ok) {
+    log('EventSub: own id lookup failed', r.status || r.error)
     return null
   }
+  eswState.selfUserId = r.id
+  return r.id
 }
 
-async function eswSubscribeWhispers(token) {
+async function eswSubscribeWhispers() {
   if (!eswState.sessionId || !eswState.selfUserId) return false
   if (eswState.subscribing) return false // POST already in flight — don't double-subscribe
   eswState.subscribing = true
   try {
-    const resp = await fetch(ESW_HELIX_SUBS, {
-      method: 'POST',
-      headers: {
-        'Client-Id': ESW_CLIENT_ID,
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        type: 'user.whisper.message',
-        version: '1',
-        condition: { user_id: eswState.selfUserId },
-        transport: { method: 'websocket', session_id: eswState.sessionId },
-      }),
-      signal: AbortSignal.timeout(8000),
+    const r = await twitchHelixViaBg('whisper_subscribe', {
+      sessionId: eswState.sessionId,
+      userId: eswState.selfUserId,
     })
-    if (resp.status === 202) {
+    if (r.ok) {
       eswState.subscribed = true
       log('EventSub: subscribed user.whisper.message')
       return true
     }
-    const txt = await resp.text().catch(() => '')
-    log('EventSub: subscribe failed', resp.status, txt.slice(0, 200))
-    if (resp.status === 401 || resp.status === 403) {
-      // Token lacks user:read:whispers — give up (don't reconnect-loop)
+    log('EventSub: subscribe failed', r.status || r.error)
+    if (r.status === 401 || r.status === 403 || r.error === 'no_token') {
+      // No twitch login, or it lacks user:read:whispers — give up (don't reconnect-loop)
       eswState.destroyed = true
       eswCleanup(true)
     }
-    return false
-  } catch (e) {
-    log('EventSub: subscribe error', e.message)
     return false
   } finally {
     eswState.subscribing = false
@@ -134,7 +110,7 @@ function eswCleanup(destroy = false) {
   eswState.connecting = false
 }
 
-function eswScheduleReconnect(token) {
+function eswScheduleReconnect() {
   if (eswState.destroyed) return
   if (eswState.reconnectTimer) return
   const delay = eswState.reconnectDelay
@@ -145,7 +121,7 @@ function eswScheduleReconnect(token) {
     eswState.reconnectTimer = null
     if (eswState.destroyed) return
     if (eswState.ws?.readyState === WebSocket.OPEN) return
-    eswConnect(token)
+    eswConnect()
   }, jitteredDelay)
 }
 
@@ -182,7 +158,7 @@ function eswHandleNotification(msg) {
   })
 }
 
-function eswHandleMessage(token) {
+function eswHandleMessage() {
   return (event) => {
     eswState.lastMessageTime = Date.now()
     let msg
@@ -202,13 +178,13 @@ function eswHandleMessage(token) {
       // Reconnect-flow welcome carries existing subs over — only subscribe on
       // first connect, and never while a prior POST is still in flight (a fast
       // server reconnect mid-POST would otherwise create a duplicate sub).
-      if (!eswState.subscribed && !eswState.subscribing) eswSubscribeWhispers(token)
+      if (!eswState.subscribed && !eswState.subscribing) eswSubscribeWhispers()
       if (eswState.keepaliveTimer) cleanup.clearInterval(eswState.keepaliveTimer)
       eswState.keepaliveTimer = cleanup.setInterval(() => {
         if (Date.now() - eswState.lastMessageTime > eswState.keepaliveTimeoutMs) {
           log('EventSub: keepalive timeout — reconnecting')
           eswCleanup()
-          eswScheduleReconnect(token)
+          eswScheduleReconnect()
         }
       }, 5000)
       eswState.reconnectDelay = 1000
@@ -223,7 +199,7 @@ function eswHandleMessage(token) {
       const newUrl = msg.payload?.session?.reconnect_url
       if (newUrl) {
         log('EventSub: server requested reconnect')
-        eswConnect(token, newUrl)
+        eswConnect(newUrl)
       }
       return
     }
@@ -231,17 +207,16 @@ function eswHandleMessage(token) {
       log('EventSub: subscription revoked', msg.payload?.subscription?.status)
       eswState.subscribed = false
       eswCleanup()
-      eswScheduleReconnect(token)
+      eswScheduleReconnect()
       return
     }
   }
 }
 
-async function eswConnect(token, urlOverride) {
+async function eswConnect(urlOverride) {
   if (eswState.connecting) return false
-  if (!token) return false
   if (!eswState.selfUserId) {
-    const id = await eswFetchSelfUserId(token)
+    const id = await eswFetchSelfUserId()
     if (!id) {
       log('EventSub: no self user id, abort')
       return false
@@ -268,11 +243,11 @@ async function eswConnect(token, urlOverride) {
     ws.onopen = () => {
       eswState.lastMessageTime = Date.now()
     }
-    ws.onmessage = eswHandleMessage(token)
+    ws.onmessage = eswHandleMessage()
     ws.onclose = () => {
       log('EventSub: socket closed')
       if (eswState.destroyed) return
-      eswScheduleReconnect(token)
+      eswScheduleReconnect()
     }
     ws.onerror = () => {}
     if (oldWs) {
@@ -293,27 +268,27 @@ async function eswConnect(token, urlOverride) {
   } catch (e) {
     log('EventSub: connect failed', e.message)
     eswState.connecting = false
-    eswScheduleReconnect(token)
+    eswScheduleReconnect()
     return false
   }
 }
 
 async function startEventSubWhispers() {
-  // Async fetch reaches twitch cookies even on Kick/YouTube tabs (via background.js)
-  const { token } = await getTwitchAuthTokenAsync()
-  if (!token) {
-    log('EventSub: no Twitch token, skipping whispers')
+  // Reaches the twitch login even on Kick/YouTube tabs (via background.js)
+  const { loggedIn } = await getTwitchLoginAsync()
+  if (!loggedIn) {
+    log('EventSub: no Twitch login, skipping whispers')
     return
   }
-  await eswConnect(token)
+  await eswConnect()
 }
 
 async function reconnectEventSubIfDead() {
   if (eswState.destroyed) return
   if (eswState.ws?.readyState === WebSocket.OPEN) return
   if (eswState.connecting) return
-  const { token } = await getTwitchAuthTokenAsync()
-  if (!token) return
+  const { loggedIn } = await getTwitchLoginAsync()
+  if (!loggedIn) return
   log('EventSub: reconnecting (visibility/wake)')
-  eswConnect(token)
+  eswConnect()
 }

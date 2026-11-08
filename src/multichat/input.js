@@ -2425,8 +2425,8 @@ async function _ctxMod(action, channel, platform, target, msgId, durationSec, la
   // result "<action> failed: channel not found". Surface plain-send's sticky
   // not-logged-in cue instead (same check as the slash-command dispatch).
   if (platform === 'twitch') {
-    const { token } = await getTwitchAuthTokenAsync()
-    if (!token) {
+    const { loggedIn } = await getTwitchLoginAsync()
+    if (!loggedIn) {
       try {
         HsNotifs.emit('twitch-auth-required', { text: t('mc_input_not_logged_in') || 'log into twitch.tv to chat' })
       } catch (_) {}
@@ -6565,7 +6565,9 @@ function getTwitchAuthToken() {
 }
 
 // Async version — returns { token, username } for cross-platform Twitch posting
-// Tries document.cookie first, falls back to background.js cookies API
+// Tries document.cookie first, falls back to background.js cookies API.
+// ONLY for the authed chat socket (sendIrcMessage → connectAuthIrc), the one job that needs
+// the raw value in this page's WebSocket; to ask "is there a login" use getTwitchLoginAsync.
 async function getTwitchAuthTokenAsync() {
   const localToken = getTwitchAuthToken()
   if (localToken) return { token: localToken, username: null }
@@ -6575,6 +6577,25 @@ async function getTwitchAuthTokenAsync() {
     return { token: resp?.token || null, username: resp?.username || null }
   } catch {}
   return { token: null, username: null }
+}
+
+// Is there a twitch login, and whose: the background answers (it keeps the cookie value).
+async function getTwitchLoginAsync() {
+  if (getTwitchAuthToken()) return { loggedIn: true, username: null }
+  try {
+    const resp = await safeSendMessage({ type: 'twitch_auth_status' })
+    return { loggedIn: !!resp?.loggedIn, username: resp?.username || null }
+  } catch {}
+  return { loggedIn: false, username: null }
+}
+
+// A named helix call made by the background (op: self_id | whisper_subscribe); never throws.
+async function twitchHelixViaBg(op, args) {
+  const resp = await safeSendMessage({ type: 'twitch_helix', op, args: args || {} }).catch((e) => ({
+    ok: false,
+    error: e?.message || 'bridge_failed',
+  }))
+  return resp && typeof resp === 'object' ? resp : { ok: false, error: 'no_response' }
 }
 
 // Send message to current tab's channel
@@ -7359,16 +7380,16 @@ async function handleSlashCommand(text, input) {
   // side's error then surfaces in the combined toast).
   const _twitchModAuthOk = async () => {
     if (!_twitchModName || _kickModSlug) return true
-    // Hard ceiling: getTwitchAuthTokenAsync's background-SW fallback
+    // Hard ceiling: getTwitchLoginAsync's background-SW fallback
     // (chrome.runtime.sendMessage) has no built-in timeout — if the SW
     // exists but its handler never calls sendResponse, this hangs forever
     // and every mod command downstream reads to the user as "Enter does
     // nothing" with zero feedback (2026-07-20 live incident). Race it.
-    const { token } = await Promise.race([
-      getTwitchAuthTokenAsync(),
-      new Promise((resolve) => setTimeout(() => resolve({ token: null }), 5000)),
+    const { loggedIn } = await Promise.race([
+      getTwitchLoginAsync(),
+      new Promise((resolve) => setTimeout(() => resolve({ loggedIn: false }), 5000)),
     ])
-    if (token) return true
+    if (loggedIn) return true
     try {
       HsNotifs.emit('twitch-auth-required', { text: t('mc_input_not_logged_in') || 'log into twitch.tv to chat' })
     } catch (_) {}

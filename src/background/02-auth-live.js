@@ -489,105 +489,203 @@ async function fetchWithEtag(url, opts = {}, ms = 10000) {
 }
 
 // ============================================
-// TOKEN ENCRYPTION (SubtleCrypto)
+// TOKEN AT REST (SubtleCrypto + IndexedDB)
 // ============================================
-// Encrypts auth tokens at rest using a random per-user salt
-// Salt is generated on first use and persisted in local storage
+// What this is, said plainly: the heatsync session token is kept in
+// storage.local as AES-GCM ciphertext (`auth_token_encrypted`, "v2:" + base64
+// of iv + ciphertext). The key is a random 256-bit CryptoKey generated once on
+// this install with extractable=false and kept in IndexedDB as a structured
+// clone. Nothing about it is derived from a public value, and nothing needed to
+// rebuild it sits beside the data.
+//
+// What it buys: a copy of storage.local on its own (a diagnostics dump, a
+// bug-report export, a backup of that one store) holds nothing usable, and no
+// API will ever hand the key's bytes out.
+//
+// What it does not buy: any code running in this service worker can still call
+// decrypt, and a copy of the whole profile folder carries the IndexedDB too.
+// The browser's cookie jar stays the source of truth for the login
+// (getAuthCookie reads it first); this blob is only the fallback for when the
+// cookie cannot be read.
+//
+// The previous scheme (PBKDF2 over the public extension id, salt stored next to
+// the ciphertext) was obfuscation, not encryption: anyone holding storage.local
+// could rebuild the key. It is kept below as decryptLegacyToken, decrypt-only,
+// so an upgrade moves the stored token onto the real key once and deletes the
+// old salt. A token that will not decrypt either way is dropped and the user
+// signs in again — never a crash, never a retry loop.
 
-async function getOrCreateEncryptionSalt() {
-  const stored = await browser.storage.local.get('encryption_salt')
-  if (stored.encryption_salt) {
-    // hex → Uint8Array
-    const hex = stored.encryption_salt
-    const arr = new Uint8Array(hex.length / 2)
-    for (let i = 0; i < arr.length; i++) arr[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
-    return arr
-  }
-  const salt = crypto.getRandomValues(new Uint8Array(32))
-  const hex = Array.from(salt)
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-  await browser.storage.local.set({ encryption_salt: hex })
-  return salt
+const TOKEN_BLOB_V2 = 'v2:'
+const TOKEN_KEY_DB = 'hs-token-key'
+const TOKEN_KEY_STORE = 'keys'
+const TOKEN_KEY_ID = 'auth-token-aes-gcm'
+// binds a ciphertext to its purpose: a blob made for something else never opens as the login
+const TOKEN_AAD = new TextEncoder().encode('heatsync/auth-token/v2')
+
+function openTokenKeyDb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(TOKEN_KEY_DB, 1)
+    req.onupgradeneeded = () => {
+      req.result.createObjectStore(TOKEN_KEY_STORE)
+    }
+    req.onsuccess = () => resolve(req.result)
+    req.onerror = () => reject(req.error || new Error('token key db open failed'))
+    req.onblocked = () => reject(new Error('token key db open blocked'))
+  })
 }
 
-async function getEncryptionKey(salt) {
+async function loadOrCreateTokenKey() {
+  const db = await openTokenKeyDb()
+  try {
+    const existing = await new Promise((resolve, reject) => {
+      const get = db.transaction(TOKEN_KEY_STORE, 'readonly').objectStore(TOKEN_KEY_STORE).get(TOKEN_KEY_ID)
+      get.onsuccess = () => resolve(get.result || null)
+      get.onerror = () => reject(get.error || new Error('token key read failed'))
+    })
+    if (existing) return existing
+    const fresh = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt'])
+    // put-if-absent in ONE readwrite transaction: two callers that both found
+    // nothing cannot each keep a different key (the loser adopts the winner's).
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(TOKEN_KEY_STORE, 'readwrite')
+      const store = tx.objectStore(TOKEN_KEY_STORE)
+      let winner = fresh
+      const get = store.get(TOKEN_KEY_ID)
+      get.onsuccess = () => {
+        if (get.result) winner = get.result
+        else store.put(fresh, TOKEN_KEY_ID)
+      }
+      tx.oncomplete = () => resolve(winner)
+      tx.onerror = () => reject(tx.error || new Error('token key write failed'))
+      tx.onabort = () => reject(tx.error || new Error('token key write aborted'))
+    })
+  } finally {
+    try {
+      db.close()
+    } catch {}
+  }
+}
+
+// one load per worker lifetime; a failure is not cached, the next call retries
+let _tokenKeyP = null
+function tokenKey() {
+  if (!_tokenKeyP) {
+    _tokenKeyP = loadOrCreateTokenKey().catch((err) => {
+      _tokenKeyP = null
+      throw err
+    })
+  }
+  return _tokenKeyP
+}
+
+// Answers the stored form, or null when it could not be encrypted. Never
+// writes the token in the clear.
+async function encryptToken(token) {
+  if (!token) return null
+  try {
+    const key = await tokenKey()
+    const iv = crypto.getRandomValues(new Uint8Array(12))
+    const encrypted = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv, additionalData: TOKEN_AAD },
+      key,
+      new TextEncoder().encode(token),
+    )
+    const combined = new Uint8Array(iv.length + encrypted.byteLength)
+    combined.set(iv)
+    combined.set(new Uint8Array(encrypted), iv.length)
+    return TOKEN_BLOB_V2 + btoa(String.fromCharCode(...combined))
+  } catch (err) {
+    log(' Encryption failed:', err?.message)
+    return null
+  }
+}
+
+function unpackTokenBlob(b64) {
+  const combined = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))
+  return { iv: combined.slice(0, 12), data: combined.slice(12) }
+}
+
+// The v2 blob's token, or null when the ciphertext does not open under the key
+// (corrupt, or a key that is gone). THROWS when the key itself could not be
+// read (IndexedDB unavailable) — a failure that says nothing about the blob.
+async function decryptTokenV2(blob) {
+  const key = await tokenKey()
+  try {
+    const { iv, data } = unpackTokenBlob(blob.slice(TOKEN_BLOB_V2.length))
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv, additionalData: TOKEN_AAD }, key, data)
+    return new TextDecoder().decode(plain)
+  } catch (err) {
+    log(' Stored token does not open under the key:', err?.message)
+    return null
+  }
+}
+
+// DECRYPT-ONLY, kept for the one-time move off the old scheme. Its key was
+// derived from the public extension id, so this is obfuscation being read, not
+// a secret being opened. Reads the stored salt; never creates one.
+async function legacyTokenKey(salt) {
   const extensionId = browser.runtime.id || 'heatsync-default'
-  const encoder = new TextEncoder()
-  const keyMaterial = await crypto.subtle.importKey(
+  const material = await crypto.subtle.importKey(
     'raw',
-    encoder.encode(`${extensionId}-heatsync-token-key`),
+    new TextEncoder().encode(`${extensionId}-heatsync-token-key`),
     'PBKDF2',
     false,
     ['deriveKey'],
   )
   return crypto.subtle.deriveKey(
     { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-    keyMaterial,
+    material,
     { name: 'AES-GCM', length: 256 },
     false,
-    ['encrypt', 'decrypt'],
+    ['decrypt'],
   )
 }
 
-async function encryptToken(token) {
-  if (!token) return null
+async function decryptLegacyToken(blob) {
+  let parts
   try {
-    const salt = await getOrCreateEncryptionSalt()
-    const key = await getEncryptionKey(salt)
-    const iv = crypto.getRandomValues(new Uint8Array(12))
-    const encoder = new TextEncoder()
-    const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoder.encode(token))
-    // Store as base64: iv + encrypted data
-    const combined = new Uint8Array(iv.length + encrypted.byteLength)
-    combined.set(iv)
-    combined.set(new Uint8Array(encrypted), iv.length)
-    return btoa(String.fromCharCode(...combined))
-  } catch (err) {
-    log(' Encryption failed:', err.message)
+    parts = unpackTokenBlob(blob)
+  } catch {
     return null
   }
+  const salts = []
+  try {
+    const hex = (await browser.storage.local.get('encryption_salt')).encryption_salt
+    if (typeof hex === 'string' && hex.length > 0 && hex.length % 2 === 0) {
+      const arr = new Uint8Array(hex.length / 2)
+      for (let i = 0; i < arr.length; i++) arr[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
+      salts.push(arr)
+    }
+  } catch {}
+  salts.push(new TextEncoder().encode('heatsync-salt')) // the first release's fixed salt
+  for (const salt of salts) {
+    try {
+      const plain = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: parts.iv },
+        await legacyTokenKey(salt),
+        parts.data,
+      )
+      return new TextDecoder().decode(plain)
+    } catch {}
+  }
+  return null
 }
 
-async function decryptToken(encryptedBase64) {
-  if (!encryptedBase64) return null
-  const combined = Uint8Array.from(atob(encryptedBase64), (c) => c.charCodeAt(0))
-  const iv = combined.slice(0, 12)
-  const encrypted = combined.slice(12)
-
-  // Try with random per-user salt first
-  try {
-    const salt = await getOrCreateEncryptionSalt()
-    const key = await getEncryptionKey(salt)
-    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, encrypted)
-    return new TextDecoder().decode(decrypted)
-  } catch {
-    // Migration: token may have been encrypted with old hardcoded salt — try it
-    try {
-      const encoder = new TextEncoder()
-      const oldKey = await getEncryptionKey(encoder.encode('heatsync-salt'))
-      const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, oldKey, encrypted)
-      const token = new TextDecoder().decode(decrypted)
-      log(' Migrating token from static salt to random salt')
-      // Re-encrypt with new random salt (getOrCreateEncryptionSalt already wrote it above)
-      const newEncrypted = await encryptToken(token)
-      if (newEncrypted) await browser.storage.local.set({ auth_token_encrypted: newEncrypted })
-      return token
-    } catch (err) {
-      log(' Decryption failed:', err.message)
-      return null
-    }
-  }
+// Answers the token or null. A pre-v2 blob is only READ here; retrieveToken
+// moves it onto the real key.
+async function decryptToken(blob) {
+  if (!blob || typeof blob !== 'string') return null
+  if (blob.startsWith(TOKEN_BLOB_V2)) return decryptTokenV2(blob)
+  return decryptLegacyToken(blob)
 }
 
 // Secure token storage helpers
 async function storeToken(token) {
   const encrypted = await encryptToken(token)
-  if (encrypted) {
-    await browser.storage.local.set({ auth_token_encrypted: encrypted })
-    // Remove old unencrypted token if exists
-    await browser.storage.local.remove('auth_token')
-  }
+  if (!encrypted) return
+  await browser.storage.local.set({ auth_token_encrypted: encrypted })
+  // the clear-text token and the old scheme's salt have no business left
+  await browser.storage.local.remove(['auth_token', 'encryption_salt'])
 }
 
 // The browser's cookie store is the truth about being logged in; the token
@@ -617,11 +715,34 @@ async function tokenAfterRejection(rejected) {
 }
 
 async function retrieveToken() {
-  const data = await browser.storage.local.get(['auth_token_encrypted', 'auth_token'])
-  // Try encrypted first
-  if (data.auth_token_encrypted) {
-    const token = await decryptToken(data.auth_token_encrypted)
-    if (token) return token
+  const data = await browser.storage.local.get(['auth_token_encrypted', 'auth_token', 'encryption_salt'])
+  const blob = data.auth_token_encrypted
+  if (typeof blob === 'string' && blob) {
+    let token = null
+    let keyReadable = true
+    try {
+      token = await decryptToken(blob)
+    } catch (err) {
+      // the key store itself failed (IndexedDB unavailable): that says nothing
+      // about the blob, so it is left alone for the next try
+      keyReadable = false
+      log(' Token key unavailable:', err?.message)
+    }
+    if (token) {
+      if (!blob.startsWith(TOKEN_BLOB_V2)) {
+        log(' Moving the stored token onto the real key')
+        await storeToken(token) // writes v2, deletes the old salt
+      } else if (data.encryption_salt) {
+        await browser.storage.local.remove('encryption_salt')
+      }
+      return token
+    }
+    if (keyReadable) {
+      // opens under nothing we hold: gone for good. Dropped so the popup stops
+      // claiming a login that no longer exists; the next sign-in writes a new one.
+      log(' Stored token is unreadable — dropping it, sign-in will replace it')
+      await browser.storage.local.remove(['auth_token_encrypted', 'encryption_salt'])
+    }
   }
   // Fallback to unencrypted (migration) and re-encrypt
   if (data.auth_token) {
@@ -680,6 +801,96 @@ async function getAuthCookie({ fresh = false } = {}) {
 
   log(' No auth token available')
   return null
+}
+
+// ============================================
+// TWITCH SESSION — the twitch.tv login cookie stays in this worker
+// ============================================
+// `auth-token` on twitch.tv is the user's twitch login. Content scripts used to
+// ask for it by value (`get_twitch_auth_token`) for four different jobs, and
+// three of them never needed the value:
+//   - "is there a twitch login, and whose"  → twitch_auth_status (yes/no + name)
+//   - helix lookups: own user id, the whisper subscription → twitch_helix; the
+//     worker makes the call, the answer leaves, the token does not
+//   - the authed chat socket on kick/youtube pages must send `PASS oauth:<token>`
+//     from the page's own WebSocket → get_twitch_auth_token, still handed out
+//     (that one job), but only to the overlay's top frame on a twitch / kick /
+//     youtube tab. Never to heatsync.org, a subframe, the popup or another
+//     extension. Moving that socket into this worker is the step that would
+//     make the value stay here for good.
+const TWITCH_WEB_CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko'
+const TWITCH_SESSION_HOSTS = /^https:\/\/((?:[a-z0-9-]+\.)*twitch\.tv|(?:[a-z0-9-]+\.)*kick\.com|www\.youtube\.com)$/
+
+// Who may use the twitch login at all: this extension's own content script, in
+// the TOP frame of a tab that is on twitch / kick / youtube. The frame's own
+// url and the tab's must be the same origin (a page cannot dress an iframe up as
+// the tab). Anything else — heatsync.org, an iframe, no tab at all — is refused.
+function twitchSessionSenderOk(sender) {
+  try {
+    if (!sender || sender.id !== browser.runtime.id) return false
+    if (!sender.tab || sender.tab.id == null || sender.frameId !== 0) return false
+    const frame = new URL(sender.url || '')
+    if (frame.origin !== new URL(sender.tab.url || '').origin) return false
+    return TWITCH_SESSION_HOSTS.test(frame.origin)
+  } catch {
+    return false
+  }
+}
+
+// The twitch cookie, read fresh each time (it rotates; a copy held for hours
+// goes stale). username falls back to the heatsync-linked twitch name: the
+// stored identity, not a fetchUserInfo() local, which was once a ReferenceError
+// here that read as "signed out".
+async function readTwitchSession() {
+  const [tokenCookie, nameCookie, stored] = await Promise.all([
+    browser.cookies.get({ url: 'https://www.twitch.tv', name: 'auth-token' }),
+    browser.cookies.get({ url: 'https://www.twitch.tv', name: 'name' }),
+    browser.storage.local.get('user_info'),
+  ])
+  return {
+    token: tokenCookie?.value || null,
+    username: nameCookie?.value
+      ? decodeURIComponent(nameCookie.value).toLowerCase()
+      : stored?.user_info?.twitch_username || null,
+  }
+}
+
+// The two helix calls the overlay needs, by name. Not a proxy: no other path, no
+// caller-chosen url or body.
+//   self_id            → { ok, id }
+//   whisper_subscribe  → { ok, status }   args: { sessionId, userId }
+async function twitchHelix(op, args = {}) {
+  const { token } = await readTwitchSession()
+  if (!token) return { ok: false, error: 'no_token' }
+  const headers = { 'Client-Id': TWITCH_WEB_CLIENT_ID, Authorization: `Bearer ${token}` }
+  if (op === 'self_id') {
+    const resp = await fetchWithTimeout('https://api.twitch.tv/helix/users', { headers, credentials: 'omit' }, 8000)
+    if (!resp.ok) return { ok: false, status: resp.status, error: `helix ${resp.status}` }
+    const id = (await resp.json().catch(() => null))?.data?.[0]?.id
+    return id ? { ok: true, id: String(id) } : { ok: false, error: 'no_id' }
+  }
+  if (op === 'whisper_subscribe') {
+    const sessionId = String(args.sessionId ?? '')
+    const userId = String(args.userId ?? '')
+    if (!/^[\w-]{8,200}$/.test(sessionId) || !/^\d{1,20}$/.test(userId)) return { ok: false, error: 'bad_args' }
+    const resp = await fetchWithTimeout(
+      'https://api.twitch.tv/helix/eventsub/subscriptions',
+      {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        credentials: 'omit',
+        body: JSON.stringify({
+          type: 'user.whisper.message',
+          version: '1',
+          condition: { user_id: userId },
+          transport: { method: 'websocket', session_id: sessionId },
+        }),
+      },
+      8000,
+    )
+    return { ok: resp.status === 202, status: resp.status }
+  }
+  return { ok: false, error: 'unknown_op' }
 }
 
 // Fetch user's emote inventory via HTTP

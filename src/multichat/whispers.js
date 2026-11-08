@@ -407,8 +407,8 @@ function handleIncomingDm(data) {
 // via Apollo's link chain (fingerprint + session correlation). The SendWhisper
 // Document is loaded from Twitch's webpack by searchTerm. Mirrors _followMutation.
 async function sendTwitchWhisperDirect(toUserId, message) {
-  const { token } = await getTwitchAuthTokenAsync()
-  if (!token) return { ok: false, noToken: true }
+  const { loggedIn } = await getTwitchLoginAsync()
+  if (!loggedIn) return { ok: false, noToken: true }
   const nonce = crypto?.randomUUID?.() || `${Date.now()}_${Math.random().toString(36).slice(2, 12)}`
   const variables = { input: { recipientUserID: String(toUserId), message: String(message), nonce } }
   const result = await apolloMutate({ searchTerm: 'SendWhisper', variables, resultField: 'sendWhisper' })
@@ -786,7 +786,7 @@ function renderWhispersTab() {
       // reopen paints even when nothing was cached this render.
       const p = hsNameParts({ name, userId: uid, platform: m.platform, colour: color, login: lower })
       const cls = `hs-mc-user hs-dm-name${p.cls ? ` ${p.cls}` : ''}`
-      return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}"${p.attrs} style="${p.style}">${p.inner}</a>`
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}"${p.attrs} style="${escapeHtml(p.style)}">${p.inner}</a>`
     }
 
     // Self side is a plain "you" token (matches the inline-dm row) — in a mixed

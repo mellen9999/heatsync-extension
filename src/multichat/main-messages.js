@@ -99,8 +99,8 @@ function buildMessageDiv(m, tabId) {
     const userLink =
       evtBadges +
       (isYtEvent && m.actor
-        ? `<span class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${evt.style}">${evt.inner}</span>`
-        : `<a href="${escapeHtml(streamEventUrl(evtPlat, ch).replace(/#hs-live$/, ''))}" target="_blank" rel="noopener noreferrer" class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${evt.style}">${evt.inner}</a>`)
+        ? `<span class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${escapeHtml(evt.style)}">${evt.inner}</span>`
+        : `<a href="${escapeHtml(streamEventUrl(evtPlat, ch).replace(/#hs-live$/, ''))}" target="_blank" rel="noopener noreferrer" class="${evtCls}" data-username="${escapeHtml(ch)}"${platAttr}${evt.attrs} style="${escapeHtml(evt.style)}">${evt.inner}</a>`)
     const textAfterChannel = escapeHtml(m.text).replace(/^\[[^\]]+\]\s*/, '')
     const actionHtml = textAfterChannel.replace(
       /(switched to |now playing |went live \u2014 )(.+)$/,
@@ -273,7 +273,7 @@ function buildMessageDiv(m, tabId) {
     // OTHER party in both directions (recipient on outgoing, sender on
     // incoming), so the arrow flows away from you on sends, toward you on
     // receives — the same mental model as a chat client's whisper split.
-    const otherName = `<span class="hs-dm-name${dm.cls ? ` ${dm.cls}` : ''}"${dm.attrs} style="${dm.style}">${dm.inner}</span>`
+    const otherName = `<span class="hs-dm-name${dm.cls ? ` ${dm.cls}` : ''}"${dm.attrs} style="${escapeHtml(dm.style)}">${dm.inner}</span>`
     const youTok = `<span class="hs-whisper-you">${t('mc_tagcard_you')}</span>`
     const arrow = `<span class="hs-whisper-arrow" style="color:${dirColor}">→</span>`
     const dirPair = m.outgoing ? `${youTok}${arrow}${otherName}` : `${otherName}${arrow}${youTok}`
@@ -317,7 +317,7 @@ function buildMessageDiv(m, tabId) {
     div.style.borderLeftColor = m.inlineNotifBorderColor || '#ffffff'
     const tsVal = timestampsEnabled ? formatTimeFromTs(m.time) : ''
     const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
-    const label = `<span style="color:${m.inlineNotifColor || '#ffffff'};font-size:13px;font-weight:700;margin-right:4px">[cmd]</span>`
+    const label = `<span style="color:${escapeHtml(m.inlineNotifColor || '#ffffff')};font-size:13px;font-weight:700;margin-right:4px">[cmd]</span>`
     const cmdText = `<span class="hs-cmd-text">${escapeHtml(m.text)}</span>`
     const markCls = m.status === 'ok' ? 'hs-cmd-ok' : m.status === 'failed' ? 'hs-cmd-fail' : 'hs-cmd-pending'
     const markText = m.status === 'ok' ? '✓' : m.status === 'failed' ? `✗${m.reason ? ` ${m.reason}` : ''}` : '…'
@@ -331,7 +331,7 @@ function buildMessageDiv(m, tabId) {
     div.style.borderLeftColor = m.inlineNotifBorderColor || '#fff'
     const tsVal = timestampsEnabled ? formatTimeFromTs(m.time) : ''
     const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
-    const label = `<span style="color:${m.inlineNotifColor || '#fff'};font-size:13px;font-weight:700;margin-right:3px">[🔥]</span>`
+    const label = `<span style="color:${escapeHtml(m.inlineNotifColor || '#fff')};font-size:13px;font-weight:700;margin-right:3px">[🔥]</span>`
     // ¶ permalink → shareable SSR page (right-click copy-link works natively);
     // the row click handler ignores anchors, mirrors the site's moment-card.
     // Shift-click pastes the URL into the chat input instead — the in-chat
@@ -339,7 +339,7 @@ function buildMessageDiv(m, tabId) {
     // instant value, no wall. Never auto-sends; the user owns the enter key.
     const perma =
       m.momentId && /^\d+$/.test(m.momentId)
-        ? ` <a class="hs-mc-moment-perma" href="https://heatsync.org/moment/${m.momentId}" target="_blank" rel="noopener" title="${t('mc_moment_permalink')}">¶</a>`
+        ? ` <a class="hs-mc-moment-perma" href="https://heatsync.org/moment/${encodeURIComponent(m.momentId)}" target="_blank" rel="noopener" title="${t('mc_moment_permalink')}">¶</a>`
         : ''
     div.innerHTML = `${tsSpan}${label}<span style="color:#ffffff">${escapeHtml(m.text || '')}</span>${perma}`
     // Same deal as the inline DM row: clickable, contains an anchor (¶ perma),
@@ -884,7 +884,7 @@ function buildMessageDiv(m, tabId) {
         // already knew. The trailing caret is the affordance, aria-expanded is
         // the state, and both the universal hover invert and keyboard
         // activation come free once it is a button.
-        `<span class="hs-mc-reply-ctx hs-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}" data-platform="${escapeHtml(m.platform || 'twitch')}"${replyUidAttr}${replyUserSplitAttr} style="${replyStyle}">${replyUserHtml}</a>${replyPlusHtml}${m.replyTo.text ? `<span class="hs-mc-reply-snippet">: ${escapeHtml(m.replyTo.text)}</span>` : ''}</span> `
+        `<span class="hs-mc-reply-ctx hs-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}" data-platform="${escapeHtml(m.platform || 'twitch')}"${replyUidAttr}${replyUserSplitAttr} style="${escapeHtml(replyStyle)}">${replyUserHtml}</a>${replyPlusHtml}${m.replyTo.text ? `<span class="hs-mc-reply-snippet">: ${escapeHtml(m.replyTo.text)}</span>` : ''}</span> `
       : ''
   // Redeem label — look up reward title from Hermes cache
   let redeemLabel = ''
@@ -1353,7 +1353,7 @@ function highlightMentionsInHtml(html, platform) {
       // followage/banner/pronouns all key off the twitch id it never got.
       // Use the same platform the uid lookup two blocks up already uses, so
       // the mention's identity and its hover card agree by construction.
-      return `${lead}<a href="https://heatsync.org/user/${encodeURIComponent(lower)}" target="_blank" rel="noopener noreferrer" class="${mentionCls}" data-username="${safeLower}" data-platform="${escapeHtml(platform)}"${uidAttr}${splitAttr} style="${style}">${inner}</a>`
+      return `${lead}<a href="https://heatsync.org/user/${encodeURIComponent(lower)}" target="_blank" rel="noopener noreferrer" class="${mentionCls}" data-username="${safeLower}" data-platform="${escapeHtml(platform)}"${uidAttr}${splitAttr} style="${escapeHtml(style)}">${inner}</a>`
     },
   )
 }

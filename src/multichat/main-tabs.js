@@ -1770,7 +1770,7 @@ function buildFeedQuoteUserLink(feedUser, uid, hsPaint, paintStyle, color) {
   // feedUid above is always resolved twitch-space (userKey(..., 'twitch')) —
   // an inline feed quote only ever names a twitch chatter, same convention
   // as the mention/reply-bar platform default elsewhere in this file.
-  return `<a href="https://heatsync.org/user/${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}" data-platform="twitch"${uidAttr}${splitAttr} style="${style}">${inner}</a>`
+  return `<a href="https://heatsync.org/user/${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}" data-platform="twitch"${uidAttr}${splitAttr} style="${escapeHtml(style)}">${inner}</a>`
 }
 
 // Shared-chat room-id → login. Keys are twitch numeric channel ids (from

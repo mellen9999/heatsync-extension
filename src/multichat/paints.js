@@ -541,7 +541,7 @@ function getHsPaintClass(userId) {
   if (!hsPaintsEnabled() || isHsPaintHiddenForUser(userId)) return ''
   const entry = hsPaintCache.get(userId)
   if (!entry?.hash) return ''
-  return `hsp-${entry.hash}`
+  return `hsp-${String(entry.hash).replace(/[^a-z0-9]/gi, '')}`
 }
 
 /** @returns {object|null} the raw validated spec (for paintNeedsSpans checks). */

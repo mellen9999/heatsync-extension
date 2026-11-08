@@ -56,7 +56,7 @@ function _renderSetSubtabBar() {
           '<button class="hs-mc-set-subtab' +
           (_settingsSubtab === id ? ' active' : '') +
           '" data-set-subtab="' +
-          id +
+          escapeHtml(id) +
           '" title="' +
           escapeHtml(_setCatLabel(id)) +
           '">' +

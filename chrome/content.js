@@ -120,6 +120,7 @@
         chrome.runtime.sendMessage({ type: 'notifs_viewed' })
       } catch {}
     })
+
     return
   }
 

@@ -940,26 +940,40 @@ async function handleMessage(message, sender, sendResponse) {
     broadcastToTabs({ type: 'user_unblocked', username: message.username })
     log(' Unblocked user:', message.username)
     sendResponse({ ok: true })
+  } else if (message.type === 'twitch_auth_status') {
+    // Is there a twitch login, and whose. The cookie's value stays here.
+    if (!twitchSessionSenderOk(sender)) {
+      sendResponse({ loggedIn: false, username: null, error: 'unauthorized sender' })
+      return true
+    }
+    readTwitchSession()
+      .then(({ token, username }) => sendResponse({ loggedIn: !!token, username }))
+      .catch(() => sendResponse({ loggedIn: false, username: null }))
+    return true
+  } else if (message.type === 'twitch_helix') {
+    // A named helix call made from here, so the twitch token never reaches a
+    // content script for it (see TWITCH SESSION in 02-auth-live.js).
+    if (!twitchSessionSenderOk(sender)) {
+      sendResponse({ ok: false, error: 'unauthorized sender' })
+      return true
+    }
+    twitchHelix(String(message.op || ''), message.args || {})
+      .then((r) => sendResponse(r))
+      .catch((e) => sendResponse({ ok: false, error: e?.message || 'helix failed' }))
+    return true
   } else if (message.type === 'get_twitch_auth_token') {
-    // Cross-domain Twitch cookie access (for sending from Kick/YouTube pages)
-    // The stored identity, not `userInfo` — that is a local const inside
-    // fetchUserInfo(), so the fallback threw ReferenceError here (optional
-    // chaining does not save an UNDECLARED name). The throw rejected the
-    // chain, the catch below fired, and a viewer with no twitch `name` cookie
-    // was told they had no token either — indistinguishable from signed out.
-    Promise.all([
-      browser.cookies.get({ url: 'https://www.twitch.tv', name: 'auth-token' }),
-      browser.cookies.get({ url: 'https://www.twitch.tv', name: 'name' }),
-      browser.storage.local.get('user_info'),
-    ])
-      .then(([tokenCookie, nameCookie, stored]) => {
-        sendResponse({
-          token: tokenCookie?.value || null,
-          username: nameCookie?.value
-            ? decodeURIComponent(nameCookie.value).toLowerCase()
-            : stored?.user_info?.twitch_username || null,
-        })
-      })
+    // The raw twitch login, for ONE job: the authed chat socket on a kick or
+    // youtube page, which has to send `PASS oauth:<token>` from the page's own
+    // WebSocket. Handed only to the overlay's top frame on a twitch / kick /
+    // youtube tab; heatsync.org, subframes, the popup and anything outside the
+    // extension get nothing. Presence checks use twitch_auth_status and helix
+    // lookups use twitch_helix, so they never see the value.
+    if (!twitchSessionSenderOk(sender)) {
+      sendResponse({ token: null, username: null, error: 'unauthorized sender' })
+      return true
+    }
+    readTwitchSession()
+      .then((session) => sendResponse(session))
       .catch(() => sendResponse({ token: null, username: null }))
     return true
   } else if (message.type === 'get_inventory') {
@@ -1223,6 +1237,13 @@ async function handleMessage(message, sender, sendResponse) {
     // state and other authed data without a Twitch tab being open.
     // Mutations that need Client-Integrity should go through twitch_relay
     // instead (relays through a live Twitch tab).
+    // Runs the caller's query as the twitch login, so only the overlay's top
+    // frame on a twitch / kick / youtube tab may ask — not heatsync.org, not an
+    // iframe, not the popup.
+    if (!twitchSessionSenderOk(sender)) {
+      sendResponse({ ok: false, error: 'unauthorized sender' })
+      return true
+    }
     ;(async () => {
       try {
         const cookie = await browser.cookies.get({ url: 'https://www.twitch.tv', name: 'auth-token' }).catch(() => null)

@@ -1239,7 +1239,7 @@ function emoteImgHtml([name, emote]) {
   // SCREEN needs and nothing else. Same reasoning as getChatResUrl: max-height
   // only shrinks, so a denser file changes the pixels and not the layout.
   const pickerUrl = hsRungUrl(emote.url, typeof devicePixelRatio === 'number' && devicePixelRatio >= 1.5 ? 2 : 1)
-  return `<span class="${wrapCls}" role="option" aria-selected="false" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}"${emote.variant ? ` data-variant="${escapeHtml(emote.variant)}"` : ''} data-source="${escapeHtml(emote.source)}" data-state="${state}" loading="lazy"></span>`
+  return `<span class="${wrapCls}" role="option" aria-selected="false" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}"${emote.variant ? ` data-variant="${escapeHtml(emote.variant)}"` : ''} data-source="${escapeHtml(emote.source)}" data-state="${escapeHtml(state)}" loading="lazy"></span>`
 }
 
 /**
@@ -1416,7 +1416,7 @@ function showEmotePicker(tab = null) {
         ${mcVisiblePickerTabs()
           .map(
             (tab) =>
-              `<button class="hs-mc-picker-tab ${pickerTab === tab.id ? 'active' : ''}" data-tab="${tab.id}">${escapeHtml(tab.labelKey ? t(tab.labelKey) : tab.label)}</button>`,
+              `<button class="hs-mc-picker-tab ${pickerTab === tab.id ? 'active' : ''}" data-tab="${escapeHtml(tab.id)}">${escapeHtml(tab.labelKey ? t(tab.labelKey) : tab.label)}</button>`,
           )
           .join('')}
       </div>

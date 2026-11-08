@@ -76,6 +76,12 @@
     }
     .explain { text-align: center; }
     .ok { color: #00ff00; font-size: 15px; text-align: center; }
+    .info { display: flex; flex-direction: column; gap: 10px; }
+    .info section { display: flex; flex-direction: column; gap: 2px; }
+    .info h2 { font-size: 13px; font-weight: 700; text-decoration: underline; }
+    .info ul { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+    .info li { display: flex; gap: 1ch; }
+    .info li::before { content: '\203A'; flex: none; }
     [hidden] { display: none !important; }
     footer {
       display: flex;
@@ -104,6 +110,25 @@
        target="_blank" rel="noopener" data-i18n="welcome_cta_kick">sign in →</a>
 
     <p class="ok" data-when="in" hidden><span class="check">✓</span> <span data-i18n="welcome_done_title">you're in</span></p>
+
+    <div class="info">
+      <section>
+        <h2 data-i18n="welcome_get_title">what you get</h2>
+        <ul>
+          <li data-i18n="welcome_get_1">twitch, kick and youtube chat in one place, with every emote (7tv, bttv, ffz, heatsync)</li>
+          <li data-i18n="welcome_get_2">reading chat needs no account</li>
+          <li data-i18n="welcome_get_3">an account adds your own emotes and settings, on every device</li>
+        </ul>
+      </section>
+      <section>
+        <h2 data-i18n="welcome_start_title">how to start</h2>
+        <ul>
+          <li data-i18n="welcome_start_1">open any twitch, kick or youtube stream. heatsync chat appears by itself</li>
+          <li data-i18n="welcome_start_2">a small card shows what's switched off. click what you want</li>
+          <li data-i18n="welcome_start_3">to chat, log in on the site as usual, then type in the box at the bottom</li>
+        </ul>
+      </section>
+    </div>
 
     <button type="button" class="cta-close" id="hs-close-btn" data-i18n="welcome_close">close</button>
 

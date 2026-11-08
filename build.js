@@ -846,6 +846,7 @@ const MULTICHAT_MODULES = [
   'tab-counter.js',
   'tab-mode.js',
   'overlay-keys.js',
+  'sr-announce.js',
   'filter-rules.js',
   'filter-rules-legacy.js',
   'user-notes.js',

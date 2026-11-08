@@ -1014,7 +1014,7 @@ function createOverlay() {
       </div>
       <div id="hs-mc-multistream-banner" hidden></div>
       <div id="hs-mc-pinbar" hidden></div>
-      <div id="hs-mc-messages" role="log" aria-label="${t('mc_main_messages_aria')}">
+      <div id="hs-mc-messages" role="log"${srLogLiveAttr()} aria-label="${t('mc_main_messages_aria')}">
         <!-- Skeleton state, painted before any join has even been issued —
              so it must be "connecting…", not "no messages yet". renderMessages
              owns the swap: it prints "no messages yet" only once _tabJoining
@@ -1023,6 +1023,7 @@ function createOverlay() {
         <div class="hs-mc-empty">${t('mc_connecting')}</div>
       </div>
       <button id="hs-mc-new-msgs" style="display:none"></button>
+      <div id="hs-mc-sr-mentions" class="hs-mc-sr-only" role="log" aria-live="polite" aria-relevant="additions" aria-label="${t('mc_a11y_mentions_aria')}"></div>
     `
 
   // Setup scroll detection after DOM insertion

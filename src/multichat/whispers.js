@@ -786,7 +786,7 @@ function renderWhispersTab() {
       // reopen paints even when nothing was cached this render.
       const p = hsNameParts({ name, userId: uid, platform: m.platform, colour: color, login: lower })
       const cls = `hs-mc-user hs-dm-name${p.cls ? ` ${p.cls}` : ''}`
-      return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}"${p.attrs} style="${p.style}">${p.inner}</a>`
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}"${p.attrs} style="${escapeHtml(p.style)}">${p.inner}</a>`
     }
 
     // Self side is a plain "you" token (matches the inline-dm row) — in a mixed

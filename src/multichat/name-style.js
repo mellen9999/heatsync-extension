@@ -154,7 +154,7 @@ function hsNameParts(o) {
   const data = { nuid: uid, nplat: plat, nsrc: platform, nlogin: login }
   if (colourIn !== undefined) data.ncol = colourIn ? colour : '-'
   let attrs = ''
-  for (const [k, v] of Object.entries(data)) if (v) attrs += ` data-hs-${k}="${escapeHtml(v)}"`
+  for (const [k, v] of Object.entries(data)) if (v) attrs += ` data-hs-${escapeHtml(k)}="${escapeHtml(v)}"`
   if (hs) attrs += hs.splitAttr
   return { uid, data, cls: hs ? hs.cls : '', style, inner: hs ? hs.html : escapeHtml(name), attrs, hs }
 }

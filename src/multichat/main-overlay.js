@@ -73,9 +73,9 @@ function setTabActive(el, on) {
 // is born active. Labels come from locale keys, '+' is literal.
 function mcTabButtonHtml(tab) {
   const label = tab.labelKey ? t(tab.labelKey) : tab.label
-  if (tab.id === 'add') return `<button class="hs-mc-tab" data-tab="add">${label}</button>`
+  if (tab.id === 'add') return `<button class="hs-mc-tab" data-tab="add">${escapeHtml(label)}</button>`
   const on = tab.id === 'live'
-  return `<button class="hs-mc-tab${on ? ' active' : ''}" role="tab" aria-selected="${on}" data-tab="${tab.id}">${label}</button>`
+  return `<button class="hs-mc-tab${on ? ' active' : ''}" role="tab" aria-selected="${on}" data-tab="${escapeHtml(tab.id)}">${escapeHtml(label)}</button>`
 }
 
 // Rebuild the 2nd row for the active tab; hidden when the tab has no cells.
@@ -1074,7 +1074,7 @@ function createOverlay() {
           isScrolledUp = true
           newBtn.innerHTML =
             newMessageCount > 0
-              ? `<span class="hs-arrow-down">▼</span> ${t('mc_new_messages', [String(newMessageCount)])}`
+              ? `<span class="hs-arrow-down">▼</span> ${t('mc_new_messages', [String(Number(newMessageCount) || 0)])}`
               : `<span class="hs-arrow-down">▼</span> ${t('mc_resume')}`
           newBtn.style.display = 'flex'
         }

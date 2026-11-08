@@ -37,7 +37,8 @@ function hsEmojiFilter(data, q, cat) {
 /** The tab's markup. Built with the panel, like every other tab. */
 function hsEmojiTabHtml() {
   const cats = HS_EMOJI_CATS.map(
-    ([id, ico]) => `<button type="button" class="hs-mc-emoji-cat" data-cat="${id}" title="${id}">${ico}</button>`,
+    ([id, ico]) =>
+      `<button type="button" class="hs-mc-emoji-cat" data-cat="${escapeHtml(id)}" title="${escapeHtml(id)}">${escapeHtml(ico)}</button>`,
   ).join('')
   return `<div class="hs-mc-tab-content hs-mc-emoji-tab" id="hs-mc-tab-emoji" style="display: none; flex-direction: column;">
         <div class="hs-mc-picker-header">

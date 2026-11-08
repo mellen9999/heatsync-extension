@@ -124,7 +124,7 @@ function _renderMessagesImpl(id, opts) {
     }
     newMessageCount++
     if (newBtn) {
-      newBtn.innerHTML = `<span class="hs-arrow-down">▼</span> ${newMessageCount} new`
+      newBtn.innerHTML = `<span class="hs-arrow-down">▼</span> ${Number(newMessageCount) || 0} new`
       newBtn.style.display = 'flex'
     }
     return

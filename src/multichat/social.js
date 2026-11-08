@@ -2228,7 +2228,7 @@ function feedAuthorLink(m) {
   // data-uid stays twitch-id-space only (ID-SPACE SAFETY, paints.js); the
   // namespaced kick_/yt_ ids ride data-hs-nuid in p.attrs
   const uidAttr = hsNameIsTwitchSpace(p.uid) ? ` data-uid="${escapeHtml(p.uid)}"` : ''
-  return `<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}" data-platform="${escapeHtml(m.platform || '')}"${uidAttr}${p.attrs} style="${p.style}">${p.inner}</a>`
+  return `<a href="https://heatsync.org/user/${encodeURIComponent(m.username)}" target="_blank" rel="noopener noreferrer" class="${cls}" data-username="${escapeHtml(lower)}" data-platform="${escapeHtml(m.platform || '')}"${uidAttr}${p.attrs} style="${escapeHtml(p.style)}">${p.inner}</a>`
 }
 
 function buildFeedMessageDiv(m, opUsername) {
@@ -2254,7 +2254,7 @@ function buildFeedMessageDiv(m, opUsername) {
   // would slip past getHeatDisplay's NaN comparisons and reach innerHTML
   // verbatim via formatHeat. Mirrors heatSpanHtml/heatSpanEl.
   const heat = Number(m.heat) || 0
-  const replies = m.reply_count || 0
+  const replies = Number(m.reply_count) || 0
   // renderFeedContent sanitizes via escapeHtml + emote ref escaping
   const content = renderFeedContent(m.content, m.emote_refs)
 
@@ -2519,7 +2519,7 @@ function renderFeedContent(content, emoteRefs) {
           if (isSelf)
             return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="hs-mention self" data-username="${escapeHtml(lower)}">@${escapeHtml(name)}</a>`
           const p = hsNameParts({ name: `@${name}`, login: lower, resolve: true })
-          return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="hs-mention${p.cls ? ` ${p.cls}` : ''}" data-username="${escapeHtml(lower)}"${p.attrs} style="${p.style}">${p.inner}</a>`
+          return `<a href="${href}" target="_blank" rel="noopener noreferrer" class="hs-mention${p.cls ? ` ${p.cls}` : ''}" data-username="${escapeHtml(lower)}"${p.attrs} style="${escapeHtml(p.style)}">${p.inner}</a>`
         })
       })
       .join('')

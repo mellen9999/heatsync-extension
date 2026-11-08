@@ -149,7 +149,10 @@ describe('multichat boot on a bridge tab', () => {
     expect(guard).toBeGreaterThan(0)
     expect(init.slice(guard, guard + 80)).toContain('return')
     // nothing else runs first: the guard is the first statement of the body
-    const firstStatement = init.slice(init.indexOf('{') + 1).replace(/\s*\/\/[^\n]*/g, '').trimStart()
+    const firstStatement = init
+      .slice(init.indexOf('{') + 1)
+      .replace(/\s*\/\/[^\n]*/g, '')
+      .trimStart()
     expect(firstStatement.startsWith("if (location.hash.includes('hs-bridge')) return")).toBe(true)
   })
 })

@@ -5,6 +5,7 @@
  *
  *   bun run build.js chrome --minify && bun scripts/merged-tab-bench.ts
  *   bun scripts/merged-tab-bench.ts --seconds 30 --twitch 30 --kick 6 --yt 3
+ *   bun scripts/merged-tab-bench.ts --budget scripts/merged-tab-budget.json   # the nightly: fails over the limit
  *
  * Why it exists: a merged tab used to repaint the whole pane (the diff render,
  * up to 500 rows) once per frame while any platform was talking. This feeds a

@@ -106,12 +106,13 @@ jobs:
         timeout-minutes: 5
         run: bun scripts/interaction-ext.ts
 
-      # per-message main-thread time of a busy merged tab, against
-      # scripts/merged-tab-budget.json (baseline + 25%), and the fast path vs a
-      # full render must agree row for row
+      # the fast path vs a full render must agree row for row. TODO: the timing
+      # gate (--budget scripts/merged-tab-budget.json, baseline + 25%) is built
+      # into the script but has no baseline file yet: measure three --json runs
+      # on a quiet machine, write the file, then add the flag here.
       - name: merged-tab bench
         timeout-minutes: 5
-        run: bun scripts/merged-tab-bench.ts --budget scripts/merged-tab-budget.json
+        run: bun scripts/merged-tab-bench.ts
 
   contracts:
     runs-on: ubuntu-latest

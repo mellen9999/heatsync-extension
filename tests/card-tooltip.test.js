@@ -20,9 +20,9 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { hsCardModel } from '../src/lib/card-model.js'
-import { hsCardHtml } from '../src/lib/card-render.js'
 import { hsCardRelativeTime, hsCardTenureMonths } from '../src/lib/card-time.js'
 import { escapeHtml } from '../src/lib/utils.js'
+import { makeCardL10n } from './card-l10n-env.js'
 
 const ROOT = join(import.meta.dir, '..')
 const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages.json'), 'utf8'))
@@ -55,7 +55,7 @@ const formatCompactSrc = slice(TIPS, 'function formatCompact(n) {', '\nfunction 
 const { renderProfileCard, hsExtRenderBio, computeSubTenureRow, computeFollowageRows } = new Function(
   'escapeHtml',
   'hsCardModel',
-  'hsCardHtml',
+  'hsCardHtmlL10n',
   'hsCardRelativeTime',
   'hsCardTenureMonths',
   'getTooltipChannelContext',
@@ -67,7 +67,7 @@ const { renderProfileCard, hsExtRenderBio, computeSubTenureRow, computeFollowage
 )(
   escapeHtml,
   hsCardModel,
-  hsCardHtml,
+  makeCardL10n(t).hsCardHtmlL10n,
   hsCardRelativeTime,
   hsCardTenureMonths,
   () => 'forsen',

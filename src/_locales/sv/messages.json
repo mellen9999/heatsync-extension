@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "En panel för livechatt på Twitch, Kick + YouTube. Plus ett gratis förråd med 5000 emotes som följer med dig till varje kanal"
+    "message": "En panel för livechatt på Twitch, Kick + YouTube. Plus ett gratis förråd med 5 000 emotes som följer med dig till varje kanal"
   },
   "common_loading": {
     "message": "läser in..."
@@ -6166,7 +6166,7 @@
     "message": "feedback / buggrapport"
   },
   "popup_inv_slots": {
-    "message": "5 000 emote-platser"
+    "message": "5 000 emote-platser"
   },
   "popup_inv_signed_in_as": {
     "message": "inloggad som $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 platser"
+    "message": " / 5 000 platser"
   },
   "popup_inv_import_hint": {
     "message": " · importera en kanal för att fylla det"
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "kommandoförslag"
+  },
+  "mc_card_l_age": {
+    "message": "ålder"
+  },
+  "mc_card_l_type": {
+    "message": "typ"
+  },
+  "mc_card_l_peak": {
+    "message": "topp"
+  },
+  "mc_card_l_rel": {
+    "message": "rel."
+  },
+  "mc_card_l_mutuals": {
+    "message": "gemensamma"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "följer dig"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "subb T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "subb hos dig"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "subb hos dig T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "sedan $DAY$ i #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "även"
+  },
+  "mc_card_l_add_bio": {
+    "message": "lägg till bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "kunde inte hämta info"
+  },
+  "mc_held_media": {
+    "message": "[mediefil dold — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[inbäddning dold — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[bild dold — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "visa"
+  },
+  "mc_held_hide": {
+    "message": "dölj"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "våld"
+  },
+  "mc_held_weapons": {
+    "message": "vapen"
+  },
+  "mc_held_drugs": {
+    "message": "droger"
+  },
+  "mc_held_hate": {
+    "message": "hatprat"
+  },
+  "mc_reply_blocked": {
+    "message": "[blockerad]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "ladda om"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "knack"
+  },
+  "mc_set_snd_chime": {
+    "message": "klang"
+  },
+  "mc_mention_reply_post": {
+    "message": "svarade på ditt inlägg"
+  },
+  "mc_mention_reply_reply": {
+    "message": "svarade på ditt svar"
+  },
+  "mc_mention_reply_you": {
+    "message": "svarade dig"
+  },
+  "mc_mention_fixed": {
+    "message": "din rapport är åtgärdad"
+  },
+  "mc_mention_in_post": {
+    "message": "du omnämndes i ett inlägg"
+  },
+  "mc_tabmode_fixed": {
+    "message": "den fliken är fast"
+  },
+  "mc_tabmode_no_close": {
+    "message": "den fliken kan inte stängas"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonym"
+  },
+  "mc_mark_user": {
+    "message": "heatsync-användare"
+  },
+  "mc_moment_permalink": {
+    "message": "permalänk — klicka för att öppna, shift-klicka för att klistra in i chatten"
   }
 }

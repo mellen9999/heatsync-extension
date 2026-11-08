@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Ein Panel für den Livechat von Twitch, Kick + YouTube. Dazu ein kostenloses Inventar mit 5000 Emote-Plätzen für jeden Kanal"
+    "message": "Ein Panel für den Livechat von Twitch, Kick + YouTube. Dazu ein kostenloses Inventar mit 5.000 Emote-Plätzen für jeden Kanal"
   },
   "common_loading": {
     "message": "lädt..."
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "befehlsvorschläge"
+  },
+  "mc_card_l_age": {
+    "message": "alter"
+  },
+  "mc_card_l_type": {
+    "message": "typ"
+  },
+  "mc_card_l_peak": {
+    "message": "peak"
+  },
+  "mc_card_l_rel": {
+    "message": "bez."
+  },
+  "mc_card_l_mutuals": {
+    "message": "gemeinsame"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "folgt dir"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub t$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "sub bei dir"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "sub bei dir t$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "seit $DAY$ in #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "auch"
+  },
+  "mc_card_l_add_bio": {
+    "message": "bio hinzufügen"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "abrufen fehlgeschlagen"
+  },
+  "mc_held_media": {
+    "message": "[medien ausgeblendet — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[einbettung ausgeblendet — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[bild ausgeblendet — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "zeigen"
+  },
+  "mc_held_hide": {
+    "message": "ausblenden"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "gewalt"
+  },
+  "mc_held_weapons": {
+    "message": "waffen"
+  },
+  "mc_held_drugs": {
+    "message": "drogen"
+  },
+  "mc_held_hate": {
+    "message": "hassrede"
+  },
+  "mc_reply_blocked": {
+    "message": "[blockiert]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "neu laden"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "klopfen"
+  },
+  "mc_set_snd_chime": {
+    "message": "glocke"
+  },
+  "mc_mention_reply_post": {
+    "message": "hat auf deinen beitrag geantwortet"
+  },
+  "mc_mention_reply_reply": {
+    "message": "hat auf deine antwort geantwortet"
+  },
+  "mc_mention_reply_you": {
+    "message": "hat dir geantwortet"
+  },
+  "mc_mention_fixed": {
+    "message": "deine meldung wurde behoben"
+  },
+  "mc_mention_in_post": {
+    "message": "du wurdest in einem beitrag erwähnt"
+  },
+  "mc_tabmode_fixed": {
+    "message": "dieser tab ist fest"
+  },
+  "mc_tabmode_no_close": {
+    "message": "dieser tab kann nicht geschlossen werden"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonym"
+  },
+  "mc_mark_user": {
+    "message": "heatsync-user"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — klicken zum öffnen, shift-klick zum einfügen in den chat"
   }
 }

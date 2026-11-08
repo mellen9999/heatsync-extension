@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Един панел за живия чат на Twitch, Kick + YouTube. Плюс безплатен инвентар с 5000 емотикона, който те следва във всеки канал"
+    "message": "Един панел за живия чат на Twitch, Kick + YouTube. Плюс безплатен инвентар с 5 000 емотикона, който те следва във всеки канал"
   },
   "common_loading": {
     "message": "зарежда се..."
@@ -6166,7 +6166,7 @@
     "message": "обратна връзка / доклад за бъг"
   },
   "popup_inv_slots": {
-    "message": "5 000 слота за emotes"
+    "message": "5 000 слота за emotes"
   },
   "popup_inv_signed_in_as": {
     "message": "влязъл като $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 слота"
+    "message": " / 5 000 слота"
   },
   "popup_inv_import_hint": {
     "message": " · импортирай канал, за да го напълниш"
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "предложения за команди"
+  },
+  "mc_card_l_age": {
+    "message": "възраст"
+  },
+  "mc_card_l_type": {
+    "message": "тип"
+  },
+  "mc_card_l_peak": {
+    "message": "пик"
+  },
+  "mc_card_l_rel": {
+    "message": "връзка"
+  },
+  "mc_card_l_mutuals": {
+    "message": "общи"
+  },
+  "mc_card_l_admin": {
+    "message": "админ"
+  },
+  "mc_card_l_staff": {
+    "message": "стаф"
+  },
+  "mc_card_l_follow_you": {
+    "message": "следва те"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "суб T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "субва те"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "субва те T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "от $DAY$ в #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "още"
+  },
+  "mc_card_l_add_bio": {
+    "message": "добави био"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "неуспешно зареждане"
+  },
+  "mc_held_media": {
+    "message": "[скрита медия — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[скрито превю — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[скрито изображение — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "покажи"
+  },
+  "mc_held_hide": {
+    "message": "скрий"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "насилие"
+  },
+  "mc_held_weapons": {
+    "message": "оръжия"
+  },
+  "mc_held_drugs": {
+    "message": "наркотици"
+  },
+  "mc_held_hate": {
+    "message": "реч на омразата"
+  },
+  "mc_reply_blocked": {
+    "message": "[блокиран]"
+  },
+  "mc_bits_n": {
+    "message": "битове: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "презареди"
+  },
+  "mc_set_snd_ping": {
+    "message": "пинг"
+  },
+  "mc_set_snd_blip": {
+    "message": "бип"
+  },
+  "mc_set_snd_knock": {
+    "message": "чукане"
+  },
+  "mc_set_snd_chime": {
+    "message": "камбанка"
+  },
+  "mc_mention_reply_post": {
+    "message": "отговори на поста ти"
+  },
+  "mc_mention_reply_reply": {
+    "message": "отговори на отговора ти"
+  },
+  "mc_mention_reply_you": {
+    "message": "отговори ти"
+  },
+  "mc_mention_fixed": {
+    "message": "докладът ти е поправен"
+  },
+  "mc_mention_in_post": {
+    "message": "спомениха те в пост"
+  },
+  "mc_tabmode_fixed": {
+    "message": "този таб не може да се променя"
+  },
+  "mc_tabmode_no_close": {
+    "message": "този таб не може да се затвори"
+  },
+  "mc_social_anonymous": {
+    "message": "Анонимен"
+  },
+  "mc_mark_user": {
+    "message": "потребител на heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "постоянна връзка — клик за отваряне, shift-клик за поставяне в чата"
   }
 }

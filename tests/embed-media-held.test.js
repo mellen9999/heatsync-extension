@@ -9,6 +9,7 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { t } from './en-t.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'feed-embed.js'), 'utf8')
 
@@ -28,8 +29,9 @@ const held = sliceBetween('const HS_MEDIA_SETTING', '\nfunction _buildFeedResolv
 const { hsHeldMediaCat, _buildHeldEmbedHtml } = new Function(
   'getSetting',
   'attr',
+  't',
   `${held}\nreturn { hsHeldMediaCat, _buildHeldEmbedHtml }`,
-)(getSetting, attr)
+)(getSetting, attr, t)
 
 beforeEach(() => {
   on = new Set()
@@ -74,7 +76,7 @@ describe('hsHeldMediaCat', () => {
   })
 
   test('an unreadable setting holds rather than shows', () => {
-    const f = new Function('getSetting', 'attr', `${held}\nreturn hsHeldMediaCat`)(undefined, attr)
+    const f = new Function('getSetting', 'attr', 't', `${held}\nreturn hsHeldMediaCat`)(undefined, attr, t)
     expect(f(['nsfw'])).toBe('nsfw')
   })
 })

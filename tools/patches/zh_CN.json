@@ -20,5 +20,5 @@
   "mc_settings_keyword_highlights": "关键词高亮",
   "mc_settings_keyword_highlights_desc": "包含其中任何一个词的消息会变成橙色，像个人提及一样。每行一个，不区分大小写，整词匹配。",
   "mc_settings_keyword_highlights_placeholder": "每行一个关键词",
-  "manifest_description": "一个面板同时看 Twitch、Kick、YouTube 直播聊天。另有 5000 个免费表情位，随你进入任何频道"
+  "manifest_description": "一个面板同时看 Twitch、Kick、YouTube 直播聊天。另有 5,000 个免费表情位，随你进入任何频道"
 }

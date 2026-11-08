@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "Um painel para o chat em direto da Twitch, Kick + YouTube. Mais um inventário gratuito de 5000 emotes que o segue em qualquer canal",
+  "manifest_description": "Um painel para o chat em direto da Twitch, Kick + YouTube. Mais um inventário gratuito de 5 000 emotes que o segue em qualquer canal",
   "common_loading": "a carregar...",
   "common_extension_updated": "Extensão atualizada — atualiza a página",
   "common_no_matches": "sem resultados",

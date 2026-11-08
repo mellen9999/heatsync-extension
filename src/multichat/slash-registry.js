@@ -530,8 +530,10 @@ export function slashAliasMap(surface) {
  * Plain-text help, column-aligned by padEnd rather than by hand. The old
  * hand-counted version is why nobody maintained it: it advertised a debug-only
  * command and omitted fourteen shipped ones.
+ * `tr` is optional: { title(section), desc(command) } put a host's language on the text; the command names and
+ * argument hints are never translated.
  */
-export function slashHelpText(surface) {
+export function slashHelpText(surface, tr = {}) {
   const cmds = slashCommandsFor(surface)
   const usage = (c) => `/${c.cmd}${c.args ? ' ' + c.args : ''}`
   const lines = []
@@ -542,8 +544,8 @@ export function slashHelpText(surface) {
     // pad every short row in the list out to nothing
     const width = Math.min(34, Math.max(...rows.map((c) => usage(c).length)) + 2)
     if (lines.length) lines.push('')
-    lines.push(`── ${sec.title}`)
-    for (const c of rows) lines.push(`${usage(c).padEnd(width)}${c.desc}`)
+    lines.push(`── ${tr.title ? tr.title(sec) : sec.title}`)
+    for (const c of rows) lines.push(`${usage(c).padEnd(width)}${tr.desc ? tr.desc(c) : c.desc}`)
   }
   return lines.join('\n')
 }

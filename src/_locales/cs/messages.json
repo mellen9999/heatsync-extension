@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Jeden panel pro živý chat Twitch, Kick + YouTube. K tomu bezplatný inventář na 5000 emotů, který vás provází každým kanálem"
+    "message": "Jeden panel pro živý chat Twitch, Kick + YouTube. K tomu bezplatný inventář na 5 000 emotů, který vás provází každým kanálem"
   },
   "common_loading": {
     "message": "načítám..."
@@ -6166,7 +6166,7 @@
     "message": "zpětná vazba / hlášení chyby"
   },
   "popup_inv_slots": {
-    "message": "5 000 slotů na emotky"
+    "message": "5 000 slotů na emotky"
   },
   "popup_inv_signed_in_as": {
     "message": "přihlášen jako $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 slotů"
+    "message": " / 5 000 slotů"
   },
   "popup_inv_import_hint": {
     "message": " · importuj kanál a naplň ho"
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "návrhy příkazů"
+  },
+  "mc_card_l_age": {
+    "message": "stáří"
+  },
+  "mc_card_l_type": {
+    "message": "typ"
+  },
+  "mc_card_l_peak": {
+    "message": "špička"
+  },
+  "mc_card_l_rel": {
+    "message": "vztah"
+  },
+  "mc_card_l_mutuals": {
+    "message": "společní"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "sleduje tě"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "subscribuje tě"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "subscribuje tě T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "od $DAY$ v #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "také"
+  },
+  "mc_card_l_add_bio": {
+    "message": "přidat bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "načtení selhalo"
+  },
+  "mc_held_media": {
+    "message": "[skrytá média — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[skrytý náhled — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[skrytý obrázek — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "zobrazit"
+  },
+  "mc_held_hide": {
+    "message": "skrýt"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "násilí"
+  },
+  "mc_held_weapons": {
+    "message": "zbraně"
+  },
+  "mc_held_drugs": {
+    "message": "drogy"
+  },
+  "mc_held_hate": {
+    "message": "nenávistné projevy"
+  },
+  "mc_reply_blocked": {
+    "message": "[zablokováno]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "načíst znovu"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "pípnutí"
+  },
+  "mc_set_snd_knock": {
+    "message": "klepání"
+  },
+  "mc_set_snd_chime": {
+    "message": "zvonek"
+  },
+  "mc_mention_reply_post": {
+    "message": "odpověď na tvůj příspěvek"
+  },
+  "mc_mention_reply_reply": {
+    "message": "odpověď na tvou odpověď"
+  },
+  "mc_mention_reply_you": {
+    "message": "odpověď pro tebe"
+  },
+  "mc_mention_fixed": {
+    "message": "tvoje hlášení bylo opraveno"
+  },
+  "mc_mention_in_post": {
+    "message": "zmínili tě v příspěvku"
+  },
+  "mc_tabmode_fixed": {
+    "message": "ten tab nejde změnit"
+  },
+  "mc_tabmode_no_close": {
+    "message": "ten tab nejde zavřít"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonym"
+  },
+  "mc_mark_user": {
+    "message": "uživatel heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "trvalý odkaz — klik otevře, shift-klik vloží do chatu"
   }
 }

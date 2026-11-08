@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "트위치, 킥, 유튜브 라이브 채팅을 한 패널에서. 게다가 어느 채널에서나 함께하는 5000칸 무료 이모트 인벤토리"
+    "message": "트위치, 킥, 유튜브 라이브 채팅을 한 패널에서. 게다가 어느 채널에서나 함께하는 5,000칸 무료 이모트 인벤토리"
   },
   "common_loading": {
     "message": "로딩 중..."
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "명령어 추천"
+  },
+  "mc_card_l_age": {
+    "message": "나이"
+  },
+  "mc_card_l_type": {
+    "message": "유형"
+  },
+  "mc_card_l_peak": {
+    "message": "최고"
+  },
+  "mc_card_l_rel": {
+    "message": "관계"
+  },
+  "mc_card_l_mutuals": {
+    "message": "공통 팔로워"
+  },
+  "mc_card_l_admin": {
+    "message": "관리자"
+  },
+  "mc_card_l_staff": {
+    "message": "스태프"
+  },
+  "mc_card_l_follow_you": {
+    "message": "나를 팔로우"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "T$TIER$ 구독 중",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "나를 구독"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "나를 구독 T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "#$CHANNEL$에서 $DAY$부터",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "그 외"
+  },
+  "mc_card_l_add_bio": {
+    "message": "소개 추가"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "조회 실패"
+  },
+  "mc_held_media": {
+    "message": "[미디어 숨김 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[임베드 숨김 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[이미지 숨김 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "표시"
+  },
+  "mc_held_hide": {
+    "message": "숨기기"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "폭력"
+  },
+  "mc_held_weapons": {
+    "message": "무기"
+  },
+  "mc_held_drugs": {
+    "message": "약물"
+  },
+  "mc_held_hate": {
+    "message": "혐오 발언"
+  },
+  "mc_reply_blocked": {
+    "message": "[차단됨]"
+  },
+  "mc_bits_n": {
+    "message": "비트 $COUNT$개",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "새로고침"
+  },
+  "mc_set_snd_ping": {
+    "message": "핑"
+  },
+  "mc_set_snd_blip": {
+    "message": "삑"
+  },
+  "mc_set_snd_knock": {
+    "message": "노크"
+  },
+  "mc_set_snd_chime": {
+    "message": "차임"
+  },
+  "mc_mention_reply_post": {
+    "message": "내 게시물에 답글"
+  },
+  "mc_mention_reply_reply": {
+    "message": "내 답글에 답글"
+  },
+  "mc_mention_reply_you": {
+    "message": "나에게 답글"
+  },
+  "mc_mention_fixed": {
+    "message": "내 신고가 수정됨"
+  },
+  "mc_mention_in_post": {
+    "message": "게시물에서 나를 멘션함"
+  },
+  "mc_tabmode_fixed": {
+    "message": "이 탭은 변경할 수 없음"
+  },
+  "mc_tabmode_no_close": {
+    "message": "이 탭은 닫을 수 없음"
+  },
+  "mc_social_anonymous": {
+    "message": "익명"
+  },
+  "mc_mark_user": {
+    "message": "heatsync 사용자"
+  },
+  "mc_moment_permalink": {
+    "message": "고유 링크 — 클릭하면 열기, shift+클릭하면 채팅에 붙여넣기"
   }
 }

@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "แผงเดียวสำหรับแชทสดของ Twitch, Kick + YouTube พร้อมคลังอิโมทฟรี 5000 ช่องที่ติดตามคุณไปทุกช่อง",
+  "manifest_description": "แผงเดียวสำหรับแชทสดของ Twitch, Kick + YouTube พร้อมคลังอิโมทฟรี 5,000 ช่องที่ติดตามคุณไปทุกช่อง",
   "common_loading": "กำลังโหลด...",
   "common_extension_updated": "อัปเดตส่วนขยายแล้ว — โปรดรีเฟรชหน้า",
   "common_no_matches": "ไม่พบผลลัพธ์",

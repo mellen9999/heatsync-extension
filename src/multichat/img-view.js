@@ -84,7 +84,7 @@ document.addEventListener(
       // flagged and not opted in: the box, never the picture
       const held = document.createElement('div')
       held.className = 'hs-img-peek-held'
-      held.textContent = `[image hidden — ${HS_MEDIA_LABEL[cat] || cat}]`
+      held.textContent = t('mc_held_image', [hsHeldLabel(cat)])
       box.appendChild(held)
     } else {
       const im = document.createElement('img')

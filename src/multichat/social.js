@@ -2339,7 +2339,7 @@ function buildFeedMessageDiv(m, opUsername) {
     : ''
   const tripcodeHtml = m.tripcode ? `<span class="hs-tripcode">${escapeHtml(m.tripcode)}</span>` : ''
   const userHtml = isAnon
-    ? `${anonAvatar}<span class="hs-feed-user" style="color:#ffffff">Anonymous</span>${tripcodeHtml}`
+    ? `${anonAvatar}<span class="hs-feed-user" style="color:#ffffff">${t('mc_social_anonymous')}</span>${tripcodeHtml}`
     : `${userAvatar}${feedAuthorLink(m)}${tripcodeHtml}`
 
   // Media/embeds (img, video, iframe) — values inside are pre-sanitized via escapeHtml/safeUrl/sanitizeEmbedId

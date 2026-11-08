@@ -218,7 +218,7 @@
     }
     .hs-mc-search-icon {
       position: absolute;
-      left: 10px;
+      inset-inline-start: 10px;
       pointer-events: none;
        color: var(--hs-muted);
       z-index: 2;
@@ -227,7 +227,8 @@
       flex: 1;
       min-width: 0;
       width: auto;
-      padding: 4px 8px 4px 28px;
+      padding-block: 4px;
+      padding-inline: 28px 8px;
       background: #000;
       color: #fff;
       border: 1px solid var(--hs-border);

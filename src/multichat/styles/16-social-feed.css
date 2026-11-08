@@ -164,9 +164,9 @@
       margin-bottom: 4px;
     }
     .hs-thread-container {
-      margin-left: 12px;
-      border-left: 2px solid #fff;
-      padding-left: 8px;
+      margin-inline-start: 12px;
+      border-inline-start: 2px solid #fff;
+      padding-inline-start: 8px;
       margin-bottom: 4px;
     }
     .hs-thread-reply {
@@ -175,9 +175,9 @@
       font-size: 13px;
     }
     .hs-thread-reply.is-thread-op {
-      border-left: 2px solid var(--hs-thread);
-      margin-left: -2px;
-      padding-left: 10px;
+      border-inline-start: 2px solid var(--hs-thread);
+      margin-inline-start: -2px;
+      padding-inline-start: 10px;
     }
     .hs-feed-loader {
       cursor: default;
@@ -517,7 +517,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-left: 4px;
+      margin-inline-start: 4px;
       padding: 0 3px;
     }
 
@@ -886,17 +886,17 @@
       cursor: pointer;
       line-height: 17px;
       font-size: 13px;
-      border-left: 2px solid transparent;
+      border-inline-start: 2px solid transparent;
     }
     .hs-discover-profile-row:hover { background: #fff; color: #000; }
     .hs-discover-profile-row:hover * { color: #000 !important; }
-    .hs-discover-profile-row.hs-discover-row-live { border-left-color: var(--hs-live); }
+    .hs-discover-profile-row.hs-discover-row-live { border-inline-start-color: var(--hs-live); }
     .hs-discover-rank {
       color: var(--hs-muted);
       font-size: 13px;
       font-variant-numeric: tabular-nums;
       width: 18px;
-      text-align: right;
+      text-align: end;
       flex-shrink: 0;
       font-family: monospace;
     }
@@ -998,7 +998,7 @@
       color: var(--hs-muted);
       font-size: 13px;
       font-weight: 700;
-      margin-right: -2px;
+      margin-inline-end: -2px;
     }
     .hs-discover-chip-btn {
       padding: 2px 8px;
@@ -1102,14 +1102,14 @@
       text-decoration: none;
       cursor: pointer;
       line-height: 17px;
-      border-left: 2px solid transparent;
+      border-inline-start: 2px solid transparent;
       border-bottom: none;
     }
     .hs-discover-post-row:last-child { border-bottom: none; }
     .hs-discover-post-row:hover {
       background: #fff;
       color: #000;
-      border-left-color: #fff;
+      border-inline-start-color: #fff;
     }
     .hs-discover-post-row:hover * { color: #000 !important; }
     .hs-discover-post-meta {
@@ -1163,7 +1163,7 @@
 
     /* Tag chips with optional inline count */
     .hs-discover-chip-count {
-      margin-left: 5px;
+      margin-inline-start: 5px;
       color: #ff00ff;
       font-variant-numeric: tabular-nums;
       font-size: 13px;
@@ -1188,7 +1188,7 @@
     }
     .hs-pinned-channel { font-size: 13px; color: #fff; font-weight: 600; }
     .hs-pinned-user { font-size: 13px; color: #ffffff; }
-    .hs-pinned-time { font-size: 13px; color: var(--hs-muted); margin-left: auto; }
+    .hs-pinned-time { font-size: 13px; color: var(--hs-muted); margin-inline-start: auto; }
     .hs-pinned-body {
       font-size: 13px;
       color: #ffffff;
@@ -1227,7 +1227,7 @@
       display: block;
       margin: 4px 0 0;
       padding: 3px 6px;
-      border-left: 2px solid var(--hs-reply-dim);
+      border-inline-start: 2px solid var(--hs-reply-dim);
       background: #000000;
       color: #ffffff;
       font-size: 13px;
@@ -1238,7 +1238,7 @@
     .hs-log-embed:hover {
       background: #fff;
       color: #000;
-      border-left-color: #000;
+      border-inline-start-color: #000;
     }
     .hs-log-embed-meta {
       display: flex;
@@ -1251,7 +1251,7 @@
     .hs-log-embed-line { display: block; word-break: break-word; }
     .hs-log-embed-user {
       color: var(--hs-reply);
-      margin-right: 4px;
+      margin-inline-end: 4px;
     }
     .hs-log-embed-user::after { content: ':'; }
     .hs-log-embed:hover .hs-log-embed-user { color: #000; }

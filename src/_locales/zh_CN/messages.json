@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "一个面板同时看 Twitch、Kick、YouTube 直播聊天。另有 5000 个免费表情位，随你进入任何频道"
+    "message": "一个面板同时看 Twitch、Kick、YouTube 直播聊天。另有 5,000 个免费表情位，随你进入任何频道"
   },
   "common_loading": {
     "message": "加载中..."
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "命令建议"
+  },
+  "mc_card_l_age": {
+    "message": "账龄"
+  },
+  "mc_card_l_type": {
+    "message": "类型"
+  },
+  "mc_card_l_peak": {
+    "message": "峰值"
+  },
+  "mc_card_l_rel": {
+    "message": "关系"
+  },
+  "mc_card_l_mutuals": {
+    "message": "共同关注者"
+  },
+  "mc_card_l_admin": {
+    "message": "管理员"
+  },
+  "mc_card_l_staff": {
+    "message": "员工"
+  },
+  "mc_card_l_follow_you": {
+    "message": "关注了你"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "已 sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "订阅了你"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "订阅了你 T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "自 $DAY$ 在 #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "还在"
+  },
+  "mc_card_l_add_bio": {
+    "message": "添加简介"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "查询失败"
+  },
+  "mc_held_media": {
+    "message": "[媒体已隐藏 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[嵌入内容已隐藏 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[图片已隐藏 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "显示"
+  },
+  "mc_held_hide": {
+    "message": "隐藏"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "暴力"
+  },
+  "mc_held_weapons": {
+    "message": "武器"
+  },
+  "mc_held_drugs": {
+    "message": "毒品"
+  },
+  "mc_held_hate": {
+    "message": "仇恨言论"
+  },
+  "mc_reply_blocked": {
+    "message": "[已屏蔽]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "刷新"
+  },
+  "mc_set_snd_ping": {
+    "message": "叮"
+  },
+  "mc_set_snd_blip": {
+    "message": "哔"
+  },
+  "mc_set_snd_knock": {
+    "message": "敲门"
+  },
+  "mc_set_snd_chime": {
+    "message": "钟声"
+  },
+  "mc_mention_reply_post": {
+    "message": "回复了你的帖子"
+  },
+  "mc_mention_reply_reply": {
+    "message": "回复了你的回复"
+  },
+  "mc_mention_reply_you": {
+    "message": "回复了你"
+  },
+  "mc_mention_fixed": {
+    "message": "你的报告已修复"
+  },
+  "mc_mention_in_post": {
+    "message": "你在帖子中被提及"
+  },
+  "mc_tabmode_fixed": {
+    "message": "该标签页为内置标签页"
+  },
+  "mc_tabmode_no_close": {
+    "message": "该标签页无法关闭"
+  },
+  "mc_social_anonymous": {
+    "message": "匿名用户"
+  },
+  "mc_mark_user": {
+    "message": "heatsync 用户"
+  },
+  "mc_moment_permalink": {
+    "message": "永久链接 — 点击打开，shift 点击粘贴到聊天"
   }
 }

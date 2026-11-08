@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Eén paneel voor de livechat van Twitch, Kick + YouTube. Plus een gratis inventaris met 5000 emotes die met je meegaat in elk kanaal"
+    "message": "Eén paneel voor de livechat van Twitch, Kick + YouTube. Plus een gratis inventaris met 5.000 emotes die met je meegaat in elk kanaal"
   },
   "common_loading": {
     "message": "laden..."
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "commandosuggesties"
+  },
+  "mc_card_l_age": {
+    "message": "leeftijd"
+  },
+  "mc_card_l_type": {
+    "message": "type"
+  },
+  "mc_card_l_peak": {
+    "message": "piek"
+  },
+  "mc_card_l_rel": {
+    "message": "rel."
+  },
+  "mc_card_l_mutuals": {
+    "message": "gedeelde"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "volgt jou"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "sub bij jou"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "sub bij jou T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "sinds $DAY$ in #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "ook"
+  },
+  "mc_card_l_add_bio": {
+    "message": "bio toevoegen"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "opzoeken mislukt"
+  },
+  "mc_held_media": {
+    "message": "[media verborgen — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[embed verborgen — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[afbeelding verborgen — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "toon"
+  },
+  "mc_held_hide": {
+    "message": "verberg"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "geweld"
+  },
+  "mc_held_weapons": {
+    "message": "wapens"
+  },
+  "mc_held_drugs": {
+    "message": "drugs"
+  },
+  "mc_held_hate": {
+    "message": "haatspraak"
+  },
+  "mc_reply_blocked": {
+    "message": "[geblokkeerd]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "herlaad"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "klop"
+  },
+  "mc_set_snd_chime": {
+    "message": "klokje"
+  },
+  "mc_mention_reply_post": {
+    "message": "reageerde op je post"
+  },
+  "mc_mention_reply_reply": {
+    "message": "reageerde op je reactie"
+  },
+  "mc_mention_reply_you": {
+    "message": "reageerde op jou"
+  },
+  "mc_mention_fixed": {
+    "message": "je melding is opgelost"
+  },
+  "mc_mention_in_post": {
+    "message": "je bent vermeld in een post"
+  },
+  "mc_tabmode_fixed": {
+    "message": "die tab is vast"
+  },
+  "mc_tabmode_no_close": {
+    "message": "die tab kan niet worden gesloten"
+  },
+  "mc_social_anonymous": {
+    "message": "Anoniem"
+  },
+  "mc_mark_user": {
+    "message": "heatsync-gebruiker"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — klik om te openen, shift-klik om in de chat te plakken"
   }
 }

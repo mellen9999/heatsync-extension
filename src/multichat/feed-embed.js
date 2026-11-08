@@ -536,22 +536,22 @@ function buildFeedMediaHtml(m) {
   // categories a viewer may open get a button (never csam, spam, a ban).
   if (Array.isArray(m?.media_held) && m.media_held.length && m.has_media) {
     const cat = m.media_held[0]
-    const label = HS_MEDIA_LABEL[cat] || cat
+    const label = hsHeldLabel(cat)
     const open = HS_MEDIA_SETTING[cat] && m.base36_id
     const reveal = open
-      ? ` <button type="button" class="hs-mc-held-post-show" data-mid="${attr(m.base36_id)}">show</button></span>`
+      ? ` <button type="button" class="hs-mc-held-post-show" data-mid="${attr(m.base36_id)}">${attr(t('mc_held_show'))}</button></span>`
       : '</span>'
-    return `<div class="hs-mc-held-post"><span class="hs-mc-held" data-cat="${attr(cat)}">[media hidden — ${attr(label)}]${reveal}</div>`
+    return `<div class="hs-mc-held-post"><span class="hs-mc-held" data-cat="${attr(cat)}">${attr(t('mc_held_media', [label]))}${reveal}</div>`
   }
   const html = _feedMediaHtml(m)
   const cat = html ? hsHeldMediaCat(m.moderation_result?.flaggedCategories) : ''
   if (!cat) return html
-  const label = HS_MEDIA_LABEL[cat] || cat
+  const label = hsHeldLabel(cat)
   const reveal =
     cat === 'csam'
       ? ''
-      : ` <button type="button" class="hs-mc-held-post-show">show</button></span><template>${html}</template>`
-  return `<div class="hs-mc-held-post"><span class="hs-mc-held" data-cat="${attr(cat)}">[media hidden — ${attr(label)}]${reveal || '</span>'}</div>`
+      : ` <button type="button" class="hs-mc-held-post-show">${attr(t('mc_held_show'))}</button></span><template>${html}</template>`
+  return `<div class="hs-mc-held-post"><span class="hs-mc-held" data-cat="${attr(cat)}">${attr(t('mc_held_media', [label]))}${reveal || '</span>'}</div>`
 }
 
 // Handles direct uploads (image/video), multi-image (media[]), and content-extracted embeds.
@@ -647,7 +647,7 @@ document.addEventListener(
       const hide = document.createElement('button')
       hide.type = 'button'
       hide.className = 'hs-mc-held-post-hide hs-mc-held-show'
-      hide.textContent = 'hide'
+      hide.textContent = t('mc_held_hide')
       real.append(hide, frag)
       box.append(real)
       box.classList.add('hs-open')
@@ -718,7 +718,15 @@ const HS_MEDIA_SETTING = {
   drugs: 'viewer_show_drug',
   hate: 'viewer_show_hate',
 }
-const HS_MEDIA_LABEL = { nsfw: 'nsfw', violence: 'violence', weapons: 'weapons', drugs: 'drugs', hate: 'hate speech' }
+const HS_MEDIA_LABEL_KEY = {
+  nsfw: 'mc_held_nsfw',
+  violence: 'mc_held_violence',
+  weapons: 'mc_held_weapons',
+  drugs: 'mc_held_drugs',
+  hate: 'mc_held_hate',
+}
+// the scanner's category in the viewer's language; an id with no label (csam) shows as itself
+const hsHeldLabel = (cat) => (HS_MEDIA_LABEL_KEY[cat] ? t(HS_MEDIA_LABEL_KEY[cat]) : cat)
 
 function hsHeldMediaCat(flagged) {
   if (!Array.isArray(flagged)) return ''
@@ -732,8 +740,8 @@ function hsHeldMediaCat(flagged) {
 }
 
 function _buildHeldEmbedHtml(cat) {
-  const label = HS_MEDIA_LABEL[cat] || cat
-  return `<span class="hs-mc-held" data-cat="${attr(cat)}">[embed hidden — ${attr(label)}] <button type="button" class="hs-mc-held-show">show</button></span>`
+  const label = hsHeldLabel(cat)
+  return `<span class="hs-mc-held" data-cat="${attr(cat)}">${attr(t('mc_held_embed', [label]))} <button type="button" class="hs-mc-held-show">${attr(t('mc_held_show'))}</button></span>`
 }
 
 function _buildFeedResolvedHtml(ph, data, revealed = false) {

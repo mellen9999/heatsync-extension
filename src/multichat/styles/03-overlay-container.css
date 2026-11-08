@@ -157,24 +157,26 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 10px 5px 8px;
+      padding-block: 5px;
+      padding-inline: 8px 10px;
       font-size: 13px;
       font-weight: 600;
       transition: none;
       cursor: pointer;
-      border-left: 3px solid var(--hs-brand);
+      border-inline-start: 3px solid var(--hs-brand);
       border-bottom: 1px solid var(--hs-border);
       box-shadow: 0 2px 0 #000000;
     }
-    .hs-mc-chat-banner-pred { border-left-color: var(--hs-brand); }
-    .hs-mc-chat-banner-poll { border-left-color: var(--hs-reply); }
+    .hs-mc-chat-banner-pred { border-inline-start-color: var(--hs-brand); }
+    .hs-mc-chat-banner-poll { border-inline-start-color: var(--hs-reply); }
     /* Opener affordance, pinned right after the timer/badge. */
     .hs-mc-chat-banner-item::after {
       content: '▸';
-      margin-left: auto;
-      padding-left: 6px;
+      margin-inline-start: auto;
+      padding-inline-start: 6px;
      }
     .hs-mc-chat-banner-item:hover::after { opacity: 1; }
+    .hs-mc-chat-banner-item:dir(rtl)::after { content: '◂'; }
     /* The title is the part that must survive a narrow panel — it ellipsises
        while the timer, badge and ▸ keep their space. */
     .hs-mc-chat-banner-title {

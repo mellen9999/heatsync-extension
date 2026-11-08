@@ -3243,9 +3243,7 @@ function _mentionInMcInput(username) {
 function showHsCtxMenu(x, y, header, items) {
   document.getElementById('hs-mc-msg-ctx')?.remove()
   const menu = document.createElement('div')
-  menu.id = 'hs-mc-msg-ctx'
-  menu.className = 'hs-mc-ctx'
-  menu.tabIndex = -1
+  Object.assign(menu, { id: 'hs-mc-msg-ctx', className: 'hs-mc-ctx', dir: HS_DIR(), tabIndex: -1 })
   menu.addEventListener('contextmenu', (e) => e.preventDefault())
 
   const kbdHandlers = {}

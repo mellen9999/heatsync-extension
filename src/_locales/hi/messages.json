@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Twitch, Kick + YouTube के लाइव चैट के लिए एक पैनल। साथ में 5000 इमोट का मुफ़्त संग्रह जो हर चैनल में आपके साथ चलता है"
+    "message": "Twitch, Kick + YouTube के लाइव चैट के लिए एक पैनल। साथ में 5,000 इमोट का मुफ़्त संग्रह जो हर चैनल में आपके साथ चलता है"
   },
   "common_loading": {
     "message": "लोड हो रहा है..."
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "कमांड सुझाव"
+  },
+  "mc_card_l_age": {
+    "message": "उम्र"
+  },
+  "mc_card_l_type": {
+    "message": "टाइप"
+  },
+  "mc_card_l_peak": {
+    "message": "पीक"
+  },
+  "mc_card_l_rel": {
+    "message": "रिश्ता"
+  },
+  "mc_card_l_mutuals": {
+    "message": "म्यूचुअल"
+  },
+  "mc_card_l_admin": {
+    "message": "एडमिन"
+  },
+  "mc_card_l_staff": {
+    "message": "स्टाफ़"
+  },
+  "mc_card_l_follow_you": {
+    "message": "तुम्हें फ़ॉलो"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "तुम्हें sub"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "तुम्हें sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "$DAY$ से #$CHANNEL$ में",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "और भी"
+  },
+  "mc_card_l_add_bio": {
+    "message": "बायो जोड़ो"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "जानकारी नहीं मिली"
+  },
+  "mc_held_media": {
+    "message": "[मीडिया छिपा — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[लिंक प्रीव्यू छिपा — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[इमेज छिपी — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "दिखाओ"
+  },
+  "mc_held_hide": {
+    "message": "छिपाओ"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "हिंसा"
+  },
+  "mc_held_weapons": {
+    "message": "हथियार"
+  },
+  "mc_held_drugs": {
+    "message": "ड्रग्स"
+  },
+  "mc_held_hate": {
+    "message": "हेट स्पीच"
+  },
+  "mc_reply_blocked": {
+    "message": "[ब्लॉक]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "रीलोड"
+  },
+  "mc_set_snd_ping": {
+    "message": "पिंग"
+  },
+  "mc_set_snd_blip": {
+    "message": "ब्लिप"
+  },
+  "mc_set_snd_knock": {
+    "message": "खटखट"
+  },
+  "mc_set_snd_chime": {
+    "message": "घंटी"
+  },
+  "mc_mention_reply_post": {
+    "message": "तुम्हारी पोस्ट पर जवाब"
+  },
+  "mc_mention_reply_reply": {
+    "message": "तुम्हारे जवाब पर जवाब"
+  },
+  "mc_mention_reply_you": {
+    "message": "तुम्हें जवाब"
+  },
+  "mc_mention_fixed": {
+    "message": "तुम्हारी रिपोर्ट ठीक हो गई"
+  },
+  "mc_mention_in_post": {
+    "message": "पोस्ट में तुम्हारा मेन्शन"
+  },
+  "mc_tabmode_fixed": {
+    "message": "यह टैब स्थायी है"
+  },
+  "mc_tabmode_no_close": {
+    "message": "यह टैब बंद नहीं हो सकता"
+  },
+  "mc_social_anonymous": {
+    "message": "अनाम"
+  },
+  "mc_mark_user": {
+    "message": "heatsync यूज़र"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — खोलने के लिए क्लिक करो, चैट में पेस्ट करने के लिए shift-क्लिक"
   }
 }

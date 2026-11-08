@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Un panel para el chat en vivo de Twitch, Kick + YouTube. Más un inventario gratuito de 5000 emotes que te sigue a cualquier canal"
+    "message": "Un panel para el chat en vivo de Twitch, Kick + YouTube. Más un inventario gratuito de 5.000 emotes que te sigue a cualquier canal"
   },
   "common_loading": {
     "message": "cargando..."
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "sugerencias de comandos"
+  },
+  "mc_card_l_age": {
+    "message": "edad"
+  },
+  "mc_card_l_type": {
+    "message": "tipo"
+  },
+  "mc_card_l_peak": {
+    "message": "pico"
+  },
+  "mc_card_l_rel": {
+    "message": "rel"
+  },
+  "mc_card_l_mutuals": {
+    "message": "en común"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "te sigue"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "suscrito T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "suscrito a ti"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "suscrito a ti T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "desde $DAY$ en #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "también"
+  },
+  "mc_card_l_add_bio": {
+    "message": "añadir bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "error al buscar"
+  },
+  "mc_held_media": {
+    "message": "[archivo oculto — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[vista previa oculta — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[imagen oculta — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "mostrar"
+  },
+  "mc_held_hide": {
+    "message": "ocultar"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "violencia"
+  },
+  "mc_held_weapons": {
+    "message": "armas"
+  },
+  "mc_held_drugs": {
+    "message": "drogas"
+  },
+  "mc_held_hate": {
+    "message": "discurso de odio"
+  },
+  "mc_reply_blocked": {
+    "message": "[bloqueado]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "recargar"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "toc"
+  },
+  "mc_set_snd_chime": {
+    "message": "campanilla"
+  },
+  "mc_mention_reply_post": {
+    "message": "respondió a tu publicación"
+  },
+  "mc_mention_reply_reply": {
+    "message": "respondió a tu respuesta"
+  },
+  "mc_mention_reply_you": {
+    "message": "te respondió"
+  },
+  "mc_mention_fixed": {
+    "message": "tu reporte fue corregido"
+  },
+  "mc_mention_in_post": {
+    "message": "te mencionaron en una publicación"
+  },
+  "mc_tabmode_fixed": {
+    "message": "esa pestaña es fija"
+  },
+  "mc_tabmode_no_close": {
+    "message": "esa pestaña no se puede cerrar"
+  },
+  "mc_social_anonymous": {
+    "message": "Anónimo"
+  },
+  "mc_mark_user": {
+    "message": "usuario de heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "enlace permanente — clic para abrir, mayús+clic para pegar en el chat"
   }
 }

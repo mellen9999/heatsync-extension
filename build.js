@@ -812,6 +812,7 @@ const MULTICHAT_MODULES = [
   'emotes.js',
   'gifs.js',
   'picker-nav.js',
+  'card-l10n.js',
   'tooltips.js',
   'tag-card.js',
   'twitch-api.js',

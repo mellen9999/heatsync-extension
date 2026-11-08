@@ -34,7 +34,8 @@
        reserves space for the live dot so it never overlaps text. */
     .hs-mc-tab {
       padding: 2px 10px !important;
-      margin: 0 -1px -1px 0 !important;
+      margin-block: 0 -1px !important;
+      margin-inline: 0 -1px !important;
       background: #000 !important;
       color: var(--hs-dim) !important;
       border: 1px solid var(--hs-border) !important;
@@ -46,7 +47,7 @@
       font-weight: 400 !important;
       white-space: nowrap !important;
       transition: none;
-      text-align: left;
+      text-align: start;
       display: inline-flex;
       align-items: center;
       justify-content: flex-start;
@@ -70,7 +71,7 @@
        combination. flex-shrink:0 so a long channel name ellipsises before the
        number does; the number is the part you can't guess. */
     .hs-mc-tab-count {
-      margin-left: 5px;
+      margin-inline-start: 5px;
        font-variant-numeric: tabular-nums;
       flex-shrink: 0;
     }
@@ -93,7 +94,7 @@
     }
     .hs-mc-tabmode-hint {
       color: var(--hs-muted);
-      margin-left: 8px;
+      margin-inline-start: 8px;
     }
 
     /* Idle hover — subtle brighten */
@@ -225,7 +226,7 @@
       flex-direction: column;
       flex: 0 0 auto;
       align-items: stretch;
-      margin-left: -1px; /* collapse double border with adjacent tabs section */
+      margin-inline-start: -1px; /* collapse double border with adjacent tabs section */
     }
     /* Horizontal tabs (top/bottom): dissolve the section/cluster wrappers
        so all 14+ buttons (channel tabs + util + pf) flow as one wrapping
@@ -292,7 +293,8 @@
       max-width: 18px !important;
       max-height: 18px !important;
       padding: 0 !important;
-      margin: 0 -1px 0 0 !important;
+      margin-block: 0 !important;
+      margin-inline: 0 -1px !important;
       flex: 0 0 18px !important;
       box-sizing: border-box !important;
       font-size: 13px !important;
@@ -310,7 +312,7 @@
     }
     /* Last button in each cluster keeps its own right border (no overlap target) */
     .hs-mc-util-btn:last-child {
-      margin-right: 0 !important;
+      margin-inline-end: 0 !important;
     }
     .hs-mc-util-btn {
       color: var(--hs-muted) !important;
@@ -529,7 +531,7 @@
     /* the dot is absolute, so a long label or the unread count ran under it —
        live tabs reserve its 8px + inset + a 4px gap on the right */
     .hs-mc-tab[data-live="true"] {
-      padding-right: 16px !important;
+      padding-inline-end: 16px !important;
     }
     /* the temp tab (page channel, not saved) — underline is its only mark */
     .hs-mc-tab-temp {
@@ -539,7 +541,7 @@
       content: '';
       position: absolute;
       top: 3px;
-      right: 4px;
+      inset-inline-end: 4px;
       width: 8px;
       height: 8px;
       background: var(--hs-live);
@@ -586,7 +588,8 @@
     .hs-mc-subcell {
       position: relative;
       padding: 2px 10px;
-      margin: 0 -1px -1px 0;
+      margin-block: 0 -1px;
+      margin-inline: 0 -1px;
       background: #000;
       color: #fff;
       border: 1px solid var(--hs-border);

@@ -374,13 +374,15 @@ function scanExistingMentions() {
 // its notifs tab; the ext used to keep only the toolbar count.
 const HS_NOTIF_KINDS = new Set(['reply', 'mention', 'feedback_fixed'])
 function hsNotifText(d) {
-  const who = d.anon ? 'anonymous: ' : ''
+  const who = d.anon ? `${t('mc_ircx_anonymous')}: ` : ''
   if (d.kind === 'reply') {
-    const to = d.op === true ? 'replied to your post' : d.op === false ? 'replied to your reply' : 'replied to you'
+    const to = t(
+      d.op === true ? 'mc_mention_reply_post' : d.op === false ? 'mc_mention_reply_reply' : 'mc_mention_reply_you',
+    )
     return `${who}${d.text ? `${to}: ${d.text}` : to}`
   }
-  if (d.kind === 'feedback_fixed') return d.text || 'your report was fixed'
-  return `${who}${d.text || 'you were mentioned in a post'}`
+  if (d.kind === 'feedback_fixed') return d.text || t('mc_mention_fixed')
+  return `${who}${d.text || t('mc_mention_in_post')}`
 }
 
 function hsNotifIn(d) {

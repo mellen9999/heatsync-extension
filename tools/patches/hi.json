@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "Twitch, Kick + YouTube के लाइव चैट के लिए एक पैनल। साथ में 5000 इमोट का मुफ़्त संग्रह जो हर चैनल में आपके साथ चलता है",
+  "manifest_description": "Twitch, Kick + YouTube के लाइव चैट के लिए एक पैनल। साथ में 5,000 इमोट का मुफ़्त संग्रह जो हर चैनल में आपके साथ चलता है",
   "common_loading": "लोड हो रहा है...",
   "common_extension_updated": "एक्सटेंशन अपडेट हो गया — पेज रिफ्रेश करें",
   "common_no_matches": "कोई मेल नहीं",

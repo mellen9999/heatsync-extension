@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "لوحة واحدة لدردشة تويتش وكيك ويوتيوب المباشرة. بالإضافة إلى مخزون مجاني من 5000 إيموت يرافقك في أي قناة"
+    "message": "لوحة واحدة لدردشة تويتش وكيك ويوتيوب المباشرة. بالإضافة إلى مخزون مجاني من 5,000 إيموت يرافقك في أي قناة"
   },
   "common_loading": {
     "message": "جارٍ التحميل..."
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "اقتراحات الأوامر"
+  },
+  "mc_card_l_age": {
+    "message": "العمر"
+  },
+  "mc_card_l_type": {
+    "message": "النوع"
+  },
+  "mc_card_l_peak": {
+    "message": "الذروة"
+  },
+  "mc_card_l_rel": {
+    "message": "علاقة"
+  },
+  "mc_card_l_mutuals": {
+    "message": "متابعون مشتركون"
+  },
+  "mc_card_l_admin": {
+    "message": "أدمن"
+  },
+  "mc_card_l_staff": {
+    "message": "طاقم"
+  },
+  "mc_card_l_follow_you": {
+    "message": "يتابعك"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "مشترك T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "مشترك معك"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "مشترك معك T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "منذ $DAY$ في #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "أيضًا"
+  },
+  "mc_card_l_add_bio": {
+    "message": "أضف نبذة"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "تعذّر جلب المعلومات"
+  },
+  "mc_held_media": {
+    "message": "[وسائط مخفية — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[معاينة الرابط مخفية — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[صورة مخفية — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "عرض"
+  },
+  "mc_held_hide": {
+    "message": "إخفاء"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "عنف"
+  },
+  "mc_held_weapons": {
+    "message": "أسلحة"
+  },
+  "mc_held_drugs": {
+    "message": "مخدرات"
+  },
+  "mc_held_hate": {
+    "message": "خطاب كراهية"
+  },
+  "mc_reply_blocked": {
+    "message": "[محظور]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ بتس",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "إعادة تحميل"
+  },
+  "mc_set_snd_ping": {
+    "message": "رنّة"
+  },
+  "mc_set_snd_blip": {
+    "message": "بيب"
+  },
+  "mc_set_snd_knock": {
+    "message": "طرقة"
+  },
+  "mc_set_snd_chime": {
+    "message": "جرس"
+  },
+  "mc_mention_reply_post": {
+    "message": "رد على منشورك"
+  },
+  "mc_mention_reply_reply": {
+    "message": "رد على ردّك"
+  },
+  "mc_mention_reply_you": {
+    "message": "رد عليك"
+  },
+  "mc_mention_fixed": {
+    "message": "تم إصلاح بلاغك"
+  },
+  "mc_mention_in_post": {
+    "message": "تمت الإشارة إليك في منشور"
+  },
+  "mc_tabmode_fixed": {
+    "message": "هذا التبويب ثابت"
+  },
+  "mc_tabmode_no_close": {
+    "message": "لا يمكن إغلاق هذا التبويب"
+  },
+  "mc_social_anonymous": {
+    "message": "مجهول"
+  },
+  "mc_mark_user": {
+    "message": "مستخدم heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "رابط دائم — انقر للفتح، أو انقر مع shift للصق في الدردشة"
   }
 }

@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Egy panel a Twitch, Kick + YouTube élő chathez. Ráadásul ingyenes, 5000 helyes emote-tár, ami minden csatornára veled tart"
+    "message": "Egy panel a Twitch, Kick + YouTube élő chathez. Ráadásul ingyenes, 5 000 helyes emote-tár, ami minden csatornára veled tart"
   },
   "common_loading": {
     "message": "betöltés..."
@@ -6166,7 +6166,7 @@
     "message": "visszajelzés / hibajelentés"
   },
   "popup_inv_slots": {
-    "message": "5 000 emote slot"
+    "message": "5 000 emote slot"
   },
   "popup_inv_signed_in_as": {
     "message": "bejelentkezve: $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 slot"
+    "message": " / 5 000 slot"
   },
   "popup_inv_import_hint": {
     "message": " · importálj egy csatornát a feltöltéshez"
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "parancsjavaslatok"
+  },
+  "mc_card_l_age": {
+    "message": "kor"
+  },
+  "mc_card_l_type": {
+    "message": "típus"
+  },
+  "mc_card_l_peak": {
+    "message": "csúcs"
+  },
+  "mc_card_l_rel": {
+    "message": "kapcs."
+  },
+  "mc_card_l_mutuals": {
+    "message": "közös"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "követ téged"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "subol téged"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "subol téged T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "$DAY$ óta itt: #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "még"
+  },
+  "mc_card_l_add_bio": {
+    "message": "bio hozzáadása"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "lekérdezés sikertelen"
+  },
+  "mc_held_media": {
+    "message": "[média elrejtve — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[beágyazás elrejtve — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[kép elrejtve — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "mutat"
+  },
+  "mc_held_hide": {
+    "message": "elrejt"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "erőszak"
+  },
+  "mc_held_weapons": {
+    "message": "fegyverek"
+  },
+  "mc_held_drugs": {
+    "message": "drogok"
+  },
+  "mc_held_hate": {
+    "message": "gyűlöletbeszéd"
+  },
+  "mc_reply_blocked": {
+    "message": "[blokkolva]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bit",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "újratöltés"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "bip"
+  },
+  "mc_set_snd_knock": {
+    "message": "kopogás"
+  },
+  "mc_set_snd_chime": {
+    "message": "csengő"
+  },
+  "mc_mention_reply_post": {
+    "message": "válaszolt a posztodra"
+  },
+  "mc_mention_reply_reply": {
+    "message": "válaszolt a válaszodra"
+  },
+  "mc_mention_reply_you": {
+    "message": "válaszolt neked"
+  },
+  "mc_mention_fixed": {
+    "message": "a bejelentésed javítva"
+  },
+  "mc_mention_in_post": {
+    "message": "megemlítettek egy posztban"
+  },
+  "mc_tabmode_fixed": {
+    "message": "ez a lap fix"
+  },
+  "mc_tabmode_no_close": {
+    "message": "ez a lap nem zárható be"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonim"
+  },
+  "mc_mark_user": {
+    "message": "heatsync felhasználó"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — kattints a megnyitáshoz, shift+kattintás a chatbe illesztéshez"
   }
 }

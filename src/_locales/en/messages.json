@@ -6771,5 +6771,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "command suggestions"
+  },
+  "mc_card_l_age": {
+    "message": "age"
+  },
+  "mc_card_l_type": {
+    "message": "type"
+  },
+  "mc_card_l_peak": {
+    "message": "peak"
+  },
+  "mc_card_l_rel": {
+    "message": "rel"
+  },
+  "mc_card_l_mutuals": {
+    "message": "mutuals"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "follow you"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "sub to you"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "sub to you T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "since $DAY$ in #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "also"
+  },
+  "mc_card_l_add_bio": {
+    "message": "add bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "lookup failed"
+  },
+  "mc_held_media": {
+    "message": "[media hidden — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[embed hidden — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[image hidden — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "show"
+  },
+  "mc_held_hide": {
+    "message": "hide"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "violence"
+  },
+  "mc_held_weapons": {
+    "message": "weapons"
+  },
+  "mc_held_drugs": {
+    "message": "drugs"
+  },
+  "mc_held_hate": {
+    "message": "hate speech"
+  },
+  "mc_reply_blocked": {
+    "message": "[blocked]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "reload"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "knock"
+  },
+  "mc_set_snd_chime": {
+    "message": "chime"
+  },
+  "mc_mention_reply_post": {
+    "message": "replied to your post"
+  },
+  "mc_mention_reply_reply": {
+    "message": "replied to your reply"
+  },
+  "mc_mention_reply_you": {
+    "message": "replied to you"
+  },
+  "mc_mention_fixed": {
+    "message": "your report was fixed"
+  },
+  "mc_mention_in_post": {
+    "message": "you were mentioned in a post"
+  },
+  "mc_tabmode_fixed": {
+    "message": "that tab is fixed"
+  },
+  "mc_tabmode_no_close": {
+    "message": "that tab can't be closed"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonymous"
+  },
+  "mc_mark_user": {
+    "message": "heatsync user"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — click to open, shift-click to paste into chat"
   }
 }

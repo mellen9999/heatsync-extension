@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Un panneau pour le chat en direct Twitch, Kick + YouTube. Plus un inventaire gratuit de 5000 emotes qui vous suit sur chaque chaîne"
+    "message": "Un panneau pour le chat en direct Twitch, Kick + YouTube. Plus un inventaire gratuit de 5 000 emotes qui vous suit sur chaque chaîne"
   },
   "common_loading": {
     "message": "chargement..."
@@ -6166,7 +6166,7 @@
     "message": "retour / rapport de bug"
   },
   "popup_inv_slots": {
-    "message": "5 000 emplacements d'emotes"
+    "message": "5 000 emplacements d'emotes"
   },
   "popup_inv_signed_in_as": {
     "message": "connecté en tant que $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 emplacements"
+    "message": " / 5 000 emplacements"
   },
   "popup_inv_import_hint": {
     "message": " · importe une chaîne pour le remplir"
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "suggestions de commandes"
+  },
+  "mc_card_l_age": {
+    "message": "âge"
+  },
+  "mc_card_l_type": {
+    "message": "type"
+  },
+  "mc_card_l_peak": {
+    "message": "pic"
+  },
+  "mc_card_l_rel": {
+    "message": "rel"
+  },
+  "mc_card_l_mutuals": {
+    "message": "en commun"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "te suit"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "abonné T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "abonné à toi"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "abonné à toi T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "depuis $DAY$ sur #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "aussi"
+  },
+  "mc_card_l_add_bio": {
+    "message": "ajouter une bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "échec de la recherche"
+  },
+  "mc_held_media": {
+    "message": "[média masqué — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[aperçu masqué — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[image masquée — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "afficher"
+  },
+  "mc_held_hide": {
+    "message": "masquer"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "violence"
+  },
+  "mc_held_weapons": {
+    "message": "armes"
+  },
+  "mc_held_drugs": {
+    "message": "drogues"
+  },
+  "mc_held_hate": {
+    "message": "discours haineux"
+  },
+  "mc_reply_blocked": {
+    "message": "[bloqué]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "recharger"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "bip"
+  },
+  "mc_set_snd_knock": {
+    "message": "toc"
+  },
+  "mc_set_snd_chime": {
+    "message": "carillon"
+  },
+  "mc_mention_reply_post": {
+    "message": "a répondu à ton post"
+  },
+  "mc_mention_reply_reply": {
+    "message": "a répondu à ta réponse"
+  },
+  "mc_mention_reply_you": {
+    "message": "t'a répondu"
+  },
+  "mc_mention_fixed": {
+    "message": "ton rapport a été corrigé"
+  },
+  "mc_mention_in_post": {
+    "message": "tu as été mentionné dans un post"
+  },
+  "mc_tabmode_fixed": {
+    "message": "cet onglet est fixe"
+  },
+  "mc_tabmode_no_close": {
+    "message": "cet onglet ne peut pas être fermé"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonyme"
+  },
+  "mc_mark_user": {
+    "message": "utilisateur heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "permalien — clic pour ouvrir, maj+clic pour coller dans le chat"
   }
 }

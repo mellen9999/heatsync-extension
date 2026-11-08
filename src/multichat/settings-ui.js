@@ -230,7 +230,9 @@ function _rowsForDef(def) {
       if (o.tag) lbl = lbl.replace(o.tag, '').trim()
       var oTip = o.tipKey ? t(o.tipKey) : o.tip || ''
       var oMod = _rowModified(def, o)
-      var oChip = _reloadPending(def, o) ? '<button class="hs-mc-set-reload" data-set-reload>reload</button>' : ''
+      var oChip = _reloadPending(def, o)
+        ? '<button class="hs-mc-set-reload" data-set-reload>' + t('mc_set_reload') + '</button>'
+        : ''
       rows.push({
         id: `${def.key}:${o.value}`,
         mod: oMod,
@@ -404,7 +406,9 @@ function _rowsForDef(def) {
   }
 
   var sMod = _rowModified(def)
-  var sChip = _reloadPending(def) ? '<button class="hs-mc-set-reload" data-set-reload>reload</button>' : ''
+  var sChip = _reloadPending(def)
+    ? '<button class="hs-mc-set-reload" data-set-reload>' + t('mc_set_reload') + '</button>'
+    : ''
   rows.push({
     id: def.key,
     mod: sMod,
@@ -1289,7 +1293,7 @@ function _renderHelpPane() {
     '<div class="hs-mc-set-help-title">' +
     t('mc_set_h_commands') +
     '</div>' +
-    `<pre class="hs-mc-set-help-cmds">${escapeHtml(`${slashHelpText('ext')}\n\n${t('mc_set_h_full_list')}`)}</pre>` +
+    `<pre class="hs-mc-set-help-cmds">${escapeHtml(`${slashHelpText('ext', { title: (s) => t(`slash_sec_${s.key}`), desc: slashDesc })}\n\n${t('mc_set_h_full_list')}`)}</pre>` +
     '</div>'
   )
 }

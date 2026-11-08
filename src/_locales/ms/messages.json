@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Satu panel untuk sembang langsung Twitch, Kick + YouTube. Plus inventori 5000 emote percuma yang ikut anda ke mana-mana saluran"
+    "message": "Satu panel untuk sembang langsung Twitch, Kick + YouTube. Plus inventori 5,000 emote percuma yang ikut anda ke mana-mana saluran"
   },
   "common_loading": {
     "message": "memuat..."
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "cadangan arahan"
+  },
+  "mc_card_l_age": {
+    "message": "usia"
+  },
+  "mc_card_l_type": {
+    "message": "jenis"
+  },
+  "mc_card_l_peak": {
+    "message": "puncak"
+  },
+  "mc_card_l_rel": {
+    "message": "hubungan"
+  },
+  "mc_card_l_mutuals": {
+    "message": "pengikut bersama"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "kakitangan"
+  },
+  "mc_card_l_follow_you": {
+    "message": "ikut anda"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "sub anda"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "sub anda T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "sejak $DAY$ dalam #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "juga dalam"
+  },
+  "mc_card_l_add_bio": {
+    "message": "tambah bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "gagal mencari"
+  },
+  "mc_held_media": {
+    "message": "[media disorok — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[pratonton pautan disorok — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[imej disorok — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "papar"
+  },
+  "mc_held_hide": {
+    "message": "sorok"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "keganasan"
+  },
+  "mc_held_weapons": {
+    "message": "senjata"
+  },
+  "mc_held_drugs": {
+    "message": "dadah"
+  },
+  "mc_held_hate": {
+    "message": "ucapan kebencian"
+  },
+  "mc_reply_blocked": {
+    "message": "[disekat]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "muat semula"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "ketukan"
+  },
+  "mc_set_snd_chime": {
+    "message": "loceng"
+  },
+  "mc_mention_reply_post": {
+    "message": "membalas hantaran anda"
+  },
+  "mc_mention_reply_reply": {
+    "message": "membalas balasan anda"
+  },
+  "mc_mention_reply_you": {
+    "message": "membalas anda"
+  },
+  "mc_mention_fixed": {
+    "message": "laporan anda telah dibaiki"
+  },
+  "mc_mention_in_post": {
+    "message": "anda disebut dalam hantaran"
+  },
+  "mc_tabmode_fixed": {
+    "message": "tab itu terbina dalam"
+  },
+  "mc_tabmode_no_close": {
+    "message": "tab itu tidak boleh ditutup"
+  },
+  "mc_social_anonymous": {
+    "message": "Tanpa nama"
+  },
+  "mc_mark_user": {
+    "message": "pengguna heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — klik untuk buka, shift-klik untuk tampal dalam sembang"
   }
 }

@@ -13,6 +13,7 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { t } from './en-t.js'
 
 const dir = (...p) => join(import.meta.dir, '..', ...p)
 const SRC = readFileSync(dir('src', 'multichat', 'tab-mode.js'), 'utf8')
@@ -77,6 +78,7 @@ function load(bar, { currentTab = 'live', channels = [] } = {}) {
     'moveChannelOrder',
     'HsNotifs',
     'getComputedStyle',
+    't',
     `${SRC}
     return { enterTabMode, exitTabMode, handleTabModeKey, tabModeActive, tabModeTabs, isChannelTab }`,
   )
@@ -95,6 +97,7 @@ function load(bar, { currentTab = 'live', channels = [] } = {}) {
     },
     { emit: (_t, d) => calls.status.push(d.text), dismissByKey: (k) => calls.dismissed.push(k) },
     () => ({ position: 'static' }),
+    t,
   )
   const cursorId = () => bar._kids.find((k) => k._classes.has('hs-mc-tab-cursor'))?.dataset.tab
   return { ...api, calls, bar, cursorId }

@@ -58,11 +58,21 @@ function sfxNoteHtml(extraStyle) {
 }
 
 // ── highlight-rule form ───────────────────────────────────────────────────────
+// static keys so the i18n call-site check can see every one
+function sfxPresetLabel(n) {
+  const labels = {
+    ping: t('mc_set_snd_ping'),
+    blip: t('mc_set_snd_blip'),
+    knock: t('mc_set_snd_knock'),
+    chime: t('mc_set_snd_chime'),
+  }
+  return labels[n] || n
+}
 function sfxFormSoundOptions() {
   return (
     `<option value="none">${t('mc_set_fr_silent')}</option>` +
     Object.keys(SFX_PRESETS)
-      .map((n) => `<option value="${n}">${n}</option>`)
+      .map((n) => `<option value="${n}">${escapeHtml(sfxPresetLabel(n))}</option>`)
       .join('') +
     `<option value="${SFX_CUSTOM}"${sfxPending ? ' selected' : ' disabled'}>${escapeHtml(t('mc_sfx_opt_file'))}</option>`
   )

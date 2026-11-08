@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Un panou pentru chatul live de pe Twitch, Kick + YouTube. Plus un inventar gratuit de 5000 de emote care te însoțește pe orice canal"
+    "message": "Un panou pentru chatul live de pe Twitch, Kick + YouTube. Plus un inventar gratuit de 5.000 de emote care te urmează pe orice canal"
   },
   "common_loading": {
     "message": "se încarcă..."
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "sugestii de comenzi"
+  },
+  "mc_card_l_age": {
+    "message": "vechime"
+  },
+  "mc_card_l_type": {
+    "message": "tip"
+  },
+  "mc_card_l_peak": {
+    "message": "vârf"
+  },
+  "mc_card_l_rel": {
+    "message": "rel"
+  },
+  "mc_card_l_mutuals": {
+    "message": "în comun"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "te urmărește"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "subed T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "subed la tine"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "subed la tine T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "din $DAY$ în #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "și"
+  },
+  "mc_card_l_add_bio": {
+    "message": "adaugă bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "căutare eșuată"
+  },
+  "mc_held_media": {
+    "message": "[media ascunsă — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[previzualizare ascunsă — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[imagine ascunsă — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "arată"
+  },
+  "mc_held_hide": {
+    "message": "ascunde"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "violență"
+  },
+  "mc_held_weapons": {
+    "message": "arme"
+  },
+  "mc_held_drugs": {
+    "message": "droguri"
+  },
+  "mc_held_hate": {
+    "message": "discurs de ură"
+  },
+  "mc_reply_blocked": {
+    "message": "[blocat]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "reîncarcă"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "bip"
+  },
+  "mc_set_snd_knock": {
+    "message": "ciocănit"
+  },
+  "mc_set_snd_chime": {
+    "message": "clopoțel"
+  },
+  "mc_mention_reply_post": {
+    "message": "a răspuns la postarea ta"
+  },
+  "mc_mention_reply_reply": {
+    "message": "a răspuns la răspunsul tău"
+  },
+  "mc_mention_reply_you": {
+    "message": "ți-a răspuns"
+  },
+  "mc_mention_fixed": {
+    "message": "raportul tău a fost rezolvat"
+  },
+  "mc_mention_in_post": {
+    "message": "ai primit o mențiune într-o postare"
+  },
+  "mc_tabmode_fixed": {
+    "message": "acel tab e fix"
+  },
+  "mc_tabmode_no_close": {
+    "message": "acel tab nu poate fi închis"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonim"
+  },
+  "mc_mark_user": {
+    "message": "utilizator heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — click pentru a deschide, shift+click pentru a lipi în chat"
   }
 }

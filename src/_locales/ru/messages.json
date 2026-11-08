@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Одна панель для живого чата Twitch, Kick + YouTube. Плюс бесплатный инвентарь на 5000 эмоций, который работает на любом канале"
+    "message": "Одна панель для живого чата Twitch, Kick + YouTube. Плюс бесплатный инвентарь на 5 000 эмоций, который работает на любом канале"
   },
   "common_loading": {
     "message": "загрузка..."
@@ -6166,7 +6166,7 @@
     "message": "отзыв / отчёт об ошибке"
   },
   "popup_inv_slots": {
-    "message": "5 000 слотов для эмоутов"
+    "message": "5 000 слотов для эмоутов"
   },
   "popup_inv_signed_in_as": {
     "message": "вход выполнен как $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 слотов"
+    "message": " / 5 000 слотов"
   },
   "popup_inv_import_hint": {
     "message": " · импортируй канал, чтобы заполнить"
@@ -6754,5 +6754,169 @@
   },
   "mc_a11y_ac_commands": {
     "message": "подсказки команд"
+  },
+  "mc_card_l_age": {
+    "message": "возраст"
+  },
+  "mc_card_l_type": {
+    "message": "тип"
+  },
+  "mc_card_l_peak": {
+    "message": "пик"
+  },
+  "mc_card_l_rel": {
+    "message": "связь"
+  },
+  "mc_card_l_mutuals": {
+    "message": "общие"
+  },
+  "mc_card_l_admin": {
+    "message": "админ"
+  },
+  "mc_card_l_staff": {
+    "message": "стафф"
+  },
+  "mc_card_l_follow_you": {
+    "message": "фолловит тебя"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "саб T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "саб у тебя"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "саб у тебя T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "с $DAY$ в #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "ещё"
+  },
+  "mc_card_l_add_bio": {
+    "message": "добавить био"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "не удалось загрузить"
+  },
+  "mc_held_media": {
+    "message": "[медиа скрыто — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[превью скрыто — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[изображение скрыто — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "показать"
+  },
+  "mc_held_hide": {
+    "message": "скрыть"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "насилие"
+  },
+  "mc_held_weapons": {
+    "message": "оружие"
+  },
+  "mc_held_drugs": {
+    "message": "наркотики"
+  },
+  "mc_held_hate": {
+    "message": "язык вражды"
+  },
+  "mc_reply_blocked": {
+    "message": "[заблокирован]"
+  },
+  "mc_bits_n": {
+    "message": "битсы: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "перезагрузить"
+  },
+  "mc_set_snd_ping": {
+    "message": "пинг"
+  },
+  "mc_set_snd_blip": {
+    "message": "бип"
+  },
+  "mc_set_snd_knock": {
+    "message": "стук"
+  },
+  "mc_set_snd_chime": {
+    "message": "звон"
+  },
+  "mc_mention_reply_post": {
+    "message": "ответ на твой пост"
+  },
+  "mc_mention_reply_reply": {
+    "message": "ответ на твой ответ"
+  },
+  "mc_mention_reply_you": {
+    "message": "ответ тебе"
+  },
+  "mc_mention_fixed": {
+    "message": "твой репорт исправлен"
+  },
+  "mc_mention_in_post": {
+    "message": "тебя упомянули в посте"
+  },
+  "mc_tabmode_fixed": {
+    "message": "эту вкладку нельзя менять"
+  },
+  "mc_tabmode_no_close": {
+    "message": "эту вкладку нельзя закрыть"
+  },
+  "mc_social_anonymous": {
+    "message": "Аноним"
+  },
+  "mc_mark_user": {
+    "message": "пользователь heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "постоянная ссылка — клик: открыть, shift-клик: вставить в чат"
   }
 }

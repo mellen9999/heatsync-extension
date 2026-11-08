@@ -120,8 +120,11 @@ describe('subsystem chokepoints', () => {
       ['eventsub-whispers.js', read('src', 'multichat', 'eventsub-whispers.js')],
       ['social.js', SOCIAL],
     ]) {
-      expect(src, `${file} no longer routes through the chokepoint`).toContain('handleIncomingWhisper(')
+      // social.js hands the server push to handleServerWhisperPush (whispers.js), which is the chokepoint call
+      const via = file === 'social.js' ? 'handleServerWhisperPush(' : 'handleIncomingWhisper('
+      expect(src, `${file} no longer routes through the chokepoint`).toContain(via)
     }
+    expect(body(WHISPERS, 'function handleServerWhisperPush(data) {', 600)).toContain('handleIncomingWhisper({')
   })
 
   test('cosmetics: gated at the per-message lookup, not just the boot pull', () => {

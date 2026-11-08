@@ -17,6 +17,48 @@ function _hashText(s) {
   for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0
   return h
 }
+// A twitch whisper reaches handleIncomingWhisper over up to three transports:
+// twitch eventsub (whisper_id, a uuid), the server's whisper:new push (the same
+// uuid) and auth-irc's WHISPER line, whose only id is the numeric message-id
+// tag. The id key pairs the first two; nothing paired irc with them, so one
+// whisper landed twice — two rows, two toasts. Pair by content instead: same
+// sender, same text, a DIFFERENT transport, within 15s. The same transport
+// repeating itself is a real repeat and stays.
+const _WHISPER_TWIN_MS = 15000
+const _whisperRecent = [] // { src, user, hash, time }
+const _WHISPER_RECENT_MAX = 50
+function _whisperTwinSeen(src, user, text, time) {
+  const u = String(user || '').toLowerCase()
+  const hash = _hashText(String(text || ''))
+  const t = time || Date.now()
+  const twin = _whisperRecent.some(
+    (r) => r.src !== src && r.user === u && r.hash === hash && Math.abs(r.time - t) <= _WHISPER_TWIN_MS,
+  )
+  _whisperRecent.push({ src, user: u, hash, time: t })
+  if (_whisperRecent.length > _WHISPER_RECENT_MAX) _whisperRecent.shift()
+  return twin
+}
+// The stored timeline may hold twins from before the pairing existed. The
+// loader drops the second copy: same sender, same text, within 15s, and ids
+// of different shapes (irc's numeric tag vs the uuid) or no ids at all. Two
+// uuids or two numerics 15s apart are the same transport repeating — kept.
+function _whisperIdShape(id) {
+  const s = String(id || '')
+  if (!s) return 'none'
+  return /^\d+$/.test(s) ? 'num' : 'uuid'
+}
+function _whisperTimelineHasTwin(list, msg) {
+  const u = String(msg.user || '').toLowerCase()
+  const t = msg.time || 0
+  return list.some((m) => {
+    if (m.text !== msg.text) return false
+    if (m.time === msg.time) return true
+    if (msg.self || m.self || msg.platform !== 'twitch' || m.platform !== 'twitch') return false
+    if (String(m.user || '').toLowerCase() !== u || Math.abs((m.time || 0) - t) > _WHISPER_TWIN_MS) return false
+    const a = _whisperIdShape(m.id)
+    return a !== _whisperIdShape(msg.id) || a === 'none'
+  })
+}
 function _whisperDedupKey(platform, id, user, time, text) {
   if (id) return `${platform}:${id}`
   return `${platform}|${(user || '').toLowerCase()}|${time || 0}|${_hashText(text || '')}`
@@ -157,7 +199,7 @@ function loadWhispers() {
         if (data) {
           if (Array.isArray(data.timeline)) {
             for (const msg of data.timeline) {
-              if (!whisperTimeline.some((m) => m.time === msg.time && m.text === msg.text)) {
+              if (!_whisperTimelineHasTwin(whisperTimeline, msg)) {
                 whisperTimeline.push(msg)
               }
             }
@@ -229,6 +271,8 @@ function handleIncomingWhisper(msg) {
   if (typeof isUserBlocked === 'function' && isUserBlocked(msg.user, 'twitch')) return
   // O(1) dedup that also collapses dual IRC↔EventSub delivery when ID is missing
   if (_whisperMarkSeen(_whisperDedupKey('twitch', msg.id, msg.user, msg.time, msg.text))) return
+  // irc carries a different id for the same whisper — pair it by content
+  if (_whisperTwinSeen(msg.src, msg.user, msg.text, msg.time)) return
 
   const key = `twitch:${msg.user.toLowerCase()}`
   whisperUsersSet(key, {
@@ -270,6 +314,22 @@ function handleIncomingWhisper(msg) {
     }
   }
   whisperSaveDebounced()
+}
+
+// The server's whisper:new push, relayed by background as dm_new with
+// platform twitch, in the chokepoint's shape. Its id is the eventsub whisper_id
+// (external_message_id) so the id key pairs it with the eventsub socket's copy;
+// routing it through handleIncomingDm would key on the hs row id and double it.
+function handleServerWhisperPush(data) {
+  handleIncomingWhisper({
+    user: data.from_display_name || data.from_twitch_login || 'unknown',
+    userId: data.from_twitch_id,
+    text: data.content,
+    color: data.from_color || '#fff',
+    time: data.created_at ? new Date(data.created_at).getTime() : Date.now(),
+    id: data.external_message_id || data.id || '',
+    src: 'server',
+  })
 }
 
 // a heatsync DM deleted on another client leaves this timeline too

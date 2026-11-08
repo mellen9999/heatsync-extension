@@ -205,7 +205,7 @@ function handleAuthIrcMessage(event) {
     // Whispers arrive via IRC WHISPER with twitch.tv/commands cap (same as Chatterino)
     if (line.includes('WHISPER')) {
       const msg = parseIrcLine(line)
-      if (msg?.type === 'whisper') handleIncomingWhisper(msg)
+      if (msg?.type === 'whisper') handleIncomingWhisper({ ...msg, src: 'irc' })
       continue
     }
     if (line.includes(' 353 ') || line.includes(' 366 ') || line.includes('ROOMSTATE')) continue

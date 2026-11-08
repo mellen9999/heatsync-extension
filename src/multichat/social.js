@@ -1402,22 +1402,9 @@ function listenForSocialEvents() {
       if (row) injectInlineNotif(row.notifType, row.msg)
     }
     if (msg.type === 'dm_new' && msg.data) {
-      // Server-pushed Twitch whispers must route through handleIncomingWhisper
-      // so the dedup key (whisper_id) matches the EventSub path. Using
-      // handleIncomingDm here would produce a second timeline entry because
-      // its dedup checks data.id (hs db row) != eventsub entry's id (whisper_id).
-      if (msg.data.platform === 'twitch') {
-        handleIncomingWhisper({
-          user: msg.data.from_display_name || msg.data.from_twitch_login || 'unknown',
-          userId: msg.data.from_twitch_id,
-          text: msg.data.content,
-          color: msg.data.from_color || '#fff',
-          time: msg.data.created_at ? new Date(msg.data.created_at).getTime() : Date.now(),
-          id: msg.data.external_message_id || msg.data.id || '',
-        })
-      } else {
-        handleIncomingDm(msg.data)
-      }
+      // a server-pushed twitch whisper joins the whisper chokepoint (whispers.js)
+      if (msg.data.platform === 'twitch') handleServerWhisperPush(msg.data)
+      else handleIncomingDm(msg.data)
     }
     if (msg.type === 'message-edited' && msg.data) {
       const d = msg.data.message_id ? msg.data : msg.data.data

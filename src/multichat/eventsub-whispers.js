@@ -178,6 +178,7 @@ function eswHandleNotification(msg) {
     color: eswResolveUserColor(event.from_user_id) || '#fff',
     time: msg.metadata?.message_timestamp ? new Date(msg.metadata.message_timestamp).getTime() : Date.now(),
     id: event.whisper_id || msgId || '',
+    src: 'eventsub',
   })
 }
 

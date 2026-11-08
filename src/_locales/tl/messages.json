@@ -7108,5 +7108,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "hindi puwedeng walang laman o may espasyo ang pangalan ng emote"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "hindi nag-load sa tamang oras ang pahina ng kick"
   }
 }

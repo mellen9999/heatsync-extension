@@ -1,111 +1,201 @@
-// background part 6 of 11 — yt send bridge, the onMessage gate.
+// background part 6 of 11 — the tab bridge (yt + kick sends), the onMessage gate.
 // build.js concatenates src/background/* in BG_PARTS order into background.js (the service worker cannot import);
 // one scope, so a later part may read an earlier part's constants, never the reverse.
 
-// ========== YOUTUBE SEND BRIDGE ==========
+// ========== TAB BRIDGE (youtube + kick sends) ==========
 //
-// YouTube has no send API usable at scale (Data API ≈ 50 msgs/day per project),
-// so a send drives a real, logged-in youtube.com tab. When the user has none
-// open, we silently open a hidden, pinned live_chat tab for the EXACT stream —
-// it inherits their YouTube login cookies, so send "just works" whenever they're
-// signed into YouTube in Chrome. We only ever open a tab for a concrete videoId
-// (never a guess) so we can never send to the wrong stream. Tabs are cached per
-// videoId and reused; cleaned up when closed.
-const ytBridgeTabs = new Map() // videoId → tabId
-// Bridge tabs used to live forever (one pinned tab per videoId ever sent to,
-// surviving stream end). Stamp use on ensure + relay; the sweep alarm removes
-// idle ones. Map loss on SW restart is fine — the sweep then closes on sight.
-const ytBridgeLastUsed = new Map() // videoId → ms timestamp
-const YT_BRIDGE_IDLE_MS = 20 * 60 * 1000
-async function sweepYtBridgeTabs() {
-  const now = Date.now()
-  for (const [vid, tid] of [...ytBridgeTabs]) {
-    const last = ytBridgeLastUsed.get(vid) || 0
-    if (now - last < YT_BRIDGE_IDLE_MS) continue
-    ytBridgeTabs.delete(vid)
-    ytBridgeLastUsed.delete(vid)
-    await browser.tabs.remove(tid).catch(() => {})
-  }
-  // Orphans: #hs-bridge-marked tabs the map doesn't know (SW restarted since
-  // creation). An actively-used one gets re-adopted into the map by the send
-  // path's URL match before the next sweep; anything still untracked is dead.
-  const tracked = new Set(ytBridgeTabs.values())
-  const marked = await browser.tabs.query({ url: '*://www.youtube.com/live_chat*' }).catch(() => [])
-  for (const t of marked) {
-    if ((t.url || '').includes('#hs-bridge') && !tracked.has(t.id)) await browser.tabs.remove(t.id).catch(() => {})
-  }
-}
+// Some sends have no API usable at scale: YouTube's Data API is ~50 messages a
+// day per project, and kick's send route wants the cookies of a real kick.com
+// page. So a send drives a real, logged-in tab of that platform. When the user
+// has none open we silently open a hidden (inactive, pinned) one, wait for its
+// content script to answer a ping, send, and keep it for the next send: it
+// inherits their login cookies, so a send "just works" whenever they are signed
+// in to that site in this browser. Idle bridges are reaped by a sweep alarm.
+//
+// One implementation, two configs (ytBridge, kickBridge). Per bridge:
+//   * the tab is keyed (yt: one per videoId, so a send can never land on the
+//     wrong stream; kick: one, any kick.com page carries any channel's send);
+//   * concurrent callers for one key share ONE creation (racing tabs.create
+//     calls each opened a pinned tab and orphaned the loser);
+//   * a tab the user closes mid-wait is replaced once, then we give up loudly;
+//   * the url carries #hs-bridge so the overlay bundle skips its whole boot
+//     there (see main.js / early-layout.js) and the orphan sweep can find it.
+const TAB_BRIDGE_MARK = '#hs-bridge'
+const BRIDGE_IDLE_MS = 20 * 60 * 1000
 
-browser.tabs.onRemoved.addListener((tabId) => {
-  for (const [vid, tid] of ytBridgeTabs) {
-    if (tid === tabId) {
-      ytBridgeTabs.delete(vid)
-      ytBridgeLastUsed.delete(vid)
+// cfg: valid(key) → bool; urlFor(key); probe(tabId) → null (keep waiting) or a
+// verdict ({} = ready, { error, reason? } = present but not sendable);
+// query = the tabs.query url pattern the orphan sweep scans; readyMs; the three
+// error codes callers already map to copy (invalidError, closedError, timeoutError).
+function createTabBridge(cfg) {
+  const tabs = new Map() // key → tabId
+  const used = new Map() // key → ms of last use; map loss on SW restart is fine, the sweep then closes on sight
+  const inflight = new Map() // key → Promise
+  const touch = (key) => used.set(key, Date.now())
+  function forget(tabId) {
+    for (const [key, id] of tabs) {
+      if (id !== tabId) continue
+      tabs.delete(key)
+      used.delete(key)
     }
   }
-})
+  browser.tabs.onRemoved.addListener(forget)
 
-function pingYtBridge(tabId) {
-  return browser.tabs.sendMessage(tabId, { type: 'youtube_bridge_ping' }).catch(() => null)
-}
+  // The tracked tab for key, if it still exists (stamps use); else forgets it.
+  async function live(key) {
+    const id = tabs.get(key)
+    if (id == null) return null
+    if (await browser.tabs.get(id).catch(() => null)) {
+      touch(key)
+      return id
+    }
+    tabs.delete(key)
+    used.delete(key)
+    return null
+  }
+  // Take a bridge tab the map forgot (SW restart) back under management —
+  // without it the orphan sweep would close the tab mid-use.
+  function adopt(key, tabId) {
+    tabs.set(key, tabId)
+    touch(key)
+  }
 
-// Ensure a sendable live_chat tab exists for videoId; resolve when its chat
-// input is present AND enabled. Returns { tabId } on ready, { tabId, error } when
-// present-but-not-sendable (e.g. logged-out → 'chat_disabled'), or { error }.
-// Inflight-deduped: concurrent sends for one videoId must share one creation —
-// racing tabs.create calls each opened a pinned tab and orphaned the loser.
-const _ytBridgeInflight = new Map() // videoId → Promise
-function ensureYoutubeBridgeTab(videoId) {
-  const inflight = _ytBridgeInflight.get(videoId)
-  if (inflight) return inflight
-  const p = _ensureYoutubeBridgeTab(videoId).finally(() => _ytBridgeInflight.delete(videoId))
-  _ytBridgeInflight.set(videoId, p)
-  return p
-}
-async function _ensureYoutubeBridgeTab(videoId) {
-  if (!/^[a-zA-Z0-9_-]{11}$/.test(videoId || '')) return { error: 'no_video' }
-  let tabId = ytBridgeTabs.get(videoId)
-  if (tabId != null) {
-    const t = await browser.tabs.get(tabId).catch(() => null)
-    if (!t) {
-      ytBridgeTabs.delete(videoId)
-      tabId = null
+  // One attempt: find or create the tab, then poll until it answers.
+  async function open(key) {
+    let tabId = await live(key)
+    if (tabId == null) {
+      const created = await browser.tabs.create({ url: cfg.urlFor(key), active: false, pinned: true }).catch(() => null)
+      if (!created?.id) return { error: cfg.closedError }
+      tabId = created.id
+      adopt(key, tabId)
+    }
+    const deadline = Date.now() + (cfg.readyMs || 12000)
+    while (Date.now() < deadline) {
+      const verdict = await cfg.probe(tabId)
+      if (verdict) return { tabId, ...verdict }
+      // The user closed it while we waited: say so rather than polling a corpse.
+      if (!(await browser.tabs.get(tabId).catch(() => null))) {
+        forget(tabId)
+        return { closed: true }
+      }
+      await new Promise((r) => setTimeout(r, 400))
+    }
+    return { tabId, error: cfg.timeoutError }
+  }
+
+  // Resolves { tabId } when ready, { tabId, error, reason? } when present but
+  // not sendable (e.g. logged out), or { error }.
+  function ensure(key) {
+    if (!cfg.valid(key)) return Promise.resolve({ error: cfg.invalidError })
+    const shared = inflight.get(key)
+    if (shared) return shared
+    const p = (async () => {
+      let r = await open(key)
+      if (r.closed) r = await open(key) // closed under us once: one fresh tab
+      return r.closed ? { error: cfg.closedError } : r
+    })().finally(() => inflight.delete(key))
+    inflight.set(key, p)
+    return p
+  }
+
+  async function sweep() {
+    const now = Date.now()
+    for (const [key, id] of [...tabs]) {
+      if (now - (used.get(key) || 0) < BRIDGE_IDLE_MS) continue
+      tabs.delete(key)
+      used.delete(key)
+      await browser.tabs.remove(id).catch(() => {})
+    }
+    // Orphans: marked tabs the map doesn't know (SW restarted since creation).
+    // An actively-used one is re-adopted by the send path before the next
+    // sweep; anything still untracked is dead. Checked live, per tab, so one
+    // adopted while the query was in flight is left alone.
+    const marked = await browser.tabs.query({ url: cfg.query }).catch(() => [])
+    for (const t of marked) {
+      if ((t.url || '').includes(TAB_BRIDGE_MARK) && ![...tabs.values()].includes(t.id)) {
+        await browser.tabs.remove(t.id).catch(() => {})
+      }
     }
   }
-  if (tabId == null) {
-    // #hs-bridge marks this tab as OURS: the multichat bundle sees the hash
-    // and skips its entire boot. Without the marker the bridge booted a full
-    // hidden popout overlay — it rebound the single __live_yt_auto__ slot to
-    // the bridge's videoId (killing the watch tab's feed on WS reconnect) and
-    // its overlay hid the native chat, so the "sign in here" tab we surface
-    // on chat_disabled had no visible login UI.
-    const created = await browser.tabs
-      .create({ url: `https://www.youtube.com/live_chat?v=${videoId}#hs-bridge`, active: false, pinned: true })
-      .catch(() => null)
-    if (!created?.id) return { error: 'no_youtube_tab' }
-    tabId = created.id
-    ytBridgeTabs.set(videoId, tabId)
-  }
-  ytBridgeLastUsed.set(videoId, Date.now())
-  // Poll for readiness — the YT SPA + auth-cookie load takes a couple seconds.
-  const deadline = Date.now() + 12000
-  let sawInput = false
-  while (Date.now() < deadline) {
-    const ping = await pingYtBridge(tabId)
-    if (ping?.ok && ping.hasInput) {
-      sawInput = true
-      if (!ping.disabled) return { tabId }
-      return { tabId, error: 'chat_disabled' } // present but logged-out / restricted
+
+  // A page that never heard the payload: no listener, or no such tab any more.
+  const UNDELIVERED = /Receiving end does not exist|Could not establish connection|No tab with id/i
+
+  // ensure + hand the payload over. Resolves { tabId, answer } (answer null =
+  // nothing in the page answered) or { bridge } carrying ensure's not-ready
+  // verdict. A tab that vanished between ready and delivery never saw the
+  // payload, so it is replaced once; any other failure (a "message port closed"
+  // means the page took it and died mid-way, the send may already be done)
+  // throws, and is never re-driven.
+  async function deliver(key, payload) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const b = await ensure(key)
+      if (!b.tabId || b.error) return { bridge: b }
+      try {
+        const answer = await browser.tabs.sendMessage(b.tabId, payload)
+        touch(key)
+        return { tabId: b.tabId, answer: answer || null }
+      } catch (e) {
+        if (!UNDELIVERED.test(e?.message || '')) throw e
+        forget(b.tabId)
+      }
     }
+    return { bridge: { error: cfg.closedError } }
+  }
+
+  return { ensure, deliver, live, adopt, touch, sweep }
+}
+
+// YouTube: a live_chat tab for the EXACT stream, ready when its chat input is
+// present AND enabled. A logged-out / restricted box is present-but-not-sendable.
+// We only ever open a tab for a concrete videoId (never a guess).
+const ytBridge = createTabBridge({
+  valid: (videoId) => /^[a-zA-Z0-9_-]{11}$/.test(videoId || ''),
+  // #hs-bridge also stops the bundle rebinding the single __live_yt_auto__ slot
+  // to the bridge's videoId (killing the watch tab's feed on WS reconnect) and
+  // its popout overlay hiding the native chat, which left the "sign in here" tab
+  // we surface on chat_disabled with no visible login UI.
+  urlFor: (videoId) => `https://www.youtube.com/live_chat?v=${videoId}${TAB_BRIDGE_MARK}`,
+  query: '*://www.youtube.com/live_chat*',
+  invalidError: 'no_video',
+  closedError: 'no_youtube_tab',
+  timeoutError: 'bridge_timeout',
+  async probe(tabId) {
+    const ping = await browser.tabs.sendMessage(tabId, { type: 'youtube_bridge_ping' }).catch(() => null)
+    if (ping?.ok && ping.hasInput) return ping.disabled ? { error: 'chat_disabled' } : {} // disabled = logged out / restricted
     // No input + a restricted-participation banner = a terminal state
     // (subscribers-only / members-only), not "still loading" — fail fast with
-    // the human reason instead of burning the full 12s into bridge_timeout.
-    if (ping?.ok && !ping.hasInput && ping.restrictedMsg) {
-      return { tabId, error: 'chat_restricted', reason: ping.restrictedMsg }
-    }
-    await new Promise((r) => setTimeout(r, 400))
-  }
-  return { tabId, error: sawInput ? 'chat_disabled' : 'bridge_timeout' }
+    // the human reason instead of burning the full wait into bridge_timeout.
+    if (ping?.ok && !ping.hasInput && ping.restrictedMsg)
+      return { error: 'chat_restricted', reason: ping.restrictedMsg }
+    return null
+  },
+})
+
+// Kick: any kick.com page can carry any channel's send (the relay fetches from
+// the page's own origin, with its cookies), so there is one bridge tab. A static
+// legal page: no player, no chat socket, nothing for kick's own app to boot.
+// Ready = its content script answered kick_bridge_ping, i.e. every kick relay
+// listener is registered. Logged-out is checked by the caller from cookies
+// before a tab is ever opened.
+const KICK_BRIDGE_KEY = 'kick'
+const kickBridge = createTabBridge({
+  valid: (key) => key === KICK_BRIDGE_KEY,
+  urlFor: () => `https://kick.com/privacy-policy${TAB_BRIDGE_MARK}`,
+  query: '*://*.kick.com/*',
+  invalidError: 'no_kick_tab',
+  closedError: 'no_kick_tab',
+  timeoutError: 'kick_bridge_timeout',
+  readyMs: 9000,
+  async probe(tabId) {
+    const ping = await browser.tabs.sendMessage(tabId, { type: 'kick_bridge_ping' }).catch(() => null)
+    return ping?.ok ? {} : null
+  },
+})
+
+// The alarm's one call: reap every idle bridge.
+function sweepBridgeTabs() {
+  return Promise.all([ytBridge.sweep(), kickBridge.sweep()])
 }
 
 const YT_VIDEO_ID = /^[a-zA-Z0-9_-]{11}$/
@@ -123,12 +213,10 @@ async function driveYoutubeChat({ videoId, senderTabId, payload }) {
   try {
     const vidOk = YT_VIDEO_ID.test(videoId || '')
     let targetTabId = null
+    let bridgedTabId = null // the target, when it is our own bridge tab
     if (vidOk) {
-      const bridged = ytBridgeTabs.get(videoId)
-      if (bridged != null && (await browser.tabs.get(bridged).catch(() => null))) {
-        targetTabId = bridged
-        ytBridgeLastUsed.set(videoId, Date.now())
-      }
+      bridgedTabId = await ytBridge.live(videoId)
+      targetTabId = bridgedTabId
       if (!targetTabId) {
         const ytTabs = await browser.tabs.query({ url: '*://www.youtube.com/*' }).catch(() => [])
         const match = ytTabs.find((t) => (t.url || '').includes(videoId))
@@ -136,9 +224,9 @@ async function driveYoutubeChat({ videoId, senderTabId, payload }) {
           targetTabId = match.id
           // Re-adopt a bridge tab the map forgot (SW restart) — without
           // this the orphan sweep would close it mid-use.
-          if ((match.url || '').includes('#hs-bridge')) {
-            ytBridgeTabs.set(videoId, match.id)
-            ytBridgeLastUsed.set(videoId, Date.now())
+          if ((match.url || '').includes(TAB_BRIDGE_MARK)) {
+            ytBridge.adopt(videoId, match.id)
+            bridgedTabId = match.id
           }
         }
       }
@@ -164,18 +252,19 @@ async function driveYoutubeChat({ videoId, senderTabId, payload }) {
           return { ok: false, error: e?.message || 'tab_send_failed' }
         }
       }
-      if (!vidOk || targetTabId === ytBridgeTabs.get(videoId)) return { ok: false, error: 'no_chat_frame' }
+      if (!vidOk || targetTabId === bridgedTabId) return { ok: false, error: 'no_chat_frame' }
     }
-    const bridge = await ensureYoutubeBridgeTab(videoId)
-    if (!bridge.tabId || bridge.error) {
+    const sent = await ytBridge.deliver(videoId, payload)
+    if (sent.bridge) {
       // Provisioned but not sendable (usually logged-out) — surface the tab
       // so the user can sign in, and report why.
-      if (bridge.tabId && bridge.error === 'chat_disabled') {
-        await browser.tabs.update(bridge.tabId, { active: true }).catch(() => {})
+      const b = sent.bridge
+      if (b.tabId && b.error === 'chat_disabled') {
+        await browser.tabs.update(b.tabId, { active: true }).catch(() => {})
       }
-      return { ok: false, error: bridge.error || 'no_youtube_tab', reason: bridge.reason }
+      return { ok: false, error: b.error || 'no_youtube_tab', reason: b.reason }
     }
-    return (await browser.tabs.sendMessage(bridge.tabId, payload)) || { ok: false, error: 'no_chat_frame' }
+    return sent.answer || { ok: false, error: 'no_chat_frame' }
   } catch (e) {
     log('driveYoutubeChat error:', e?.message)
     return { ok: false, error: e?.message || 'send_failed' }

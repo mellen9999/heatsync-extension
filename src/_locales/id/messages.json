@@ -7108,5 +7108,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "nama emote tidak boleh kosong atau berisi spasi"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "halaman kick tidak termuat tepat waktu"
   }
 }

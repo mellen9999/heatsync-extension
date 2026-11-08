@@ -7108,5 +7108,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "لا يمكن أن يكون اسم الإيموت فارغًا أو يحتوي على مسافات"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "لم تُحمَّل صفحة kick في الوقت المناسب"
   }
 }

@@ -489,7 +489,7 @@ const TAB_GATED_ALARMS = {
   'refresh-emote-inventory': () => ({ delayInMinutes: 1 + Math.random(), periodInMinutes: 1 }),
   'prune-expired-mutes': () => ({ periodInMinutes: 1 }),
   'hs-7tv-watchdog': () => ({ periodInMinutes: 2 }),
-  'hs-yt-bridge-sweep': () => ({ periodInMinutes: 5 }),
+  'hs-bridge-sweep': () => ({ periodInMinutes: 5 }),
 }
 ensureAlarm('refresh-global-emotes', { delayInMinutes: 1440 + Math.random() * 60, periodInMinutes: 1440 })
 ensureAlarm('refresh-emote-inventory', TAB_GATED_ALARMS['refresh-emote-inventory']())
@@ -516,8 +516,11 @@ ensureAlarm('hs-7tv-watchdog', TAB_GATED_ALARMS['hs-7tv-watchdog']())
 // Server kill-switch poll — recovers from a broken release without forcing a
 // CWS update push. delayInMinutes jitter spreads 30k clients' first hit.
 ensureAlarm('hs-health-poll', { delayInMinutes: 0.25 + Math.random() * 0.5, periodInMinutes: 5 })
-// Reap idle yt send-bridge tabs (see sweepYtBridgeTabs).
-ensureAlarm('hs-yt-bridge-sweep', TAB_GATED_ALARMS['hs-yt-bridge-sweep']())
+// Reap idle send-bridge tabs, yt + kick (see sweepBridgeTabs). The yt-only name this alarm
+// had before kick joined it lingers in already-installed browsers: clear it, or it
+// keeps waking the worker every 5 minutes forever.
+browser.alarms?.clear?.('hs-yt-bridge-sweep')?.catch?.(() => {})
+ensureAlarm('hs-bridge-sweep', TAB_GATED_ALARMS['hs-bridge-sweep']())
 // Kick follow mirror — hourly, matching the server's twitch resync latch. See
 // syncKickFollows(): Kick is the one platform the SERVER can never sync, so the
 // mirror has to run here. Jittered so 30k clients don't sync on the same tick.
@@ -735,8 +738,8 @@ browser.alarms?.onAlarm?.addListener(async (alarm) => {
     } catch (e) {
       log('hs-ws-watchdog error:', e?.message)
     }
-  } else if (alarm.name === 'hs-yt-bridge-sweep') {
-    sweepYtBridgeTabs().catch(() => {})
+  } else if (alarm.name === 'hs-bridge-sweep') {
+    sweepBridgeTabs().catch(() => {})
   } else if (alarm.name === 'hs-health-poll') {
     fetchHealth().catch(() => {})
   } else if (alarm.name === 'hs-7tv-watchdog') {

@@ -7108,5 +7108,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "et emotenavn må ikke være tomt eller have mellemrum"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "kick-siden indlæstes ikke i tide"
   }
 }

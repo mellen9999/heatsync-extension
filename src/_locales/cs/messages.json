@@ -7108,5 +7108,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "název emote nesmí být prázdný ani obsahovat mezery"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "stránka kick se nenačetla včas"
   }
 }

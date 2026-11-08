@@ -7108,5 +7108,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "un nom d'emote ne peut pas être vide ni contenir d'espaces"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "la page kick ne s'est pas chargée à temps"
   }
 }

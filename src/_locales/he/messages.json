@@ -7108,5 +7108,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "שם אימוט לא יכול להיות ריק או לכלול רווחים"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "דף kick לא נטען בזמן"
   }
 }

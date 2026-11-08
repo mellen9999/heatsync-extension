@@ -7108,5 +7108,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "имя эмоута не может быть пустым или с пробелами"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "страница kick не загрузилась вовремя"
   }
 }

@@ -7108,5 +7108,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "το όνομα του emote δεν μπορεί να είναι κενό ή να έχει κενά"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "η σελίδα του kick δεν φορτώθηκε εγκαίρως"
   }
 }

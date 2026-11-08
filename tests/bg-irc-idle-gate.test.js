@@ -64,7 +64,7 @@ describe('scheduleWsIdleCheck gates the SW lifelines on platform tabs', () => {
     const defEnd = BG_SRC.indexOf("ensureAlarm('refresh-global-emotes'", defStart)
     expect(defEnd).toBeGreaterThan(defStart)
     const DEF = BG_SRC.slice(defStart, defEnd)
-    for (const name of ['refresh-emote-inventory', 'prune-expired-mutes', 'hs-7tv-watchdog', 'hs-yt-bridge-sweep']) {
+    for (const name of ['refresh-emote-inventory', 'prune-expired-mutes', 'hs-7tv-watchdog', 'hs-bridge-sweep']) {
       expect(DEF).toContain(`'${name}'`)
     }
     // went-live notifications + kill-switch recovery must keep running tab-less

@@ -7108,5 +7108,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "tên emote không được trống hoặc có dấu cách"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "trang kick không tải kịp"
   }
 }

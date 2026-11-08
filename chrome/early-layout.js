@@ -109,6 +109,10 @@
   else if (host.includes('twitch.tv')) platform = 'twitch'
   else return // not a host we inject into
 
+  // BG send-bridge tab (see main.js): the multichat never boots there, so a
+  // prepaint would be a permanent black bar over a page nobody is meant to see.
+  if (location.hash.includes('hs-bridge')) return
+
   // "hs chat on <site>" switched off (mirrored from the subsystems setting by main.js): this site keeps
   // its own chat, so paint nothing and squeeze nothing.
   try {
@@ -144,8 +148,6 @@
   // '1'/'0' come back as numbers.
   const ytNonLive = platform === 'yt' && String(readLS('ytNonLiveChat', '0')) === '1'
 
-  // #hs-bridge = BG send-bridge tab: the multichat never boots there, so a
-  // popout prepaint would be a permanent black screen over the native chat.
   const isPopout =
     (platform === 'twitch' && /^\/(popout|embed)\/[a-zA-Z0-9_]+\/chat/.test(location.pathname)) ||
     // kick's own popout — same regex main.js uses; without this hs-popout only
@@ -157,8 +159,7 @@
     // pure black flash on top of the replay)
     (platform === 'yt' &&
       location.pathname.startsWith('/live_chat') &&
-      !location.pathname.startsWith('/live_chat_replay') &&
-      !location.hash.includes('hs-bridge'))
+      !location.pathname.startsWith('/live_chat_replay'))
 
   // Only prepaint where chat will actually mount — otherwise the black bar
   // shows for up to 4s on home/directory/browse/search/shorts/etc. while the

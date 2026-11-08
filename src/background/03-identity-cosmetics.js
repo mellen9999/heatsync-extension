@@ -348,11 +348,6 @@ async function resolveKickChannelIdBg(slug) {
   }
 }
 
-// Send a Kick chat message via a kick.com tab's session cookies. Any kick.com
-// tab works as the messaging origin — the send is parameterized by channelId
-// + XSRF token, not by which channel the tab happens to be viewing. Shared by
-// the kick_send_message runtime-message handler and the kick:relay_send ws
-// path.
 // Rank kick.com tabs by relay viability: a discarded tab has NO content
 // scripts (memory-saver unloads them) and a pre-reload tab holds an
 // invalidated context — both throw "Receiving end does not exist" on
@@ -378,31 +373,78 @@ async function readKickSession() {
   return { cookie, session }
 }
 
+// A relay that provably never reached a page: nothing was listening, or the tab
+// is gone. Only such a failure may be retried on another tab — one that took the
+// message and died mid-way ("message port closed") may already have posted it.
+const KICK_UNREACHED = /Receiving end does not exist|Could not establish connection|No tab with id/i
+
+// One kick.com tab's answer to a relay message: { answer } from the page, or
+// { error, unreached } when it never came. Never throws. deadlineMs > 0 caps the
+// wait, so a hung renderer cannot hang the caller forever.
+async function askKickTab(tabId, message, deadlineMs) {
+  const asked = browser.tabs
+    .sendMessage(tabId, message)
+    .then((answer) => (answer ? { answer } : { error: 'no response from tab', unreached: true }))
+    .catch((e) => ({ error: e?.message || 'kick relay failed', unreached: KICK_UNREACHED.test(e?.message || '') }))
+  if (!deadlineMs) return asked
+  return Promise.race([
+    asked,
+    new Promise((res) => setTimeout(() => res({ error: 'kick tab unresponsive — reload kick.com' }), deadlineMs)),
+  ])
+}
+
+// Hand one relay message to a kick.com tab and resolve its answer; never throws.
+// The open tabs go first, best-ranked first (prefer(tab) floats one to the
+// front); when none could take it — no tab at all, or every one provably never
+// saw it (discarded, pre-reload, signed-in-elsewhere pages) — the bridge tab
+// carries it, opened on demand. A tab that took the message and then failed
+// is NOT retried through the bridge: the post may be done.
+async function relayViaKickTab(message, { prefer = null, deadlineMs = 0 } = {}) {
+  let ranked = rankKickRelayTabs(await browser.tabs.query({ url: '*://*.kick.com/*' }).catch(() => []))
+  const first = prefer ? ranked.find(prefer) : null
+  if (first) ranked = [first, ...ranked.filter((t) => t !== first)]
+  let lastError = 'no response from tab'
+  let mayHaveLanded = false
+  for (const tab of ranked) {
+    // A bridge tab the map forgot (SW restart) goes back under management, or
+    // the sweep would close it mid-use.
+    if ((tab.url || '').includes(TAB_BRIDGE_MARK)) kickBridge.adopt(KICK_BRIDGE_KEY, tab.id)
+    const r = await askKickTab(tab.id, message, deadlineMs)
+    if (r.answer) return r.answer
+    lastError = r.error
+    if (!r.unreached) mayHaveLanded = true
+  }
+  if (mayHaveLanded) return { ok: false, error: lastError }
+  try {
+    const sent = await kickBridge.deliver(KICK_BRIDGE_KEY, message)
+    if (sent.bridge) return { ok: false, error: sent.bridge.error || 'no_kick_tab' }
+    return sent.answer || { ok: false, error: 'no response from tab' }
+  } catch (e) {
+    return { ok: false, error: e?.message || 'kick relay failed' }
+  }
+}
+
+// Send a Kick chat message via a kick.com tab's session cookies. Any kick.com
+// tab works as the messaging origin — the send is parameterized by channelId
+// + XSRF token, not by which channel the tab happens to be viewing. With none
+// open the hidden bridge tab (kickBridge, 06-message-gate.js) stands in. Shared
+// by the kick_send_message runtime-message handler and the kick:relay_send ws
+// path.
 async function sendKickMessageViaTab(channelId, content, reply = null) {
   if (!channelId || !content) return { ok: false, error: 'missing params' }
   // Kick's send API demands Authorization: Bearer <session_token> (2026-07);
-  // the laravel session cookie + XSRF alone 403s. Absent XSRF = logged out.
+  // the laravel session cookie + XSRF alone 403s. Absent XSRF = logged out —
+  // answered here, before any tab is opened for a send that cannot land.
   const { cookie, session } = await readKickSession()
   if (!cookie?.value) return { ok: false, error: 'kick_not_logged_in' }
-  const tabs = await browser.tabs.query({ url: '*://*.kick.com/*' })
-  if (!tabs || tabs.length === 0) return { ok: false, error: 'no_kick_tab' }
-  let lastError = 'no response from tab'
-  for (const tab of rankKickRelayTabs(tabs)) {
-    try {
-      const result = await browser.tabs.sendMessage(tab.id, {
-        type: 'kick_send_relay',
-        channelId,
-        content,
-        reply: reply || null,
-        xsrfToken: cookie.value,
-        sessionToken: session?.value || '',
-      })
-      if (result) return result
-    } catch (e) {
-      lastError = e?.message || 'tab relay failed'
-    }
-  }
-  return { ok: false, error: lastError }
+  return relayViaKickTab({
+    type: 'kick_send_relay',
+    channelId,
+    content,
+    reply: reply || null,
+    xsrfToken: cookie.value,
+    sessionToken: session?.value || '',
+  })
 }
 
 // Kick chat modes — PUT /api/v1/chatrooms/<chatroomId>. Route discovered
@@ -413,24 +455,13 @@ async function setKickChatModeViaTab(chatroomId, body) {
   if (!chatroomId || !body) return { ok: false, error: 'missing params' }
   const { cookie, session } = await readKickSession()
   if (!cookie?.value) return { ok: false, error: 'kick_not_logged_in' }
-  const tabs = await browser.tabs.query({ url: '*://*.kick.com/*' })
-  if (!tabs || tabs.length === 0) return { ok: false, error: 'no_kick_tab' }
-  let lastError = 'no response from tab'
-  for (const tab of rankKickRelayTabs(tabs)) {
-    try {
-      const result = await browser.tabs.sendMessage(tab.id, {
-        type: 'kick_chatmode_relay',
-        chatroomId,
-        body,
-        xsrfToken: cookie.value,
-        sessionToken: session?.value || '',
-      })
-      if (result) return result
-    } catch (e) {
-      lastError = e?.message || 'tab relay failed'
-    }
-  }
-  return { ok: false, error: lastError }
+  return relayViaKickTab({
+    type: 'kick_chatmode_relay',
+    chatroomId,
+    body,
+    xsrfToken: cookie.value,
+    sessionToken: session?.value || '',
+  })
 }
 
 const kickChatroomIdCache = new Map()

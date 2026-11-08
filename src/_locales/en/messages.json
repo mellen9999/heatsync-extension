@@ -7125,5 +7125,8 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "an emote name can't be empty or have spaces"
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "kick page did not load in time"
   }
 }

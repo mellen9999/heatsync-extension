@@ -7772,7 +7772,7 @@
       if (hkey && hermesToggles?.[hkey] === false) return null
       const div = document.createElement('div')
       const evFill = eventFill(m.eventClass)
-      div.className = `hs-mc-stream-event ${m.eventClass || ''}${evFill ? ` hs-filled hs-fill-${evFill} hs-row-label${/event-online\b/.test(m.eventClass) ? ' hs-row-alert' : ''}` : ''}`
+      div.className = `hs-mc-stream-event ${m.eventClass || ''}${evFill ? ` hs-filled hs-fill-${evFill} hs-row-label` : ''}`
       const tsVal = timestampsEnabled && m.time ? formatTimeFromTs(m.time) : ''
       const tsSpan = tsVal ? `<span class="hs-mc-ts">${tsVal}</span>` : ''
       const isYtEvent = m.platform === 'youtube'

@@ -11,10 +11,21 @@
  * means off (nothing written, stale copy wiped), and nothing ever touches the
  * synced area, the one place another device could read what you typed.
  */
-import { beforeEach, describe, expect, test } from 'bun:test'
+import { afterAll, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { SETTINGS } from '../src/lib/settings-schema.js'
+
+// installBrowser() puts a chrome, a browser and a cleanup on globalThis for every test. Whatever was
+// there before this file goes back when it is done: bun runs every file in one process, and a stub left
+// behind reaches the next file's modules at load.
+const _before = { chrome: globalThis.chrome, browser: globalThis.browser, cleanup: globalThis.cleanup }
+afterAll(() => {
+  for (const [k, v] of Object.entries(_before)) {
+    if (v === undefined) delete globalThis[k]
+    else globalThis[k] = v
+  }
+})
 
 const ROOT = join(import.meta.dir, '..')
 const MODULE = join(ROOT, 'src', 'multichat', 'sent-history.js')

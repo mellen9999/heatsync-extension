@@ -47,6 +47,8 @@ const FILES = [
   ['public/css/brand-tokens.css', 'src/multichat/styles/01-brand-tokens.css'],
   ['public/css/modules/brand-rows.css', 'src/multichat/styles/21-brand-rows.css'],
   ['shared/brand/tokens.gen.js', 'src/lib/brand-tokens.js'],
+  ['scripts/lib/inline-doctrine.mjs', 'tests/lib/inline-doctrine.mjs'],
+  ['scripts/lib/strip-comments.mjs', 'tests/lib/strip-comments.mjs'],
 ]
 
 describe('site-copy parity', () => {

@@ -30,6 +30,9 @@
 # ONE brand layer (palette, fills, row metrics, the filled-row styles) — generated from the site's
 # shared/brand/tokens.json; the site and the extension render rows from the same bytes.
 #
+# scripts/lib/{inline-doctrine,strip-comments}.mjs → tests/lib/: the inline-css doctrine scanner,
+# so the site and the extension judge js-built style by the same rules.
+#
 # tests/site-copy-parity.test.js (and the site's mirror of it) is what makes
 # this stick; biome.json leaves these files unformatted so a formatter pass
 # cannot break byte parity.
@@ -50,7 +53,9 @@ for pair in \
   public/css/modules/card.css:src/multichat/styles/20-card.css \
   public/css/brand-tokens.css:src/multichat/styles/01-brand-tokens.css \
   public/css/modules/brand-rows.css:src/multichat/styles/21-brand-rows.css \
-  shared/brand/tokens.gen.js:src/lib/brand-tokens.js
+  shared/brand/tokens.gen.js:src/lib/brand-tokens.js \
+  scripts/lib/inline-doctrine.mjs:tests/lib/inline-doctrine.mjs \
+  scripts/lib/strip-comments.mjs:tests/lib/strip-comments.mjs
 do
   src_rel="${pair%%:*}"
   dst_rel="${pair##*:}"

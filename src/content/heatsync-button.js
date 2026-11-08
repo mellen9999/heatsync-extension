@@ -1558,7 +1558,7 @@
         padding: 5px 8px;
         background: #000000;
         border: 1px solid #ffffff;
-        border-radius: 2px;
+        border-radius: 0;
         color: #fff;
         font-size: 13px;
         outline: none;
@@ -1571,7 +1571,7 @@
         padding: 4px 8px;
         background: #fff;
         border: none;
-        border-radius: 2px;
+        border-radius: 0;
         color: #000;
         font-size: 13px;
         font-weight: 600;

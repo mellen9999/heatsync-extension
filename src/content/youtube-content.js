@@ -434,9 +434,9 @@
       const safeAngle = Number.isFinite(Number(paint.angle)) ? Number(paint.angle) : 0
       const safeShape = /^(circle|ellipse)$/.test(paint.shape) ? paint.shape : 'circle'
       if (fn === 'linear-gradient') {
-        el.style.backgroundImage = `linear-gradient(${safeAngle}deg, ${stops})`
+        el.style.backgroundImage = `linear-gradient(${safeAngle}deg, ${stops})` // doctrine: paint art
       } else {
-        el.style.backgroundImage = `radial-gradient(${safeShape}, ${stops})`
+        el.style.backgroundImage = `radial-gradient(${safeShape}, ${stops})` // doctrine: paint art
       }
     } else if (paint.color) {
       const r = (paint.color >>> 24) & 0xff

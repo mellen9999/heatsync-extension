@@ -1750,7 +1750,7 @@
     font-weight: bold !important;
     line-height: 1 !important;
     padding: 1px 3px !important;
-    border-radius: 6px !important;
+    border-radius: 0 !important;
     z-index: 10 !important;
     pointer-events: none !important;
     opacity: 0 !important;
@@ -1770,7 +1770,7 @@
     align-items: center !important;
     gap: 6px !important;
     background: #000000 !important;
-    border-radius: 4px !important;
+    border-radius: 0 !important;
     padding: 4px 8px !important;
     position: absolute !important;
     z-index: 100 !important;
@@ -7736,9 +7736,9 @@
       const safeAngle = Number.isFinite(Number(paint.angle)) ? Number(paint.angle) : 0
       const safeShape = /^(circle|ellipse)$/.test(paint.shape) ? paint.shape : 'circle'
       if (fn === 'linear-gradient') {
-        el.style.backgroundImage = `linear-gradient(${safeAngle}deg, ${stops})`
+        el.style.backgroundImage = `linear-gradient(${safeAngle}deg, ${stops})` // doctrine: paint art
       } else {
-        el.style.backgroundImage = `radial-gradient(${safeShape}, ${stops})`
+        el.style.backgroundImage = `radial-gradient(${safeShape}, ${stops})` // doctrine: paint art
       }
     } else if (paint.color) {
       const r = (paint.color >>> 24) & 0xff

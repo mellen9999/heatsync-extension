@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "マウスの下のチャット行に返信ボタンを表示します。返信は常に行メニューにあります（右クリック、タッチは長押し）"
+  },
+  "mc_badge_staff_label": {
+    "message": "スタッフ"
+  },
+  "mc_badge_staff_how": {
+    "message": "heatsyncで働いています"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1か月"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "heatsync plus 1か月。plusが有効な間表示されます"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3か月"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "heatsync plus 3か月。plusが有効な間表示されます"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6か月"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "heatsync plus 6か月。plusが有効な間表示されます"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1年"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "heatsync plus 1年。plusが有効な間表示されます"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2年"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "heatsync plus 2年。plusが有効な間表示されます"
+  },
+  "mc_badge_ember_label": {
+    "message": "おき火"
+  },
+  "mc_badge_ember_how": {
+    "message": "2026年4月30日より前にheatsyncに参加しました。火花が燃え移る前です"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "初期サポーター"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "アカウントを2026年7月より前に作りました。最初の1000人ほどの中です"
   }
 }

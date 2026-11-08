@@ -40,6 +40,7 @@ for pair in \
   client/cosmetics/fill-layers.js \
   client/cosmetics/glyph-mask.js \
   client/utils/plus-tenure.js \
+  client/utils/badge-catalogue.js \
   client/chat/stv-paint-css.js
 do
   cp "$site/$pair" "$here/src/lib/$(basename "$pair")"

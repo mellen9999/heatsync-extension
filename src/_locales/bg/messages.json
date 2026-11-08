@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "показва бутон за отговор на реда под мишката. отговорът винаги е в менюто на реда (десен клик, дълго натискане на тъч)"
+  },
+  "mc_badge_staff_label": {
+    "message": "екип"
+  },
+  "mc_badge_staff_how": {
+    "message": "работиш по heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 месец"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 месец heatsync plus. показва се, докато plus е активен"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 месеца"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 месеца heatsync plus. показва се, докато plus е активен"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 месеца"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 месеца heatsync plus. показва се, докато plus е активен"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 година"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 година heatsync plus. показва се, докато plus е активен"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 години"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 години heatsync plus. показва се, докато plus е активен"
+  },
+  "mc_badge_ember_label": {
+    "message": "жарава"
+  },
+  "mc_badge_ember_how": {
+    "message": "присъедини се към heatsync преди 30 април 2026, преди искрата да пламне"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "ранен подкрепящ"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "акаунтът ти е създаден преди юли 2026, сред първите около хиляда"
   }
 }

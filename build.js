@@ -826,6 +826,7 @@ const MULTICHAT_MODULES = [
   'img-view.js',
   'paints.js',
   'cosmetics.js',
+  'badges.js',
   'name-style.js',
   'fill-family.js',
   'stream-line-ids.js',
@@ -935,6 +936,14 @@ function readMultichatModules() {
   const plusTenurePath = join(SRC_DIR, 'lib', 'plus-tenure.js')
   if (existsSync(plusTenurePath)) {
     combined += `\n// --- lib/plus-tenure.js ---\n${stripExports(readFileSync(plusTenurePath, 'utf8'))}\n`
+  }
+
+  // The badge catalogue (src/lib/badge-catalogue.js) — verbatim site copy, same
+  // reasoning as plus-tenure above: only the overlay draws badge marks, and
+  // multichat/badges.js (modules loop) reads badgeById, so it lands first.
+  const badgeCataloguePath = join(SRC_DIR, 'lib', 'badge-catalogue.js')
+  if (existsSync(badgeCataloguePath)) {
+    combined += `\n// --- lib/badge-catalogue.js ---\n${stripExports(readFileSync(badgeCataloguePath, 'utf8'))}\n`
   }
 
   // The gifs tab's fetch layer — another verbatim site copy

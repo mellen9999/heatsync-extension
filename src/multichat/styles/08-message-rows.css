@@ -689,6 +689,18 @@
       vertical-align: middle;
       white-space: nowrap;
     }
+    /* heatsync badge (badges.js) - one catalogue glyph after the name / plus mark,
+       colour set inline from the catalogue (ANSI only); the one 13px badge size. */
+    .hs-badge {
+      display: inline-block;
+      margin: 0 2px 0 4px;
+      font-family: var(--hs-mc-font, monospace);
+      font-size: 13px;
+      font-weight: 700;
+      vertical-align: middle;
+      white-space: nowrap;
+      cursor: default;
+    }
     .hs-mc-link {
       color: var(--hs-link);
       text-decoration: none;

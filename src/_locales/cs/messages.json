@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "zobrazí tlačítko odpovědi na řádku pod myší. odpověď je vždy v nabídce řádku (pravé tlačítko, dlouhý stisk na dotyku)"
+  },
+  "mc_badge_staff_label": {
+    "message": "tým"
+  },
+  "mc_badge_staff_how": {
+    "message": "pracuješ na heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 měsíc"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 měsíc heatsync plus. zobrazuje se, dokud je plus aktivní"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 měsíce"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 měsíce heatsync plus. zobrazuje se, dokud je plus aktivní"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 měsíců"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 měsíců heatsync plus. zobrazuje se, dokud je plus aktivní"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 rok"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 rok heatsync plus. zobrazuje se, dokud je plus aktivní"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 roky"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 roky heatsync plus. zobrazuje se, dokud je plus aktivní"
+  },
+  "mc_badge_ember_label": {
+    "message": "žhavé uhlí"
+  },
+  "mc_badge_ember_how": {
+    "message": "připojil ses k heatsync před 30. dubnem 2026, než se jiskra chytla"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "první podporovatel"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "tvůj účet vznikl před červencem 2026, mezi prvním tisícem"
   }
 }

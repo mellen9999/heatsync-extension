@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "fare altındaki sohbet satırında yanıt düğmesi gösterir. yanıt her zaman satır menüsünde (sağ tık, dokunmatikte uzun basma)"
+  },
+  "mc_badge_staff_label": {
+    "message": "ekip"
+  },
+  "mc_badge_staff_how": {
+    "message": "heatsync üzerinde çalışıyorsun"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 ay"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 ay heatsync plus. plus'ın aktif olduğu sürece görünür"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 ay"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 ay heatsync plus. plus'ın aktif olduğu sürece görünür"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 ay"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 ay heatsync plus. plus'ın aktif olduğu sürece görünür"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 yıl"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 yıl heatsync plus. plus'ın aktif olduğu sürece görünür"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 yıl"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 yıl heatsync plus. plus'ın aktif olduğu sürece görünür"
+  },
+  "mc_badge_ember_label": {
+    "message": "kor"
+  },
+  "mc_badge_ember_how": {
+    "message": "heatsync'e 30 nisan 2026'dan önce katıldın, kıvılcım tutuşmadan önce"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "erken destekçi"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "hesabın temmuz 2026'dan önce açıldı, ilk bin kişi arasında"
   }
 }

@@ -1472,7 +1472,7 @@ const EMBED_RESOLVE_TTL = 60 * 60 * 1000 // 1 hour
 // no point holding it any longer client-side since the server refreshes at the
 // same cadence. In-memory only (unlike userCosmeticsCache) — paints are cheap,
 // low-stakes to refetch, and don't need to survive an SW restart.
-const _paintsCache = new Map() // twitchUserId → { spec: object|null, color: string|null, plus: string|null, fetchedAt }
+const _paintsCache = new Map() // twitchUserId → { spec: object|null, color: string|null, plus: string|null, badge: string|null, fetchedAt }
 const PAINTS_TTL = 60 * 1000
 const PAINTS_CACHE_MAX = 500
 // Channel banner / accent across platforms — Twitch GQL (public client id),
@@ -4196,7 +4196,7 @@ function setUserCosmetic(twitchId, cosmetic) {
   debounceSaveCosmetics()
 }
 
-function setPaintCache(twitchId, spec, color = null, plus = null) {
+function setPaintCache(twitchId, spec, color = null, plus = null, badge = null) {
   if (_paintsCache.size >= PAINTS_CACHE_MAX) {
     _paintsCache.delete(_paintsCache.keys().next().value)
   }
@@ -4204,7 +4204,14 @@ function setPaintCache(twitchId, spec, color = null, plus = null) {
   // plus_since (active HeatSync Plus tenure) — both ride the same
   // /api/paints response, cached alongside the spec so the fetch_paints reply
   // can return parallel colors/plus maps without a second request/inflight chain.
-  _paintsCache.set(twitchId, { spec: spec ?? null, color: color ?? null, plus: plus ?? null, fetchedAt: Date.now() })
+  // badge = the one heatsync badge id they show (rides the same response too)
+  _paintsCache.set(twitchId, {
+    spec: spec ?? null,
+    color: color ?? null,
+    plus: plus ?? null,
+    badge: badge ?? null,
+    fetchedAt: Date.now(),
+  })
 }
 
 async function fetchBulkBadges() {
@@ -11646,7 +11653,7 @@ async function handleMessage(message, sender, sendResponse) {
     ).slice(0, 50)
     ;(async () => {
       if (!ids.length) {
-        sendResponse({ paints: {}, colors: {}, plus: {} })
+        sendResponse({ paints: {}, colors: {}, plus: {}, badges: {} })
         return
       }
       const result = {}
@@ -11689,9 +11696,11 @@ async function handleMessage(message, sender, sendResponse) {
               if (data?.paints && typeof data.paints === 'object') {
                 const dataColors = data.colors && typeof data.colors === 'object' ? data.colors : {}
                 const dataPlus = data.plus && typeof data.plus === 'object' ? data.plus : {}
+                // absent on a server that predates badges: nobody has one
+                const dataBadges = data.badges && typeof data.badges === 'object' ? data.badges : {}
                 for (const id of toFetch) {
                   const spec = data.paints[id] ?? null
-                  setPaintCache(id, spec, dataColors[id] ?? null, dataPlus[id] ?? null)
+                  setPaintCache(id, spec, dataColors[id] ?? null, dataPlus[id] ?? null, dataBadges[id] ?? null)
                   out[id] = spec
                 }
               }
@@ -11740,12 +11749,14 @@ async function handleMessage(message, sender, sendResponse) {
       // present by now).
       const colors = {}
       const plus = {}
+      const badges = {}
       for (const id of Object.keys(result)) {
         const cached = _paintsCache.get(id)
         if (cached?.color) colors[id] = cached.color
         if (cached?.plus) plus[id] = cached.plus
+        if (cached?.badge) badges[id] = cached.badge
       }
-      sendResponse({ paints: result, colors, plus })
+      sendResponse({ paints: result, colors, plus, badges })
     })()
     return true
   } else if (message.type === 'get_sender_emotes') {

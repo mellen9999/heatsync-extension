@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "माउस के नीचे वाली चैट पंक्ति पर जवाब बटन दिखाएँ। जवाब हमेशा पंक्ति मेनू में रहता है (राइट-क्लिक, टच पर देर तक दबाएँ)"
+  },
+  "mc_badge_staff_label": {
+    "message": "टीम"
+  },
+  "mc_badge_staff_how": {
+    "message": "आप heatsync पर काम करते हैं"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 महीना"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 महीना का heatsync plus. आपका plus चालू रहने तक दिखता है"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 महीने"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 महीने का heatsync plus. आपका plus चालू रहने तक दिखता है"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 महीने"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 महीने का heatsync plus. आपका plus चालू रहने तक दिखता है"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 साल"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 साल का heatsync plus. आपका plus चालू रहने तक दिखता है"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 साल"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 साल का heatsync plus. आपका plus चालू रहने तक दिखता है"
+  },
+  "mc_badge_ember_label": {
+    "message": "अंगारा"
+  },
+  "mc_badge_ember_how": {
+    "message": "आप 30 अप्रैल 2026 से पहले heatsync से जुड़े, चिंगारी लगने से पहले"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "शुरुआती समर्थक"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "आपका खाता जुलाई 2026 से पहले बना, पहले लगभग एक हज़ार में"
   }
 }

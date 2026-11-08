@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "마우스 아래의 채팅 줄에 답장 버튼을 표시합니다. 답장은 항상 줄 메뉴에 있습니다 (오른쪽 클릭, 터치는 길게 누르기)"
+  },
+  "mc_badge_staff_label": {
+    "message": "스태프"
+  },
+  "mc_badge_staff_how": {
+    "message": "heatsync에서 일해요"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1개월"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "heatsync plus 1개월. plus가 켜져 있는 동안 표시돼요"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3개월"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "heatsync plus 3개월. plus가 켜져 있는 동안 표시돼요"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6개월"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "heatsync plus 6개월. plus가 켜져 있는 동안 표시돼요"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1년"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "heatsync plus 1년. plus가 켜져 있는 동안 표시돼요"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2년"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "heatsync plus 2년. plus가 켜져 있는 동안 표시돼요"
+  },
+  "mc_badge_ember_label": {
+    "message": "불씨"
+  },
+  "mc_badge_ember_how": {
+    "message": "2026년 4월 30일 전에 heatsync에 가입했어요. 불꽃이 붙기 전이에요"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "초기 서포터"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "2026년 7월 전에 계정을 만들었어요. 처음 천 명쯤 안에 들어요"
   }
 }

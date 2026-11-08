@@ -720,7 +720,7 @@ function _removeHsPlusTenureToken(el) {
   if (stale?.classList?.contains('hs-plus-tenure')) stale.remove()
 }
 
-// Apply a resolved PLUS TENURE token beside visible rows in place — the
+// Apply a resolved PLUS TENURE token (and the heatsync badge, see badges.js) beside visible rows in place — the
 // counterpart to updateHsPaintsInPlace above, fired from its own independent
 // batch (queuePlusTenureLookup/flushHsPaintBatch in paints.js) once tenure
 // resolves. Repaints both the sender username anchor (_uidIndex for a
@@ -750,10 +750,13 @@ function applyHsPlusTenureToVisible(userIds) {
         ? container.querySelectorAll(`[data-hs-paint-uid="${CSS.escape(uid)}"]`)
         : _uidIndex.get(uid)
       if (!divs) continue
+      const badgeId = getHsBadgeId(uid)
       for (const div of divs) {
         const userLink = div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
         if (since) _placeHsPlusTenureToken(userLink, since)
         else _removeHsPlusTenureToken(userLink)
+        // the heatsync badge rides this same pass: it sits after the plus mark
+        placeHsBadgeToken(userLink, badgeId)
       }
     }
   } finally {

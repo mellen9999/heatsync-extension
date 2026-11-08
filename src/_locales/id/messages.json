@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "tampilkan tombol balas pada baris chat di bawah mouse. balas selalu ada di menu baris (klik kanan, tekan lama di layar sentuh)"
+  },
+  "mc_badge_staff_label": {
+    "message": "tim"
+  },
+  "mc_badge_staff_how": {
+    "message": "kamu bekerja di heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 bulan"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 bulan heatsync plus. tampil selama plus kamu aktif"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 bulan"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 bulan heatsync plus. tampil selama plus kamu aktif"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 bulan"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 bulan heatsync plus. tampil selama plus kamu aktif"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 tahun"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 tahun heatsync plus. tampil selama plus kamu aktif"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 tahun"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 tahun heatsync plus. tampil selama plus kamu aktif"
+  },
+  "mc_badge_ember_label": {
+    "message": "bara"
+  },
+  "mc_badge_ember_how": {
+    "message": "kamu bergabung di heatsync sebelum 30 april 2026, sebelum percikan menyala"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "pendukung awal"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "akunmu dibuat sebelum juli 2026, di antara seribu pertama"
   }
 }

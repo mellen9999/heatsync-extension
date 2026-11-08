@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "在鼠标所在的聊天行显示回复按钮。回复始终在行菜单中（右键，触屏长按）"
+  },
+  "mc_badge_staff_label": {
+    "message": "团队"
+  },
+  "mc_badge_staff_how": {
+    "message": "你在 heatsync 工作"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 个月"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "heatsync plus 1 个月，plus 有效期间会显示"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 个月"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "heatsync plus 3 个月，plus 有效期间会显示"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 个月"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "heatsync plus 6 个月，plus 有效期间会显示"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 年"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "heatsync plus 1 年，plus 有效期间会显示"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 年"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "heatsync plus 2 年，plus 有效期间会显示"
+  },
+  "mc_badge_ember_label": {
+    "message": "余烬"
+  },
+  "mc_badge_ember_how": {
+    "message": "你在 2026 年 4 月 30 日之前加入了 heatsync，那时火花还没点着"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "早期支持者"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "你的账号在 2026 年 7 月之前创建，大约是最早的一千人之一"
   }
 }

@@ -951,6 +951,7 @@ function renderProfileCardView() {
     escapeHtml,
     renderBio: hsExtRenderBio,
     renderPlusBadge: typeof renderPlusTenureToken === 'function' ? renderPlusTenureToken : undefined,
+    renderBadge: typeof renderHsBadgeToken === 'function' ? renderHsBadgeToken : undefined,
     paintColor: typeof sanitizeColor === 'function' ? sanitizeColor : undefined,
     renderBadges: () => pcRenderBadgesHtml(data, username),
   })

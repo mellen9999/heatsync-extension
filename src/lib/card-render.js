@@ -81,6 +81,9 @@ function relRow(esc, fmtTime, entry) {
  * @param {(s: string) => string} opts.escapeHtml
  * @param {(bio: string) => string} [opts.renderBio] host-trusted HTML for the
  *   bio line (mentions/emotes linked) — falls back to plain escaped text
+ * @param {(badgeId: string) => string} [opts.renderBadge] host's own heatsync
+ *   badge mark (utils/badge-token.js), '' for an id it does not know. Absent =
+ *   no badge drawn.
  * @param {(sinceIso: string) => string} [opts.renderPlusBadge] host's own
  *   plus-badge markup — falls back to a bare glyph
  * @param {(hex: string) => string} [opts.paintColor] host's dark-color-boost
@@ -120,6 +123,7 @@ export function hsCardHtml(model, opts) {
     fmtTime,
     renderBio: opts.renderBio,
     renderPlusBadge: opts.renderPlusBadge,
+    renderBadge: opts.renderBadge,
     paintColor: opts.paintColor,
     renderBadges: opts.renderBadges,
     clickable,
@@ -307,7 +311,7 @@ function renderNavRow(model, esc, variant, hideLogsLink) {
 
 function renderProfile(
   model,
-  { esc, variant, fmtTime, renderBio, renderPlusBadge, paintColor, renderBadges, clickable, hideLogsLink, navInBar },
+  { esc, variant, fmtTime, renderBio, renderPlusBadge, renderBadge, paintColor, renderBadges, clickable, hideLogsLink, navInBar },
 ) {
   const peek = variant === 'peek'
   const cls = [`hs-card`, `hs-card-${esc(variant)}`, model.isOwnProfile ? 'hs-card-own' : ''].filter(Boolean).join(' ')
@@ -328,6 +332,7 @@ function renderProfile(
   const plusBadge = model.plusSince
     ? (renderPlusBadge ? unlink(renderPlusBadge(model.plusSince)) : `<span class="hs-card-plus" title="plus">+</span>`)
     : ''
+  const badge = model.badge && renderBadge ? unlink(renderBadge(model.badge)) : ''
   const flair = model.flair
     ? `<img class="hs-card-flair" src="${esc(model.flair.badgeUrl)}" alt="${esc(model.flair.broadcasterLogin)} sub" title="${esc(model.flair.broadcasterLogin)} sub" width="16" height="16">`
     : ''
@@ -346,7 +351,7 @@ function renderProfile(
     <div class="hs-card-identity">
       <img class="hs-card-avatar" src="${esc(model.avatarUrl)}" alt="${esc(model.displayName)}" data-imgerr-src="/anon.webp">
       <strong class="hs-card-name" data-color="${esc(nameColor)}"${paintAttrs}>${esc(model.displayName)}</strong>
-      ${pronouns}${plusBadge}${flair}${ember}
+      ${pronouns}${plusBadge}${badge}${flair}${ember}
     </div>`
 
   // Host-only chat-badge chip row (native + 7TV/BTTV/FFZ/Chatterino) — see

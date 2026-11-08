@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "visa en svarsknapp på chattraden under musen. svar finns alltid i radmenyn (högerklick, långt tryck på touch)"
+  },
+  "mc_badge_staff_label": {
+    "message": "team"
+  },
+  "mc_badge_staff_how": {
+    "message": "du jobbar på heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 månad"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 månad av heatsync plus. visas så länge ditt plus är aktivt"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 månader"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 månader av heatsync plus. visas så länge ditt plus är aktivt"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 månader"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 månader av heatsync plus. visas så länge ditt plus är aktivt"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 år"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 år av heatsync plus. visas så länge ditt plus är aktivt"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 år"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 år av heatsync plus. visas så länge ditt plus är aktivt"
+  },
+  "mc_badge_ember_label": {
+    "message": "glöd"
+  },
+  "mc_badge_ember_how": {
+    "message": "du gick med i heatsync före 30 april 2026, innan gnistan tände"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "tidig supporter"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "ditt konto skapades före juli 2026, bland de första tusen eller så"
   }
 }

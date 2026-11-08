@@ -8408,7 +8408,7 @@
     if (hsPlusUid) {
       const since = getHsPlusTenureSince(hsPlusUid)
       if (since === undefined) queuePlusTenureLookup(hsPlusUid)
-      else if (since) hsPlusHtml = renderPlusTenureToken(since)
+      else hsPlusHtml = (since ? renderPlusTenureToken(since) : '') + renderHsBadgeToken(getHsBadgeId(hsPlusUid))
     }
     // Name colour (when no HS/7TV paint owns the fill): the user's PICKED
     // heatsync colour on youtube + kick ONLY — never twitch, whose custom name
@@ -11106,7 +11106,7 @@
         else queueMcCosmeticsLookup(m.userId)
         if (hasResolvedHsPaint(m.userId)) _restoredPaintUids.push(m.userId)
         const since = getHsPlusTenureSince(m.userId)
-        if (since) _restoredPlusUids.push(m.userId)
+        if (since || getHsBadgeId(m.userId)) _restoredPlusUids.push(m.userId)
         else if (since === undefined) queuePlusTenureLookup(m.userId)
       }
       const _rp3 = performance.now()

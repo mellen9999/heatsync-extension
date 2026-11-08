@@ -601,6 +601,7 @@ function scheduleHsCosmeticSave() {
       paints: newest(hsRawSpecs, ([, v]) => !!v),
       colors: newest(hsColorCache, ([, v]) => !!v),
       plus: newest(hsPlusCache, ([, v]) => !!v),
+      badges: newest(hsBadgeCache, ([, v]) => !!v),
     }
     try {
       browser.storage.local.set({ [HS_PERSIST_KEY]: blob }).catch(() => {})
@@ -614,6 +615,7 @@ async function hydrateHsCosmetics() {
     if (!blob || Date.now() - (blob.at || 0) > HS_PERSIST_TTL) return
     for (const [uid, color] of blob.colors || []) if (!hsColorCache.has(uid)) setHsColorEntry(uid, color)
     for (const [uid, since] of blob.plus || []) if (!hsPlusCache.has(uid)) setHsPlusEntry(uid, since)
+    for (const [uid, id] of blob.badges || []) if (!hsBadgeCache.has(uid)) setHsBadgeEntry(uid, id)
     if (!hsPaintsEnabled()) return
     for (const [uid, spec] of blob.paints || []) {
       if (hsPaintCache.has(uid) || !spec || typeof spec !== 'object') continue
@@ -704,11 +706,13 @@ async function flushHsPaintBatch() {
   let paints = null
   let colors = null
   let plus = null
+  let badges = null
   try {
     const resp = await safeSendMessage({ type: 'fetch_paints', userIds: batch })
     if (resp?.paints && typeof resp.paints === 'object') paints = resp.paints
     if (resp?.colors && typeof resp.colors === 'object') colors = resp.colors
     if (resp?.plus && typeof resp.plus === 'object') plus = resp.plus
+    if (resp?.badges && typeof resp.badges === 'object') badges = resp.badges
   } catch (_) {
     paints = null
   }
@@ -741,6 +745,20 @@ async function flushHsPaintBatch() {
       if ((hsPlusCache.get(id) ?? null) !== prev) plusChanged.push(id)
     }
     if (plusChanged.length && typeof applyHsPlusTenureToVisible === 'function') applyHsPlusTenureToVisible(plusChanged)
+  }
+
+  // The heatsync badge rides the same response (badges.js). An older server
+  // sends no `badges` map at all, in which case nobody has one. Placed by the
+  // same pass as the plus mark, which also covers a badge that went away.
+  if (badges || plus) {
+    const badgeChanged = []
+    for (const id of batch) {
+      const prev = hsBadgeCache.get(id) ?? null
+      setHsBadgeEntry(id, badges?.[id])
+      if ((hsBadgeCache.get(id) ?? null) !== prev) badgeChanged.push(id)
+    }
+    if (badgeChanged.length && typeof applyHsPlusTenureToVisible === 'function')
+      applyHsPlusTenureToVisible(badgeChanged)
   }
 
   if (paints) {
@@ -776,7 +794,7 @@ async function flushHsPaintBatch() {
     for (const id of batch) hsPaintPending.add(id)
   }
 
-  if (paints || colors || plus) scheduleHsCosmeticSave()
+  if (paints || colors || plus || badges) scheduleHsCosmeticSave()
   if ((hsPaintPending.size > 0 || hsPaintPriority.size > 0) && !hsPaintBatchTimer) {
     hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BACKLOG_DELAY)
   }

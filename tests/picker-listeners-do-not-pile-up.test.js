@@ -45,7 +45,12 @@ function harness() {
     getElementById: () => ({ classList: { remove() {} } }),
   }
   const ids = new Map()
-  const fns = { id: (fn) => ids.get(fn) ?? (ids.set(fn, ids.size + 1), ids.size) }
+  const fns = {
+    id: (fn) => {
+      if (!ids.has(fn)) ids.set(fn, ids.size + 1)
+      return ids.get(fn)
+    },
+  }
   const timers = new Map()
   let t = 0
   const mcSignal = { aborted: false }

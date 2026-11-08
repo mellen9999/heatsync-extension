@@ -28,7 +28,10 @@ function load(posts = {}) {
     escapeHtml: (s) => String(s),
     clEmoteUrlAllowed: (u) => /^https:\/\/cdn\.7tv\.app\//.test(u),
     cleanup: {
-      setIntervalIfVisible: (fn, ms) => (timers.push([fn, ms]), timers.length),
+      setIntervalIfVisible: (fn, ms) => {
+        timers.push([fn, ms])
+        return timers.length
+      },
       clearInterval: (id) => cleared.push(id),
     },
     isOwnFeedPost: () => false,

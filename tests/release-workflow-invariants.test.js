@@ -42,8 +42,7 @@ describe('the release survives an AMO outage', () => {
 
   test('the AMO-independent assets ride with the create, not the promote', () => {
     const create = YML.slice(at('assets=('), at('gh release create "$TAG"'))
-    // Regexes, not strings: the ${VERSION} here is shell, and a literal one
-    // inside a JS string trips lint/suspicious/noTemplateCurlyInString.
+    // Regexes, not strings: the ${VERSION} here is shell, not a JS template.
     for (const a of [/heatsync-chrome-\$\{VERSION\}\.zip/, /heatsync-source-\$\{VERSION\}\.zip/, /checksums\.txt/]) {
       expect(create).toMatch(a)
     }

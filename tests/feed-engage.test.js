@@ -187,7 +187,12 @@ describe('review fixes', () => {
     const gate = new Promise((r) => {
       release = r
     })
-    const e = load({ replies: async () => (await gate, { ok: true, data: { success: true, score: 1, user_vote: 1 } }) })
+    const e = load({
+      replies: async () => {
+        await gate
+        return { ok: true, data: { success: true, score: 1, user_vote: 1 } }
+      },
+    })
     const m = { base36_id: 'a', user_vote: null, vote_score: 0 }
     const first = e.feedUpvote(m)
     await e.feedUpvote(m)

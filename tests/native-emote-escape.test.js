@@ -16,8 +16,6 @@
  */
 
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { escapeHtml } from '../src/lib/utils.js'
 import { mainSource } from './main-src.js'
 

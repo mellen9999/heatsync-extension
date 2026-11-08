@@ -4,8 +4,6 @@
  * count — so a channel nobody had spoken in kept showing unread after a reload.
  */
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { mainSource } from './main-src.js'
 
 const SRC = mainSource()

@@ -1,8 +1,6 @@
 // rule 10: "yours" is the exact emote, not the name. Owning W must not make another chatter's
 // channel W read as owned (right-click would remove YOUR W instead of blocking theirs).
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import * as mods from '../src/lib/modifiers.js'
 import { escapeHtml, unescapeHtml } from '../src/lib/utils.js'
 import { mainSource } from './main-src.js'

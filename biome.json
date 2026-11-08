@@ -61,6 +61,16 @@
   },
   "overrides": [
     {
+      "includes": ["tests/**/*.js"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noTemplateCurlyInString": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": [
         "src/lib/paint-core.js",
         "src/lib/scene-spec.js",

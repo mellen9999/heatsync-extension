@@ -20,7 +20,6 @@ import { bgSource } from './bg-src.js'
 
 const ROOT = join(import.meta.dir, '..')
 const BG_SRC = bgSource()
-const MAIN_SRC = readFileSync(join(ROOT, 'src', 'multichat', 'main.js'), 'utf8')
 
 function extractFn(name, src = BG_SRC) {
   const start = src.indexOf(`function ${name}(`)

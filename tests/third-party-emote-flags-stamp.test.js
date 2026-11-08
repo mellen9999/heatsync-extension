@@ -5,7 +5,6 @@
  * viewer turned off — and a failed lookup must cost a channel nothing.
  */
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { bgSource } from './bg-src.js'
 
 const SRC = bgSource()

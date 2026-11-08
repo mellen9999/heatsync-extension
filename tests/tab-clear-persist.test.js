@@ -3,8 +3,6 @@
 // right-click path must stamp tabSeenAt like a normal tab view does — it used
 // to clear only the DOM classes and the red came straight back on reload.
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { mainSource } from './main-src.js'
 
 const MAIN = mainSource()

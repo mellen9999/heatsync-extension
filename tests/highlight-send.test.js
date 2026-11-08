@@ -97,9 +97,10 @@ describe('sendHighlightedTwitchMessage', () => {
     let captured
     const send = makeSender({
       twitchGql: async () => costReply(250), // channel with a 250-bit highlight
-      gqlProxy: async (op, vars) => (
-        (captured = vars), { data: { sendHighlightedChatMessage: { balance: 9, error: null } } }
-      ),
+      gqlProxy: async (_op, vars) => {
+        captured = vars
+        return { data: { sendHighlightedChatMessage: { balance: 9, error: null } } }
+      },
     })
     await send('42', 'hi', null, null)
     expect(captured.input.cost).toBe(250)
@@ -121,9 +122,10 @@ describe('sendHighlightedTwitchMessage', () => {
   test('reply id is threaded into the input', async () => {
     let captured
     const send = makeSender({
-      gqlProxy: async (op, vars) => (
-        (captured = vars), { data: { sendHighlightedChatMessage: { balance: 1, error: null } } }
-      ),
+      gqlProxy: async (_op, vars) => {
+        captured = vars
+        return { data: { sendHighlightedChatMessage: { balance: 1, error: null } } }
+      },
     })
     await send('9', 'yo', 'nonce-x', 'parent-42')
     expect(captured.input.replyParentMessageID).toBe('parent-42')
@@ -142,7 +144,7 @@ describe('sendHighlightedTwitchMessage', () => {
   test('mutation is sent through the MAIN-world proxy as a rawQuery (integrity)', async () => {
     let opts
     const send = makeSender({
-      gqlProxy: async (op, vars, o) => {
+      gqlProxy: async (_op, _vars, o) => {
         opts = o
         return { data: { sendHighlightedChatMessage: { balance: 1, error: null } } }
       },

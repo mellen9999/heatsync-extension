@@ -1,6 +1,4 @@
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { bgSource } from './bg-src.js'
 
 /**
@@ -29,7 +27,7 @@ function load(map, setIds) {
       k.includes('/') ? { platform: k.split('/')[0], channel: k.split('/')[1] } : { platform: 'twitch', channel: k },
     log: () => {},
     broadcastToTabs: (m) => sent.push(m),
-    fetchChannelOwnerEmotes: async (ch, id, platform) => {
+    fetchChannelOwnerEmotes: async (ch, _id, platform) => {
       refetched.push(`${platform}/${ch}`)
     },
     getStorableChannelEmotes: () => ({}),

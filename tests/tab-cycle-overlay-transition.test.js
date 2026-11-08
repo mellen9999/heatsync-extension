@@ -89,8 +89,12 @@ class ElementNode {
     }
     this._classes = new Set()
     this.classList = {
-      add: (...c) => c.forEach((x) => this._classes.add(x)),
-      remove: (...c) => c.forEach((x) => this._classes.delete(x)),
+      add: (...c) => {
+        for (const x of c) this._classes.add(x)
+      },
+      remove: (...c) => {
+        for (const x of c) this._classes.delete(x)
+      },
       contains: (c) => this._classes.has(c),
     }
   }

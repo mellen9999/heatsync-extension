@@ -1,5 +1,4 @@
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { mainSource } from './main-src.js'
 
 // The live-dot helpers sit inside main.js's closure — slice their source and run it for real.

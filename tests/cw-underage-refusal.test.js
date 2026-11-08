@@ -1,5 +1,4 @@
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { bgSource } from './bg-src.js'
 import { mainSource } from './main-src.js'
 

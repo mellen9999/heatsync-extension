@@ -19,7 +19,7 @@
  *   - Normal prose and stack frame text is NOT over-redacted
  */
 
-import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
 // ── Harness: load the IIFE into a fresh isolated context each test ─────────────
@@ -45,9 +45,6 @@ function loadReporter({
   manifestVersion = '1.7.3',
   existingEntries = [],
 } = {}) {
-  // In-memory storage backing
-  const mem = {}
-
   // Captured setTimeout calls — we run them manually for flush control
   const timers = []
 
@@ -89,7 +86,7 @@ function loadReporter({
   const win = {
     __hsErrorReporter: undefined,
     __heatsyncReloadScheduled: undefined,
-    addEventListener(type, fn, capture) {
+    addEventListener(type, fn) {
       if (!listeners[type]) listeners[type] = []
       listeners[type].push(fn)
     },
@@ -200,7 +197,6 @@ describe('installation', () => {
   test('second load is a no-op (IIFE guard)', () => {
     // Pre-set __hsErrorReporter so the guard fires
     const win = { __hsErrorReporter: { capture: () => {}, flush: () => {}, ver: 'old', plat: 'other' } }
-    const listeners = {}
     win.addEventListener = () => {}
     const chrome = {
       runtime: { getManifest: () => ({ version: '9.9.9' }), lastError: null, id: 'x' },

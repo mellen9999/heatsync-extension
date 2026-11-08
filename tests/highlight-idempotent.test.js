@@ -22,7 +22,6 @@ function extractFn(src, name) {
 // and uuid source, so we can assert reuse-vs-fresh without touching the network.
 function makeTxns() {
   let now = 1_000_000
-  let n = 0
   return new Function(
     'clock',
     'uuid',

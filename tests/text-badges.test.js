@@ -131,7 +131,6 @@ describe('the short-label table', () => {
   test('the chip text is escaped on the way into the DOM', () => {
     const start = API.indexOf('function renderBadges(')
     const body = API.slice(start, API.indexOf('\nfunction renderThirdPartyBadges', start))
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: this IS the literal
     // source substring being asserted — renderBadges builds its HTML with a
     // template literal, and the point of the test is that `text` goes through
     // escapeHtml on the way in.

@@ -1,5 +1,4 @@
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { SETTINGS } from '../src/lib/settings-schema.js'
 import { RETIRED_UI_KEYS } from '../src/lib/utils.js'
 import { bgSource } from './bg-src.js'
@@ -9,7 +8,6 @@ import { mainSource } from './main-src.js'
 // from the server's ui_state, from chrome.storage.sync blobs written before
 // the update. They are never adopted from the server, and once this device
 // has migrated their values the stored blob drops them (8 KB sync quota).
-const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 const BG = bgSource()
 const MAIN = mainSource()
 

@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { mainSource } from './main-src.js'
 
 // the mentions tab survives a restart (rust a5deb0c parity). Pins the contract:

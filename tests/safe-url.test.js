@@ -14,8 +14,6 @@ import { safeUrl } from '../src/lib/utils.js'
 // ── helpers ────────────────────────────────────────────────────────────────────
 
 const EMPTY = ''
-const allow = (url, expected = url) => ({ url, expected, should: 'allow' })
-const block = (url) => ({ url, expected: EMPTY, should: 'block' })
 
 // ── ALLOW: http / https ────────────────────────────────────────────────────────
 

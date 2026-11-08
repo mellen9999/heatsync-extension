@@ -26,8 +26,7 @@ describe('_proxyAllowed sliding-window limiter (extracted from real source)', ()
   })
   // Run the ACTUAL shipped function, not a re-implementation, so a semantic
   // regression in the limiter is caught here.
-  // biome-ignore lint/security/noGlobalEval: intentionally executing the real _proxyAllowed extracted from source (test-only, input is our own committed file)
-  const _proxyAllowed = (0, eval)(`(${m[0]})`)
+  const _proxyAllowed = new Function(`return (${m[0]})`)()
   afterAll(() => setSystemTime()) // restore real clock
 
   test('allows exactly `max` calls per window, blocks the rest', () => {

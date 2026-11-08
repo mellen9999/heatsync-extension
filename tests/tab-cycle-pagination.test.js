@@ -82,7 +82,7 @@ describe('catalog pagination — the 20/20 dead-end', () => {
     const { acState, fetch } = build({
       matches: [...locals],
       index: 59,
-      stv: async (q, signal, opts) => {
+      stv: async (_q, _signal, opts) => {
         calls.push(opts.page)
         return pages[opts.page] || []
       },
@@ -109,7 +109,7 @@ describe('catalog pagination — the 20/20 dead-end', () => {
     let page = 0
     const { acState, fetch } = build({
       matches: fullPage('kap').map(mirror),
-      stv: async (q, s, opts) => {
+      stv: async (_q, _s, opts) => {
         page = opts.page
         return fullPage('kap') // every page full duplicates
       },
@@ -152,7 +152,7 @@ describe('catalog pagination — the 20/20 dead-end', () => {
     const { acState, fetch } = build({
       matches: [...locals],
       index: 1,
-      stv: async (q, s, opts) => pages[opts.page] || [],
+      stv: async (_q, _s, opts) => pages[opts.page] || [],
     })
     const onChip = acState.matches[acState.index]
     await fetch('kap')

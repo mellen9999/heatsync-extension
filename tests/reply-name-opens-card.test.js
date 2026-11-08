@@ -200,29 +200,24 @@ describe('the unified context menu targets the name actually clicked', () => {
 
 describe('every name-rendering site sets data-platform', () => {
   test('the reply pill carries the message platform (twitch-implicit default)', () => {
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: asserting literal source text, not writing a real template string
     expect(MAIN).toContain('data-platform="${escapeHtml(m.platform || \'twitch\')}"${replyUidAttr}')
   })
 
   test('mentions inside processEmotes (predictions/outcomes) carry twitch', () => {
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: asserting literal source text, not writing a real template string
     expect(EMOTES).toContain('data-username="${name}" data-platform="twitch"')
   })
 
   test('feed post authors carry the post platform', () => {
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: asserting literal source text, not writing a real template string
     expect(SOCIAL).toContain('data-platform="${escapeHtml(m.platform || \'\')}"')
   })
 
   test('the inline feed-quote username anchor carries a platform', () => {
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: asserting literal source text, not writing a real template string
     expect(MAIN).toContain('data-platform="twitch"${uidAttr}${splitAttr}')
   })
 
   test('the primary @mention highlighter still carries its resolved platform', () => {
     // Pre-existing — pinned so a future refactor of highlightMentionsInHtml
     // cannot silently drop it the way the other four sites had.
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: asserting literal source text, not writing a real template string
     expect(MAIN).toContain('data-platform="${escapeHtml(platform)}"${uidAttr}${splitAttr}')
   })
 })

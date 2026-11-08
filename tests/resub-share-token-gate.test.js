@@ -245,7 +245,8 @@ describe('the page-world token reader (chrome/twitch-callout-token.js)', () => {
     const ls = {}
     const win = {
       addEventListener: (t, f) => {
-        ;(ls[t] ||= []).push(f)
+        if (!ls[t]) ls[t] = []
+        ls[t].push(f)
       },
       removeEventListener: () => {},
       dispatchEvent: (e) => {

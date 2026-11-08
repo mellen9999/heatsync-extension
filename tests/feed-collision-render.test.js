@@ -59,7 +59,7 @@ function render(text, refs, { blocked = [] } = {}) {
     escapeHtml,
     safeUrl,
     em.lookupPublicEmote,
-    (name, e) => (blocked.includes(e?.hash) ? true : false),
+    (_name, e) => (blocked.includes(e?.hash) ? true : false),
     new Set(),
     () => 'global',
     'data:,',

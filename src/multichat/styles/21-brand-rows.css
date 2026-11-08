@@ -37,7 +37,7 @@
 :is(.hs-filled, .hs-row-mention) .hs-mention:not(.hs-name-cut *) { font-weight: 700; }
 .hs-name-cut {
     display: inline-block;
-    vertical-align: top;
+    vertical-align: baseline; /* top rode up to the line box's top when an emote made the line taller */
     padding: 0 var(--brand-cut-pad-x);
     background: #000000;
 }

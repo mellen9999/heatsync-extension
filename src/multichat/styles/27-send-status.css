@@ -1,0 +1,24 @@
+    /* "sending" checklist (send-status.js), settings > ?. One row per site: its name, a state
+       word led by a glyph (so it reads without colour), and a sign-in button only where there
+       is something to do. The state colours are the settings switch's own: green on, red off. */
+    .hs-mc-send-hint { padding: 0 14px 4px; }
+    .hs-mc-send-row .hs-mc-setting-label { flex: 1 1 8ch; }
+    .hs-mc-send-state.in { color: var(--hs-ok); }
+    .hs-mc-send-state.out { color: var(--hs-danger-dim); }
+    .hs-mc-send-state.unknown { color: var(--hs-warn); }
+    .hs-mc-send-go {
+      font: inherit;
+      background: #000;
+      color: #fff;
+      border: 1px solid #fff;
+      border-radius: 0;
+      padding: 2px 10px;
+      cursor: pointer;
+    }
+    .hs-mc-send-go:hover,
+    .hs-mc-send-go:focus-visible,
+    .hs-mc-send-go:active {
+      background: #fff;
+      color: #000;
+      outline: none;
+    }

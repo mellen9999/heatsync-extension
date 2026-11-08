@@ -1375,6 +1375,11 @@ async function handleMessage(message, sender, sendResponse) {
       }
     })()
     return true
+  } else if (message.type === 'yt_session_status') {
+    // The "sending" checklist (settings › ?): signed in to youtube? true / false, or null when the
+    // cookie store could not be read. A boolean only — never a cookie value.
+    readYoutubeSignedIn().then((loggedIn) => sendResponse({ loggedIn }))
+    return true
   } else if (message.type === 'kick_send_message') {
     // Route Kick chat send through a kick.com tab (same-origin cookies)
     ;(async () => {

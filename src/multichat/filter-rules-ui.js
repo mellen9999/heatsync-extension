@@ -438,11 +438,7 @@ function _renderFilterRuleForm(d, editId) {
         '">' +
         escapeHtml(t('mc_mr_cancel')) +
         '</button>'
-      : '<button data-fr-action="add" style="' +
-        FR_BTN +
-        '">' +
-        escapeHtml(t('mc_set_fr_add_btn')) +
-        '</button>') +
+      : '<button data-fr-action="add" style="' + FR_BTN + '">' + escapeHtml(t('mc_set_fr_add_btn')) + '</button>') +
     '</div>' +
     '<div data-fr-preview style="font-size:13px;padding:4px 0 0">' +
     frPreviewHtml(d) +

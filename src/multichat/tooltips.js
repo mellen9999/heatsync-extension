@@ -1190,6 +1190,7 @@ function renderProfileCard(p, platform, extras = {}) {
     escapeHtml,
     renderBio: hsExtRenderBio,
     renderPlusBadge: typeof renderPlusTenureToken === 'function' ? renderPlusTenureToken : undefined,
+    renderBadge: typeof renderHsBadgeToken === 'function' ? renderHsBadgeToken : undefined,
     paintColor: typeof sanitizeColor === 'function' ? sanitizeColor : undefined,
   })
 }

@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "เปิดเครื่องมือผู้ดูแล kick: คำที่บล็อก ตัวกรองข้อความ ผู้แชท"
+  },
+  "mc_badge_staff_label": {
+    "message": "ทีมงาน"
+  },
+  "mc_badge_staff_how": {
+    "message": "คุณทำงานที่ heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 เดือน"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "heatsync plus 1 เดือน แสดงตราบใดที่ plus ของคุณยังใช้งานอยู่"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 เดือน"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "heatsync plus 3 เดือน แสดงตราบใดที่ plus ของคุณยังใช้งานอยู่"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 เดือน"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "heatsync plus 6 เดือน แสดงตราบใดที่ plus ของคุณยังใช้งานอยู่"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 ปี"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "heatsync plus 1 ปี แสดงตราบใดที่ plus ของคุณยังใช้งานอยู่"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 ปี"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "heatsync plus 2 ปี แสดงตราบใดที่ plus ของคุณยังใช้งานอยู่"
+  },
+  "mc_badge_ember_label": {
+    "message": "ถ่านไฟ"
+  },
+  "mc_badge_ember_how": {
+    "message": "คุณเข้าร่วม heatsync ก่อนวันที่ 30 เมษายน 2026 ก่อนประกายไฟจะติด"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "ผู้สนับสนุนยุคแรก"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "บัญชีของคุณสร้างก่อนเดือนกรกฎาคม 2026 อยู่ในพันคนแรกหรือประมาณนั้น"
   }
 }

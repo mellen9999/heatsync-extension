@@ -7034,5 +7034,53 @@
   },
   "slash_desc_kickmod": {
     "message": "open kick mod tools: blocked words, message filter, chatters"
+  },
+  "mc_badge_staff_label": {
+    "message": "staff"
+  },
+  "mc_badge_staff_how": {
+    "message": "you work on heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 month"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 month of heatsync plus. shows while your plus is active"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 months"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 months of heatsync plus. shows while your plus is active"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 months"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 months of heatsync plus. shows while your plus is active"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 year"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 year of heatsync plus. shows while your plus is active"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 years"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 years of heatsync plus. shows while your plus is active"
+  },
+  "mc_badge_ember_label": {
+    "message": "ember"
+  },
+  "mc_badge_ember_how": {
+    "message": "you joined heatsync before 30 april 2026, before the spark caught"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "early supporter"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "your account was made before july 2026, among the first thousand or so"
   }
 }

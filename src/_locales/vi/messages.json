@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "mở công cụ kiểm duyệt kick: từ bị chặn, bộ lọc tin nhắn, người trò chuyện"
+  },
+  "mc_badge_staff_label": {
+    "message": "đội ngũ"
+  },
+  "mc_badge_staff_how": {
+    "message": "bạn làm việc ở heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 tháng"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 tháng heatsync plus. hiện khi plus của bạn còn hoạt động"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 tháng"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 tháng heatsync plus. hiện khi plus của bạn còn hoạt động"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 tháng"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 tháng heatsync plus. hiện khi plus của bạn còn hoạt động"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 năm"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 năm heatsync plus. hiện khi plus của bạn còn hoạt động"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 năm"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 năm heatsync plus. hiện khi plus của bạn còn hoạt động"
+  },
+  "mc_badge_ember_label": {
+    "message": "than hồng"
+  },
+  "mc_badge_ember_how": {
+    "message": "bạn tham gia heatsync trước 30 tháng 4 2026, trước khi tia lửa bén"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "người ủng hộ sớm"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "tài khoản của bạn tạo trước tháng 7 2026, trong khoảng một nghìn người đầu"
   }
 }

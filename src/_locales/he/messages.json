@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "פתח את כלי המנחה של kick: מילים חסומות, מסנן הודעות, משתתפים בצ'אט"
+  },
+  "mc_badge_staff_label": {
+    "message": "צוות"
+  },
+  "mc_badge_staff_how": {
+    "message": "אתה עובד על heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 חודש"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 חודש של heatsync plus. מוצג כל עוד ה-plus שלך פעיל"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 חודשים"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 חודשים של heatsync plus. מוצג כל עוד ה-plus שלך פעיל"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 חודשים"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 חודשים של heatsync plus. מוצג כל עוד ה-plus שלך פעיל"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 שנה"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 שנה של heatsync plus. מוצג כל עוד ה-plus שלך פעיל"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 שנים"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 שנים של heatsync plus. מוצג כל עוד ה-plus שלך פעיל"
+  },
+  "mc_badge_ember_label": {
+    "message": "גחלת"
+  },
+  "mc_badge_ember_how": {
+    "message": "הצטרפת ל-heatsync לפני 30 באפריל 2026, לפני שהניצוץ נתפס"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "תומך מוקדם"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "החשבון שלך נוצר לפני יולי 2026, בין האלף הראשונים בערך"
   }
 }

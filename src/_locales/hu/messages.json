@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "kick moderátor eszközök megnyitása: tiltott szavak, üzenetszűrő, csevegők"
+  },
+  "mc_badge_staff_label": {
+    "message": "csapat"
+  },
+  "mc_badge_staff_how": {
+    "message": "a heatsyncen dolgozol"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 hónap"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 hónap heatsync plus. addig látszik, amíg a plus aktív"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 hónap"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 hónap heatsync plus. addig látszik, amíg a plus aktív"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 hónap"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 hónap heatsync plus. addig látszik, amíg a plus aktív"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 év"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 év heatsync plus. addig látszik, amíg a plus aktív"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 év"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 év heatsync plus. addig látszik, amíg a plus aktív"
+  },
+  "mc_badge_ember_label": {
+    "message": "parázs"
+  },
+  "mc_badge_ember_how": {
+    "message": "2026. április 30. előtt csatlakoztál a heatsynchez, mielőtt a szikra lángra kapott"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "korai támogató"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "a fiókod 2026 júliusa előtt készült, nagyjából az első ezer között"
   }
 }

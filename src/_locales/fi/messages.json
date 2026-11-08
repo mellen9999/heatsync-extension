@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "avaa kickin moderointityökalut: estetyt sanat, viestisuodatin, keskustelijat"
+  },
+  "mc_badge_staff_label": {
+    "message": "tiimi"
+  },
+  "mc_badge_staff_how": {
+    "message": "työskentelet heatsyncin parissa"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 kuukausi"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "heatsync plus, 1 kuukausi. näkyy niin kauan kuin plussasi on voimassa"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 kuukautta"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "heatsync plus, 3 kuukautta. näkyy niin kauan kuin plussasi on voimassa"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 kuukautta"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "heatsync plus, 6 kuukautta. näkyy niin kauan kuin plussasi on voimassa"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 vuosi"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "heatsync plus, 1 vuosi. näkyy niin kauan kuin plussasi on voimassa"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 vuotta"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "heatsync plus, 2 vuotta. näkyy niin kauan kuin plussasi on voimassa"
+  },
+  "mc_badge_ember_label": {
+    "message": "hiillos"
+  },
+  "mc_badge_ember_how": {
+    "message": "liityit heatsynciin ennen 30. huhtikuuta 2026, ennen kuin kipinä syttyi"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "varhainen tukija"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "tilisi luotiin ennen heinäkuuta 2026, noin ensimmäisen tuhannen joukossa"
   }
 }

@@ -540,6 +540,17 @@ async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolean }) {
   ])
   try {
     await c.route('https://heatsync.org/**', (r: any) => r.abort())
+    // The cosmetics batch (paint + plus + colour + badge in one reply). Registered
+    // after the abort above because routes match last-registered-first. Only user
+    // 77 has a badge: the badge check below proves a row shows it and others don't.
+    await c.route(/^https:\/\/heatsync\.org\/api\/paints\?/, (r: any) =>
+      r.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: { 'access-control-allow-origin': '*' },
+        body: JSON.stringify({ paints: {}, plus: {}, colors: {}, badges: { '77': 'plus_12m' } }),
+      }),
+    )
     await c.route(PLATFORMS[0].glob, (r: any) =>
       r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(PLATFORMS[0].body) }),
     )
@@ -619,6 +630,53 @@ async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolean }) {
       )
     }
     if (full) ok('the echo comes back through the parser and renders — compose, wire, back, screen')
+
+    // ── the heatsync badge, from the cosmetics batch ───────────────────────
+    // The first line from user 77 renders before the batch answers, so its badge
+    // arrives through the in-place pass; the second renders after, so it is baked
+    // at render time. Both must show the same mark in the same place, and a
+    // chatter the batch says nothing about must show none.
+    if (full) {
+      const say = (user: string, uid: number, id: string, text: string) =>
+        push(`@display-name=${user};color=#FFFF00;user-id=${uid};id=${id} :${user}!x@x.tmi.twitch.tv PRIVMSG #probechan :${text}\r\n`)
+      say('badged', 77, 'b1', 'first badge line')
+      say('plainone', 78, 'b2', 'no badge here')
+      await until(p, async () =>
+        (await p.evaluate(() => !!document.querySelector('#hs-mc-messages .hs-mc-user + .hs-badge[data-badge="plus_12m"]'))),
+      )
+      say('badged', 77, 'b3', 'second badge line')
+      await until(p, async () =>
+        (await p.evaluate(() => document.getElementById('hs-mc-messages')?.textContent || '')).includes('second badge line'),
+      )
+      const badgeRows: Array<{ text: string, marks: string[], glyph: string, title: string, size: string, after: boolean }> =
+        await p.evaluate(() =>
+          [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')]
+            .filter((r) => /badge line|no badge here/.test(r.textContent || ''))
+            .map((r) => {
+              const b = r.querySelector('.hs-badge') as HTMLElement | null
+              return {
+                text: (r.textContent || '').trim(),
+                marks: [...r.querySelectorAll('.hs-badge')].map((m) => (m as HTMLElement).dataset.badge || ''),
+                glyph: b?.textContent || '',
+                title: b?.title || '',
+                size: b ? getComputedStyle(b).fontSize : '',
+                after: !!b && b.previousElementSibling?.classList.contains('hs-mc-user') === true,
+              }
+            }),
+        )
+      const withBadge = badgeRows.filter((r) => /badge line/.test(r.text))
+      const without = badgeRows.filter((r) => /no badge here/.test(r.text))
+      if (withBadge.length !== 2 || withBadge.some((r) => r.marks.join() !== 'plus_12m')) {
+        fail(`both lines from the badged user should show exactly one plus_12m badge: ${JSON.stringify(badgeRows)}`)
+      }
+      if (without.length !== 1 || without[0].marks.length) fail(`a chatter with no badge got one: ${JSON.stringify(without)}`)
+      const b0 = withBadge[0]
+      if (!b0.after) fail('the badge is not directly after the name')
+      if (b0.glyph !== '★') fail(`wrong glyph: ${JSON.stringify(b0.glyph)}`)
+      if (/mc_badge_/.test(b0.title) || !b0.title.includes(' — ')) fail(`the hover text is not "name — how": ${JSON.stringify(b0.title)}`)
+      if (b0.size !== '13px') fail(`badge text must be the fixed 13px, got ${b0.size}`)
+      ok('a badge from the cosmetics batch shows after the name, in place and at render, and only on the right chatter')
+    }
 
     // ── moderation, from a raw CLEARCHAT off the wire ──────────────────────
     // The dim/hide decision is the one behaviour changed today, and until now

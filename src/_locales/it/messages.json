@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "apri gli strumenti di moderazione kick: parole bloccate, filtro messaggi, utenti in chat"
+  },
+  "mc_badge_staff_label": {
+    "message": "team"
+  },
+  "mc_badge_staff_how": {
+    "message": "lavori su heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 mese"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 mese di heatsync plus. si vede finché il tuo plus è attivo"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 mesi"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 mesi di heatsync plus. si vede finché il tuo plus è attivo"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 mesi"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 mesi di heatsync plus. si vede finché il tuo plus è attivo"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 anno"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 anno di heatsync plus. si vede finché il tuo plus è attivo"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 anni"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 anni di heatsync plus. si vede finché il tuo plus è attivo"
+  },
+  "mc_badge_ember_label": {
+    "message": "brace"
+  },
+  "mc_badge_ember_how": {
+    "message": "sei entrato in heatsync prima del 30 aprile 2026, prima che la scintilla si accendesse"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "primo sostenitore"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "il tuo account è stato creato prima di luglio 2026, tra i primi mille circa"
   }
 }

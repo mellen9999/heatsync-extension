@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "deschide uneltele de moderare kick: cuvinte blocate, filtru de mesaje, participanți la chat"
+  },
+  "mc_badge_staff_label": {
+    "message": "echipă"
+  },
+  "mc_badge_staff_how": {
+    "message": "lucrezi la heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 lună"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 lună de heatsync plus. se vede cât timp plus-ul tău e activ"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 luni"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 luni de heatsync plus. se vede cât timp plus-ul tău e activ"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 luni"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 luni de heatsync plus. se vede cât timp plus-ul tău e activ"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 an"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 an de heatsync plus. se vede cât timp plus-ul tău e activ"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 ani"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 ani de heatsync plus. se vede cât timp plus-ul tău e activ"
+  },
+  "mc_badge_ember_label": {
+    "message": "jar"
+  },
+  "mc_badge_ember_how": {
+    "message": "te-ai alăturat heatsync înainte de 30 aprilie 2026, înainte să se aprindă scânteia"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "susținător timpuriu"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "contul tău a fost făcut înainte de iulie 2026, printre primii o mie sau cam așa"
   }
 }

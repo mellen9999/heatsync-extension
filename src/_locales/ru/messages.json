@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "открыть инструменты модерации kick: запрещённые слова, фильтр сообщений, участники чата"
+  },
+  "mc_badge_staff_label": {
+    "message": "команда"
+  },
+  "mc_badge_staff_how": {
+    "message": "ты работаешь над heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 месяц"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 месяц heatsync plus. видно, пока твой plus активен"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 месяца"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 месяца heatsync plus. видно, пока твой plus активен"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 месяцев"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 месяцев heatsync plus. видно, пока твой plus активен"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 год"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 год heatsync plus. видно, пока твой plus активен"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 года"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 года heatsync plus. видно, пока твой plus активен"
+  },
+  "mc_badge_ember_label": {
+    "message": "уголёк"
+  },
+  "mc_badge_ember_how": {
+    "message": "ты пришёл в heatsync до 30 апреля 2026, до того как разгорелась искра"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "ранний сторонник"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "твой аккаунт создан до июля 2026, среди первой тысячи или около того"
   }
 }

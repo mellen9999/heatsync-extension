@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "افتح أدوات مشرف kick: الكلمات المحظورة، فلتر الرسائل، المتحدثون"
+  },
+  "mc_badge_staff_label": {
+    "message": "الفريق"
+  },
+  "mc_badge_staff_how": {
+    "message": "أنت تعمل على heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus شهر واحد"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "شهر واحد من heatsync plus. يظهر ما دام plus لديك مفعلا"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 أشهر"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 أشهر من heatsync plus. يظهر ما دام plus لديك مفعلا"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 أشهر"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 أشهر من heatsync plus. يظهر ما دام plus لديك مفعلا"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus سنة واحدة"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "سنة واحدة من heatsync plus. يظهر ما دام plus لديك مفعلا"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus سنتان"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "سنتان من heatsync plus. يظهر ما دام plus لديك مفعلا"
+  },
+  "mc_badge_ember_label": {
+    "message": "جمرة"
+  },
+  "mc_badge_ember_how": {
+    "message": "انضممت إلى heatsync قبل 30 أبريل 2026، قبل أن تشتعل الشرارة"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "داعم مبكر"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "أُنشئ حسابك قبل يوليو 2026، ضمن أول ألف تقريبا"
   }
 }

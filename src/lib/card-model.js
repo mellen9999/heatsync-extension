@@ -376,6 +376,7 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
     avatarUrl: profile.twitch_profile_pic || profile.kick_profile_pic || profile.profile_image_url || profile.avatarUrl || payload.chatter?.avatarUrl || '/anon.webp',
     pronouns: ctx.pronouns || profile.pronouns || null,
     plusSince: profile.plus_since || null,
+    badge: profile.badge || null,
     flair,
     ember: ember ? { name: ember.name } : null,
     bio: profile.bio || '',

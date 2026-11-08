@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "kick 모더레이터 도구 열기: 차단 단어, 메시지 필터, 채팅 참여자"
+  },
+  "mc_badge_staff_label": {
+    "message": "스태프"
+  },
+  "mc_badge_staff_how": {
+    "message": "heatsync에서 일해요"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1개월"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "heatsync plus 1개월. plus가 켜져 있는 동안 표시돼요"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3개월"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "heatsync plus 3개월. plus가 켜져 있는 동안 표시돼요"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6개월"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "heatsync plus 6개월. plus가 켜져 있는 동안 표시돼요"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1년"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "heatsync plus 1년. plus가 켜져 있는 동안 표시돼요"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2년"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "heatsync plus 2년. plus가 켜져 있는 동안 표시돼요"
+  },
+  "mc_badge_ember_label": {
+    "message": "불씨"
+  },
+  "mc_badge_ember_how": {
+    "message": "2026년 4월 30일 전에 heatsync에 가입했어요. 불꽃이 붙기 전이에요"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "초기 서포터"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "2026년 7월 전에 계정을 만들었어요. 처음 천 명쯤 안에 들어요"
   }
 }

@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "buksan ang mga mod tool ng kick: mga naka-block na salita, filter ng mensahe, mga chatter"
+  },
+  "mc_badge_staff_label": {
+    "message": "koponan"
+  },
+  "mc_badge_staff_how": {
+    "message": "nagtatrabaho ka sa heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 buwan"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 buwan ng heatsync plus. lalabas habang aktibo ang plus mo"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 buwan"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 buwan ng heatsync plus. lalabas habang aktibo ang plus mo"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 buwan"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 buwan ng heatsync plus. lalabas habang aktibo ang plus mo"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 taon"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 taon ng heatsync plus. lalabas habang aktibo ang plus mo"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 taon"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 taon ng heatsync plus. lalabas habang aktibo ang plus mo"
+  },
+  "mc_badge_ember_label": {
+    "message": "baga"
+  },
+  "mc_badge_ember_how": {
+    "message": "sumali ka sa heatsync bago ang 30 abril 2026, bago nagliyab ang kislap"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "maagang tagasuporta"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "ginawa ang account mo bago ang hulyo 2026, kasama sa unang isang libo o mahigit"
   }
 }

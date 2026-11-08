@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "kick-modtools öffnen: gesperrte wörter, nachrichtenfilter, chatter"
+  },
+  "mc_badge_staff_label": {
+    "message": "team"
+  },
+  "mc_badge_staff_how": {
+    "message": "du arbeitest an heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 monat"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 monat heatsync plus. wird angezeigt, solange dein plus aktiv ist"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 monate"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 monate heatsync plus. wird angezeigt, solange dein plus aktiv ist"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 monate"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 monate heatsync plus. wird angezeigt, solange dein plus aktiv ist"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 jahr"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 jahr heatsync plus. wird angezeigt, solange dein plus aktiv ist"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 jahre"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 jahre heatsync plus. wird angezeigt, solange dein plus aktiv ist"
+  },
+  "mc_badge_ember_label": {
+    "message": "glut"
+  },
+  "mc_badge_ember_how": {
+    "message": "du bist heatsync vor dem 30. april 2026 beigetreten, bevor der funke zündete"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "früher unterstützer"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "dein konto wurde vor juli 2026 erstellt, unter den ersten tausend oder so"
   }
 }

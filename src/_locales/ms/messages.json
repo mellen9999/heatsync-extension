@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "buka alat moderator kick: perkataan disekat, penapis mesej, peserta sembang"
+  },
+  "mc_badge_staff_label": {
+    "message": "pasukan"
+  },
+  "mc_badge_staff_how": {
+    "message": "anda bekerja di heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 bulan"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 bulan heatsync plus. dipaparkan selagi plus anda aktif"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 bulan"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 bulan heatsync plus. dipaparkan selagi plus anda aktif"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 bulan"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 bulan heatsync plus. dipaparkan selagi plus anda aktif"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 tahun"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 tahun heatsync plus. dipaparkan selagi plus anda aktif"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 tahun"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 tahun heatsync plus. dipaparkan selagi plus anda aktif"
+  },
+  "mc_badge_ember_label": {
+    "message": "bara"
+  },
+  "mc_badge_ember_how": {
+    "message": "anda menyertai heatsync sebelum 30 april 2026, sebelum percikan menyala"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "penyokong awal"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "akaun anda dibuat sebelum julai 2026, antara seribu yang pertama"
   }
 }

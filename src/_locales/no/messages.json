@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "åpne kick-modverktøy: blokkerte ord, meldingsfilter, chattere"
+  },
+  "mc_badge_staff_label": {
+    "message": "team"
+  },
+  "mc_badge_staff_how": {
+    "message": "du jobber på heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 måned"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 måned med heatsync plus. vises så lenge plus er aktiv"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 måneder"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 måneder med heatsync plus. vises så lenge plus er aktiv"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 måneder"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 måneder med heatsync plus. vises så lenge plus er aktiv"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 år"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 år med heatsync plus. vises så lenge plus er aktiv"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 år"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 år med heatsync plus. vises så lenge plus er aktiv"
+  },
+  "mc_badge_ember_label": {
+    "message": "glør"
+  },
+  "mc_badge_ember_how": {
+    "message": "du ble med i heatsync før 30 april 2026, før gnisten tok fyr"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "tidlig støttespiller"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "kontoen din ble laget før juli 2026, blant de første tusen eller så"
   }
 }

@@ -7017,5 +7017,53 @@
   },
   "slash_desc_kickmod": {
     "message": "otwórz narzędzia moderatora kick: zablokowane słowa, filtr wiadomości, czatujący"
+  },
+  "mc_badge_staff_label": {
+    "message": "ekipa"
+  },
+  "mc_badge_staff_how": {
+    "message": "pracujesz przy heatsync"
+  },
+  "mc_badge_plus_1m_label": {
+    "message": "plus 1 miesiąc"
+  },
+  "mc_badge_plus_1m_how": {
+    "message": "1 miesiąc heatsync plus. widać, dopóki twój plus jest aktywny"
+  },
+  "mc_badge_plus_3m_label": {
+    "message": "plus 3 miesiące"
+  },
+  "mc_badge_plus_3m_how": {
+    "message": "3 miesiące heatsync plus. widać, dopóki twój plus jest aktywny"
+  },
+  "mc_badge_plus_6m_label": {
+    "message": "plus 6 miesięcy"
+  },
+  "mc_badge_plus_6m_how": {
+    "message": "6 miesięcy heatsync plus. widać, dopóki twój plus jest aktywny"
+  },
+  "mc_badge_plus_12m_label": {
+    "message": "plus 1 rok"
+  },
+  "mc_badge_plus_12m_how": {
+    "message": "1 rok heatsync plus. widać, dopóki twój plus jest aktywny"
+  },
+  "mc_badge_plus_24m_label": {
+    "message": "plus 2 lata"
+  },
+  "mc_badge_plus_24m_how": {
+    "message": "2 lata heatsync plus. widać, dopóki twój plus jest aktywny"
+  },
+  "mc_badge_ember_label": {
+    "message": "żar"
+  },
+  "mc_badge_ember_how": {
+    "message": "konto w heatsync masz sprzed 30 kwietnia 2026, zanim zajęła się iskra"
+  },
+  "mc_badge_early_supporter_label": {
+    "message": "wczesne wsparcie"
+  },
+  "mc_badge_early_supporter_how": {
+    "message": "twoje konto powstało przed lipcem 2026, wśród pierwszego tysiąca mniej więcej"
   }
 }

@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "vis en svarknapp på chatraden under musen. svar finnes alltid i radmenyen (høyreklikk, langt trykk på touch)"
+  },
+  "mc_card_l_age": {
+    "message": "alder"
+  },
+  "mc_card_l_type": {
+    "message": "type"
+  },
+  "mc_card_l_peak": {
+    "message": "topp"
+  },
+  "mc_card_l_rel": {
+    "message": "rel."
+  },
+  "mc_card_l_mutuals": {
+    "message": "felles"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "følger deg"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "sub hos deg"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "sub hos deg T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "siden $DAY$ i #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "også"
+  },
+  "mc_card_l_add_bio": {
+    "message": "legg til bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "kunne ikke hente info"
+  },
+  "mc_held_media": {
+    "message": "[media skjult — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[innbygging skjult — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[bilde skjult — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "vis"
+  },
+  "mc_held_hide": {
+    "message": "skjul"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "vold"
+  },
+  "mc_held_weapons": {
+    "message": "våpen"
+  },
+  "mc_held_drugs": {
+    "message": "narkotika"
+  },
+  "mc_held_hate": {
+    "message": "hatprat"
+  },
+  "mc_reply_blocked": {
+    "message": "[blokkert]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "last på nytt"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "banking"
+  },
+  "mc_set_snd_chime": {
+    "message": "klokkeklang"
+  },
+  "mc_mention_reply_post": {
+    "message": "svarte på innlegget ditt"
+  },
+  "mc_mention_reply_reply": {
+    "message": "svarte på svaret ditt"
+  },
+  "mc_mention_reply_you": {
+    "message": "svarte deg"
+  },
+  "mc_mention_fixed": {
+    "message": "rapporten din ble fikset"
+  },
+  "mc_mention_in_post": {
+    "message": "du ble omtalt i et innlegg"
+  },
+  "mc_tabmode_fixed": {
+    "message": "den fanen er fast"
+  },
+  "mc_tabmode_no_close": {
+    "message": "den fanen kan ikke lukkes"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonym"
+  },
+  "mc_mark_user": {
+    "message": "heatsync-bruker"
+  },
+  "mc_moment_permalink": {
+    "message": "permalenke — klikk for å åpne, shift-klikk for å lime inn i chatten"
   }
 }

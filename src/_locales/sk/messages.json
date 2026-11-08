@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "zobrazí tlačidlo odpovede na riadku pod myšou. odpoveď je vždy v ponuke riadku (pravé tlačidlo, dlhé stlačenie na dotyku)"
+  },
+  "mc_card_l_age": {
+    "message": "vek"
+  },
+  "mc_card_l_type": {
+    "message": "typ"
+  },
+  "mc_card_l_peak": {
+    "message": "vrchol"
+  },
+  "mc_card_l_rel": {
+    "message": "vzťah"
+  },
+  "mc_card_l_mutuals": {
+    "message": "spoloční"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "sleduje ťa"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "subscribuje ťa"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "subscribuje ťa T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "od $DAY$ v #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "tiež"
+  },
+  "mc_card_l_add_bio": {
+    "message": "pridať bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "načítanie zlyhalo"
+  },
+  "mc_held_media": {
+    "message": "[skryté médiá — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[skrytý náhľad — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[skrytý obrázok — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "zobraziť"
+  },
+  "mc_held_hide": {
+    "message": "skryť"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "násilie"
+  },
+  "mc_held_weapons": {
+    "message": "zbrane"
+  },
+  "mc_held_drugs": {
+    "message": "drogy"
+  },
+  "mc_held_hate": {
+    "message": "nenávistné prejavy"
+  },
+  "mc_reply_blocked": {
+    "message": "[zablokované]"
+  },
+  "mc_bits_n": {
+    "message": "bity: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "načítať znova"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "pípnutie"
+  },
+  "mc_set_snd_knock": {
+    "message": "klopanie"
+  },
+  "mc_set_snd_chime": {
+    "message": "zvonček"
+  },
+  "mc_mention_reply_post": {
+    "message": "odpoveď na tvoj príspevok"
+  },
+  "mc_mention_reply_reply": {
+    "message": "odpoveď na tvoju odpoveď"
+  },
+  "mc_mention_reply_you": {
+    "message": "odpoveď pre teba"
+  },
+  "mc_mention_fixed": {
+    "message": "tvoje hlásenie bolo opravené"
+  },
+  "mc_mention_in_post": {
+    "message": "spomenuli ťa v príspevku"
+  },
+  "mc_tabmode_fixed": {
+    "message": "táto karta sa nedá meniť"
+  },
+  "mc_tabmode_no_close": {
+    "message": "táto karta sa nedá zavrieť"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonym"
+  },
+  "mc_mark_user": {
+    "message": "používateľ heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "trvalý odkaz — klik otvorí, shift-klik vloží do chatu"
   }
 }

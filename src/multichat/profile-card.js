@@ -944,7 +944,7 @@ function renderProfileCardView() {
     { formatCompactNumber: pcFmt },
   )
 
-  const html = hsCardHtml(model, {
+  const html = hsCardHtmlL10n(model, {
     variant: floating ? 'full' : 'panel',
     // in the panel the destinations ride the 2nd row (pcMountDestRow), not the card
     navInBar: !floating,

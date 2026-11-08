@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "fare altındaki sohbet satırında yanıt düğmesi gösterir. yanıt her zaman satır menüsünde (sağ tık, dokunmatikte uzun basma)"
+  },
+  "mc_card_l_age": {
+    "message": "yaş"
+  },
+  "mc_card_l_type": {
+    "message": "tür"
+  },
+  "mc_card_l_peak": {
+    "message": "zirve"
+  },
+  "mc_card_l_rel": {
+    "message": "ilişki"
+  },
+  "mc_card_l_mutuals": {
+    "message": "ortak"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "seni takip ediyor"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "sana sub"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "sana sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "$DAY$ beri #$CHANNEL$ kanalında",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "ayrıca"
+  },
+  "mc_card_l_add_bio": {
+    "message": "bio ekle"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "bilgi alınamadı"
+  },
+  "mc_held_media": {
+    "message": "[medya gizlendi — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[önizleme gizlendi — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[görsel gizlendi — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "göster"
+  },
+  "mc_held_hide": {
+    "message": "gizle"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "şiddet"
+  },
+  "mc_held_weapons": {
+    "message": "silah"
+  },
+  "mc_held_drugs": {
+    "message": "uyuşturucu"
+  },
+  "mc_held_hate": {
+    "message": "nefret söylemi"
+  },
+  "mc_reply_blocked": {
+    "message": "[engellendi]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "yenile"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "tak tak"
+  },
+  "mc_set_snd_chime": {
+    "message": "çan"
+  },
+  "mc_mention_reply_post": {
+    "message": "gönderine yanıt verdi"
+  },
+  "mc_mention_reply_reply": {
+    "message": "yanıtına yanıt verdi"
+  },
+  "mc_mention_reply_you": {
+    "message": "sana yanıt verdi"
+  },
+  "mc_mention_fixed": {
+    "message": "raporun düzeltildi"
+  },
+  "mc_mention_in_post": {
+    "message": "bir gönderide senden bahsedildi"
+  },
+  "mc_tabmode_fixed": {
+    "message": "bu sekme sabit"
+  },
+  "mc_tabmode_no_close": {
+    "message": "bu sekme kapatılamaz"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonim"
+  },
+  "mc_mark_user": {
+    "message": "heatsync kullanıcısı"
+  },
+  "mc_moment_permalink": {
+    "message": "kalıcı bağlantı — açmak için tıkla, sohbete yapıştırmak için shift+tıkla"
   }
 }

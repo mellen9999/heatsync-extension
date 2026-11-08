@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "mostra um botão de responder na linha do chat sob o rato. responder está sempre no menu da linha (clique direito, toque longo)"
+  },
+  "mc_card_l_age": {
+    "message": "idade"
+  },
+  "mc_card_l_type": {
+    "message": "tipo"
+  },
+  "mc_card_l_peak": {
+    "message": "pico"
+  },
+  "mc_card_l_rel": {
+    "message": "rel"
+  },
+  "mc_card_l_mutuals": {
+    "message": "em comum"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "segue-te"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "subscrito T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "subscrito em ti"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "subscrito em ti T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "desde $DAY$ em #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "também"
+  },
+  "mc_card_l_add_bio": {
+    "message": "adicionar bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "falha ao procurar"
+  },
+  "mc_held_media": {
+    "message": "[multimédia oculta — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[pré-visualização oculta — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[imagem oculta — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "mostrar"
+  },
+  "mc_held_hide": {
+    "message": "ocultar"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "violência"
+  },
+  "mc_held_weapons": {
+    "message": "armas"
+  },
+  "mc_held_drugs": {
+    "message": "drogas"
+  },
+  "mc_held_hate": {
+    "message": "discurso de ódio"
+  },
+  "mc_reply_blocked": {
+    "message": "[bloqueado]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "recarregar"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "toc"
+  },
+  "mc_set_snd_chime": {
+    "message": "sino"
+  },
+  "mc_mention_reply_post": {
+    "message": "respondeu à tua publicação"
+  },
+  "mc_mention_reply_reply": {
+    "message": "respondeu à tua resposta"
+  },
+  "mc_mention_reply_you": {
+    "message": "respondeu-te"
+  },
+  "mc_mention_fixed": {
+    "message": "o teu relatório foi corrigido"
+  },
+  "mc_mention_in_post": {
+    "message": "mencionaram-te numa publicação"
+  },
+  "mc_tabmode_fixed": {
+    "message": "esse separador é fixo"
+  },
+  "mc_tabmode_no_close": {
+    "message": "esse separador não pode ser fechado"
+  },
+  "mc_social_anonymous": {
+    "message": "Anónimo"
+  },
+  "mc_mark_user": {
+    "message": "utilizador do heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "ligação permanente — clica para abrir, shift+clique para colar no chat"
   }
 }

@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "εμφανίζει κουμπί απάντησης στη γραμμή συνομιλίας κάτω από το ποντίκι. η απάντηση υπάρχει πάντα στο μενού γραμμής (δεξί κλικ, παρατεταμένο πάτημα στην αφή)"
+  },
+  "mc_card_l_age": {
+    "message": "ηλικία"
+  },
+  "mc_card_l_type": {
+    "message": "τύπος"
+  },
+  "mc_card_l_peak": {
+    "message": "κορυφή"
+  },
+  "mc_card_l_rel": {
+    "message": "σχέση"
+  },
+  "mc_card_l_mutuals": {
+    "message": "κοινοί"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "σε ακολουθεί"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "sub σε εσένα"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "sub σε εσένα T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "από $DAY$ στο #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "επίσης"
+  },
+  "mc_card_l_add_bio": {
+    "message": "προσθήκη bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "αποτυχία αναζήτησης"
+  },
+  "mc_held_media": {
+    "message": "[κρυμμένο πολυμέσο — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[κρυμμένο embed — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[κρυμμένη εικόνα — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "εμφάνιση"
+  },
+  "mc_held_hide": {
+    "message": "απόκρυψη"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "βία"
+  },
+  "mc_held_weapons": {
+    "message": "όπλα"
+  },
+  "mc_held_drugs": {
+    "message": "ναρκωτικά"
+  },
+  "mc_held_hate": {
+    "message": "ρητορική μίσους"
+  },
+  "mc_reply_blocked": {
+    "message": "[αποκλεισμένο]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "επαναφόρτωση"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "χτύπημα"
+  },
+  "mc_set_snd_chime": {
+    "message": "καμπανάκι"
+  },
+  "mc_mention_reply_post": {
+    "message": "απάντησε στην ανάρτησή σου"
+  },
+  "mc_mention_reply_reply": {
+    "message": "απάντησε στην απάντησή σου"
+  },
+  "mc_mention_reply_you": {
+    "message": "σου απάντησε"
+  },
+  "mc_mention_fixed": {
+    "message": "το report σου διορθώθηκε"
+  },
+  "mc_mention_in_post": {
+    "message": "σε ανέφεραν σε μια ανάρτηση"
+  },
+  "mc_tabmode_fixed": {
+    "message": "αυτή η καρτέλα είναι σταθερή"
+  },
+  "mc_tabmode_no_close": {
+    "message": "αυτή η καρτέλα δεν κλείνει"
+  },
+  "mc_social_anonymous": {
+    "message": "Ανώνυμος"
+  },
+  "mc_mark_user": {
+    "message": "χρήστης heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — κλικ για άνοιγμα, shift-κλικ για επικόλληση στο chat"
   }
 }

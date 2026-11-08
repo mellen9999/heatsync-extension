@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "tampilkan tombol balas pada baris chat di bawah mouse. balas selalu ada di menu baris (klik kanan, tekan lama di layar sentuh)"
+  },
+  "mc_card_l_age": {
+    "message": "usia"
+  },
+  "mc_card_l_type": {
+    "message": "tipe"
+  },
+  "mc_card_l_peak": {
+    "message": "puncak"
+  },
+  "mc_card_l_rel": {
+    "message": "relasi"
+  },
+  "mc_card_l_mutuals": {
+    "message": "pengikut bersama"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staf"
+  },
+  "mc_card_l_follow_you": {
+    "message": "follow kamu"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "sub kamu"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "sub kamu T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "sejak $DAY$ di #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "juga di"
+  },
+  "mc_card_l_add_bio": {
+    "message": "tambah bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "gagal memuat info"
+  },
+  "mc_held_media": {
+    "message": "[media disembunyikan — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[sematan disembunyikan — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[gambar disembunyikan — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "tampilkan"
+  },
+  "mc_held_hide": {
+    "message": "sembunyikan"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "kekerasan"
+  },
+  "mc_held_weapons": {
+    "message": "senjata"
+  },
+  "mc_held_drugs": {
+    "message": "narkoba"
+  },
+  "mc_held_hate": {
+    "message": "ujaran kebencian"
+  },
+  "mc_reply_blocked": {
+    "message": "[diblokir]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "muat ulang"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "ketukan"
+  },
+  "mc_set_snd_chime": {
+    "message": "lonceng"
+  },
+  "mc_mention_reply_post": {
+    "message": "membalas postinganmu"
+  },
+  "mc_mention_reply_reply": {
+    "message": "membalas balasanmu"
+  },
+  "mc_mention_reply_you": {
+    "message": "membalasmu"
+  },
+  "mc_mention_fixed": {
+    "message": "laporanmu sudah diperbaiki"
+  },
+  "mc_mention_in_post": {
+    "message": "kamu di-mention di sebuah postingan"
+  },
+  "mc_tabmode_fixed": {
+    "message": "tab itu bawaan"
+  },
+  "mc_tabmode_no_close": {
+    "message": "tab itu tidak bisa ditutup"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonim"
+  },
+  "mc_mark_user": {
+    "message": "pengguna heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — klik untuk membuka, shift-klik untuk menempel ke chat"
   }
 }

@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "マウスの下のチャット行に返信ボタンを表示します。返信は常に行メニューにあります（右クリック、タッチは長押し）"
+  },
+  "mc_card_l_age": {
+    "message": "年齢"
+  },
+  "mc_card_l_type": {
+    "message": "種別"
+  },
+  "mc_card_l_peak": {
+    "message": "ピーク"
+  },
+  "mc_card_l_rel": {
+    "message": "関係"
+  },
+  "mc_card_l_mutuals": {
+    "message": "共通フォロワー"
+  },
+  "mc_card_l_admin": {
+    "message": "管理者"
+  },
+  "mc_card_l_staff": {
+    "message": "スタッフ"
+  },
+  "mc_card_l_follow_you": {
+    "message": "あなたをフォロー"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "T$TIER$サブ中",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "あなたをサブ"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "あなたをサブ T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "#$CHANNEL$ で $DAY$ から",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "他"
+  },
+  "mc_card_l_add_bio": {
+    "message": "自己紹介を追加"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "取得に失敗"
+  },
+  "mc_held_media": {
+    "message": "[メディア非表示 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[埋め込み非表示 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[画像非表示 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "表示"
+  },
+  "mc_held_hide": {
+    "message": "非表示"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "暴力"
+  },
+  "mc_held_weapons": {
+    "message": "武器"
+  },
+  "mc_held_drugs": {
+    "message": "薬物"
+  },
+  "mc_held_hate": {
+    "message": "ヘイト"
+  },
+  "mc_reply_blocked": {
+    "message": "[ブロック済み]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ ビッツ",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "リロード"
+  },
+  "mc_set_snd_ping": {
+    "message": "ピン"
+  },
+  "mc_set_snd_blip": {
+    "message": "ピッ"
+  },
+  "mc_set_snd_knock": {
+    "message": "ノック"
+  },
+  "mc_set_snd_chime": {
+    "message": "チャイム"
+  },
+  "mc_mention_reply_post": {
+    "message": "あなたの投稿に返信"
+  },
+  "mc_mention_reply_reply": {
+    "message": "あなたの返信に返信"
+  },
+  "mc_mention_reply_you": {
+    "message": "あなたに返信"
+  },
+  "mc_mention_fixed": {
+    "message": "報告が修正された"
+  },
+  "mc_mention_in_post": {
+    "message": "投稿でメンションされた"
+  },
+  "mc_tabmode_fixed": {
+    "message": "このタブは変更できない"
+  },
+  "mc_tabmode_no_close": {
+    "message": "このタブは閉じられない"
+  },
+  "mc_social_anonymous": {
+    "message": "匿名"
+  },
+  "mc_mark_user": {
+    "message": "heatsync ユーザー"
+  },
+  "mc_moment_permalink": {
+    "message": "パーマリンク — クリックで開く、shift+クリックでチャットに貼り付け"
   }
 }

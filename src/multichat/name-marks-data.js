@@ -138,6 +138,20 @@ function hsMarksKnown(uid) {
   return false
 }
 
+// name-marks.js is vendored byte for byte and prints these two titles in english; the host says them in the viewer's
+// language. anchored on the class so no escaped user text can match
+function hsMarksL10n(html) {
+  return html
+    .replace(
+      'class="hs-mark-flame" title="heatsync user"',
+      () => `class="hs-mark-flame" title="${_hsmEsc(t('mc_mark_user'))}"`,
+    )
+    .replace(
+      /(class="hs-mark-heat hs-mark-heat-\w+") title="heat"/,
+      (_, cls) => `${cls} title="${_hsmEsc(t('lib_opt_heat'))}"`,
+    )
+}
+
 /** the marks span a twitch row carries before its name ('' when all three switches are off) */
 function hsMarksRowHtml(m, uid) {
   const flairOn = hsMarksOn('subFlair')
@@ -148,7 +162,7 @@ function hsMarksRowHtml(m, uid) {
   const flair = flairOn && /^\d{1,20}$/.test(uid) ? _hsmGet('flair', uid) : null
   const heat = (flameOn || barsOn) && hsMarksValidLogin(login) ? _hsmGet('heat', login) : 0
   const wear = hsMarksWear(flameOn, barsOn, flameOn && hsMarksKnown(uid), isSelf(m), heat)
-  return `<span class="hs-mc-marks">${hsMarksHtml(flair, wear)}</span>`
+  return `<span class="hs-mc-marks">${hsMarksL10n(hsMarksHtml(flair, wear))}</span>`
 }
 
 /** logins or ids whose marks changed: repaint the drawn rows in place (rows built later read the caches) */

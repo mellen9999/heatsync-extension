@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "מציג כפתור תגובה בשורת הצ'אט שמתחת לעכבר. תגובה תמיד זמינה בתפריט השורה (קליק ימני, לחיצה ארוכה במגע)"
+  },
+  "mc_card_l_age": {
+    "message": "גיל"
+  },
+  "mc_card_l_type": {
+    "message": "סוג"
+  },
+  "mc_card_l_peak": {
+    "message": "שיא"
+  },
+  "mc_card_l_rel": {
+    "message": "קשר"
+  },
+  "mc_card_l_mutuals": {
+    "message": "עוקבים משותפים"
+  },
+  "mc_card_l_admin": {
+    "message": "אדמין"
+  },
+  "mc_card_l_staff": {
+    "message": "צוות"
+  },
+  "mc_card_l_follow_you": {
+    "message": "עוקב אחריך"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "מנוי T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "מנוי אצלך"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "מנוי אצלך T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "מאז $DAY$ ב-#$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "גם"
+  },
+  "mc_card_l_add_bio": {
+    "message": "הוסף ביו"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "החיפוש נכשל"
+  },
+  "mc_held_media": {
+    "message": "[מדיה מוסתרת — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[תצוגת קישור מוסתרת — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[תמונה מוסתרת — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "הצג"
+  },
+  "mc_held_hide": {
+    "message": "הסתר"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "אלימות"
+  },
+  "mc_held_weapons": {
+    "message": "נשק"
+  },
+  "mc_held_drugs": {
+    "message": "סמים"
+  },
+  "mc_held_hate": {
+    "message": "דברי שנאה"
+  },
+  "mc_reply_blocked": {
+    "message": "[חסום]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "טען מחדש"
+  },
+  "mc_set_snd_ping": {
+    "message": "פינג"
+  },
+  "mc_set_snd_blip": {
+    "message": "בליפ"
+  },
+  "mc_set_snd_knock": {
+    "message": "דפיקה"
+  },
+  "mc_set_snd_chime": {
+    "message": "פעמון"
+  },
+  "mc_mention_reply_post": {
+    "message": "תגובה לפוסט שלך"
+  },
+  "mc_mention_reply_reply": {
+    "message": "תגובה לתגובה שלך"
+  },
+  "mc_mention_reply_you": {
+    "message": "תגובה אליך"
+  },
+  "mc_mention_fixed": {
+    "message": "הדיווח שלך תוקן"
+  },
+  "mc_mention_in_post": {
+    "message": "הוזכרת בפוסט"
+  },
+  "mc_tabmode_fixed": {
+    "message": "הלשונית הזו קבועה"
+  },
+  "mc_tabmode_no_close": {
+    "message": "אי אפשר לסגור את הלשונית הזו"
+  },
+  "mc_social_anonymous": {
+    "message": "אנונימי"
+  },
+  "mc_mark_user": {
+    "message": "משתמש heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "קישור קבוע — לחץ לפתיחה, shift+לחיצה להדבקה בצ'אט"
   }
 }

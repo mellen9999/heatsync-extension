@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "pokazuje przycisk odpowiedzi na wierszu czatu pod myszą. odpowiedź jest zawsze w menu wiersza (prawy przycisk, długie przytrzymanie na dotyku)"
+  },
+  "mc_card_l_age": {
+    "message": "wiek"
+  },
+  "mc_card_l_type": {
+    "message": "typ"
+  },
+  "mc_card_l_peak": {
+    "message": "szczyt"
+  },
+  "mc_card_l_rel": {
+    "message": "relacja"
+  },
+  "mc_card_l_mutuals": {
+    "message": "wspólni"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "obserwuje cię"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "subuje cię"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "subuje cię T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "od $DAY$ na #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "też"
+  },
+  "mc_card_l_add_bio": {
+    "message": "dodaj bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "nie udało się wczytać"
+  },
+  "mc_held_media": {
+    "message": "[media ukryte — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[podgląd ukryty — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[obraz ukryty — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "pokaż"
+  },
+  "mc_held_hide": {
+    "message": "ukryj"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "przemoc"
+  },
+  "mc_held_weapons": {
+    "message": "broń"
+  },
+  "mc_held_drugs": {
+    "message": "narkotyki"
+  },
+  "mc_held_hate": {
+    "message": "mowa nienawiści"
+  },
+  "mc_reply_blocked": {
+    "message": "[zablokowano]"
+  },
+  "mc_bits_n": {
+    "message": "bity: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "przeładuj"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "bip"
+  },
+  "mc_set_snd_knock": {
+    "message": "pukanie"
+  },
+  "mc_set_snd_chime": {
+    "message": "dzwonek"
+  },
+  "mc_mention_reply_post": {
+    "message": "odpowiedź na twój post"
+  },
+  "mc_mention_reply_reply": {
+    "message": "odpowiedź na twoją odpowiedź"
+  },
+  "mc_mention_reply_you": {
+    "message": "odpowiedź dla ciebie"
+  },
+  "mc_mention_fixed": {
+    "message": "twoje zgłoszenie zostało naprawione"
+  },
+  "mc_mention_in_post": {
+    "message": "wspomniano o tobie w poście"
+  },
+  "mc_tabmode_fixed": {
+    "message": "tej karty nie można zmienić"
+  },
+  "mc_tabmode_no_close": {
+    "message": "tej karty nie można zamknąć"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonim"
+  },
+  "mc_mark_user": {
+    "message": "użytkownik heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — klik otwiera, shift-klik wkleja do czatu"
   }
 }

@@ -7,6 +7,7 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { t } from './en-t.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'feed-embed.js'), 'utf8')
 
@@ -28,9 +29,10 @@ const wrap = sliceBetween('function buildFeedMediaHtml', '// Handles direct uplo
 const { buildFeedMediaHtml } = new Function(
   'getSetting',
   'attr',
+  't',
   '_feedMediaHtml',
   `${held}\n${wrap}\nreturn { buildFeedMediaHtml }`,
-)(getSetting, attr, (m) => (m?.has_media ? REAL : ''))
+)(getSetting, attr, t, (m) => (m?.has_media ? REAL : ''))
 
 const post = (cats) => ({ has_media: true, moderation_result: { flaggedCategories: cats } })
 
@@ -99,6 +101,6 @@ describe('show / hide wiring', () => {
   test('the click handler offers hide after show and removes the real markup again', () => {
     expect(SRC).toContain("'.hs-mc-held-post-show, .hs-mc-held-post-hide'")
     expect(SRC).toContain("box.querySelector('.hs-mc-held-real')?.remove()")
-    expect(SRC).toContain("hide.textContent = 'hide'")
+    expect(SRC).toContain("hide.textContent = t('mc_held_hide')")
   })
 })

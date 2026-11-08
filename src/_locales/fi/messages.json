@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "näytä vastauspainike hiiren alla olevalla chat-rivillä. vastaus on aina rivivalikossa (oikea klikkaus, pitkä painallus kosketuksella)"
+  },
+  "mc_card_l_age": {
+    "message": "ikä"
+  },
+  "mc_card_l_type": {
+    "message": "tyyppi"
+  },
+  "mc_card_l_peak": {
+    "message": "huippu"
+  },
+  "mc_card_l_rel": {
+    "message": "suhde"
+  },
+  "mc_card_l_mutuals": {
+    "message": "yhteiset"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "seuraa sinua"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "sub kanavallasi"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "sub kanavallasi T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "$DAY$ alkaen kanavalla #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "myös"
+  },
+  "mc_card_l_add_bio": {
+    "message": "lisää esittely"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "haku epäonnistui"
+  },
+  "mc_held_media": {
+    "message": "[media piilotettu — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[upote piilotettu — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[kuva piilotettu — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "näytä"
+  },
+  "mc_held_hide": {
+    "message": "piilota"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "väkivalta"
+  },
+  "mc_held_weapons": {
+    "message": "aseet"
+  },
+  "mc_held_drugs": {
+    "message": "huumeet"
+  },
+  "mc_held_hate": {
+    "message": "vihapuhe"
+  },
+  "mc_reply_blocked": {
+    "message": "[estetty]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bitsiä",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "lataa uudelleen"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "piip"
+  },
+  "mc_set_snd_knock": {
+    "message": "koputus"
+  },
+  "mc_set_snd_chime": {
+    "message": "kilahdus"
+  },
+  "mc_mention_reply_post": {
+    "message": "vastasi postaukseesi"
+  },
+  "mc_mention_reply_reply": {
+    "message": "vastasi vastaukseesi"
+  },
+  "mc_mention_reply_you": {
+    "message": "vastasi sinulle"
+  },
+  "mc_mention_fixed": {
+    "message": "raporttisi korjattiin"
+  },
+  "mc_mention_in_post": {
+    "message": "sinut mainittiin postauksessa"
+  },
+  "mc_tabmode_fixed": {
+    "message": "tämä välilehti on kiinteä"
+  },
+  "mc_tabmode_no_close": {
+    "message": "tätä välilehteä ei voi sulkea"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonyymi"
+  },
+  "mc_mark_user": {
+    "message": "heatsync-käyttäjä"
+  },
+  "mc_moment_permalink": {
+    "message": "pysyvä linkki — klikkaa avataksesi, shift-klikkaa liittääksesi chattiin"
   }
 }

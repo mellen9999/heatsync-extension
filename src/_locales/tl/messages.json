@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "magpakita ng reply button sa chat row sa ilalim ng mouse. laging nasa row menu ang reply (right-click, matagal na pindot sa touch)"
+  },
+  "mc_card_l_age": {
+    "message": "edad"
+  },
+  "mc_card_l_type": {
+    "message": "uri"
+  },
+  "mc_card_l_peak": {
+    "message": "peak"
+  },
+  "mc_card_l_rel": {
+    "message": "relasyon"
+  },
+  "mc_card_l_mutuals": {
+    "message": "mutuals"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "staff"
+  },
+  "mc_card_l_follow_you": {
+    "message": "follower mo"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "subscriber mo"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "subscriber mo T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "mula $DAY$ sa #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "din sa"
+  },
+  "mc_card_l_add_bio": {
+    "message": "magdagdag ng bio"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "bigo ang paghahanap"
+  },
+  "mc_held_media": {
+    "message": "[nakatago ang media — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[nakatago ang embed — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[nakatago ang larawan — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "ipakita"
+  },
+  "mc_held_hide": {
+    "message": "itago"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "karahasan"
+  },
+  "mc_held_weapons": {
+    "message": "armas"
+  },
+  "mc_held_drugs": {
+    "message": "droga"
+  },
+  "mc_held_hate": {
+    "message": "hate speech"
+  },
+  "mc_reply_blocked": {
+    "message": "[naka-block]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "i-reload"
+  },
+  "mc_set_snd_ping": {
+    "message": "ping"
+  },
+  "mc_set_snd_blip": {
+    "message": "blip"
+  },
+  "mc_set_snd_knock": {
+    "message": "katok"
+  },
+  "mc_set_snd_chime": {
+    "message": "kampana"
+  },
+  "mc_mention_reply_post": {
+    "message": "sinagot ang post mo"
+  },
+  "mc_mention_reply_reply": {
+    "message": "sinagot ang sagot mo"
+  },
+  "mc_mention_reply_you": {
+    "message": "sinagot ka"
+  },
+  "mc_mention_fixed": {
+    "message": "naayos na ang report mo"
+  },
+  "mc_mention_in_post": {
+    "message": "na-mention ka sa isang post"
+  },
+  "mc_tabmode_fixed": {
+    "message": "built-in ang tab na iyon"
+  },
+  "mc_tabmode_no_close": {
+    "message": "hindi maisasara ang tab na iyon"
+  },
+  "mc_social_anonymous": {
+    "message": "Anonymous"
+  },
+  "mc_mark_user": {
+    "message": "user ng heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "permalink — i-click para buksan, shift-click para i-paste sa chat"
   }
 }

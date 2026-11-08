@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "показує кнопку відповіді на рядку чату під мишею. відповідь завжди є в меню рядка (правий клік, довге натискання на сенсорі)"
+  },
+  "mc_card_l_age": {
+    "message": "вік"
+  },
+  "mc_card_l_type": {
+    "message": "тип"
+  },
+  "mc_card_l_peak": {
+    "message": "пік"
+  },
+  "mc_card_l_rel": {
+    "message": "зв'язок"
+  },
+  "mc_card_l_mutuals": {
+    "message": "спільні"
+  },
+  "mc_card_l_admin": {
+    "message": "адмін"
+  },
+  "mc_card_l_staff": {
+    "message": "стаф"
+  },
+  "mc_card_l_follow_you": {
+    "message": "стежить за тобою"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "суб T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "субить тебе"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "субить тебе T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "з $DAY$ в #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "ще"
+  },
+  "mc_card_l_add_bio": {
+    "message": "додати біо"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "не вдалося завантажити"
+  },
+  "mc_held_media": {
+    "message": "[медіа приховано — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[прев'ю приховано — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[зображення приховано — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "показати"
+  },
+  "mc_held_hide": {
+    "message": "сховати"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "насильство"
+  },
+  "mc_held_weapons": {
+    "message": "зброя"
+  },
+  "mc_held_drugs": {
+    "message": "наркотики"
+  },
+  "mc_held_hate": {
+    "message": "мова ворожнечі"
+  },
+  "mc_reply_blocked": {
+    "message": "[заблоковано]"
+  },
+  "mc_bits_n": {
+    "message": "бітси: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "перезавантажити"
+  },
+  "mc_set_snd_ping": {
+    "message": "пінг"
+  },
+  "mc_set_snd_blip": {
+    "message": "біп"
+  },
+  "mc_set_snd_knock": {
+    "message": "стук"
+  },
+  "mc_set_snd_chime": {
+    "message": "дзвін"
+  },
+  "mc_mention_reply_post": {
+    "message": "відповідь на твій пост"
+  },
+  "mc_mention_reply_reply": {
+    "message": "відповідь на твою відповідь"
+  },
+  "mc_mention_reply_you": {
+    "message": "відповідь тобі"
+  },
+  "mc_mention_fixed": {
+    "message": "твій репорт виправлено"
+  },
+  "mc_mention_in_post": {
+    "message": "тебе згадали в пості"
+  },
+  "mc_tabmode_fixed": {
+    "message": "цю вкладку не можна змінити"
+  },
+  "mc_tabmode_no_close": {
+    "message": "цю вкладку не можна закрити"
+  },
+  "mc_social_anonymous": {
+    "message": "Анонім"
+  },
+  "mc_mark_user": {
+    "message": "користувач heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "постійне посилання — клік: відкрити, shift-клік: вставити в чат"
   }
 }

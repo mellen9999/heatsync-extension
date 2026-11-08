@@ -7,6 +7,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { t } from './en-t.js'
 
 const dir = join(import.meta.dir, '..', 'src', 'multichat')
 const strip = (s) => s.replace(/^export \{[\s\S]*?\}\s*$/m, '')
@@ -19,7 +20,7 @@ const ROW = {
   badge_url: 'https://static-cdn.jtvnw.net/badges/v1/x/1',
 }
 
-function rig() {
+function rig(tr = t) {
   let onMessage = null
   const rows = []
   const document = {
@@ -43,6 +44,7 @@ function rig() {
     getSenderEmotes: () => null,
     isSelf: (m) => m.user === 'me',
     pinAfterInPlaceUpdate: () => {},
+    t: tr,
   }
   const names = Object.keys(env)
   const api = new Function(...names, `${code}; return { _hsmSets, hsMarksRowHtml }`)(...names.map((k) => env[k]))
@@ -56,6 +58,25 @@ function rig() {
   }
   return { api, row, send: (msg) => onMessage(msg) }
 }
+
+describe('the flame and heat titles speak the viewer language', () => {
+  const pseudo = (key) => `<${key}>`
+  const wearer = (tr, heat) => {
+    const { api } = rig(tr)
+    api._hsmSets.heat.map.set('me', { v: heat, at: Date.now(), asked: 0 })
+    return api.hsMarksRowHtml({ user: 'me', userId: '42', platform: 'twitch' }, '42')
+  }
+
+  test('english is exactly what the vendored module prints', () => {
+    expect(wearer(t, 0)).toContain('class="hs-mark-flame" title="heatsync user"')
+    expect(wearer(t, 120)).toContain(' title="heat">')
+  })
+
+  test('another locale replaces both, escaped', () => {
+    expect(wearer(pseudo, 0)).toContain('class="hs-mark-flame" title="&#60;mc_mark_user&#62;"')
+    expect(wearer(pseudo, 120)).toContain(' title="&#60;lib_opt_heat&#62;">')
+  })
+})
 
 describe('account_changed drops your own flair', () => {
   test('every held flair is asked again; your row repaints without the old badge, others keep theirs', async () => {

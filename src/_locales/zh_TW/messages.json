@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "在滑鼠所在的聊天列顯示回覆按鈕。回覆一律在列選單中（右鍵，觸控長按）"
+  },
+  "mc_card_l_age": {
+    "message": "帳齡"
+  },
+  "mc_card_l_type": {
+    "message": "類型"
+  },
+  "mc_card_l_peak": {
+    "message": "峰值"
+  },
+  "mc_card_l_rel": {
+    "message": "關係"
+  },
+  "mc_card_l_mutuals": {
+    "message": "共同追蹤者"
+  },
+  "mc_card_l_admin": {
+    "message": "管理員"
+  },
+  "mc_card_l_staff": {
+    "message": "員工"
+  },
+  "mc_card_l_follow_you": {
+    "message": "追蹤你"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "已 sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "訂閱你"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "訂閱你 T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "自 $DAY$ 在 #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "還在"
+  },
+  "mc_card_l_add_bio": {
+    "message": "新增簡介"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "查詢失敗"
+  },
+  "mc_held_media": {
+    "message": "[媒體已隱藏 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[嵌入內容已隱藏 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[圖片已隱藏 — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "顯示"
+  },
+  "mc_held_hide": {
+    "message": "隱藏"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "暴力"
+  },
+  "mc_held_weapons": {
+    "message": "武器"
+  },
+  "mc_held_drugs": {
+    "message": "毒品"
+  },
+  "mc_held_hate": {
+    "message": "仇恨言論"
+  },
+  "mc_reply_blocked": {
+    "message": "[已封鎖]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "重新載入"
+  },
+  "mc_set_snd_ping": {
+    "message": "叮"
+  },
+  "mc_set_snd_blip": {
+    "message": "嗶"
+  },
+  "mc_set_snd_knock": {
+    "message": "敲門"
+  },
+  "mc_set_snd_chime": {
+    "message": "鐘聲"
+  },
+  "mc_mention_reply_post": {
+    "message": "回覆了你的貼文"
+  },
+  "mc_mention_reply_reply": {
+    "message": "回覆了你的回覆"
+  },
+  "mc_mention_reply_you": {
+    "message": "回覆了你"
+  },
+  "mc_mention_fixed": {
+    "message": "你的回報已修復"
+  },
+  "mc_mention_in_post": {
+    "message": "你在貼文中被提及"
+  },
+  "mc_tabmode_fixed": {
+    "message": "該分頁為內建分頁"
+  },
+  "mc_tabmode_no_close": {
+    "message": "該分頁無法關閉"
+  },
+  "mc_social_anonymous": {
+    "message": "匿名使用者"
+  },
+  "mc_mark_user": {
+    "message": "heatsync 使用者"
+  },
+  "mc_moment_permalink": {
+    "message": "永久連結 — 點擊開啟，shift 點擊貼到聊天室"
   }
 }

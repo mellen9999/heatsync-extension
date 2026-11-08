@@ -1185,7 +1185,7 @@ function renderProfileCard(p, platform, extras = {}) {
     },
     { formatCompactNumber: formatCompact },
   )
-  return hsCardHtml(model, {
+  return hsCardHtmlL10n(model, {
     variant: 'peek',
     escapeHtml,
     renderBio: hsExtRenderBio,

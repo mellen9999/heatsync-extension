@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "hiện nút trả lời trên dòng chat dưới con trỏ. trả lời luôn có trong menu dòng (chuột phải, nhấn giữ trên cảm ứng)"
+  },
+  "mc_card_l_age": {
+    "message": "tuổi"
+  },
+  "mc_card_l_type": {
+    "message": "loại"
+  },
+  "mc_card_l_peak": {
+    "message": "đỉnh"
+  },
+  "mc_card_l_rel": {
+    "message": "liên kết"
+  },
+  "mc_card_l_mutuals": {
+    "message": "theo dõi chung"
+  },
+  "mc_card_l_admin": {
+    "message": "admin"
+  },
+  "mc_card_l_staff": {
+    "message": "nhân viên"
+  },
+  "mc_card_l_follow_you": {
+    "message": "đang theo dõi bạn"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "sub T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "sub bạn"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "sub bạn T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "từ $DAY$ ở #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "cũng ở"
+  },
+  "mc_card_l_add_bio": {
+    "message": "thêm giới thiệu"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "tra cứu thất bại"
+  },
+  "mc_held_media": {
+    "message": "[đã ẩn media — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[đã ẩn nội dung nhúng — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[đã ẩn ảnh — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "hiện"
+  },
+  "mc_held_hide": {
+    "message": "ẩn"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "bạo lực"
+  },
+  "mc_held_weapons": {
+    "message": "vũ khí"
+  },
+  "mc_held_drugs": {
+    "message": "ma túy"
+  },
+  "mc_held_hate": {
+    "message": "ngôn từ thù ghét"
+  },
+  "mc_reply_blocked": {
+    "message": "[đã chặn]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ bits",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "tải lại"
+  },
+  "mc_set_snd_ping": {
+    "message": "ting"
+  },
+  "mc_set_snd_blip": {
+    "message": "bíp"
+  },
+  "mc_set_snd_knock": {
+    "message": "gõ cửa"
+  },
+  "mc_set_snd_chime": {
+    "message": "chuông"
+  },
+  "mc_mention_reply_post": {
+    "message": "đã trả lời bài đăng của bạn"
+  },
+  "mc_mention_reply_reply": {
+    "message": "đã trả lời phản hồi của bạn"
+  },
+  "mc_mention_reply_you": {
+    "message": "đã trả lời bạn"
+  },
+  "mc_mention_fixed": {
+    "message": "báo cáo của bạn đã được sửa"
+  },
+  "mc_mention_in_post": {
+    "message": "bạn được nhắc đến trong một bài đăng"
+  },
+  "mc_tabmode_fixed": {
+    "message": "tab này là tab có sẵn"
+  },
+  "mc_tabmode_no_close": {
+    "message": "không thể đóng tab này"
+  },
+  "mc_social_anonymous": {
+    "message": "Ẩn danh"
+  },
+  "mc_mark_user": {
+    "message": "người dùng heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "liên kết cố định — bấm để mở, giữ shift và bấm để dán vào chat"
   }
 }

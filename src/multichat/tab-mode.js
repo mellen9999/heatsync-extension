@@ -174,7 +174,7 @@ function handleTabModeKey(e) {
   if (k === 'J' || k === 'K') {
     const id = tabs[_tabMode.cursor]?.dataset.tab
     if (!isChannelTab(id)) {
-      _tabModeStatus('that tab is fixed')
+      _tabModeStatus(t('mc_tabmode_fixed'))
       return true
     }
     const delta = k === 'J' ? 1 : -1
@@ -190,7 +190,7 @@ function handleTabModeKey(e) {
   if (k === 'd' || k === 'x') {
     const id = tabs[_tabMode.cursor]?.dataset.tab
     if (!isChannelTab(id)) {
-      _tabModeStatus("that tab can't be closed")
+      _tabModeStatus(t('mc_tabmode_no_close'))
       return true
     }
     removeChannel(id)

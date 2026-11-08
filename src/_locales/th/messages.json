@@ -6613,5 +6613,169 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "แสดงปุ่มตอบกลับที่แถวแชทใต้เมาส์ การตอบกลับมีในเมนูแถวเสมอ (คลิกขวา, กดค้างบนจอสัมผัส)"
+  },
+  "mc_card_l_age": {
+    "message": "อายุ"
+  },
+  "mc_card_l_type": {
+    "message": "ประเภท"
+  },
+  "mc_card_l_peak": {
+    "message": "สูงสุด"
+  },
+  "mc_card_l_rel": {
+    "message": "สถานะ"
+  },
+  "mc_card_l_mutuals": {
+    "message": "ผู้ติดตามร่วม"
+  },
+  "mc_card_l_admin": {
+    "message": "แอดมิน"
+  },
+  "mc_card_l_staff": {
+    "message": "ทีมงาน"
+  },
+  "mc_card_l_follow_you": {
+    "message": "ติดตามคุณ"
+  },
+  "mc_card_l_sub_tier": {
+    "message": "ซับ T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_sub_to_you": {
+    "message": "ซับคุณ"
+  },
+  "mc_card_l_sub_to_you_tier": {
+    "message": "ซับคุณ T$TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_card_l_since_in": {
+    "message": "ตั้งแต่ $DAY$ ใน #$CHANNEL$",
+    "placeholders": {
+      "day": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_card_l_also": {
+    "message": "อีก"
+  },
+  "mc_card_l_add_bio": {
+    "message": "เพิ่มไบโอ"
+  },
+  "mc_card_l_lookup_failed": {
+    "message": "ดึงข้อมูลไม่ได้"
+  },
+  "mc_held_media": {
+    "message": "[ซ่อนมีเดีย — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_embed": {
+    "message": "[ซ่อนลิงก์พรีวิว — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_image": {
+    "message": "[ซ่อนรูป — $WHY$]",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_held_show": {
+    "message": "แสดง"
+  },
+  "mc_held_hide": {
+    "message": "ซ่อน"
+  },
+  "mc_held_nsfw": {
+    "message": "nsfw"
+  },
+  "mc_held_violence": {
+    "message": "ความรุนแรง"
+  },
+  "mc_held_weapons": {
+    "message": "อาวุธ"
+  },
+  "mc_held_drugs": {
+    "message": "ยาเสพติด"
+  },
+  "mc_held_hate": {
+    "message": "คำพูดเกลียดชัง"
+  },
+  "mc_reply_blocked": {
+    "message": "[บล็อกแล้ว]"
+  },
+  "mc_bits_n": {
+    "message": "$COUNT$ บิต",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_reload": {
+    "message": "รีโหลด"
+  },
+  "mc_set_snd_ping": {
+    "message": "ปิง"
+  },
+  "mc_set_snd_blip": {
+    "message": "บลิป"
+  },
+  "mc_set_snd_knock": {
+    "message": "เคาะ"
+  },
+  "mc_set_snd_chime": {
+    "message": "กระดิ่ง"
+  },
+  "mc_mention_reply_post": {
+    "message": "ตอบกลับโพสต์ของคุณ"
+  },
+  "mc_mention_reply_reply": {
+    "message": "ตอบกลับคอมเมนต์ของคุณ"
+  },
+  "mc_mention_reply_you": {
+    "message": "ตอบกลับคุณ"
+  },
+  "mc_mention_fixed": {
+    "message": "เรื่องที่คุณแจ้งแก้ไขแล้ว"
+  },
+  "mc_mention_in_post": {
+    "message": "คุณถูกกล่าวถึงในโพสต์"
+  },
+  "mc_tabmode_fixed": {
+    "message": "แท็บนี้แก้ไขไม่ได้"
+  },
+  "mc_tabmode_no_close": {
+    "message": "ปิดแท็บนี้ไม่ได้"
+  },
+  "mc_social_anonymous": {
+    "message": "ไม่ระบุชื่อ"
+  },
+  "mc_mark_user": {
+    "message": "ผู้ใช้ heatsync"
+  },
+  "mc_moment_permalink": {
+    "message": "ลิงก์ถาวร — คลิกเพื่อเปิด, shift+คลิกเพื่อวางในแชท"
   }
 }

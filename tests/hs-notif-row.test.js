@@ -3,6 +3,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { t } from './en-t.js'
 
 const ROOT = join(import.meta.dir, '..')
 const BG = readFileSync(join(ROOT, 'chrome', 'background.js'), 'utf8')
@@ -12,7 +13,10 @@ const slice = (src, from, to) => src.slice(src.indexOf(from), src.indexOf(to))
 const shape = new Function(
   `${slice(BG, 'function shapeHsNotif(', '// the mentions tab was looked at')}; return shapeHsNotif`,
 )()
-const text = new Function(`${slice(MENTIONS, 'function hsNotifText(', 'function hsNotifIn(')}; return hsNotifText`)()
+const text = new Function(
+  't',
+  `${slice(MENTIONS, 'function hsNotifText(', 'function hsNotifIn(')}; return hsNotifText`,
+)(t)
 
 describe('shapeHsNotif', () => {
   test('keeps only bounded fields', () => {

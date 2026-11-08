@@ -809,6 +809,7 @@ const MULTICHAT_MODULES = [
   'kick-send.js',
   'emotes.js',
   'gifs.js',
+  'card-l10n.js',
   'tooltips.js',
   'tag-card.js',
   'twitch-api.js',

@@ -7998,7 +7998,7 @@
       // incoming), so the arrow flows away from you on sends, toward you on
       // receives — the same mental model as a chat client's whisper split.
       const otherName = `<span class="hs-dm-name${dm.cls ? ` ${dm.cls}` : ''}"${dm.attrs} style="${dm.style}">${dm.inner}</span>`
-      const youTok = '<span class="hs-whisper-you">you</span>'
+      const youTok = `<span class="hs-whisper-you">${t('mc_tagcard_you')}</span>`
       const arrow = `<span class="hs-whisper-arrow" style="color:${dirColor}">→</span>`
       const dirPair = m.outgoing ? `${youTok}${arrow}${otherName}` : `${otherName}${arrow}${youTok}`
       // All values sanitized — safe innerHTML
@@ -8063,7 +8063,7 @@
       // instant value, no wall. Never auto-sends; the user owns the enter key.
       const perma =
         m.momentId && /^\d+$/.test(m.momentId)
-          ? ` <a class="hs-mc-moment-perma" href="https://heatsync.org/moment/${m.momentId}" target="_blank" rel="noopener" title="permalink — click to open, shift-click to paste into chat">¶</a>`
+          ? ` <a class="hs-mc-moment-perma" href="https://heatsync.org/moment/${m.momentId}" target="_blank" rel="noopener" title="${t('mc_moment_permalink')}">¶</a>`
           : ''
       div.innerHTML = `${tsSpan}${label}<span style="color:#ffffff">${escapeHtml(m.text || '')}</span>${perma}`
       // Same deal as the inline DM row: clickable, contains an anchor (¶ perma),
@@ -8381,7 +8381,8 @@
       isSuperChat && m.amount
         ? `<span class="hs-mc-sc-badge" style="background:${safeScColor};color:#000;padding:0 4px;border-radius:0;font-size:13px;font-weight:700;margin-right:3px;">${escapeHtml(m.amount)}</span>`
         : ''
-    const bitsBadge = m.bits ? `<span class="hs-mc-bits-badge" title="${m.bits} bits">${m.bits} bits</span>` : ''
+    const bitsN = m.bits && t('mc_bits_n', [m.bits])
+    const bitsBadge = m.bits ? `<span class="hs-mc-bits-badge" title="${bitsN}">${bitsN}</span>` : ''
     // (cheermote rendering is applied inline in processedText via renderCheermotesInText)
     // HeatSync paint (own-platform cosmetic) takes precedence over 7TV — see
     // hsPaintRender in paints.js. Returns null (falls through to the existing
@@ -8606,7 +8607,7 @@
     // with no name, no text, no profile link.
     const replyBlocked = m.replyTo?.user && isUserBlocked(m.replyTo.user, m.platform)
     const replyBar = replyBlocked
-      ? `<span class="hs-mc-reply-ctx hs-reply-ctx">&#8618;[blocked]</span> `
+      ? `<span class="hs-mc-reply-ctx hs-reply-ctx">&#8618;${t('mc_reply_blocked')}</span> `
       : m.replyTo?.user
         ? // role/tabindex/aria make the pill the control it always was. Clicking
           // it has opened the thread stack for a long time, but nothing SAID so:

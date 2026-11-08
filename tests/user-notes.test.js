@@ -1,5 +1,19 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import {
+
+// bun runs every test file in one process, so a `window`, `chrome` or `cleanup`
+// another file left on globalThis is still there when this module evaluates —
+// and user-notes.js wires chrome.storage.onChanged through cleanup at load when
+// it sees a window. Which files run first is the directory's order, so the
+// same suite passed in one checkout and threw in a fresh worktree. Import
+// after clearing those three, then put back whatever was there.
+const _leaked = {}
+for (const k of ['window', 'chrome', 'cleanup']) {
+  if (k in globalThis) {
+    _leaked[k] = globalThis[k]
+    delete globalThis[k]
+  }
+}
+const {
   _hsNoteResetForTest,
   HS_NOTE_MAX,
   hsNoteDelete,
@@ -8,7 +22,8 @@ import {
   hsNoteSave,
   hsNoteServerEligible,
   hsNoteSyncOnOpen,
-} from '../src/multichat/user-notes.js'
+} = await import('../src/multichat/user-notes.js')
+Object.assign(globalThis, _leaked)
 
 // The module resolves a chatter to their alias set via the (bundle-global)
 // identity helpers. In tests we inject them on globalThis to simulate the

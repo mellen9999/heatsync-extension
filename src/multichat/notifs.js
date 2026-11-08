@@ -781,6 +781,34 @@ const HsNotifs = (() => {
     },
   })
 
+  // Mod anniversary — twitch's own callout, not a resub (same "N month" words,
+  // different event). No heatsync share mode: Share is twitch's button.
+  registerType('twitch-mod-anniversary-share', {
+    layer: 'chat-docked-bottom',
+    channelScoped: true,
+    dedupeKey: ({ months, channel }) => `modanniv:${channel}:${months}`,
+    render: ({ data }) => {
+      const el = document.createElement('span')
+      el.className = 'hs-notif-watchstreak-body'
+      const icon = document.createElement('span')
+      icon.className = 'hs-notif-watchstreak-icon'
+      icon.textContent = '★'
+      const text = document.createElement('span')
+      text.className = 'hs-notif-watchstreak-text'
+      text.textContent = t('mc_notif_mod_anniv', [String(data.months | 0)])
+      el.appendChild(icon)
+      el.appendChild(text)
+      return el
+    },
+    actions: {
+      primary: {
+        label: t('mc_notif_share'),
+        onClick: (data) => !!window.__hsResubShare?.clickNative?.(data._nativeShareBtn),
+      },
+      dismiss: {},
+    },
+  })
+
   // Server-driven "please update" prompt — fires when the version-floor in
   // /api/extension/health is above current manifest version. dedupeKey keeps
   // it to one prompt per (current, min) pair so re-fetching health doesn't

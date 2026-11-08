@@ -211,6 +211,26 @@ function calloutTokenMatches(scan, expect) {
   return true
 }
 
+/**
+ * What a twitch private callout is celebrating, read from its text.
+ *
+ * Order matters. A mod anniversary ("Congrats on your 6 month Mod
+ * Anniversary!") also says "N month": read as a resub it told a 100-month
+ * subscriber they had 6 months, and its share built a resub token for the
+ * wrong count. A watch streak never says months, but a sub anniversary may
+ * say "stream", so watch streak is asked before the resub fallback.
+ */
+function readCalloutKind(txt) {
+  const s = String(txt || '')
+  const num = (re) => {
+    const m = s.match(re)
+    return m ? parseInt(m[1], 10) : 0
+  }
+  if (/mod\s*anniversary/i.test(s)) return { type: 'modanniv', count: num(/(\d+)\s*-?\s*months?\s*mod\s*anniversary/i) }
+  if (/watch[\s-]*streak/i.test(s)) return { type: 'watchstreak', count: num(/(\d+)\s*stream/i) }
+  return { type: 'resub', count: num(/(\d+)\s*month/i) }
+}
+
 function fiberTokenScan(rootEl) {
   if (typeof getFiber !== 'function' || !rootEl) return null
   // trace = what the walk saw, for the one warning a failed scan emits. Shapes
@@ -795,15 +815,25 @@ function setupHsCalloutCloseButton() {
       console.warn('[heatsync-ext] resub token scan found nothing — fibers:', (scan.trace || []).join(' '))
     }
 
-    // Watch-streak first (text mentions "watch streak"); resub fallback (only
-    // "N month" — without "watch streak"). Order matters: a watch-streak
-    // callout never mentions months, but a sub-anniversary may incidentally
-    // contain "stream", so explicit watchstreak check wins.
-    const isWatchstreak = /watch[\s-]*streak/i.test(txt)
-    const streakMatch = isWatchstreak ? txt.match(/(\d+)\s*stream/i) : null
-    const streakCount = streakMatch ? parseInt(streakMatch[1], 10) : 0
-    const monthMatch = !isWatchstreak ? txt.match(/(\d+)\s*month/i) : null
-    const months = monthMatch ? parseInt(monthMatch[1], 10) : 0
+    const kind = readCalloutKind(txt)
+    if (kind.type === 'modanniv') {
+      calloutEl.dataset.hsSurfaced = '1'
+      if (!kind.count) return
+      try {
+        HsNotifs.emit('twitch-mod-anniversary-share', {
+          months: kind.count,
+          channel: ch,
+          _nativeShareBtn: shareBtn,
+        })
+      } catch (_) {}
+      try {
+        _updateMcLayout?.()
+      } catch (_) {}
+      return
+    }
+    const isWatchstreak = kind.type === 'watchstreak'
+    const streakCount = isWatchstreak ? kind.count : 0
+    const months = kind.type === 'resub' ? kind.count : 0
 
     if (isWatchstreak && streakCount) {
       if (_watchstreakAlreadySharedToday(ch)) {

@@ -5058,6 +5058,15 @@
       }
     }
   },
+  "mc_notif_mod_anniv": {
+    "message": "擔任管理員 $COUNT$ 個月",
+    "description": "mod-anniversary callout (twitch \"congrats on your N month mod anniversary\"), one phrase; $COUNT$ = months modding this channel",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_notif_share": {
     "message": "分享"
   },

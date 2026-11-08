@@ -559,11 +559,18 @@ const redeemTitleMap = new Map()
 const mentionsBuffer = []
 const MAX_BUFFER = 500
 
-// Mod-action log: capped in-memory history of ban/timeout/unban/delete notices
-// (self + observed, all channels), for the streamer/mod popout view. Recorded
-// at the irc/kick 'message' chokepoints (below) so it survives chat-buffer
-// cycling. Pure logic + dedup/cap live in mod-log.js (unit-tested).
+// Mod-action log: history of ban/timeout/unban/delete notices (self + observed,
+// all channels), for the streamer/mod popout view. Recorded at the irc/kick
+// 'message' chokepoints (below) so it survives chat-buffer cycling, and kept in
+// chrome.storage.local so it survives a reload too (newest 500 per channel).
+// Pure logic + dedup/cap + the storage half live in mod-log.js (unit-tested).
 const modActionLog = []
+const modLogStore = createModLogStore({
+  log: modActionLog,
+  storage: () => (chrome?.runtime?.id ? chrome.storage.local : null),
+  setTimer: (fn, ms) => cleanup.setTimeout(fn, ms),
+  clearTimer: (t) => cleanup.clearTimeout(t),
+})
 
 // Max chat rows kept as live DOM. Decoupled from the data buffers (ring
 // buffer 1500, persist 1500) which stay large for scrollback-data, sync and
@@ -1210,6 +1217,9 @@ function _flushPersistenceSync() {
   // survives the unload, so this closes the 1.5s debounce gap without
   // writing HeatSync data to the host page's localStorage.
   try {
+    modLogStore.flush()
+  } catch {}
+  try {
     if (_persistMentionsState.timer) {
       cleanup.clearTimeout(_persistMentionsState.timer)
       _persistMentionsState.timer = null
@@ -1243,6 +1253,16 @@ async function restorePersistedBuffers() {
           }
         }
       }
+    } catch {}
+
+    // the mod log: merge what the last session kept into the (still empty) in-memory one
+    await modLogStore.load()
+    // …and keep it current with what another tab of this browser writes, so the
+    // write that tab-close does carries both sides
+    try {
+      cleanup.addListener(chrome.storage.onChanged, (changes, area) => {
+        if (area === 'local' && changes[MOD_LOG_KEY]) modLogStore.absorb(changes[MOD_LOG_KEY].newValue)
+      })
     } catch {}
 
     let mChrome = null

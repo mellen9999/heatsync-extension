@@ -1139,8 +1139,8 @@ function _renderCategoryPaneInner(cat) {
 // ring ("captured locally only"), and the picked sound files (hs_sfx_*: up to
 // 256 kb each, per device by design — rules and the mention sound export only
 // the file's name), and the sent-message history (hs_sent_history: what you typed, this device only). Import skips the same set so a crafted file can't overwrite
-// them either.
-var _SETTINGS_PRIVATE_KEY_RE = /^hs_(mentions_v2|user_notes|errors|irc_|kick_|yt_|whisper|sfx_|sent_history)/
+// them either. (hs_modlog_v1 — who was banned where, and by whom — is private too.)
+var _SETTINGS_PRIVATE_KEY_RE = /^hs_(mentions_v2|user_notes|errors|irc_|kick_|yt_|whisper|sfx_|sent_history|modlog)/
 // local-mirror settings (keyword highlights, filter rules) live under
 // unprefixed mirror keys — allowlist them alongside the hs_/viewer_ namespaces
 // or the export silently drops them (derived from the registry, never hand-listed)

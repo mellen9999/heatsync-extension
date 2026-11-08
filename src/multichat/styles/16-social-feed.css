@@ -1211,6 +1211,7 @@
     .hs-modlog-time { color: var(--hs-border); font-variant-numeric: tabular-nums; }
     .hs-modlog-channel { color: #fff; font-weight: 600; }
     .hs-modlog-body { color: #ffffff; word-break: break-word; }
+    .hs-modlog-actor { color: #fff; white-space: nowrap; }
     .hs-modlog-ban .hs-modlog-body { color: var(--hs-danger); }
     .hs-modlog-timeout .hs-modlog-body { color: var(--hs-gold); }
     .hs-modlog-unban .hs-modlog-body,

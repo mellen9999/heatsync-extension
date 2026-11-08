@@ -51,6 +51,13 @@ cross-platform chat extension and nothing speculative.
 - **CSP**: extension pages declare `script-src 'self'; object-src 'none'` in both MV3 (`extension_pages`) and MV2 manifests — no inline eval, no remote scripts.
 - **SSRF guard**: urls the content script asks the background to fetch (link previews, feed embeds) are validated in `chrome/background.js` (`fetch_link_preview` / `fetch_embed_resolve`) — `http(s):`-only, with a localhost / private-IP blocklist so the proxy can't be aimed at the local network.
 
+## secrets and server-driven actions
+
+- **token at rest** — the heatsync token kept in `storage.local` is sealed with AES-GCM under a non-extractable key held in IndexedDB. a copy of `storage.local` on its own (a diagnostics dump, a bug-report export, a backup of that one store) holds nothing usable, and no api hands the key's bytes out. it does not stop code already running in the extension, or someone holding your whole browser profile folder (the key's store lives there too). the browser's cookie jar stays the source of truth for the login; the blob is only the fallback. blobs from older builds are decrypted once and re-sealed at startup.
+- **twitch login** — the twitch session cookie stays in the background worker. pages ask `twitch_auth_status` / `twitch_helix` and get an answer, not the token; the one path that still needs the raw login (the irc socket on kick / youtube pages) is limited to this extension's own content scripts on twitch, kick and youtube pages.
+- **relayed sends** — when heatsync.org asks this browser to post a chat line to kick or youtube (`kick:relay_send`, `yt:relay_send`), the line only goes out after a real keypress or tap on heatsync.org in this browser (the content script reports `isTrusted` events only), a request id not seen before, no repeat of the same text to the same place within 10 s, and the length / rate caps in `src/background/05-ws.js`. every relay, sent or refused, is written to a local log (`hs_relay_log`, last 50) and counted in the popup's error copy. a compromised server can still ride a real keypress inside those caps; binding a send to its exact text needs the site to report what was typed.
+- **html sinks** — `tests/html-sink-ratchet.test.js` reads every `innerHTML` / `insertAdjacentHTML` / `createContextualFragment` / `DOMParser` / `srcdoc` write in `src/` and `chrome/*.js` and fails on any it cannot prove is built from constants and the escape helpers. the few it can't prove are listed with a count and a reason; the list can only shrink.
+
 ## build pipeline guards
 
 - post-build `node --check` over every output bundle (catches template-literal termination bugs before zip).

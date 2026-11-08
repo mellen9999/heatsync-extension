@@ -1,5 +1,30 @@
 # changelog
 
+## [1.7.125] — 2026-11-08
+
+### added
+- **getting started** — the welcome page leads with opening a channel; sign-in comes last and is optional. a six-card tour covers the right-click menu, /help, search, adding a channel, settings and the switches, and can be replayed from settings › ?.
+- **sending checklist** — settings › ? shows which of twitch, kick and youtube you can send to, with a sign-in button for the ones you can't.
+- **keyboard** — row mode puts a cursor on chat rows (alt+r); the row right-click menu works from the keyboard; alt+1-9, alt+[ ] and alt+r work while typing.
+- **screen readers** — read every message, only mentions, or nothing.
+- **mod tools** — the mod log survives a reload and names who acted; new mods get a starter set of hover buttons; youtube rows get the toolbar; kick mod panel for blocked words, message filter and chatters (/kickmod).
+- **filters** — edit rules in place, live match count, a notify option, and your own sound file and volume for rules and @mentions.
+- **emotes** — upload your own emote from the picker; heatsync emotes load the size that fits your screen; bttv pro personal emotes show for everyone.
+- **badges** — a heatsync badge shows only when you pick it, in the flame's place.
+- **tabs** — right-click a tab to move it left or right.
+- **composer** — sent history survives a reload, spellcheck toggle, arrow keys in the picker.
+- **languages** — mod actions, key help and the profile card speak your language; plain words instead of bt, mt and purge; right-to-left languages mirror the panel.
+
+### changed
+- **pronouns** — looked up through heatsync, so pronoundb never sees you; the pronoundb permission is gone.
+- **kick sends** — with no kick tab open, a hidden one opens on demand.
+
+### fixed
+- **whispers** — a whisper heard twice (irc and eventsub) shows once.
+- **chat emoji** — sit on the line again.
+- **background** — reconnects that failed quietly, a failed badge refresh that blocked retries, and requests that never got an answer.
+- **security** — twitch login handed to pages less often; only known twitch requests go through the background; page text escaped before it is drawn.
+
 ## [1.7.124] — 2026-11-08
 
 ### changed

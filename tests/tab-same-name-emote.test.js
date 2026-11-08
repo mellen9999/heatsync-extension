@@ -380,7 +380,7 @@ describe('4b2. addEmoteToInventory carries replace to the background and names a
     const env = {
       mcRemoteEmoteIndex: new Map(),
       zeroWidthFromAnyCache: () => false,
-      emoteBlockKey: (n, u, h) => h || btoa(u),
+      emoteBlockKey: (_n, u, h) => h || btoa(u),
       showToast: (text, kind) => toasts.push([text, kind]),
       t: (key, args) => `${key}:${args?.join(',')}`,
       pendingEmoteOps: new Set(),
@@ -536,12 +536,18 @@ describe('4b3. an added emote carries the per-emote key, not a truncated url', (
     const env = {
       mcRemoteEmoteIndex: new Map(),
       zeroWidthFromAnyCache: () => false,
-      emoteBlockKey: (n, u, h) => h || btoa(u),
+      emoteBlockKey: (_n, u, h) => h || btoa(u),
       showToast() {},
       t: (k) => k,
       pendingEmoteOps: new Set(),
       chrome: {
-        runtime: { lastError: null, sendMessage: (m, cb) => (sent.push(m), cb({ success: true, hash: 'h', slot: 1 })) },
+        runtime: {
+          lastError: null,
+          sendMessage: (m, cb) => {
+            sent.push(m)
+            cb({ success: true, hash: 'h', slot: 1 })
+          },
+        },
       },
       blockedEmoteNames: new Set(),
       removedEmoteFallback: new Map(),

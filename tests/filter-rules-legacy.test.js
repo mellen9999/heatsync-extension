@@ -1,5 +1,4 @@
 import { beforeEach, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { SETTINGS } from '../src/lib/settings-schema.js'
 import { RETIRED_UI_KEYS } from '../src/lib/utils.js'
 import { compileFilterRules, evaluateFilterRules } from '../src/multichat/filter-rules.js'

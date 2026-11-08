@@ -99,8 +99,12 @@ function fakeDocument() {
   return {
     body: {
       classList: {
-        add: (...c) => c.forEach((x) => set.add(x)),
-        remove: (...c) => c.forEach((x) => set.delete(x)),
+        add: (...c) => {
+          for (const x of c) set.add(x)
+        },
+        remove: (...c) => {
+          for (const x of c) set.delete(x)
+        },
         contains: (c) => set.has(c),
         toggle: (c, on) => (on ? set.add(c) : set.delete(c)),
       },

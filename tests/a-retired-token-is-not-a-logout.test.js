@@ -17,8 +17,6 @@
  * source and evaluated with stubs, the call sites are asserted on the source.
  */
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { bgSource } from './bg-src.js'
 
 const SRC = bgSource()

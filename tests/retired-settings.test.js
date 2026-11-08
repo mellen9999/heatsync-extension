@@ -1,5 +1,4 @@
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { SETTINGS } from '../src/lib/settings-schema.js'
 import { RETIRED_UI_KEYS } from '../src/lib/utils.js'
 import { bgSource } from './bg-src.js'
@@ -9,7 +8,6 @@ import { mainSource } from './main-src.js'
 // from the server's ui_state, from chrome.storage.sync blobs written before
 // the update. They are never adopted from the server, and once this device
 // has migrated their values the stored blob drops them (8 KB sync quota).
-const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 const BG = bgSource()
 const MAIN = mainSource()
 
@@ -48,8 +46,5 @@ test('the stored blob drops them after the server has spoken, through the servic
   expect(seed.slice(0, 3500)).toMatch(/finally \{\s*retireSettings\(\)/)
   const fn = MAIN.slice(MAIN.indexOf('async function retireSettings('))
   expect(fn.slice(0, 2500)).toContain('dropRetired: true')
-  const at = BG.indexOf("message.type === 'ui_settings_rmw'")
-  expect(BG.slice(at, at + 1500)).toContain(
-    'if (message.dropRetired === true) for (const k of RETIRED_UI_KEYS) delete next[k]',
-  )
+  // the worker's side of dropRetired is executed in sw-settings.test.js
 })

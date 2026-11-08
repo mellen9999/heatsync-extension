@@ -1,4 +1,4 @@
-import { PLATFORMS, errors, fail, ok } from './lib'
+import { PLATFORMS, errors, fail, ok, retryUntil } from './lib'
 
 export async function youtubeDeleteCheck(ctx: any) {
   // ── a youtube deletion actually reaches the overlay ──────────────────────
@@ -16,7 +16,6 @@ export async function youtubeDeleteCheck(ctx: any) {
     yp.on('pageerror', (e: unknown) => errors.push(`yt-delete: ${String(e).slice(0, 300)}`))
     await yp.goto(PLATFORMS[0].url, { waitUntil: 'domcontentloaded' })
     await yp.waitForSelector('#hs-mc-messages', { timeout: 25_000 })
-    await yp.waitForTimeout(1200) // let the content script register its listener
 
     await yp.evaluate(() => {
       const msgs = document.getElementById('hs-mc-messages')
@@ -36,7 +35,8 @@ export async function youtubeDeleteCheck(ctx: any) {
     if (!id2) fail('could not resolve the extension id to drive a deletion')
     const ep2 = await ctx.newPage()
     await ep2.goto(`chrome-extension://${id2}/popup.html`, { waitUntil: 'load' })
-    const delivered = await ep2.evaluate(
+    const deliver = () =>
+      ep2.evaluate(
       () =>
         new Promise((res) => {
           try {
@@ -53,20 +53,23 @@ export async function youtubeDeleteCheck(ctx: any) {
           }
         }),
     )
+    // The content script registers its listener a beat after the overlay mounts, and a broadcast that
+    // arrives first is dropped without a word. A deletion is harmless to repeat, so deliver it again
+    // until the row clears instead of guessing how long registration takes.
+    let delivered = 'never sent'
+    const cleared = await retryUntil(
+      yp,
+      async () => {
+        delivered = (await deliver()) as string
+      },
+      () =>
+        yp.evaluate(() =>
+          !!document.querySelector('.hs-mc-msg[data-msg-id="YT_DOOMED"]')?.classList.contains('hs-mc-msg-cleared'),
+        ),
+      { every: 1500, ms: 12_000 },
+    )
     await ep2.close()
     if (delivered !== 'sent') fail(`could not deliver the deletion: ${delivered}`)
-
-    const cleared = await yp
-      .waitForFunction(
-        () => {
-          const doomed = document.querySelector('.hs-mc-msg[data-msg-id="YT_DOOMED"]')
-          return !!doomed?.classList.contains('hs-mc-msg-cleared')
-        },
-        null,
-        { timeout: 8000 },
-      )
-      .then(() => true)
-      .catch(() => false)
 
     const untouched = await yp.evaluate(
       () => !document.querySelector('.hs-mc-msg[data-msg-id="YT_SAFE"]')?.classList.contains('hs-mc-msg-cleared'),

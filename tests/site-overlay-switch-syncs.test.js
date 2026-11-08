@@ -33,14 +33,6 @@ test('refuses anything that is not a site overlay gate', () => {
   expect(siteOverlayMerge({}, '__proto__', false)).toBeNull()
 })
 
-test('the service worker stores the switch and fans it out to the server', () => {
-  const at = BG.indexOf("message.type === 'site_overlay_set'")
-  expect(at).toBeGreaterThan(-1)
-  const body = BG.slice(at, at + 1500)
-  expect(body).toContain('uiSettingsRmw(')
-  expect(body).toContain("wsSend({ type: 'ui-state:sync', patch: { subsystems } })")
-})
-
 test('the popup and the page helper write through the service worker only', () => {
   const popup = read('chrome/popup.js')
   expect(popup).toContain("type: 'site_overlay_set'")

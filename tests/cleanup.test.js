@@ -69,7 +69,7 @@ function setupCleanup({ document: documentStub } = {}) {
     return id
   })
   const clearIntervalSpy = spy((id) => intervalIds.delete(id))
-  const setTimeoutSpy = spy((fn, ms) => {
+  const setTimeoutSpy = spy((fn) => {
     const id = nextId++
     timeoutIds.set(id, fn)
     return id
@@ -82,9 +82,9 @@ function setupCleanup({ document: documentStub } = {}) {
   })
   const cancelAnimationFrameSpy = spy((id) => rafIds.delete(id))
 
-  // Lexical stubs captured by eval(CLEANUP_SRC). eslint-disable consts are
-  // "unused" only to a static linter — the eval'd code references them.
-  /* eslint-disable no-unused-vars */
+  // Lexical stubs captured by eval(CLEANUP_SRC). These consts are "unused" only to a static
+  // linter — the eval'd code references them.
+  // biome-ignore-start lint/correctness/noUnusedVariables: read by name from the eval'd module source
   const setInterval = setIntervalSpy
   const clearInterval = clearIntervalSpy
   const setTimeout = setTimeoutSpy
@@ -95,7 +95,7 @@ function setupCleanup({ document: documentStub } = {}) {
   const document = documentStub || { hidden: false }
   // fresh fake window each load → heatsyncCleanup guard never short-circuits
   const window = { __hsPerfTrace: false }
-  /* eslint-enable no-unused-vars */
+  // biome-ignore-end lint/correctness/noUnusedVariables: read by name from the eval'd module source
 
   // eslint-disable-next-line no-eval
   // biome-ignore lint/security/noGlobalEval: test harness evaluates the module source to assign window.heatsyncCleanup
@@ -272,10 +272,10 @@ describe('cleanup — setTimeout / clearTimeout', () => {
 })
 
 describe('cleanup — MutationObserver (trackObserver / untrackObserver)', () => {
-  let stubs, c
+  let c
 
   beforeEach(() => {
-    ;({ c, stubs } = setupCleanup())
+    ;({ c } = setupCleanup())
   })
 
   test('trackObserver returns the observer and does not call disconnect', () => {
@@ -342,10 +342,10 @@ describe('cleanup — MutationObserver (trackObserver / untrackObserver)', () =>
 })
 
 describe('cleanup — addEventListener (trackListener / untrackListener)', () => {
-  let stubs, c
+  let c
 
   beforeEach(() => {
-    ;({ c, stubs } = setupCleanup())
+    ;({ c } = setupCleanup())
   })
 
   test('trackListener calls target.addEventListener with the right args', () => {

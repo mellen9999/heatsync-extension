@@ -22,8 +22,6 @@
  * into one, or if the markers move.
  */
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { bgSource } from './bg-src.js'
 
 const SRC = bgSource()

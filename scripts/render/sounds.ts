@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { launchWithExtension } from '../lib/chromium'
 import { startMockIrc } from '../lib/mock-irc'
-import { PLATFORMS, closeContext, errors, fail, fixtureHtml, ok, until } from './lib'
+import { PLATFORMS, closeContext, errors, fail, fixtureHtml, observe, ok, until } from './lib'
 
 /**
  * Highlight-rule sounds: a rule's own audio file, in a real browser.
@@ -48,7 +48,7 @@ function wavBytes(seconds: number, hz: number) {
 
 const SOUND_SPY = `(() => {
   if (window.__hsSnd) return 'already'
-  const log = (window.__hsSnd = { src: [], osc: 0, gains: [] })
+  const log = (window.__hsSnd = { src: [], osc: 0, gains: [], suspends: 0 })
   const ps = AudioBufferSourceNode.prototype.start
   AudioBufferSourceNode.prototype.start = function (...a) {
     log.src.push(this.buffer ? this.buffer.duration : -1)
@@ -58,6 +58,11 @@ const SOUND_SPY = `(() => {
   OscillatorNode.prototype.start = function (...a) {
     log.osc++
     return po.apply(this, a)
+  }
+  const psus = AudioContext.prototype.suspend
+  AudioContext.prototype.suspend = function (...a) {
+    log.suspends++
+    return psus.apply(this, a)
   }
   const pg = AudioParam.prototype.setValueAtTime
   AudioParam.prototype.setValueAtTime = function (v, t) {
@@ -143,6 +148,7 @@ export async function soundCheck() {
       let src: number[] = []
       let osc = 0
       let gains: number[] = []
+      let suspends = 0
       for (const contextId of worlds) {
         const r = await cdp.send('Runtime.evaluate', { expression: 'JSON.stringify(window.__hsSnd || null)', contextId, returnByValue: true })
         const v = r.result?.value ? JSON.parse(r.result.value) : null
@@ -150,9 +156,10 @@ export async function soundCheck() {
           src = src.concat(v.src)
           osc += v.osc
           gains = gains.concat(v.gains)
+          suspends += v.suspends || 0
         }
       }
-      return { src, osc, gains }
+      return { src, osc, gains, suspends }
     }
     let msgN = 0
     const say = (text: string) =>
@@ -176,7 +183,10 @@ export async function soundCheck() {
 
     // ── the idle audio device is parked, then wakes for the next cue ────────
     const firstCue = (await spy()).src.length
-    await p.waitForTimeout(3500) // past the cue's tail + the idle-suspend grace
+    // the context parks itself once the cue's tail + the idle grace have passed: watch it happen
+    if (!(await until(p, async () => (await spy()).suspends >= 1, 12_000))) {
+      fail('the audio device never parked after the cue (AudioContext.suspend was not called)')
+    }
     say('seeded after parking')
     if (!(await until(p, async () => (await spy()).src.length > firstCue, 8000))) {
       fail('after the audio device idled, the next matching message started no sound')
@@ -185,16 +195,16 @@ export async function soundCheck() {
 
     // ── a raid is one cue ───────────────────────────────────────────────────
     const startsBefore = (await spy()).src.length
-    await p.waitForTimeout(1400)
+    await observe(p, 1400, 'the rule\'s cue throttle (SFX_THROTTLE_MS, 1.2s) has to pass before the raid starts')
     for (let i = 0; i < 30; i++) say(`seeded raid ${i}`)
     if (!(await shown('seeded raid 29'))) fail('the raid never finished rendering')
-    await p.waitForTimeout(600)
+    await observe(p, 600, 'a second cue from the raid would start here')
     const raided = (await spy()).src.length - startsBefore
     if (raided !== 1) fail(`30 matching messages started ${raided} sounds, expected exactly 1 (rate limit)`)
     ok('a raid of 30 matching messages is one cue, not thirty')
 
     // ── a file that is not on this device: the ping, not silence ────────────
-    await p.waitForTimeout(1400)
+    await observe(p, 1400, 'the cue throttle (1.2s) after the raid')
     const oscBefore = (await spy()).osc
     const srcBefore = (await spy()).src.length
     say('ghost rule fires')
@@ -212,7 +222,7 @@ export async function soundCheck() {
     // for a redraw-free stretch so the typed text is not wiped mid-test
     const formIsQuiet = async () => {
       await p.evaluate(() => document.querySelector('.hs-mc-fr-addform')?.setAttribute('data-probe', '1'))
-      await p.waitForTimeout(1500)
+      await observe(p, 1500, 'this IS the quiet-stretch detector: a redraw inside it drops the probe')
       return p.evaluate(() => document.querySelector('.hs-mc-fr-addform')?.getAttribute('data-probe') === '1')
     }
     if (!(await until(p, formIsQuiet, 12_000))) fail('the settings tab kept redrawing; the add-rule form never held still')
@@ -256,7 +266,7 @@ export async function soundCheck() {
     if (saved.recBytes < 1000 || saved.recName !== 'airhorn.wav') {
       fail(`the file did not land on this device: ${JSON.stringify({ bytes: saved.recBytes, name: saved.recName })}`)
     }
-    await p.waitForTimeout(1400)
+    await observe(p, 1400, 'the cue throttle (1.2s) after the ghost-rule ping')
     const uiBefore = (await spy()).src.length
     say('viaui matched')
     if (!(await until(p, async () => (await spy()).src.length > uiBefore, 8000))) {

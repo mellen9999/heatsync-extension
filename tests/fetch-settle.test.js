@@ -11,8 +11,6 @@
  * 1,600 BTTV 429s in 45s. Peak after: ~235MB, ~15 429s.
  */
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { bgSource } from './bg-src.js'
 
 const BG = bgSource()

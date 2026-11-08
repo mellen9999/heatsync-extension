@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { launchWithExtension } from '../lib/chromium'
-import { closeContext, errors, fail, fixtureHtml, ok, until } from './lib'
+import { closeContext, errors, fail, fixtureHtml, ok, stable, until } from './lib'
 
 /**
  * Kick mod tools: /kickmod -> panel -> background -> a kick.com tab -> web.kick.com.
@@ -90,7 +90,7 @@ export async function kickModCheck() {
     await p
       .waitForSelector('#hs-mc-input', { timeout: 25_000 })
       .catch(() => fail('the overlay composer never appeared on a kick channel page'))
-    await p.waitForTimeout(5000)
+    if (!(await stable(p, '#hs-mc-input', 1000))) fail('the composer never held still after mounting')
 
     await p.click('#hs-mc-input')
     await p.keyboard.type('/kickmod')
@@ -98,8 +98,7 @@ export async function kickModCheck() {
     // name); press until the composer has taken the command
     for (let i = 0; i < 3; i++) {
       await p.keyboard.press('Enter')
-      await p.waitForTimeout(800)
-      if (!(await p.evaluate(() => document.getElementById('hs-mc-input')?.textContent))) break
+      if (await until(p, async () => !(await p.evaluate(() => document.getElementById('hs-mc-input')?.textContent)), 1200)) break
     }
     await p
       .waitForSelector('.hs-ms-row .hs-ms-text', { timeout: 15_000 })

@@ -10,8 +10,6 @@
  * Source-level guard: these paths live in the non-module content bundle.
  */
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { mainSource } from './main-src.js'
 
 const MAIN = mainSource()

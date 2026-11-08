@@ -3,7 +3,6 @@
  * from src/multichat/main.js so the test fails loudly if the logic moves.
  */
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { mcMergeLegs } from '../src/multichat/seed-legs.js'
 import { mainSource } from './main-src.js'
 

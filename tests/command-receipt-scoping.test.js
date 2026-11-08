@@ -13,8 +13,6 @@
  * with stubbed globals, same technique as tests/whisper-own-send-echo.test.js.
  */
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { mainSource } from './main-src.js'
 
 const SRC = mainSource()

@@ -30,7 +30,7 @@ const callGuard = (needle) => {
 
 describe('platform transports respect their platform gate', () => {
   test('the kick page tap is gated on kick', () => {
-    expect(callGuard('initKickNativeTap === ')).toContain('gKick')
+    expect(callGuard('initKickNativeTap()')).toContain('gKick')
   })
 
   test('the twitch native tap is gated on twitch', () => {

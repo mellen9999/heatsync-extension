@@ -1,6 +1,4 @@
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { bgSource } from './bg-src.js'
 
 // Extracts the SHIPPED `bgIrcDupModNotice` from chrome/background.js by name and

@@ -1,6 +1,4 @@
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import ts from 'typescript'
 import { bgSource } from './bg-src.js'
 

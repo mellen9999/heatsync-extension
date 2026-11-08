@@ -9,7 +9,7 @@
  * <video> and an in-memory storage, including the race that makes this hard:
  * the page restores its OWN volume after the player mounts.
  */
-import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
+import { afterEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 

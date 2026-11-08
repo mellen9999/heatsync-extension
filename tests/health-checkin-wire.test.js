@@ -15,7 +15,6 @@
  */
 
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { bgSource } from './bg-src.js'
 
 const BG_SRC = bgSource()

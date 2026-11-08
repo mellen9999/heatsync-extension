@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { mcHealEntries, mcMergeLegs, mcSeedAdoptLegs } from '../src/multichat/seed-legs.js'
 import { mainSource } from './main-src.js'
 

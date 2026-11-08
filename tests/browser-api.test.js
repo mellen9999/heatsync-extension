@@ -21,21 +21,38 @@
  */
 
 import { describe, expect, test } from 'bun:test'
-import api, {
+
+// bun runs every test file in one process, and which file runs first is the directory's order. A
+// `chrome` / `browser` another file left on globalThis is still there when this module evaluates,
+// and it binds its api at load, so one leaked stub rewired every test below (and the stubs that
+// hand back promises made them hang). A query string gives this file its own instance: load that
+// one behind clean globals, then put back whatever was there.
+const _leaked = {}
+for (const k of ['chrome', 'browser']) {
+  if (k in globalThis) {
+    _leaked[k] = globalThis[k]
+    delete globalThis[k]
+  }
+}
+const mod = await import('../src/lib/browser-api.js?clean-globals')
+Object.assign(globalThis, _leaked)
+
+const api = mod.default
+const {
   bidiDir,
   getI18nLocale,
   hydrateI18n,
   I18N_LOCALE_NAMES,
   initI18n,
   isContextValid,
-  api as namedApi,
+  api: namedApi,
   platform,
   runtime,
   setI18nLocale,
   storage,
   t,
   tabs,
-} from '../src/lib/browser-api.js'
+} = mod
 
 // ── export shape ─────────────────────────────────────────────────────────────
 
@@ -109,15 +126,12 @@ describe('browser-api: platform', () => {
 // ── null-API graceful fallbacks ───────────────────────────────────────────────
 
 describe('browser-api: null-API graceful handling (Bun env = no chrome/browser)', () => {
-  // Fail LOUD if another test file left a chrome global behind. browser-api
-  // binds rawApi at import time, so a leaked stub silently rewires every test
-  // below — and if that stub returns promises instead of calling chrome's
-  // callback, they don't fail, they HANG (bun then never exits, and the
-  // release workflow burns its 6h cap producing nothing). One assertion turns
-  // that into an instant, readable failure.
-  test('no test file has leaked a chrome/browser global into this one', () => {
-    expect(typeof globalThis.chrome).toBe('undefined')
-    expect(typeof globalThis.browser).toBe('undefined')
+  // The module under test was loaded behind clean globals (see the top of the file), so a stub another
+  // file leaked cannot rewire it — that used to HANG these tests (bun then never exits, and the release
+  // workflow burned its 6h cap producing nothing). This says so out loud: no api was bound.
+  test('the module bound no chrome/browser api, whatever ran before this file', () => {
+    expect(isContextValid()).toBe(false)
+    expect(Object.keys(_leaked).every((k) => globalThis[k] === _leaked[k])).toBe(true)
   })
 
   test('isContextValid returns false', () => {

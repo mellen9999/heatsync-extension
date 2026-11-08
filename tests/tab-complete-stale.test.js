@@ -108,7 +108,7 @@ describe('completionWantsOverlay — the match flag beats the name lookup', () =
   })
 
   test('same NAME, different asset (collision) → NOT stacked even with recovery wired', () => {
-    const fn = makeOverlayFn((name, url) => url === 'https://cdn.7tv.app/emote/AB/1x.avif')
+    const fn = makeOverlayFn((_name, url) => url === 'https://cdn.7tv.app/emote/AB/1x.avif')
     expect(
       fn({ name: 'microwave', url: 'https://cdn.7tv.app/emote/ZZ/1x.avif', zeroWidth: false }, { isOverlay: true }),
     ).toBe(false)

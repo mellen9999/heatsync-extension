@@ -16,8 +16,6 @@
 // These pins keep the render paths routed through that chokepoint.
 
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { bgSource } from './bg-src.js'
 import { mainSource } from './main-src.js'
 

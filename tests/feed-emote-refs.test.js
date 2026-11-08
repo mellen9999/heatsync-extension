@@ -45,7 +45,7 @@ function harness({ picks = [], known = {} } = {}) {
     feedMessages: [],
     recentRemoteCompletions,
     lookupEmoteRenderOrder: (n) => known[n],
-    apiFetch: async (path, opts) => {
+    apiFetch: async (_path, opts) => {
       calls.push(opts.body)
       return { ok: true, data: {} }
     },

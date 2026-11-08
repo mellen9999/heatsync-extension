@@ -9,19 +9,25 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# read-only by default; a job that needs more says so itself
+permissions:
+  contents: read
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    env:
-      # The paint-compiler parity gate needs the site repo checked out beside
-      # this one. It is private until the flip, so this runner cannot have it;
-      # the gate refuses to skip quietly anywhere this is not set.
-      HS_PARITY_SKIP_OK: "1"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - uses: oven-sh/setup-bun@v2
+      # The contract tests (ws-contract, paint-compiler-parity, site-copy-parity)
+      # read the private site repo, which has to sit beside this checkout. They
+      # no longer skip anywhere: no key, no run, and the step says how to add it.
+      - uses: ./.github/actions/site
+        with:
+          ssh-key: ${{ secrets.SITE_DEPLOY_KEY }}
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.4
 
@@ -54,6 +60,12 @@ jobs:
 
       - name: lint
         run: bunx @biomejs/biome check src/ chrome/ tests/ build.js
+
+      # tests/ is held to zero warnings (src/ still carries some, so the line
+      # above stays warn-tolerant). A warning in a test is a dead import or an
+      # unused fixture: noise that hides the next real finding.
+      - name: lint tests (no warnings)
+        run: bunx @biomejs/biome check tests/ --error-on-warnings
 
       - name: typecheck
         run: bun run typecheck
@@ -90,10 +102,42 @@ jobs:
       - name: render (overlay geometry + behaviour in a real browser)
         run: bun scripts/render-extension.ts
 
+  # Dependencies with a known high/critical advisory, and secrets in the commits
+  # a push brings. The nightly runs the same two over the whole history.
+  supply-chain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read # gitleaks lists a pull request's commits
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0 # gitleaks walks commits; a shallow clone hides the ones it needs
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+
+      - name: install dependencies
+        run: bun install --frozen-lockfile
+
+      # exits non-zero on any advisory at or above the level; lower ones are
+      # listed by the nightly and left for a human
+      - name: bun audit (high and critical fail)
+        run: bun audit --audit-level=high
+
+      # config: .gitleaks.toml (public values and fixtures are allowlisted there,
+      # each with the reason). on a push it scans the pushed commits only.
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   notify-failure:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: build-and-test
+    needs: [build-and-test, supply-chain]
     # A PR check is attended work — its author is looking at the red tick — so
     # the only run worth ringing a phone about is a merge that broke main.
     #

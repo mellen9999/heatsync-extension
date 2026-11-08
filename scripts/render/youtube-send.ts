@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { launchWithExtension } from '../lib/chromium'
-import { closeContext, errors, fail, fixtureHtml, ok, until } from './lib'
+import { closeContext, errors, fail, fixtureHtml, observe, ok, stable, until } from './lib'
 
 /**
  * Youtube send: overlay composer -> background -> a /live_chat tab, which types
@@ -59,7 +59,8 @@ export async function youtubeSendCheck() {
     await p
       .waitForSelector('#hs-mc-input', { timeout: 25_000 })
       .catch(() => fail('the overlay composer never appeared on a youtube live_chat page'))
-    await p.waitForTimeout(4000)
+    // the overlay has mounted and stopped laying itself out: the click below lands on a still box
+    if (!(await stable(p, '#hs-mc-input', 1000))) fail('the composer never held still after mounting')
 
     // A real click, not $eval — a composer playwright can't hit is the product
     // bug (something covering it, zero-size, hidden). The one recorded flake
@@ -100,7 +101,7 @@ export async function youtubeSendCheck() {
     await p.keyboard.press('Enter')
     await until(p, async () => (await p.evaluate(() => (window as any).__ytClicks || 0)) > 0)
     // A beat past the first click, so a SECOND one would be caught too.
-    await p.waitForTimeout(1500)
+    await observe(p, 1500, 'a second click would be a double post')
 
     const state: { clicks: number, items: string[] } = await p.evaluate(() => ({
       clicks: (window as any).__ytClicks || 0,

@@ -1,5 +1,4 @@
 import { expect, test } from 'bun:test'
-import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { computeBuildStamp } from '../scripts/lib/build-stamp.mjs'
@@ -88,10 +87,8 @@ function extractEscapeFn() {
 test('escapeCssForTemplateLiteral round-trips backtick + dollar-brace + backslash through a real template literal', () => {
   const escapeCssForTemplateLiteral = extractEscapeFn()
   const original = [
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: a literal CSS comment, not JS interpolation — that's the point of the test
     '/* a comment with a `backtick` and a ${trap} */',
     '.hs-card-x::after { content: "\\2014"; }',
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: a literal CSS attribute selector, not JS interpolation — that's the point of the test
     'a[data-x="${not-js}"] { color: red; }',
   ].join('\n')
 

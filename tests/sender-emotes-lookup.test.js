@@ -9,8 +9,6 @@
  * BTTV and the site all render as text. The site's sender path never did it.
  */
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { bgSource } from './bg-src.js'
 
 const BG = bgSource()

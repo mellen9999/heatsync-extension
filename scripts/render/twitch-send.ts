@@ -200,7 +200,10 @@ export async function twitchIrcCheck({ dim, full }: { dim: boolean, full: boolea
     }
 
     push('@ban-duration=600;target-user-id=42 :tmi.twitch.tv CLEARCHAT #probechan :victim\r\n')
-    await p.waitForTimeout(1500)
+    // the notice is the last thing the mod action renders, in both dim modes
+    await until(p, async () =>
+      /timed out/i.test(await p.evaluate(() => document.getElementById('hs-mc-messages')?.textContent || '')),
+    )
     // A live channel re-renders constantly; one more message stands in for that.
     push(
       '@display-name=third;color=#00FFFF;user-id=44;id=m3 ' +

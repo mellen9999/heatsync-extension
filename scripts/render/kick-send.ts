@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { launchWithExtension } from '../lib/chromium'
-import { closeContext, errors, fail, fixtureHtml, ok, until } from './lib'
+import { closeContext, errors, fail, fixtureHtml, ok, retryUntil, stable } from './lib'
 
 /**
  * Kick send: overlay composer -> background -> a kick.com tab -> POST.
@@ -73,12 +73,23 @@ export async function kickSendCheck() {
     await p
       .waitForSelector('#hs-mc-input', { timeout: 25_000 })
       .catch(() => fail('the overlay composer never appeared on a kick channel page'))
-    await p.waitForTimeout(5000)
+    if (!(await stable(p, '#hs-mc-input', 1000))) fail('the composer never held still after mounting')
 
-    await p.click('#hs-mc-input')
-    await p.keyboard.type('hello from the harness')
-    await p.keyboard.press('Enter')
-    await until(p, () => posts.length > 0)
+    // The background may not have registered this tab yet, and a send before that is dropped without a
+    // word. Type it again (the box is cleared first, so the body stays exactly one message) until the
+    // POST shows up, instead of guessing how long boot takes.
+    await retryUntil(
+      p,
+      async () => {
+        await p.click('#hs-mc-input')
+        await p.keyboard.press('Control+A')
+        await p.keyboard.press('Backspace')
+        await p.keyboard.type('hello from the harness')
+        await p.keyboard.press('Enter')
+      },
+      () => posts.length > 0,
+      { every: 3000 },
+    )
 
     if (!posts.length) {
       fail(

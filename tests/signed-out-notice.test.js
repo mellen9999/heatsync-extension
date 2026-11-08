@@ -5,7 +5,6 @@
  * (same marker pattern as background-helpers.test.js) and run against stubs.
  */
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { bgSource } from './bg-src.js'
 
 const SRC = bgSource()
@@ -18,7 +17,7 @@ function mk({ local = {}, session = {}, inventory = [], tabs = [{ id: 1 }] } = {
   const sent = []
   const browser = {
     tabs: {
-      sendMessage: async (id, m) => {
+      sendMessage: async (_id, m) => {
         if (!env.tabs.length) throw new Error('no receiver')
         sent.push(m)
       },

@@ -264,7 +264,7 @@ ${extractFn(SRC, 'shouldProcessAutomodHold')}
 ${extractFn(SRC, 'injectPendingAutomodHolds')}
 return injectPendingAutomodHolds`,
     )(
-      (login, msgId) => (onScreen.includes(msgId) ? { msgId } : null),
+      (_login, msgId) => (onScreen.includes(msgId) ? { msgId } : null),
       (row) => inserted.push(row),
       seen,
       { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, String(v)) },

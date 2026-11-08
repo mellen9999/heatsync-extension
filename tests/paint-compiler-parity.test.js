@@ -17,15 +17,12 @@
  * compiler on either side goes red until the other is synced.
  */
 import { describe, expect, test } from 'bun:test'
-import { existsSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
+import { siteDir } from './site-dir.js'
 
 const HERE = resolve(import.meta.dir, '..')
-const SITE =
-  process.env.HS_SITE_DIR ||
-  [resolve(HERE, '..', 'heatsync'), resolve(HERE, '..', '..', 'heatsync'), '/home/mellen/projects/heatsync'].find((p) =>
-    existsSync(join(p, 'client', 'utils', 'paint-spec.js')),
-  )
+const SITE = siteDir('client/utils/paint-spec.js')
 
 // Site-relative paths, not bare names — animation-phase.js is the paint
 // RUNTIME and lives in client/cosmetics, not beside the compiler.

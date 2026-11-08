@@ -38,8 +38,7 @@ function ownButtons() {
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/@media[^{]*\{/g, '') // unwrap one level; the stray `}` parses as an empty rule
     const re = /([^{}]+)\{([^{}]*)\}/g
-    let m
-    while ((m = re.exec(css))) {
+    for (const m of css.matchAll(re)) {
       const selector = m[1].trim().split('\n').pop().trim()
       const body = m[2]
       if (selector.includes('[')) continue // native host-page button

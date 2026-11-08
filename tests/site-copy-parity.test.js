@@ -27,15 +27,12 @@
  * either side goes red until the other is synced.
  */
 import { describe, expect, test } from 'bun:test'
-import { existsSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
+import { SITE_MISSING, siteDir, siteRequired } from './site-dir.js'
 
 const HERE = resolve(import.meta.dir, '..')
-const SITE =
-  process.env.HS_SITE_DIR ||
-  [resolve(HERE, '..', 'heatsync'), resolve(HERE, '..', '..', 'heatsync'), '/home/mellen/projects/heatsync'].find((p) =>
-    existsSync(join(p, 'client', 'utils', 'gif-search-remote.js')),
-  )
+const SITE = siteDir('client/utils/gif-search-remote.js')
 
 // [site-relative path, our-relative path] — most pairs are src/lib/<basename>
 // of the site path, but card.css lands as a renamed styles/ fragment instead.
@@ -54,6 +51,7 @@ const FILES = [
 
 describe('site-copy parity', () => {
   if (!SITE) {
+    if (siteRequired()) throw new Error(SITE_MISSING)
     test.skip('site repo not present — parity cannot be checked here', () => {})
     return
   }

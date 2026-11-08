@@ -119,7 +119,13 @@ describe('blocklist keys', () => {
 describe('prototype pollution keys', () => {
   test('__proto__ key is stripped', () => {
     const input = Object.create(null)
-    input.__proto__ = { injected: true }
+    // an OWN key named __proto__ (a JSON.parse payload makes exactly this), not an assignment to the prototype
+    Object.defineProperty(input, '__proto__', {
+      value: { injected: true },
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    })
     input.zebra = true
     const out = sanitizeUiSettings(input)
     // use Object.keys — toHaveProperty traverses the prototype chain

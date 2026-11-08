@@ -362,7 +362,6 @@ describe('paint lookup id-space guard — structural invariant', () => {
     // The raw numeric kick id must never reach queuePaintLookup on its own —
     // only wrapped in the kick_ namespace template literal.
     expect(fnBody).not.toMatch(/queuePaintLookup\(c\.kickId\)/)
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: asserting literal source text (the kick_ template literal), not writing a real template string
     expect(fnBody).toContain('`kick_${c.kickId}`')
   })
 })
@@ -627,7 +626,10 @@ describe('a compiled paint can select the markup the extension emits', () => {
 describe('--hs-name-c — a painted name keeps the colour it would have worn, for an underlay', () => {
   test('hsNameColourDecl lifts a colour under the underlay floor (3:1 against the chat background) and keeps a readable one as written', () => {
     const lum = (hex) => {
-      const lin = (v) => ((v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+      const lin = (v) => {
+        const s = v / 255
+        return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4
+      }
       const n = parseInt(hex.slice(1), 16)
       return 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255)
     }

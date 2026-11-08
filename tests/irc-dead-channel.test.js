@@ -5,8 +5,6 @@
  * every ~140s forever (a youtube-only creator whose twitch was banned).
  */
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { bgSource } from './bg-src.js'
 
 const SRC = bgSource()

@@ -35,18 +35,7 @@ function fakeTextNode(text) {
   return {
     nodeType: 3, // Node.TEXT_NODE
     textContent: text,
-    cloneNode: (deep) => fakeTextNode(text),
-  }
-}
-
-/** A fake element node. */
-function fakeElementNode(tag = 'SPAN', html = '<span></span>') {
-  return {
-    nodeType: 1, // Node.ELEMENT_NODE
-    tagName: tag,
-    outerHTML: html,
-    cloneNode: (deep) => fakeElementNode(tag, html),
-    querySelectorAll: () => [],
+    cloneNode: () => fakeTextNode(text),
   }
 }
 

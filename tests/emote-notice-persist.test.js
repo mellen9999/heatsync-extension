@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
 import { mainSource } from './main-src.js'
 
 // 7TV emote add/remove notices must outlive reloads: a week of storage, a

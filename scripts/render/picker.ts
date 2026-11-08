@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { launchWithExtension } from '../lib/chromium'
-import { closeContext, errors, fail, fixtureHtml, ok } from './lib'
+import { closeContext, errors, fail, fixtureHtml, ok, until } from './lib'
 
 /**
  * The picker, end to end, with no message driven by hand: mount the button on a
@@ -101,7 +101,9 @@ export async function pickerClickCheck() {
       await p
         .waitForSelector('#heatsync-panel', { timeout: 10_000 })
         .catch(() => fail(`${plat.name}: the picker panel never opened`))
-      await p.waitForTimeout(1000)
+      await p
+        .waitForSelector('#heatsync-panel .heatsync-tab[data-tab="emoji"]', { timeout: 10_000 })
+        .catch(() => fail(`${plat.name}: the picker opened with no emoji tab`))
 
       // A DOM click, not a mouse click, for the tab switch only. heatsync.org is
       // blocked here so the channel/global/mine tabs keep failing and re-rendering
@@ -116,7 +118,7 @@ export async function pickerClickCheck() {
         })
         .catch(() => false)
       if (!switched) fail(`${plat.name}: the picker has no emoji tab to switch to`)
-      await p.waitForTimeout(1500)
+      await p.waitForSelector('#heatsync-panel .heatsync-emote-wrap', { timeout: 10_000 }).catch(() => {})
 
       // Dispatched, not hit-tested. heatsync.org is blocked here, so the
       // channel/global/mine tabs sit in an error state whose retry re-renders
@@ -135,7 +137,7 @@ export async function pickerClickCheck() {
         })
         .catch(() => false)
       if (!clicked) fail(`${plat.name}: the first emote tile vanished before it could be clicked`)
-      await p.waitForTimeout(1500)
+      await until(p, async () => !!(await readInput()).trim(), 8000)
 
       const after = await readInput()
       if (!after.trim()) {

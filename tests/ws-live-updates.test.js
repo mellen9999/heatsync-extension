@@ -59,12 +59,7 @@ describe('settings:delete', () => {
       expect(bg.settingsDeleteKey(bad)).toBe('')
     }
   })
-  test('proto keys fall out in the sanitizer that runs after the delete', () => {
-    expect(BG).toMatch(/delete next\[key\]\s*\n\s*return sanitizeUiSettings\(next\)/)
-  })
-  test('wired through the same uiSettingsRmw as settings:patch', () => {
-    expect(BG).toMatch(/case 'settings:delete': \{[\s\S]*uiSettingsRmw\(\(ui\) => \{[\s\S]*delete next\[key\]/)
-  })
+  // what a delete frame does to storage is executed in sw-settings.test.js
 })
 
 describe('notification counts', () => {

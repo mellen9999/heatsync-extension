@@ -3,8 +3,6 @@
 // "went live" row linked to twitch.tv, the hover card looked the name up as a
 // twitch login (no user, no avatar), and the tab it opened enabled twitch only.
 import { describe, expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { hsLiveChannelEntry, streamEventPlatform, streamEventUrl } from '../src/lib/utils.js'
 import { mainSource } from './main-src.js'
 

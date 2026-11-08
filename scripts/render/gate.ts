@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { launchWithExtension } from '../lib/chromium'
-import { PLATFORMS, closeContext, errors, fail, fixtureHtml, ok } from './lib'
+import { PLATFORMS, closeContext, errors, fail, fixtureHtml, observe, ok, until } from './lib'
 
 /**
  * Seed a subsystem map, boot a twitch page, and report what the overlay asked
@@ -54,7 +54,26 @@ async function gatePolarity(subsystems: Record<string, boolean>) {
     await p.goto('https://www.twitch.tv/gatechan', { waitUntil: 'domcontentloaded' })
     const twitchOn = subsystems['overlay-twitch'] !== false
     if (twitchOn) await p.waitForSelector('#hs-mc-messages', { timeout: 25_000 })
-    await p.waitForTimeout(4500)
+    // ON: boot is over once the wire has said its piece and stopped. OFF: nothing is supposed to be
+    // said at all, so there is nothing to wait for, only a window to listen in.
+    if (twitchOn) {
+      let last = -1
+      let quietSince = Date.now()
+      await until(
+        p,
+        async () => {
+          const n: number = await sw.evaluate(() => (globalThis as any).__gateSeen.length)
+          if (n !== last) {
+            last = n
+            quietSince = Date.now()
+          }
+          return n > 0 && Date.now() - quietSince >= 1500
+        },
+        20_000,
+      )
+    } else {
+      await observe(p, 4500, 'a switched-off site must ask the background for nothing')
+    }
     const mounted = await p.evaluate(() => !!document.getElementById('hs-mc-overlay'))
 
     const seen: string[] = await sw.evaluate(() => (globalThis as any).__gateSeen)
@@ -92,8 +111,15 @@ async function gatePolarity(subsystems: Record<string, boolean>) {
     )
     await drv.close()
     if (delivered !== 'sent') throw new Error(`could not drive the gate check: ${delivered}`)
-    // Youtube rows drip through a pace queue; give it room.
-    await p.waitForTimeout(9000)
+    // Youtube rows drip through a pace queue: wait for all three probes to land.
+    await until(
+      p,
+      async () => {
+        const t: string = await p.evaluate(() => document.getElementById('hs-mc-messages')?.textContent || '')
+        return ['GATEPROBE_TWITCH', 'GATEPROBE_KICK', 'GATEPROBE_YT'].every((s) => t.includes(s))
+      },
+      15_000,
+    )
 
     const texts: string[] = await p.evaluate(() =>
       [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].map((r) => (r.textContent || '').trim()),

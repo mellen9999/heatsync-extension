@@ -92,6 +92,62 @@ export async function until(p: any, check: () => boolean | Promise<boolean>, ms 
 }
 
 /**
+ * Wait until `sel` is on the page and has held the same box for `quietMs`: the
+ * overlay finished mounting and nothing is still re-laying it out. This is what
+ * a fixed "let it boot" sleep was standing in for. Returns false on timeout.
+ */
+export async function stable(p: any, sel: string, quietMs = 600, ms = 20_000) {
+  return p
+    .waitForFunction(
+      ({ sel, quietMs }: { sel: string; quietMs: number }) => {
+        const el = document.querySelector(sel)
+        const r = el?.getBoundingClientRect()
+        if (!r || !r.width || !r.height) return false
+        const key = [r.x, r.y, r.width, r.height].map(Math.round).join(',')
+        const w = window as any
+        if (w.__hsStill?.sel !== sel || w.__hsStill.key !== key) {
+          w.__hsStill = { sel, key, since: performance.now() }
+          return false
+        }
+        return performance.now() - w.__hsStill.since >= quietMs
+      },
+      { sel, quietMs },
+      { timeout: ms, polling: 100 },
+    )
+    .then(() => true)
+    .catch(() => false)
+}
+
+/**
+ * Do `act` (it must be safe to repeat) until `done()` holds. For a first action
+ * the page may not be listening for yet: a content script that has not
+ * registered its handler drops the message without a word, and a fixed sleep
+ * only guessed how long that takes. Each try gets `every` ms to take effect.
+ */
+export async function retryUntil(
+  p: any,
+  act: () => Promise<unknown>,
+  done: () => boolean | Promise<boolean>,
+  { every = 1000, ms = 20_000 }: { every?: number; ms?: number } = {},
+) {
+  for (let waited = 0; waited < ms; waited += every) {
+    await act()
+    if (await until(p, done, every)) return true
+  }
+  return false
+}
+
+/**
+ * A window in which something must NOT happen (a second click, a stray cue, a
+ * list that should have stayed gone). There is no condition to wait for when
+ * the expected outcome is nothing, so these stay as bounded, named waits.
+ */
+export async function observe(p: any, ms: number, why: string) {
+  void why // read by the person who is about to shorten it
+  await p.waitForTimeout(ms)
+}
+
+/**
  * Closing a persistent context that still holds a websocket to a local mock can
  * hang forever, and a harness that hangs is worse than one that fails: there is
  * nothing to read. Bounded, and it says so when it gives up.

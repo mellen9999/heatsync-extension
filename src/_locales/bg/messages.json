@@ -7108,5 +7108,209 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "името на емотето не може да е празно или да има интервали"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "действия"
+  },
+  "mc_ctx_menu_for": {
+    "message": "действия за $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k движение · enter действия · r отговори · esc излез",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "няма какво да се прави на този ред"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "на този ред не може да се отговори"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- РЕДОВЕ --"
+  },
+  "lib_sec_accessibility": {
+    "message": "достъпност"
+  },
+  "mc_settings_sr_announce": {
+    "message": "екранният четец чете"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "какво чете на глас екранният четец, докато идва чатът. при само споменавания мълчи, докато някой не те спомене"
+  },
+  "lib_opt_sr_all": {
+    "message": "всички съобщения"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "само споменавания"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ те спомена: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "споменавания"
+  },
+  "mc_set_h_chat": {
+    "message": "чат"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "към този таб"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "предишен / следващ таб"
+  },
+  "mc_set_h_rows": {
+    "message": "режим по редове"
+  },
+  "mc_set_h_row_menu": {
+    "message": "меню с действия"
+  },
+  "mc_set_h_row_reply": {
+    "message": "отговори"
+  },
+  "mc_set_h_row_leave": {
+    "message": "излез"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    режим по редове"
+  },
+  "mc_ctx_move_left": {
+    "message": "премести наляво"
+  },
+  "mc_ctx_move_right": {
+    "message": "премести надясно"
+  },
+  "mc_ctx_move_up": {
+    "message": "премести нагоре"
+  },
+  "mc_ctx_move_down": {
+    "message": "премести надолу"
+  },
+  "mc_modlog_ban": {
+    "message": "$TARGET$ беше баннат",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "$TARGET$ получи timeout",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "$TARGET$ получи timeout ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "$TARGET$ беше unban-нат",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "timeout-ът на $TARGET$ беше махнат",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "съобщение на $TARGET$ беше изтрито",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "съобщение беше изтрито"
+  },
+  "mc_modlog_someone": {
+    "message": "някой"
+  },
+  "mc_modlog_by": {
+    "message": "от $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$с",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$м",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$ч",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$д",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "баннеш ли $USER$ в #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

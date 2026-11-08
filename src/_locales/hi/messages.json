@@ -7108,5 +7108,209 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "इमोट का नाम खाली नहीं हो सकता और उसमें खाली जगह नहीं होनी चाहिए"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "एक्शन"
+  },
+  "mc_ctx_menu_for": {
+    "message": "$NAME$ के लिए एक्शन",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k हिलाओ · enter एक्शन · r जवाब · esc बाहर",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "इस लाइन पर करने को कुछ नहीं"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "इस लाइन का जवाब नहीं दे सकते"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- लाइनें --"
+  },
+  "lib_sec_accessibility": {
+    "message": "एक्सेसिबिलिटी"
+  },
+  "mc_settings_sr_announce": {
+    "message": "स्क्रीन रीडर पढ़ता है"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "चैट आने पर स्क्रीन रीडर क्या ज़ोर से पढ़े। सिर्फ़ मेंशन चुनने पर वह तब तक चुप रहता है जब तक कोई तुम्हें मेंशन न करे"
+  },
+  "lib_opt_sr_all": {
+    "message": "सारे मैसेज"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "सिर्फ़ मेंशन"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ ने तुम्हें मेंशन किया: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "मेंशन"
+  },
+  "mc_set_h_chat": {
+    "message": "चैट"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "उस टैब पर जाओ"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "पिछला / अगला टैब"
+  },
+  "mc_set_h_rows": {
+    "message": "लाइन मोड"
+  },
+  "mc_set_h_row_menu": {
+    "message": "एक्शन मेनू"
+  },
+  "mc_set_h_row_reply": {
+    "message": "जवाब"
+  },
+  "mc_set_h_row_leave": {
+    "message": "बाहर"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    लाइन मोड"
+  },
+  "mc_ctx_move_left": {
+    "message": "बाएँ हिलाओ"
+  },
+  "mc_ctx_move_right": {
+    "message": "दाएँ हिलाओ"
+  },
+  "mc_ctx_move_up": {
+    "message": "ऊपर हिलाओ"
+  },
+  "mc_ctx_move_down": {
+    "message": "नीचे हिलाओ"
+  },
+  "mc_modlog_ban": {
+    "message": "$TARGET$ को ban किया गया",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "$TARGET$ को timeout दिया गया",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "$TARGET$ को timeout दिया गया ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "$TARGET$ का ban हटा",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "$TARGET$ का timeout हटा",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "$TARGET$ का एक मैसेज हटाया गया",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "एक मैसेज हटाया गया"
+  },
+  "mc_modlog_someone": {
+    "message": "कोई"
+  },
+  "mc_modlog_by": {
+    "message": "$NAME$ द्वारा",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$ सेक",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$ मिन",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$ घंटे",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$ दिन",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "#$CHANNEL$ में $USER$ को ban करना है?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

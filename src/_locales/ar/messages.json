@@ -7108,5 +7108,209 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "لا يمكن أن يكون اسم الإيموت فارغًا أو يحتوي على مسافات"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "إجراءات"
+  },
+  "mc_ctx_menu_for": {
+    "message": "إجراءات $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k تحريك · enter إجراءات · r رد · esc خروج",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "لا يوجد ما يمكن فعله في هذا السطر"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "لا يمكن الرد على هذا السطر"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- السطور --"
+  },
+  "lib_sec_accessibility": {
+    "message": "إمكانية الوصول"
+  },
+  "mc_settings_sr_announce": {
+    "message": "قارئ الشاشة يقرأ"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "ما يقرؤه قارئ الشاشة بصوت عالٍ مع وصول الدردشة. الإشارات فقط يبقى صامتًا حتى يشير إليك أحد"
+  },
+  "lib_opt_sr_all": {
+    "message": "كل الرسائل"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "الإشارات فقط"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ أشار إليك: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "الإشارات"
+  },
+  "mc_set_h_chat": {
+    "message": "الدردشة"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "اذهب إلى ذلك التبويب"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "التبويب السابق / التالي"
+  },
+  "mc_set_h_rows": {
+    "message": "وضع السطور"
+  },
+  "mc_set_h_row_menu": {
+    "message": "قائمة الإجراءات"
+  },
+  "mc_set_h_row_reply": {
+    "message": "رد"
+  },
+  "mc_set_h_row_leave": {
+    "message": "خروج"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    وضع السطور"
+  },
+  "mc_ctx_move_left": {
+    "message": "تحريك لليسار"
+  },
+  "mc_ctx_move_right": {
+    "message": "تحريك لليمين"
+  },
+  "mc_ctx_move_up": {
+    "message": "تحريك لأعلى"
+  },
+  "mc_ctx_move_down": {
+    "message": "تحريك لأسفل"
+  },
+  "mc_modlog_ban": {
+    "message": "تم حظر $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "تم عمل timeout على $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "تم عمل timeout على $TARGET$ ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "رُفع الحظر عن $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "رُفع الـ timeout عن $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "حُذفت رسالة من $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "حُذفت رسالة"
+  },
+  "mc_modlog_someone": {
+    "message": "شخص ما"
+  },
+  "mc_modlog_by": {
+    "message": "بواسطة $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$ث",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$د",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$س",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$ي",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "حظر $USER$ في #$CHANNEL$؟",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

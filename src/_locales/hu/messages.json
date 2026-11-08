@@ -7108,5 +7108,209 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "az emote neve nem lehet üres, és nem lehet benne szóköz"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "műveletek"
+  },
+  "mc_ctx_menu_for": {
+    "message": "műveletek: $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k mozgás · enter műveletek · r válasz · esc kilépés",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "ezen a soron nincs mit tenni"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "erre a sorra nem lehet válaszolni"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- SOROK --"
+  },
+  "lib_sec_accessibility": {
+    "message": "kisegítő lehetőségek"
+  },
+  "mc_settings_sr_announce": {
+    "message": "a képernyőolvasó felolvassa"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "mit olvas fel hangosan a képernyőolvasó, amikor jön a chat. a csak említések mód néma marad, amíg valaki meg nem említ"
+  },
+  "lib_opt_sr_all": {
+    "message": "minden üzenet"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "csak említések"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ megemlített: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "említések"
+  },
+  "mc_set_h_chat": {
+    "message": "chat"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "ugrás arra a lapra"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "előző / következő lap"
+  },
+  "mc_set_h_rows": {
+    "message": "sormód"
+  },
+  "mc_set_h_row_menu": {
+    "message": "műveleti menü"
+  },
+  "mc_set_h_row_reply": {
+    "message": "válasz"
+  },
+  "mc_set_h_row_leave": {
+    "message": "kilépés"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    sormód"
+  },
+  "mc_ctx_move_left": {
+    "message": "mozgatás balra"
+  },
+  "mc_ctx_move_right": {
+    "message": "mozgatás jobbra"
+  },
+  "mc_ctx_move_up": {
+    "message": "mozgatás fel"
+  },
+  "mc_ctx_move_down": {
+    "message": "mozgatás le"
+  },
+  "mc_modlog_ban": {
+    "message": "$TARGET$ ban-t kapott",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "$TARGET$ timeout-ot kapott",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "$TARGET$ timeout-ot kapott ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "$TARGET$ ban-je feloldva",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "$TARGET$ timeout-ja feloldva",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "$TARGET$ egy üzenete törölve",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "egy üzenet törölve"
+  },
+  "mc_modlog_someone": {
+    "message": "valaki"
+  },
+  "mc_modlog_by": {
+    "message": "$NAME$ által",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$mp",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$p",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$ó",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$n",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "ban $USER$ itt: #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

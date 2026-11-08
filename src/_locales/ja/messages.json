@@ -7108,5 +7108,209 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "エモート名は空にできず、スペースも入れられません"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "操作"
+  },
+  "mc_ctx_menu_for": {
+    "message": "$NAME$ の操作",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k 移動 · enter 操作 · r 返信 · esc 終了",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "この行でできる操作はない"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "この行には返信できない"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- 行 --"
+  },
+  "lib_sec_accessibility": {
+    "message": "アクセシビリティ"
+  },
+  "mc_settings_sr_announce": {
+    "message": "スクリーンリーダーの読み上げ"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "チャットが届いたときにスクリーンリーダーが声に出して読む内容。メンションのみは、誰かにメンションされるまで静か"
+  },
+  "lib_opt_sr_all": {
+    "message": "すべてのメッセージ"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "メンションのみ"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ があなたをメンションした: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "メンション"
+  },
+  "mc_set_h_chat": {
+    "message": "チャット"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "そのタブへ移動"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "前 / 次のタブ"
+  },
+  "mc_set_h_rows": {
+    "message": "行モード"
+  },
+  "mc_set_h_row_menu": {
+    "message": "操作メニュー"
+  },
+  "mc_set_h_row_reply": {
+    "message": "返信"
+  },
+  "mc_set_h_row_leave": {
+    "message": "終了"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    行モード"
+  },
+  "mc_ctx_move_left": {
+    "message": "左へ移動"
+  },
+  "mc_ctx_move_right": {
+    "message": "右へ移動"
+  },
+  "mc_ctx_move_up": {
+    "message": "上へ移動"
+  },
+  "mc_ctx_move_down": {
+    "message": "下へ移動"
+  },
+  "mc_modlog_ban": {
+    "message": "$TARGET$ を ban した",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "$TARGET$ を timeout した",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "$TARGET$ を timeout した ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "$TARGET$ の ban を解除した",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "$TARGET$ の timeout を解除した",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "$TARGET$ のメッセージを削除した",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "メッセージを削除した"
+  },
+  "mc_modlog_someone": {
+    "message": "誰か"
+  },
+  "mc_modlog_by": {
+    "message": "$NAME$ による",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$秒",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$分",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$時間",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$日",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "#$CHANNEL$ で $USER$ を ban しますか？",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

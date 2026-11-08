@@ -7108,5 +7108,209 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "o nome de um emote não pode ficar vazio nem ter espaços"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "ações"
+  },
+  "mc_ctx_menu_for": {
+    "message": "ações para $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k mover · enter ações · r responder · esc sair",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "nada a fazer nesta linha"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "não dá para responder a esta linha"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- LINHAS --"
+  },
+  "lib_sec_accessibility": {
+    "message": "acessibilidade"
+  },
+  "mc_settings_sr_announce": {
+    "message": "leitor de tela lê"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "o que o leitor de tela lê em voz alta quando o chat chega. só menções fica em silêncio até alguém te mencionar"
+  },
+  "lib_opt_sr_all": {
+    "message": "todas as mensagens"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "só menções"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ mencionou você: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "menções"
+  },
+  "mc_set_h_chat": {
+    "message": "chat"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "ir para essa aba"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "aba anterior / próxima"
+  },
+  "mc_set_h_rows": {
+    "message": "modo linha"
+  },
+  "mc_set_h_row_menu": {
+    "message": "menu de ações"
+  },
+  "mc_set_h_row_reply": {
+    "message": "responder"
+  },
+  "mc_set_h_row_leave": {
+    "message": "sair"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    modo linha"
+  },
+  "mc_ctx_move_left": {
+    "message": "mover para a esquerda"
+  },
+  "mc_ctx_move_right": {
+    "message": "mover para a direita"
+  },
+  "mc_ctx_move_up": {
+    "message": "mover para cima"
+  },
+  "mc_ctx_move_down": {
+    "message": "mover para baixo"
+  },
+  "mc_modlog_ban": {
+    "message": "baniu $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "deu timeout em $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "deu timeout em $TARGET$ ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "desbaniu $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "tirou o timeout de $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "apagou uma mensagem de $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "apagou uma mensagem"
+  },
+  "mc_modlog_someone": {
+    "message": "alguém"
+  },
+  "mc_modlog_by": {
+    "message": "por $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$s",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$m",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$h",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$d",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "banir $USER$ em #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

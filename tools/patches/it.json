@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "Un pannello per la chat live di Twitch, Kick + YouTube. In più un inventario gratuito da 5000 emote che ti segue in ogni canale",
+  "manifest_description": "Un pannello per la chat live di Twitch, Kick + YouTube. In più un inventario gratuito da 5.000 emote che ti segue in ogni canale",
   "common_loading": "caricamento...",
   "common_extension_updated": "Estensione aggiornata — ricarica la pagina",
   "common_no_matches": "nessun risultato",

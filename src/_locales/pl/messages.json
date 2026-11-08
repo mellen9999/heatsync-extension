@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Jeden panel do czatu na żywo z Twitch, Kick + YouTube. Do tego darmowy ekwipunek na 5000 emotek, który działa na każdym kanale"
+    "message": "Jeden panel do czatu na żywo z Twitch, Kick + YouTube. Do tego darmowy ekwipunek na 5 000 emotek, który działa na każdym kanale"
   },
   "common_loading": {
     "message": "ładowanie..."
@@ -6166,7 +6166,7 @@
     "message": "opinia / zgłoszenie błędu"
   },
   "popup_inv_slots": {
-    "message": "5 000 slotów na emotki"
+    "message": "5 000 slotów na emotki"
   },
   "popup_inv_signed_in_as": {
     "message": "zalogowano jako $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 slotów"
+    "message": " / 5 000 slotów"
   },
   "popup_inv_import_hint": {
     "message": " · zaimportuj kanał, żeby go wypełnić"

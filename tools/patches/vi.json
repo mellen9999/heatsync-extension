@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "Một bảng cho chat trực tiếp của Twitch, Kick + YouTube. Kèm kho 5000 emote miễn phí đi theo bạn vào mọi kênh",
+  "manifest_description": "Một bảng cho chat trực tiếp của Twitch, Kick + YouTube. Kèm kho 5.000 emote miễn phí đi theo bạn vào mọi kênh",
   "common_loading": "đang tải...",
   "common_extension_updated": "Tiện ích đã cập nhật — tải lại trang",
   "common_no_matches": "không có kết quả",

@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "Egy panel a Twitch, Kick + YouTube élő chathez. Ráadásul ingyenes, 5000 helyes emote-tár, ami minden csatornára veled tart",
+  "manifest_description": "Egy panel a Twitch, Kick + YouTube élő chathez. Ráadásul ingyenes, 5 000 helyes emote-tár, ami minden csatornára veled tart",
   "common_loading": "betöltés...",
   "common_extension_updated": "Bővítmény frissült — frissítsd az oldalt",
   "common_no_matches": "nincs találat",

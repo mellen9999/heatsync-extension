@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "一个面板同时看 Twitch、Kick、YouTube 直播聊天。另有 5000 个免费表情位，随你进入任何频道"
+    "message": "一个面板同时看 Twitch、Kick、YouTube 直播聊天。另有 5,000 个免费表情位，随你进入任何频道"
   },
   "common_loading": {
     "message": "加载中..."

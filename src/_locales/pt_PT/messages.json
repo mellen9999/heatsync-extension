@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Um painel para o chat em direto da Twitch, Kick + YouTube. Mais um inventário gratuito de 5000 emotes que o segue em qualquer canal"
+    "message": "Um painel para o chat em direto da Twitch, Kick + YouTube. Mais um inventário gratuito de 5 000 emotes que o segue em qualquer canal"
   },
   "common_loading": {
     "message": "a carregar..."
@@ -6166,7 +6166,7 @@
     "message": "feedback / relatório de bug"
   },
   "popup_inv_slots": {
-    "message": "5.000 posições de emotes"
+    "message": "5 000 posições de emotes"
   },
   "popup_inv_signed_in_as": {
     "message": "sessão iniciada como $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5.000 posições"
+    "message": " / 5 000 posições"
   },
   "popup_inv_import_hint": {
     "message": " · importa um canal para o encher"

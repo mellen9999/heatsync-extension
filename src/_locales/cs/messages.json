@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Jeden panel pro živý chat Twitch, Kick + YouTube. K tomu bezplatný inventář na 5000 emotů, který vás provází každým kanálem"
+    "message": "Jeden panel pro živý chat Twitch, Kick + YouTube. K tomu bezplatný inventář na 5 000 emotů, který vás provází každým kanálem"
   },
   "common_loading": {
     "message": "načítám..."
@@ -6166,7 +6166,7 @@
     "message": "zpětná vazba / hlášení chyby"
   },
   "popup_inv_slots": {
-    "message": "5 000 slotů na emotky"
+    "message": "5 000 slotů na emotky"
   },
   "popup_inv_signed_in_as": {
     "message": "přihlášen jako $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 slotů"
+    "message": " / 5 000 slotů"
   },
   "popup_inv_import_hint": {
     "message": " · importuj kanál a naplň ho"

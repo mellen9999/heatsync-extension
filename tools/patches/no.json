@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "Ett panel for direktechat på Twitch, Kick + YouTube. Pluss et gratis lager med 5000 emotes som følger deg til hver kanal",
+  "manifest_description": "Ett panel for direktechat på Twitch, Kick + YouTube. Pluss et gratis lager med 5 000 emotes som følger deg til hver kanal",
   "common_loading": "laster...",
   "common_extension_updated": "Utvidelse oppdatert — last siden på nytt",
   "common_no_matches": "ingen treff",

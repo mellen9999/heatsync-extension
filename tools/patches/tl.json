@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "Isang panel para sa live chat ng Twitch, Kick + YouTube. Plus libreng 5000-slot na emote inventory na kasama mo sa bawat channel",
+  "manifest_description": "Isang panel para sa live chat ng Twitch, Kick + YouTube. Plus libreng 5,000-slot na emote inventory na kasama mo sa bawat channel",
   "common_loading": "naglo-load...",
   "common_extension_updated": "Na-update ang extension — i-refresh ang page",
   "common_no_matches": "walang nakitang resulta",

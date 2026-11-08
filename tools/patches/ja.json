@@ -21,5 +21,5 @@
   "mc_settings_keyword_highlights": "キーワードハイライト",
   "mc_settings_keyword_highlights_desc": "ここで指定した単語を含むメッセージはオレンジ色になり、個人メンションのように扱われます。改行区切り、大文字小文字を区別せず、完全一致。",
   "mc_settings_keyword_highlights_placeholder": "1行に1キーワード",
-  "manifest_description": "Twitch・Kick・YouTube のライブチャットをひとつのパネルに。さらに、どのチャンネルでも使える5000枠の無料エモートインベントリ"
+  "manifest_description": "Twitch・Kick・YouTube のライブチャットをひとつのパネルに。さらに、どのチャンネルでも使える5,000枠の無料エモートインベントリ"
 }

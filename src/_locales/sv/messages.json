@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "En panel för livechatt på Twitch, Kick + YouTube. Plus ett gratis förråd med 5000 emotes som följer med dig till varje kanal"
+    "message": "En panel för livechatt på Twitch, Kick + YouTube. Plus ett gratis förråd med 5 000 emotes som följer med dig till varje kanal"
   },
   "common_loading": {
     "message": "läser in..."
@@ -6166,7 +6166,7 @@
     "message": "feedback / buggrapport"
   },
   "popup_inv_slots": {
-    "message": "5 000 emote-platser"
+    "message": "5 000 emote-platser"
   },
   "popup_inv_signed_in_as": {
     "message": "inloggad som $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 platser"
+    "message": " / 5 000 platser"
   },
   "popup_inv_import_hint": {
     "message": " · importera en kanal för att fylla det"

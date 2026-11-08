@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "Одна панель для живого чату Twitch, Kick + YouTube. Плюс безкоштовний інвентар на 5000 емоцій, що працює на будь-якому каналі",
+  "manifest_description": "Одна панель для живого чату Twitch, Kick + YouTube. Плюс безкоштовний інвентар на 5 000 емоцій, що працює на будь-якому каналі",
   "common_loading": "завантаження...",
   "common_extension_updated": "Розширення оновлено — оновіть сторінку",
   "common_no_matches": "немає результатів",

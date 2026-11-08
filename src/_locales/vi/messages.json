@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Một bảng cho chat trực tiếp của Twitch, Kick + YouTube. Kèm kho 5000 emote miễn phí đi theo bạn vào mọi kênh"
+    "message": "Một bảng cho chat trực tiếp của Twitch, Kick + YouTube. Kèm kho 5.000 emote miễn phí đi theo bạn vào mọi kênh"
   },
   "common_loading": {
     "message": "đang tải..."
@@ -6166,7 +6166,7 @@
     "message": "góp ý / báo lỗi"
   },
   "popup_inv_slots": {
-    "message": "5,000 ô emote"
+    "message": "5.000 ô emote"
   },
   "popup_inv_signed_in_as": {
     "message": "đăng nhập với tên $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5,000 ô"
+    "message": " / 5.000 ô"
   },
   "popup_inv_import_hint": {
     "message": " · nhập một kênh để lấp đầy"

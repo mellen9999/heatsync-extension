@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Ett panel for direktechat på Twitch, Kick + YouTube. Pluss et gratis lager med 5000 emotes som følger deg til hver kanal"
+    "message": "Ett panel for direktechat på Twitch, Kick + YouTube. Pluss et gratis lager med 5 000 emotes som følger deg til hver kanal"
   },
   "common_loading": {
     "message": "laster..."
@@ -6166,7 +6166,7 @@
     "message": "tilbakemelding / feilrapport"
   },
   "popup_inv_slots": {
-    "message": "5 000 emote-plasser"
+    "message": "5 000 emote-plasser"
   },
   "popup_inv_signed_in_as": {
     "message": "logget inn som $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 plasser"
+    "message": " / 5 000 plasser"
   },
   "popup_inv_import_hint": {
     "message": " · importer en kanal for å fylle det"

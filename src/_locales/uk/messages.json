@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Одна панель для живого чату Twitch, Kick + YouTube. Плюс безкоштовний інвентар на 5000 емоцій, що працює на будь-якому каналі"
+    "message": "Одна панель для живого чату Twitch, Kick + YouTube. Плюс безкоштовний інвентар на 5 000 емоцій, що працює на будь-якому каналі"
   },
   "common_loading": {
     "message": "завантаження..."
@@ -6166,7 +6166,7 @@
     "message": "відгук / звіт про баг"
   },
   "popup_inv_slots": {
-    "message": "5 000 слотів emotes"
+    "message": "5 000 слотів emotes"
   },
   "popup_inv_signed_in_as": {
     "message": "увійшов як $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 слотів"
+    "message": " / 5 000 слотів"
   },
   "popup_inv_import_hint": {
     "message": " · імпортуй канал, щоб заповнити"

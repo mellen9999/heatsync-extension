@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "Yksi paneeli Twitchin, Kickin + YouTuben live-chattiin. Lisäksi ilmainen 5000 emoten varasto, joka seuraa sinua joka kanavalle",
+  "manifest_description": "Yksi paneeli Twitchin, Kickin + YouTuben live-chattiin. Lisäksi ilmainen 5 000 emoten varasto, joka seuraa sinua joka kanavalle",
   "common_loading": "ladataan...",
   "common_extension_updated": "Laajennus päivitetty — päivitä sivu",
   "common_no_matches": "ei osumia",

@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Един панел за живия чат на Twitch, Kick + YouTube. Плюс безплатен инвентар с 5000 емотикона, който те следва във всеки канал"
+    "message": "Един панел за живия чат на Twitch, Kick + YouTube. Плюс безплатен инвентар с 5 000 емотикона, който те следва във всеки канал"
   },
   "common_loading": {
     "message": "зарежда се..."
@@ -6166,7 +6166,7 @@
     "message": "обратна връзка / доклад за бъг"
   },
   "popup_inv_slots": {
-    "message": "5 000 слота за emotes"
+    "message": "5 000 слота за emotes"
   },
   "popup_inv_signed_in_as": {
     "message": "влязъл като $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 слота"
+    "message": " / 5 000 слота"
   },
   "popup_inv_import_hint": {
     "message": " · импортирай канал, за да го напълниш"

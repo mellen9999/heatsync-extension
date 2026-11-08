@@ -3,7 +3,7 @@
     "message": "heatsync"
   },
   "manifest_description": {
-    "message": "Egy panel a Twitch, Kick + YouTube élő chathez. Ráadásul ingyenes, 5000 helyes emote-tár, ami minden csatornára veled tart"
+    "message": "Egy panel a Twitch, Kick + YouTube élő chathez. Ráadásul ingyenes, 5 000 helyes emote-tár, ami minden csatornára veled tart"
   },
   "common_loading": {
     "message": "betöltés..."
@@ -6166,7 +6166,7 @@
     "message": "visszajelzés / hibajelentés"
   },
   "popup_inv_slots": {
-    "message": "5 000 emote slot"
+    "message": "5 000 emote slot"
   },
   "popup_inv_signed_in_as": {
     "message": "bejelentkezve: $USER$",
@@ -6177,7 +6177,7 @@
     }
   },
   "popup_inv_slots_of": {
-    "message": " / 5 000 slot"
+    "message": " / 5 000 slot"
   },
   "popup_inv_import_hint": {
     "message": " · importálj egy csatornát a feltöltéshez"

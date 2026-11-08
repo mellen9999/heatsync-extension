@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "Ένα πάνελ για το ζωντανό chat σε Twitch, Kick + YouTube. Επιπλέον, δωρεάν αποθήκη 5000 emote που σε ακολουθεί σε κάθε κανάλι",
+  "manifest_description": "Ένα πάνελ για το ζωντανό chat σε Twitch, Kick + YouTube. Επιπλέον, δωρεάν αποθήκη 5.000 emote που σε ακολουθεί σε κάθε κανάλι",
   "common_loading": "φόρτωση...",
   "common_extension_updated": "Η επέκταση ενημερώθηκε — ανανέωσε τη σελίδα",
   "common_no_matches": "χωρίς αποτελέσματα",

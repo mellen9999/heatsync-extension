@@ -1,6 +1,6 @@
 {
   "manifest_name": "heatsync",
-  "manifest_description": "En panel för livechatt på Twitch, Kick + YouTube. Plus ett gratis förråd med 5000 emotes som följer med dig till varje kanal",
+  "manifest_description": "En panel för livechatt på Twitch, Kick + YouTube. Plus ett gratis förråd med 5 000 emotes som följer med dig till varje kanal",
   "common_loading": "läser in...",
   "common_extension_updated": "Tillägget uppdaterat — ladda om sidan",
   "common_no_matches": "inga träffar",

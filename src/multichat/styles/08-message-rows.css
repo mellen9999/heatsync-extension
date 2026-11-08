@@ -1125,7 +1125,7 @@
       height: 120px;
     }
     /* identity-mismatch warning — emotes won't render for others (see
-       warnIdentityMismatch in main.js). terse inline red, square, no motion. */
+       warnIdentityMismatch in self-identity.js). terse inline red, square, no motion. */
     #hs-mc-idwarn {
       display: flex;
       align-items: center;

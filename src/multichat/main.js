@@ -1887,36 +1887,6 @@
     }
   }
 
-  // Identity-mismatch warning: the signed-in HS account can't be resolved from
-  // the identity the user is chatting under, so their HS emotes render for
-  // nobody else. Terse inline banner above the composer, once per senderKey per
-  // session, dismissible for good per (account, key) via ui_settings-style
-  // storage. Never fires when hsSenderKeys is unknown (old server/logged out).
-  const _identityWarned = new Set()
-  function warnIdentityMismatch(senderKey) {
-    if (!senderKey || _identityWarned.has(senderKey)) return
-    _identityWarned.add(senderKey)
-    const dismissKey = `hs_idwarn_${hsCurrentUsername || ''}_${senderKey}`
-    api.storage.local
-      .get(dismissKey)
-      .then((d) => {
-        if (d?.[dismissKey]) return
-        const bar = document.getElementById('hs-mc-inputbar')
-        if (!bar || document.getElementById('hs-mc-idwarn')) return
-        const el = document.createElement('div')
-        el.id = 'hs-mc-idwarn'
-        const acct = hsCurrentUsername || 'unknown'
-        const ident = senderKey.replace(':', ' ')
-        el.innerHTML = `<span>${t('mc_main_idwarn', [`<b>${escapeHtml(acct)}</b>`, `<b>${escapeHtml(ident)}</b>`, `<a href="https://heatsync.org/settings" target="_blank" rel="noopener">${t('mc_main_idwarn_link')}</a>`])}</span>${hsXButtonHtml('hs-x-inline', t('mc_main_dismiss'), `id="hs-mc-idwarn-x" title="${t('mc_main_dismiss')}"`)}`
-        bar.parentNode.insertBefore(el, bar)
-        el.querySelector('#hs-mc-idwarn-x')?.addEventListener('click', () => {
-          el.remove()
-          api.storage.local.set({ [dismissKey]: true })
-        })
-      })
-      .catch(() => {})
-  }
-
   function flushSenderEmoteBatch() {
     if (!senderEmotePending.size) return
     const batch = [...senderEmotePending].slice(0, SENDER_EMOTE_BATCH)

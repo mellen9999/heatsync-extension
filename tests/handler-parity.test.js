@@ -73,6 +73,7 @@ const PIPELINE = [
   'evaluateFilterRules', // user filter rules
   'playFilterRuleSound', // highlight rule audio cue
   'isMention', // mention detection
+  'ruleAlertsMention', // a highlight rule's "also notify me" counts as a mention
   'bumpStreamStats', // per-channel stats
   'mentionsBuffer.push', // mention buffering
   'persistMentions',

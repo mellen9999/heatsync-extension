@@ -2,7 +2,7 @@
 
 twitch, kick and youtube live chat in one panel — read every stream you follow and reply into any of them without alt-tabbing. nobody else has to install anything. plus your own emotes in any channel: 5,000 free slots, no streamer setup needed.
 
-**no ad trackers, no third-party analytics or telemetry** — emotes and settings sync through heatsync's own servers, never to google, sentry, or any analytics company. it does talk to 7tv, bttv, ffz and pronoundb, because that is where those cosmetics live; [the privacy policy](https://heatsync.org/legal/privacy) lists exactly what goes to each.
+**no ad trackers, no third-party analytics or telemetry** — emotes and settings sync through heatsync's own servers, never to google, sentry, or any analytics company. it does talk to 7tv, bttv and ffz, because that is where those emotes and cosmetics live (pronouns come through heatsync, so chatter ids never reach pronoundb); [the privacy policy](https://heatsync.org/legal/privacy) lists exactly what goes to each.
 
 ## features
 

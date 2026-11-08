@@ -1487,10 +1487,10 @@ const PAINTS_CACHE_MAX = 500
 const _channelBannerCache = new Map()
 const CHANNEL_BANNER_TTL = 12 * 60 * 60 * 1000
 const CHANNEL_BANNER_MAX = 800
-// pronoundb.org self-declared pronouns — public GET, Twitch-only (their v2
-// API has no Kick/YouTube platform as of 2026-07). Keyed by twitch numeric
-// user id. 24h TTL — pronouns almost never change, so a stale value for a
-// day is harmless (unlike a stale banner/avatar).
+// Self-declared pronouns (pronoundb data via heatsync's /api/pronouns, so
+// chatter ids never reach a third party). Twitch-only — pronoundb has no
+// Kick/YouTube platform. Keyed by twitch numeric user id. 24h TTL — pronouns
+// almost never change, so a stale value for a day is harmless.
 const _pronounCache = new Map()
 const PRONOUN_TTL = 24 * 60 * 60 * 1000
 const PRONOUN_CACHE_MAX = 500

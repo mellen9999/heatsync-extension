@@ -336,17 +336,15 @@ async function handleMessage(message, sender, sendResponse) {
     return true
   }
 
-  // PronounDB lookup — self-declared pronouns for a Twitch numeric user id.
-  // Content scripts can't hit pronoundb.org directly (CSP connect-src is
-  // extension-declared, and cross-origin fetch from a page-world content
-  // script is blocked regardless) — this is the only fetch path. Response:
-  // { pronouns: string[] } | null. 24h LRU cache above absorbs repeat hovers.
+  // Pronoun lookup — self-declared pronouns for a Twitch numeric user id, via
+  // heatsync's first-party proxy (content-script fetches to heatsync.org trip
+  // the edge, so this stays a BG fetch). Response: { pronouns: string[] } |
+  // null. 24h LRU cache above absorbs repeat hovers. A `degraded` answer means
+  // the proxy could not find out: an absent id then is NOT "has none", so it
+  // is answered null without being remembered.
   if (message.type === 'fetch_pronouns') {
     const platform = String(message.platform || '').toLowerCase()
     const userId = String(message.userId || '').replace(/[^0-9]/g, '')
-    // pronoundb v2 supports discord/github/minecraft/twitch/twitter — no
-    // kick or youtube, so anything else is a guaranteed miss. Bail before
-    // spending a network round-trip.
     if (platform !== 'twitch' || !userId) {
       sendResponse(null)
       return true
@@ -358,16 +356,21 @@ async function handleMessage(message, sender, sendResponse) {
       return true
     }
     fetchWithTimeout(
-      `https://pronoundb.org/api/v2/lookup?platform=${platform}&ids=${encodeURIComponent(userId)}`,
+      `${API_URL}/api/pronouns?platform=twitch&ids=${userId}`,
       { headers: { Accept: 'application/json' } },
       5000,
     )
       .then((r) => (r.ok ? r.json() : null))
       .then((json) => {
-        const words = json?.[userId]?.sets?.en
-        const data = Array.isArray(words) && words.length ? { pronouns: words.slice(0, 3) } : null
-        _pronounCache.set(cacheKey, { data, ts: Date.now() })
-        if (_pronounCache.size > PRONOUN_CACHE_MAX) _pronounCache.delete(_pronounCache.keys().next().value)
+        const words = json?.pronouns?.[userId]
+        const data =
+          Array.isArray(words) && words.length
+            ? { pronouns: words.filter((w) => typeof w === 'string').slice(0, 3) }
+            : null
+        if (json && (data || json.degraded !== true)) {
+          _pronounCache.set(cacheKey, { data, ts: Date.now() })
+          if (_pronounCache.size > PRONOUN_CACHE_MAX) _pronounCache.delete(_pronounCache.keys().next().value)
+        }
         sendResponse(data)
       })
       .catch(() => sendResponse(null))

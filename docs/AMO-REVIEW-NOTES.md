@@ -74,7 +74,6 @@ the emote inventory, sign in with the free Twitch/Kick OAuth at heatsync.org.
 | `www.youtube.com` (incl. `/live_chat*`) | read public YouTube live-chat DOM for the multichat panel and fetch public oEmbed metadata to route chat to the correct tab. No YouTube cookies/auth used. |
 | `heatsync.org` | sync the user's own emote inventory + account, and first-party proxy for recent-message history, chat-log archives and chatterino badges (so those requests aren't made from the user's IP). |
 | `7tv.io`, `api.7tv.app`, `api.betterttv.net`, `api.frankerfacez.com` | read-only public APIs for emote sets, paints, and badges. Only emote names and numeric user ids are sent (see the privacy policy). |
-| `pronoundb.org` | self-declared pronouns for the profile card (Twitch numeric id only; toggle in settings → display → pronouns). |
 
 ---
 

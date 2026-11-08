@@ -7169,5 +7169,209 @@
   },
   "mc_mtb_seeded": {
     "message": "в строки чата добавлены кнопки mod: удалить, таймаут 10 мин, бан. поменяй их в настройках › mod"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "действия"
+  },
+  "mc_ctx_menu_for": {
+    "message": "действия для $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k перемещение · enter действия · r ответить · esc выйти",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "в этой строке нечего делать"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "на эту строку нельзя ответить"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- СТРОКИ --"
+  },
+  "lib_sec_accessibility": {
+    "message": "доступность"
+  },
+  "mc_settings_sr_announce": {
+    "message": "программа чтения с экрана читает"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "что программа чтения с экрана произносит вслух, пока идёт чат. при выборе только упоминания тишина, пока тебя не @упомянут"
+  },
+  "lib_opt_sr_all": {
+    "message": "все сообщения"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "только упоминания"
+  },
+  "mc_a11y_mention_said": {
+    "message": "упоминание от $USER$: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "упоминания"
+  },
+  "mc_set_h_chat": {
+    "message": "чат"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "перейти на эту вкладку"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "предыдущая / следующая вкладка"
+  },
+  "mc_set_h_rows": {
+    "message": "режим строк"
+  },
+  "mc_set_h_row_menu": {
+    "message": "меню действий"
+  },
+  "mc_set_h_row_reply": {
+    "message": "ответить"
+  },
+  "mc_set_h_row_leave": {
+    "message": "выйти"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    режим строк"
+  },
+  "mc_ctx_move_left": {
+    "message": "сдвинуть влево"
+  },
+  "mc_ctx_move_right": {
+    "message": "сдвинуть вправо"
+  },
+  "mc_ctx_move_up": {
+    "message": "сдвинуть вверх"
+  },
+  "mc_ctx_move_down": {
+    "message": "сдвинуть вниз"
+  },
+  "mc_modlog_ban": {
+    "message": "$TARGET$ забанен",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "таймаут для $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "таймаут для $TARGET$ ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "$TARGET$ разбанен",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "таймаут снят с $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "удалено сообщение от $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "удалено сообщение"
+  },
+  "mc_modlog_someone": {
+    "message": "кто-то"
+  },
+  "mc_modlog_by": {
+    "message": "от $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$с",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$м",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$ч",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$д",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "забанить $USER$ в #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

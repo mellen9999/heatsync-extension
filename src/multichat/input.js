@@ -2350,6 +2350,8 @@ function initInput() {
           msg: msg || null,
           feedDiv: feedDiv || null,
           feedMsg,
+          // row mode (row-mode.js) fires this event from the keyboard: focus goes onto the first item
+          keyboard: e.hsKeyboard === true,
         })
       },
       { capture: true, signal: mcSignal },
@@ -2453,7 +2455,7 @@ async function _ctxMod(action, channel, platform, target, msgId, durationSec, la
 }
 
 function openUserCtxMenu(x, y, username, platform, ctx = {}) {
-  const { msg, feedDiv, feedMsg } = ctx
+  const { msg, feedDiv, feedMsg, keyboard } = ctx
   const rel = hsRelPeek(username, platform)?.relationship || null
   const youFollow = !!(rel?.youFollow || rel?.isFollowing)
   const youBlock =
@@ -2755,7 +2757,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       },
     })
   }
-  showHsCtxMenu(x, y, username, items)
+  showHsCtxMenu(x, y, username, items, { keyboard })
   // Async warm-up: cache miss or stale → fetch fresh and patch the menu's
   // follow/block labels in place. Survives the typical case where the user's
   // first interaction with a sender is a right-click (no hover-warmed cache).
@@ -3233,112 +3235,6 @@ function _mentionInMcInput(username) {
   }
 }
 
-// Generic numbered/keyboard context menu. `items` is an array of either the
-// string 'sep' or { label, fn, danger, good, disabled }. Actionable items are
-// numbered 1..9 top-down for keyboard select. Used by every right-click surface.
-function showHsCtxMenu(x, y, header, items) {
-  document.getElementById('hs-mc-msg-ctx')?.remove()
-  const menu = document.createElement('div')
-  Object.assign(menu, { id: 'hs-mc-msg-ctx', className: 'hs-mc-ctx', dir: HS_DIR(), tabIndex: -1 })
-  menu.addEventListener('contextmenu', (e) => e.preventDefault())
-
-  const kbdHandlers = {}
-  const kbdItems = [] // {el, fn} in DOM order; numbered 1..9 from the top
-  if (header) {
-    const h = document.createElement('div')
-    h.className = 'hs-mc-em-header'
-    h.textContent = header
-    menu.appendChild(h)
-  }
-  for (const spec of items) {
-    if (spec === 'sep') {
-      const s = document.createElement('div')
-      s.className = 'hs-mc-em-sep'
-      menu.appendChild(s)
-      continue
-    }
-    const it = document.createElement('div')
-    it.className =
-      'hs-mc-em-item' +
-      (spec.danger ? ' hs-mc-em-danger' : '') +
-      (spec.good ? ' hs-mc-em-good' : '') +
-      (spec.disabled ? ' hs-mc-em-disabled' : '')
-    if (spec.key) it.dataset.hsKey = spec.key
-    const lab = document.createElement('span')
-    lab.className = 'hs-mc-em-label'
-    lab.textContent = spec.label
-    it.appendChild(lab)
-    if (!spec.disabled && spec.fn) {
-      kbdItems.push({ el: it, fn: spec.fn })
-      it.addEventListener('click', () => {
-        dismiss()
-        try {
-          spec.fn()
-        } catch {}
-      })
-    }
-    menu.appendChild(it)
-  }
-  // Number top-down (key 1 is the first item, ascending downward).
-  for (let i = 0; i < kbdItems.length && i < 9; i++) {
-    const { el, fn } = kbdItems[i]
-    const n = i + 1
-    const k = document.createElement('span')
-    k.className = 'hs-mc-em-kbd'
-    k.textContent = String(n)
-    el.appendChild(k)
-    kbdHandlers[String(n)] = fn
-  }
-
-  document.body.appendChild(menu)
-  menu.style.visibility = 'hidden'
-  menu.style.left = '0px'
-  menu.style.top = '0px'
-  const mw = menu.offsetWidth,
-    mh = menu.offsetHeight
-  const vw = window.innerWidth,
-    vh = window.innerHeight
-  const flipX = x + mw + 8 > vw
-  const flipY = y + mh + 8 > vh
-  menu.style.left = `${flipX ? Math.max(4, x - mw) : Math.min(x, vw - mw - 4)}px`
-  menu.style.top = `${flipY ? Math.max(4, y - mh) : Math.min(y, vh - mh - 4)}px`
-  if (flipX) menu.classList.add('hs-mc-em-flip-x')
-  if (flipY) menu.classList.add('hs-mc-em-flip-y')
-  menu.style.visibility = ''
-  try {
-    menu.focus({ preventScroll: true })
-  } catch {}
-
-  function dismiss() {
-    menu.remove()
-    document.removeEventListener('mousedown', outside, true)
-    document.removeEventListener('keydown', keyHandler, true)
-    document.removeEventListener('contextmenu', outside, true)
-  }
-  function outside(ev) {
-    if (!menu.contains(ev.target)) dismiss()
-  }
-  function keyHandler(ev) {
-    if (ev.key === 'Escape') {
-      ev.preventDefault()
-      dismiss()
-      return
-    }
-    const fn = kbdHandlers[ev.key]
-    if (fn) {
-      ev.preventDefault()
-      dismiss()
-      try {
-        fn()
-      } catch {}
-    }
-  }
-  setTimeout(() => {
-    document.addEventListener('mousedown', outside, true)
-    document.addEventListener('keydown', keyHandler, true)
-    document.addEventListener('contextmenu', outside, true)
-  }, 0)
-}
 function applyMcMutes() {
   // No muted users → nothing to strip. Skip the full-DOM scan entirely (this runs
   // on every renderMessages — up to 500 rows × a nested querySelector each — and is

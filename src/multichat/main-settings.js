@@ -479,6 +479,7 @@ const _RUNTIME_BRIDGE = {
 const _APPLIERS = {
   rebuildInput: () => rebuildInput(),
   spellcheck: (v) => hsApplySpellcheck(v),
+  srAnnounce: (v) => srApplyMode(v),
   // Repaint every tab and start/stop the heat ticker to match the new mode.
   tabCounter: () => {
     refreshTabCounters()

@@ -274,6 +274,9 @@ function ruleAlertsMention(msg, verdict) {
 // viaRule: the alert is a highlight rule's "also notify me", not an @you — the
 // rule already played its own sound on arrival, so the mention ping stays out of it.
 function notifyMention(msg, viaRule) {
+  // Screen reader: the quiet "mentions only" mode says these and nothing else
+  // (sr-announce.js). First, and whatever the window's focus — it is not a popup.
+  srAnnounceMention(msg)
   // Always evaluate audio + title-flash even when system notif disabled — they
   // have their own gates. The original "return if notifs off" check killed the
   // tab-title flash for users who didn't want OS popups but did want a visual

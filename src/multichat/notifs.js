@@ -593,6 +593,28 @@ const HsNotifs = (() => {
     },
   })
 
+  // Row mode — same mode-line as tab mode (row-mode.js), same persistence:
+  // up for exactly as long as the mode is, dismissed by key on exit. Wears
+  // tab mode's classes, so the line looks the same in both.
+  registerType('row-mode', {
+    layer: 'statusbar',
+    dedupeKey: () => 'row-mode',
+    dedupePolicy: 'replace',
+    render: ({ data }) => {
+      const el = document.createElement('span')
+      el.className = 'hs-notif-toast-text hs-mc-tabmode-line'
+      const tag = document.createElement('span')
+      tag.className = 'hs-mc-tabmode-tag'
+      tag.textContent = t('mc_notif_rows_tag')
+      el.appendChild(tag)
+      const rest = document.createElement('span')
+      rest.className = 'hs-mc-tabmode-hint'
+      rest.textContent = typeof data?.text === 'string' ? data.text : ''
+      el.appendChild(rest)
+      return el
+    },
+  })
+
   // Twitch resub-share — user's own resub callout. Surfaces above input,
   // shows month count + Share button (clicks the native Twitch share so the
   // existing _enterResubShareMode flow runs) and X to dismiss. Native DOM is

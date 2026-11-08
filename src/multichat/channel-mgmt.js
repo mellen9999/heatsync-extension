@@ -677,9 +677,10 @@ function renderAddChannelForm(msgsEl) {
 }
 
 /**
- * Move a channel one slot up or down in the strip. Tab mode's J/K is the only
- * caller — there has never been a reorder path here, drag or otherwise, so the
- * order you added channels in was the order you were stuck with.
+ * Move a channel one slot up or down in the strip. THE one reorder: tab mode's
+ * J/K and the tab's right-click "move" items both call it. There was no reorder
+ * path at all before tab mode, drag or otherwise, so the order you added
+ * channels in was the order you were stuck with.
  *
  * Refuses at the ends rather than wrapping: the strip also holds the fixed
  * surfaces (feed/mentions/live), so wrapping would look like a channel jumping
@@ -700,6 +701,28 @@ function moveChannelOrder(tabId, delta) {
   saveConfig()
   updateTabBar()
   return true
+}
+
+/**
+ * The "move" items for a channel tab's right-click menu: one per direction that
+ * is open (a channel at an end of the list has nowhere to go that way), named
+ * for where the strip really runs. Earlier in the list is left in a horizontal
+ * strip, right in a right-to-left one and up in a column (tabs docked left or
+ * right). Each item's `delta` is what moveChannelOrder takes.
+ * @param {string} tabId
+ * @param {{vertical?: boolean, rtl?: boolean}} [layout]
+ * @returns {{label: string, delta: number}[]}
+ */
+function channelMoveOptions(tabId, { vertical = false, rtl = false } = {}) {
+  const list = config?.channels
+  const at = Array.isArray(list) ? list.findIndex((c) => c.id === tabId) : -1
+  if (at < 0) return []
+  const earlier = vertical ? 'mc_ctx_move_up' : rtl ? 'mc_ctx_move_right' : 'mc_ctx_move_left'
+  const later = vertical ? 'mc_ctx_move_down' : rtl ? 'mc_ctx_move_left' : 'mc_ctx_move_right'
+  const out = []
+  if (at > 0) out.push({ label: t(earlier), delta: -1 })
+  if (at < list.length - 1) out.push({ label: t(later), delta: 1 })
+  return out
 }
 
 function removeChannel(tabId) {

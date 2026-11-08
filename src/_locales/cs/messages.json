@@ -7169,5 +7169,209 @@
   },
   "mc_mtb_seeded": {
     "message": "do řádků chatu přibyla mod tlačítka: smazat, timeout 10 min, ban. změníš je v nastavení › mod"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "akce"
+  },
+  "mc_ctx_menu_for": {
+    "message": "akce pro $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k pohyb · enter akce · r odpovědět · esc opustit",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "na tomto řádku není co dělat"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "na tento řádek nelze odpovědět"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- ŘÁDKY --"
+  },
+  "lib_sec_accessibility": {
+    "message": "přístupnost"
+  },
+  "mc_settings_sr_announce": {
+    "message": "čtečka obrazovky čte"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "co čtečka obrazovky čte nahlas, když chodí chat. jen zmínky mlčí, dokud tě někdo nezmíní"
+  },
+  "lib_opt_sr_all": {
+    "message": "všechny zprávy"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "jen zmínky"
+  },
+  "mc_a11y_mention_said": {
+    "message": "zmínka od $USER$: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "zmínky"
+  },
+  "mc_set_h_chat": {
+    "message": "chat"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "přejít na ten tab"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "předchozí / další tab"
+  },
+  "mc_set_h_rows": {
+    "message": "řádkový režim"
+  },
+  "mc_set_h_row_menu": {
+    "message": "menu akcí"
+  },
+  "mc_set_h_row_reply": {
+    "message": "odpovědět"
+  },
+  "mc_set_h_row_leave": {
+    "message": "opustit"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    řádkový režim"
+  },
+  "mc_ctx_move_left": {
+    "message": "posunout doleva"
+  },
+  "mc_ctx_move_right": {
+    "message": "posunout doprava"
+  },
+  "mc_ctx_move_up": {
+    "message": "posunout nahoru"
+  },
+  "mc_ctx_move_down": {
+    "message": "posunout dolů"
+  },
+  "mc_modlog_ban": {
+    "message": "ban pro $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "timeout pro $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "timeout pro $TARGET$ ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "unban pro $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "timeout pro $TARGET$ zrušen",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "smazaná zpráva od $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "smazaná zpráva"
+  },
+  "mc_modlog_someone": {
+    "message": "někdo"
+  },
+  "mc_modlog_by": {
+    "message": "od $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$ s",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$ min",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$ h",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$ d",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "zabanovat $USER$ v #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

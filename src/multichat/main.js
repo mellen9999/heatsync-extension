@@ -1001,7 +1001,7 @@ async function init() {
     }
     // Record every mod-action notice (self + observed, all channels) into the
     // mod-action log for the streamer/mod popout. No-op for non-mod notices.
-    pushModLogEntry(modActionLog, modLogEntryFromNotice(msg))
+    modLogStore.record(msg)
     // CLEARCHAT/CLEARMSG → live-dim already-rendered DOM rows from the offender.
     // Buffer entries were already flagged with `cleared=true` inside the IRC client,
     // so future re-renders pick it up via the renderer; this just patches the visible DOM.
@@ -1149,7 +1149,7 @@ async function init() {
   kickChat.on('message', (msg) => {
     chatLogsLive(msg)
     // Record Kick mod-action notices into the mod-action log (no-op otherwise).
-    pushModLogEntry(modActionLog, modLogEntryFromNotice(msg))
+    modLogStore.record(msg)
     // Reflect kick ban/timeout/delete/unban notices in the live DOM (same
     // shared path twitch uses) — this handler, not irc.on('message'), is where
     // kick notices land.

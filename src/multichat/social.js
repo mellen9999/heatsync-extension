@@ -3920,8 +3920,16 @@ function renderModLogTab() {
     }
     const body = document.createElement('span')
     body.className = 'hs-modlog-body'
-    body.textContent = typeof modLogLine === 'function' ? modLogLine(e) : `${e.action} ${e.target}`
+    body.textContent = modLogLine(e, t)
     row.appendChild(body)
+    // who did it, when it is known (only actions taken through heatsync say)
+    const by = modLogBy(e, t)
+    if (by) {
+      const who = document.createElement('span')
+      who.className = 'hs-modlog-actor'
+      who.textContent = by
+      row.appendChild(who)
+    }
     frag.appendChild(row)
   }
   msgsEl.appendChild(frag)

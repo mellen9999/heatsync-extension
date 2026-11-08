@@ -7169,5 +7169,209 @@
   },
   "mc_mtb_seeded": {
     "message": "у рядки чату додано кнопки mod: видалити, тайм-аут 10 хв, бан. змінити їх можна в налаштуваннях › mod"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "дії"
+  },
+  "mc_ctx_menu_for": {
+    "message": "дії для $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k перехід · enter дії · r відповісти · esc вийти",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "з цим рядком нічого робити"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "на цей рядок не можна відповісти"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- РЯДКИ --"
+  },
+  "lib_sec_accessibility": {
+    "message": "доступність"
+  },
+  "mc_settings_sr_announce": {
+    "message": "екранний читач читає"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "що екранний читач читає вголос, коли надходить чат. лише згадки мовчить, доки тебе хтось не згадає"
+  },
+  "lib_opt_sr_all": {
+    "message": "усі повідомлення"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "лише згадки"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ згадує тебе: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "згадки"
+  },
+  "mc_set_h_chat": {
+    "message": "чат"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "перейти на ту вкладку"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "попередня / наступна вкладка"
+  },
+  "mc_set_h_rows": {
+    "message": "режим рядків"
+  },
+  "mc_set_h_row_menu": {
+    "message": "меню дій"
+  },
+  "mc_set_h_row_reply": {
+    "message": "відповісти"
+  },
+  "mc_set_h_row_leave": {
+    "message": "вийти"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    режим рядків"
+  },
+  "mc_ctx_move_left": {
+    "message": "перемістити вліво"
+  },
+  "mc_ctx_move_right": {
+    "message": "перемістити вправо"
+  },
+  "mc_ctx_move_up": {
+    "message": "перемістити вгору"
+  },
+  "mc_ctx_move_down": {
+    "message": "перемістити вниз"
+  },
+  "mc_modlog_ban": {
+    "message": "забанено $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "тайм-аут для $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "тайм-аут для $TARGET$ ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "розбанено $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "тайм-аут для $TARGET$ знято",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "видалено повідомлення від $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "видалено повідомлення"
+  },
+  "mc_modlog_someone": {
+    "message": "хтось"
+  },
+  "mc_modlog_by": {
+    "message": "від $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$с",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$хв",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$год",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$д",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "забанити $USER$ в #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

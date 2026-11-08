@@ -705,6 +705,32 @@ const SETTINGS = [
     runtimeVar: 'pronounsEnabled',
   },
 
+  // ── display / accessibility ───────────────────────────────────────────
+  {
+    // How much of the chat a screen reader says out loud (multichat/sr-announce.js). The message
+    // list is a polite live region, so on a busy channel `all` is a firehose: `mentions` silences
+    // it and says only the lines that @ you, through a separate region. `all` is how it always was.
+    key: 'hs_sr_announce',
+    basic: true, // whoever needs it can't be expected to dig through "show all" to find it
+    type: 'enum',
+    default: 'all',
+    scope: 'local',
+    category: 'display',
+    section: 'accessibility',
+    sectionKey: 'lib_sec_accessibility',
+    labelKey: 'mc_settings_sr_announce',
+    tipKey: 'mc_settings_sr_announce_desc',
+    control: 'select',
+    alias: 'screen reader aria live announce read aloud nvda jaws voiceover orca accessibility blind quiet',
+    apply: 'srAnnounce',
+    applyOnLoad: true,
+    options: [
+      { value: 'all', label: 'all messages', labelKey: 'lib_opt_sr_all' },
+      { value: 'mentions', label: 'mentions only', labelKey: 'lib_opt_sr_mentions' },
+      { value: 'off', label: 'off', labelKey: 'mc_cm_off' },
+    ],
+  },
+
   // ── chat / input ──────────────────────────────────────────────────────
   {
     // Whether your inventory feeds tab-complete / inline suggestions. Off, a

@@ -7169,5 +7169,209 @@
   },
   "mc_mtb_seeded": {
     "message": "đã thêm nút mod vào các dòng chat: xóa, timeout 10 phút, ban. đổi trong cài đặt › mod"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "thao tác"
+  },
+  "mc_ctx_menu_for": {
+    "message": "thao tác cho $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k di chuyển · enter thao tác · r trả lời · esc thoát",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "dòng này không có gì để làm"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "không thể trả lời dòng này"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- DÒNG --"
+  },
+  "lib_sec_accessibility": {
+    "message": "trợ năng"
+  },
+  "mc_settings_sr_announce": {
+    "message": "trình đọc màn hình đọc"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "trình đọc màn hình đọc to những gì khi chat có tin mới. chỉ nhắc tên thì im lặng cho đến khi có người nhắc tên bạn"
+  },
+  "lib_opt_sr_all": {
+    "message": "tất cả tin nhắn"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "chỉ nhắc tên"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ đã nhắc tên bạn: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "nhắc tên"
+  },
+  "mc_set_h_chat": {
+    "message": "chat"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "đến tab đó"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "tab trước / sau"
+  },
+  "mc_set_h_rows": {
+    "message": "chế độ dòng"
+  },
+  "mc_set_h_row_menu": {
+    "message": "menu thao tác"
+  },
+  "mc_set_h_row_reply": {
+    "message": "trả lời"
+  },
+  "mc_set_h_row_leave": {
+    "message": "thoát"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    chế độ dòng"
+  },
+  "mc_ctx_move_left": {
+    "message": "di chuyển sang trái"
+  },
+  "mc_ctx_move_right": {
+    "message": "di chuyển sang phải"
+  },
+  "mc_ctx_move_up": {
+    "message": "di chuyển lên"
+  },
+  "mc_ctx_move_down": {
+    "message": "di chuyển xuống"
+  },
+  "mc_modlog_ban": {
+    "message": "đã cấm $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "đã timeout $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "đã timeout $TARGET$ ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "đã bỏ cấm $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "đã gỡ timeout của $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "đã xóa một tin nhắn của $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "đã xóa một tin nhắn"
+  },
+  "mc_modlog_someone": {
+    "message": "ai đó"
+  },
+  "mc_modlog_by": {
+    "message": "bởi $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$ giây",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$ phút",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$ giờ",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$ ngày",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "cấm $USER$ trong #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

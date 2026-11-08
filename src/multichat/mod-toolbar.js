@@ -401,6 +401,8 @@ function _injectTwitchModNotice({ channel, action, target, durationSec, msgId })
       targetUser: tgtLc,
       targetMsgId: action === 'delete' ? msgId || '' : undefined,
       banDuration: action === 'timeout' ? Math.max(1, durationSec | 0) : 0,
+      // who did it — the mod log keeps the name (twitch's own echo is actor-less)
+      actor: _modActor(),
       isSynthetic: true,
     })
   } catch (_) {}
@@ -439,6 +441,7 @@ function _injectKickModNotice({ channel, action, target, durationSec, msgId }) {
       targetUser: tgtLc,
       // a deleted message dims its row (same field the twitch notice carries)
       targetMsgId: action === 'delete' ? msgId || '' : undefined,
+      actor: _modActor(),
       isSynthetic: true,
     }
     buf.push(m)
@@ -504,7 +507,11 @@ async function dispatchModAction({
       .filter(Boolean)
     if (modConfirmBan || banReasons.length) {
       const tgtName = String(target || '').replace(/^@/, '')
-      const res = await hsConfirm(`ban ${tgtName} in #${String(channel || '').replace(/^#/, '')}?`, 'ban', banReasons)
+      const res = await hsConfirm(
+        t('mc_modtoolbar_ban_confirm', [tgtName, String(channel || '').replace(/^#/, '')]),
+        t('content_card_ban'),
+        banReasons,
+      )
       if (!res.ok) return { tResp: null, kResp: null, twitchName: null, kickSlug: null, anyOk: false, cancelled: true }
       if (res.reason) reason = res.reason
     }

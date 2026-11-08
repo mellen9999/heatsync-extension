@@ -7169,5 +7169,209 @@
   },
   "mc_mtb_seeded": {
     "message": "mod-knappar har lagts till på chattraderna: radera, timeout 10 min, ban. ändra dem i inställningar › mod"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "åtgärder"
+  },
+  "mc_ctx_menu_for": {
+    "message": "åtgärder för $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k flytta · enter åtgärder · r svara · esc lämna",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "inget att göra på den här raden"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "den här raden går inte att svara på"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- RADER --"
+  },
+  "lib_sec_accessibility": {
+    "message": "tillgänglighet"
+  },
+  "mc_settings_sr_announce": {
+    "message": "skärmläsaren läser upp"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "vad en skärmläsare läser upp när chatten kommer in. bara omnämnanden är tyst tills någon nämner dig"
+  },
+  "lib_opt_sr_all": {
+    "message": "alla meddelanden"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "bara omnämnanden"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ nämnde dig: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "omnämnanden"
+  },
+  "mc_set_h_chat": {
+    "message": "chatt"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "gå till den fliken"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "föregående / nästa flik"
+  },
+  "mc_set_h_rows": {
+    "message": "radläge"
+  },
+  "mc_set_h_row_menu": {
+    "message": "åtgärdsmeny"
+  },
+  "mc_set_h_row_reply": {
+    "message": "svara"
+  },
+  "mc_set_h_row_leave": {
+    "message": "lämna"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    radläge"
+  },
+  "mc_ctx_move_left": {
+    "message": "flytta åt vänster"
+  },
+  "mc_ctx_move_right": {
+    "message": "flytta åt höger"
+  },
+  "mc_ctx_move_up": {
+    "message": "flytta upp"
+  },
+  "mc_ctx_move_down": {
+    "message": "flytta ner"
+  },
+  "mc_modlog_ban": {
+    "message": "$TARGET$ blev bannad",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "$TARGET$ fick timeout",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "$TARGET$ fick timeout ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "$TARGET$ fick ban hävd",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "timeout hävd för $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "ett meddelande från $TARGET$ togs bort",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "ett meddelande togs bort"
+  },
+  "mc_modlog_someone": {
+    "message": "någon"
+  },
+  "mc_modlog_by": {
+    "message": "av $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$s",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$min",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$h",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$d",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "banna $USER$ i #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

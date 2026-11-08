@@ -7169,5 +7169,209 @@
   },
   "mc_mtb_seeded": {
     "message": "mod-knoppen toegevoegd aan de chatrijen: verwijderen, timeout 10 min, ban. wijzig ze in instellingen › mod"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "acties"
+  },
+  "mc_ctx_menu_for": {
+    "message": "acties voor $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k verplaatsen · enter acties · r reageren · esc verlaten",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "niets te doen op deze regel"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "op deze regel kun je niet reageren"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- REGELS --"
+  },
+  "lib_sec_accessibility": {
+    "message": "toegankelijkheid"
+  },
+  "mc_settings_sr_announce": {
+    "message": "schermlezer leest voor"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "wat een schermlezer hardop voorleest als er chat binnenkomt. alleen vermeldingen blijft stil tot iemand je vermeldt"
+  },
+  "lib_opt_sr_all": {
+    "message": "alle berichten"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "alleen vermeldingen"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ heeft je vermeld: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "vermeldingen"
+  },
+  "mc_set_h_chat": {
+    "message": "chat"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "ga naar die tab"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "vorige / volgende tab"
+  },
+  "mc_set_h_rows": {
+    "message": "regelmodus"
+  },
+  "mc_set_h_row_menu": {
+    "message": "actiemenu"
+  },
+  "mc_set_h_row_reply": {
+    "message": "reageren"
+  },
+  "mc_set_h_row_leave": {
+    "message": "verlaten"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    regelmodus"
+  },
+  "mc_ctx_move_left": {
+    "message": "verplaats naar links"
+  },
+  "mc_ctx_move_right": {
+    "message": "verplaats naar rechts"
+  },
+  "mc_ctx_move_up": {
+    "message": "verplaats omhoog"
+  },
+  "mc_ctx_move_down": {
+    "message": "verplaats omlaag"
+  },
+  "mc_modlog_ban": {
+    "message": "$TARGET$ gebanned",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "$TARGET$ in timeout",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "$TARGET$ in timeout ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "ban van $TARGET$ opgeheven",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "timeout van $TARGET$ opgeheven",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "bericht van $TARGET$ verwijderd",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "bericht verwijderd"
+  },
+  "mc_modlog_someone": {
+    "message": "iemand"
+  },
+  "mc_modlog_by": {
+    "message": "door $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$s",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$m",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$u",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$d",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "$USER$ bannen in #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

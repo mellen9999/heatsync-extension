@@ -7169,5 +7169,209 @@
   },
   "mc_mtb_seeded": {
     "message": "mod-knapper er tilføjet til chatrækkerne: slet, timeout 10 min, ban. ret dem i indstillinger › mod"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "handlinger"
+  },
+  "mc_ctx_menu_for": {
+    "message": "handlinger for $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k flyt · enter handlinger · r svar · esc forlad",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "intet at gøre på denne linje"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "denne linje kan ikke besvares"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- LINJER --"
+  },
+  "lib_sec_accessibility": {
+    "message": "tilgængelighed"
+  },
+  "mc_settings_sr_announce": {
+    "message": "skærmlæseren læser"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "hvad en skærmlæser læser højt, når chatten kommer ind. kun omtaler er stille, indtil nogen omtaler dig"
+  },
+  "lib_opt_sr_all": {
+    "message": "alle beskeder"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "kun omtaler"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ omtalte dig: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "omtaler"
+  },
+  "mc_set_h_chat": {
+    "message": "chat"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "gå til den fane"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "forrige / næste fane"
+  },
+  "mc_set_h_rows": {
+    "message": "linjetilstand"
+  },
+  "mc_set_h_row_menu": {
+    "message": "handlingsmenu"
+  },
+  "mc_set_h_row_reply": {
+    "message": "svar"
+  },
+  "mc_set_h_row_leave": {
+    "message": "forlad"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    linjetilstand"
+  },
+  "mc_ctx_move_left": {
+    "message": "flyt til venstre"
+  },
+  "mc_ctx_move_right": {
+    "message": "flyt til højre"
+  },
+  "mc_ctx_move_up": {
+    "message": "flyt op"
+  },
+  "mc_ctx_move_down": {
+    "message": "flyt ned"
+  },
+  "mc_modlog_ban": {
+    "message": "$TARGET$ blev bannet",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "$TARGET$ fik timeout",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "$TARGET$ fik timeout ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "$TARGET$ blev unbannet",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "timeout ophævet for $TARGET$",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "besked fra $TARGET$ slettet",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "besked slettet"
+  },
+  "mc_modlog_someone": {
+    "message": "nogen"
+  },
+  "mc_modlog_by": {
+    "message": "af $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$s",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$m",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$t",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$d",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "ban $USER$ i #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

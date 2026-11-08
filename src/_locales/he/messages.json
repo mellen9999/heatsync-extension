@@ -7169,5 +7169,209 @@
   },
   "mc_mtb_seeded": {
     "message": "נוספו כפתורי mod לשורות הצ'אט: מחיקה, timeout ל-10 דקות, ban. אפשר לשנות אותם בהגדרות › mod"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "פעולות"
+  },
+  "mc_ctx_menu_for": {
+    "message": "פעולות עבור $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k הזזה · enter פעולות · r השב · esc יציאה",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "אין מה לעשות בשורה הזו"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "אי אפשר להשיב לשורה הזו"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- שורות --"
+  },
+  "lib_sec_accessibility": {
+    "message": "נגישות"
+  },
+  "mc_settings_sr_announce": {
+    "message": "קורא המסך מקריא"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "מה קורא המסך מקריא בקול כשהצ'אט מגיע. באפשרות אזכורים בלבד הוא שותק עד שמישהו מזכיר אותך"
+  },
+  "lib_opt_sr_all": {
+    "message": "כל ההודעות"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "אזכורים בלבד"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ הזכיר אותך: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "אזכורים"
+  },
+  "mc_set_h_chat": {
+    "message": "צ'אט"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "מעבר ללשונית הזו"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "לשונית קודמת / הבאה"
+  },
+  "mc_set_h_rows": {
+    "message": "מצב שורות"
+  },
+  "mc_set_h_row_menu": {
+    "message": "תפריט פעולות"
+  },
+  "mc_set_h_row_reply": {
+    "message": "השב"
+  },
+  "mc_set_h_row_leave": {
+    "message": "יציאה"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    מצב שורות"
+  },
+  "mc_ctx_move_left": {
+    "message": "הזזה שמאלה"
+  },
+  "mc_ctx_move_right": {
+    "message": "הזזה ימינה"
+  },
+  "mc_ctx_move_up": {
+    "message": "הזזה למעלה"
+  },
+  "mc_ctx_move_down": {
+    "message": "הזזה למטה"
+  },
+  "mc_modlog_ban": {
+    "message": "$TARGET$ קיבל ban",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "$TARGET$ קיבל timeout",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "$TARGET$ קיבל timeout ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "ה-ban של $TARGET$ בוטל",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "ה-timeout של $TARGET$ בוטל",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "הודעה של $TARGET$ נמחקה",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "הודעה נמחקה"
+  },
+  "mc_modlog_someone": {
+    "message": "מישהו"
+  },
+  "mc_modlog_by": {
+    "message": "על ידי $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$ שנ׳",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$ דק׳",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$ שע׳",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$ י׳",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "לתת ban ל-$USER$ ב-#$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

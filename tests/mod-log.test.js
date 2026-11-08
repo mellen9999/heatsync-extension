@@ -8,6 +8,7 @@ import {
   modLogLine,
   pushModLogEntry,
 } from '../src/multichat/mod-log.js'
+import { t } from './en-t.js'
 
 function notice(overrides = {}) {
   return {
@@ -112,25 +113,27 @@ test('pushModLogEntry: caps at max, trimming oldest first', () => {
 
 // ── formatDuration ────────────────────────────────────────────────────────
 test('formatDuration: compact human units, empty for 0', () => {
-  expect(formatDuration(0)).toBe('')
-  expect(formatDuration(undefined)).toBe('')
-  expect(formatDuration(45)).toBe('45s')
-  expect(formatDuration(600)).toBe('10m')
-  expect(formatDuration(3600)).toBe('1h')
-  expect(formatDuration(7200)).toBe('2h')
-  expect(formatDuration(86400)).toBe('1d')
-  expect(formatDuration(-5)).toBe('')
+  expect(formatDuration(0, t)).toBe('')
+  expect(formatDuration(undefined, t)).toBe('')
+  expect(formatDuration(45, t)).toBe('45s')
+  expect(formatDuration(600, t)).toBe('10m')
+  expect(formatDuration(3600, t)).toBe('1h')
+  expect(formatDuration(7200, t)).toBe('2h')
+  expect(formatDuration(86400, t)).toBe('1d')
+  expect(formatDuration(-5, t)).toBe('')
 })
 
 // ── modLogLine ────────────────────────────────────────────────────────────
 test('modLogLine: human one-liner per action', () => {
-  expect(modLogLine({ action: 'ban', target: 'bob' })).toBe('banned bob')
-  expect(modLogLine({ action: 'timeout', target: 'bob', durationSec: 600 })).toBe('timed out bob (10m)')
-  expect(modLogLine({ action: 'timeout', target: 'bob', durationSec: 0 })).toBe('timed out bob')
-  expect(modLogLine({ action: 'unban', target: 'bob' })).toBe('unbanned bob')
-  expect(modLogLine({ action: 'delete', target: 'bob' })).toBe("deleted bob's message")
-  expect(modLogLine({ action: 'delete', target: '' })).toBe('deleted a message')
-  expect(modLogLine(null)).toBe('')
+  expect(modLogLine({ action: 'ban', target: 'bob' }, t)).toBe('banned bob')
+  expect(modLogLine({ action: 'timeout', target: 'bob', durationSec: 600 }, t)).toBe('timed out bob (10m)')
+  expect(modLogLine({ action: 'timeout', target: 'bob', durationSec: 0 }, t)).toBe('timed out bob')
+  expect(modLogLine({ action: 'unban', target: 'bob' }, t)).toBe('unbanned bob')
+  expect(modLogLine({ action: 'untimeout', target: 'bob' }, t)).toBe('lifted the timeout on bob')
+  expect(modLogLine({ action: 'delete', target: 'bob' }, t)).toBe('deleted a message from bob')
+  expect(modLogLine({ action: 'delete', target: '' }, t)).toBe('deleted a message')
+  expect(modLogLine({ action: 'ban', target: '' }, t)).toBe('banned someone')
+  expect(modLogLine(null, t)).toBe('')
 })
 
 // ── filterModLog ──────────────────────────────────────────────────────────

@@ -780,8 +780,8 @@ function _renderCategoryPaneInner(cat) {
 // ring ("captured locally only"), and the picked sound files (hs_sfx_*: up to
 // 256 kb each, per device by design — rules and the mention sound export only
 // the file's name), and the sent-message history (hs_sent_history: what you typed, this device only). Import skips the same set so a crafted file can't overwrite
-// them either.
-var _SETTINGS_PRIVATE_KEY_RE = /^hs_(mentions_v2|user_notes|errors|irc_|kick_|yt_|whisper|sfx_|sent_history)/
+// them either. (hs_modlog_v1 — who was banned where, and by whom — is private too.)
+var _SETTINGS_PRIVATE_KEY_RE = /^hs_(mentions_v2|user_notes|errors|irc_|kick_|yt_|whisper|sfx_|sent_history|modlog)/
 // local-mirror settings (keyword highlights, filter rules) live under
 // unprefixed mirror keys — allowlist them alongside the hs_/viewer_ namespaces
 // or the export silently drops them (derived from the registry, never hand-listed)
@@ -912,6 +912,23 @@ const _SET_HELP_VIM = [
   ['za', 'mc_set_h_fold'],
   ['d', 'mc_set_h_reset_row'],
   ['H L', 'mc_set_h_prev_next'],
+  ['spc r', 'mc_set_h_rows'],
+]
+// The chat's own keys, anywhere on the page — what no pane's key list said. alt combos always work
+// (vi mode or not). Every global key the overlay binds belongs here: main-overlay.js (alt+digit,
+// alt+bracket, alt+r) names this list, and tests/key-help.test.js holds the two together.
+const _SET_HELP_CHAT = [
+  ['alt 1-9', 'mc_set_h_nth_tab'],
+  ['alt [ ]', 'mc_set_h_tab_cycle'],
+  ['alt r', 'mc_set_h_rows'],
+]
+// row mode (row-mode.js): the keys once you are in it
+const _SET_HELP_ROWS = [
+  ['j k', 'mc_set_h_move'],
+  ['g G', 'mc_set_h_first_last'],
+  ['enter', 'mc_set_h_row_menu'],
+  ['r', 'mc_set_h_row_reply'],
+  ['esc', 'mc_set_h_row_leave'],
 ]
 function _renderHelpPane() {
   function grid(pairs) {
@@ -928,6 +945,14 @@ function _renderHelpPane() {
     t('mc_set_h_keys') +
     '</div>' +
     `<div class="hs-mc-set-help-grid">${grid(_SET_HELP_KEYS)}</div>` +
+    '<div class="hs-mc-set-help-title">' +
+    t('mc_set_h_chat') +
+    '</div>' +
+    `<div class="hs-mc-set-help-grid">${grid(_SET_HELP_CHAT)}</div>` +
+    '<div class="hs-mc-set-help-title">' +
+    t('mc_set_h_rows') +
+    '</div>' +
+    `<div class="hs-mc-set-help-grid">${grid(_SET_HELP_ROWS)}</div>` +
     (viModeEnabled
       ? `<div class="hs-mc-set-help-title">vi</div><div class="hs-mc-set-help-grid">${grid(_SET_HELP_VIM)}</div>`
       : '') +

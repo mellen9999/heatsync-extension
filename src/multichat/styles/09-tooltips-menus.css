@@ -70,12 +70,19 @@
       display: flex; align-items: center; justify-content: space-between;
       gap: 8px;
     }
-    .hs-mc-ctx .hs-mc-em-item:hover { background: #fff; color: #000; }
-    .hs-mc-ctx .hs-mc-em-item:hover .hs-mc-em-kbd { background: #000; color: #fff; border-color: #000; }
+    /* hover AND keyboard focus are the same white plate: the menu keeps real focus
+       (ctx-menu.js), and hovering an item moves focus to it, so one row is ever lit */
+    .hs-mc-ctx .hs-mc-em-item:hover,
+    .hs-mc-ctx .hs-mc-em-item:focus { background: #fff; color: #000; outline: none; }
+    .hs-mc-ctx .hs-mc-em-item:hover .hs-mc-em-kbd,
+    .hs-mc-ctx .hs-mc-em-item:focus .hs-mc-em-kbd { background: #000; color: #fff; border-color: #000; }
+    .hs-mc-ctx:focus { outline: none; }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger { color: var(--hs-danger); }
-    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger:hover { background: #ffffff; color: #000000; }
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger:hover,
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-danger:focus { background: #ffffff; color: #000000; }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good { color: var(--hs-ok); }
-    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good:hover { background: #fff; color: #000; }
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good:hover,
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good:focus { background: #fff; color: #000; }
     .hs-mc-ctx .hs-mc-em-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .hs-mc-ctx .hs-mc-em-kbd {
       display: inline-block; min-width: 14px; padding: 0 4px;
@@ -84,6 +91,9 @@
     }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled { cursor: not-allowed; }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled:hover { background: none; color: inherit; }
+    /* the pointer skips an unusable row; the keyboard cursor can stand on it (so a
+       screen reader can read it) and has to show where it is */
+    .hs-mc-ctx .hs-mc-em-item.hs-mc-em-disabled:focus { background: #fff; color: #000; }
     .hs-mc-ctx .hs-mc-em-sep { height: 1px; background: #000000; margin: 2px 0; }
     /* #hs-user-tooltip is a bare positioning/show-hide shell now — the actual
      * card (src/lib/card-render.js's .hs-card-peek output, appended as its

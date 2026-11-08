@@ -287,3 +287,15 @@
        markdown *x* / _x_ renders <em>, so it reads as underline here. */
     #hs-mc-overlay :is(em, i, cite, dfn, var, address) { font-style: normal; }
     #hs-mc-overlay em { text-decoration: underline; }
+
+    /* Words for a screen reader and nobody else: the mentions-only live region
+       (sr-announce.js). The standard visually-hidden box — present for assistive
+       tech, takes no room, paints nothing. display:none would hide it from them too. */
+    .hs-mc-sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      margin: -1px; padding: 0; border: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }

@@ -490,6 +490,14 @@ function createTabBar() {
     }
 
     mkItem(t('mc_ctx_edit'), '#fff', () => showEditChannelForm(tabId))
+    // reorder with the mouse — the same moveChannelOrder tab mode's J/K calls
+    const strip = { vertical: tabPosition === 'left' || tabPosition === 'right', rtl: HS_DIR() === 'rtl' }
+    for (const mv of channelMoveOptions(tabId, strip)) {
+      mkItem(mv.label, '#fff', () => {
+        if (moveChannelOrder(tabId, mv.delta))
+          tabBarElement?.querySelector(`.hs-mc-tab[data-tab="${CSS.escape(tabId)}"]`)?.focus()
+      })
+    }
     mkItem(t('mc_ctx_remove'), 'var(--hs-danger)', () => removeChannel(tabId))
 
     // Append then clamp to viewport so it doesn't overflow off-screen
@@ -1006,7 +1014,7 @@ function createOverlay() {
       </div>
       <div id="hs-mc-multistream-banner" hidden></div>
       <div id="hs-mc-pinbar" hidden></div>
-      <div id="hs-mc-messages" role="log" aria-label="${t('mc_main_messages_aria')}">
+      <div id="hs-mc-messages" role="log"${srLogLiveAttr()} aria-label="${t('mc_main_messages_aria')}">
         <!-- Skeleton state, painted before any join has even been issued —
              so it must be "connecting…", not "no messages yet". renderMessages
              owns the swap: it prints "no messages yet" only once _tabJoining
@@ -1015,6 +1023,7 @@ function createOverlay() {
         <div class="hs-mc-empty">${t('mc_connecting')}</div>
       </div>
       <button id="hs-mc-new-msgs" style="display:none"></button>
+      <div id="hs-mc-sr-mentions" class="hs-mc-sr-only" role="log" aria-live="polite" aria-relevant="additions" aria-label="${t('mc_a11y_mentions_aria')}"></div>
     `
 
   // Setup scroll detection after DOM insertion
@@ -2248,6 +2257,7 @@ function cycleTab(fwd) {
 }
 
 initOverlayKeys(mcSignal)
+initRowMode(mcSignal)
 registerOverlayKey('f', () => openFollowsView())
 document.addEventListener('keydown', followsKeyHandler, { capture: true, signal: mcSignal })
 registerOverlayKey('/', () => focusLiveSearch())
@@ -2283,16 +2293,23 @@ document.addEventListener(
   { signal: mcSignal },
 )
 
-// alt+1..9 jump to the Nth content tab, alt+] / alt+[ cycle next/prev. Alt
-// (not ctrl/cmd) avoids the browser's own ctrl/cmd+N tab switching. NOT
-// gated on where focus is: alt+digit types nothing, so there is no reason to
-// make the user leave the composer to switch tabs. e.code (Digit1.. /
-// Bracket*) is layout-independent and immune to Alt-composition on
-// non-Linux keymaps; the ctrlKey bail also covers AltGr (ctrl+alt).
+// alt+1..9 jump to the Nth content tab, alt+] / alt+[ cycle next/prev, alt+r
+// is row mode (row-mode.js) — the way in for people who don't run vi mode, whose
+// <Space> r leader is the other. Alt (not ctrl/cmd) avoids the browser's own
+// ctrl/cmd+N tab switching. NOT gated on where focus is: alt+digit types
+// nothing, so there is no reason to make the user leave the composer to switch
+// tabs. e.code (Digit1.. / Bracket* / KeyR) is layout-independent and immune to
+// Alt-composition on non-Linux keymaps (alt+r types an (R) on a Mac); the ctrlKey
+// bail also covers AltGr (ctrl+alt). The key help lists all of these
+// (settings-ui.js, _SET_HELP_CHAT) — add a new one there too.
 document.addEventListener(
   'keydown',
   (e) => {
     if (!e.altKey || e.ctrlKey || e.metaKey) return
+    if (e.code === 'KeyR' && !e.shiftKey) {
+      if (toggleRowMode()) e.preventDefault()
+      return
+    }
     const isDigit = /^Digit[1-9]$/.test(e.code || '')
     const isBracket = e.code === 'BracketRight' || e.code === 'BracketLeft'
     if (!isDigit && !isBracket) return

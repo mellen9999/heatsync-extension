@@ -7169,5 +7169,209 @@
   },
   "mc_mtb_seeded": {
     "message": "butang mod ditambah pada baris sembang: padam, timeout 10 min, ban. ubah di tetapan › mod"
+  },
+  "mc_ctx_menu_aria": {
+    "message": "tindakan"
+  },
+  "mc_ctx_menu_for": {
+    "message": "tindakan untuk $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_rowmode_status": {
+    "message": "$POS$/$TOTAL$ · j k gerak · enter tindakan · r balas · esc keluar",
+    "placeholders": {
+      "pos": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_rowmode_no_actions": {
+    "message": "tiada apa yang boleh dibuat pada baris ini"
+  },
+  "mc_rowmode_no_reply": {
+    "message": "baris ini tidak boleh dibalas"
+  },
+  "mc_notif_rows_tag": {
+    "message": "-- BARIS --"
+  },
+  "lib_sec_accessibility": {
+    "message": "kebolehcapaian"
+  },
+  "mc_settings_sr_announce": {
+    "message": "pembaca skrin membaca"
+  },
+  "mc_settings_sr_announce_desc": {
+    "message": "apa yang dibaca kuat oleh pembaca skrin apabila sembang masuk. sebutan sahaja kekal senyap sehingga ada yang menyebut anda"
+  },
+  "lib_opt_sr_all": {
+    "message": "semua mesej"
+  },
+  "lib_opt_sr_mentions": {
+    "message": "sebutan sahaja"
+  },
+  "mc_a11y_mention_said": {
+    "message": "$USER$ menyebut anda: $TEXT$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "text": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_a11y_mentions_aria": {
+    "message": "sebutan"
+  },
+  "mc_set_h_chat": {
+    "message": "sembang"
+  },
+  "mc_set_h_nth_tab": {
+    "message": "ke tab itu"
+  },
+  "mc_set_h_tab_cycle": {
+    "message": "tab sebelum / seterusnya"
+  },
+  "mc_set_h_rows": {
+    "message": "mod baris"
+  },
+  "mc_set_h_row_menu": {
+    "message": "menu tindakan"
+  },
+  "mc_set_h_row_reply": {
+    "message": "balas"
+  },
+  "mc_set_h_row_leave": {
+    "message": "keluar"
+  },
+  "cs_vi_cheatsheet_rows": {
+    "message": "SPC r    mod baris"
+  },
+  "mc_ctx_move_left": {
+    "message": "gerak ke kiri"
+  },
+  "mc_ctx_move_right": {
+    "message": "gerak ke kanan"
+  },
+  "mc_ctx_move_up": {
+    "message": "gerak ke atas"
+  },
+  "mc_ctx_move_down": {
+    "message": "gerak ke bawah"
+  },
+  "mc_modlog_ban": {
+    "message": "$TARGET$ di-ban",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout": {
+    "message": "$TARGET$ di-timeout",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_timeout_for": {
+    "message": "$TARGET$ di-timeout ($DURATION$)",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      },
+      "duration": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_modlog_unban": {
+    "message": "$TARGET$ di-unban",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_untimeout": {
+    "message": "timeout $TARGET$ ditamatkan",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete": {
+    "message": "mesej daripada $TARGET$ dipadam",
+    "placeholders": {
+      "target": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_delete_any": {
+    "message": "mesej dipadam"
+  },
+  "mc_modlog_someone": {
+    "message": "seseorang"
+  },
+  "mc_modlog_by": {
+    "message": "oleh $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_s": {
+    "message": "$COUNT$s",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_m": {
+    "message": "$COUNT$m",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_h": {
+    "message": "$COUNT$j",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modlog_dur_d": {
+    "message": "$COUNT$h",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_modtoolbar_ban_confirm": {
+    "message": "ban $USER$ di #$CHANNEL$?",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      },
+      "channel": {
+        "content": "$2"
+      }
+    }
   }
 }

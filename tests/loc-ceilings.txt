@@ -1,0 +1,7 @@
+# god-file ceilings: <max lines> <path>  # why. raise only with a reason in the same commit
+16151 src/multichat/main.js  # baseline
+9855 src/multichat/input.js  # baseline
+5310 src/multichat/emotes.js  # baseline
+4757 src/multichat/twitch-api.js  # baseline
+4210 src/multichat/social.js  # baseline
+3235 src/lib/paint-spec.js  # baseline

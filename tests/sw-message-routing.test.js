@@ -73,11 +73,12 @@ describe('sender gate', () => {
 })
 
 describe('malformed and unknown messages', () => {
-  test('a type nobody handles gets no reply and breaks nothing', async () => {
+  test('a type nobody handles is answered unknown_type, not left hanging', async () => {
     const sw = await boot()
     const out = await sw.exchange({ type: 'definitely_not_a_message_type' }, twitchTab)
-    // the channel is held open and never answered: a caller awaiting this would wait forever
-    expect(out.responded).toBe(false)
+    // answered, so a caller awaiting this resolves instead of waiting out its timeout
+    expect(out.responded).toBe(true)
+    expect(out.response).toEqual({ ok: false, error: 'unknown_type' })
     // and the worker is still fine afterwards
     expect(await sw.send({ type: 'get_auth_state' }, twitchTab)).toEqual({ loggedIn: true })
     expect(sw.consoleLog.filter((l) => l.level === 'error')).toEqual([])
@@ -95,7 +96,7 @@ describe('malformed and unknown messages', () => {
   test('a prototype-pollution shaped message is just an unknown type', async () => {
     const sw = await boot()
     const out = await sw.exchange(JSON.parse('{"type":"__proto__","__proto__":{"polluted":true}}'), twitchTab)
-    expect(out.responded).toBe(false)
+    expect(out.response).toEqual({ ok: false, error: 'unknown_type' })
     expect(sw.eval('({}).polluted')).toBeUndefined()
   })
 })

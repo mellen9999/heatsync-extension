@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "ești înăuntru"
   },
-  "welcome_explain": {
-    "message": "conectează-te la heatsync.org ca să folosești emoturile și setările în fiecare chat"
-  },
   "welcome_close": {
     "message": "închide"
   },
@@ -595,7 +592,7 @@
     "message": "url-urile din chat devin clicabile"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k derulare, g/G sus/jos, / căutare"
+    "message": "taste vim: j/k derulare, g/G sus/jos, / căutare. pentru cei care știu vim"
   },
   "mc_settings_zebra_desc": {
     "message": "umbrire alternativă a rândurilor"
@@ -607,10 +604,10 @@
     "message": "marcaj de timp pe fiecare mesaj"
   },
   "mc_settings_show_avatars": {
-    "message": "pfp-uri"
+    "message": "poze de profil"
   },
   "mc_settings_avatars_desc": {
-    "message": "avatare lângă numele utilizatorilor"
+    "message": "poze de profil lângă numele utilizatorilor"
   },
   "mc_settings_inline_notifs": {
     "message": "notificări inline"
@@ -909,7 +906,7 @@
     "message": "nu ești autentificat"
   },
   "mc_input_auth_failed": {
-    "message": "autentificare eșuată — autentifică-te din nou pe Twitch"
+    "message": "conectarea a eșuat — conectează-te din nou la twitch"
   },
   "mc_social_back": {
     "message": "<- înapoi"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 zile"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (golește mesajele, 1s)"
+    "message": "șterge mesajele (timeout de 1 secundă)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "ban permanent"
@@ -2698,10 +2695,10 @@
     "message": "deschide streamul youtube ca să trimiți"
   },
   "mc_yt_send_restricted": {
-    "message": "chatul yt e restricționat pentru acest stream"
+    "message": "chatul youtube e restricționat pentru acest stream"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — nu poți scrie aici",
+    "message": "youtube: $REASON$ — nu poți scrie aici",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 zile"
   },
   "mc_mtb_t_purge": {
-    "message": "purjare — șterge mesajele acestui utilizator (timeout 1s)"
+    "message": "șterge mesajele acestui utilizator (timeout de 1 secundă)"
   },
   "mc_mtb_t_ban": {
     "message": "ban permanent"
@@ -4799,7 +4796,7 @@
     "message": "+ adaugă un canal"
   },
   "mc_main_idwarn": {
-    "message": "emotes-urile tale nu se văd pentru ceilalți aici — cont heatsync $ACCT$, scrii ca $IDENT$ — $LINK$",
+    "message": "ceilalți nu îți văd emoturile aici — contul tău heatsync este $ACCT$, dar scrii ca $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "filtru — /regex/ sau @utilizator"
+    "message": "caută în chat — un cuvânt sau @nume"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ pct",
@@ -5091,7 +5088,7 @@
     "message": "-- TABURI --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "autentificarea twitch a eșuat"
+    "message": "conectarea la twitch a eșuat"
   },
   "mc_notif_r_no_user": {
     "message": "fără nume de utilizator twitch"
@@ -5280,22 +5277,22 @@
     "message": "sistem · backup / restaurare"
   },
   "mc_set_export_tip": {
-    "message": "salvează ui_settings + toate cheile hs_* într-un fișier JSON. portabil între dispozitive și browsere."
+    "message": "salvează toate setările tale într-un fișier. folosește-l pe alt dispozitiv sau în alt browser"
   },
   "mc_set_export": {
     "message": "exportă setările"
   },
   "mc_set_export_btn": {
-    "message": "descarcă .json"
+    "message": "salvează într-un fișier"
   },
   "mc_set_import_tip": {
-    "message": "restaurează dintr-un fișier JSON exportat anterior. se îmbină cu setările existente."
+    "message": "încarcă setări salvate înainte. se adaugă la cele pe care le ai"
   },
   "mc_set_import": {
     "message": "importă setările"
   },
   "mc_set_import_btn": {
-    "message": "încarcă .json"
+    "message": "încarcă dintr-un fișier"
   },
   "mc_set_reset_all_title": {
     "message": "resetează toate setările pe toate paginile"
@@ -5884,7 +5881,7 @@
     }
   },
   "hsbtn_provider_err": {
-    "message": "err"
+    "message": "eroare"
   },
   "hsbtn_search_status": {
     "message": "„$QUERY$” — $STATUS$",
@@ -6365,7 +6362,7 @@
     "message": "postează un thread în feedul tău heatsync"
   },
   "slash_desc_re": {
-    "message": "răspunde ultimului [OP] afișat în chat"
+    "message": "răspunde la ultima postare din feed afișată în chat"
   },
   "slash_desc_dm": {
     "message": "trimite un dm heatsync; fără mesaj deschide conversația"
@@ -6407,7 +6404,7 @@
     "message": "golește tabul curent doar pentru tine"
   },
   "slash_desc_mute": {
-    "message": "dă mute cuiva 24h, pe toate conturile lui conectate"
+    "message": "dă mute cuiva pentru 24 de ore, pe toate conturile conectate ale persoanei"
   },
   "slash_desc_unmute": {
     "message": "scoate un mute"
@@ -6455,7 +6452,7 @@
     "message": "șterge un singur mesaj"
   },
   "slash_desc_nuke": {
-    "message": "șterge în masă mesajele recente care conțin un termen"
+    "message": "șterge multe mesaje recente care conțin un cuvânt"
   },
   "slash_desc_announce": {
     "message": "postează un anunț, opțional colorat"
@@ -6491,7 +6488,7 @@
     "message": "deschide cererile de unban"
   },
   "slash_desc_slow": {
-    "message": "mod lent, implicit 30s"
+    "message": "mod lent: oamenii așteaptă între mesaje, implicit 30 de secunde"
   },
   "slash_desc_followers": {
     "message": "mod doar urmăritori"
@@ -6503,7 +6500,7 @@
     "message": "mod doar abonați"
   },
   "slash_desc_unique": {
-    "message": "mod chat unic; doar twitch, kick nu are echivalent"
+    "message": "fără mesaje repetate (chat unic); doar pe twitch"
   },
   "slash_desc_poll": {
     "message": "creează un sondaj, 2-5 opțiuni"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "tur de bun venit"
   },
-  "mc_tour_title": {
-    "message": "bun venit! astea pornesc oprite. dă clic pe una ca s-o pornești"
-  },
   "mc_tour_timestamps_tip": {
     "message": "arată ora lângă fiecare mesaj"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "arată turul din nou"
   },
-  "welcome_get_title": {
-    "message": "ce primești"
-  },
-  "welcome_get_1": {
-    "message": "chatul de pe twitch, kick și youtube într-un singur loc, cu toate emoturile (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "pentru a citi chatul nu ai nevoie de cont"
   },
-  "welcome_get_3": {
-    "message": "un cont adaugă emoturile și setările tale pe fiecare dispozitiv"
-  },
-  "welcome_start_title": {
-    "message": "cum începi"
-  },
   "welcome_start_1": {
     "message": "deschide orice stream de pe twitch, kick sau youtube. chatul heatsync apare singur"
-  },
-  "welcome_start_2": {
-    "message": "un card mic arată ce e oprit. dă clic pe ce vrei"
-  },
-  "welcome_start_3": {
-    "message": "ca să scrii, conectează-te pe site ca de obicei și tastează în caseta de jos"
   },
   "mc_settings_mention_sound": {
     "message": "sunet de mențiune"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "numele unui emote nu poate fi gol și nu poate avea spații"
+  },
+  "mc_tour_menu_t": {
+    "message": "clic dreapta pe un mesaj"
+  },
+  "mc_tour_menu_d": {
+    "message": "se deschide un meniu: răspunde, copiază, mute, urmărește și altele. pe telefon, ține apăsat"
+  },
+  "mc_tour_cmd_t": {
+    "message": "scrie / pentru comenzi"
+  },
+  "mc_tour_cmd_d": {
+    "message": "în caseta de jos. apare o listă. /help le arată pe toate"
+  },
+  "mc_tour_find_t": {
+    "message": "caută un mesaj"
+  },
+  "mc_tour_find_d": {
+    "message": "scrie un cuvânt sau un nume în caseta de sus. rămân doar mesajele care se potrivesc"
+  },
+  "mc_tour_tabs_t": {
+    "message": "mai multe canale"
+  },
+  "mc_tour_tabs_d": {
+    "message": "dă clic pe + ca să adaugi un canal. alt+1 până la alt+9 sar între taburi"
+  },
+  "mc_tour_settings_t": {
+    "message": "setări"
+  },
+  "mc_tour_settings_d": {
+    "message": "butonul ⚙. ? dinăuntru are ajutor, verificările conectării tale și acest tur din nou"
+  },
+  "mc_tour_switches_t": {
+    "message": "astea pornesc oprite. dă clic pe una ca s-o pornești"
+  },
+  "mc_tour_next": {
+    "message": "înainte →"
+  },
+  "mc_tour_back": {
+    "message": "← înapoi"
+  },
+  "mc_tour_skip": {
+    "message": "sari peste"
+  },
+  "welcome_s1_t": {
+    "message": "deschide un stream"
+  },
+  "welcome_s1_tour": {
+    "message": "prima dată apare un tur scurt. îl poți sări oricând"
+  },
+  "welcome_s2_t": {
+    "message": "ascunde și arată chatul"
+  },
+  "welcome_s2_d": {
+    "message": "butonul de ascundere din bara de taburi a chatului îl strânge. dă clic pe fâșia albă subțire de la marginea paginii ca să-l aduci înapoi"
+  },
+  "welcome_s3_t": {
+    "message": "conectează-te (opțional)"
+  },
+  "welcome_s3_d": {
+    "message": "cu un cont poți trimite pe twitch, kick și youtube deodată și îți folosești emoturile pe orice dispozitiv"
+  },
+  "mc_mtb_l_purge": {
+    "message": "șterge"
+  },
+  "mc_mtb_l_bt": {
+    "message": "cuvinte"
+  },
+  "mc_mtb_l_mt": {
+    "message": "unelte"
+  },
+  "mc_send_title": {
+    "message": "trimitere"
+  },
+  "mc_send_hint": {
+    "message": "ca să trimiți de aici, conectează-te o dată pe fiecare site. pentru citit nu trebuie cont"
+  },
+  "mc_send_in": {
+    "message": "conectat"
+  },
+  "mc_send_out": {
+    "message": "neconectat"
+  },
+  "mc_send_unknown": {
+    "message": "nu se știe"
   }
 }

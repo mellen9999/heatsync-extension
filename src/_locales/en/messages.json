@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "you're in"
   },
-  "welcome_explain": {
-    "message": "sign in to heatsync.org to use your emotes and settings in every chat"
-  },
   "welcome_close": {
     "message": "close"
   },
@@ -596,7 +593,7 @@
     "message": "urls in chat become clickable"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k scroll, g/G top/bottom, / search"
+    "message": "vim keys: j/k scroll, g/G top/bottom, / search. for people who know vim"
   },
   "mc_settings_zebra_desc": {
     "message": "alternating row shading"
@@ -608,10 +605,10 @@
     "message": "timestamp on each message"
   },
   "mc_settings_show_avatars": {
-    "message": "pfps"
+    "message": "profile pictures"
   },
   "mc_settings_avatars_desc": {
-    "message": "pfps next to usernames"
+    "message": "profile pictures next to usernames"
   },
   "mc_settings_inline_notifs": {
     "message": "inline notifications"
@@ -910,7 +907,7 @@
     "message": "not logged in"
   },
   "mc_input_auth_failed": {
-    "message": "auth failed — re-login to twitch"
+    "message": "sign-in failed — log in to twitch again"
   },
   "mc_social_back": {
     "message": "<- back"
@@ -1157,7 +1154,7 @@
     "message": "which edge the multichat tab bar docks to"
   },
   "mc_settings_chat_position": {
-    "message": "chat dock side"
+    "message": "chat side"
   },
   "mc_settings_chat_position_desc": {
     "message": "which side of the player the chat panel docks to — hidden tucks it away (\\ key toggles)"
@@ -1340,7 +1337,7 @@
     "message": "timeout 7 days"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (clear messages, 1s)"
+    "message": "clear their messages (1 second timeout)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "permanent ban"
@@ -2699,10 +2696,10 @@
     "message": "open the youtube stream to send"
   },
   "mc_yt_send_restricted": {
-    "message": "yt chat is restricted for this stream"
+    "message": "youtube chat is restricted for this stream"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — can't chat here",
+    "message": "youtube: $REASON$ — can't chat here",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -3617,7 +3614,7 @@
     "message": "max"
   },
   "mc_twapi_amt": {
-    "message": "amt"
+    "message": "amount"
   },
   "mc_twapi_bet": {
     "message": "bet"
@@ -4732,7 +4729,7 @@
     "message": "timeout 7 days"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — clear this user’s messages (1s timeout)"
+    "message": "clear this user’s messages (1 second timeout)"
   },
   "mc_mtb_t_ban": {
     "message": "permanent ban"
@@ -4815,7 +4812,7 @@
     "message": "+ add a channel"
   },
   "mc_main_idwarn": {
-    "message": "your emotes won't render for others here — heatsync acct $ACCT$, chatting as $IDENT$ — $LINK$",
+    "message": "others can't see your emotes here — your heatsync account is $ACCT$ but you are chatting as $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4914,7 +4911,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "filter — /regex/ or @user"
+    "message": "search chat — a word or @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ pts",
@@ -5108,7 +5105,7 @@
     "message": "-- TABS --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch auth failed"
+    "message": "twitch sign-in failed"
   },
   "mc_notif_r_no_user": {
     "message": "no twitch username"
@@ -5297,22 +5294,22 @@
     "message": "system · backup / restore"
   },
   "mc_set_export_tip": {
-    "message": "dump ui_settings + all hs_* keys to a JSON file. portable across devices and browsers."
+    "message": "save all your settings to a file. use it on another device or browser"
   },
   "mc_set_export": {
     "message": "export settings"
   },
   "mc_set_export_btn": {
-    "message": "download .json"
+    "message": "save to a file"
   },
   "mc_set_import_tip": {
-    "message": "restore from a previously-exported JSON file. merges into existing settings."
+    "message": "load settings you saved before. they are added to the ones you have"
   },
   "mc_set_import": {
     "message": "import settings"
   },
   "mc_set_import_btn": {
-    "message": "load .json"
+    "message": "load from a file"
   },
   "mc_set_reset_all_title": {
     "message": "reset every setting on every page"
@@ -5901,7 +5898,7 @@
     }
   },
   "hsbtn_provider_err": {
-    "message": "err"
+    "message": "error"
   },
   "hsbtn_search_status": {
     "message": "“$QUERY$” — $STATUS$",
@@ -6382,7 +6379,7 @@
     "message": "post a thread to your heatsync feed"
   },
   "slash_desc_re": {
-    "message": "reply to the last [OP] shown in chat"
+    "message": "reply to the last feed post shown in chat"
   },
   "slash_desc_dm": {
     "message": "send a heatsync DM; no message opens the conversation"
@@ -6424,7 +6421,7 @@
     "message": "clear the current tab for you only"
   },
   "slash_desc_mute": {
-    "message": "mute someone for 24h, across their linked accounts"
+    "message": "mute someone for 24 hours, on all their linked accounts"
   },
   "slash_desc_unmute": {
     "message": "clear a mute"
@@ -6472,7 +6469,7 @@
     "message": "delete a single message"
   },
   "slash_desc_nuke": {
-    "message": "bulk-delete recent messages containing a term"
+    "message": "delete lots of recent messages that contain a word"
   },
   "slash_desc_announce": {
     "message": "post an announcement, optionally coloured"
@@ -6508,7 +6505,7 @@
     "message": "open unban requests"
   },
   "slash_desc_slow": {
-    "message": "slow mode, default 30s"
+    "message": "slow mode: people wait between messages, default 30 seconds"
   },
   "slash_desc_followers": {
     "message": "followers-only mode"
@@ -6520,7 +6517,7 @@
     "message": "subscribers-only mode"
   },
   "slash_desc_unique": {
-    "message": "unique-chat mode; twitch only, kick has no equivalent"
+    "message": "no repeat messages (unique chat); twitch only"
   },
   "slash_desc_poll": {
     "message": "create a poll, 2-5 choices"
@@ -6634,9 +6631,6 @@
   "mc_tour_aria": {
     "message": "welcome tour"
   },
-  "mc_tour_title": {
-    "message": "welcome! these start off. click one to turn it on"
-  },
   "mc_tour_timestamps_tip": {
     "message": "show the time next to every message"
   },
@@ -6667,29 +6661,11 @@
   "mc_set_tour_btn": {
     "message": "show the tour again"
   },
-  "welcome_get_title": {
-    "message": "what you get"
-  },
-  "welcome_get_1": {
-    "message": "twitch, kick and youtube chat in one place, with every emote (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "reading chat needs no account"
   },
-  "welcome_get_3": {
-    "message": "an account adds your own emotes and settings, on every device"
-  },
-  "welcome_start_title": {
-    "message": "how to start"
-  },
   "welcome_start_1": {
     "message": "open any twitch, kick or youtube stream. heatsync chat appears by itself"
-  },
-  "welcome_start_2": {
-    "message": "a small card shows what's switched off. click what you want"
-  },
-  "welcome_start_3": {
-    "message": "to chat, log in on the site as usual, then type in the box at the bottom"
   },
   "mc_settings_mention_sound": {
     "message": "mention sound"
@@ -7125,5 +7101,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "an emote name can't be empty or have spaces"
+  },
+  "mc_tour_menu_t": {
+    "message": "right-click a message"
+  },
+  "mc_tour_menu_d": {
+    "message": "a menu opens: reply, copy, mute, follow and more. on a phone, press and hold"
+  },
+  "mc_tour_cmd_t": {
+    "message": "type / for commands"
+  },
+  "mc_tour_cmd_d": {
+    "message": "in the box at the bottom. a list pops up. /help shows all of them"
+  },
+  "mc_tour_find_t": {
+    "message": "find a message"
+  },
+  "mc_tour_find_d": {
+    "message": "type a word or a name in the box at the top. only matching messages stay"
+  },
+  "mc_tour_tabs_t": {
+    "message": "more channels"
+  },
+  "mc_tour_tabs_d": {
+    "message": "click + to add a channel. alt+1 to alt+9 jump between tabs"
+  },
+  "mc_tour_settings_t": {
+    "message": "settings"
+  },
+  "mc_tour_settings_d": {
+    "message": "the ⚙ button. ? inside has help, your sign-in checks and this tour again"
+  },
+  "mc_tour_switches_t": {
+    "message": "these start off. click one to turn it on"
+  },
+  "mc_tour_next": {
+    "message": "next →"
+  },
+  "mc_tour_back": {
+    "message": "← back"
+  },
+  "mc_tour_skip": {
+    "message": "skip"
+  },
+  "welcome_s1_t": {
+    "message": "open a stream"
+  },
+  "welcome_s1_tour": {
+    "message": "a short tour shows up the first time. skip it any time"
+  },
+  "welcome_s2_t": {
+    "message": "hide and show the chat"
+  },
+  "welcome_s2_d": {
+    "message": "the hide button in the chat's tab bar tucks it away. click the thin white strip at the edge of the page to bring it back"
+  },
+  "welcome_s3_t": {
+    "message": "sign in (optional)"
+  },
+  "welcome_s3_d": {
+    "message": "an account lets you send to twitch, kick and youtube at once, and use your own emotes on every device"
+  },
+  "mc_mtb_l_purge": {
+    "message": "clear"
+  },
+  "mc_mtb_l_bt": {
+    "message": "words"
+  },
+  "mc_mtb_l_mt": {
+    "message": "tools"
+  },
+  "mc_send_title": {
+    "message": "sending"
+  },
+  "mc_send_hint": {
+    "message": "to send from here, sign in on each site once. reading needs no account"
+  },
+  "mc_send_in": {
+    "message": "signed in"
+  },
+  "mc_send_out": {
+    "message": "not signed in"
+  },
+  "mc_send_unknown": {
+    "message": "can't tell"
   }
 }

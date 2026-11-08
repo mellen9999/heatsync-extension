@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "אתה בפנים"
   },
-  "welcome_explain": {
-    "message": "התחבר ל-heatsync.org כדי להשתמש באימוטים ובהגדרות שלך בכל צ׳אט"
-  },
   "welcome_close": {
     "message": "סגור"
   },
@@ -595,7 +592,7 @@
     "message": "כתובות url בצ'אט הופכות לניתנות ללחיצה"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k גלילה, g/G למעלה/למטה, / חיפוש"
+    "message": "מקשי vim: j/k גלילה, g/G למעלה/למטה, / חיפוש. למי שמכיר vim"
   },
   "mc_settings_zebra_desc": {
     "message": "הצללת שורות לסירוגין"
@@ -607,10 +604,10 @@
     "message": "חותמת זמן על כל הודעה"
   },
   "mc_settings_show_avatars": {
-    "message": "אווטרים"
+    "message": "תמונות פרופיל"
   },
   "mc_settings_avatars_desc": {
-    "message": "אווטארים ליד שמות המשתמשים"
+    "message": "תמונות פרופיל ליד שמות המשתמשים"
   },
   "mc_settings_inline_notifs": {
     "message": "התראות inline"
@@ -909,7 +906,7 @@
     "message": "לא מחובר"
   },
   "mc_input_auth_failed": {
-    "message": "אימות נכשל — התחבר שוב ל-Twitch"
+    "message": "ההתחברות נכשלה — התחבר שוב ל-twitch"
   },
   "mc_social_back": {
     "message": "<- חזור"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 ימים"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (ניקוי הודעות, 1s)"
+    "message": "נקה את ההודעות שלו (timeout של שנייה)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "באן קבוע"
@@ -2698,10 +2695,10 @@
     "message": "פתח את הסטרים ב-youtube כדי לשלוח"
   },
   "mc_yt_send_restricted": {
-    "message": "הצ'אט ב-yt מוגבל בסטרים הזה"
+    "message": "הצ'אט ב-youtube מוגבל בשידור הזה"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — אי אפשר לצ'וטט כאן",
+    "message": "youtube: $REASON$ — אי אפשר לכתוב כאן",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 ימים"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — נקה את הודעות המשתמש (timeout של שנייה)"
+    "message": "נקה את ההודעות של המשתמש (timeout של שנייה)"
   },
   "mc_mtb_t_ban": {
     "message": "ban לצמיתות"
@@ -4799,7 +4796,7 @@
     "message": "+ הוסף ערוץ"
   },
   "mc_main_idwarn": {
-    "message": "האימוטים שלך לא יוצגו לאחרים כאן — חשבון heatsync $ACCT$, מצ'אט בשם $IDENT$ — $LINK$",
+    "message": "אחרים לא רואים את האימוטים שלך כאן — חשבון heatsync שלך הוא $ACCT$ אבל אתה כותב בשם $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "סינון — /regex/ או @user"
+    "message": "חפש בצ'אט — מילה או @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ נק׳",
@@ -5091,7 +5088,7 @@
     "message": "-- לשוניות --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "האימות ב-twitch נכשל"
+    "message": "ההתחברות ל-twitch נכשלה"
   },
   "mc_notif_r_no_user": {
     "message": "אין שם משתמש ב-twitch"
@@ -5280,22 +5277,22 @@
     "message": "מערכת · גיבוי / שחזור"
   },
   "mc_set_export_tip": {
-    "message": "מייצא את ui_settings ואת כל מפתחות hs_* לקובץ JSON. נייד בין מכשירים ודפדפנים."
+    "message": "שמור את כל ההגדרות שלך בקובץ. השתמש בו במכשיר או בדפדפן אחר"
   },
   "mc_set_export": {
     "message": "ייצוא הגדרות"
   },
   "mc_set_export_btn": {
-    "message": "הורד .json"
+    "message": "שמור לקובץ"
   },
   "mc_set_import_tip": {
-    "message": "שחזור מקובץ JSON שיוצא קודם. ממוזג להגדרות הקיימות."
+    "message": "טען הגדרות ששמרת קודם. הן מתווספות להגדרות שיש לך"
   },
   "mc_set_import": {
     "message": "ייבוא הגדרות"
   },
   "mc_set_import_btn": {
-    "message": "טען .json"
+    "message": "טען מקובץ"
   },
   "mc_set_reset_all_title": {
     "message": "אפס כל הגדרה בכל עמוד"
@@ -6365,7 +6362,7 @@
     "message": "פרסם שרשור בפיד heatsync שלך"
   },
   "slash_desc_re": {
-    "message": "השב על ה-[OP] האחרון שהוצג בצ'אט"
+    "message": "השב לפוסט האחרון מהפיד שמוצג בצ'אט"
   },
   "slash_desc_dm": {
     "message": "שלח DM ב-heatsync; בלי הודעה נפתחת השיחה"
@@ -6455,7 +6452,7 @@
     "message": "מחק הודעה בודדת"
   },
   "slash_desc_nuke": {
-    "message": "מחק בכמות גדולה הודעות אחרונות שמכילות מונח"
+    "message": "מחק בבת אחת הרבה הודעות אחרונות שמכילות מילה"
   },
   "slash_desc_announce": {
     "message": "פרסם הכרזה, אפשר בצבע"
@@ -6491,7 +6488,7 @@
     "message": "פתח בקשות unban"
   },
   "slash_desc_slow": {
-    "message": "מצב איטי, ברירת מחדל 30 שנ׳"
+    "message": "מצב איטי: צריך לחכות בין הודעות, ברירת מחדל 30 שניות"
   },
   "slash_desc_followers": {
     "message": "מצב עוקבים בלבד"
@@ -6503,7 +6500,7 @@
     "message": "מצב מנויים בלבד"
   },
   "slash_desc_unique": {
-    "message": "מצב צ'אט ייחודי; twitch בלבד, ל-kick אין מקבילה"
+    "message": "בלי הודעות חוזרות (צ'אט ייחודי); twitch בלבד"
   },
   "slash_desc_poll": {
     "message": "צור סקר, 2-5 אפשרויות"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "סיור היכרות"
   },
-  "mc_tour_title": {
-    "message": "ברוך הבא! אלה כבויים בהתחלה. לחץ על אחד כדי להפעיל אותו"
-  },
   "mc_tour_timestamps_tip": {
     "message": "מציג את השעה ליד כל הודעה"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "הצג את הסיור שוב"
   },
-  "welcome_get_title": {
-    "message": "מה מקבלים"
-  },
-  "welcome_get_1": {
-    "message": "צ׳אט של twitch, kick ו-youtube במקום אחד, עם כל האימוטים (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "לקריאת הצ׳אט לא צריך חשבון"
   },
-  "welcome_get_3": {
-    "message": "חשבון מוסיף את האימוטים וההגדרות שלך בכל מכשיר"
-  },
-  "welcome_start_title": {
-    "message": "איך מתחילים"
-  },
   "welcome_start_1": {
     "message": "פתח כל שידור ב-twitch, kick או youtube. הצ׳אט של heatsync מופיע מעצמו"
-  },
-  "welcome_start_2": {
-    "message": "כרטיס קטן מראה מה כבוי. לחץ על מה שאתה רוצה"
-  },
-  "welcome_start_3": {
-    "message": "כדי לכתוב בצ׳אט, התחבר לאתר כרגיל והקלד בתיבה שלמטה"
   },
   "mc_settings_mention_sound": {
     "message": "צליל אזכור"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "שם אימוט לא יכול להיות ריק או לכלול רווחים"
+  },
+  "mc_tour_menu_t": {
+    "message": "לחץ קליק ימני על הודעה"
+  },
+  "mc_tour_menu_d": {
+    "message": "נפתח תפריט: הגב, העתק, השתק, עקוב ועוד. בטלפון, לחץ והחזק"
+  },
+  "mc_tour_cmd_t": {
+    "message": "הקלד / לפקודות"
+  },
+  "mc_tour_cmd_d": {
+    "message": "בתיבה שלמטה. תופיע רשימה. /help מראה את כולן"
+  },
+  "mc_tour_find_t": {
+    "message": "מצא הודעה"
+  },
+  "mc_tour_find_d": {
+    "message": "הקלד מילה או שם בתיבה שלמעלה. רק הודעות מתאימות יישארו"
+  },
+  "mc_tour_tabs_t": {
+    "message": "עוד ערוצים"
+  },
+  "mc_tour_tabs_d": {
+    "message": "לחץ על + כדי להוסיף ערוץ. alt+1 עד alt+9 קופצים בין לשוניות"
+  },
+  "mc_tour_settings_t": {
+    "message": "הגדרות"
+  },
+  "mc_tour_settings_d": {
+    "message": "כפתור ⚙. בפנים, ? מראה עזרה, בדיקות התחברות ואת הסיור הזה שוב"
+  },
+  "mc_tour_switches_t": {
+    "message": "אלה כבויים בהתחלה. לחץ על אחד כדי להדליק אותו"
+  },
+  "mc_tour_next": {
+    "message": "הבא ←"
+  },
+  "mc_tour_back": {
+    "message": "חזרה →"
+  },
+  "mc_tour_skip": {
+    "message": "דלג"
+  },
+  "welcome_s1_t": {
+    "message": "פתח שידור"
+  },
+  "welcome_s1_tour": {
+    "message": "סיור קצר מופיע בפעם הראשונה. אפשר לדלג עליו בכל רגע"
+  },
+  "welcome_s2_t": {
+    "message": "הסתר והצג את הצ'אט"
+  },
+  "welcome_s2_d": {
+    "message": "כפתור ההסתרה בסרגל הלשוניות של הצ'אט מחביא אותו. לחץ על הפס הלבן הדק בקצה הדף כדי להחזיר אותו"
+  },
+  "welcome_s3_t": {
+    "message": "התחבר (לא חובה)"
+  },
+  "welcome_s3_d": {
+    "message": "עם חשבון אפשר לשלוח ל-twitch, kick ו-youtube בבת אחת, ולהשתמש באימוטים שלך בכל מכשיר"
+  },
+  "mc_mtb_l_purge": {
+    "message": "נקה"
+  },
+  "mc_mtb_l_bt": {
+    "message": "מילים"
+  },
+  "mc_mtb_l_mt": {
+    "message": "כלים"
+  },
+  "mc_send_title": {
+    "message": "שליחה"
+  },
+  "mc_send_hint": {
+    "message": "כדי לשלוח מכאן, התחבר פעם אחת בכל אתר. לקריאה לא צריך חשבון"
+  },
+  "mc_send_in": {
+    "message": "מחובר"
+  },
+  "mc_send_out": {
+    "message": "לא מחובר"
+  },
+  "mc_send_unknown": {
+    "message": "לא ידוע"
   }
 }

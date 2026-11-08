@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "du er med"
   },
-  "welcome_explain": {
-    "message": "log ind på heatsync.org for at bruge dine emotes og indstillinger i alle chats"
-  },
   "welcome_close": {
     "message": "luk"
   },
@@ -595,7 +592,7 @@
     "message": "url'er i chatten bliver klikbare"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k scroll, g/G top/bund, / søg"
+    "message": "vim-taster: j/k scroller, g/G top/bund, / søger. til dem, der kender vim"
   },
   "mc_settings_zebra_desc": {
     "message": "skiftende række-skyggelægning"
@@ -909,7 +906,7 @@
     "message": "ikke logget ind"
   },
   "mc_input_auth_failed": {
-    "message": "godkendelse mislykkedes — log ind igen på Twitch"
+    "message": "login mislykkedes — log ind på twitch igen"
   },
   "mc_social_back": {
     "message": "<- tilbage"
@@ -1156,7 +1153,7 @@
     "message": "hvilken kant multichat-fanelinjen docker til"
   },
   "mc_settings_chat_position": {
-    "message": "chattens dock-side"
+    "message": "chattens side"
   },
   "mc_settings_chat_position_desc": {
     "message": "hvilken side af afspilleren chatpanelet docker til — hidden gemmer det væk (\\-tasten skifter)"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 dage"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (ryd beskeder, 1s)"
+    "message": "ryd deres beskeder (1 sekunds timeout)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "permanent ban"
@@ -2698,10 +2695,10 @@
     "message": "åbn youtube-streamen for at sende"
   },
   "mc_yt_send_restricted": {
-    "message": "yt-chat er begrænset for denne stream"
+    "message": "youtube-chatten er begrænset for denne stream"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — kan ikke chatte her",
+    "message": "youtube: $REASON$ — du kan ikke chatte her",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -3601,7 +3598,7 @@
     "message": "maks"
   },
   "mc_twapi_amt": {
-    "message": "beløb"
+    "message": "antal"
   },
   "mc_twapi_bet": {
     "message": "indsats"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 dage"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — ryd denne brugers beskeder (1s timeout)"
+    "message": "ryd denne brugers beskeder (1 sekunds timeout)"
   },
   "mc_mtb_t_ban": {
     "message": "permanent ban"
@@ -4799,7 +4796,7 @@
     "message": "+ tilføj en kanal"
   },
   "mc_main_idwarn": {
-    "message": "dine emotes vises ikke for andre her — heatsync-konto $ACCT$, chatter som $IDENT$ — $LINK$",
+    "message": "andre kan ikke se dine emotes her — din heatsync-konto er $ACCT$, men du chatter som $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "filter — /regex/ eller @user"
+    "message": "søg i chatten — et ord eller @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ point",
@@ -5280,22 +5277,22 @@
     "message": "system · backup / gendan"
   },
   "mc_set_export_tip": {
-    "message": "dump ui_settings + alle hs_*-nøgler til en JSON-fil. kan flyttes mellem enheder og browsere."
+    "message": "gem alle dine indstillinger i en fil. brug den på en anden enhed eller browser"
   },
   "mc_set_export": {
     "message": "eksportér indstillinger"
   },
   "mc_set_export_btn": {
-    "message": "download .json"
+    "message": "gem i en fil"
   },
   "mc_set_import_tip": {
-    "message": "gendan fra en tidligere eksporteret JSON-fil. flettes ind i eksisterende indstillinger."
+    "message": "indlæs indstillinger, du har gemt før. de lægges oven i dem, du har"
   },
   "mc_set_import": {
     "message": "importér indstillinger"
   },
   "mc_set_import_btn": {
-    "message": "indlæs .json"
+    "message": "indlæs fra en fil"
   },
   "mc_set_reset_all_title": {
     "message": "nulstil alle indstillinger på alle sider"
@@ -6365,7 +6362,7 @@
     "message": "skriv en tråd til dit heatsync-feed"
   },
   "slash_desc_re": {
-    "message": "svar på den seneste [OP] vist i chatten"
+    "message": "svar på det seneste opslag fra feedet, der vises i chatten"
   },
   "slash_desc_dm": {
     "message": "send en heatsync-DM; uden besked åbnes samtalen"
@@ -6407,7 +6404,7 @@
     "message": "ryd den nuværende fane kun for dig"
   },
   "slash_desc_mute": {
-    "message": "gør nogen tavs i 24t på tværs af deres forbundne konti"
+    "message": "gør nogen tavs i 24 timer på alle deres forbundne konti"
   },
   "slash_desc_unmute": {
     "message": "ophæv tavshed"
@@ -6455,7 +6452,7 @@
     "message": "slet en enkelt besked"
   },
   "slash_desc_nuke": {
-    "message": "slet seneste beskeder med et ord i bulk"
+    "message": "slet mange nylige beskeder med et ord på én gang"
   },
   "slash_desc_announce": {
     "message": "send en meddelelse, evt. farvet"
@@ -6491,7 +6488,7 @@
     "message": "åbn unban-anmodninger"
   },
   "slash_desc_slow": {
-    "message": "langsom tilstand, standard 30s"
+    "message": "langsom tilstand: folk skal vente mellem beskeder, standard 30 sekunder"
   },
   "slash_desc_followers": {
     "message": "kun følgere"
@@ -6503,7 +6500,7 @@
     "message": "kun abonnenter"
   },
   "slash_desc_unique": {
-    "message": "unik chat; kun twitch, kick har ingen tilsvarende"
+    "message": "ingen gentagne beskeder (unik chat); kun twitch"
   },
   "slash_desc_poll": {
     "message": "opret en afstemning, 2-5 valg"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "kort rundvisning"
   },
-  "mc_tour_title": {
-    "message": "velkommen! disse ting er slået fra til at starte med. klik på en for at slå den til"
-  },
   "mc_tour_timestamps_tip": {
     "message": "vis klokkeslættet ved siden af hver besked"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "vis rundvisningen igen"
   },
-  "welcome_get_title": {
-    "message": "det får du"
-  },
-  "welcome_get_1": {
-    "message": "twitch-, kick- og youtube-chat ét sted, med alle emotes (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "du behøver ikke en konto for at læse chatten"
   },
-  "welcome_get_3": {
-    "message": "en konto giver dig dine egne emotes og indstillinger på alle enheder"
-  },
-  "welcome_start_title": {
-    "message": "sådan kommer du i gang"
-  },
   "welcome_start_1": {
     "message": "åbn en hvilken som helst stream på twitch, kick eller youtube. heatsync-chatten dukker op af sig selv"
-  },
-  "welcome_start_2": {
-    "message": "et lille kort viser, hvad der er slået fra. klik på det, du vil have"
-  },
-  "welcome_start_3": {
-    "message": "for at chatte skal du logge ind på siden som sædvanlig og skrive i feltet nederst"
   },
   "mc_settings_mention_sound": {
     "message": "omtalelyd"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "et emotenavn må ikke være tomt eller have mellemrum"
+  },
+  "mc_tour_menu_t": {
+    "message": "højreklik på en besked"
+  },
+  "mc_tour_menu_d": {
+    "message": "en menu åbner: svar, kopiér, gør tavs, følg og mere. på en telefon: tryk og hold"
+  },
+  "mc_tour_cmd_t": {
+    "message": "skriv / for kommandoer"
+  },
+  "mc_tour_cmd_d": {
+    "message": "i feltet nederst. en liste dukker op. /help viser dem alle"
+  },
+  "mc_tour_find_t": {
+    "message": "find en besked"
+  },
+  "mc_tour_find_d": {
+    "message": "skriv et ord eller et navn i feltet øverst. kun de beskeder, der passer, bliver"
+  },
+  "mc_tour_tabs_t": {
+    "message": "flere kanaler"
+  },
+  "mc_tour_tabs_d": {
+    "message": "klik på + for at tilføje en kanal. alt+1 til alt+9 hopper mellem faner"
+  },
+  "mc_tour_settings_t": {
+    "message": "indstillinger"
+  },
+  "mc_tour_settings_d": {
+    "message": "⚙-knappen. ? indeni har hjælp, dine login-tjek og denne rundvisning igen"
+  },
+  "mc_tour_switches_t": {
+    "message": "disse er slået fra. klik på en for at slå den til"
+  },
+  "mc_tour_next": {
+    "message": "næste →"
+  },
+  "mc_tour_back": {
+    "message": "← tilbage"
+  },
+  "mc_tour_skip": {
+    "message": "spring over"
+  },
+  "welcome_s1_t": {
+    "message": "åbn en stream"
+  },
+  "welcome_s1_tour": {
+    "message": "en kort rundvisning dukker op første gang. spring den over når som helst"
+  },
+  "welcome_s2_t": {
+    "message": "skjul og vis chatten"
+  },
+  "welcome_s2_d": {
+    "message": "skjul-knappen i chattens fanelinje gemmer den væk. klik på den tynde hvide stribe i kanten af siden for at få den tilbage"
+  },
+  "welcome_s3_t": {
+    "message": "log ind (valgfrit)"
+  },
+  "welcome_s3_d": {
+    "message": "en konto lader dig sende til twitch, kick og youtube på én gang og bruge dine egne emotes på alle enheder"
+  },
+  "mc_mtb_l_purge": {
+    "message": "ryd"
+  },
+  "mc_mtb_l_bt": {
+    "message": "ord"
+  },
+  "mc_mtb_l_mt": {
+    "message": "værktøj"
+  },
+  "mc_send_title": {
+    "message": "afsendelse"
+  },
+  "mc_send_hint": {
+    "message": "for at sende herfra skal du logge ind på hvert site én gang. at læse kræver ingen konto"
+  },
+  "mc_send_in": {
+    "message": "logget ind"
+  },
+  "mc_send_out": {
+    "message": "ikke logget ind"
+  },
+  "mc_send_unknown": {
+    "message": "ukendt"
   }
 }

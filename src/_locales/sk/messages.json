@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "si dnu"
   },
-  "welcome_explain": {
-    "message": "prihlás sa na heatsync.org a používaj svoje emotes a nastavenia v každom chate"
-  },
   "welcome_close": {
     "message": "zavrieť"
   },
@@ -595,7 +592,7 @@
     "message": "url v chate sa stávajú klikateľnými"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k posúvanie, g/G hore/dole, / hľadaj"
+    "message": "klávesy vim: j/k posúvanie, g/G hore/dole, / hľadanie. pre tých, čo poznajú vim"
   },
   "mc_settings_zebra_desc": {
     "message": "striedajúce sa tieňovanie riadkov"
@@ -607,10 +604,10 @@
     "message": "časová pečiatka na každej správe"
   },
   "mc_settings_show_avatars": {
-    "message": "avatary"
+    "message": "profilové obrázky"
   },
   "mc_settings_avatars_desc": {
-    "message": "avatary vedľa mien používateľov"
+    "message": "profilové obrázky vedľa mien používateľov"
   },
   "mc_settings_inline_notifs": {
     "message": "inline notifikácie"
@@ -909,7 +906,7 @@
     "message": "neprihlásený"
   },
   "mc_input_auth_failed": {
-    "message": "overenie zlyhalo — prihlás sa znova na Twitch"
+    "message": "prihlásenie zlyhalo — prihlás sa znova na twitch"
   },
   "mc_social_back": {
     "message": "<- späť"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 dní"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (vymazať správy, 1s)"
+    "message": "vymazať správy (timeout na 1 sekundu)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "trvalý ban"
@@ -2698,10 +2695,10 @@
     "message": "na odosielanie otvor stream youtube"
   },
   "mc_yt_send_restricted": {
-    "message": "chat yt je pre tento stream obmedzený"
+    "message": "chat youtube je pre tento stream obmedzený"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — tu sa nedá chatovať",
+    "message": "youtube: $REASON$ — tu sa nedá chatovať",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 dní"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — vymaže správy používateľa (timeout 1s)"
+    "message": "vymazať správy tohto používateľa (timeout na 1 sekundu)"
   },
   "mc_mtb_t_ban": {
     "message": "trvalý ban"
@@ -4799,7 +4796,7 @@
     "message": "+ pridať kanál"
   },
   "mc_main_idwarn": {
-    "message": "tvoje emotikony tu ostatní neuvidia — heatsync účet $ACCT$, chatuješ ako $IDENT$ — $LINK$",
+    "message": "ostatní tu nevidia tvoje emotikony — tvoj účet heatsync je $ACCT$, ale chatuješ ako $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "filter — /regex/ alebo @user"
+    "message": "hľadaj v chate — slovo alebo @meno"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ bodov",
@@ -5091,7 +5088,7 @@
     "message": "-- KARTY --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "overenie twitchu zlyhalo"
+    "message": "prihlásenie na twitch zlyhalo"
   },
   "mc_notif_r_no_user": {
     "message": "chýba meno na twitchi"
@@ -5280,22 +5277,22 @@
     "message": "systém · záloha / obnova"
   },
   "mc_set_export_tip": {
-    "message": "vyexportuje ui_settings + všetky kľúče hs_* do súboru JSON. prenosné medzi zariadeniami a prehliadačmi."
+    "message": "uloží všetky tvoje nastavenia do súboru. použi ho na inom zariadení alebo v inom prehliadači"
   },
   "mc_set_export": {
     "message": "exportovať nastavenia"
   },
   "mc_set_export_btn": {
-    "message": "stiahnuť .json"
+    "message": "uložiť do súboru"
   },
   "mc_set_import_tip": {
-    "message": "obnoví z predtým exportovaného súboru JSON. zlúči sa do existujúcich nastavení."
+    "message": "načíta nastavenia uložené predtým. pridajú sa k tým, ktoré už máš"
   },
   "mc_set_import": {
     "message": "importovať nastavenia"
   },
   "mc_set_import_btn": {
-    "message": "načítať .json"
+    "message": "načítať zo súboru"
   },
   "mc_set_reset_all_title": {
     "message": "obnoviť všetky nastavenia na všetkých stránkach"
@@ -6365,7 +6362,7 @@
     "message": "pridá vlákno do tvojho feedu heatsync"
   },
   "slash_desc_re": {
-    "message": "odpovie na posledné [OP] zobrazené v chate"
+    "message": "odpovie na posledný príspevok z feedu zobrazený v chate"
   },
   "slash_desc_dm": {
     "message": "pošle dm na heatsync; bez správy otvorí konverzáciu"
@@ -6407,7 +6404,7 @@
     "message": "vymaže aktuálnu kartu iba tebe"
   },
   "slash_desc_mute": {
-    "message": "stlmí niekoho na 24h naprieč jeho prepojenými účtami"
+    "message": "stlmí niekoho na 24 hodín vo všetkých prepojených účtoch"
   },
   "slash_desc_unmute": {
     "message": "zruší stlmenie"
@@ -6455,7 +6452,7 @@
     "message": "zmaže jednu správu"
   },
   "slash_desc_nuke": {
-    "message": "hromadne zmaže nedávne správy obsahujúce výraz"
+    "message": "zmaže veľa nedávnych správ, ktoré obsahujú slovo"
   },
   "slash_desc_announce": {
     "message": "pošle oznámenie, voliteľne farebné"
@@ -6491,7 +6488,7 @@
     "message": "otvorí žiadosti o zrušenie banu"
   },
   "slash_desc_slow": {
-    "message": "pomalý režim, predvolene 30s"
+    "message": "pomalý režim: ľudia čakajú medzi správami, predvolene 30 sekúnd"
   },
   "slash_desc_followers": {
     "message": "režim iba pre sledovateľov"
@@ -6503,7 +6500,7 @@
     "message": "režim iba pre odberateľov"
   },
   "slash_desc_unique": {
-    "message": "režim unikátneho chatu; iba twitch, kick nemá ekvivalent"
+    "message": "žiadne opakované správy (unikátny chat); iba twitch"
   },
   "slash_desc_poll": {
     "message": "vytvorí anketu, 2-5 možností"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "uvítacia prehliadka"
   },
-  "mc_tour_title": {
-    "message": "vitaj! tieto veci sú na začiatku vypnuté. klikni na niektorú a zapni ju"
-  },
   "mc_tour_timestamps_tip": {
     "message": "zobrazí čas pri každej správe"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "ukázať prehliadku znova"
   },
-  "welcome_get_title": {
-    "message": "čo získaš"
-  },
-  "welcome_get_1": {
-    "message": "chat z twitchu, kicku a youtube na jednom mieste, so všetkými emotes (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "na čítanie chatu nepotrebuješ účet"
   },
-  "welcome_get_3": {
-    "message": "účet pridá tvoje vlastné emotes a nastavenia na každom zariadení"
-  },
-  "welcome_start_title": {
-    "message": "ako začať"
-  },
   "welcome_start_1": {
     "message": "otvor akýkoľvek stream na twitchi, kicku alebo youtube. chat heatsync sa objaví sám"
-  },
-  "welcome_start_2": {
-    "message": "malá karta ukazuje, čo je vypnuté. klikni na to, čo chceš"
-  },
-  "welcome_start_3": {
-    "message": "pre písanie sa prihlás na webe ako zvyčajne a píš do poľa dole"
   },
   "mc_settings_mention_sound": {
     "message": "zvuk zmienky"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "názov emote nesmie byť prázdny ani obsahovať medzery"
+  },
+  "mc_tour_menu_t": {
+    "message": "klikni pravým tlačidlom na správu"
+  },
+  "mc_tour_menu_d": {
+    "message": "otvorí sa ponuka: odpovedať, kopírovať, stlmiť, nasledovať a ďalšie. na telefóne podrž prst"
+  },
+  "mc_tour_cmd_t": {
+    "message": "napíš / pre príkazy"
+  },
+  "mc_tour_cmd_d": {
+    "message": "do políčka dole. objaví sa zoznam. /help ukáže všetky"
+  },
+  "mc_tour_find_t": {
+    "message": "nájdi správu"
+  },
+  "mc_tour_find_d": {
+    "message": "napíš slovo alebo meno do políčka hore. zostanú len zodpovedajúce správy"
+  },
+  "mc_tour_tabs_t": {
+    "message": "viac kanálov"
+  },
+  "mc_tour_tabs_d": {
+    "message": "klikni na + a pridaj kanál. alt+1 až alt+9 prepínajú medzi kartami"
+  },
+  "mc_tour_settings_t": {
+    "message": "nastavenia"
+  },
+  "mc_tour_settings_d": {
+    "message": "tlačidlo ⚙. ? vnútri má pomoc, kontrolu prihlásenia a túto prehliadku znova"
+  },
+  "mc_tour_switches_t": {
+    "message": "tieto sú na začiatku vypnuté. klikni na jedno a zapni ho"
+  },
+  "mc_tour_next": {
+    "message": "ďalej →"
+  },
+  "mc_tour_back": {
+    "message": "← späť"
+  },
+  "mc_tour_skip": {
+    "message": "preskočiť"
+  },
+  "welcome_s1_t": {
+    "message": "otvor stream"
+  },
+  "welcome_s1_tour": {
+    "message": "prvýkrát sa ukáže krátka prehliadka. môžeš ju kedykoľvek preskočiť"
+  },
+  "welcome_s2_t": {
+    "message": "skry a zobraz chat"
+  },
+  "welcome_s2_d": {
+    "message": "tlačidlo skryť v lište kariet chatu ho schová. klikni na tenký biely pásik na okraji stránky a vráti sa"
+  },
+  "welcome_s3_t": {
+    "message": "prihlás sa (nepovinné)"
+  },
+  "welcome_s3_d": {
+    "message": "s účtom môžeš písať naraz na twitch, kick aj youtube a používať svoje emotikony na každom zariadení"
+  },
+  "mc_mtb_l_purge": {
+    "message": "vymazať"
+  },
+  "mc_mtb_l_bt": {
+    "message": "slová"
+  },
+  "mc_mtb_l_mt": {
+    "message": "nástroje"
+  },
+  "mc_send_title": {
+    "message": "odosielanie"
+  },
+  "mc_send_hint": {
+    "message": "ak chceš odtiaľto písať, prihlás sa raz na každom webe. na čítanie účet netreba"
+  },
+  "mc_send_in": {
+    "message": "prihlásený"
+  },
+  "mc_send_out": {
+    "message": "neprihlásený"
+  },
+  "mc_send_unknown": {
+    "message": "nedá sa zistiť"
   }
 }

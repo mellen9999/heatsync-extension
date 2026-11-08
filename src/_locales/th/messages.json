@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "เข้าแล้ว"
   },
-  "welcome_explain": {
-    "message": "เข้าสู่ระบบ heatsync.org เพื่อใช้อีโมตและการตั้งค่าของคุณในทุกแชต"
-  },
   "welcome_close": {
     "message": "ปิด"
   },
@@ -595,7 +592,7 @@
     "message": "url ในแชทกลายเป็นลิงก์ที่คลิกได้"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k เลื่อน, g/G บน/ล่าง, / ค้นหา"
+    "message": "ปุ่ม vim: j/k เลื่อน, g/G บน/ล่าง, / ค้นหา สำหรับคนที่รู้จัก vim"
   },
   "mc_settings_zebra_desc": {
     "message": "เงาแถวสลับกัน"
@@ -610,7 +607,7 @@
     "message": "รูปโปรไฟล์"
   },
   "mc_settings_avatars_desc": {
-    "message": "อวาตาร์ข้างชื่อผู้ใช้"
+    "message": "รูปโปรไฟล์ข้างชื่อผู้ใช้"
   },
   "mc_settings_inline_notifs": {
     "message": "แจ้งเตือนแบบอินไลน์"
@@ -909,7 +906,7 @@
     "message": "ยังไม่ได้เข้าสู่ระบบ"
   },
   "mc_input_auth_failed": {
-    "message": "ยืนยันตัวตนล้มเหลว — เข้าสู่ระบบ Twitch ใหม่"
+    "message": "เข้าสู่ระบบไม่สำเร็จ — เข้าสู่ระบบ twitch ใหม่อีกครั้ง"
   },
   "mc_social_back": {
     "message": "<- กลับ"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 วัน"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (ล้างข้อความ, 1 วิ)"
+    "message": "ล้างข้อความ (timeout 1 วินาที)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "แบนถาวร"
@@ -2698,10 +2695,10 @@
     "message": "เปิดสตรีม youtube เพื่อส่ง"
   },
   "mc_yt_send_restricted": {
-    "message": "แชท yt ถูกจำกัดสำหรับสตรีมนี้"
+    "message": "แชท youtube ถูกจำกัดในสตรีมนี้"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — แชทที่นี่ไม่ได้",
+    "message": "youtube: $REASON$ — แชทที่นี่ไม่ได้",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 วัน"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — ล้างข้อความของผู้ใช้นี้ (timeout 1 วิ)"
+    "message": "ล้างข้อความของผู้ใช้นี้ (timeout 1 วินาที)"
   },
   "mc_mtb_t_ban": {
     "message": "แบนถาวร"
@@ -4799,7 +4796,7 @@
     "message": "+ เพิ่มช่อง"
   },
   "mc_main_idwarn": {
-    "message": "คนอื่นจะไม่เห็นอีโมตของคุณที่นี่ — บัญชี heatsync $ACCT$ กำลังแชทเป็น $IDENT$ — $LINK$",
+    "message": "คนอื่นจะไม่เห็นอีโมตของคุณที่นี่ — บัญชี heatsync ของคุณคือ $ACCT$ แต่คุณกำลังแชทเป็น $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "กรอง — /regex/ หรือ @user"
+    "message": "ค้นหาในแชท — คำหรือ @ชื่อ"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ แต้ม",
@@ -5091,7 +5088,7 @@
     "message": "-- แท็บ --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "ยืนยันตัวตน twitch ไม่สำเร็จ"
+    "message": "เข้าสู่ระบบ twitch ไม่สำเร็จ"
   },
   "mc_notif_r_no_user": {
     "message": "ไม่มีชื่อผู้ใช้ twitch"
@@ -5280,22 +5277,22 @@
     "message": "ระบบ · สำรอง / กู้คืน"
   },
   "mc_set_export_tip": {
-    "message": "ส่งออก ui_settings + คีย์ hs_* ทั้งหมดเป็นไฟล์ JSON ย้ายข้ามอุปกรณ์และเบราว์เซอร์ได้"
+    "message": "บันทึกการตั้งค่าทั้งหมดของคุณเป็นไฟล์ เอาไปใช้ในอุปกรณ์หรือเบราว์เซอร์อื่นได้"
   },
   "mc_set_export": {
     "message": "ส่งออกการตั้งค่า"
   },
   "mc_set_export_btn": {
-    "message": "ดาวน์โหลด .json"
+    "message": "บันทึกเป็นไฟล์"
   },
   "mc_set_import_tip": {
-    "message": "กู้คืนจากไฟล์ JSON ที่เคยส่งออก รวมเข้ากับการตั้งค่าที่มีอยู่"
+    "message": "โหลดการตั้งค่าที่เคยบันทึกไว้ จะถูกเพิ่มเข้ากับที่คุณมีอยู่"
   },
   "mc_set_import": {
     "message": "นำเข้าการตั้งค่า"
   },
   "mc_set_import_btn": {
-    "message": "โหลด .json"
+    "message": "โหลดจากไฟล์"
   },
   "mc_set_reset_all_title": {
     "message": "รีเซ็ตทุกการตั้งค่าในทุกหน้า"
@@ -6365,7 +6362,7 @@
     "message": "โพสต์เธรดลงฟีด heatsync ของคุณ"
   },
   "slash_desc_re": {
-    "message": "ตอบกลับ [OP] ล่าสุดที่แสดงในแชท"
+    "message": "ตอบกลับโพสต์ล่าสุดจากฟีดที่แสดงในแชท"
   },
   "slash_desc_dm": {
     "message": "ส่ง dm บน heatsync ถ้าไม่ใส่ข้อความจะเปิดบทสนทนา"
@@ -6407,7 +6404,7 @@
     "message": "ล้างแท็บปัจจุบันเฉพาะฝั่งคุณ"
   },
   "slash_desc_mute": {
-    "message": "ปิดเสียงใครสักคน 24 ชม. ครอบคลุมทุกบัญชีที่เชื่อมไว้"
+    "message": "ปิดเสียงใครสักคนนาน 24 ชั่วโมง ในทุกบัญชีที่เชื่อมไว้"
   },
   "slash_desc_unmute": {
     "message": "เลิกปิดเสียง"
@@ -6455,7 +6452,7 @@
     "message": "ลบข้อความเดียว"
   },
   "slash_desc_nuke": {
-    "message": "ลบข้อความล่าสุดที่มีคำที่กำหนดเป็นชุด"
+    "message": "ลบข้อความล่าสุดเยอะ ๆ ที่มีคำหนึ่งคำ"
   },
   "slash_desc_announce": {
     "message": "โพสต์ประกาศ จะใส่สีหรือไม่ก็ได้"
@@ -6491,7 +6488,7 @@
     "message": "เปิดคำขอปลดแบน"
   },
   "slash_desc_slow": {
-    "message": "โหมดช้า ค่าเริ่มต้น 30 วิ"
+    "message": "โหมดช้า: ทุกคนต้องรอระหว่างข้อความ ค่าเริ่มต้น 30 วินาที"
   },
   "slash_desc_followers": {
     "message": "โหมดเฉพาะผู้ติดตาม"
@@ -6503,7 +6500,7 @@
     "message": "โหมดเฉพาะผู้สมัคร"
   },
   "slash_desc_unique": {
-    "message": "โหมดแชทไม่ซ้ำ มีเฉพาะ twitch ส่วน kick ไม่มี"
+    "message": "ห้ามข้อความซ้ำ (แชทไม่ซ้ำ) ใช้ได้เฉพาะ twitch"
   },
   "slash_desc_poll": {
     "message": "สร้างโพล 2-5 ตัวเลือก"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "ทัวร์ต้อนรับ"
   },
-  "mc_tour_title": {
-    "message": "ยินดีต้อนรับ! ของเหล่านี้ปิดอยู่ตอนเริ่ม คลิกอันที่ต้องการเพื่อเปิด"
-  },
   "mc_tour_timestamps_tip": {
     "message": "แสดงเวลาข้างข้อความทุกข้อความ"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "แสดงทัวร์อีกครั้ง"
   },
-  "welcome_get_title": {
-    "message": "สิ่งที่คุณจะได้"
-  },
-  "welcome_get_1": {
-    "message": "แชต twitch, kick และ youtube ในที่เดียว พร้อมอีโมตทั้งหมด (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "อ่านแชตไม่ต้องมีบัญชี"
   },
-  "welcome_get_3": {
-    "message": "บัญชีจะเพิ่มอีโมตและการตั้งค่าของคุณเองในทุกอุปกรณ์"
-  },
-  "welcome_start_title": {
-    "message": "เริ่มอย่างไร"
-  },
   "welcome_start_1": {
     "message": "เปิดสตรีม twitch, kick หรือ youtube ไหนก็ได้ แชต heatsync จะขึ้นมาเอง"
-  },
-  "welcome_start_2": {
-    "message": "การ์ดเล็ก ๆ จะบอกว่าอะไรปิดอยู่ คลิกอันที่ต้องการ"
-  },
-  "welcome_start_3": {
-    "message": "ถ้าจะแชต ให้เข้าสู่ระบบในเว็บตามปกติ แล้วพิมพ์ในช่องด้านล่าง"
   },
   "mc_settings_mention_sound": {
     "message": "เสียงเมนชัน"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "ชื่ออีโมตห้ามว่างหรือมีช่องว่าง"
+  },
+  "mc_tour_menu_t": {
+    "message": "คลิกขวาที่ข้อความ"
+  },
+  "mc_tour_menu_d": {
+    "message": "เมนูจะเปิดขึ้น: ตอบกลับ คัดลอก ปิดเสียง ติดตาม และอื่น ๆ บนมือถือให้กดค้างไว้"
+  },
+  "mc_tour_cmd_t": {
+    "message": "พิมพ์ / เพื่อดูคำสั่ง"
+  },
+  "mc_tour_cmd_d": {
+    "message": "ในช่องด้านล่าง รายการจะเด้งขึ้นมา /help แสดงทั้งหมด"
+  },
+  "mc_tour_find_t": {
+    "message": "หาข้อความ"
+  },
+  "mc_tour_find_d": {
+    "message": "พิมพ์คำหรือชื่อในช่องด้านบน จะเหลือแต่ข้อความที่ตรงกัน"
+  },
+  "mc_tour_tabs_t": {
+    "message": "ช่องเพิ่มเติม"
+  },
+  "mc_tour_tabs_d": {
+    "message": "คลิก + เพื่อเพิ่มช่อง alt+1 ถึง alt+9 กระโดดไปมาระหว่างแท็บ"
+  },
+  "mc_tour_settings_t": {
+    "message": "ตั้งค่า"
+  },
+  "mc_tour_settings_d": {
+    "message": "ปุ่ม ⚙ ข้างในมี ? ซึ่งมีวิธีใช้ ตัวเช็กการเข้าสู่ระบบ และทัวร์นี้อีกครั้ง"
+  },
+  "mc_tour_switches_t": {
+    "message": "สวิตช์เหล่านี้ปิดอยู่ตอนแรก คลิกอันที่ต้องการเพื่อเปิด"
+  },
+  "mc_tour_next": {
+    "message": "ถัดไป →"
+  },
+  "mc_tour_back": {
+    "message": "← ย้อนกลับ"
+  },
+  "mc_tour_skip": {
+    "message": "ข้าม"
+  },
+  "welcome_s1_t": {
+    "message": "เปิดสตรีม"
+  },
+  "welcome_s1_tour": {
+    "message": "ครั้งแรกจะมีทัวร์สั้น ๆ โผล่ขึ้นมา ข้ามได้ทุกเมื่อ"
+  },
+  "welcome_s2_t": {
+    "message": "ซ่อนและแสดงแชท"
+  },
+  "welcome_s2_d": {
+    "message": "ปุ่มซ่อนในแถบแท็บของแชทจะเก็บแชทไว้ คลิกแถบสีขาวบาง ๆ ที่ขอบหน้าเพื่อเรียกกลับมา"
+  },
+  "welcome_s3_t": {
+    "message": "เข้าสู่ระบบ (ไม่บังคับ)"
+  },
+  "welcome_s3_d": {
+    "message": "มีบัญชีแล้วส่งข้อความไป twitch, kick และ youtube พร้อมกันได้ และใช้อีโมตของคุณเองได้ในทุกอุปกรณ์"
+  },
+  "mc_mtb_l_purge": {
+    "message": "ล้าง"
+  },
+  "mc_mtb_l_bt": {
+    "message": "คำ"
+  },
+  "mc_mtb_l_mt": {
+    "message": "เครื่องมือ"
+  },
+  "mc_send_title": {
+    "message": "การส่ง"
+  },
+  "mc_send_hint": {
+    "message": "จะส่งจากที่นี่ได้ ต้องเข้าสู่ระบบแต่ละเว็บไซต์หนึ่งครั้ง การอ่านไม่ต้องมีบัญชี"
+  },
+  "mc_send_in": {
+    "message": "เข้าสู่ระบบแล้ว"
+  },
+  "mc_send_out": {
+    "message": "ยังไม่ได้เข้าสู่ระบบ"
+  },
+  "mc_send_unknown": {
+    "message": "ไม่แน่ใจ"
   }
 }

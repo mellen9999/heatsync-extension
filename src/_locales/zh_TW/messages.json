@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "你已就緒"
   },
-  "welcome_explain": {
-    "message": "登入 heatsync.org，即可在每個聊天室使用你的表情和設定"
-  },
   "welcome_close": {
     "message": "關閉"
   },
@@ -595,7 +592,7 @@
     "message": "聊天中的連結變為可點擊"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k 捲動，g/G 頂端/底部，/ 搜尋"
+    "message": "vim 按鍵：j/k 捲動，g/G 頂端/底部，/ 搜尋。給懂 vim 的人用"
   },
   "mc_settings_zebra_desc": {
     "message": "交替列背景色"
@@ -610,7 +607,7 @@
     "message": "大頭貼"
   },
   "mc_settings_avatars_desc": {
-    "message": "使用者名稱旁顯示頭像"
+    "message": "在使用者名稱旁顯示大頭貼"
   },
   "mc_settings_inline_notifs": {
     "message": "內嵌通知"
@@ -909,7 +906,7 @@
     "message": "未登入"
   },
   "mc_input_auth_failed": {
-    "message": "驗證失敗 — 請重新登入 Twitch"
+    "message": "登入失敗 — 請重新登入 twitch"
   },
   "mc_social_back": {
     "message": "<- 返回"
@@ -1156,7 +1153,7 @@
     "message": "multichat 分頁列停靠在哪一邊"
   },
   "mc_settings_chat_position": {
-    "message": "聊天停靠側"
+    "message": "聊天在哪一邊"
   },
   "mc_settings_chat_position_desc": {
     "message": "聊天面板停靠在播放器哪一側 — 隱藏則收起（按 \\ 鍵切換）"
@@ -1339,7 +1336,7 @@
     "message": "禁言 7 天"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "清除訊息（1 秒）"
+    "message": "清除他們的訊息（禁言 1 秒）"
   },
   "mc_settings_mod_btn_ban": {
     "message": "永久封鎖"
@@ -2698,10 +2695,10 @@
     "message": "請開啟 youtube 直播以傳送"
   },
   "mc_yt_send_restricted": {
-    "message": "此直播的 yt 聊天受限"
+    "message": "youtube 聊天在這場直播中受限"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt：$REASON$ — 無法在此聊天",
+    "message": "youtube：$REASON$ — 不能在這裡聊天",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "禁言 7 天"
   },
   "mc_mtb_t_purge": {
-    "message": "清除 — 清空該使用者的訊息（禁言 1 秒）"
+    "message": "清除該使用者的訊息（禁言 1 秒）"
   },
   "mc_mtb_t_ban": {
     "message": "永久封禁"
@@ -4799,7 +4796,7 @@
     "message": "+ 新增頻道"
   },
   "mc_main_idwarn": {
-    "message": "你的表情在這裡不會對其他人顯示 — heatsync 帳號 $ACCT$，目前聊天身分 $IDENT$ — $LINK$",
+    "message": "別人在這裡看不到你的表情 — 你的 heatsync 帳號是 $ACCT$，但你正以 $IDENT$ 聊天 — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "篩選 — /正規式/ 或 @使用者"
+    "message": "搜尋聊天 — 一個詞或 @名字"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ 點",
@@ -5091,7 +5088,7 @@
     "message": "-- 分頁 --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch 驗證失敗"
+    "message": "twitch 登入失敗"
   },
   "mc_notif_r_no_user": {
     "message": "無 twitch 使用者名稱"
@@ -5280,22 +5277,22 @@
     "message": "系統 · 備份 / 還原"
   },
   "mc_set_export_tip": {
-    "message": "將 ui_settings 和所有 hs_* 鍵匯出為 JSON 檔。可跨裝置、跨瀏覽器使用。"
+    "message": "把你的全部設定存成一個檔案。可在其他裝置或瀏覽器上使用"
   },
   "mc_set_export": {
     "message": "匯出設定"
   },
   "mc_set_export_btn": {
-    "message": "下載 .json"
+    "message": "儲存到檔案"
   },
   "mc_set_import_tip": {
-    "message": "從先前匯出的 JSON 檔還原。會合併到現有設定中。"
+    "message": "載入你之前儲存的設定。它們會加到你現有的設定裡"
   },
   "mc_set_import": {
     "message": "匯入設定"
   },
   "mc_set_import_btn": {
-    "message": "載入 .json"
+    "message": "從檔案載入"
   },
   "mc_set_reset_all_title": {
     "message": "重設所有頁面的全部設定"
@@ -6365,7 +6362,7 @@
     "message": "向你的 heatsync 動態發佈討論串"
   },
   "slash_desc_re": {
-    "message": "回覆聊天中最近顯示的 [OP]"
+    "message": "回覆聊天中顯示的最新一則動態"
   },
   "slash_desc_dm": {
     "message": "傳送 heatsync 私訊；不帶訊息則開啟對話"
@@ -6407,7 +6404,7 @@
     "message": "僅為你清空目前分頁"
   },
   "slash_desc_mute": {
-    "message": "靜音某人 24 小時，涵蓋其連結帳號"
+    "message": "把某人靜音 24 小時，包括他所有連結的帳號"
   },
   "slash_desc_unmute": {
     "message": "解除靜音"
@@ -6455,7 +6452,7 @@
     "message": "刪除單則訊息"
   },
   "slash_desc_nuke": {
-    "message": "批次刪除含某詞的近期訊息"
+    "message": "批次刪除含有某個詞的近期訊息"
   },
   "slash_desc_announce": {
     "message": "發佈公告，可選顏色"
@@ -6491,7 +6488,7 @@
     "message": "開啟解封申請"
   },
   "slash_desc_slow": {
-    "message": "慢速模式，預設 30 秒"
+    "message": "慢速模式：大家傳訊息要間隔一下，預設 30 秒"
   },
   "slash_desc_followers": {
     "message": "僅追隨者模式"
@@ -6503,7 +6500,7 @@
     "message": "僅訂閱者模式"
   },
   "slash_desc_unique": {
-    "message": "唯一聊天模式；僅 twitch 支援，kick 沒有對應功能"
+    "message": "不允許重複訊息（唯一聊天）；僅限 twitch"
   },
   "slash_desc_poll": {
     "message": "建立投票，2-5 個選項"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "歡迎導覽"
   },
-  "mc_tour_title": {
-    "message": "歡迎！這些功能一開始是關的。點一下就能開啟"
-  },
   "mc_tour_timestamps_tip": {
     "message": "在每則訊息旁顯示時間"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "再看一次導覽"
   },
-  "welcome_get_title": {
-    "message": "你能得到什麼"
-  },
-  "welcome_get_1": {
-    "message": "twitch、kick 和 youtube 的聊天集中在一處，還有所有表情（7tv、bttv、ffz、heatsync）"
-  },
   "welcome_get_2": {
     "message": "只看聊天不需要帳號"
   },
-  "welcome_get_3": {
-    "message": "帳號會把你自己的表情和設定帶到每台裝置"
-  },
-  "welcome_start_title": {
-    "message": "怎麼開始"
-  },
   "welcome_start_1": {
     "message": "開啟任一 twitch、kick 或 youtube 直播。heatsync 聊天會自動出現"
-  },
-  "welcome_start_2": {
-    "message": "一張小卡片會告訴你哪些是關的。點你想要的"
-  },
-  "welcome_start_3": {
-    "message": "要發言，請照常登入該網站，然後在底部輸入框裡輸入"
   },
   "mc_settings_mention_sound": {
     "message": "提及提示音"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "表情名字不能為空，也不能有空格"
+  },
+  "mc_tour_menu_t": {
+    "message": "在訊息上按右鍵"
+  },
+  "mc_tour_menu_d": {
+    "message": "會打開選單：回覆、複製、靜音、追蹤等。在手機上，長按"
+  },
+  "mc_tour_cmd_t": {
+    "message": "輸入 / 使用指令"
+  },
+  "mc_tour_cmd_d": {
+    "message": "在底部的輸入框裡。會跳出一個清單。/help 顯示全部"
+  },
+  "mc_tour_find_t": {
+    "message": "找一則訊息"
+  },
+  "mc_tour_find_d": {
+    "message": "在頂部的框裡輸入一個詞或名字。只留下符合的訊息"
+  },
+  "mc_tour_tabs_t": {
+    "message": "更多頻道"
+  },
+  "mc_tour_tabs_d": {
+    "message": "點 + 新增頻道。alt+1 到 alt+9 在分頁之間跳轉"
+  },
+  "mc_tour_settings_t": {
+    "message": "設定"
+  },
+  "mc_tour_settings_d": {
+    "message": "⚙ 按鈕。裡面的 ? 有說明、登入檢查和再看一次這個導覽"
+  },
+  "mc_tour_switches_t": {
+    "message": "這些一開始是關的。點一下就能開啟"
+  },
+  "mc_tour_next": {
+    "message": "下一步 →"
+  },
+  "mc_tour_back": {
+    "message": "← 返回"
+  },
+  "mc_tour_skip": {
+    "message": "跳過"
+  },
+  "welcome_s1_t": {
+    "message": "打開一個直播"
+  },
+  "welcome_s1_tour": {
+    "message": "第一次會出現一個簡短導覽。隨時都可以跳過"
+  },
+  "welcome_s2_t": {
+    "message": "隱藏和顯示聊天"
+  },
+  "welcome_s2_d": {
+    "message": "聊天分頁列裡的隱藏按鈕可以把它收起來。點頁面邊緣那條細白條就能把它請回來"
+  },
+  "welcome_s3_t": {
+    "message": "登入（選用）"
+  },
+  "welcome_s3_d": {
+    "message": "有了帳號，就能一次傳訊息到 twitch、kick 和 youtube，還能在每台裝置上用你自己的表情"
+  },
+  "mc_mtb_l_purge": {
+    "message": "清除"
+  },
+  "mc_mtb_l_bt": {
+    "message": "封鎖詞"
+  },
+  "mc_mtb_l_mt": {
+    "message": "工具"
+  },
+  "mc_send_title": {
+    "message": "傳送"
+  },
+  "mc_send_hint": {
+    "message": "想從這裡傳訊息，每個網站要登入一次。只看聊天不需要帳號"
+  },
+  "mc_send_in": {
+    "message": "已登入"
+  },
+  "mc_send_out": {
+    "message": "未登入"
+  },
+  "mc_send_unknown": {
+    "message": "不確定"
   }
 }

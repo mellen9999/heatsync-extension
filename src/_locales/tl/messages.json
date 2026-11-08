@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "nandito ka na"
   },
-  "welcome_explain": {
-    "message": "mag-sign in sa heatsync.org para magamit ang iyong mga emote at settings sa bawat chat"
-  },
   "welcome_close": {
     "message": "isara"
   },
@@ -595,7 +592,7 @@
     "message": "ang mga url sa chat ay nagiging maaaring i-click"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k mag-scroll, g/G itaas/ibaba, / maghanap"
+    "message": "mga vim key: j/k mag-scroll, g/G itaas/ibaba, / maghanap. para sa mga marunong ng vim"
   },
   "mc_settings_zebra_desc": {
     "message": "alternating na row shading"
@@ -607,10 +604,10 @@
     "message": "timestamp sa bawat mensahe"
   },
   "mc_settings_show_avatars": {
-    "message": "mga avatar"
+    "message": "mga larawan sa profile"
   },
   "mc_settings_avatars_desc": {
-    "message": "mga avatar sa tabi ng mga username"
+    "message": "mga larawan sa profile sa tabi ng mga username"
   },
   "mc_settings_inline_notifs": {
     "message": "mga notification sa chat"
@@ -909,7 +906,7 @@
     "message": "hindi naka-login"
   },
   "mc_input_auth_failed": {
-    "message": "hindi nag-authenticate — mag-login ulit sa Twitch"
+    "message": "hindi nakapag-sign in — mag-log in ulit sa twitch"
   },
   "mc_social_back": {
     "message": "<- bumalik"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 araw"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (burahin ang mga mensahe, 1s)"
+    "message": "burahin ang mga mensahe nila (timeout na 1 segundo)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "permanenteng ban"
@@ -2698,10 +2695,10 @@
     "message": "buksan ang youtube stream para magpadala"
   },
   "mc_yt_send_restricted": {
-    "message": "limitado ang yt chat para sa stream na ito"
+    "message": "limitado ang youtube chat sa stream na ito"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — hindi makapag-chat dito",
+    "message": "youtube: $REASON$ — hindi makapag-chat dito",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 araw"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — burahin ang mga mensahe ng user na ito (1s timeout)"
+    "message": "burahin ang mga mensahe ng user na ito (timeout na 1 segundo)"
   },
   "mc_mtb_t_ban": {
     "message": "permanenteng ban"
@@ -4799,7 +4796,7 @@
     "message": "+ magdagdag ng channel"
   },
   "mc_main_idwarn": {
-    "message": "hindi makikita ng iba dito ang mga emote mo — heatsync acct $ACCT$, nagcha-chat bilang $IDENT$ — $LINK$",
+    "message": "hindi makikita ng iba dito ang mga emote mo — ang heatsync account mo ay $ACCT$ pero nagcha-chat ka bilang $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "filter — /regex/ o @user"
+    "message": "hanapin sa chat — isang salita o @pangalan"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ pts",
@@ -5091,7 +5088,7 @@
     "message": "-- TABS --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "nabigo ang twitch auth"
+    "message": "hindi nakapag-sign in sa twitch"
   },
   "mc_notif_r_no_user": {
     "message": "walang twitch username"
@@ -5280,22 +5277,22 @@
     "message": "system · backup / restore"
   },
   "mc_set_export_tip": {
-    "message": "i-dump ang ui_settings + lahat ng hs_* key sa isang JSON file. magagamit sa ibang device at browser."
+    "message": "i-save ang lahat ng settings mo sa isang file. gamitin ito sa ibang device o browser"
   },
   "mc_set_export": {
     "message": "i-export ang settings"
   },
   "mc_set_export_btn": {
-    "message": "i-download ang .json"
+    "message": "i-save sa file"
   },
   "mc_set_import_tip": {
-    "message": "ibalik mula sa dating na-export na JSON file. isasama sa kasalukuyang settings."
+    "message": "i-load ang mga settings na na-save mo dati. idadagdag ang mga ito sa mga mayroon ka na"
   },
   "mc_set_import": {
     "message": "i-import ang settings"
   },
   "mc_set_import_btn": {
-    "message": "i-load ang .json"
+    "message": "i-load mula sa file"
   },
   "mc_set_reset_all_title": {
     "message": "i-reset ang bawat setting sa bawat pahina"
@@ -5884,7 +5881,7 @@
     }
   },
   "hsbtn_provider_err": {
-    "message": "err"
+    "message": "mali"
   },
   "hsbtn_search_status": {
     "message": "“$QUERY$” — $STATUS$",
@@ -6365,7 +6362,7 @@
     "message": "mag-post ng thread sa heatsync feed mo"
   },
   "slash_desc_re": {
-    "message": "sagutin ang huling [OP] na ipinakita sa chat"
+    "message": "sagutin ang huling post mula sa feed na ipinakita sa chat"
   },
   "slash_desc_dm": {
     "message": "magpadala ng heatsync DM; kung walang mensahe, bubuksan ang usapan"
@@ -6407,7 +6404,7 @@
     "message": "burahin ang kasalukuyang tab para sa iyo lang"
   },
   "slash_desc_mute": {
-    "message": "i-mute ang isang tao nang 24h, sa lahat ng naka-link nilang account"
+    "message": "i-mute ang isang tao nang 24 oras, sa lahat ng naka-link nilang account"
   },
   "slash_desc_unmute": {
     "message": "alisin ang mute"
@@ -6455,7 +6452,7 @@
     "message": "burahin ang isang mensahe"
   },
   "slash_desc_nuke": {
-    "message": "magbura nang maramihan ng mga kamakailang mensaheng may isang term"
+    "message": "magbura ng maraming kamakailang mensahe na may isang salita"
   },
   "slash_desc_announce": {
     "message": "mag-post ng announcement, maaaring may kulay"
@@ -6491,7 +6488,7 @@
     "message": "buksan ang mga unban request"
   },
   "slash_desc_slow": {
-    "message": "slow mode, default 30s"
+    "message": "slow mode: naghihintay ang mga tao sa pagitan ng mga mensahe, default 30 segundo"
   },
   "slash_desc_followers": {
     "message": "followers-only mode"
@@ -6503,7 +6500,7 @@
     "message": "subscribers-only mode"
   },
   "slash_desc_unique": {
-    "message": "unique-chat mode; twitch lang, walang katumbas sa kick"
+    "message": "walang paulit-ulit na mensahe (unique chat); twitch lang"
   },
   "slash_desc_poll": {
     "message": "gumawa ng poll, 2-5 pagpipilian"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "maikling tour"
   },
-  "mc_tour_title": {
-    "message": "maligayang pagdating! nakapatay ang mga ito sa simula. i-click ang isa para i-on"
-  },
   "mc_tour_timestamps_tip": {
     "message": "ipinapakita ang oras sa tabi ng bawat mensahe"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "ipakita ulit ang tour"
   },
-  "welcome_get_title": {
-    "message": "ano ang makukuha mo"
-  },
-  "welcome_get_1": {
-    "message": "chat ng twitch, kick at youtube sa iisang lugar, kasama ang lahat ng emote (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "hindi kailangan ng account para magbasa ng chat"
   },
-  "welcome_get_3": {
-    "message": "nagdadagdag ang account ng sarili mong emote at settings sa bawat device"
-  },
-  "welcome_start_title": {
-    "message": "paano magsimula"
-  },
   "welcome_start_1": {
     "message": "magbukas ng kahit anong stream sa twitch, kick o youtube. kusang lalabas ang heatsync chat"
-  },
-  "welcome_start_2": {
-    "message": "may maliit na card na nagpapakita kung ano ang naka-off. i-click ang gusto mo"
-  },
-  "welcome_start_3": {
-    "message": "para makipag-chat, mag-log in sa site gaya ng dati, tapos mag-type sa kahon sa ibaba"
   },
   "mc_settings_mention_sound": {
     "message": "tunog ng mention"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "hindi puwedeng walang laman o may espasyo ang pangalan ng emote"
+  },
+  "mc_tour_menu_t": {
+    "message": "i-right-click ang isang mensahe"
+  },
+  "mc_tour_menu_d": {
+    "message": "may bubukas na menu: sagutin, kopyahin, i-mute, i-follow at iba pa. sa phone, pindutin nang matagal"
+  },
+  "mc_tour_cmd_t": {
+    "message": "i-type ang / para sa mga command"
+  },
+  "mc_tour_cmd_d": {
+    "message": "sa kahon sa ibaba. may lalabas na listahan. ipinapakita ng /help ang lahat"
+  },
+  "mc_tour_find_t": {
+    "message": "maghanap ng mensahe"
+  },
+  "mc_tour_find_d": {
+    "message": "mag-type ng salita o pangalan sa kahon sa itaas. mga tugmang mensahe lang ang matitira"
+  },
+  "mc_tour_tabs_t": {
+    "message": "mas maraming channel"
+  },
+  "mc_tour_tabs_d": {
+    "message": "i-click ang + para magdagdag ng channel. nagpapalipat-lipat ng tab ang alt+1 hanggang alt+9"
+  },
+  "mc_tour_settings_t": {
+    "message": "settings"
+  },
+  "mc_tour_settings_d": {
+    "message": "ang ⚙ button. may tulong ang ? sa loob, mga check ng sign-in mo, at ang tour na ito ulit"
+  },
+  "mc_tour_switches_t": {
+    "message": "naka-off ang mga ito sa simula. i-click ang isa para i-on"
+  },
+  "mc_tour_next": {
+    "message": "susunod →"
+  },
+  "mc_tour_back": {
+    "message": "← balik"
+  },
+  "mc_tour_skip": {
+    "message": "laktawan"
+  },
+  "welcome_s1_t": {
+    "message": "magbukas ng stream"
+  },
+  "welcome_s1_tour": {
+    "message": "may maikling tour na lalabas sa unang beses. puwede mo itong laktawan anumang oras"
+  },
+  "welcome_s2_t": {
+    "message": "itago at ipakita ang chat"
+  },
+  "welcome_s2_d": {
+    "message": "itinatago ito ng hide button sa tab bar ng chat. i-click ang manipis na puting guhit sa gilid ng page para maibalik ito"
+  },
+  "welcome_s3_t": {
+    "message": "mag-sign in (opsyonal)"
+  },
+  "welcome_s3_d": {
+    "message": "sa isang account, makakapagpadala ka sa twitch, kick at youtube nang sabay, at magagamit ang sarili mong mga emote sa bawat device"
+  },
+  "mc_mtb_l_purge": {
+    "message": "burahin"
+  },
+  "mc_mtb_l_bt": {
+    "message": "salita"
+  },
+  "mc_mtb_l_mt": {
+    "message": "tools"
+  },
+  "mc_send_title": {
+    "message": "pagpapadala"
+  },
+  "mc_send_hint": {
+    "message": "para makapagpadala mula rito, mag-sign in sa bawat site nang isang beses. hindi kailangan ng account para magbasa"
+  },
+  "mc_send_in": {
+    "message": "naka-sign in"
+  },
+  "mc_send_out": {
+    "message": "hindi naka-sign in"
+  },
+  "mc_send_unknown": {
+    "message": "hindi alam"
   }
 }

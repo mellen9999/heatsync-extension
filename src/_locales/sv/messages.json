@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "du är med"
   },
-  "welcome_explain": {
-    "message": "logga in på heatsync.org för att använda dina emotes och inställningar i alla chattar"
-  },
   "welcome_close": {
     "message": "stäng"
   },
@@ -595,7 +592,7 @@
     "message": "url:er i chatten blir klickbara"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k rulla, g/G topp/botten, / sök"
+    "message": "vim-tangenter: j/k rulla, g/G topp/botten, / sök. för dig som kan vim"
   },
   "mc_settings_zebra_desc": {
     "message": "växlande radskuggning"
@@ -610,7 +607,7 @@
     "message": "profilbilder"
   },
   "mc_settings_avatars_desc": {
-    "message": "avatarer bredvid användarnamn"
+    "message": "profilbilder bredvid användarnamn"
   },
   "mc_settings_inline_notifs": {
     "message": "inline-notiser"
@@ -909,7 +906,7 @@
     "message": "ej inloggad"
   },
   "mc_input_auth_failed": {
-    "message": "autentisering misslyckades — logga in på Twitch igen"
+    "message": "inloggningen misslyckades — logga in på twitch igen"
   },
   "mc_social_back": {
     "message": "<- tillbaka"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 dagar"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (rensa meddelanden, 1s)"
+    "message": "rensa meddelandena (timeout på 1 sekund)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "permanent ban"
@@ -2698,10 +2695,10 @@
     "message": "öppna youtube-streamen för att skicka"
   },
   "mc_yt_send_restricted": {
-    "message": "yt-chatten är begränsad för den här streamen"
+    "message": "youtube-chatten är begränsad för den här streamen"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — kan inte chatta här",
+    "message": "youtube: $REASON$ — kan inte chatta här",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -3601,7 +3598,7 @@
     "message": "max"
   },
   "mc_twapi_amt": {
-    "message": "belopp"
+    "message": "antal"
   },
   "mc_twapi_bet": {
     "message": "satsa"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 dagar"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — rensa användarens meddelanden (1s timeout)"
+    "message": "rensa användarens meddelanden (timeout på 1 sekund)"
   },
   "mc_mtb_t_ban": {
     "message": "permanent ban"
@@ -4799,7 +4796,7 @@
     "message": "+ lägg till kanal"
   },
   "mc_main_idwarn": {
-    "message": "dina emotes visas inte för andra här — heatsync-konto $ACCT$, chattar som $IDENT$ — $LINK$",
+    "message": "andra ser inte dina emotes här — ditt heatsync-konto är $ACCT$ men du chattar som $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "filter — /regex/ eller @user"
+    "message": "sök i chatten — ett ord eller @namn"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ p",
@@ -5091,7 +5088,7 @@
     "message": "-- FLIKAR --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch-inloggning misslyckades"
+    "message": "inloggningen på twitch misslyckades"
   },
   "mc_notif_r_no_user": {
     "message": "inget twitch-användarnamn"
@@ -5280,22 +5277,22 @@
     "message": "system · backup / återställning"
   },
   "mc_set_export_tip": {
-    "message": "dumpar ui_settings + alla hs_*-nycklar till en JSON-fil. fungerar mellan enheter och webbläsare."
+    "message": "spara alla dina inställningar i en fil. använd den på en annan enhet eller webbläsare"
   },
   "mc_set_export": {
     "message": "exportera inställningar"
   },
   "mc_set_export_btn": {
-    "message": "ladda ner .json"
+    "message": "spara till fil"
   },
   "mc_set_import_tip": {
-    "message": "återställ från en tidigare exporterad JSON-fil. slås ihop med befintliga inställningar."
+    "message": "ladda inställningar du sparat förut. de läggs till dem du redan har"
   },
   "mc_set_import": {
     "message": "importera inställningar"
   },
   "mc_set_import_btn": {
-    "message": "ladda .json"
+    "message": "ladda från fil"
   },
   "mc_set_reset_all_title": {
     "message": "återställ alla inställningar på alla sidor"
@@ -6365,7 +6362,7 @@
     "message": "posta en tråd i ditt heatsync-flöde"
   },
   "slash_desc_re": {
-    "message": "svara på senaste [OP] som visats i chatten"
+    "message": "svara på det senaste flödesinlägget som visas i chatten"
   },
   "slash_desc_dm": {
     "message": "skicka ett heatsync-dm; utan meddelande öppnas konversationen"
@@ -6407,7 +6404,7 @@
     "message": "rensa den här fliken bara för dig"
   },
   "slash_desc_mute": {
-    "message": "tysta någon i 24h, över deras länkade konton"
+    "message": "tysta någon i 24 timmar, på alla deras länkade konton"
   },
   "slash_desc_unmute": {
     "message": "häv en tystning"
@@ -6455,7 +6452,7 @@
     "message": "ta bort ett enskilt meddelande"
   },
   "slash_desc_nuke": {
-    "message": "massradera senaste meddelanden som innehåller en term"
+    "message": "radera många nya meddelanden som innehåller ett ord"
   },
   "slash_desc_announce": {
     "message": "posta ett tillkännagivande, valfritt i färg"
@@ -6491,7 +6488,7 @@
     "message": "öppna förfrågningar om att häva ban"
   },
   "slash_desc_slow": {
-    "message": "långsamt läge, standard 30s"
+    "message": "långsamt läge: folk får vänta mellan meddelanden, standard 30 sekunder"
   },
   "slash_desc_followers": {
     "message": "endast följare-läge"
@@ -6503,7 +6500,7 @@
     "message": "endast prenumeranter-läge"
   },
   "slash_desc_unique": {
-    "message": "unik chatt-läge; bara twitch, kick har ingen motsvarighet"
+    "message": "inga upprepade meddelanden (unik chatt); bara twitch"
   },
   "slash_desc_poll": {
     "message": "skapa en omröstning, 2-5 val"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "kort rundtur"
   },
-  "mc_tour_title": {
-    "message": "välkommen! de här sakerna är avstängda från start. klicka på en för att slå på den"
-  },
   "mc_tour_timestamps_tip": {
     "message": "visar klockslaget bredvid varje meddelande"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "visa rundturen igen"
   },
-  "welcome_get_title": {
-    "message": "det här får du"
-  },
-  "welcome_get_1": {
-    "message": "twitch-, kick- och youtube-chatt på ett ställe, med alla emotes (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "du behöver inget konto för att läsa chatten"
   },
-  "welcome_get_3": {
-    "message": "ett konto ger dig egna emotes och inställningar på varje enhet"
-  },
-  "welcome_start_title": {
-    "message": "så kommer du igång"
-  },
   "welcome_start_1": {
     "message": "öppna vilken ström som helst på twitch, kick eller youtube. heatsync-chatten dyker upp av sig själv"
-  },
-  "welcome_start_2": {
-    "message": "ett litet kort visar vad som är avstängt. klicka på det du vill ha"
-  },
-  "welcome_start_3": {
-    "message": "för att chatta loggar du in på sajten som vanligt och skriver i rutan längst ner"
   },
   "mc_settings_mention_sound": {
     "message": "nämnljud"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "ett emotenamn kan inte vara tomt eller ha mellanslag"
+  },
+  "mc_tour_menu_t": {
+    "message": "högerklicka på ett meddelande"
+  },
+  "mc_tour_menu_d": {
+    "message": "en meny öppnas: svara, kopiera, tysta, följ med mera. på mobil, tryck och håll"
+  },
+  "mc_tour_cmd_t": {
+    "message": "skriv / för kommandon"
+  },
+  "mc_tour_cmd_d": {
+    "message": "i rutan längst ner. en lista dyker upp. /help visar alla"
+  },
+  "mc_tour_find_t": {
+    "message": "hitta ett meddelande"
+  },
+  "mc_tour_find_d": {
+    "message": "skriv ett ord eller ett namn i rutan högst upp. bara matchande meddelanden blir kvar"
+  },
+  "mc_tour_tabs_t": {
+    "message": "fler kanaler"
+  },
+  "mc_tour_tabs_d": {
+    "message": "klicka på + för att lägga till en kanal. alt+1 till alt+9 hoppar mellan flikar"
+  },
+  "mc_tour_settings_t": {
+    "message": "inställningar"
+  },
+  "mc_tour_settings_d": {
+    "message": "⚙-knappen. ? där inne har hjälp, kontroll av din inloggning och den här rundturen igen"
+  },
+  "mc_tour_switches_t": {
+    "message": "de här är avstängda från start. klicka på en för att slå på den"
+  },
+  "mc_tour_next": {
+    "message": "nästa →"
+  },
+  "mc_tour_back": {
+    "message": "← tillbaka"
+  },
+  "mc_tour_skip": {
+    "message": "hoppa över"
+  },
+  "welcome_s1_t": {
+    "message": "öppna en stream"
+  },
+  "welcome_s1_tour": {
+    "message": "en kort rundtur visas första gången. hoppa över den när du vill"
+  },
+  "welcome_s2_t": {
+    "message": "dölj och visa chatten"
+  },
+  "welcome_s2_d": {
+    "message": "dölj-knappen i chattens flikrad gömmer den. klicka på den smala vita remsan i sidans kant för att få tillbaka den"
+  },
+  "welcome_s3_t": {
+    "message": "logga in (valfritt)"
+  },
+  "welcome_s3_d": {
+    "message": "med ett konto kan du skicka till twitch, kick och youtube på en gång och använda dina egna emotes på alla enheter"
+  },
+  "mc_mtb_l_purge": {
+    "message": "rensa"
+  },
+  "mc_mtb_l_bt": {
+    "message": "ord"
+  },
+  "mc_mtb_l_mt": {
+    "message": "verktyg"
+  },
+  "mc_send_title": {
+    "message": "skicka"
+  },
+  "mc_send_hint": {
+    "message": "för att skicka härifrån, logga in på varje sajt en gång. för att läsa behövs inget konto"
+  },
+  "mc_send_in": {
+    "message": "inloggad"
+  },
+  "mc_send_out": {
+    "message": "inte inloggad"
+  },
+  "mc_send_unknown": {
+    "message": "okänt"
   }
 }

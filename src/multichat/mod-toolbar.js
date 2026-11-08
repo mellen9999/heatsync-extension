@@ -52,7 +52,7 @@ const MOD_BUTTON_CATALOG = {
     needsMsgId: false,
   },
   purge: {
-    label: 'purge',
+    labelKey: 'mc_mtb_l_purge', // the button's face: a plain word, translated
     titleKey: 'mc_mtb_t_purge',
     action: 'timeout',
     durationSec: 1,
@@ -63,7 +63,7 @@ const MOD_BUTTON_CATALOG = {
   unban: { label: '✓', titleKey: 'mc_mtb_t_unban', action: 'unban', durationSec: null, needsMsgId: false },
   // opens the channel's blocked-terms panel; twitch rows only (kick has no such list)
   blocked_terms: {
-    label: 'bt',
+    labelKey: 'mc_mtb_l_bt',
     titleKey: 'mc_mtb_t_bt',
     action: 'blocked_terms',
     durationSec: null,
@@ -72,7 +72,7 @@ const MOD_BUTTON_CATALOG = {
   },
   // opens the channel's mod tools panel (shield, unban requests, automod, chatters)
   mod_tools: {
-    label: 'mt',
+    labelKey: 'mc_mtb_l_mt',
     titleKey: 'mc_mtb_t_mt',
     action: 'mod_tools',
     durationSec: null,
@@ -217,7 +217,7 @@ function rebuildModToolbarButtons() {
     const b = document.createElement('button')
     b.className = `hs-mod-btn hs-mod-${def.action}`
     b.type = 'button'
-    b.textContent = def.label
+    b.textContent = def.labelKey ? t(def.labelKey) : def.label
     b.title = t(def.titleKey)
     b.dataset.modBtn = id
     b.tabIndex = -1

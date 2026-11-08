@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "вътре си"
   },
-  "welcome_explain": {
-    "message": "влез в heatsync.org, за да ползваш емотиконите и настройките си във всеки чат"
-  },
   "welcome_close": {
     "message": "затвори"
   },
@@ -595,7 +592,7 @@
     "message": "url адресите в чата стават кликаеми"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k скролиране, g/G начало/край, / търсене"
+    "message": "vim клавиши: j/k скролиране, g/G горе/долу, / търсене. за тези, които знаят vim"
   },
   "mc_settings_zebra_desc": {
     "message": "редуващо се засенчване на редове"
@@ -607,10 +604,10 @@
     "message": "времеви печат на всяко съобщение"
   },
   "mc_settings_show_avatars": {
-    "message": "аватари"
+    "message": "профилни снимки"
   },
   "mc_settings_avatars_desc": {
-    "message": "аватари до потребителските имена"
+    "message": "профилни снимки до потребителските имена"
   },
   "mc_settings_inline_notifs": {
     "message": "вградени известия"
@@ -909,7 +906,7 @@
     "message": "не си влязъл"
   },
   "mc_input_auth_failed": {
-    "message": "удостоверяването се провали — влез отново в Twitch"
+    "message": "входът не успя — влез отново в twitch"
   },
   "mc_social_back": {
     "message": "<- назад"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 дни"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (изчисти съобщенията, 1s)"
+    "message": "изчисти съобщенията му (timeout 1 секунда)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "постоянен бан"
@@ -2698,10 +2695,10 @@
     "message": "отвори youtube стрийма, за да пишеш"
   },
   "mc_yt_send_restricted": {
-    "message": "yt чатът е ограничен за този стрийм"
+    "message": "чатът в youtube е ограничен за този стрийм"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — не можеш да пишеш тук",
+    "message": "youtube: $REASON$ — тук не можеш да пишеш",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -3601,7 +3598,7 @@
     "message": "макс"
   },
   "mc_twapi_amt": {
-    "message": "сума"
+    "message": "брой"
   },
   "mc_twapi_bet": {
     "message": "залог"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 дни"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — изчисти съобщенията на потребителя (timeout 1с)"
+    "message": "изчисти съобщенията на този потребител (timeout 1 секунда)"
   },
   "mc_mtb_t_ban": {
     "message": "перманентен бан"
@@ -4799,7 +4796,7 @@
     "message": "+ добави канал"
   },
   "mc_main_idwarn": {
-    "message": "emotes ти няма да се виждат от другите тук — heatsync акаунт $ACCT$, пишеш като $IDENT$ — $LINK$",
+    "message": "другите не виждат твоите emotes тук — акаунтът ти в heatsync е $ACCT$, но пишеш като $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "филтър — /regex/ или @user"
+    "message": "търси в чата — дума или @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ т.",
@@ -5091,7 +5088,7 @@
     "message": "-- ТАБОВЕ --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch автентикацията не успя"
+    "message": "входът в twitch не успя"
   },
   "mc_notif_r_no_user": {
     "message": "няма twitch потребителско име"
@@ -5280,22 +5277,22 @@
     "message": "система · резервно копие / възстановяване"
   },
   "mc_set_export_tip": {
-    "message": "изхвърля ui_settings + всички hs_* ключове в JSON файл. пренослив между устройства и браузъри."
+    "message": "запази всичките си настройки във файл. ползвай го на друго устройство или браузър"
   },
   "mc_set_export": {
     "message": "експорт на настройките"
   },
   "mc_set_export_btn": {
-    "message": "изтегли .json"
+    "message": "запази във файл"
   },
   "mc_set_import_tip": {
-    "message": "възстановяване от експортиран преди това JSON файл. слива се със съществуващите настройки."
+    "message": "зареди настройки, които си запазил преди. добавят се към тези, които имаш"
   },
   "mc_set_import": {
     "message": "импорт на настройките"
   },
   "mc_set_import_btn": {
-    "message": "зареди .json"
+    "message": "зареди от файл"
   },
   "mc_set_reset_all_title": {
     "message": "нулирай всяка настройка на всяка страница"
@@ -5884,7 +5881,7 @@
     }
   },
   "hsbtn_provider_err": {
-    "message": "греш."
+    "message": "грешка"
   },
   "hsbtn_search_status": {
     "message": "“$QUERY$” — $STATUS$",
@@ -6365,7 +6362,7 @@
     "message": "публикувай нишка във feed-а си в heatsync"
   },
   "slash_desc_re": {
-    "message": "отговори на последния [OP] в чата"
+    "message": "отговори на последния пост от фийда, показан в чата"
   },
   "slash_desc_dm": {
     "message": "изпрати heatsync DM; без съобщение отваря разговора"
@@ -6407,7 +6404,7 @@
     "message": "изчисти текущия таб само за теб"
   },
   "slash_desc_mute": {
-    "message": "заглуши някого за 24ч, през свързаните му акаунти"
+    "message": "заглуши някого за 24 часа, във всичките му свързани акаунти"
   },
   "slash_desc_unmute": {
     "message": "махни заглушаване"
@@ -6455,7 +6452,7 @@
     "message": "изтрий отделно съобщение"
   },
   "slash_desc_nuke": {
-    "message": "масово изтриване на скорошни съобщения с даден термин"
+    "message": "изтрий наведнъж много скорошни съобщения с дадена дума"
   },
   "slash_desc_announce": {
     "message": "публикувай съобщение, по желание цветно"
@@ -6491,7 +6488,7 @@
     "message": "отвори заявките за unban"
   },
   "slash_desc_slow": {
-    "message": "бавен режим, по подразбиране 30с"
+    "message": "бавен режим: хората чакат между съобщенията, по подразбиране 30 секунди"
   },
   "slash_desc_followers": {
     "message": "режим само за последователи"
@@ -6503,7 +6500,7 @@
     "message": "режим само за абонати"
   },
   "slash_desc_unique": {
-    "message": "режим на уникален чат; само twitch, kick няма еквивалент"
+    "message": "без повтарящи се съобщения (уникален чат); само twitch"
   },
   "slash_desc_poll": {
     "message": "създай анкета, 2-5 избора"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "кратка обиколка"
   },
-  "mc_tour_title": {
-    "message": "здравей! тези неща са изключени. кликни върху някое, за да го включиш"
-  },
   "mc_tour_timestamps_tip": {
     "message": "показва часа до всяко съобщение"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "покажи обиколката отново"
   },
-  "welcome_get_title": {
-    "message": "какво получаваш"
-  },
-  "welcome_get_1": {
-    "message": "чат от twitch, kick и youtube на едно място, с всички емотикони (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "за четене на чат не ти трябва акаунт"
   },
-  "welcome_get_3": {
-    "message": "акаунтът добавя твоите емотикони и настройки на всяко устройство"
-  },
-  "welcome_start_title": {
-    "message": "как да започнеш"
-  },
   "welcome_start_1": {
     "message": "отвори стрийм в twitch, kick или youtube. чатът на heatsync се появява сам"
-  },
-  "welcome_start_2": {
-    "message": "малка карта показва кое е изключено. кликни върху това, което искаш"
-  },
-  "welcome_start_3": {
-    "message": "за да пишеш, влез в сайта както обикновено и напиши в полето най-долу"
   },
   "mc_settings_mention_sound": {
     "message": "звук при споменаване"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "името на емотето не може да е празно или да има интервали"
+  },
+  "mc_tour_menu_t": {
+    "message": "кликни с десния бутон на съобщение"
+  },
+  "mc_tour_menu_d": {
+    "message": "отваря се меню: отговор, копиране, заглушаване, последване и още. на телефон натисни и задръж"
+  },
+  "mc_tour_cmd_t": {
+    "message": "напиши / за команди"
+  },
+  "mc_tour_cmd_d": {
+    "message": "в полето най-долу. появява се списък. /help ги показва всички"
+  },
+  "mc_tour_find_t": {
+    "message": "намери съобщение"
+  },
+  "mc_tour_find_d": {
+    "message": "напиши дума или име в полето най-горе. остават само съвпадащите съобщения"
+  },
+  "mc_tour_tabs_t": {
+    "message": "още канали"
+  },
+  "mc_tour_tabs_d": {
+    "message": "кликни +, за да добавиш канал. alt+1 до alt+9 те прехвърлят между табовете"
+  },
+  "mc_tour_settings_t": {
+    "message": "настройки"
+  },
+  "mc_tour_settings_d": {
+    "message": "бутонът ⚙. в ? има помощ, проверка дали си влязъл и тази обиколка отново"
+  },
+  "mc_tour_switches_t": {
+    "message": "тези са изключени. кликни един, за да го включиш"
+  },
+  "mc_tour_next": {
+    "message": "напред →"
+  },
+  "mc_tour_back": {
+    "message": "← назад"
+  },
+  "mc_tour_skip": {
+    "message": "пропусни"
+  },
+  "welcome_s1_t": {
+    "message": "отвори стрийм"
+  },
+  "welcome_s1_tour": {
+    "message": "първия път се показва кратка обиколка. можеш да я пропуснеш по всяко време"
+  },
+  "welcome_s2_t": {
+    "message": "скрий и покажи чата"
+  },
+  "welcome_s2_d": {
+    "message": "бутонът за скриване в лентата с табове на чата го прибира. кликни тънката бяла ивица на края на страницата, за да го върнеш"
+  },
+  "welcome_s3_t": {
+    "message": "влез (по желание)"
+  },
+  "welcome_s3_d": {
+    "message": "с акаунт можеш да пишеш в twitch, kick и youtube наведнъж и да ползваш свои emotes на всяко устройство"
+  },
+  "mc_mtb_l_purge": {
+    "message": "изчисти"
+  },
+  "mc_mtb_l_bt": {
+    "message": "думи"
+  },
+  "mc_mtb_l_mt": {
+    "message": "mod"
+  },
+  "mc_send_title": {
+    "message": "изпращане"
+  },
+  "mc_send_hint": {
+    "message": "за да пишеш оттук, влез веднъж във всеки сайт. за четене не ти трябва акаунт"
+  },
+  "mc_send_in": {
+    "message": "влязъл си"
+  },
+  "mc_send_out": {
+    "message": "не си влязъл"
+  },
+  "mc_send_unknown": {
+    "message": "не се знае"
   }
 }

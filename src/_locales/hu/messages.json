@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "bent vagy"
   },
-  "welcome_explain": {
-    "message": "jelentkezz be a heatsync.org-on, hogy minden chatben használhasd az emote-jaidat és a beállításaidat"
-  },
   "welcome_close": {
     "message": "bezár"
   },
@@ -595,7 +592,7 @@
     "message": "az url-ek a csevegésben kattinthatóvá válnak"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k görgetés, g/G fel/le, / keresés"
+    "message": "vim billentyűk: j/k görgetés, g/G fel/le, / keresés. vim-ismerőknek"
   },
   "mc_settings_zebra_desc": {
     "message": "felváltva sorárnyékolás"
@@ -610,7 +607,7 @@
     "message": "profilképek"
   },
   "mc_settings_avatars_desc": {
-    "message": "avatarok felhasználónevek mellett"
+    "message": "profilképek a felhasználónevek mellett"
   },
   "mc_settings_inline_notifs": {
     "message": "inline értesítések"
@@ -909,7 +906,7 @@
     "message": "nincs bejelentkezve"
   },
   "mc_input_auth_failed": {
-    "message": "hitelesítés sikertelen — jelentkezz be újra Twitchre"
+    "message": "a bejelentkezés nem sikerült — jelentkezz be újra a twitchre"
   },
   "mc_social_back": {
     "message": "<- vissza"
@@ -1156,7 +1153,7 @@
     "message": "melyik szélre dokkoljon a multichat lapsáv"
   },
   "mc_settings_chat_position": {
-    "message": "chat dokkolási oldala"
+    "message": "chat oldala"
   },
   "mc_settings_chat_position_desc": {
     "message": "a lejátszó melyik oldalára dokkoljon a chatpanel — az elrejtve eltünteti (a \\ billentyű váltja)"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 nap"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (üzenetek törlése, 1mp)"
+    "message": "az üzenetei törlése (1 másodperces timeout)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "végleges ban"
@@ -2698,10 +2695,10 @@
     "message": "küldéshez nyisd meg a youtube streamet"
   },
   "mc_yt_send_restricted": {
-    "message": "a yt chat korlátozott ennél a streamnél"
+    "message": "a youtube chat korlátozott ennél a streamnél"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — itt nem chatelhetsz",
+    "message": "youtube: $REASON$ — itt nem lehet chatelni",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 nap"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — a felhasználó üzeneteinek törlése (1 mp timeout)"
+    "message": "a felhasználó üzeneteinek törlése (1 másodperces timeout)"
   },
   "mc_mtb_t_ban": {
     "message": "végleges ban"
@@ -4799,7 +4796,7 @@
     "message": "+ csatorna hozzáadása"
   },
   "mc_main_idwarn": {
-    "message": "az emote-jaid itt nem jelennek meg másoknak — heatsync fiók: $ACCT$, chat azonosító: $IDENT$ — $LINK$",
+    "message": "mások nem látják itt az emote-jaidat — a heatsync fiókod $ACCT$, de $IDENT$ néven chatelsz — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "szűrő — /regex/ vagy @user"
+    "message": "keresés a chatben — egy szó vagy @név"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ pont",
@@ -5091,7 +5088,7 @@
     "message": "-- LAPOK --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch hitelesítés sikertelen"
+    "message": "a twitch bejelentkezés nem sikerült"
   },
   "mc_notif_r_no_user": {
     "message": "nincs twitch felhasználónév"
@@ -5280,22 +5277,22 @@
     "message": "rendszer · mentés / visszaállítás"
   },
   "mc_set_export_tip": {
-    "message": "az ui_settings és az összes hs_* kulcs kiírása egy JSON fájlba. eszközök és böngészők közt hordozható."
+    "message": "az összes beállításod mentése egy fájlba. használd másik eszközön vagy böngészőben"
   },
   "mc_set_export": {
     "message": "beállítások exportálása"
   },
   "mc_set_export_btn": {
-    "message": ".json letöltése"
+    "message": "mentés fájlba"
   },
   "mc_set_import_tip": {
-    "message": "visszaállítás korábban exportált JSON fájlból. egyesül a meglévő beállításokkal."
+    "message": "korábban mentett beállítások betöltése. hozzáadódnak a meglévőkhöz"
   },
   "mc_set_import": {
     "message": "beállítások importálása"
   },
   "mc_set_import_btn": {
-    "message": ".json betöltése"
+    "message": "betöltés fájlból"
   },
   "mc_set_reset_all_title": {
     "message": "minden beállítás visszaállítása minden oldalon"
@@ -6365,7 +6362,7 @@
     "message": "szál posztolása a heatsync feededre"
   },
   "slash_desc_re": {
-    "message": "válasz a chatben utoljára látott [OP]-ra"
+    "message": "válasz a chatben utoljára látott feed-bejegyzésre"
   },
   "slash_desc_dm": {
     "message": "heatsync DM küldése; üzenet nélkül megnyitja a beszélgetést"
@@ -6407,7 +6404,7 @@
     "message": "a jelenlegi lap törlése csak nálad"
   },
   "slash_desc_mute": {
-    "message": "valaki némítása 24 órára, az összekötött fiókjain át"
+    "message": "valaki némítása 24 órára, az összes összekötött fiókján"
   },
   "slash_desc_unmute": {
     "message": "némítás feloldása"
@@ -6455,7 +6452,7 @@
     "message": "egyetlen üzenet törlése"
   },
   "slash_desc_nuke": {
-    "message": "a kifejezést tartalmazó friss üzenetek tömeges törlése"
+    "message": "sok friss üzenet törlése egyszerre, ha tartalmaznak egy szót"
   },
   "slash_desc_announce": {
     "message": "közlemény posztolása, opcionálisan színesen"
@@ -6491,7 +6488,7 @@
     "message": "unban kérelmek megnyitása"
   },
   "slash_desc_slow": {
-    "message": "lassú mód, alapból 30 mp"
+    "message": "lassú mód: üzenetek között várni kell, alapból 30 másodperc"
   },
   "slash_desc_followers": {
     "message": "csak követők módja"
@@ -6503,7 +6500,7 @@
     "message": "csak előfizetők módja"
   },
   "slash_desc_unique": {
-    "message": "egyedi chat mód; csak twitch, a kicken nincs megfelelője"
+    "message": "nincs ismétlődő üzenet (egyedi chat); csak twitch"
   },
   "slash_desc_poll": {
     "message": "szavazás indítása, 2-5 lehetőség"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "üdvözlő túra"
   },
-  "mc_tour_title": {
-    "message": "üdv! ezek alapból ki vannak kapcsolva. kattints az egyikre, hogy bekapcsold"
-  },
   "mc_tour_timestamps_tip": {
     "message": "megmutatja az időt minden üzenet mellett"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "túra újra megjelenítése"
   },
-  "welcome_get_title": {
-    "message": "mit kapsz"
-  },
-  "welcome_get_1": {
-    "message": "twitch, kick és youtube chat egy helyen, minden emote-tal (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "a chat olvasásához nem kell fiók"
   },
-  "welcome_get_3": {
-    "message": "a fiók hozzáadja a saját emote-jaidat és beállításaidat minden eszközön"
-  },
-  "welcome_start_title": {
-    "message": "hogyan kezdj hozzá"
-  },
   "welcome_start_1": {
     "message": "nyiss meg bármilyen twitch, kick vagy youtube streamet. a heatsync chat magától megjelenik"
-  },
-  "welcome_start_2": {
-    "message": "egy kis kártya mutatja, mi van kikapcsolva. kattints arra, amit szeretnél"
-  },
-  "welcome_start_3": {
-    "message": "a chateléshez jelentkezz be az oldalon, ahogy szoktál, és írj az alul lévő mezőbe"
   },
   "mc_settings_mention_sound": {
     "message": "megemlítés hangja"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "az emote neve nem lehet üres, és nem lehet benne szóköz"
+  },
+  "mc_tour_menu_t": {
+    "message": "jobb klikk egy üzenetre"
+  },
+  "mc_tour_menu_d": {
+    "message": "megnyílik egy menü: válasz, másolás, némítás, követés és még több. telefonon nyomd hosszan"
+  },
+  "mc_tour_cmd_t": {
+    "message": "írj / jelet a parancsokhoz"
+  },
+  "mc_tour_cmd_d": {
+    "message": "az alsó mezőbe. felugrik egy lista. a /help mindet megmutatja"
+  },
+  "mc_tour_find_t": {
+    "message": "üzenet keresése"
+  },
+  "mc_tour_find_d": {
+    "message": "írj egy szót vagy nevet a felső mezőbe. csak a találatok maradnak"
+  },
+  "mc_tour_tabs_t": {
+    "message": "több csatorna"
+  },
+  "mc_tour_tabs_d": {
+    "message": "a + gombbal adhatsz hozzá csatornát. alt+1 – alt+9 lapot vált"
+  },
+  "mc_tour_settings_t": {
+    "message": "beállítások"
+  },
+  "mc_tour_settings_d": {
+    "message": "a ⚙ gomb. benne a ? súgót, a bejelentkezés-ellenőrzést és ezt a túrát mutatja újra"
+  },
+  "mc_tour_switches_t": {
+    "message": "ezek alapból ki vannak kapcsolva. kattints egyre a bekapcsoláshoz"
+  },
+  "mc_tour_next": {
+    "message": "tovább →"
+  },
+  "mc_tour_back": {
+    "message": "← vissza"
+  },
+  "mc_tour_skip": {
+    "message": "kihagyás"
+  },
+  "welcome_s1_t": {
+    "message": "nyiss meg egy streamet"
+  },
+  "welcome_s1_tour": {
+    "message": "először egy rövid túra jelenik meg. bármikor kihagyhatod"
+  },
+  "welcome_s2_t": {
+    "message": "rejtsd el és mutasd meg a chatet"
+  },
+  "welcome_s2_d": {
+    "message": "a chat lapsávjában lévő elrejtés gomb eltünteti. kattints az oldal szélén lévő vékony fehér csíkra, hogy visszahozd"
+  },
+  "welcome_s3_t": {
+    "message": "jelentkezz be (nem kötelező)"
+  },
+  "welcome_s3_d": {
+    "message": "fiókkal egyszerre küldhetsz twitchre, kickre és youtube-ra, és minden eszközön használhatod a saját emote-jaidat"
+  },
+  "mc_mtb_l_purge": {
+    "message": "töröl"
+  },
+  "mc_mtb_l_bt": {
+    "message": "szavak"
+  },
+  "mc_mtb_l_mt": {
+    "message": "eszközök"
+  },
+  "mc_send_title": {
+    "message": "küldés"
+  },
+  "mc_send_hint": {
+    "message": "hogy innen küldhess, jelentkezz be egyszer minden oldalon. az olvasáshoz nem kell fiók"
+  },
+  "mc_send_in": {
+    "message": "bejelentkezve"
+  },
+  "mc_send_out": {
+    "message": "nincs bejelentkezve"
+  },
+  "mc_send_unknown": {
+    "message": "ismeretlen"
   }
 }

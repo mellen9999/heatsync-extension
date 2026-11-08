@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "dah masuk"
   },
-  "welcome_explain": {
-    "message": "log masuk ke heatsync.org untuk guna emote dan tetapan anda dalam setiap sembang"
-  },
   "welcome_close": {
     "message": "tutup"
   },
@@ -595,7 +592,7 @@
     "message": "url dalam sembang boleh diklik"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k tatal, g/G atas/bawah, / cari"
+    "message": "kekunci vim: j/k tatal, g/G atas/bawah, / cari. untuk yang tahu vim"
   },
   "mc_settings_zebra_desc": {
     "message": "bayangan baris bergilir"
@@ -607,10 +604,10 @@
     "message": "cap masa pada setiap mesej"
   },
   "mc_settings_show_avatars": {
-    "message": "pfp"
+    "message": "gambar profil"
   },
   "mc_settings_avatars_desc": {
-    "message": "avatar di sebelah nama pengguna"
+    "message": "gambar profil di sebelah nama pengguna"
   },
   "mc_settings_inline_notifs": {
     "message": "notifikasi inline"
@@ -909,7 +906,7 @@
     "message": "belum log masuk"
   },
   "mc_input_auth_failed": {
-    "message": "pengesahan gagal — log masuk semula ke Twitch"
+    "message": "log masuk gagal — log masuk twitch semula"
   },
   "mc_social_back": {
     "message": "<- kembali"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 hari"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (kosongkan mesej, 1s)"
+    "message": "kosongkan mesej mereka (timeout 1 saat)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "ban kekal"
@@ -2698,10 +2695,10 @@
     "message": "buka strim youtube untuk hantar"
   },
   "mc_yt_send_restricted": {
-    "message": "sembang yt dihadkan untuk strim ini"
+    "message": "sembang youtube dihadkan untuk strim ini"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — tak boleh bersembang di sini",
+    "message": "youtube: $REASON$ — tak boleh bersembang di sini",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 hari"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — kosongkan mesej pengguna ini (timeout 1s)"
+    "message": "kosongkan mesej pengguna ini (timeout 1 saat)"
   },
   "mc_mtb_t_ban": {
     "message": "ban kekal"
@@ -4799,7 +4796,7 @@
     "message": "+ tambah saluran"
   },
   "mc_main_idwarn": {
-    "message": "emote anda tak akan dipaparkan kepada orang lain di sini — akaun heatsync $ACCT$, bersembang sebagai $IDENT$ — $LINK$",
+    "message": "orang lain tak nampak emote anda di sini — akaun heatsync anda $ACCT$ tetapi anda bersembang sebagai $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "tapis — /regex/ atau @user"
+    "message": "cari dalam sembang — satu perkataan atau @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ mata",
@@ -5091,7 +5088,7 @@
     "message": "-- TAB --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "pengesahan twitch gagal"
+    "message": "log masuk twitch gagal"
   },
   "mc_notif_r_no_user": {
     "message": "tiada nama pengguna twitch"
@@ -5280,22 +5277,22 @@
     "message": "sistem · sandaran / pulihkan"
   },
   "mc_set_export_tip": {
-    "message": "buang ui_settings + semua kunci hs_* ke fail JSON. boleh dibawa antara peranti dan pelayar."
+    "message": "simpan semua tetapan anda ke dalam fail. guna di peranti atau pelayar lain"
   },
   "mc_set_export": {
     "message": "eksport tetapan"
   },
   "mc_set_export_btn": {
-    "message": "muat turun .json"
+    "message": "simpan ke fail"
   },
   "mc_set_import_tip": {
-    "message": "pulihkan daripada fail JSON yang dieksport sebelum ini. digabung ke tetapan sedia ada."
+    "message": "muatkan tetapan yang anda simpan tadi. ia ditambah pada tetapan yang anda ada"
   },
   "mc_set_import": {
     "message": "import tetapan"
   },
   "mc_set_import_btn": {
-    "message": "muat .json"
+    "message": "muat daripada fail"
   },
   "mc_set_reset_all_title": {
     "message": "set semula setiap tetapan di setiap halaman"
@@ -6365,7 +6362,7 @@
     "message": "kirim thread ke suapan heatsync anda"
   },
   "slash_desc_re": {
-    "message": "balas [OP] terakhir yang dipaparkan dalam sembang"
+    "message": "balas kiriman suapan terakhir yang dipaparkan dalam sembang"
   },
   "slash_desc_dm": {
     "message": "hantar DM heatsync; tanpa mesej, perbualan dibuka"
@@ -6407,7 +6404,7 @@
     "message": "kosongkan tab semasa untuk anda sahaja"
   },
   "slash_desc_mute": {
-    "message": "senyapkan seseorang 24j, merentas akaun terpautnya"
+    "message": "senyapkan seseorang selama 24 jam, pada semua akaun yang dipautkan"
   },
   "slash_desc_unmute": {
     "message": "buang senyap"
@@ -6455,7 +6452,7 @@
     "message": "padam satu mesej"
   },
   "slash_desc_nuke": {
-    "message": "padam beramai-ramai mesej terkini yang mengandungi satu terma"
+    "message": "padam banyak mesej terkini yang mengandungi satu perkataan"
   },
   "slash_desc_announce": {
     "message": "kirim pengumuman, boleh berwarna"
@@ -6491,7 +6488,7 @@
     "message": "buka permintaan unban"
   },
   "slash_desc_slow": {
-    "message": "mod perlahan, lalai 30s"
+    "message": "mod perlahan: orang perlu tunggu antara mesej, lalai 30 saat"
   },
   "slash_desc_followers": {
     "message": "mod pengikut sahaja"
@@ -6503,7 +6500,7 @@
     "message": "mod pelanggan sahaja"
   },
   "slash_desc_unique": {
-    "message": "mod sembang unik; twitch sahaja, kick tiada setara"
+    "message": "tiada mesej berulang (sembang unik); twitch sahaja"
   },
   "slash_desc_poll": {
     "message": "cipta undian, 2-5 pilihan"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "lawatan alu-aluan"
   },
-  "mc_tour_title": {
-    "message": "selamat datang! ini mula-mula dimatikan. klik satu untuk menghidupkannya"
-  },
   "mc_tour_timestamps_tip": {
     "message": "tunjukkan masa di sebelah setiap mesej"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "tunjukkan lawatan lagi"
   },
-  "welcome_get_title": {
-    "message": "apa yang anda dapat"
-  },
-  "welcome_get_1": {
-    "message": "sembang twitch, kick dan youtube di satu tempat, dengan semua emote (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "membaca sembang tidak perlukan akaun"
   },
-  "welcome_get_3": {
-    "message": "akaun menambah emote dan tetapan anda sendiri pada setiap peranti"
-  },
-  "welcome_start_title": {
-    "message": "cara bermula"
-  },
   "welcome_start_1": {
     "message": "buka mana-mana strim twitch, kick atau youtube. sembang heatsync muncul dengan sendirinya"
-  },
-  "welcome_start_2": {
-    "message": "kad kecil menunjukkan apa yang dimatikan. klik yang anda mahu"
-  },
-  "welcome_start_3": {
-    "message": "untuk bersembang, log masuk ke laman seperti biasa, kemudian taip dalam kotak di bawah"
   },
   "mc_settings_mention_sound": {
     "message": "bunyi sebutan"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "nama emote tidak boleh kosong atau ada ruang"
+  },
+  "mc_tour_menu_t": {
+    "message": "klik kanan pada mesej"
+  },
+  "mc_tour_menu_d": {
+    "message": "satu menu terbuka: balas, salin, senyap, ikut dan lagi. pada telefon, tekan dan tahan"
+  },
+  "mc_tour_cmd_t": {
+    "message": "taip / untuk arahan"
+  },
+  "mc_tour_cmd_d": {
+    "message": "dalam kotak di bawah. satu senarai muncul. /help tunjukkan semuanya"
+  },
+  "mc_tour_find_t": {
+    "message": "cari mesej"
+  },
+  "mc_tour_find_d": {
+    "message": "taip satu perkataan atau nama dalam kotak di atas. hanya mesej yang sepadan kekal"
+  },
+  "mc_tour_tabs_t": {
+    "message": "lebih banyak saluran"
+  },
+  "mc_tour_tabs_d": {
+    "message": "klik + untuk tambah saluran. alt+1 hingga alt+9 untuk lompat antara tab"
+  },
+  "mc_tour_settings_t": {
+    "message": "tetapan"
+  },
+  "mc_tour_settings_d": {
+    "message": "butang ⚙. ? di dalamnya ada bantuan, semakan log masuk anda dan lawatan ini sekali lagi"
+  },
+  "mc_tour_switches_t": {
+    "message": "ini bermula dalam keadaan mati. klik satu untuk hidupkan"
+  },
+  "mc_tour_next": {
+    "message": "seterusnya →"
+  },
+  "mc_tour_back": {
+    "message": "← kembali"
+  },
+  "mc_tour_skip": {
+    "message": "langkau"
+  },
+  "welcome_s1_t": {
+    "message": "buka satu strim"
+  },
+  "welcome_s1_tour": {
+    "message": "lawatan ringkas muncul kali pertama. langkau bila-bila masa"
+  },
+  "welcome_s2_t": {
+    "message": "sorok dan tunjuk sembang"
+  },
+  "welcome_s2_d": {
+    "message": "butang sorok dalam bar tab sembang menyimpannya. klik jalur putih nipis di tepi halaman untuk membawanya balik"
+  },
+  "welcome_s3_t": {
+    "message": "log masuk (pilihan)"
+  },
+  "welcome_s3_d": {
+    "message": "dengan akaun, anda boleh hantar ke twitch, kick dan youtube serentak, dan guna emote sendiri di setiap peranti"
+  },
+  "mc_mtb_l_purge": {
+    "message": "kosong"
+  },
+  "mc_mtb_l_bt": {
+    "message": "kata"
+  },
+  "mc_mtb_l_mt": {
+    "message": "alat"
+  },
+  "mc_send_title": {
+    "message": "hantar"
+  },
+  "mc_send_hint": {
+    "message": "untuk hantar dari sini, log masuk di setiap laman sekali. membaca tidak perlukan akaun"
+  },
+  "mc_send_in": {
+    "message": "sudah log masuk"
+  },
+  "mc_send_out": {
+    "message": "belum log masuk"
+  },
+  "mc_send_unknown": {
+    "message": "tak pasti"
   }
 }

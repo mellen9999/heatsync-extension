@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "você está dentro"
   },
-  "welcome_explain": {
-    "message": "entre no heatsync.org para usar seus emotes e configurações em todos os chats"
-  },
   "welcome_close": {
     "message": "fechar"
   },
@@ -595,7 +592,7 @@
     "message": "urls no chat se tornam clicáveis"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k rolar, g/G cima/baixo, / buscar"
+    "message": "teclas vim: j/k rolar, g/G topo/fim, / buscar. para quem conhece vim"
   },
   "mc_settings_zebra_desc": {
     "message": "sombreamento alternado de linhas"
@@ -610,7 +607,7 @@
     "message": "fotos de perfil"
   },
   "mc_settings_avatars_desc": {
-    "message": "avatares ao lado dos nomes de usuário"
+    "message": "fotos de perfil ao lado dos nomes"
   },
   "mc_settings_inline_notifs": {
     "message": "notificações inline"
@@ -909,7 +906,7 @@
     "message": "não está logado"
   },
   "mc_input_auth_failed": {
-    "message": "autenticação falhou — faça login na Twitch novamente"
+    "message": "falha ao entrar — entre na twitch de novo"
   },
   "mc_social_back": {
     "message": "<- voltar"
@@ -1339,7 +1336,7 @@
     "message": "timeout de 7 dias"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purgar (limpa mensagens, 1s)"
+    "message": "limpar as mensagens da pessoa (timeout de 1 segundo)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "banimento permanente"
@@ -2698,10 +2695,10 @@
     "message": "abra a stream do youtube para enviar"
   },
   "mc_yt_send_restricted": {
-    "message": "o chat do yt está restrito nesta stream"
+    "message": "o chat do youtube está restrito nesta live"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — você não pode falar no chat aqui",
+    "message": "youtube: $REASON$ — não dá pra falar no chat aqui",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -3601,7 +3598,7 @@
     "message": "máx"
   },
   "mc_twapi_amt": {
-    "message": "valor"
+    "message": "quantidade"
   },
   "mc_twapi_bet": {
     "message": "aposta"
@@ -4716,7 +4713,7 @@
     "message": "timeout de 7 dias"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — limpar mensagens deste usuário (timeout de 1s)"
+    "message": "limpar as mensagens deste usuário (timeout de 1 segundo)"
   },
   "mc_mtb_t_ban": {
     "message": "ban permanente"
@@ -4799,7 +4796,7 @@
     "message": "+ adicionar canal"
   },
   "mc_main_idwarn": {
-    "message": "seus emotes não aparecem pros outros aqui — conta heatsync $ACCT$, no chat como $IDENT$ — $LINK$",
+    "message": "os outros não veem seus emotes aqui — sua conta heatsync é $ACCT$, mas você está no chat como $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "filtro — /regex/ ou @user"
+    "message": "buscar no chat — uma palavra ou @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ pts",
@@ -5091,7 +5088,7 @@
     "message": "-- ABAS --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "falha na autenticação do twitch"
+    "message": "falha ao entrar na twitch"
   },
   "mc_notif_r_no_user": {
     "message": "sem nome de usuário do twitch"
@@ -5280,22 +5277,22 @@
     "message": "sistema · backup / restauração"
   },
   "mc_set_export_tip": {
-    "message": "despeja ui_settings + todas as chaves hs_* num arquivo JSON. portátil entre dispositivos e navegadores."
+    "message": "salva todas as suas configurações num arquivo. use em outro aparelho ou navegador"
   },
   "mc_set_export": {
     "message": "exportar configurações"
   },
   "mc_set_export_btn": {
-    "message": "baixar .json"
+    "message": "salvar num arquivo"
   },
   "mc_set_import_tip": {
-    "message": "restaura de um arquivo JSON exportado antes. mescla com as configurações atuais."
+    "message": "carrega configurações que você salvou antes. elas são somadas às que você já tem"
   },
   "mc_set_import": {
     "message": "importar configurações"
   },
   "mc_set_import_btn": {
-    "message": "carregar .json"
+    "message": "carregar de um arquivo"
   },
   "mc_set_reset_all_title": {
     "message": "redefinir todas as configurações de todas as páginas"
@@ -6365,7 +6362,7 @@
     "message": "poste uma thread no seu feed do heatsync"
   },
   "slash_desc_re": {
-    "message": "responda ao último [OP] mostrado no chat"
+    "message": "responde ao último post do feed mostrado no chat"
   },
   "slash_desc_dm": {
     "message": "envie uma dm no heatsync; sem mensagem, abre a conversa"
@@ -6407,7 +6404,7 @@
     "message": "limpa a aba atual só pra você"
   },
   "slash_desc_mute": {
-    "message": "muta alguém por 24h, em todas as contas vinculadas"
+    "message": "muta alguém por 24 horas, em todas as contas vinculadas"
   },
   "slash_desc_unmute": {
     "message": "tira um mute"
@@ -6455,7 +6452,7 @@
     "message": "apaga uma única mensagem"
   },
   "slash_desc_nuke": {
-    "message": "apaga em massa as mensagens recentes com um termo"
+    "message": "apaga de uma vez várias mensagens recentes com uma palavra"
   },
   "slash_desc_announce": {
     "message": "posta um anúncio, opcionalmente colorido"
@@ -6491,7 +6488,7 @@
     "message": "abre os pedidos de unban"
   },
   "slash_desc_slow": {
-    "message": "modo lento, padrão 30s"
+    "message": "modo lento: as pessoas esperam entre as mensagens, padrão 30 segundos"
   },
   "slash_desc_followers": {
     "message": "modo só seguidores"
@@ -6503,7 +6500,7 @@
     "message": "modo só inscritos"
   },
   "slash_desc_unique": {
-    "message": "modo chat único; só twitch, o kick não tem equivalente"
+    "message": "sem mensagens repetidas (chat único); só twitch"
   },
   "slash_desc_poll": {
     "message": "cria uma enquete, 2-5 opções"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "tour de boas-vindas"
   },
-  "mc_tour_title": {
-    "message": "oi! estas coisas começam desligadas. clique numa para ligar"
-  },
   "mc_tour_timestamps_tip": {
     "message": "mostra a hora ao lado de cada mensagem"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "mostrar o tour de novo"
   },
-  "welcome_get_title": {
-    "message": "o que você ganha"
-  },
-  "welcome_get_1": {
-    "message": "o chat da twitch, kick e youtube num só lugar, com todos os emotes (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "ler o chat não precisa de conta"
   },
-  "welcome_get_3": {
-    "message": "uma conta traz seus próprios emotes e configurações em cada dispositivo"
-  },
-  "welcome_start_title": {
-    "message": "como começar"
-  },
   "welcome_start_1": {
     "message": "abra qualquer live da twitch, kick ou youtube. o chat do heatsync aparece sozinho"
-  },
-  "welcome_start_2": {
-    "message": "um cartãozinho mostra o que está desligado. clique no que quiser"
-  },
-  "welcome_start_3": {
-    "message": "para conversar, entre no site como sempre e digite na caixa lá embaixo"
   },
   "mc_settings_mention_sound": {
     "message": "som de menção"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "o nome de um emote não pode ficar vazio nem ter espaços"
+  },
+  "mc_tour_menu_t": {
+    "message": "clique com o botão direito numa mensagem"
+  },
+  "mc_tour_menu_d": {
+    "message": "abre um menu: responder, copiar, mutar, seguir e mais. no celular, toque e segure"
+  },
+  "mc_tour_cmd_t": {
+    "message": "digite / para comandos"
+  },
+  "mc_tour_cmd_d": {
+    "message": "na caixa lá embaixo. aparece uma lista. /help mostra todos"
+  },
+  "mc_tour_find_t": {
+    "message": "ache uma mensagem"
+  },
+  "mc_tour_find_d": {
+    "message": "digite uma palavra ou um nome na caixa lá em cima. só ficam as mensagens que combinam"
+  },
+  "mc_tour_tabs_t": {
+    "message": "mais canais"
+  },
+  "mc_tour_tabs_d": {
+    "message": "clique em + para adicionar um canal. alt+1 até alt+9 pulam entre as abas"
+  },
+  "mc_tour_settings_t": {
+    "message": "configurações"
+  },
+  "mc_tour_settings_d": {
+    "message": "o botão ⚙. o ? lá dentro tem ajuda, a checagem dos seus logins e este tour de novo"
+  },
+  "mc_tour_switches_t": {
+    "message": "estes começam desligados. clique num para ligar"
+  },
+  "mc_tour_next": {
+    "message": "próximo →"
+  },
+  "mc_tour_back": {
+    "message": "← voltar"
+  },
+  "mc_tour_skip": {
+    "message": "pular"
+  },
+  "welcome_s1_t": {
+    "message": "abra uma live"
+  },
+  "welcome_s1_tour": {
+    "message": "um tour rápido aparece na primeira vez. pule quando quiser"
+  },
+  "welcome_s2_t": {
+    "message": "esconda e mostre o chat"
+  },
+  "welcome_s2_d": {
+    "message": "o botão de esconder na barra de abas do chat guarda ele. clique na faixa branca fina na borda da página para trazer de volta"
+  },
+  "welcome_s3_t": {
+    "message": "entre (opcional)"
+  },
+  "welcome_s3_d": {
+    "message": "com uma conta, você envia para twitch, kick e youtube de uma vez e usa seus próprios emotes em qualquer aparelho"
+  },
+  "mc_mtb_l_purge": {
+    "message": "limpar"
+  },
+  "mc_mtb_l_bt": {
+    "message": "palavras"
+  },
+  "mc_mtb_l_mt": {
+    "message": "tools"
+  },
+  "mc_send_title": {
+    "message": "envio"
+  },
+  "mc_send_hint": {
+    "message": "para enviar daqui, entre uma vez em cada site. ler não precisa de conta"
+  },
+  "mc_send_in": {
+    "message": "com login"
+  },
+  "mc_send_out": {
+    "message": "sem login"
+  },
+  "mc_send_unknown": {
+    "message": "não sei"
   }
 }

@@ -47,7 +47,7 @@ export const SLASH_REGISTRY = [
   {
     cmd: 're',
     args: '<text>',
-    desc: 'reply to the last [OP] shown in chat',
+    desc: 'reply to the last feed post shown in chat',
     on: 'both',
     needs: 'login',
     does: 'heatsync',
@@ -130,7 +130,7 @@ export const SLASH_REGISTRY = [
   {
     cmd: 'mute',
     args: '<user>',
-    desc: 'mute someone for 24h, across their linked accounts',
+    desc: 'mute someone for 24 hours, on all their linked accounts',
     on: 'both',
     needs: 'none',
     does: 'local',
@@ -238,7 +238,7 @@ export const SLASH_REGISTRY = [
   {
     cmd: 'nuke',
     args: '<term> [secs]',
-    desc: 'bulk-delete recent messages containing a term',
+    desc: 'delete lots of recent messages that contain a word',
     on: 'both',
     needs: 'mod',
     does: 'twitch+kick',
@@ -319,7 +319,7 @@ export const SLASH_REGISTRY = [
   {
     cmd: 'slow',
     args: '[secs|off]',
-    desc: 'slow mode, default 30s',
+    desc: 'slow mode: people wait between messages, default 30 seconds',
     on: 'both',
     needs: 'mod',
     does: 'twitch+kick',
@@ -355,7 +355,7 @@ export const SLASH_REGISTRY = [
   {
     cmd: 'unique',
     args: '[off]',
-    desc: 'unique-chat mode; twitch only, kick has no equivalent',
+    desc: 'no repeat messages (unique chat); twitch only',
     on: 'both',
     needs: 'mod',
     does: 'twitch',

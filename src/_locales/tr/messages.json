@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "içerdesin"
   },
-  "welcome_explain": {
-    "message": "emote ve ayarlarını her sohbette kullanmak için heatsync.org'a giriş yap"
-  },
   "welcome_close": {
     "message": "kapat"
   },
@@ -595,7 +592,7 @@
     "message": "sohbetteki url'ler tıklanabilir hale gelir"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k kaydırma, g/G üst/alt, / arama"
+    "message": "vim tuşları: j/k kaydır, g/G üst/alt, / ara. vim bilenler için"
   },
   "mc_settings_zebra_desc": {
     "message": "dönüşümlü satır gölgelendirme"
@@ -610,7 +607,7 @@
     "message": "profil resimleri"
   },
   "mc_settings_avatars_desc": {
-    "message": "kullanıcı adlarının yanında avatarlar"
+    "message": "kullanıcı adlarının yanında profil resimleri"
   },
   "mc_settings_inline_notifs": {
     "message": "satır içi bildirimler"
@@ -909,7 +906,7 @@
     "message": "giriş yapılmadı"
   },
   "mc_input_auth_failed": {
-    "message": "kimlik doğrulama başarısız — Twitch'e yeniden giriş yap"
+    "message": "giriş başarısız — twitch'e tekrar giriş yap"
   },
   "mc_social_back": {
     "message": "<- geri"
@@ -1156,7 +1153,7 @@
     "message": "multichat sekme çubuğunun yaslandığı kenar"
   },
   "mc_settings_chat_position": {
-    "message": "sohbet kenarı"
+    "message": "sohbet tarafı"
   },
   "mc_settings_chat_position_desc": {
     "message": "sohbet panelinin oynatıcının hangi tarafına yaslanacağı — hidden gizler (\\ tuşu açıp kapatır)"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 gün"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (mesajları temizle, 1s)"
+    "message": "mesajlarını temizle (1 saniyelik timeout)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "kalıcı ban"
@@ -2698,10 +2695,10 @@
     "message": "göndermek için youtube yayınını aç"
   },
   "mc_yt_send_restricted": {
-    "message": "bu yayın için yt sohbeti kısıtlı"
+    "message": "bu yayında youtube sohbeti kısıtlı"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — burada sohbet edemezsin",
+    "message": "youtube: $REASON$ — burada sohbet edemezsin",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "7 gün timeout"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — bu kullanıcının mesajlarını temizle (1sn timeout)"
+    "message": "bu kullanıcının mesajlarını temizle (1 saniyelik timeout)"
   },
   "mc_mtb_t_ban": {
     "message": "kalıcı ban"
@@ -4799,7 +4796,7 @@
     "message": "+ kanal ekle"
   },
   "mc_main_idwarn": {
-    "message": "emote'ların burada başkalarına görünmez — heatsync hesabı $ACCT$, $IDENT$ olarak sohbet ediyorsun — $LINK$",
+    "message": "başkaları emote'larını burada göremez — heatsync hesabın $ACCT$ ama $IDENT$ olarak sohbet ediyorsun — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "filtre — /regex/ veya @user"
+    "message": "sohbette ara — bir kelime veya @isim"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ puan",
@@ -5091,7 +5088,7 @@
     "message": "-- SEKMELER --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch yetkilendirmesi başarısız"
+    "message": "twitch girişi başarısız"
   },
   "mc_notif_r_no_user": {
     "message": "twitch kullanıcı adı yok"
@@ -5280,22 +5277,22 @@
     "message": "sistem · yedekle / geri yükle"
   },
   "mc_set_export_tip": {
-    "message": "ui_settings + tüm hs_* anahtarlarını bir JSON dosyasına aktarır. cihazlar ve tarayıcılar arasında taşınabilir."
+    "message": "tüm ayarlarını bir dosyaya kaydet. başka cihazda veya tarayıcıda kullan"
   },
   "mc_set_export": {
     "message": "ayarları dışa aktar"
   },
   "mc_set_export_btn": {
-    "message": ".json indir"
+    "message": "dosyaya kaydet"
   },
   "mc_set_import_tip": {
-    "message": "daha önce dışa aktarılmış bir JSON dosyasından geri yükler. mevcut ayarlarla birleştirilir."
+    "message": "daha önce kaydettiğin ayarları yükle. mevcut ayarlarına eklenir"
   },
   "mc_set_import": {
     "message": "ayarları içe aktar"
   },
   "mc_set_import_btn": {
-    "message": ".json yükle"
+    "message": "dosyadan yükle"
   },
   "mc_set_reset_all_title": {
     "message": "tüm sayfalardaki her ayarı sıfırla"
@@ -6365,7 +6362,7 @@
     "message": "heatsync akışına thread paylaş"
   },
   "slash_desc_re": {
-    "message": "sohbette gösterilen son [OP] gönderisini yanıtla"
+    "message": "sohbette gösterilen son akış gönderisini yanıtla"
   },
   "slash_desc_dm": {
     "message": "heatsync DM gönder; mesaj yoksa konuşmayı açar"
@@ -6407,7 +6404,7 @@
     "message": "geçerli tabı sadece senin için temizle"
   },
   "slash_desc_mute": {
-    "message": "birini 24 saat sustur, bağlı hesapları dahil"
+    "message": "birini 24 saat sustur, bağlı tüm hesaplarında"
   },
   "slash_desc_unmute": {
     "message": "susturmayı kaldır"
@@ -6455,7 +6452,7 @@
     "message": "tek bir mesajı sil"
   },
   "slash_desc_nuke": {
-    "message": "bir terim içeren son mesajları toplu sil"
+    "message": "bir kelime içeren çok sayıda son mesajı sil"
   },
   "slash_desc_announce": {
     "message": "duyuru paylaş, istersen renkli"
@@ -6491,7 +6488,7 @@
     "message": "ban kaldırma isteklerini aç"
   },
   "slash_desc_slow": {
-    "message": "yavaş mod, varsayılan 30sn"
+    "message": "yavaş mod: mesajlar arasında beklenir, varsayılan 30 saniye"
   },
   "slash_desc_followers": {
     "message": "sadece takipçi modu"
@@ -6503,7 +6500,7 @@
     "message": "sadece abone modu"
   },
   "slash_desc_unique": {
-    "message": "benzersiz sohbet modu; sadece twitch, kick'te karşılığı yok"
+    "message": "tekrar eden mesaj yok (benzersiz sohbet); sadece twitch"
   },
   "slash_desc_poll": {
     "message": "anket oluştur, 2-5 seçenek"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "hoş geldin turu"
   },
-  "mc_tour_title": {
-    "message": "hoş geldin! bunlar başta kapalı. açmak istediğine tıkla"
-  },
   "mc_tour_timestamps_tip": {
     "message": "her mesajın yanında saati gösterir"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "turu tekrar göster"
   },
-  "welcome_get_title": {
-    "message": "neler kazanırsın"
-  },
-  "welcome_get_1": {
-    "message": "twitch, kick ve youtube sohbeti tek yerde, tüm emote'larla (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "sohbeti okumak için hesap gerekmez"
   },
-  "welcome_get_3": {
-    "message": "hesap, kendi emote'larını ve ayarlarını her cihaza getirir"
-  },
-  "welcome_start_title": {
-    "message": "nasıl başlanır"
-  },
   "welcome_start_1": {
     "message": "twitch, kick veya youtube'da herhangi bir yayını aç. heatsync sohbeti kendiliğinden çıkar"
-  },
-  "welcome_start_2": {
-    "message": "küçük bir kart nelerin kapalı olduğunu gösterir. istediğine tıkla"
-  },
-  "welcome_start_3": {
-    "message": "sohbet etmek için siteye her zamanki gibi giriş yap, sonra alttaki kutuya yaz"
   },
   "mc_settings_mention_sound": {
     "message": "bahsedilme sesi"
@@ -7108,5 +7084,89 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "emote adı boş olamaz ve boşluk içeremez"
+  },
+  "mc_tour_menu_t": {
+    "message": "bir mesaja sağ tıkla"
+  },
+  "mc_tour_menu_d": {
+    "message": "bir menü açılır: yanıtla, kopyala, sustur, takip et ve daha fazlası. telefonda basılı tut"
+  },
+  "mc_tour_cmd_t": {
+    "message": "komutlar için / yaz"
+  },
+  "mc_tour_cmd_d": {
+    "message": "en alttaki kutuya. bir liste açılır. /help hepsini gösterir"
+  },
+  "mc_tour_find_t": {
+    "message": "bir mesaj bul"
+  },
+  "mc_tour_find_d": {
+    "message": "en üstteki kutuya bir kelime veya isim yaz. sadece uyan mesajlar kalır"
+  },
+  "mc_tour_tabs_t": {
+    "message": "daha fazla kanal"
+  },
+  "mc_tour_tabs_d": {
+    "message": "kanal eklemek için + tıkla. alt+1 ile alt+9 sekmeler arasında atlar"
+  },
+  "mc_tour_settings_t": {
+    "message": "ayarlar"
+  },
+  "mc_tour_settings_d": {
+    "message": "⚙ düğmesi. içindeki ? yardımı, giriş kontrollerini ve bu turu tekrar gösterir"
+  },
+  "mc_tour_switches_t": {
+    "message": "bunlar başta kapalı. açmak için birine tıkla"
+  },
+  "mc_tour_next": {
+    "message": "sonraki →"
+  },
+  "mc_tour_back": {
+    "message": "← geri"
+  },
+  "mc_tour_skip": {
+    "message": "geç"
+  },
+  "welcome_s1_t": {
+    "message": "bir yayın aç"
+  },
+  "welcome_s1_tour": {
+    "message": "ilk seferde kısa bir tur çıkar. istediğin zaman geçebilirsin"
+  },
+  "welcome_s2_t": {
+    "message": "sohbeti gizle ve göster"
+  },
+  "welcome_s2_d": {
+    "message": "sohbetin sekme çubuğundaki gizle düğmesi onu saklar. geri getirmek için sayfanın kenarındaki ince beyaz şeride tıkla"
+  },
+  "welcome_s3_t": {
+    "message": "giriş yap (isteğe bağlı)"
+  },
+  "welcome_s3_d": {
+    "message": "bir hesapla twitch, kick ve youtube'a aynı anda mesaj gönderebilir, kendi emote'larını her cihazda kullanabilirsin"
+  },
+  "mc_mtb_l_purge": {
+    "message": "temizle"
+  },
+  "mc_mtb_l_bt": {
+    "message": "kelime"
+  },
+  "mc_mtb_l_mt": {
+    "message": "araçlar"
+  },
+  "mc_send_title": {
+    "message": "gönderme"
+  },
+  "mc_send_hint": {
+    "message": "buradan mesaj göndermek için her sitede bir kez giriş yap. okumak için hesap gerekmez"
+  },
+  "mc_send_in": {
+    "message": "giriş yapıldı"
+  },
+  "mc_send_out": {
+    "message": "giriş yapılmadı"
+  },
+  "mc_send_unknown": {
+    "message": "bilinmiyor"
   }
 }

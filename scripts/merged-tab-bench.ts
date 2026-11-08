@@ -22,7 +22,7 @@
  * Opt-in like render-extension.ts: it needs a real browser binary. Nothing here
  * touches the network (heatsync.org is aborted) or a real profile.
  */
-import { mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { assertBuilt, launchWithExtension } from './lib/chromium'
@@ -35,6 +35,9 @@ const SECONDS = arg('seconds', 30)
 const RATE = { twitch: arg('twitch', 30), kick: arg('kick', 6), yt: arg('yt', 3) }
 const JSON_OUT = process.argv.includes('--json')
 const PROFILE = process.argv.includes('--profile') // where the script time goes, by function
+// a gate, not just a report: --budget scripts/merged-tab-budget.json fails the run when the main-thread
+// time per message is over the file's limit (the baseline measured on a quiet machine, plus headroom)
+const BUDGET_FILE = process.argv.includes('--budget') ? process.argv[process.argv.indexOf('--budget') + 1] : null
 
 const CHAN = 'benchchan'
 const fixture =
@@ -294,6 +297,24 @@ try {
   if (!sameSet || !sameOrder || dupes || pageErrors.length) {
     console.error('FAIL: the pane differs from a full render, or the page threw')
     process.exitCode = 1
+  }
+  if (BUDGET_FILE) {
+    const budget = JSON.parse(readFileSync(BUDGET_FILE, 'utf8')) as { baseline: number; limit: number; headroom: number }
+    const got = result.perMessageMs.task
+    // a run that fed nothing measures nothing: NaN > limit is false, which would read as a pass
+    const wanted = (RATE.twitch + RATE.kick + RATE.yt) * SECONDS
+    if (!Number.isFinite(got) || total < wanted * 0.5) {
+      console.error(`FAIL: the bench fed ${total} of ~${wanted} messages, so its timing means nothing`)
+      process.exitCode = 1
+    } else if (got > budget.limit) {
+      console.error(
+        `FAIL: ${got}ms of main thread per message is over the budget of ${budget.limit}ms (baseline ${budget.baseline}ms + ${Math.round(budget.headroom * 100)}%). ` +
+          'a slower runner is not a regression: re-measure per the note in the budget file before raising it',
+      )
+      process.exitCode = 1
+    } else {
+      log(`budget: ${got}ms per message, under ${budget.limit}ms (baseline ${budget.baseline}ms + ${Math.round(budget.headroom * 100)}%)`)
+    }
   }
 } finally {
   await Promise.race([c.close(), new Promise((r) => setTimeout(r, 15_000))])

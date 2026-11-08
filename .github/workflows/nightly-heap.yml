@@ -1,27 +1,35 @@
 name: nightly-heap
 
-# The extension's memory on a page with no chat (ext-on minus ext-off, budget in
-# scripts/heap-budget.ts). ~3 min, no live channels. The lived-in soak stays a
-# manual run: it needs busy channels and an hour. Twice a day so the sentinel's
-# 26h staleness window survives GitHub dropping one cron fire (2026-10-19 did).
+# What a push-time run cannot afford to do, once or twice a day:
+#   heap-quick      the extension's memory on a page with no chat (ext-on minus
+#                   ext-off, budget in scripts/heap-budget.ts). ~3 min, no live
+#                   channels. The lived-in soak stays a manual run: it needs busy
+#                   channels and an hour.
+#   browser-suites  the real-browser suites ci.yml does not run: rtl, the three
+#                   emote-collision renders, the interaction trace, and the
+#                   merged-tab bench against its recorded budget.
+#   contracts       the three tests that compare this repo with the site repo,
+#                   run against the site's CURRENT main. A change on the site
+#                   side alone (no push here) turns this red within a day.
+#   supply-chain    bun audit and gitleaks over the whole history.
+# Twice a day so the sentinel's 26h staleness window survives GitHub dropping
+# one cron fire (2026-10-19 did).
 on:
   schedule:
     - cron: '17 9,21 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   heap-quick:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      # The build runs the test suite first, and its paint-compiler parity gate
-      # needs the private site repo beside this checkout — same as ci.yml. The
-      # first dispatched run (2026-10-14) died on exactly this before measuring.
-      HS_PARITY_SKIP_OK: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.4
 
@@ -37,16 +45,124 @@ jobs:
           bunx playwright-core install chromium
           echo "CHROMIUM_BIN=$(bun -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_ENV"
 
+      # `bun run test:heap-budget:quick` minus its build's test run. That run needs
+      # the private site repo for the parity tests (the first dispatched run,
+      # 2026-10-14, died on exactly that before measuring), and ci.yml and the
+      # contracts job below already run every test.
+      - name: build
+        run: bun run build.js chrome --minify --no-test
+
       - name: non-chat heap budget
         # below the job's 15: a step that times out fails the job (and pages);
         # a job that times out is `cancelled`, which pages nobody
-        timeout-minutes: 12
-        run: bun run test:heap-budget:quick
+        timeout-minutes: 10
+        run: bun scripts/heap-budget.ts --quick
+
+  browser-suites:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+
+      - name: install dependencies
+        run: bun install --frozen-lockfile
+
+      # same reason as heap-quick: playwright's own chromium, not branded chrome
+      - name: install chromium
+        run: |
+          bunx playwright-core install chromium
+          echo "CHROMIUM_BIN=$(bun -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_ENV"
+
+      - name: build
+        run: bun run build.js chrome --minify --no-test
+
+      # Each step has its own ceiling below the job's 40: a step that times out
+      # fails the job (and pages); a job that times out is `cancelled`, which
+      # pages nobody.
+      - name: rtl (arabic mirrors the overlay, english does not)
+        timeout-minutes: 5
+        run: bun scripts/render-rtl.ts
+
+      - name: emote collisions (twitch)
+        timeout-minutes: 5
+        run: bun scripts/render-emote-collisions.ts
+
+      - name: emote collisions (twitch native)
+        timeout-minutes: 5
+        run: bun scripts/render-emote-collisions-native.ts
+
+      - name: emote collisions (kick)
+        timeout-minutes: 5
+        run: bun scripts/render-emote-collisions-kick.ts
+
+      # A trace, not a gate: it prints what a hover, a tab click, a keystroke and
+      # a send cost the page's main thread. It fails only if the page cannot be
+      # driven at all. Read the numbers in the step log.
+      - name: interaction trace
+        timeout-minutes: 5
+        run: bun scripts/interaction-ext.ts
+
+      # per-message main-thread time of a busy merged tab, against
+      # scripts/merged-tab-budget.json (baseline + 25%), and the fast path vs a
+      # full render must agree row for row
+      - name: merged-tab bench
+        timeout-minutes: 5
+        run: bun scripts/merged-tab-bench.ts --budget scripts/merged-tab-budget.json
+
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - uses: ./.github/actions/site
+        with:
+          ssh-key: ${{ secrets.SITE_DEPLOY_KEY }}
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+
+      - name: install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: contract tests against the site's current main
+        run: bun test tests/ws-contract.test.js tests/paint-compiler-parity.test.js tests/site-copy-parity.test.js
+
+  supply-chain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0 # the whole history, not the tip
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+
+      - name: install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: bun audit (high and critical fail)
+        run: bun audit --audit-level=high
+
+      # config: .gitleaks.toml. a scheduled run scans every commit.
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   notify-failure:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: heap-quick
+    needs: [heap-quick, browser-suites, contracts, supply-chain]
     # Only the SCHEDULED run pages. A workflow_dispatch is somebody at a
     # terminal asking a question — they are reading the answer already, and a
     # red is their experiment's RESULT, not an incident. On 2026-10-14 this job

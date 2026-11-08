@@ -1,0 +1,44 @@
+name: site repo beside this one
+description: >
+  Checks out mellen9999/heatsync (private) as a sibling of this checkout and exports
+  HS_SITE_DIR, so the contract tests have something to compare against. Fails loudly
+  when the deploy key is missing, because a contract test that skips proves nothing.
+
+inputs:
+  ssh-key:
+    description: read-only deploy key for the site repo (pass secrets.SITE_DEPLOY_KEY)
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: the deploy key is there
+      shell: bash
+      env:
+        SITE_DEPLOY_KEY: ${{ inputs.ssh-key }}
+      run: |
+        if [ -z "$SITE_DEPLOY_KEY" ]; then
+          echo "::error title=SITE_DEPLOY_KEY is not set::the contract tests (ws-contract, paint-compiler-parity, site-copy-parity) compare this repo with mellen9999/heatsync and refuse to skip, so this job cannot run without the key."
+          echo "to fix, once:"
+          echo "  1. ssh-keygen -t ed25519 -N '' -f site_deploy"
+          echo "  2. github.com/mellen9999/heatsync > settings > deploy keys > add site_deploy.pub (read-only)"
+          echo "  3. github.com/mellen9999/heatsync-extension > settings > secrets and variables > actions > new secret SITE_DEPLOY_KEY = the contents of site_deploy"
+          echo "a pull request from a fork never sees secrets: push the branch to this repo instead."
+          exit 1
+        fi
+
+    # actions/checkout only writes inside the workspace; the tests look for the
+    # site as a sibling, and `bun test` would otherwise walk into it.
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      with:
+        repository: mellen9999/heatsync
+        ssh-key: ${{ inputs.ssh-key }}
+        path: _site
+        persist-credentials: false
+
+    - name: put it beside this checkout
+      shell: bash
+      run: |
+        mv _site ../heatsync
+        echo "HS_SITE_DIR=$(cd ../heatsync && pwd)" >> "$GITHUB_ENV"

@@ -3,6 +3,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import ts from 'typescript'
 import { bgSource } from './bg-src.js'
+import { SITE_MISSING, siteDir, siteRequired } from './site-dir.js'
 
 /**
  * The websocket is a two-ended contract and only one end was ever checked.
@@ -11,19 +12,18 @@ import { bgSource } from './bg-src.js'
  * fails — the message is read, matched against nothing, and dropped. The
  * feature simply does not exist on the client, silently, forever.
  *
- * Skips when the site repo is not checked out, like the site's own cross-repo
+ * Skips when the site repo is not checked out (a standalone clone) — but never in ci,
+ * where a skip is a failure (tests/site-dir.js). Like the site's own cross-repo
  * guard, so this never blocks a standalone clone.
  */
 
 /**
- * The sibling repo, found from either a normal checkout or a worktree. Inside
- * `.worktrees/<name>/` the projects dir is two levels further up than it looks
- * — the exact trap that made scripts/smoke-extension.ts report "playwright not
- * found" on a machine that had it installed.
+ * The sibling repo, found from either a normal checkout or a worktree (tests/site-dir.js: inside
+ * `.worktrees/<name>/` the projects dir is two levels further up than it looks — the exact trap that
+ * made scripts/smoke-extension.ts report "playwright not found" on a machine that had it installed).
  */
-const siteRoot = ['..', '../..', '../../..', '../../../..']
-  .map((up) => join(import.meta.dir, '..', up, 'heatsync'))
-  .find((p) => existsSync(join(p, 'server')))
+const siteRoot = siteDir('server')
+if (!siteRoot && siteRequired()) throw new Error(SITE_MISSING)
 
 /** Types handled by handleWSMessage, via the AST — not regex. */
 function handledTypes() {

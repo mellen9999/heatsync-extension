@@ -15,3 +15,15 @@ paths = ['''chrome/early-inject-main\.js''']
 [[allowlists]]
 description = "redaction-test fixtures — fake jwt/secret strings used to test the redactor"
 paths = ['''tests/error-reporter\.test\.js''']
+
+[[allowlists]]
+description = "youtube's own public innertube web key (youtube.com ships it in every page; the extension calls the same endpoints a viewer's tab does)"
+regexes = ['''AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8''']
+
+[[allowlists]]
+description = "stray files long gone from the tree (a saved lofi page and a build log); full-history scans still walk the commits that carried them"
+paths = ['''lofi_lc\.html''', '''build\.log''']
+
+[[allowlists]]
+description = "test fixtures: empty-string and nullish keys for userKey(), nothing secret"
+paths = ['''tests/user-key\.test\.js''']

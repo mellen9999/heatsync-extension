@@ -602,7 +602,7 @@
       maxWidth: '460px',
       whiteSpace: 'pre',
     })
-    cheatsheetEl.textContent = hsViT('cs_vi_cheatsheet')
+    cheatsheetEl.textContent = `${hsViT('cs_vi_cheatsheet')}\n${hsViT('cs_vi_cheatsheet_rows')}`
     document.body.appendChild(cheatsheetEl)
     // Auto-dismiss on any key
     const dismiss = () => {

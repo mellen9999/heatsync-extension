@@ -618,7 +618,9 @@ function flushMessageQueue() {
       continue
     }
     try {
-      socket.send(JSON.stringify(msg))
+      // the queue stamp is ours, not the server's
+      const { _queuedAt, ...wire } = msg
+      socket.send(JSON.stringify(wire))
       log(` 📤 Sent queued: ${msg.type}`)
     } catch (_err) {
       messageQueue.unshift(msg) // Put it back
@@ -1121,8 +1123,7 @@ function wsSend(msg) {
 
   // Queue the message and ensure we're connecting
   log(` 📥 Queueing message: ${msg.type}`)
-  msg._queuedAt = Date.now()
-  messageQueue.push(msg)
+  messageQueue.push({ ...msg, _queuedAt: Date.now() })
 
   // Limit queue size to prevent memory issues
   if (messageQueue.length > 50) {
@@ -2320,7 +2321,7 @@ function scheduleReconnect() {
 
   reconnectTimer = setTimeout(() => {
     reconnectTimer = null
-    connectWebSocket()
+    connectWebSocket().catch((err) => log(' WS reconnect failed:', err?.message))
   }, delay)
 }
 

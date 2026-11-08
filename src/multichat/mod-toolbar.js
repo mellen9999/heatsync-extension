@@ -355,24 +355,32 @@ function _modActor() {
 function _modNoticeFields(action, actor, tgt, durationSec) {
   const a = actor || tgt
   if (action === 'ban')
-    return { noticeType: 'ban_success', systemMsg: a ? `${a} banned ${tgt}` : `${tgt} was permanently banned` }
+    return {
+      noticeType: 'ban_success',
+      systemMsg: a ? t('mc_modnotice_ban', [a, tgt]) : t('mc_modnotice_ban_anon', [tgt]),
+    }
   if (action === 'timeout') {
-    const d = Math.max(1, durationSec | 0)
+    const d = String(Math.max(1, durationSec | 0))
     return {
       noticeType: 'timeout_success',
-      systemMsg: a ? `${a} timed out ${tgt} for ${d}s` : `${tgt} timed out for ${d}s`,
+      systemMsg: a ? t('mc_modnotice_timeout', [a, tgt, d]) : t('mc_modnotice_timeout_anon', [tgt, d]),
     }
   }
   if (action === 'unban' || action === 'untimeout')
-    return { noticeType: 'unban_success', systemMsg: a ? `${a} unbanned ${tgt}` : `${tgt} is no longer banned` }
+    return {
+      noticeType: 'unban_success',
+      systemMsg: a ? t('mc_modnotice_unban', [a, tgt]) : t('mc_modnotice_unban_anon', [tgt]),
+    }
   if (action === 'delete')
     return {
       noticeType: 'delete_message_success',
       systemMsg: a
-        ? `${a} deleted a message${tgt ? ` from ${tgt}` : ''}`
+        ? tgt
+          ? t('mc_modnotice_delete_from', [a, tgt])
+          : t('mc_modnotice_delete', [a])
         : tgt
-          ? `${tgt}'s message deleted`
-          : 'message deleted',
+          ? t('mc_modnotice_delete_anon_target', [tgt])
+          : t('mc_modnotice_delete_anon'),
     }
   return null
 }

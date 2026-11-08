@@ -85,9 +85,7 @@ function _tabModeRender() {
   cur.classList.add(TAB_CURSOR_CLASS)
   cur.scrollIntoView?.({ block: 'nearest', inline: 'nearest' })
   const label = (cur.textContent || '').trim()
-  _tabModeStatus(
-    `${_tabMode.cursor + 1}/${tabs.length} ${label} · jk move · enter open · JK reorder · d close · a add · esc`,
-  )
+  _tabModeStatus(t('mc_tabmode_hint', [String(_tabMode.cursor + 1), String(tabs.length), label]))
 }
 
 /** @returns {boolean} whether the mode actually opened */

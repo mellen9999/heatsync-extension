@@ -14,7 +14,7 @@
     .hs-fl-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: underline; }
     .hs-fl-game { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--hs-muted); }
     .hs-fl-row:hover .hs-fl-game, .hs-fl-row:active .hs-fl-game, .hs-fl-sel .hs-fl-game { color: #000; }
-    .hs-fl-up, .hs-fl-views { flex: 0 0 auto; text-align: right; }
+    .hs-fl-up, .hs-fl-views { flex: 0 0 auto; text-align: end; }
     .hs-fl-views { min-width: 4ch; }
     .hs-fl-note { color: var(--hs-muted); padding: 8px 0; }
     .hs-fl-hint { margin-top: 8px; color: var(--hs-muted); }

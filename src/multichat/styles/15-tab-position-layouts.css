@@ -60,12 +60,13 @@
     .hs-tabs-right #hs-mc-tabbar::-webkit-scrollbar { display: none; }
     .hs-tabs-right .hs-mc-tab,
     .hs-tabs-left .hs-mc-tab {
-      padding: 4px 14px 4px 6px !important;
+      padding-block: 4px !important;
+      padding-inline: 6px 14px !important;
       font-size: 13px !important;
       min-width: 0 !important;
       max-width: none !important;
       width: 100% !important;
-      text-align: left !important;
+      text-align: start !important;
       box-sizing: border-box !important;
       flex: 0 0 auto !important;
       margin: 0 0 -1px 0 !important;
@@ -89,7 +90,8 @@
       max-width: 14px !important;
       padding: 0 !important;
       flex: 0 0 14px !important;
-      margin: 0 -1px 0 0 !important;
+      margin-block: 0 !important;
+      margin-inline: 0 -1px !important;
     }
     /* Right-cluster (util-row) wraps its rows. In vertical mode
        the tabbar's align-items:flex-start collapses it to content width, so
@@ -106,8 +108,9 @@
     .hs-tabs-left #hs-mc-subrow .hs-mc-dest {
       width: 100%;
       box-sizing: border-box;
-      text-align: left;
-      padding: 4px 14px 4px 6px;
+      text-align: start;
+      padding-block: 4px;
+      padding-inline: 6px 14px;
       margin: 0 0 -1px 0;
     }
     .hs-tabs-right #hs-mc-subrow .hs-x-cell,

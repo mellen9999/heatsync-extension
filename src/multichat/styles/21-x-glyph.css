@@ -26,7 +26,8 @@
     .hs-x:active,
     .hs-x:focus-visible { background: #fff; color: #000; border-color: #fff; outline: none; }
     /* last cell of the 2nd row, full row height */
-    .hs-x-cell { margin: 0 0 -1px auto; align-self: stretch; min-width: 28px; padding: 0 6px; border: 0; }
+    .hs-x-cell { margin-block: 0 -1px;
+    margin-inline: auto 0; align-self: stretch; min-width: 28px; padding: 0 6px; border: 0; }
     .hs-x-cell svg { width: 14px; height: 14px; }
     @media (pointer: coarse) {
       .hs-x { min-width: 40px; min-height: 40px; }

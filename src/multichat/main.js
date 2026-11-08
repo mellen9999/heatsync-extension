@@ -6458,8 +6458,7 @@
   function getOrCreateHsContainer(chatRoom) {
     let container = document.getElementById('hs-mc-container')
     if (container && document.contains(container)) return container
-    container = document.createElement('div')
-    container.id = 'hs-mc-container'
+    container = Object.assign(document.createElement('div'), { id: 'hs-mc-container', dir: HS_DIR() })
     // Keep a live reference: twitch commits the chat-shell unmount BEFORE
     // pushState on some SPA transitions (channel → /directory), so by the time
     // the nav event fires the panel is detached and invisible to

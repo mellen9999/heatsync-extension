@@ -8,12 +8,12 @@
       color: #fff !important;
       transition: none;
       visibility: visible !important;
-      border-left: 3px solid transparent;
+      border-inline-start: 3px solid transparent;
       margin: 0 6px;
     }
     .hs-mc-menu-item:hover {
       background: #fff !important;
-      border-left-color: #000;
+      border-inline-start-color: #000;
     }
     .hs-mc-menu-item:active {
       background: #fff !important;
@@ -133,7 +133,7 @@
       background: #000000;
       border-radius: 0;
       padding: 8px 10px;
-      border-left: 3px solid var(--oc, var(--hs-info));
+      border-inline-start: 3px solid var(--oc, var(--hs-info));
     }
     .hs-mc-pred-outcome-head {
       display: flex;
@@ -289,7 +289,7 @@
       font-weight: 600;
        text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-left: 4px;
+      margin-inline-start: 4px;
     }
     .hs-mc-pred-result-won {
       background: #000000;
@@ -316,7 +316,7 @@
 
     /* Outcome states */
     .hs-mc-pred-outcome-won {
-      border-left-color: var(--hs-ok);
+      border-inline-start-color: var(--hs-ok);
       background: #000000;
     }
     .hs-mc-pred-outcome-lost {
@@ -333,7 +333,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       vertical-align: middle;
-      margin-left: 4px;
+      margin-inline-start: 4px;
     }
 
     /* ═══ Mod controls ═══ */
@@ -434,7 +434,7 @@
     .hs-mc-pred-create-dur-label {
       font-size: 13px;
       color: var(--hs-muted);
-      margin-right: 2px;
+      margin-inline-end: 2px;
     }
     .hs-mc-pred-create-dur {
       font-size: 13px;
@@ -531,7 +531,7 @@
     .hs-mc-poll-choice-fill {
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       height: 100%;
       background: #000000;
     }
@@ -563,7 +563,7 @@
       color: var(--hs-plat-twitch);
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
-      margin-left: 8px;
+      margin-inline-start: 8px;
     }
     .hs-mc-poll-choice-top .hs-mc-poll-choice-pct {
       color: var(--hs-plat-twitch);
@@ -656,7 +656,7 @@
     .hs-mc-poll-create-dur-label {
       font-size: 13px;
       color: var(--hs-muted);
-      margin-right: 2px;
+      margin-inline-end: 2px;
     }
     .hs-mc-poll-create-dur {
       font-size: 13px;
@@ -803,7 +803,7 @@
       gap: 8px;
       padding: 6px 8px;
       background: #000000;
-      border-left: 2px solid var(--rc, var(--hs-plat-twitch));
+      border-inline-start: 2px solid var(--rc, var(--hs-plat-twitch));
       cursor: pointer;
       transition: none;
     }
@@ -890,7 +890,7 @@
       height: 14px;
       border-radius: 0;
       vertical-align: -2px;
-      margin-left: 6px;
+      margin-inline-start: 6px;
       border: 1px solid #ffffff;
     }
     .hs-mc-color-grid {
@@ -1196,7 +1196,7 @@
       color: #000 !important;
     }
     .hs-mc-set-child {
-      padding-left: 28px !important;
+      padding-inline-start: 28px !important;
     }
     .hs-mc-set-child-glyph {
       color: var(--hs-muted);
@@ -1214,6 +1214,9 @@
        survives zebra/hover/focus backgrounds */
     .hs-mc-setting-row.hs-mc-set-mod {
       box-shadow: inset 3px 0 0 #fff;
+    }
+    .hs-mc-setting-row.hs-mc-set-mod:dir(rtl) {
+      box-shadow: inset -3px 0 0 #fff;
     }
     .hs-mc-set-cnt {
       color: var(--hs-muted);
@@ -1236,7 +1239,7 @@
       font-size: 13px;
       padding: 0 6px;
       cursor: pointer;
-      margin-left: auto;
+      margin-inline-start: auto;
       flex-shrink: 0;
     }
     .hs-mc-set-reload:hover {
@@ -1335,7 +1338,7 @@
       color: var(--hs-muted);
       font-size: 13px;
       min-width: 28px;
-      text-align: right;
+      text-align: end;
       flex-shrink: 0;
     }
 

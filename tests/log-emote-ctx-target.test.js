@@ -92,7 +92,7 @@ test('event row click opens the channel on its live tab, not the last active tab
 
 test('live tabs reserve room for the live dot so the unread count never sits under it', () => {
   const css = readFileSync(new URL('../src/multichat/styles/02-tab-bar.css', import.meta.url), 'utf8')
-  expect(css).toMatch(/\.hs-mc-tab\[data-live="true"\] \{\s*padding-right: 16px !important/)
+  expect(css).toMatch(/\.hs-mc-tab\[data-live="true"\] \{\s*padding-inline-end: 16px !important/)
 })
 
 test('a row inserted mid-list restripes everything after it', () => {

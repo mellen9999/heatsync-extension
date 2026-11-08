@@ -58,10 +58,10 @@
        text-decoration: line-through;
     }
     .hs-cl-ch {
-      color: var(--hs-dim); margin-right: 6px;
+      color: var(--hs-dim); margin-inline-end: 6px;
     }
     .hs-cl-user {
-      color: #fff; font-weight: 700; margin-right: 6px;
+      color: #fff; font-weight: 700; margin-inline-end: 6px;
     }
     .hs-cl-body { color: #ffffff; word-break: break-word; }
     .hs-cl-link { color: var(--hs-link); text-decoration: none; word-break: break-all; }
@@ -92,7 +92,7 @@
     }
     .hs-cl-emote:not(.zw):hover { background: #fff; filter: brightness(0.2); cursor: pointer; }
     /* a zero-width overlay emote sits on the one before it */
-    .hs-cl-emote.zw { margin-left: -18px; }
+    .hs-cl-emote.zw { margin-inline-start: -18px; }
     .hs-cl-empty {
       color: var(--hs-muted); text-align: center; padding: 40px 8px;
     }
@@ -109,15 +109,17 @@
     }
     .hs-cl-public-archive:hover { background: #fff; color: #000; border-color: #fff; }
     .hs-cl-time {
-      float: right; min-width: 8ch; margin-left: 8px; padding: 0 2px;
-      text-align: right; color: var(--hs-muted); font-size: 13px;
+      float: right; min-width: 8ch; margin-inline-start: 8px; padding: 0 2px;
+      text-align: end; color: var(--hs-muted); font-size: 13px;
       font-variant-numeric: tabular-nums; white-space: nowrap;
       text-decoration: none;
     }
+    /* float has no logical value before chrome 118: the time rides the end edge in rtl too */
+    .hs-cl-time:dir(rtl) { float: left; }
     .hs-cl-time time { color: inherit; }
     a.hs-cl-time:hover { background: #fff; color: #000; }
     a.hs-cl-time.hs-cl-time-copied { color: #fff; }
 
 
-.hs-cl-badges { margin-right: 4px; }
-.hs-cl-badge-img { display: inline-block; width: 18px; height: 18px; margin-right: 2px; vertical-align: middle; }
+.hs-cl-badges { margin-inline-end: 4px; }
+.hs-cl-badge-img { display: inline-block; width: 18px; height: 18px; margin-inline-end: 2px; vertical-align: middle; }

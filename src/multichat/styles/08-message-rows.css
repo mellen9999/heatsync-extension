@@ -335,7 +335,7 @@
       background: #000;
       color: #fff;
       border: 1px solid var(--hs-border);
-      border-right: 0;
+      border-inline-end: 0;
       font: 13px/18px var(--hs-mc-font, monospace);
       user-select: none;
       height: 20px;
@@ -350,7 +350,7 @@
       background: #000;
       color: #fff;
       border: 0;
-      border-right: 1px solid var(--hs-border);
+      border-inline-end: 1px solid var(--hs-border);
       font: inherit;
       cursor: pointer;
       /* no line-height:1 — the same even-runway rule as the width, on the other
@@ -358,7 +358,7 @@
          leaves 5px to split, so the glyph sat on a half pixel. Inheriting the
          toolbar's 18px line-height fills the box exactly instead. */
     }
-    .hs-mod-btn:last-child { border-right: 0; }
+    .hs-mod-btn:last-child { border-inline-end: 0; }
     .hs-mod-btn:hover { background: #fff; color: #000; }
     #hs-mc-reply-indicator {
       flex: 1 0 100%;
@@ -1068,7 +1068,8 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      padding: 0 2px 0 6px;
+      padding-block: 0;
+      padding-inline: 6px 2px;
       height: 18px;
       background: #000;
     }
@@ -1145,6 +1146,11 @@
        and clicking it opens the thread stack. No caret, no transition. */
     .hs-mc-reply-ctx {
       cursor: pointer;
+    }
+    /* rtl ui: the pill takes the direction of what it quotes, like the row under it,
+       or an english quote clips its first letters off the wrong end */
+    .hs-mc-reply-ctx:dir(rtl) {
+      unicode-bidi: plaintext;
     }
 
     /* chips on a filled row take the fill's label colour, on a black plate */

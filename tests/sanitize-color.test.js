@@ -135,7 +135,7 @@ describe('sanitizeColor — real regex + boost + cache (src/multichat/main.js)',
   test('cache is capped at 500 entries (oldest evicted, does not grow unbounded)', () => {
     const { sanitizeColor, cacheSize } = makeSanitizeColor({ readableNamesEnabled: true })
     for (let i = 0; i < 501; i++) {
-      sanitizeColor('#' + i.toString(16).padStart(6, '0'))
+      sanitizeColor(`#${i.toString(16).padStart(6, '0')}`)
     }
     expect(cacheSize()).toBe(500)
   })

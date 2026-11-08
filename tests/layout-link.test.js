@@ -24,7 +24,7 @@ describe('mcLayoutParse', () => {
   })
   test('junk dropped, never throws', () => {
     expect(mcLayoutParse('t:bad name+x:foo+nocolon+t:ok')).toEqual([t({ twitch: 'ok' })])
-    expect(mcLayoutParse('t:' + 'a'.repeat(31))).toEqual([])
+    expect(mcLayoutParse(`t:${'a'.repeat(31)}`)).toEqual([])
     expect(mcLayoutParse(null)).toEqual([])
     expect(mcLayoutParse('%E0%A4%A')).toEqual([])
   })

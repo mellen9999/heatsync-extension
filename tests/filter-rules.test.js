@@ -122,14 +122,14 @@ test('regex: alternation catastrophic pattern falls back (no hang)', () => {
 test('regex: brace-quantified nested quantifier falls back (no hang)', () => {
   // (a+){30} bypassed old guard but causes ~33s backtracking — must be blocked
   compileFilterRules([rule({ match: { type: 'regex', value: '(a+){30}' } })])
-  const msg = makeMsg({ text: 'a'.repeat(32) + '!' })
+  const msg = makeMsg({ text: `${'a'.repeat(32)}!` })
   const res = evaluateFilterRules(msg, null)
   expect(typeof res.hide).toBe('boolean')
 })
 
 test('regex: brace-quantified alternation falls back (no hang)', () => {
   compileFilterRules([rule({ match: { type: 'regex', value: '(a|ab){20}' } })])
-  const msg = makeMsg({ text: 'a'.repeat(25) + '!' })
+  const msg = makeMsg({ text: `${'a'.repeat(25)}!` })
   const res = evaluateFilterRules(msg, null)
   expect(typeof res.hide).toBe('boolean')
 })
@@ -399,7 +399,7 @@ test('expr: regex term is ReDoS-guarded and works', () => {
   expect(hides('regex:"^!"', makeMsg({ text: 'hi' }))).toBe(false)
   // catastrophic pattern degrades to literal, must not hang
   const start = performance.now()
-  hides('regex:"(a+)+$"', makeMsg({ text: 'a'.repeat(40) + '!' }))
+  hides('regex:"(a+)+$"', makeMsg({ text: `${'a'.repeat(40)}!` }))
   expect(performance.now() - start).toBeLessThan(100)
 })
 
@@ -441,13 +441,13 @@ test('expr: malformed expressions are dropped (fail-safe, never hide)', () => {
 })
 
 test('expr: deep nesting does not crash (depth guard drops it)', () => {
-  const deep = '('.repeat(200) + 'first' + ')'.repeat(200)
+  const deep = `${'('.repeat(200)}first${')'.repeat(200)}`
   // Must not throw; over-deep → dropped → no hide.
   expect(hides(deep, makeMsg({ isFirstMsg: true }))).toBe(false)
 })
 
 test('expr: overlong expression is rejected', () => {
-  expect(hides('contains:x || '.repeat(60) + 'first', makeMsg({ isFirstMsg: true }))).toBe(false)
+  expect(hides(`${'contains:x || '.repeat(60)}first`, makeMsg({ isFirstMsg: true }))).toBe(false)
 })
 
 test('expr: highlight action returns color', () => {

@@ -287,7 +287,7 @@ describe('browser-api: I18N_LOCALE_NAMES', () => {
   })
 
   test('has English entry', () => {
-    expect(I18N_LOCALE_NAMES['en']).toBe('English')
+    expect(I18N_LOCALE_NAMES.en).toBe('English')
   })
 
   test('has major languages present', () => {

@@ -63,7 +63,7 @@ describe('send-status: the checklist', () => {
           timers.push(fn)
           return timers.length
         },
-        addEventListener: (target, ev, fn) => focusListeners.push([ev, fn]),
+        addEventListener: (_target, ev, fn) => focusListeners.push([ev, fn]),
       },
     )
   }

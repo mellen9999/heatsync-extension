@@ -45,7 +45,7 @@ describe('t() call sites match their messages', () => {
   for (const f of FILES) {
     const src = readFileSync(f, 'utf8')
     for (const m of src.matchAll(/\bt\('([a-z0-9_]+)',\s*\[([^\]]*)\]/g)) {
-      sites.push({ file: f.replace(ROOT + '/', ''), key: m[1], args: countArgs(m[2]) })
+      sites.push({ file: f.replace(`${ROOT}/`, ''), key: m[1], args: countArgs(m[2]) })
     }
   }
 

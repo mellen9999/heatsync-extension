@@ -252,12 +252,12 @@ describe('block: deny-list bypass via long padding (defense-in-depth)', () => {
     // POTENTIAL GAP: the deny-list is a first-line guard; for this pattern the second
     // line (protocol allowlist) is the actual defence. The deny-list window (32 chars)
     // could be increased or removed in favour of relying solely on the URL() allowlist.
-    const padded = 'x'.repeat(31) + 'javascript:alert(1)'
+    const padded = `${'x'.repeat(31)}javascript:alert(1)`
     expect(safeUrl(padded)).toBe(EMPTY)
   })
 
   test('32-char padding before javascript: — deny-list definitely misses; URL() still rejects', () => {
-    const padded = 'x'.repeat(32) + 'javascript:alert(1)'
+    const padded = `${'x'.repeat(32)}javascript:alert(1)`
     expect(safeUrl(padded)).toBe(EMPTY)
   })
 })

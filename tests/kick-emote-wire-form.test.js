@@ -77,7 +77,7 @@ describe('kickifyEmoteText', () => {
   })
 
   test('a message already over the limit is still expanded (kick rejects either way)', () => {
-    const huge = ('KEKW ' + 'y'.repeat(100) + ' ').repeat(6).trim()
+    const huge = `KEKW ${'y'.repeat(100)} `.repeat(6).trim()
     expect(huge.length).toBeGreaterThan(500)
     expect(f(huge)).toContain('[emote:37226:KEKW]')
   })

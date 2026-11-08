@@ -165,8 +165,11 @@ describe('the legitimate flow still goes through', () => {
     let n2 = 0
     const h = load({
       platform: {
-        kick: async (_id, text) =>
-          ++n2 === 1 ? { ok: false, error: 'no_kick_tab' } : (h.sent.kick.push({ text }), { ok: true }),
+        kick: async (_id, text) => {
+          if (++n2 === 1) return { ok: false, error: 'no_kick_tab' }
+          h.sent.kick.push({ text })
+          return { ok: true }
+        },
       },
     })
     const first = await h.relay(kick('chan', 'try me twice'))

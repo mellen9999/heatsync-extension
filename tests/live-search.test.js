@@ -87,7 +87,7 @@ test('catastrophic (a+)+ pattern: does not hang, falls back to literal', () => {
   const m = buildLiveSearchMatcher('/(a+)+/')
   const start = Date.now()
   // If the real regex ran, this would hang for seconds on a long mismatching string
-  m.test(msg('user', 'a'.repeat(30) + 'b'))
+  m.test(msg('user', `${'a'.repeat(30)}b`))
   expect(Date.now() - start).toBeLessThan(100)
   // Literal fallback: "(a+)+" must appear verbatim to match
   expect(m.test(msg('user', '(a+)+'))).toBe(true)
@@ -97,7 +97,7 @@ test('catastrophic (a+)+ pattern: does not hang, falls back to literal', () => {
 test('catastrophic (a|a)+ pattern: does not hang', () => {
   const m = buildLiveSearchMatcher('/(a|a)+/')
   const start = Date.now()
-  m.test(msg('user', 'a'.repeat(30) + 'b'))
+  m.test(msg('user', `${'a'.repeat(30)}b`))
   expect(Date.now() - start).toBeLessThan(100)
 })
 

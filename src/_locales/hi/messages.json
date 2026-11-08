@@ -1318,7 +1318,7 @@
     "message": "mod टूलबार बटन"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "चैनल के mod होने पर चैट पंक्तियों पर होवर एक्शन — सब डिफ़ॉल्ट बंद"
+    "message": "चैनल के mod होने पर चैट पंक्तियों पर होवर एक्शन। पहली बार mod बनने पर शुरुआती सेट दिखता है; इसे यहाँ बदलो"
   },
   "mc_settings_mod_btn_delete": {
     "message": "यह मैसेज डिलीट करो"
@@ -1411,7 +1411,7 @@
     "message": "फ़िल्टर नियम"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "नियम-वार हाइलाइट/छिपाने वाले फ़िल्टर — कीवर्ड, regex, यूज़र, बैज या msgtype; नियम एडिटर से संभालो"
+    "message": "शब्द, पैटर्न, यूज़र, बैज या किस्म के हिसाब से मैसेज हाइलाइट या छिपाओ। नियम यहाँ जोड़ो, बदलो और क्रम में लगाओ"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "स्क्रॉल-व्हील वॉल्यूम"
@@ -5324,10 +5324,10 @@
     "message": "सारे चैनल"
   },
   "mc_set_fr_t_keyword": {
-    "message": "कीवर्ड"
+    "message": "शब्द"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "पैटर्न"
   },
   "mc_set_fr_t_user": {
     "message": "यूज़र"
@@ -5336,13 +5336,13 @@
     "message": "बैज"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "मैसेज टाइप"
+    "message": "किस्म"
   },
   "mc_set_fr_t_expr": {
-    "message": "एक्सप्रेशन"
+    "message": "एडवांस्ड"
   },
   "mc_set_fr_expr_tip": {
-    "message": "जैसे first && !badge:subscriber — && || ! ( ) से जोड़ो; फ़ील्ड user: badge: type: contains: regex:"
+    "message": "जाँचों को && (और) || (या) ! (नहीं) से जोड़ो, जैसे: first && !badge:subscriber. जाँचें: first, action, reply, cheer, user:नाम, badge:नाम, contains:टेक्स्ट, regex:पैटर्न, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "वैल्यू..."
@@ -6678,7 +6678,7 @@
     "message": "मेंशन की आवाज़"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "जब यह टैब बैकग्राउंड में हो और कोई आपको @मेंशन करे तब क्या बजे। अंतर्निहित आवाज़ या आपकी अपनी फ़ाइल"
+    "message": "जब कोई आपको @मेंशन करे तब क्या बजे। अंतर्निहित आवाज़ या आपकी अपनी फ़ाइल"
   },
   "mc_settings_mention_sound_file": {
     "message": "ध्वनि फ़ाइल"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "इमोट का नाम खाली नहीं हो सकता और उसमें खाली जगह नहीं होनी चाहिए"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "पूरा शब्द या वाक्यांश, जैसे: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "टेक्स्ट पैटर्न (regex), जैसे: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "चैट के एक व्यक्ति का नाम, जैसे: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "बैज वाले सभी, जैसे: moderator, subscriber या vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "मैसेज की एक किस्म: first-message, action, reply या cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "पिछले $TOTAL$ मैसेज में से $COUNT$ से मेल खाता है",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "पिछले $TOTAL$ मैसेज में से किसी से मेल नहीं खाता",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "आज़माने के लिए यहाँ अभी कोई मैसेज नहीं है"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "यह नियम अभी काम नहीं करता। जो लिखा है उसे जाँचो"
+  },
+  "mc_set_fr_notify": {
+    "message": "मुझे भी बताओ"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "मेल को मेंशन गिना जाता है: वह मेंशन टैब में दिखता है, टैब का टाइटल झपकता है और डेस्कटॉप नोटिफ़िकेशन आता है (अगर चालू हों)। खाते की ज़रूरत नहीं"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "मेंशन की आवाज़ बजती है"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "मेंशन की आवाज़ कब बजे: सिर्फ़ जब आप दूसरी विंडो में हों, या हर बार"
+  },
+  "mc_set_msw_away": {
+    "message": "सिर्फ़ जब मैं दूर हूँ"
+  },
+  "mc_set_msw_always": {
+    "message": "हमेशा"
+  },
+  "mc_mtb_seeded": {
+    "message": "चैट पंक्तियों में mod बटन जोड़े गए: डिलीट, 10 मिनट timeout, ban. इन्हें सेटिंग › mod में बदलो"
   }
 }

@@ -1318,7 +1318,7 @@
     "message": "mod 工具栏按钮"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "当你是频道 mod 时，在聊天行上悬停显示的操作 — 默认全部关闭"
+    "message": "当你是频道 mod 时，在聊天行上悬停显示的操作。第一次成为 mod 时会出现一组起始按钮；可在这里修改"
   },
   "mc_settings_mod_btn_delete": {
     "message": "删除此消息"
@@ -1411,7 +1411,7 @@
     "message": "过滤规则"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "按规则高亮/隐藏 — 关键词、正则、用户、徽章或消息类型；在规则编辑器中管理"
+    "message": "按词、模式、用户、徽章或种类来高亮或隐藏消息。规则在这里添加、编辑和排序"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "滚轮调音量"
@@ -5324,10 +5324,10 @@
     "message": "所有频道"
   },
   "mc_set_fr_t_keyword": {
-    "message": "关键词"
+    "message": "词"
   },
   "mc_set_fr_t_regex": {
-    "message": "正则"
+    "message": "模式"
   },
   "mc_set_fr_t_user": {
     "message": "用户"
@@ -5336,13 +5336,13 @@
     "message": "徽章"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "消息类型"
+    "message": "种类"
   },
   "mc_set_fr_t_expr": {
-    "message": "表达式"
+    "message": "高级"
   },
   "mc_set_fr_expr_tip": {
-    "message": "例如 first && !badge:subscriber — 用 && || ! ( ) 连接；字段 user: badge: type: contains: regex:"
+    "message": "用 && (且) || (或) ! (非) 连接条件，例如：first && !badge:subscriber。条件：first、action、reply、cheer、user:名字、badge:名字、contains:文字、regex:模式、bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "值…"
@@ -6678,7 +6678,7 @@
     "message": "提及提示音"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "此标签页在后台时被 @提及 会播放的声音。内置声音或你自己的文件"
+    "message": "被 @提及 时播放的声音。内置声音或你自己的文件"
   },
   "mc_settings_mention_sound_file": {
     "message": "声音文件"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "表情名字不能为空，也不能有空格"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "一个完整的词或短语，例如：gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "一种文字模式（regex），例如：^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "聊天里某一个人的名字，例如：nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "所有带徽章的人，例如：moderator、subscriber 或 vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "一种消息：first-message、action、reply 或 cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "最近 $TOTAL$ 条消息中有 $COUNT$ 条匹配",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "最近 $TOTAL$ 条消息都不匹配",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "这里还没有可以试的消息"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "这条规则暂时还用不了。检查一下你输入的内容"
+  },
+  "mc_set_fr_notify": {
+    "message": "也通知我"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "匹配时按提及处理：出现在提及标签页，标签页标题闪烁，开启时还会弹出桌面通知。不需要账号"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "提及提示音何时播放"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "提及提示音何时播放：只在你在别的窗口时，或每次都播"
+  },
+  "mc_set_msw_away": {
+    "message": "只在我离开时"
+  },
+  "mc_set_msw_always": {
+    "message": "每次"
+  },
+  "mc_mtb_seeded": {
+    "message": "已给聊天行加上 mod 按钮：删除、禁言 10 分钟、封禁。可在设置 › mod 里修改"
   }
 }

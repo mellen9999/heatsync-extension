@@ -1318,7 +1318,7 @@
     "message": "mod-verktygsknappar"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "hovringsåtgärder på chattrader när du är mod i kanalen — alla av som standard"
+    "message": "hovringsåtgärder på chattrader när du är mod i kanalen. första gången du är mod dyker ett startset upp; ändra det här"
   },
   "mc_settings_mod_btn_delete": {
     "message": "radera det här meddelandet"
@@ -1411,7 +1411,7 @@
     "message": "filterregler"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "markera/dölj-filter per regel — nyckelord, regex, användare, märke eller meddelandetyp; hanteras i regelredigeraren"
+    "message": "markera eller dölj meddelanden efter ord, mönster, användare, badge eller sort. lägg till, ändra och ordna regler här"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "volym med mushjul"
@@ -5324,10 +5324,10 @@
     "message": "alla kanaler"
   },
   "mc_set_fr_t_keyword": {
-    "message": "nyckelord"
+    "message": "ord"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "mönster"
   },
   "mc_set_fr_t_user": {
     "message": "användare"
@@ -5336,13 +5336,13 @@
     "message": "bricka"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "medd.typ"
+    "message": "sort"
   },
   "mc_set_fr_t_expr": {
-    "message": "uttryck"
+    "message": "avancerat"
   },
   "mc_set_fr_expr_tip": {
-    "message": "t.ex. first && !badge:subscriber — foga med && || ! ( ); fält user: badge: type: contains: regex:"
+    "message": "foga ihop tester med && (och) || (eller) ! (inte), t.ex.: first && !badge:subscriber. tester: first, action, reply, cheer, user:namn, badge:namn, contains:text, regex:mönster, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "värde..."
@@ -6678,7 +6678,7 @@
     "message": "nämnljud"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "vad som spelas när du @nämns medan den här fliken är i bakgrunden. ett inbyggt ljud eller din egen fil"
+    "message": "vad som spelas när du @nämns. ett inbyggt ljud eller din egen fil"
   },
   "mc_settings_mention_sound_file": {
     "message": "ljudfil"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "ett emotenamn kan inte vara tomt eller ha mellanslag"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "ett helt ord eller en fras, t.ex.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "ett textmönster (regex), t.ex.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "en chattares namn, t.ex.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "alla med en badge, t.ex.: moderator, subscriber eller vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "en sorts meddelande: first-message, action, reply eller cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "matchar $COUNT$ av de senaste $TOTAL$ meddelandena",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "matchar inget av de senaste $TOTAL$ meddelandena",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "inga meddelanden här ännu att prova på"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "regeln fungerar inte ännu. kolla vad du skrev"
+  },
+  "mc_set_fr_notify": {
+    "message": "säg till mig också"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "en träff räknas som ett omnämnande: den syns i omnämnandefliken, fliktiteln blinkar och en skrivbordsavisering kommer om de är på. inget konto behövs"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "nämnljudet spelas"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "när nämnljudet spelas: bara när du är i ett annat fönster, eller varje gång"
+  },
+  "mc_set_msw_away": {
+    "message": "bara när jag är borta"
+  },
+  "mc_set_msw_always": {
+    "message": "alltid"
+  },
+  "mc_mtb_seeded": {
+    "message": "mod-knappar har lagts till på chattraderna: radera, timeout 10 min, ban. ändra dem i inställningar › mod"
   }
 }

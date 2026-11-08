@@ -1318,7 +1318,7 @@
     "message": "mod eszköztár gombok"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "hover műveletek a chatsorokon, ha modod a csatornát — alapból mind ki"
+    "message": "hover műveletek a chatsorokon, ha mod vagy a csatornán. amikor először leszel mod, egy kezdő készlet jelenik meg; itt módosíthatod"
   },
   "mc_settings_mod_btn_delete": {
     "message": "üzenet törlése"
@@ -1411,7 +1411,7 @@
     "message": "szűrőszabályok"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "szabályonkénti kiemelő/rejtő szűrők — kulcsszó, regex, felhasználó, jelvény vagy üzenettípus; a szabályszerkesztőben kezelhető"
+    "message": "emelj ki vagy rejts el üzeneteket szó, minta, felhasználó, jelvény vagy fajta szerint. itt adhatsz hozzá, szerkeszthetsz és rendezhetsz szabályokat"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "görgetős hangerő"
@@ -5324,10 +5324,10 @@
     "message": "minden csatorna"
   },
   "mc_set_fr_t_keyword": {
-    "message": "kulcsszó"
+    "message": "szó"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "minta"
   },
   "mc_set_fr_t_user": {
     "message": "felhasználó"
@@ -5336,13 +5336,13 @@
     "message": "jelvény"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "üzenettípus"
+    "message": "fajta"
   },
   "mc_set_fr_t_expr": {
-    "message": "kifejezés"
+    "message": "haladó"
   },
   "mc_set_fr_expr_tip": {
-    "message": "pl. first && !badge:subscriber — összekötés: && || ! ( ); mezők: user: badge: type: contains: regex:"
+    "message": "kösd össze a vizsgálatokat így: && (és) || (vagy) ! (nem), pl.: first && !badge:subscriber. vizsgálatok: first, action, reply, cheer, user:név, badge:név, contains:szöveg, regex:minta, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "érték..."
@@ -6678,7 +6678,7 @@
     "message": "megemlítés hangja"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "mi szól, ha @megemlítenek, miközben ez a lap a háttérben van. beépített hang vagy saját fájl"
+    "message": "mi szól, ha @megemlítenek. beépített hang vagy saját fájl"
   },
   "mc_settings_mention_sound_file": {
     "message": "hangfájl"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "az emote neve nem lehet üres, és nem lehet benne szóköz"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "egy egész szó vagy kifejezés, pl.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "szövegminta (regex), pl.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "egy csevegő neve, pl.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "mindenki, akinek van jelvénye, pl.: moderator, subscriber vagy vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "az üzenet fajtája: first-message, action, reply vagy cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "illik $COUNT$ darabra az utolsó $TOTAL$ üzenetből",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "az utolsó $TOTAL$ üzenet közül egyikre sem illik",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "itt még nincs üzenet, amin kipróbálhatnád"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "ez a szabály még nem működik. ellenőrizd, mit írtál"
+  },
+  "mc_set_fr_notify": {
+    "message": "értesíts is"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "egy találat megemlítésnek számít: megjelenik a megemlítések lapon, villog a lap címe, és asztali értesítést kapsz, ha be van kapcsolva. nem kell hozzá fiók"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "a megemlítés hangja szól"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "mikor szól a megemlítés hangja: csak ha másik ablakban vagy, vagy mindig"
+  },
+  "mc_set_msw_away": {
+    "message": "csak ha nem vagyok itt"
+  },
+  "mc_set_msw_always": {
+    "message": "mindig"
+  },
+  "mc_mtb_seeded": {
+    "message": "mod gombok kerültek a chatsorokra: törlés, timeout 10 perc, ban. módosítsd őket: beállítások › mod"
   }
 }

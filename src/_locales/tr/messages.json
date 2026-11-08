@@ -1318,7 +1318,7 @@
     "message": "mod araç çubuğu düğmeleri"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "kanalda modsan sohbet satırlarında üzerine gelince çıkan işlemler — hepsi varsayılan kapalı"
+    "message": "kanalda modsan sohbet satırlarında üzerine gelince çıkan işlemler. ilk kez mod olduğunda bir başlangıç seti gelir; buradan değiştir"
   },
   "mc_settings_mod_btn_delete": {
     "message": "bu mesajı sil"
@@ -1411,7 +1411,7 @@
     "message": "filtre kuralları"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "kural başına vurgula/gizle filtreleri — anahtar kelime, regex, kullanıcı, rozet veya mesaj türü; kural düzenleyiciden yönetilir"
+    "message": "mesajları kelimeye, desene, kullanıcıya, rozete ya da türe göre vurgula veya gizle. kuralları burada ekle, düzenle ve sırala"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "tekerlekle ses"
@@ -5324,10 +5324,10 @@
     "message": "tüm kanallar"
   },
   "mc_set_fr_t_keyword": {
-    "message": "anahtar kelime"
+    "message": "kelime"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "desen"
   },
   "mc_set_fr_t_user": {
     "message": "kullanıcı"
@@ -5336,13 +5336,13 @@
     "message": "rozet"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "mesaj türü"
+    "message": "tür"
   },
   "mc_set_fr_t_expr": {
-    "message": "ifade"
+    "message": "gelişmiş"
   },
   "mc_set_fr_expr_tip": {
-    "message": "örn. first && !badge:subscriber — && || ! ( ) ile birleştir; alanlar user: badge: type: contains: regex:"
+    "message": "testleri && (ve) || (veya) ! (değil) ile birleştir, örn: first && !badge:subscriber. testler: first, action, reply, cheer, user:ad, badge:ad, contains:metin, regex:desen, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "değer..."
@@ -6678,7 +6678,7 @@
     "message": "bahsedilme sesi"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "bu sekme arka plandayken @bahsedildiğinde ne çalacağı. yerleşik bir ses ya da kendi dosyan"
+    "message": "sana @bahsedildiğinde ne çalacağı. yerleşik bir ses ya da kendi dosyan"
   },
   "mc_settings_mention_sound_file": {
     "message": "ses dosyası"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "emote adı boş olamaz ve boşluk içeremez"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "bütün bir kelime ya da ifade, örn: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "bir metin deseni (regex), örn: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "sohbetteki tek bir kişinin adı, örn: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "rozeti olan herkes, örn: moderator, subscriber ya da vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "bir mesaj türü: first-message, action, reply ya da cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "son $TOTAL$ mesajın $COUNT$ tanesiyle eşleşiyor",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "son $TOTAL$ mesajın hiçbiriyle eşleşmiyor",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "burada denemek için henüz mesaj yok"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "bu kural henüz çalışmıyor. yazdığını kontrol et"
+  },
+  "mc_set_fr_notify": {
+    "message": "bana da haber ver"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "eşleşme bahsedilme gibi sayılır: bahsedilmeler sekmesine düşer, sekme başlığı yanıp söner ve açıksa masaüstü bildirimi gelir. hesap gerekmez"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "bahsedilme sesi çalar"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "bahsedilme sesi ne zaman çalar: yalnızca başka bir pencerede olduğunda ya da her seferinde"
+  },
+  "mc_set_msw_away": {
+    "message": "yalnızca uzaktayken"
+  },
+  "mc_set_msw_always": {
+    "message": "her zaman"
+  },
+  "mc_mtb_seeded": {
+    "message": "sohbet satırlarına mod düğmeleri eklendi: sil, timeout 10 dk, ban. ayarlar › mod içinden değiştirebilirsin"
   }
 }

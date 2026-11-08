@@ -1318,7 +1318,7 @@
     "message": "mod 工具列按鈕"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "當你是頻道 mod 時，在聊天列上懸停顯示的操作 — 預設全部關閉"
+    "message": "當你是頻道 mod 時，在聊天列上懸停顯示的操作。第一次成為 mod 時會出現一組起始按鈕；可在這裡修改"
   },
   "mc_settings_mod_btn_delete": {
     "message": "刪除此訊息"
@@ -1411,7 +1411,7 @@
     "message": "過濾規則"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "依規則醒目提示/隱藏 — 關鍵字、正規表示式、使用者、徽章或訊息類型；在規則編輯器中管理"
+    "message": "依詞、模式、使用者、徽章或種類來醒目標示或隱藏訊息。規則在這裡新增、編輯和排序"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "滾輪調音量"
@@ -5324,10 +5324,10 @@
     "message": "所有頻道"
   },
   "mc_set_fr_t_keyword": {
-    "message": "關鍵字"
+    "message": "詞"
   },
   "mc_set_fr_t_regex": {
-    "message": "正規式"
+    "message": "模式"
   },
   "mc_set_fr_t_user": {
     "message": "使用者"
@@ -5336,13 +5336,13 @@
     "message": "徽章"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "訊息類型"
+    "message": "種類"
   },
   "mc_set_fr_t_expr": {
-    "message": "運算式"
+    "message": "進階"
   },
   "mc_set_fr_expr_tip": {
-    "message": "例如 first && !badge:subscriber — 用 && || ! ( ) 連接；欄位 user: badge: type: contains: regex:"
+    "message": "用 && (且) || (或) ! (非) 連接條件，例如：first && !badge:subscriber。條件：first、action、reply、cheer、user:名字、badge:名字、contains:文字、regex:模式、bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "值…"
@@ -6678,7 +6678,7 @@
     "message": "提及提示音"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "此分頁在背景時被 @提及 會播放的聲音。內建聲音或你自己的檔案"
+    "message": "被 @提及 時播放的聲音。內建聲音或你自己的檔案"
   },
   "mc_settings_mention_sound_file": {
     "message": "聲音檔案"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "表情名字不能為空，也不能有空格"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "一個完整的詞或短語，例如：gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "一種文字模式（regex），例如：^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "聊天裡某一個人的名字，例如：nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "所有有徽章的人，例如：moderator、subscriber 或 vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "一種訊息：first-message、action、reply 或 cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "最近 $TOTAL$ 則訊息中有 $COUNT$ 則符合",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "最近 $TOTAL$ 則訊息都不符合",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "這裡還沒有可以試的訊息"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "這條規則暫時還不能用。檢查一下你輸入的內容"
+  },
+  "mc_set_fr_notify": {
+    "message": "也通知我"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "符合時按提及處理：出現在提及分頁，分頁標題閃爍，開啟時還會跳出桌面通知。不需要帳號"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "提及提示音何時播放"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "提及提示音何時播放：只在你在別的視窗時，或每次都播"
+  },
+  "mc_set_msw_away": {
+    "message": "只在我離開時"
+  },
+  "mc_set_msw_always": {
+    "message": "每次"
+  },
+  "mc_mtb_seeded": {
+    "message": "已為聊天列加上 mod 按鈕：刪除、禁言 10 分鐘、封鎖。可在設定 › mod 裡修改"
   }
 }

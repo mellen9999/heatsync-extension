@@ -1318,7 +1318,7 @@
     "message": "κουμπιά toolbar mod"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "ενέργειες στο hover σε γραμμές chat όταν είσαι mod στο κανάλι — όλα off από προεπιλογή"
+    "message": "ενέργειες στο hover σε γραμμές chat όταν είσαι mod στο κανάλι. την πρώτη φορά που γίνεσαι mod εμφανίζεται ένα αρχικό σετ· άλλαξέ το εδώ"
   },
   "mc_settings_mod_btn_delete": {
     "message": "διαγραφή αυτού του μηνύματος"
@@ -1411,7 +1411,7 @@
     "message": "κανόνες φίλτρου"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "φίλτρα highlight/απόκρυψης ανά κανόνα — λέξη-κλειδί, regex, χρήστης, badge ή msgtype· διαχείριση από τον επεξεργαστή κανόνων"
+    "message": "επισήμανε ή κρύψε μηνύματα ανά λέξη, μοτίβο, χρήστη, badge ή είδος. πρόσθεσε, άλλαξε και ταξινόμησε κανόνες εδώ"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "ένταση με τη ροδέλα"
@@ -5324,10 +5324,10 @@
     "message": "όλα τα κανάλια"
   },
   "mc_set_fr_t_keyword": {
-    "message": "λέξη-κλειδί"
+    "message": "λέξη"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "μοτίβο"
   },
   "mc_set_fr_t_user": {
     "message": "χρήστης"
@@ -5336,13 +5336,13 @@
     "message": "σήμα"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "τύπος μηνύματος"
+    "message": "είδος"
   },
   "mc_set_fr_t_expr": {
-    "message": "έκφραση"
+    "message": "σύνθετο"
   },
   "mc_set_fr_expr_tip": {
-    "message": "π.χ. first && !badge:subscriber — συνδυασμός με && || ! ( ); πεδία user: badge: type: contains: regex:"
+    "message": "συνδύασε ελέγχους με && (και) || (ή) ! (όχι), π.χ.: first && !badge:subscriber. έλεγχοι: first, action, reply, cheer, user:όνομα, badge:όνομα, contains:κείμενο, regex:μοτίβο, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "τιμή..."
@@ -6678,7 +6678,7 @@
     "message": "ήχος αναφοράς"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "τι παίζει όταν σε @αναφέρουν ενώ αυτή η καρτέλα είναι στο παρασκήνιο. ένας ενσωματωμένος ήχος ή δικό σου αρχείο"
+    "message": "τι παίζει όταν σε @αναφέρουν. ένας ενσωματωμένος ήχος ή δικό σου αρχείο"
   },
   "mc_settings_mention_sound_file": {
     "message": "αρχείο ήχου"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "το όνομα του emote δεν μπορεί να είναι κενό ή να έχει κενά"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "μια ολόκληρη λέξη ή φράση, π.χ.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "ένα μοτίβο κειμένου (regex), π.χ.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "το όνομα ενός χρήστη στο chat, π.χ.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "όλοι με ένα badge, π.χ.: moderator, subscriber ή vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "ένα είδος μηνύματος: first-message, action, reply ή cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "ταιριάζει με $COUNT$ από τα τελευταία $TOTAL$ μηνύματα",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "δεν ταιριάζει με κανένα από τα τελευταία $TOTAL$ μηνύματα",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "δεν υπάρχουν ακόμα μηνύματα εδώ για δοκιμή"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "ο κανόνας δεν δουλεύει ακόμα. έλεγξε τι έγραψες"
+  },
+  "mc_set_fr_notify": {
+    "message": "ειδοποίησέ με επίσης"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "μια αντιστοιχία μετράει σαν αναφορά: εμφανίζεται στην καρτέλα αναφορών, αναβοσβήνει τον τίτλο της καρτέλας και στέλνει ειδοποίηση επιφάνειας εργασίας αν είναι ενεργή. δεν χρειάζεται λογαριασμός"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "ο ήχος αναφοράς παίζει"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "πότε παίζει ο ήχος αναφοράς: μόνο όσο είσαι σε άλλο παράθυρο ή κάθε φορά"
+  },
+  "mc_set_msw_away": {
+    "message": "μόνο όταν λείπω"
+  },
+  "mc_set_msw_always": {
+    "message": "πάντα"
+  },
+  "mc_mtb_seeded": {
+    "message": "προστέθηκαν κουμπιά mod στις γραμμές του chat: διαγραφή, timeout 10 λεπτών, ban. άλλαξέ τα στις ρυθμίσεις › mod"
   }
 }

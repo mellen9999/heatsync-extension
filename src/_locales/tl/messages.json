@@ -1318,7 +1318,7 @@
     "message": "mga button ng mod toolbar"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "mga aksyon kapag na-hover ang row ng chat kung mod ka ng channel — lahat naka-off bilang default"
+    "message": "mga aksyon kapag na-hover ang row ng chat kung mod ka ng channel. sa unang beses na maging mod ka, may lalabas na panimulang set; baguhin dito"
   },
   "mc_settings_mod_btn_delete": {
     "message": "burahin ang mensaheng ito"
@@ -1411,7 +1411,7 @@
     "message": "mga filter rule"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "highlight/hide na filter kada rule — keyword, regex, user, badge, o uri ng mensahe; pinamamahalaan sa rules editor"
+    "message": "i-highlight o itago ang mga mensahe ayon sa salita, pattern, user, badge o uri. magdagdag, mag-edit at mag-ayos ng mga patakaran dito"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "volume gamit ang scroll-wheel"
@@ -5324,10 +5324,10 @@
     "message": "lahat ng channel"
   },
   "mc_set_fr_t_keyword": {
-    "message": "keyword"
+    "message": "salita"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "pattern"
   },
   "mc_set_fr_t_user": {
     "message": "user"
@@ -5336,13 +5336,13 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "uri ng mensahe"
+    "message": "uri"
   },
   "mc_set_fr_t_expr": {
-    "message": "expr"
+    "message": "advanced"
   },
   "mc_set_fr_expr_tip": {
-    "message": "hal. first && !badge:subscriber — pagsamahin gamit ang && || ! ( ); mga field user: badge: type: contains: regex:"
+    "message": "pagdugtungin ang mga test gamit ang && (at) || (o) ! (hindi), hal.: first && !badge:subscriber. mga test: first, action, reply, cheer, user:pangalan, badge:pangalan, contains:teksto, regex:pattern, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "halaga..."
@@ -6678,7 +6678,7 @@
     "message": "tunog ng mention"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "ang tutunog kapag ikaw ay na-@mention habang nasa background ang tab na ito. built-in na tunog o sarili mong file"
+    "message": "ang tutunog kapag na-@mention ka. built-in na tunog o sarili mong file"
   },
   "mc_settings_mention_sound_file": {
     "message": "sound file"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "hindi puwedeng walang laman o may espasyo ang pangalan ng emote"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "buong salita o parirala, hal.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "pattern ng teksto (regex), hal.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "pangalan ng isang chatter, hal.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "lahat ng may badge, hal.: moderator, subscriber o vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "isang uri ng mensahe: first-message, action, reply o cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "tumutugma sa $COUNT$ sa huling $TOTAL$ mensahe",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "walang tumutugma sa huling $TOTAL$ mensahe",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "wala pang mensahe rito na masusubukan"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "hindi pa gumagana ang patakarang ito. tingnan ang tinype mo"
+  },
+  "mc_set_fr_notify": {
+    "message": "abisuhan din ako"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "ang tugma ay binibilang na parang mention: lalabas sa mentions tab, kukurap ang pamagat ng tab, at magpapadala ng desktop notification kung naka-on. hindi kailangan ng account"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "tutunog ang mention"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "kailan tutunog ang mention: kapag nasa ibang window ka lang, o palagi"
+  },
+  "mc_set_msw_away": {
+    "message": "kapag wala ako lang"
+  },
+  "mc_set_msw_always": {
+    "message": "palagi"
+  },
+  "mc_mtb_seeded": {
+    "message": "nadagdagan ng mga mod button ang mga row ng chat: burahin, timeout 10 min, ban. baguhin sa settings › mod"
   }
 }

@@ -1318,7 +1318,7 @@
     "message": "tlačidlá modov"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "akcie pri nabehnutí na riadky chatu, keď moderuješ kanál — všetky predvolene vypnuté"
+    "message": "akcie pri nabehnutí na riadky chatu, keď si mod kanála. prvýkrát, keď si mod, sa objaví štartovacia sada; zmeníš ju tu"
   },
   "mc_settings_mod_btn_delete": {
     "message": "vymazať túto správu"
@@ -1411,7 +1411,7 @@
     "message": "pravidlá filtrov"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "zvýraznenie/skrytie podľa pravidla — kľúčové slovo, regex, používateľ, odznak alebo typ správy; spravuje sa v editore pravidiel"
+    "message": "zvýrazni alebo skry správy podľa slova, vzoru, používateľa, odznaku alebo druhu. pravidlá tu pridáš, upravíš aj zoradíš"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "hlasitosť kolieskom"
@@ -5324,10 +5324,10 @@
     "message": "všetky kanály"
   },
   "mc_set_fr_t_keyword": {
-    "message": "kľúčové slovo"
+    "message": "slovo"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "vzor"
   },
   "mc_set_fr_t_user": {
     "message": "používateľ"
@@ -5336,13 +5336,13 @@
     "message": "odznak"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "typ správy"
+    "message": "druh"
   },
   "mc_set_fr_t_expr": {
-    "message": "výraz"
+    "message": "pokročilé"
   },
   "mc_set_fr_expr_tip": {
-    "message": "napr. first && !badge:subscriber — spájaj cez && || ! ( ); polia user: badge: type: contains: regex:"
+    "message": "spájaj testy cez && (a) || (alebo) ! (nie), napr.: first && !badge:subscriber. testy: first, action, reply, cheer, user:meno, badge:meno, contains:text, regex:vzor, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "hodnota..."
@@ -6678,7 +6678,7 @@
     "message": "zvuk zmienky"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "čo sa prehrá, keď vás niekto @spomenie a táto karta je na pozadí. vstavaný zvuk alebo váš vlastný súbor"
+    "message": "čo sa prehrá, keď vás niekto @spomenie. vstavaný zvuk alebo váš vlastný súbor"
   },
   "mc_settings_mention_sound_file": {
     "message": "zvukový súbor"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "názov emote nesmie byť prázdny ani obsahovať medzery"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "celé slovo alebo fráza, napr.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "textový vzor (regex), napr.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "meno jedného diváka, napr.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "všetci s odznakom, napr.: moderator, subscriber alebo vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "druh správy: first-message, action, reply alebo cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "zodpovedá $COUNT$ z posledných $TOTAL$ správ",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "nezodpovedá žiadna z posledných $TOTAL$ správ",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "zatiaľ tu nie sú žiadne správy na vyskúšanie"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "pravidlo zatiaľ nefunguje. skontroluj, čo si napísal"
+  },
+  "mc_set_fr_notify": {
+    "message": "a upozorniť ma"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "zhoda sa počíta ako zmienka: objaví sa na karte zmienok, zabliká názov karty a príde oznámenie na plochu, ak sú zapnuté. účet nie je potrebný"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "zvuk zmienky hrá"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "kedy hrá zvuk zmienky: len keď ste v inom okne, alebo vždy"
+  },
+  "mc_set_msw_away": {
+    "message": "len keď som preč"
+  },
+  "mc_set_msw_always": {
+    "message": "vždy"
+  },
+  "mc_mtb_seeded": {
+    "message": "do riadkov chatu pribudli mod tlačidlá: zmazať, timeout 10 min, ban. zmeníš ich v nastavenia › mod"
   }
 }

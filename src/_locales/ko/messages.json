@@ -1318,7 +1318,7 @@
     "message": "mod 툴바 버튼"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "채널 mod일 때 채팅 줄에 뜨는 호버 동작 — 전부 기본 꺼짐"
+    "message": "채널 mod일 때 채팅 줄에 뜨는 호버 동작. 처음 mod가 되면 기본 세트가 생겨요. 여기서 바꿀 수 있어요"
   },
   "mc_settings_mod_btn_delete": {
     "message": "이 메시지 삭제"
@@ -1411,7 +1411,7 @@
     "message": "필터 규칙"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "규칙별 하이라이트/숨김 필터 — 키워드, regex, 사용자, 배지, 메시지 유형; 규칙 편집기에서 관리"
+    "message": "단어, 패턴, 사용자, 배지, 종류로 메시지를 강조하거나 숨겨요. 규칙은 여기서 추가·편집·정렬해요"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "스크롤 볼륨"
@@ -5324,10 +5324,10 @@
     "message": "모든 채널"
   },
   "mc_set_fr_t_keyword": {
-    "message": "키워드"
+    "message": "단어"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "패턴"
   },
   "mc_set_fr_t_user": {
     "message": "유저"
@@ -5336,13 +5336,13 @@
     "message": "배지"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "메시지 유형"
+    "message": "종류"
   },
   "mc_set_fr_t_expr": {
-    "message": "식"
+    "message": "고급"
   },
   "mc_set_fr_expr_tip": {
-    "message": "예: first && !badge:subscriber — && || ! ( ) 로 연결; 필드 user: badge: type: contains: regex:"
+    "message": "조건을 && (그리고) || (또는) ! (아님) 으로 이어요. 예: first && !badge:subscriber. 조건: first, action, reply, cheer, user:이름, badge:이름, contains:글자, regex:패턴, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "값..."
@@ -6678,7 +6678,7 @@
     "message": "멘션 소리"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "이 탭이 백그라운드일 때 @멘션되면 나는 소리. 내장 소리 또는 내 파일"
+    "message": "@멘션되었을 때 나는 소리. 내장 소리 또는 내 파일"
   },
   "mc_settings_mention_sound_file": {
     "message": "소리 파일"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "이모트 이름은 비워 둘 수 없고 띄어쓰기도 안 돼요"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "단어나 문구 전체, 예: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "글자 패턴(regex), 예: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "채팅하는 사람 한 명의 이름, 예: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "배지가 있는 모든 사람, 예: moderator, subscriber, vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "메시지의 종류: first-message, action, reply, cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "최근 $TOTAL$개 중 $COUNT$개와 일치",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "최근 $TOTAL$개 중 일치하는 게 없어요",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "시험해 볼 메시지가 아직 없어요"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "이 규칙은 아직 작동하지 않아요. 입력한 내용을 확인하세요"
+  },
+  "mc_set_fr_notify": {
+    "message": "알림도 받기"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "일치하면 멘션처럼 취급돼요: 멘션 탭에 들어가고, 탭 제목이 깜빡이고, 켜 두었다면 데스크톱 알림도 떠요. 계정은 필요 없어요"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "멘션 소리가 나는 때"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "멘션 소리가 나는 때: 다른 창에 있을 때만, 또는 항상"
+  },
+  "mc_set_msw_away": {
+    "message": "자리를 비웠을 때만"
+  },
+  "mc_set_msw_always": {
+    "message": "항상"
+  },
+  "mc_mtb_seeded": {
+    "message": "채팅 줄에 mod 버튼을 추가했어요: 삭제, 10분 timeout, ban. 설정 › mod 에서 바꿀 수 있어요"
   }
 }

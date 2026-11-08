@@ -1318,7 +1318,7 @@
     "message": "mod-werkbalkknoppen"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "hover-acties op chatrijen als je mod bent in het kanaal — standaard allemaal uit"
+    "message": "hover-acties op chatrijen als je mod bent in het kanaal. de eerste keer dat je mod bent verschijnt een startset; wijzig die hier"
   },
   "mc_settings_mod_btn_delete": {
     "message": "verwijder dit bericht"
@@ -1411,7 +1411,7 @@
     "message": "filterregels"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "highlight/verberg-filters per regel — keyword, regex, gebruiker, badge of berichttype; beheer via de regeleditor"
+    "message": "markeer of verberg berichten op woord, patroon, gebruiker, badge of soort. voeg regels hier toe, bewerk ze en zet ze in volgorde"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "scrollwiel-volume"
@@ -5324,10 +5324,10 @@
     "message": "alle kanalen"
   },
   "mc_set_fr_t_keyword": {
-    "message": "trefwoord"
+    "message": "woord"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "patroon"
   },
   "mc_set_fr_t_user": {
     "message": "gebruiker"
@@ -5336,13 +5336,13 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "berichttype"
+    "message": "soort"
   },
   "mc_set_fr_t_expr": {
-    "message": "expr"
+    "message": "geavanceerd"
   },
   "mc_set_fr_expr_tip": {
-    "message": "bv. first && !badge:subscriber — combineer met && || ! ( ); velden user: badge: type: contains: regex:"
+    "message": "koppel tests met && (en) || (of) ! (niet), bv.: first && !badge:subscriber. tests: first, action, reply, cheer, user:naam, badge:naam, contains:tekst, regex:patroon, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "waarde..."
@@ -6678,7 +6678,7 @@
     "message": "vermeldingsgeluid"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "wat er klinkt als iemand je @vermeldt terwijl dit tabblad op de achtergrond staat. een ingebouwd geluid of je eigen bestand"
+    "message": "wat er klinkt als iemand je @vermeldt. een ingebouwd geluid of je eigen bestand"
   },
   "mc_settings_mention_sound_file": {
     "message": "geluidsbestand"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "een emote-naam mag niet leeg zijn of spaties hebben"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "een heel woord of zinsdeel, bv.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "een tekstpatroon (regex), bv.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "de naam van één chatter, bv.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "iedereen met een badge, bv.: moderator, subscriber of vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "een soort bericht: first-message, action, reply of cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "komt overeen met $COUNT$ van de laatste $TOTAL$ berichten",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "komt met geen van de laatste $TOTAL$ berichten overeen",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "hier zijn nog geen berichten om het op te proberen"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "deze regel werkt nog niet. check wat je hebt getypt"
+  },
+  "mc_set_fr_notify": {
+    "message": "waarschuw mij ook"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "een treffer telt als een vermelding: hij staat in het vermeldingen-tabblad, de tabtitel knippert en er komt een bureaubladmelding als die aanstaat. geen account nodig"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "vermeldingsgeluid klinkt"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "wanneer het vermeldingsgeluid klinkt: alleen als je in een ander venster zit, of elke keer"
+  },
+  "mc_set_msw_away": {
+    "message": "alleen als ik weg ben"
+  },
+  "mc_set_msw_always": {
+    "message": "altijd"
+  },
+  "mc_mtb_seeded": {
+    "message": "mod-knoppen toegevoegd aan de chatrijen: verwijderen, timeout 10 min, ban. wijzig ze in instellingen › mod"
   }
 }

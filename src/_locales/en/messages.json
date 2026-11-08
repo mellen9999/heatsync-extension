@@ -1319,7 +1319,7 @@
     "message": "mod toolbar buttons"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "hover actions on chat rows when you mod the channel — all off by default"
+    "message": "hover actions on chat rows when you mod the channel. a starter set appears the first time you're a mod; change it here"
   },
   "mc_settings_mod_btn_delete": {
     "message": "delete this message"
@@ -1412,7 +1412,7 @@
     "message": "filter rules"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "per-rule highlight/hide filters — keyword, regex, user, badge, or msgtype; managed via the rules editor"
+    "message": "highlight or hide messages by word, pattern, user, badge or kind. add, edit and reorder rules here"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "scroll-wheel volume"
@@ -5341,10 +5341,10 @@
     "message": "all channels"
   },
   "mc_set_fr_t_keyword": {
-    "message": "keyword"
+    "message": "word"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "pattern"
   },
   "mc_set_fr_t_user": {
     "message": "user"
@@ -5353,13 +5353,13 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "msgtype"
+    "message": "kind"
   },
   "mc_set_fr_t_expr": {
-    "message": "expr"
+    "message": "advanced"
   },
   "mc_set_fr_expr_tip": {
-    "message": "e.g. first && !badge:subscriber — join with && || ! ( ); fields user: badge: type: contains: regex:"
+    "message": "mix tests with && (and) || (or) ! (not), like: first && !badge:subscriber. tests: first, action, reply, cheer, user:name, badge:name, contains:text, regex:pattern, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "value..."
@@ -6695,7 +6695,7 @@
     "message": "mention sound"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "what plays when you get @mentioned while this tab is in the background. a built-in sound, or your own file"
+    "message": "what plays when you get @mentioned. a built-in sound, or your own file"
   },
   "mc_settings_mention_sound_file": {
     "message": "sound file"
@@ -7125,5 +7125,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "an emote name can't be empty or have spaces"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "a whole word or phrase, like: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "a text pattern (regex), like: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "one chatter's name, like: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "everyone with a badge, like: moderator, subscriber or vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "a kind of message: first-message, action, reply or cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "matches $COUNT$ of the last $TOTAL$ messages",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "matches none of the last $TOTAL$ messages",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "no messages here yet to try it on"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "this rule doesn't work yet. check what you typed"
+  },
+  "mc_set_fr_notify": {
+    "message": "also notify me"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "a match counts like a mention: it shows in the mentions tab, flashes the tab title and sends a desktop notification if those are on. no account needed"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "mention sound plays"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "when the mention sound plays: only while you're in another window, or every time"
+  },
+  "mc_set_msw_away": {
+    "message": "only when i'm away"
+  },
+  "mc_set_msw_always": {
+    "message": "always"
+  },
+  "mc_mtb_seeded": {
+    "message": "mod buttons added to chat rows: delete, timeout 10m, ban. change them in settings › mod"
   }
 }

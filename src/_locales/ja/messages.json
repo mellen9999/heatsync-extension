@@ -1318,7 +1318,7 @@
     "message": "mod ツールバーのボタン"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "チャンネルの mod のとき、チャット行に出るホバー操作 — すべて既定でオフ"
+    "message": "チャンネルの mod のとき、チャット行に出るホバー操作。初めて mod になったときに最初のセットが入ります。ここで変更できます"
   },
   "mc_settings_mod_btn_delete": {
     "message": "このメッセージを削除"
@@ -1411,7 +1411,7 @@
     "message": "フィルタルール"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "ルールごとのハイライト/非表示フィルタ — キーワード、regex、ユーザー、バッジ、メッセージ種別。ルールエディタで管理"
+    "message": "単語・パターン・ユーザー・バッジ・種類でメッセージをハイライトまたは非表示。ルールの追加・編集・並べ替えはここで"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "スクロールで音量"
@@ -5324,10 +5324,10 @@
     "message": "すべてのチャンネル"
   },
   "mc_set_fr_t_keyword": {
-    "message": "キーワード"
+    "message": "単語"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "パターン"
   },
   "mc_set_fr_t_user": {
     "message": "ユーザー"
@@ -5336,13 +5336,13 @@
     "message": "バッジ"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "メッセージ種別"
+    "message": "種類"
   },
   "mc_set_fr_t_expr": {
-    "message": "式"
+    "message": "高度"
   },
   "mc_set_fr_expr_tip": {
-    "message": "例: first && !badge:subscriber — && || ! ( ) で結合。フィールド user: badge: type: contains: regex:"
+    "message": "条件を && (かつ) || (または) ! (ではない) でつなぐ。例: first && !badge:subscriber。条件: first, action, reply, cheer, user:名前, badge:名前, contains:テキスト, regex:パターン, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "値..."
@@ -6678,7 +6678,7 @@
     "message": "メンション音"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "このタブがバックグラウンドのときに @メンションされると鳴る音。内蔵音か自分のファイル"
+    "message": "@メンションされたときに鳴る音。内蔵音か自分のファイル"
   },
   "mc_settings_mention_sound_file": {
     "message": "音声ファイル"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "エモート名は空にできず、スペースも入れられません"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "単語やフレーズまるごと。例: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "文字のパターン（regex）。例: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "チャット参加者ひとりの名前。例: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "バッジを持つ全員。例: moderator、subscriber、vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "メッセージの種類: first-message、action、reply、cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "直近 $TOTAL$ 件中 $COUNT$ 件に一致",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "直近 $TOTAL$ 件のどれにも一致しません",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "ためせるメッセージがまだありません"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "このルールはまだ動きません。入力を確認してください"
+  },
+  "mc_set_fr_notify": {
+    "message": "通知もする"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "一致したらメンションとして扱います。メンションタブに入り、タブタイトルが点滅し、オンならデスクトップ通知も出ます。アカウントは不要"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "メンション音を鳴らすとき"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "メンション音が鳴るとき: 別のウィンドウにいる間だけ、または毎回"
+  },
+  "mc_set_msw_away": {
+    "message": "離れているときだけ"
+  },
+  "mc_set_msw_always": {
+    "message": "いつも"
+  },
+  "mc_mtb_seeded": {
+    "message": "チャット行に mod ボタンを追加しました: 削除、10分 timeout、ban。設定 › mod で変更できます"
   }
 }

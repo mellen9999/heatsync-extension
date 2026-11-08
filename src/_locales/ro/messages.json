@@ -1318,7 +1318,7 @@
     "message": "butoane bară mod"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "acțiuni la hover pe rândurile din chat când ești mod pe canal — toate oprite implicit"
+    "message": "acțiuni la hover pe rândurile din chat când ești mod pe canal. prima dată când ești mod apare un set de start; schimbă-l aici"
   },
   "mc_settings_mod_btn_delete": {
     "message": "șterge acest mesaj"
@@ -1411,7 +1411,7 @@
     "message": "reguli de filtrare"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "filtre de evidențiere/ascundere pe regulă — cuvânt-cheie, regex, utilizator, insignă sau tip de mesaj; se gestionează din editorul de reguli"
+    "message": "evidențiază sau ascunde mesaje după cuvânt, model, utilizator, insignă sau fel. adaugă, editează și ordonează regulile aici"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "volum cu rotița"
@@ -5324,10 +5324,10 @@
     "message": "toate canalele"
   },
   "mc_set_fr_t_keyword": {
-    "message": "cuvânt cheie"
+    "message": "cuvânt"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "model"
   },
   "mc_set_fr_t_user": {
     "message": "utilizator"
@@ -5336,13 +5336,13 @@
     "message": "insignă"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "tip msg"
+    "message": "fel"
   },
   "mc_set_fr_t_expr": {
-    "message": "expr"
+    "message": "avansat"
   },
   "mc_set_fr_expr_tip": {
-    "message": "ex.: first && !badge:subscriber — leagă cu && || ! ( ); câmpuri user: badge: type: contains: regex:"
+    "message": "leagă testele cu && (și) || (sau) ! (nu), ex.: first && !badge:subscriber. teste: first, action, reply, cheer, user:nume, badge:nume, contains:text, regex:model, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "valoare..."
@@ -6678,7 +6678,7 @@
     "message": "sunet de mențiune"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "ce se aude când ești @menționat și fila e în fundal. un sunet încorporat sau propriul fișier"
+    "message": "ce se aude când ești @menționat. un sunet încorporat sau propriul fișier"
   },
   "mc_settings_mention_sound_file": {
     "message": "fișier de sunet"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "numele unui emote nu poate fi gol și nu poate avea spații"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "un cuvânt sau o expresie întreagă, ex.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "un model de text (regex), ex.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "numele unei persoane din chat, ex.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "toți cei cu o insignă, ex.: moderator, subscriber sau vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "un fel de mesaj: first-message, action, reply sau cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "se potrivește cu $COUNT$ din ultimele $TOTAL$ mesaje",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "nu se potrivește cu niciunul din ultimele $TOTAL$ mesaje",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "încă nu sunt mesaje aici pe care să o încerci"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "regula asta nu merge încă. verifică ce ai scris"
+  },
+  "mc_set_fr_notify": {
+    "message": "anunță-mă și pe mine"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "o potrivire contează ca o mențiune: apare în fila de mențiuni, clipește titlul filei și vine o notificare pe desktop dacă sunt activate. nu ai nevoie de cont"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "sunetul de mențiune se aude"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "când se aude sunetul de mențiune: doar cât ești în altă fereastră, sau de fiecare dată"
+  },
+  "mc_set_msw_away": {
+    "message": "doar când sunt plecat"
+  },
+  "mc_set_msw_always": {
+    "message": "mereu"
+  },
+  "mc_mtb_seeded": {
+    "message": "butoane de mod adăugate pe rândurile din chat: șterge, timeout 10 min, ban. schimbă-le în setări › mod"
   }
 }

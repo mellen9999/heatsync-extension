@@ -1318,7 +1318,7 @@
     "message": "أزرار شريط mod"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "إجراءات عند التمرير على أسطر الدردشة حين تكون mod في القناة — كلها متوقفة افتراضيًا"
+    "message": "إجراءات عند التمرير على أسطر الدردشة حين تكون mod في القناة. تظهر مجموعة بداية أول مرة تصبح فيها mod؛ غيّرها هنا"
   },
   "mc_settings_mod_btn_delete": {
     "message": "احذف هذه الرسالة"
@@ -1411,7 +1411,7 @@
     "message": "قواعد الفلاتر"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "فلاتر تمييز/إخفاء لكل قاعدة — keyword أو regex أو user أو badge أو msgtype؛ تُدار من محرّر القواعد"
+    "message": "ميّز الرسائل أو أخفِها حسب كلمة أو نمط أو مستخدم أو شارة أو نوع. أضف القواعد وعدّلها ورتّبها هنا"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "الصوت بعجلة التمرير"
@@ -5327,7 +5327,7 @@
     "message": "كلمة"
   },
   "mc_set_fr_t_regex": {
-    "message": "تعبير نمطي"
+    "message": "نمط"
   },
   "mc_set_fr_t_user": {
     "message": "مستخدم"
@@ -5336,13 +5336,13 @@
     "message": "شارة"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "نوع الرسالة"
+    "message": "نوع"
   },
   "mc_set_fr_t_expr": {
-    "message": "تعبير"
+    "message": "متقدم"
   },
   "mc_set_fr_expr_tip": {
-    "message": "مثال: first && !badge:subscriber — اربط بـ && || ! ( )؛ الحقول user: badge: type: contains: regex:"
+    "message": "اجمع الشروط بـ && (و) || (أو) ! (ليس)، مثل: first && !badge:subscriber. الشروط: first وaction وreply وcheer وuser:name وbadge:name وcontains:text وregex:pattern وbits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "القيمة..."
@@ -6678,7 +6678,7 @@
     "message": "صوت الإشارة"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "ما يُشغَّل عند الإشارة إليك بـ @ بينما هذا التبويب في الخلفية. صوت مدمج أو ملفك الخاص"
+    "message": "ما يُشغَّل عند الإشارة إليك بـ @. صوت مدمج أو ملفك الخاص"
   },
   "mc_settings_mention_sound_file": {
     "message": "ملف صوتي"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "لا يمكن أن يكون اسم الإيموت فارغًا أو يحتوي على مسافات"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "كلمة أو عبارة كاملة، مثل: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "نمط نصي (regex)، مثل: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "اسم شخص واحد في الدردشة، مثل: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "كل من لديه شارة، مثل: moderator أو subscriber أو vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "نوع من الرسائل: first-message أو action أو reply أو cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "تطابق $COUNT$ من آخر $TOTAL$ رسالة",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "لا تطابق أيًّا من آخر $TOTAL$ رسالة",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "لا رسائل هنا بعد لتجربتها"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "هذه القاعدة لا تعمل بعد. راجع ما كتبته"
+  },
+  "mc_set_fr_notify": {
+    "message": "نبّهني أيضًا"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "التطابق يُحسب كإشارة: يظهر في تبويب الإشارات، ويُومض عنوان التبويب، ويُرسل إشعار سطح المكتب إن كانت مفعّلة. لا حاجة إلى حساب"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "متى يُشغَّل صوت الإشارة"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "متى يُشغَّل صوت الإشارة: فقط وأنت في نافذة أخرى، أو في كل مرة"
+  },
+  "mc_set_msw_away": {
+    "message": "فقط عندما أكون بعيدًا"
+  },
+  "mc_set_msw_always": {
+    "message": "دائمًا"
+  },
+  "mc_mtb_seeded": {
+    "message": "أُضيفت أزرار mod إلى أسطر الدردشة: حذف، timeout لمدة 10 دقائق، حظر. غيّرها من الإعدادات › mod"
   }
 }

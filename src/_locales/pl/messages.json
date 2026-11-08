@@ -1318,7 +1318,7 @@
     "message": "przyciski paska moda"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "akcje po najechaniu na wiersze czatu, gdy jesteś modem kanału — domyślnie wszystkie wyłączone"
+    "message": "akcje po najechaniu na wiersze czatu, gdy jesteś modem kanału. za pierwszym razem, gdy zostajesz modem, pojawia się zestaw startowy; zmienisz go tutaj"
   },
   "mc_settings_mod_btn_delete": {
     "message": "usuń tę wiadomość"
@@ -1411,7 +1411,7 @@
     "message": "reguły filtrów"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "filtry podświetlania/ukrywania per reguła — słowo kluczowe, regex, użytkownik, odznaka lub typ wiadomości; zarządzane w edytorze reguł"
+    "message": "wyróżniaj lub ukrywaj wiadomości według słowa, wzorca, użytkownika, odznaki lub rodzaju. reguły dodasz, zmienisz i ułożysz tutaj"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "głośność kółkiem"
@@ -5324,10 +5324,10 @@
     "message": "wszystkie kanały"
   },
   "mc_set_fr_t_keyword": {
-    "message": "słowo kluczowe"
+    "message": "słowo"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "wzorzec"
   },
   "mc_set_fr_t_user": {
     "message": "użytkownik"
@@ -5336,13 +5336,13 @@
     "message": "odznaka"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "typ wiad."
+    "message": "rodzaj"
   },
   "mc_set_fr_t_expr": {
-    "message": "wyrażenie"
+    "message": "zaawansowane"
   },
   "mc_set_fr_expr_tip": {
-    "message": "np. first && !badge:subscriber — łącz za pomocą && || ! ( ); pola user: badge: type: contains: regex:"
+    "message": "łącz testy za pomocą && (i) || (lub) ! (nie), np.: first && !badge:subscriber. testy: first, action, reply, cheer, user:nazwa, badge:nazwa, contains:tekst, regex:wzorzec, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "wartość..."
@@ -6678,7 +6678,7 @@
     "message": "dźwięk wzmianki"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "co gra, gdy ktoś Cię @wspomni, a ta karta jest w tle. wbudowany dźwięk albo własny plik"
+    "message": "co gra, gdy ktoś Cię @wspomni. wbudowany dźwięk albo własny plik"
   },
   "mc_settings_mention_sound_file": {
     "message": "plik dźwiękowy"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "nazwa emote nie może być pusta ani zawierać spacji"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "całe słowo lub fraza, np.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "wzorzec tekstu (regex), np.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "nazwa jednej osoby z czatu, np.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "wszyscy z odznaką, np.: moderator, subscriber lub vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "rodzaj wiadomości: first-message, action, reply lub cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "pasuje do $COUNT$ z ostatnich $TOTAL$ wiadomości",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "nie pasuje do żadnej z ostatnich $TOTAL$ wiadomości",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "nie ma tu jeszcze wiadomości do wypróbowania"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "ta reguła jeszcze nie działa. sprawdź, co wpisałeś"
+  },
+  "mc_set_fr_notify": {
+    "message": "powiadom mnie też"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "trafienie liczy się jak wzmianka: pojawia się w karcie wzmianek, miga tytuł karty i przychodzi powiadomienie na pulpicie, jeśli są włączone. konto nie jest potrzebne"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "dźwięk wzmianki gra"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "kiedy gra dźwięk wzmianki: tylko gdy jesteś w innym oknie albo za każdym razem"
+  },
+  "mc_set_msw_away": {
+    "message": "tylko gdy mnie nie ma"
+  },
+  "mc_set_msw_always": {
+    "message": "zawsze"
+  },
+  "mc_mtb_seeded": {
+    "message": "do wierszy czatu dodano przyciski moda: usuń, timeout 10 min, ban. zmienisz je w ustawienia › mod"
   }
 }

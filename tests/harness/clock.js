@@ -12,6 +12,7 @@ export function createClock(start, probe = { busy: () => false }) {
   let now = start
   let seq = 0
   let activity = 0
+  let disposed = false
   /** @type {Map<number, {id:number, due:number, seq:number, every:number|null, fn:Function}>} */
   const timers = new Map()
 
@@ -34,6 +35,7 @@ export function createClock(start, probe = { busy: () => false }) {
     schedule(fn, ms, every = null) {
       const delay = Math.max(0, Number(ms) || 0)
       const id = ++seq
+      if (disposed) return id
       timers.set(id, { id, due: now + delay, seq: id, every: every == null ? null : Math.max(1, every), fn })
       activity++
       return id
@@ -75,6 +77,11 @@ export function createClock(start, probe = { busy: () => false }) {
       }
       now = target
       await clock.settle()
+    },
+    /** the worker is gone: drop every timer and refuse new ones, so no callback can ever run again */
+    dispose() {
+      timers.clear()
+      disposed = true
     },
     /** errors thrown synchronously from timer callbacks (test can assert it stays empty) */
     thrown: [],

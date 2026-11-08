@@ -35,6 +35,10 @@
 //                                 storage / cookies / tabs / alarms / routes survive
 //   sw.eval(code)              read or call worker internals (top-level const/let/function are visible)
 //
+// memory: the bundle is compiled once per process and run in a fresh context per boot. a context is only
+// freed when nothing points at it, so every test file adds `afterEach(disposeAll)` (clears timers, sockets,
+// routes, chrome listeners). peak rss for all four sw-*.test.js files together is ~140MB.
+//
 // determinism: Math.random() is 0 unless you pass `random`, so backoff jitter is exactly 0ms and a test
 // can assert exact delays. an unrouted fetch fails like a dead network (and lands in sw.net.unrouted),
 // so a worker that starts calling a new endpoint shows up as data, not as a silent hang.
@@ -59,10 +63,22 @@ const HS_WS = 'wss://heatsync.org/ws'
 const T0 = Date.UTC(2026, 10, 8, 12, 0, 0)
 
 let bundleCache = null
+let scriptCache = null
 /** the worker as it ships: head line + every part, build order */
 export function bundleSource() {
   if (bundleCache == null) bundleCache = BG_HEAD + BG_PART_PATHS.map((p) => readFileSync(p, 'utf8')).join('\n')
   return bundleCache
+}
+// compiled once per process; a vm.Script runs in any number of contexts (each boot gets its own scope)
+const bundleScript = () => (scriptCache ??= new vm.Script(bundleSource(), { filename: 'background.js' }))
+
+// every worker booted and not yet torn down. a test file calls `afterEach(disposeAll)`; a file that
+// forgets hits MAX_LIVE and fails loudly instead of quietly holding a vm context per test.
+const live = new Set()
+const MAX_LIVE = 8
+/** tear down every worker this process booted: timers, sockets, routes and fake-chrome listeners released */
+export function disposeAll() {
+  for (const sw of [...live]) sw.dispose()
 }
 
 /** the sender a content script on `url` carries (tab id + origin), as chrome fills it in */
@@ -73,12 +89,17 @@ export const tabSender = (id, url) => ({ id: EXTENSION_ID, tab: { id, url } })
  * @returns {Promise<ReturnType<typeof build>>}
  */
 export async function bootSw(opts = {}) {
+  if (live.size >= MAX_LIVE) {
+    throw new Error(
+      `harness: ${live.size} workers are still alive. every worker is a whole vm context: add afterEach(disposeAll) to the test file`,
+    )
+  }
   const sw = build(opts)
   vm.runInContext('0', sw.ctx) // the context exists before the script runs
-  const script = new vm.Script(bundleSource(), { filename: 'background.js' })
-  script.runInContext(sw.ctx)
+  bundleScript().runInContext(sw.ctx)
   await sw.settle()
   if (sw.eval('self.__hsBootOk') !== true) {
+    sw.dispose()
     throw new Error('harness: background.js stopped evaluating before its last statement (__hsBootOk unset)')
   }
   return sw
@@ -86,6 +107,8 @@ export async function bootSw(opts = {}) {
 
 function build(opts) {
   const prev = opts.from?._state() || null
+  // restart() closes over these three, not over `opts`: opts.from would chain every earlier worker in memory
+  const { sockets: sockOpt, healthy: healthyOpt, random: randomOpt } = opts
   const startAt = opts.now ?? prev?.now ?? T0
   let net
   const clock = createClock(startAt, { busy: () => net.busy() })
@@ -278,9 +301,24 @@ function build(opts) {
       alarms: fake.alarmList(),
     }),
     /** the browser killed this worker (idle eviction) and woke a fresh one: memory is gone, the rest stays */
-    restart: (more = {}) =>
-      bootSw({ sockets: opts.sockets, healthy: opts.healthy, random: opts.random, ...more, from: sw }),
+    restart: (more = {}) => bootSw({ sockets: sockOpt, healthy: healthyOpt, random: randomOpt, ...more, from: sw }),
+
+    /** end this worker for good: no timer fires again, sockets / routes / listeners are dropped, so the whole
+     *  vm context can be collected. (a restart's old worker is disposed by the test's afterEach like any other.) */
+    dispose() {
+      if (!live.delete(sw)) return
+      clock.dispose()
+      for (const s of sockets) {
+        s.onopen = s.onmessage = s.onclose = s.onerror = null
+        for (const l of Object.values(s._listeners)) l.length = 0
+      }
+      sockets.length = 0
+      net.reset()
+      selfListeners.clear()
+      fake.dispose()
+    },
   }
+  live.add(sw)
   const popupSender = { id: EXTENSION_ID } // an extension page: no tab, always allowed
   return sw
 }

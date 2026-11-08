@@ -2,8 +2,10 @@
 // types do, and what happens to a type nobody handles. runs the real background bundle through
 // tests/harness/sw.js — nothing here reads source text.
 
-import { describe, expect, test } from 'bun:test'
-import { bootSw, json, networkError, status, tabSender } from './harness/sw.js'
+import { afterEach, describe, expect, test } from 'bun:test'
+import { bootSw, disposeAll, json, networkError, status, tabSender } from './harness/sw.js'
+
+afterEach(disposeAll)
 
 const AUTH = { name: 'auth', value: 'tok-abc', domain: 'heatsync.org' }
 const twitchTab = tabSender(7, 'https://www.twitch.tv/kripp')

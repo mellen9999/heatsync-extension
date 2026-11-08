@@ -7,8 +7,10 @@
 // promise nobody catches, which bun reports as a failure. so a test that runs the clock for a while either
 // opens/fails every socket it is handed or boots with sockets: 'open'.
 
-import { describe, expect, test } from 'bun:test'
-import { bootSw, tabSender } from './harness/sw.js'
+import { afterEach, describe, expect, test } from 'bun:test'
+import { bootSw, disposeAll, tabSender } from './harness/sw.js'
+
+afterEach(disposeAll)
 
 const AUTH = { name: 'auth', value: 'tok-1', domain: 'heatsync.org' }
 const TAB_URL = 'https://www.twitch.tv/kripp'

@@ -7,8 +7,10 @@
 // behaviours, all asserted below by running them: a failed fetch keeps what it had, arms a one-shot
 // alarm that survives worker eviction, and that alarm refetches the channels open in tabs.
 
-import { describe, expect, test } from 'bun:test'
-import { bootSw, json, status, tabSender } from './harness/sw.js'
+import { afterEach, describe, expect, test } from 'bun:test'
+import { bootSw, disposeAll, json, status, tabSender } from './harness/sw.js'
+
+afterEach(disposeAll)
 
 const AUTH = { name: 'auth', value: 'tok', domain: 'heatsync.org' }
 const TAB_URL = 'https://www.twitch.tv/kripp'

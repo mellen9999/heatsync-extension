@@ -23,6 +23,10 @@ function createEvent() {
     },
     hasListener: (fn) => listeners.includes(fn),
     hasListeners: () => listeners.length > 0,
+    /** harness side: forget every listener (sw.dispose) */
+    clear: () => {
+      listeners.length = 0
+    },
     /** harness side: call every listener, return what they returned */
     emit(...args) {
       return [...listeners].map((fn) => {
@@ -454,6 +458,23 @@ export function createFakeChrome({ clock, ctxJson, extensionId }) {
     alarmNames: () => [...alarmTable.keys()],
     alarm: (name) => (alarmTable.has(name) ? publicAlarm(alarmTable.get(name)) : null),
     armAlarm,
+    /** release everything the worker registered (sw.dispose): listeners, alarms, tabs, replies */
+    dispose() {
+      const walk = (obj, depth) => {
+        if (!obj || typeof obj !== 'object' || depth > 3) return
+        for (const v of Object.values(obj)) {
+          if (v && typeof v === 'object' && typeof v.clear === 'function' && typeof v.addListener === 'function')
+            v.clear()
+          else walk(v, depth + 1)
+        }
+      }
+      walk(chrome, 0)
+      alarmTable.clear()
+      tabTable.clear()
+      tabHandlers.clear()
+      tabMessages.length = 0
+      jar.length = 0
+    },
   }
   return harness
 }

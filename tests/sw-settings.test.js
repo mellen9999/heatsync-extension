@@ -2,8 +2,10 @@
 // restart each do to a setting on its way into (and out of) chrome.storage. real worker, fake
 // chrome (tests/harness/sw.js) whose storage is async + JSON-cloned like the real one.
 
-import { describe, expect, test } from 'bun:test'
-import { bootSw, tabSender } from './harness/sw.js'
+import { afterEach, describe, expect, test } from 'bun:test'
+import { bootSw, disposeAll, tabSender } from './harness/sw.js'
+
+afterEach(disposeAll)
 
 const AUTH = { name: 'auth', value: 'tok-1', domain: 'heatsync.org' }
 const TAB_URL = 'https://www.twitch.tv/kripp'

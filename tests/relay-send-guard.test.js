@@ -18,7 +18,7 @@ import { bgSource } from './bg-src.js'
 const SRC = bgSource()
 const EXT_ID = 'hsextensionidhsextensionidhsextens'
 
-const GUARD_START = SRC.indexOf('const RELAY_GESTURE_MS')
+const GUARD_START = SRC.indexOf('const RELAY_DUP_MS')
 const GUARD_END = SRC.indexOf('async function connectWebSocket() {')
 if (GUARD_START < 0 || GUARD_END < GUARD_START) throw new Error('relay guard markers missing')
 const GUARD = SRC.slice(GUARD_START, GUARD_END)
@@ -79,7 +79,7 @@ async function handle(msg) {
 ${CASES}
   }
 }
-return { noteSiteGesture, siteGestureAge, admitRelay, runGuardedRelay, relayDiagSummary, relayLog, handle, _relay }`,
+return { admitRelay, runGuardedRelay, relayDiagSummary, relayLog, handle, _relay }`,
   )
   const api = make(
     browser,
@@ -106,28 +106,15 @@ return { noteSiteGesture, siteGestureAge, admitRelay, runGuardedRelay, relayDiag
   return { ...api, sent, acks, logs, local, session, flushLog, relay }
 }
 
-const heatsyncTab = (over = {}) => ({
-  id: EXT_ID,
-  tab: { id: 3, url: 'https://heatsync.org/chat' },
-  frameId: 0,
-  url: 'https://heatsync.org/chat',
-  ...over,
-})
 const VID = 'abcdefghijk'
 let n = 0
 const kick = (channel, text, over = {}) => ({ type: 'kick:relay_send', reqId: `kick-${++n}`, channel, text, ...over })
 const yt = (videoId, text, over = {}) => ({ type: 'yt:relay_send', reqId: `yt-${++n}`, videoId, text, ...over })
 
-/** a person is at heatsync.org right now */
-function atTheKeyboard(h, at = Date.now()) {
-  expect(h.noteSiteGesture(heatsyncTab(), at)).toBe(true)
-}
-
 describe('the legitimate flow still goes through', () => {
   test('a keypress on heatsync.org, then the server relays: kick posts and acks ok', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     const ack = await h.relay(kick('SomeChannel', 'hello chat'))
     expect(ack).toMatchObject({ type: 'kick:relay_ack', ok: true })
     expect(ack.reqId).toMatch(/^kick-/)
@@ -137,7 +124,6 @@ describe('the legitimate flow still goes through', () => {
   test('youtube: posts through the tab and hands back the account that sent', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     const ack = await h.relay(yt(VID, 'hi from the site'))
     expect(ack).toMatchObject({ type: 'yt:relay_ack', ok: true, ytUsername: 'ytme' })
     expect(h.sent.yt).toEqual([{ videoId: VID, text: 'hi from the site' }])
@@ -146,7 +132,6 @@ describe('the legitimate flow still goes through', () => {
   test('a merged tab sends kick and youtube at the same instant: both go', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     const [a, b] = await Promise.all([
       h.relay(kick('chan', 'one line to two rooms')),
       h.relay(yt(VID, 'one line to two rooms')),
@@ -157,13 +142,10 @@ describe('the legitimate flow still goes through', () => {
   test('the next line a few seconds later goes, and so does the same text after the repeat window', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     expect((await h.relay(kick('chan', 'first'))).ok).toBe(true)
     setSystemTime(T0 + 2500)
-    atTheKeyboard(h, T0 + 2500)
     expect((await h.relay(kick('chan', 'second'))).ok).toBe(true)
     setSystemTime(T0 + 13_000)
-    atTheKeyboard(h, T0 + 13_000)
     expect((await h.relay(kick('chan', 'first'))).ok).toBe(true)
     expect(h.sent.kick.map((s) => s.text)).toEqual(['first', 'second', 'first'])
   })
@@ -173,7 +155,6 @@ describe('the legitimate flow still goes through', () => {
     const h = load()
     for (let s = 0; s <= 60; s += 5) {
       setSystemTime(T0 + s * 1000)
-      atTheKeyboard(h, T0 + s * 1000)
     }
     setSystemTime(T0 + 60_000 + 1500)
     expect((await h.relay(kick('chan', 'finally sent'))).ok).toBe(true)
@@ -188,7 +169,6 @@ describe('the legitimate flow still goes through', () => {
           ++n2 === 1 ? { ok: false, error: 'no_kick_tab' } : (h.sent.kick.push({ text }), { ok: true }),
       },
     })
-    atTheKeyboard(h)
     const first = await h.relay(kick('chan', 'try me twice'))
     expect(first).toMatchObject({ ok: false, error: 'no_kick_tab' })
     setSystemTime(T0 + 1200)
@@ -204,63 +184,40 @@ describe('the legitimate flow still goes through', () => {
         },
       },
     })
-    atTheKeyboard(h)
     expect(await h.relay(yt(VID, 'boom'))).toMatchObject({ ok: false, error: 'tab exploded' })
   })
 
   test('a kick channel that will not resolve says no_channel', async () => {
     setSystemTime(T0)
     const h = load({ platform: { resolve: async () => ({ error: 'kick api 404' }) } })
-    atTheKeyboard(h)
     expect(await h.relay(kick('nosuchchan', 'hello'))).toMatchObject({ ok: false, error: 'no_channel' })
   })
 })
 
-describe('no user action, no post', () => {
-  test('a server-pushed relay with no keypress ever is refused and nothing is sent', async () => {
+describe('no keypress needed (a phone types, the desktop browser posts)', () => {
+  test('a relay frame with no local keypress ever goes through, on both platforms', async () => {
     setSystemTime(T0)
     const h = load()
-    expect(await h.relay(kick('chan', 'posted while you sleep'))).toMatchObject({ ok: false, error: 'no_user_action' })
-    expect(await h.relay(yt(VID, 'posted while you sleep'))).toMatchObject({ ok: false, error: 'no_user_action' })
-    expect(h.sent.kick).toEqual([])
-    expect(h.sent.yt).toEqual([])
+    expect((await h.relay(kick('chan', 'typed on the phone'))).ok).toBe(true)
+    expect((await h.relay(yt(VID, 'typed on the phone'))).ok).toBe(true)
+    expect(h.sent.kick).toHaveLength(1)
+    expect(h.sent.yt).toHaveLength(1)
   })
 
-  test('the last keypress was more than 30 s ago: refused', async () => {
+  test('caps and the repeat guard still block with no keypress in play', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
-    setSystemTime(T0 + 31_000)
-    expect(await h.relay(kick('chan', 'late'))).toMatchObject({ ok: false, error: 'no_user_action' })
-    setSystemTime(T0 + 29_000)
-    expect((await h.relay(kick('chan', 'on time'))).ok).toBe(true)
-  })
-
-  test('only a heatsync.org top frame can report a keypress', () => {
-    const h = load()
-    for (const from of [
-      heatsyncTab({ url: 'https://www.twitch.tv/x', tab: { id: 1, url: 'https://www.twitch.tv/x' } }),
-      heatsyncTab({
-        url: 'https://heatsync.org.evil.example/',
-        tab: { id: 1, url: 'https://heatsync.org.evil.example/' },
-      }),
-      heatsyncTab({ frameId: 2 }),
-      heatsyncTab({ tab: undefined }),
-      heatsyncTab({ id: 'someotherextensionidsomeotherext' }),
-      undefined,
-    ]) {
-      expect(h.noteSiteGesture(from)).toBe(false)
-    }
-    expect(h._relay.gestureAt).toBe(0)
-  })
-
-  test('a worker restart between the keypress and the relay frame does not lose it', async () => {
-    setSystemTime(T0)
-    const session = fakeArea()
-    atTheKeyboard(load({ session }))
-    await new Promise((r) => setTimeout(r, 1))
-    const reborn = load({ session })
-    expect((await reborn.relay(kick('chan', 'after the restart'))).ok).toBe(true)
+    expect((await h.relay(kick('chan', 'same words'))).ok).toBe(true)
+    setSystemTime(T0 + 2000)
+    expect(await h.relay(kick('chan', 'same words'))).toMatchObject({ ok: false, error: 'duplicate_message' })
+    expect(await h.relay(kick('chan', 'x', { reqId: 'fixed' }))).toMatchObject({ ok: true })
+    expect(await h.relay(kick('chan', 'y', { reqId: 'fixed' }))).toMatchObject({
+      ok: false,
+      error: 'duplicate_request',
+    })
+    setSystemTime(T0 + 2100)
+    expect(await h.relay(kick('chan', 'too soon'))).toMatchObject({ ok: false, error: 'rate_limited' })
+    expect(await h.relay(kick('chan', 'z'.repeat(501)))).toMatchObject({ ok: false, error: 'invalid_text' })
   })
 })
 
@@ -268,7 +225,6 @@ describe('replays, repeats and floods', () => {
   test('the same request id twice posts once', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     const frame = kick('chan', 'once only')
     expect((await h.relay(frame)).ok).toBe(true)
     setSystemTime(T0 + 3000)
@@ -279,7 +235,6 @@ describe('replays, repeats and floods', () => {
   test('identical text to the same place inside 10 s is refused; case and spacing do not dodge it', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     expect((await h.relay(kick('chan', 'buy my thing'))).ok).toBe(true)
     setSystemTime(T0 + 2000)
     expect(await h.relay(kick('chan', 'buy my thing'))).toMatchObject({ ok: false, error: 'duplicate_message' })
@@ -291,7 +246,6 @@ describe('replays, repeats and floods', () => {
   test('the same text to another place, or other text to the same place, is fine', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     expect((await h.relay(kick('chan', 'gg'))).ok).toBe(true)
     expect((await h.relay(kick('other', 'gg'))).ok).toBe(true)
     setSystemTime(T0 + 2000)
@@ -301,7 +255,6 @@ describe('replays, repeats and floods', () => {
   test('two to the same place less than a second apart: the second is refused', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     expect((await h.relay(kick('chan', 'a'))).ok).toBe(true)
     setSystemTime(T0 + 400)
     expect(await h.relay(kick('chan', 'b'))).toMatchObject({ ok: false, error: 'rate_limited' })
@@ -314,14 +267,11 @@ describe('replays, repeats and floods', () => {
     const h = load()
     for (let i = 0; i < 15; i++) {
       setSystemTime(T0 + i * 1100)
-      atTheKeyboard(h, T0 + i * 1100)
       expect((await h.relay(kick('chan', `line ${i}`))).ok).toBe(true)
     }
     setSystemTime(T0 + 15 * 1100)
-    atTheKeyboard(h, T0 + 15 * 1100)
     expect(await h.relay(kick('chan', 'line 15'))).toMatchObject({ ok: false, error: 'rate_limited' })
     setSystemTime(T0 + 61_000)
-    atTheKeyboard(h, T0 + 61_000)
     expect((await h.relay(kick('chan', 'line 15'))).ok).toBe(true)
   })
 
@@ -330,11 +280,9 @@ describe('replays, repeats and floods', () => {
     const h = load()
     for (let i = 0; i < 20; i++) {
       setSystemTime(T0 + i * 1000)
-      atTheKeyboard(h, T0 + i * 1000)
       expect((await h.relay(kick(`chan${i}`, `hi ${i}`))).ok).toBe(true)
     }
     setSystemTime(T0 + 20_500)
-    atTheKeyboard(h, T0 + 20_500)
     expect(await h.relay(kick('chan99', 'one too many'))).toMatchObject({ ok: false, error: 'rate_limited' })
     expect(h.sent.kick).toHaveLength(20)
   })
@@ -342,11 +290,9 @@ describe('replays, repeats and floods', () => {
   test('a server hammering frames with keypress cover is held to the caps', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     let landed = 0
     for (let i = 0; i < 300; i++) {
       setSystemTime(T0 + i * 100) // 10 frames a second for 30 s
-      atTheKeyboard(h, T0 + i * 100)
       if ((await h.relay(kick(`c${i % 7}`, `spam ${i}`))).ok) landed++
     }
     expect(landed).toBeLessThanOrEqual(20)
@@ -373,7 +319,6 @@ describe('malformed frames are refused before anything runs', () => {
     test(name, async () => {
       setSystemTime(T0)
       const h = load()
-      atTheKeyboard(h)
       expect(await h.relay(make())).toMatchObject({ ok: false, error })
       expect(h.sent.kick).toEqual([])
       expect(h.sent.yt).toEqual([])
@@ -383,7 +328,6 @@ describe('malformed frames are refused before anything runs', () => {
   test('the length limits are inclusive: 200 on youtube, 500 on kick go', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     expect((await h.relay(yt(VID, 'y'.repeat(200)))).ok).toBe(true)
     expect((await h.relay(kick('chan', 'k'.repeat(500)))).ok).toBe(true)
   })
@@ -393,15 +337,14 @@ describe('the record the user can read', () => {
   test('every outcome is written: sent, failed and refused', async () => {
     setSystemTime(T0)
     const h = load({ platform: { kick: async () => ({ ok: false, error: 'no_kick_tab' }) } })
-    await h.relay(kick('chan', 'refused: nobody pressed a key'))
-    atTheKeyboard(h)
+    await h.relay(kick('chan', '   '))
     await h.relay(yt(VID, 'goes'))
     setSystemTime(T0 + 2000)
     await h.relay(kick('chan', 'fails'))
     h.flushLog()
     const rows = h.local.data.hs_relay_log
     expect(rows.map((r) => [r.p, r.to, r.r])).toEqual([
-      ['kick', 'chan', 'refused:no_user_action'],
+      ['kick', 'chan', 'refused:invalid_text'],
       ['youtube', VID, 'sent'],
       ['kick', 'chan', 'failed:no_kick_tab'],
     ])
@@ -411,15 +354,14 @@ describe('the record the user can read', () => {
   test('a flood of refusals folds into one counted row instead of burying the real entries', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     await h.relay(kick('chan', 'a real one'))
-    setSystemTime(T0 + 90_000) // keypress is stale: every frame below is refused
-    for (let i = 0; i < 400; i++) await h.relay(kick('chan', `flood ${i}`))
+    setSystemTime(T0 + 90_000)
+    for (let i = 0; i < 400; i++) await h.relay(kick('chan', ' ')) // every frame below is refused
     h.flushLog()
     const rows = h.local.data.hs_relay_log
     expect(rows).toHaveLength(2)
     expect(rows[0].r).toBe('sent')
-    expect(rows[1]).toMatchObject({ r: 'refused:no_user_action', c: 400 })
+    expect(rows[1]).toMatchObject({ r: 'refused:invalid_text', c: 400 })
   })
 
   test('the log never holds more than 50 rows and survives a restart', async () => {
@@ -427,7 +369,6 @@ describe('the record the user can read', () => {
     const h = load()
     for (let i = 0; i < 80; i++) {
       setSystemTime(T0 + i * 100_000)
-      atTheKeyboard(h, T0 + i * 100_000)
       await h.relay(kick(`chan${i}`, `line ${i}`))
     }
     h.flushLog()
@@ -439,7 +380,6 @@ describe('the record the user can read', () => {
   test('the diag copy carries counts and places, never the text', async () => {
     setSystemTime(T0)
     const h = load()
-    atTheKeyboard(h)
     await h.relay(kick('chan', 'a private-ish sentence'))
     setSystemTime(T0 + 2000)
     await h.relay(kick('chan', 'another one', { reqId: 'x' }))
@@ -447,6 +387,5 @@ describe('the record the user can read', () => {
     expect(d.outcomes).toEqual({ sent: 2 })
     expect(d.recent[0]).toMatchObject({ p: 'kick', to: 'chan', r: 'sent' })
     expect(JSON.stringify(d)).not.toContain('sentence')
-    expect(d.gestureAgeMs).toBe(2000)
   })
 })

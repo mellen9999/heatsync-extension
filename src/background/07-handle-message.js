@@ -1202,12 +1202,6 @@ async function handleMessage(message, sender, sendResponse) {
     return true
   } else if (message.type === 'notifs_read') {
     markNotifsRead()
-  } else if (message.type === 'site_gesture') {
-    // A real keypress/tap on heatsync.org in this browser — the evidence a
-    // relayed send needs (see RELAYED SENDS in 05-ws.js). Only the heatsync.org
-    // top frame counts.
-    sendResponse({ ok: noteSiteGesture(sender) })
-    return true
   } else if (message.type === 'notifs_viewed') {
     unreadNotifCount = 0
     browser.storage.session?.set({ unread_notif_count: 0 }).catch(() => {})

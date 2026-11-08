@@ -652,25 +652,22 @@ function wsDebugNote(evt, extra) {
 // the platform login only the browser has.
 //
 // The frame carries nothing this extension can verify (reqId, target and text
-// are all chosen by the server), so it is not trusted on its own. Before a
-// relayed send runs it must clear, in order:
-//   1. a real user action: a keypress or tap on heatsync.org in THIS browser
-//      within RELAY_GESTURE_MS. content.js reports only events the browser
-//      itself produced (event.isTrusted); a page script cannot fake one. This is
-//      also what stops a second signed-in browser from posting the same line.
-//   2. a request id not seen before (a replayed frame does nothing)
-//   3. not the same text to the same place within RELAY_DUP_MS
-//   4. at least RELAY_MIN_GAP_MS since the last one to that place, and under
+// are all chosen by the server), so it is not trusted on its own. The server
+// fans a relay out to ALL of the user's extension sockets, so typing on
+// heatsync.org on a phone posts through the desktop browser: no keypress ever
+// happens here, and none is required. Before a relayed send runs it must clear:
+//   1. a request id not seen before (a replayed frame does nothing)
+//   2. not the same text to the same place within RELAY_DUP_MS
+//   3. at least RELAY_MIN_GAP_MS since the last one to that place, and under
 //      RELAY_PER_TARGET_PER_MIN there / RELAY_GLOBAL_PER_MIN overall. The
 //      server's own bucket (5 per 30 s per user) binds first, so a real person
 //      never meets these; a server that misbehaves does.
-// A relay that is refused, fails or lands is written to hs_relay_log (last 50,
-// local only), and the popup's "errors" copy carries its counts.
+// Every relay, refused, failed or sent, is one line in the worker log and a row
+// in hs_relay_log (last 50, local only); the popup's "errors" copy carries counts.
 //
-// What this does NOT bind: which text. A compromised server could still ride a
-// real keypress, within these caps. Binding a send to its exact text needs the
-// site to say what the user typed (see the report this shipped with).
-const RELAY_GESTURE_MS = 30_000
+// RESIDUAL RISK: a compromised server can still post up to the caps above.
+// The real fix is a device-pairing key: the originating device signs each relay
+// and this extension verifies it before posting.
 const RELAY_DUP_MS = 10_000
 const RELAY_MIN_GAP_MS = 1_000
 const RELAY_PER_TARGET_PER_MIN = 15
@@ -679,43 +676,14 @@ const RELAY_REQ_MEMORY_MS = 120_000
 const RELAY_TEXT_MAX = { youtube: 200, kick: 500 }
 const RELAY_LOG_KEY = 'hs_relay_log'
 const RELAY_LOG_MAX = 50
-const SITE_GESTURE_KEY = 'hs_site_gesture'
 
 const _relay = {
   admitted: [], // { at, to } of sends let through, last minute
   lastByTarget: new Map(), // to → at of the last one let through
   dupAt: new Map(), // to|text → at
   reqIds: new Map(), // reqId → at
-  gestureAt: 0,
   logP: null, // the stored log, loaded once
   logTimer: null,
-}
-
-// A heatsync.org tab saw a trusted keypress/tap. Only the heatsync.org top
-// frame of a tab counts. Answers whether it was taken.
-function noteSiteGesture(sender, now = Date.now()) {
-  try {
-    if (sender?.id !== browser.runtime.id || !sender.tab || sender.frameId !== 0) return false
-    if (new URL(sender.url || '').origin !== 'https://heatsync.org') return false
-  } catch {
-    return false
-  }
-  _relay.gestureAt = now
-  // survives a worker restart between the keypress and the relay frame
-  try {
-    browser.storage.session?.set?.({ [SITE_GESTURE_KEY]: now })?.catch?.(() => {})
-  } catch {}
-  return true
-}
-
-async function siteGestureAge(now = Date.now()) {
-  if (!_relay.gestureAt) {
-    try {
-      const got = await browser.storage.session?.get?.(SITE_GESTURE_KEY)
-      _relay.gestureAt = Number(got?.[SITE_GESTURE_KEY]) || 0
-    } catch {}
-  }
-  return _relay.gestureAt ? now - _relay.gestureAt : Number.POSITIVE_INFINITY
 }
 
 const relayTextKey = (text) => text.trim().toLowerCase().replace(/\s+/g, ' ')
@@ -723,7 +691,7 @@ const relayTextKey = (text) => text.trim().toLowerCase().replace(/\s+/g, ' ')
 // Decide, and on yes record the send as under way. Sync, so two frames in one
 // tick cannot both pass. Answers null to proceed or the refusal code.
 // platform: 'youtube' | 'kick'; target: videoId | channel.
-function admitRelay({ platform, target, text, reqId }, gestureAgeMs, now = Date.now()) {
+function admitRelay({ platform, target, text, reqId }, now = Date.now()) {
   if (typeof reqId !== 'string' || !reqId || reqId.length > 64) return 'invalid_request'
   const targetOk =
     typeof target === 'string' &&
@@ -732,7 +700,6 @@ function admitRelay({ platform, target, text, reqId }, gestureAgeMs, now = Date.
   if (typeof text !== 'string' || !text.trim() || text.length > (RELAY_TEXT_MAX[platform] || 200)) return 'invalid_text'
   const seen = _relay.reqIds.get(reqId)
   if (seen !== undefined && now - seen <= RELAY_REQ_MEMORY_MS) return 'duplicate_request'
-  if (!Number.isFinite(gestureAgeMs) || gestureAgeMs > RELAY_GESTURE_MS) return 'no_user_action'
 
   const to = `${platform}:${target.toLowerCase()}`
   const dupKey = `${to}|${relayTextKey(text)}`
@@ -782,6 +749,7 @@ function relayLog() {
 
 async function noteRelay({ platform, target, text, outcome }, now = Date.now()) {
   try {
+    log(` relay ${platform}:${String(target || '').slice(0, 64)} ${outcome} (${String(text || '').length} chars)`)
     const rows = await relayLog()
     const to = String(target || '').slice(0, 64)
     const prev = rows[rows.length - 1]
@@ -813,7 +781,6 @@ async function relayDiagSummary(now = Date.now()) {
   const outcomes = {}
   for (const r of rows) outcomes[r.r] = (outcomes[r.r] || 0) + (r.c || 1)
   return {
-    gestureAgeMs: _relay.gestureAt ? now - _relay.gestureAt : null,
     outcomes,
     recent: rows.slice(-10).map((r) => ({ ageMs: now - r.t, p: r.p, to: r.to, r: r.r, c: r.c || 1 })),
   }
@@ -832,8 +799,7 @@ async function runGuardedRelay(relay, run) {
 }
 
 async function guardedRelayInner({ platform, target, text, reqId }, run) {
-  const gestureAge = await siteGestureAge()
-  const refusal = admitRelay({ platform, target, text, reqId }, gestureAge)
+  const refusal = admitRelay({ platform, target, text, reqId })
   if (refusal) {
     await noteRelay({ platform, target, text, outcome: `refused:${refusal}` })
     return { ok: false, error: refusal }

@@ -2565,5 +2565,10 @@ async function handleMessage(message, sender, sendResponse) {
       }
     })()
     return true // async response
+  } else if (typeof message.type === 'string' && !message.type.startsWith('bg_')) {
+    // Nobody here owns this type — answer, or the caller waits out its timeout.
+    // bg_* belong to the other BG listeners (irc, kick history), which answer
+    // for themselves; the first reply wins, so answering for them would steal it.
+    sendResponse({ ok: false, error: 'unknown_type' })
   }
 }

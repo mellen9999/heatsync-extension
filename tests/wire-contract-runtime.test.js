@@ -80,8 +80,7 @@ const NOT_A_REAL_SEND = new Set(['foo'])
  * every one of them working code.
  */
 function dispatchedByRouter() {
-  const file = join(ROOT, 'chrome', 'background.js')
-  const src = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
+  const src = ts.createSourceFile('background.js', bgSource(), ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
   let fn = null
   const walk = (n) => {
     if (ts.isFunctionDeclaration(n) && n.name?.text === 'handleMessage') fn = n

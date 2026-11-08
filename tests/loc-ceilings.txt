@@ -1,5 +1,5 @@
 # god-file ceilings: <max lines> <path>  # why. raise only with a reason in the same commit
-2400 src/multichat/main.js  # 2026-11-08: init + startup only — the body is 7 main-*.js parts (build.js MAIN_PARTS), each under the floor
+3000 src/multichat/main-messages.js  # 2026-11-08: the biggest of the 8 parts main.js split into (build.js MAIN_PARTS); main.js itself is 2.3k now
 9855 src/multichat/input.js  # baseline
 5310 src/multichat/emotes.js  # baseline
 4757 src/multichat/twitch-api.js  # baseline

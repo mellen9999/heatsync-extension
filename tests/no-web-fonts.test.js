@@ -34,8 +34,8 @@ function code(text, rel) {
 }
 
 // the only live mentions allowed: migrating a stored retired choice to monospace
-// only the parts that carry the migration code — not every main part
-const MIGRATION = new Set(['src/lib/settings-schema.js', 'src/multichat/main-overlay.js', 'src/multichat/main-live.js'])
+// only the one main part that carries the migration code — not every part
+const MIGRATION = new Set(['src/lib/settings-schema.js', 'src/multichat/main-tabs.js'])
 const SOURCE = TRACKED.filter((p) => /\.(js|css|html|json)$/.test(p)).filter(
   (p) => !/_locales|multichat-core|multichat-twitch|emoji-data|chrome\/manifest\.json/.test(p),
 )

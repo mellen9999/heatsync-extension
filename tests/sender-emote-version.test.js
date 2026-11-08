@@ -13,12 +13,13 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 import { mainSource } from './main-src.js'
 
 const src = (f) => readFileSync(join(import.meta.dir, '..', f), 'utf8')
 const EMOTES = src('src/multichat/emotes.js')
 const MAIN = mainSource()
-const BG = src('chrome/background.js')
+const BG = bgSource()
 
 function helpers() {
   const a = EMOTES.indexOf('const senderEmoteHighVer = new Map()')

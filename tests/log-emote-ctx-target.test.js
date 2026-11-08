@@ -1,5 +1,6 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { bgSource } from './bg-src.js'
 import { mainSource } from './main-src.js'
 
 const src = readFileSync(new URL('../src/multichat/input.js', import.meta.url), 'utf8')
@@ -105,7 +106,7 @@ test('a row inserted mid-list restripes everything after it', () => {
 
 test('tabs re-assert channel interest so a restarted service worker cannot strand an older tab', () => {
   const irc = readFileSync(new URL('../src/multichat/irc.js', import.meta.url), 'utf8')
-  const bg = readFileSync(new URL('../chrome/background.js', import.meta.url), 'utf8')
+  const bg = bgSource()
   expect(irc).toMatch(/type: 'bg_irc_interest', channels: \[\.\.\.this\.channels\.keys\(\)\]/)
   expect(irc).toMatch(/_interestTimer = cleanup\.setInterval\(\(\) => this\._reassertInterest\(\), 15000\)/)
   expect(bg).toMatch(/message\.type === 'bg_irc_interest'[\s\S]*?bgIrcRegisterTabInterest\(tabId, ch\)/)

@@ -8,6 +8,7 @@ import {
   hsMarksValidLogin,
   hsMarksWear,
 } from '../src/multichat/name-marks.js'
+import { bgSource } from './bg-src.js'
 import { mainSource } from './main-src.js'
 
 describe('heat bar tiers (heatsync-chat contract)', () => {
@@ -140,7 +141,7 @@ describe('wiring', () => {
     for (const k of ['subFlair', 'flame', 'heatBars']) expect(s).toContain(`'${k}'`)
   })
   test('the background relay validates what it forwards', () => {
-    const bg = read('chrome/background.js')
+    const bg = bgSource()
     expect(bg).toContain("message.type === 'fetch_name_marks'")
     expect(bg).toContain('/api/users/flair?ids=')
   })

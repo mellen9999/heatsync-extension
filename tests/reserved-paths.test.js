@@ -17,7 +17,12 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { RESERVED_PATHS } from '../src/lib/reserved-paths.js'
+import { bgSource } from './bg-src.js'
 import { MAIN_PART_FILES, mainSource } from './main-src.js'
+
+// background.js is generated from src/background/*; its copy is read through the parts
+const BG_LABEL = 'background.js (src/background/*)'
+const sourceOf = (file) => (file === BG_LABEL ? bgSource() : read(file))
 
 const read = (p) => readFileSync(join(import.meta.dir, '..', p), 'utf8')
 
@@ -52,9 +57,9 @@ function extractSetLiteral(src, name) {
 describe('hand-duplicated copies stay in lockstep (build.js enforces this at build time too)', () => {
   const canonical = [...RESERVED_PATHS].sort()
 
-  for (const file of ['chrome/background.js', 'chrome/popup.js', 'chrome/early-layout.js']) {
+  for (const file of [BG_LABEL, 'chrome/popup.js', 'chrome/early-layout.js']) {
     test(`${file} declares a RESERVED_PATHS literal matching src/lib/reserved-paths.js`, () => {
-      const copy = extractSetLiteral(read(file), 'RESERVED_PATHS')
+      const copy = extractSetLiteral(sourceOf(file), 'RESERVED_PATHS')
       expect(copy).not.toBeNull()
       expect(copy).toEqual(canonical)
     })
@@ -71,12 +76,12 @@ describe('no divergent reserved-path list grew back', () => {
     ...MAIN_PART_FILES.map((p) => `src/multichat/${p}`),
     'chrome/content.js',
     'chrome/heatsync-button.js',
-    'chrome/background.js',
+    BG_LABEL,
     'chrome/early-layout.js',
     'chrome/popup.js',
   ]) {
     test(`${file} has no inline reserved-path array literal`, () => {
-      const src = read(file)
+      const src = sourceOf(file)
       // Strip out the one sanctioned literal declarations (named RESERVED_PATHS)
       // before scanning for a rogue duplicate.
       const stripped = src.replace(/(?:const|let|var)\s+RESERVED_PATHS\s*=\s*new Set\(\[[\s\S]*?\]\)/g, '')

@@ -18,10 +18,11 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 import { mainSource } from './main-src.js'
 
 const main = mainSource()
-const bg = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const bg = bgSource()
 
 describe('rAF starvation guard (inverse visibility wedge)', () => {
   test('rafOrTimeout races believed-visible rAF against a watchdog', () => {

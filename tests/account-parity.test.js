@@ -7,6 +7,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { SLASH_REGISTRY, slashAvailableOn } from '../src/multichat/slash-registry.js'
+import { bgSource } from './bg-src.js'
 
 const root = join(import.meta.dir, '..')
 const read = (...p) => readFileSync(join(root, ...p), 'utf8')
@@ -171,7 +172,7 @@ describe('cross-follow and discover', () => {
 })
 
 describe('background', () => {
-  const bg = read('chrome', 'background.js')
+  const bg = bgSource()
   test('went-live click lands a youtube channel on /live and reads avatarUrl', () => {
     const fn = new Function(
       `${bg.slice(bg.indexOf('function channelPageUrl'), bg.indexOf('// Which channel a page belongs to'))}; return channelPageUrl`,

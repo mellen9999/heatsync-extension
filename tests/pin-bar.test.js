@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 import { mainSource } from './main-src.js'
 
 /**
@@ -12,7 +13,7 @@ import { mainSource } from './main-src.js'
 const ROOT = join(import.meta.dir, '..')
 const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8')
 const SRC = ['x-glyph.js', 'pin-bar.js'].map((f) => read('src', 'multichat', f)).join('\n')
-const BG = read('chrome', 'background.js')
+const BG = bgSource()
 const INPUT = read('src', 'multichat', 'input.js')
 const MAIN = mainSource()
 const BUILD = read('build.js')

@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
 /**
  * Live thread frames: the content-side join/leave state machine, the frame →
@@ -8,7 +9,7 @@ import { join } from 'node:path'
  */
 const ROOT = join(import.meta.dir, '..')
 const ENGAGE = readFileSync(join(ROOT, 'src', 'multichat', 'feed-engage.js'), 'utf8')
-const BG = readFileSync(join(ROOT, 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 
 function load(posts = {}) {
   const sent = []

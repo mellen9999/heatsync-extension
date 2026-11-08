@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { readdirSync, readFileSync } from 'node:fs'
-import { BG_PART_FILES } from './bg-src.js'
+import { BG_HEAD, BG_PART_FILES } from './bg-src.js'
 
 // build.js owns the concat order; the test helper mirrors it so a slice across
 // two parts reads the same bytes the service worker runs.
@@ -10,6 +10,11 @@ describe('background parts', () => {
     const m = build.match(/const BG_PARTS = \[([\s\S]*?)\]/)
     expect(m).not.toBeNull()
     expect(BG_PART_FILES).toEqual([...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]))
+  })
+
+  test('the helper writes the same head line build.js does (the executed harness runs the bundle byte for byte)', () => {
+    const build = readFileSync(new URL('../build.js', import.meta.url), 'utf8')
+    expect(build.includes(`'${BG_HEAD.trimEnd()}\\n'`)).toBe(true)
   })
 
   test('every file in src/background is a listed part', () => {

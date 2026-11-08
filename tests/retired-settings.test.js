@@ -48,8 +48,5 @@ test('the stored blob drops them after the server has spoken, through the servic
   expect(seed.slice(0, 3500)).toMatch(/finally \{\s*retireSettings\(\)/)
   const fn = MAIN.slice(MAIN.indexOf('async function retireSettings('))
   expect(fn.slice(0, 2500)).toContain('dropRetired: true')
-  const at = BG.indexOf("message.type === 'ui_settings_rmw'")
-  expect(BG.slice(at, at + 1500)).toContain(
-    'if (message.dropRetired === true) for (const k of RETIRED_UI_KEYS) delete next[k]',
-  )
+  // the worker's side of dropRetired is executed in sw-settings.test.js
 })

@@ -1226,18 +1226,20 @@ function build(browser) {
   // (all consumers are typeof-guarded, so emoji autocomplete just vanished —
   // no error). Distinct filename per world sidesteps the dedupe while keeping
   // the single-parse win that 43f297b's unbundling was after.
-  cpSync(join(chromeDir, 'emoji-data.js'), join(outDir, 'emoji-data.iso.js'))
+  const emojiSrc = join(SRC_DIR, 'data', 'emoji-data.js')
+  cpSync(emojiSrc, join(outDir, 'emoji-data.iso.js'))
   // Also write the iso copy into chrome/ — manifest.json (mirrored below for
   // the unpacked dev extension) references emoji-data.iso.js in its
   // content_scripts entries; without it the dev-loaded chrome/ dir is
-  // un-loadable.
-  if (browser === 'chrome') cpSync(join(chromeDir, 'emoji-data.js'), join(chromeDir, 'emoji-data.iso.js'))
+  // un-loadable. The source is src/data/emoji-data.js; both copies are
+  // generated and gitignored, so the three can never disagree.
+  if (browser === 'chrome') cpSync(emojiSrc, join(chromeDir, 'emoji-data.iso.js'))
 
   // emoji-data.main.js: the PAGE-world copy (twitch only), cut to [name, emoji] —
   // all autocomplete-hook.js reads. It used to load emoji-data.js whole, so every
-  // twitch page parsed the 118KB dataset twice. Plain emoji-data.js is not shipped
-  // at all now: it is the source both copies are made from. Same dev-load rule as above.
-  const emojiMain = emojiPairsSource(readFileSync(join(chromeDir, 'emoji-data.js'), 'utf8'))
+  // twitch page parsed the 118KB dataset twice. The source itself is not shipped:
+  // src/data/emoji-data.js is what both copies are made from. Same dev-load rule as above.
+  const emojiMain = emojiPairsSource(readFileSync(emojiSrc, 'utf8'))
   writeFileSync(join(outDir, 'emoji-data.main.js'), emojiMain)
   if (browser === 'chrome') writeFileSync(join(chromeDir, 'emoji-data.main.js'), emojiMain)
 

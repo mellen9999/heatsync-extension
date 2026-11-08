@@ -1,4 +1,5 @@
 import { expect, test } from 'bun:test'
+import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { runInNewContext } from 'node:vm'
@@ -61,7 +62,7 @@ for (const name of ['chrome.json', 'firefox.json']) {
 //  - an ISOLATED entry must never carry the pairs file (they read category etc.)
 //  - the pairs are the dataset's own, row for row (one source, generated)
 //  - the hook reads nothing but EMOJI_PAIRS
-const DATA_SRC = readFileSync(join(ROOT, 'chrome', 'emoji-data.js'), 'utf8')
+const DATA_SRC = readFileSync(join(ROOT, 'src', 'data', 'emoji-data.js'), 'utf8')
 
 for (const name of ['chrome.json', 'firefox.json']) {
   test(`${name}: the page-world autocomplete hook loads the slim pairs, before itself`, () => {
@@ -105,8 +106,16 @@ test('emoji-data.main.js is the dataset, row for row, as [name, emoji]', () => {
   }
 })
 
-test('the checked-in chrome/emoji-data.main.js is what the build makes from emoji-data.js', () => {
-  expect(readFileSync(join(ROOT, 'chrome', 'emoji-data.main.js'), 'utf8')).toBe(emojiPairsSource(DATA_SRC))
+test('the two shipped copies are generated, never tracked — one source in src/data', () => {
+  const ignored = readFileSync(join(ROOT, '.gitignore'), 'utf8').split('\n')
+  expect(ignored).toContain('chrome/emoji-data.iso.js')
+  expect(ignored).toContain('chrome/emoji-data.main.js')
+  const tracked = execFileSync(
+    'git',
+    ['ls-files', '--', 'chrome/emoji-data.js', 'chrome/emoji-data.iso.js', 'chrome/emoji-data.main.js'],
+    { cwd: ROOT, encoding: 'utf8' },
+  )
+  expect(tracked.trim()).toBe('')
 })
 
 test('a malformed dataset fails the build instead of shipping a partial file', () => {

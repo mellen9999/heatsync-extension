@@ -55,7 +55,7 @@
       "build.js",
       "!dist",
       "!node_modules",
-      "!chrome/emoji-data.js",
+      "!src/data/emoji-data.js",
       "!chrome/emoji-data.iso.js",
       "!chrome/emoji-data.main.js",
       "!src/lib/brand-tokens.js"

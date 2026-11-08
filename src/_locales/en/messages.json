@@ -7031,5 +7031,8 @@
   },
   "mc_kms_role_bot": {
     "message": "bot"
+  },
+  "slash_desc_kickmod": {
+    "message": "open kick mod tools: blocked words, message filter, chatters"
   }
 }

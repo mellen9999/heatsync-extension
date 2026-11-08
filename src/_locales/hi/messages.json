@@ -7014,5 +7014,8 @@
   },
   "mc_kms_role_bot": {
     "message": "bot"
+  },
+  "slash_desc_kickmod": {
+    "message": "kick मॉड टूल खोलें: ब्लॉक किए गए शब्द, संदेश फ़िल्टर, चैटर"
   }
 }

@@ -7014,5 +7014,8 @@
   },
   "mc_kms_role_bot": {
     "message": "bot"
+  },
+  "slash_desc_kickmod": {
+    "message": "เปิดเครื่องมือผู้ดูแล kick: คำที่บล็อก ตัวกรองข้อความ ผู้แชท"
   }
 }

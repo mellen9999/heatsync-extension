@@ -6920,7 +6920,7 @@
     "message": "パーマリンク — クリックで開く、shift+クリックでチャットに貼り付け"
   },
   "mc_kms_title": {
-    "message": "kick モツール"
+    "message": "kick モデレーションツール"
   },
   "mc_kms_cell_words": {
     "message": "ブロックワード"
@@ -7014,5 +7014,8 @@
   },
   "mc_kms_role_bot": {
     "message": "bot"
+  },
+  "slash_desc_kickmod": {
+    "message": "kick のモデレーションツールを開く: ブロックした単語、メッセージフィルター、チャット参加者"
   }
 }

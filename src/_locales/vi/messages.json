@@ -7014,5 +7014,8 @@
   },
   "mc_kms_role_bot": {
     "message": "bot"
+  },
+  "slash_desc_kickmod": {
+    "message": "mở công cụ kiểm duyệt kick: từ bị chặn, bộ lọc tin nhắn, người trò chuyện"
   }
 }

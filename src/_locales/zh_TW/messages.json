@@ -7014,5 +7014,8 @@
   },
   "mc_kms_role_bot": {
     "message": "bot"
+  },
+  "slash_desc_kickmod": {
+    "message": "開啟 kick 管理工具：封鎖字詞、訊息過濾、聊天者"
   }
 }

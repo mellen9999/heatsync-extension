@@ -7014,5 +7014,8 @@
   },
   "mc_kms_role_bot": {
     "message": "bot"
+  },
+  "slash_desc_kickmod": {
+    "message": "פתח את כלי המנחה של kick: מילים חסומות, מסנן הודעות, משתתפים בצ'אט"
   }
 }

@@ -7014,5 +7014,8 @@
   },
   "mc_kms_role_bot": {
     "message": "bot"
+  },
+  "slash_desc_kickmod": {
+    "message": "kick moderatör araçlarını aç: engellenen kelimeler, mesaj filtresi, sohbet edenler"
   }
 }

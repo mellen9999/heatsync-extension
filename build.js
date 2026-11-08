@@ -142,7 +142,7 @@ function checkMultichatCleanupBinding() {
   const body = bootstrap.slice(bootstrap.search(/^const cleanup = \{/m))
   for (const m of body.matchAll(/^ {2}(?:get )?([A-Za-z0-9_$]+)\s*\(/gm)) defined.add(m[1])
   const missing = new Set()
-  for (const file of MULTICHAT_MODULES.concat(['main.js', 'twitch-host.js', 'kick-host.js', 'youtube-host.js'])) {
+  for (const file of MULTICHAT_MODULES.concat(HOST_MODULES, MAIN_PARTS, ['main.js'])) {
     const p = join(mcDir, file)
     if (!existsSync(p)) continue
     for (const m of readFileSync(p, 'utf8').matchAll(/\bcleanup\.([A-Za-z0-9_$]+)\s*\(/g)) {
@@ -164,7 +164,21 @@ function checkMultichatCleanupBinding() {
 // exist, so the first cross-file reference throws at load and the whole
 // multichat block dies on every site, with a clean build and green tests. Same
 // outage class as checkMultichatOrphanedRenames, different cause.
-const MULTICHAT_ENTRIES = new Set(['main.js', 'twitch-host.js', 'kick-host.js', 'youtube-host.js'])
+// The main body is eight banner-bounded parts in bundle order; main.js (init +
+// startup) is the entry that closes the list. They share one scope at bundle
+// time, so order here is load order: constants and load-time statements in a
+// later part may read an earlier part's, never the reverse.
+const MAIN_PARTS = [
+  'main-state.js',
+  'main-settings.js',
+  'main-overlay.js',
+  'main-tabs.js',
+  'main-messages.js',
+  'main-live.js',
+  'main-storage.js',
+]
+const HOST_MODULES = ['twitch-host.js', 'kick-host.js', 'youtube-host.js']
+const MULTICHAT_ENTRIES = new Set(['main.js', ...MAIN_PARTS, ...HOST_MODULES])
 function checkMultichatModuleList(mcDir) {
   const listed = new Set(MULTICHAT_MODULES)
   const orphans = readdirSync(mcDir).filter((f) => f.endsWith('.js') && !listed.has(f) && !MULTICHAT_ENTRIES.has(f))
@@ -195,7 +209,7 @@ function checkMultichatModuleList(mcDir) {
 // declares `_foo` at top level and file B (any file) still references bare
 // `foo`, the rename orphaned its callers.
 function checkMultichatOrphanedRenames(mcDir) {
-  const files = MULTICHAT_MODULES.concat(['main.js', 'twitch-host.js', 'kick-host.js', 'youtube-host.js']).filter((f) =>
+  const files = MULTICHAT_MODULES.concat(HOST_MODULES, MAIN_PARTS, ['main.js']).filter((f) =>
     existsSync(join(mcDir, f)),
   )
   const sources = new Map(files.map((f) => [f, readFileSync(join(mcDir, f), 'utf8')]))
@@ -304,7 +318,7 @@ function checkScopeCollisions() {
   }
 
   // multichat layer: all MULTICHAT_MODULES + per-platform host modules + main.js
-  const mcFiles = [...MULTICHAT_MODULES, 'kick-host.js', 'youtube-host.js', 'twitch-host.js', 'main.js']
+  const mcFiles = [...MULTICHAT_MODULES, ...HOST_MODULES, ...MAIN_PARTS, 'main.js']
   const libDecls = extractDecls(libDir, LIB_FILES)
   const mcDecls = extractDecls(mcDir, mcFiles)
 
@@ -875,7 +889,7 @@ const MULTICHAT_MODULES = [
 // fiber tap simply never runs on kick. Platform selection is main.js's
 // location.hostname detection, the same path every dev build has always used;
 // the manifest's match patterns gate injection to exactly those hostnames.
-const CORE_MODULES = [...MULTICHAT_MODULES, 'twitch-host.js', 'kick-host.js', 'youtube-host.js']
+const CORE_MODULES = [...MULTICHAT_MODULES, ...HOST_MODULES, ...MAIN_PARTS]
 
 // Escapes everything that would otherwise break out of (or interpolate into)
 // the JS template literal CSS gets embedded into below: backslash first

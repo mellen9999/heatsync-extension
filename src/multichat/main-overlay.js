@@ -2257,6 +2257,7 @@ function cycleTab(fwd) {
 }
 
 initOverlayKeys(mcSignal)
+initRowMode(mcSignal)
 registerOverlayKey('f', () => openFollowsView())
 document.addEventListener('keydown', followsKeyHandler, { capture: true, signal: mcSignal })
 registerOverlayKey('/', () => focusLiveSearch())
@@ -2292,16 +2293,23 @@ document.addEventListener(
   { signal: mcSignal },
 )
 
-// alt+1..9 jump to the Nth content tab, alt+] / alt+[ cycle next/prev. Alt
-// (not ctrl/cmd) avoids the browser's own ctrl/cmd+N tab switching. NOT
-// gated on where focus is: alt+digit types nothing, so there is no reason to
-// make the user leave the composer to switch tabs. e.code (Digit1.. /
-// Bracket*) is layout-independent and immune to Alt-composition on
-// non-Linux keymaps; the ctrlKey bail also covers AltGr (ctrl+alt).
+// alt+1..9 jump to the Nth content tab, alt+] / alt+[ cycle next/prev, alt+r
+// is row mode (row-mode.js) — the way in for people who don't run vi mode, whose
+// <Space> r leader is the other. Alt (not ctrl/cmd) avoids the browser's own
+// ctrl/cmd+N tab switching. NOT gated on where focus is: alt+digit types
+// nothing, so there is no reason to make the user leave the composer to switch
+// tabs. e.code (Digit1.. / Bracket* / KeyR) is layout-independent and immune to
+// Alt-composition on non-Linux keymaps (alt+r types an (R) on a Mac); the ctrlKey
+// bail also covers AltGr (ctrl+alt). The key help lists all of these
+// (settings-ui.js, _SET_HELP_CHAT) — add a new one there too.
 document.addEventListener(
   'keydown',
   (e) => {
     if (!e.altKey || e.ctrlKey || e.metaKey) return
+    if (e.code === 'KeyR' && !e.shiftKey) {
+      if (toggleRowMode()) e.preventDefault()
+      return
+    }
     const isDigit = /^Digit[1-9]$/.test(e.code || '')
     const isBracket = e.code === 'BracketRight' || e.code === 'BracketLeft'
     if (!isDigit && !isBracket) return

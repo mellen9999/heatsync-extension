@@ -497,6 +497,25 @@
        no animation, wins over notice-type coloring (same specificity, later
        in source order) so the current match is always identifiable. */
     .hs-mc-msg.hs-mc-search-current { border-left: 2px solid var(--hs-mention) !important; background: var(--hs-warn-tint) !important; }
+    /* Row-mode cursor (row-mode.js) — the keyboard invert (--hs-sel: cyan bg,
+       black text), the same token as the tab-mode rover and the picker cursor.
+       Reverse video over the WHOLE row: every colour inside it (names, paints,
+       links, badges' text) goes black, or a cyan or yellow name would vanish on
+       the cyan plate. Emotes and badge images are pictures and keep theirs. */
+    .hs-mc-msg.hs-mc-row-cursor,
+    .hs-feed-msg.hs-mc-row-cursor {
+      background: var(--hs-sel) !important;
+      color: var(--hs-sel-fg) !important;
+      outline: none;
+    }
+    .hs-mc-row-cursor *,
+    .hs-mc-row-cursor *::before,
+    .hs-mc-row-cursor *::after {
+      color: var(--hs-sel-fg) !important;
+      -webkit-text-fill-color: var(--hs-sel-fg) !important;
+      text-shadow: none !important;
+    }
+    .hs-mc-row-cursor .hs-mc-user { background-image: none !important; }
     /* Cleared (timed out / banned / msg deleted) — grey but READABLE, no
        strikethrough. That is the third-party convention (ffz/bttv/7tv): a mod
        needs to see what was actually said, and a line through it fights the

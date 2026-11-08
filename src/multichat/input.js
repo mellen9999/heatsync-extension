@@ -2620,10 +2620,9 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
         )
         if (!isKick && !isYt)
           mod.push({ label: t('mc_settings_mod_btn_blocked_terms'), fn: () => openBlockedTerms(modCh) })
-        if (!isKick && !isYt) {
-          mod.push({ label: t('content_card_mod_tools'), fn: () => openModSuite(modCh, 'shield') })
-          if (msgLogin) mod.push({ label: t('mc_input_warn'), fn: () => msWarnPrompt(modCh, msgLogin) })
-        }
+        if (!isYt) mod.push(modToolsItem(isKick, modCh))
+        if (!isKick && !isYt && msgLogin)
+          mod.push({ label: t('mc_input_warn'), fn: () => msWarnPrompt(modCh, msgLogin) })
         mod.push('sep')
         items.push(...mod)
       } else {
@@ -7007,6 +7006,7 @@ const COMMAND_RECEIPT_SCOPE = {
   testnotices: 'none',
   blocked: 'none', // opens a panel — the panel is the confirmation
   modtools: 'none', // opens a panel
+  kickmod: 'none', // opens a panel
   unbanrequests: 'none', // opens a panel
   shield: 'channel',
   warn: 'channel',
@@ -8421,11 +8421,11 @@ async function handleSlashCommand(text, input) {
     return true
   }
 
+  if (cmd === 'kickmod') return kickModCommand(_kickModSlug, input) // kick-mod-suite.js
   // ─── Mod suite (mod) ─── /modtools /shield /warn /shoutout /unbanrequests.
   // Thin calls to heatsync.org's /api/mod/* (mod-suite-calls.js); the server is
-  // the helix caller and the real mod check, this one only keeps the command
-  // off a channel the user plainly doesn't mod. Resolves the twitch login, or a
-  // failure result (already toasted) to return as is.
+  // the helix caller and the real mod check, this one only keeps the command off
+  // a channel the user plainly doesn't mod; resolves the login or a toasted failure.
   const _msGate = async () => {
     // twitch-only: the tab's twitch leg, or the page itself on twitch — same as /highlight above.
     const _msChannel = _twitchModName

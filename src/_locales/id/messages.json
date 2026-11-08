@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "tampilkan tombol balas pada baris chat di bawah mouse. balas selalu ada di menu baris (klik kanan, tekan lama di layar sentuh)"
+  },
+  "mc_kms_title": {
+    "message": "alat mod kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "kata yang diblokir"
+  },
+  "mc_kms_cell_filter": {
+    "message": "filter pesan"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k pilih kata · d hapus · / tambah kata"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k pilih baris · 0-3 atur tingkat"
+  },
+  "mc_kms_word_ph": {
+    "message": "tambah kata atau frasa, lalu enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "belum ada kata yang diblokir"
+  },
+  "mc_kms_word_added": {
+    "message": "diblokir: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "blokir dibuka: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "sudah diblokir: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "hapus"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 mati · 3 paling ketat · spam dan teks acak: 0 mati, 1 hidup"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filter tersimpan"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "konten seksual"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "ujaran kebencian"
+  },
+  "mc_kms_cat_violence": {
+    "message": "kekerasan"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "narkoba"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "senjata"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "teks acak"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "masuk ke kick di tab browser, lalu coba lagi"
+  },
+  "mc_kms_no_channel": {
+    "message": "buka dulu tab channel kick"
+  },
+  "mc_kms_err": {
+    "message": "tidak bisa terhubung ke kick — coba lagi"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

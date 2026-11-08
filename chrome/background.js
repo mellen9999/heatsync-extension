@@ -3546,6 +3546,52 @@ async function setKickChatModeViaTab(chatroomId, body) {
 }
 
 const kickChatroomIdCache = new Map()
+// slug -> kick's CHANNEL id (v2 channels .id). The web.kick.com moderation
+// routes key on it; the chat send/delete routes key on the chatroom id instead.
+const kickChannelNumIdCache = new Map()
+
+// The kick moderation routes on web.kick.com that kick's own dashboard calls
+// (read out of its bundle; see kick-mod-calls.js). One whitelist: the relay tab
+// only ever fetches what this returns, never a url the page handed it.
+//   words_get / words_edit   banned words list / add + remove
+//   rules_get / rules_set    kick's message-moderation levels (8 keys)
+//   chatters                 who is chatting now (kick serves it to anyone)
+const KICK_WEB_MOD_OPS = new Set(['words_get', 'words_edit', 'rules_get', 'rules_set', 'chatters'])
+const KICK_RULE_KEYS = [
+  'sexual_content',
+  'hate_speech',
+  'violence',
+  'bullying',
+  'drugs',
+  'weapons',
+  'gibberish',
+  'spam',
+]
+function kickWebModRequest(op, channelId, a = {}) {
+  const id = Number(channelId)
+  if (!Number.isInteger(id) || id <= 0) return null
+  const base = `https://web.kick.com/api/v1/channels/${id}/chat`
+  const word = (w) => ({ word: String(w?.word || '').trim(), permission: String(w?.permission || 'PUBLIC') })
+  if (op === 'words_get') return { method: 'GET', url: `${base}/banned-words` }
+  if (op === 'chatters') return { method: 'GET', url: `${base}/active-chatters` }
+  if (op === 'rules_get') return { method: 'GET', url: `${base}/moderation-rules` }
+  if (op === 'words_edit') {
+    const additions = (Array.isArray(a.add) ? a.add : []).map(word).filter((w) => w.word)
+    const removals = (Array.isArray(a.remove) ? a.remove : []).map(word).filter((w) => w.word)
+    if (!additions.length && !removals.length) return null
+    return { method: 'PUT', url: `${base}/banned-words`, body: { additions, removals } }
+  }
+  if (op === 'rules_set') {
+    const body = {}
+    for (const k of KICK_RULE_KEYS) {
+      const n = Number(a.rules?.[k])
+      if (!Number.isInteger(n) || n < 0 || n > 3) return null
+      body[k] = n
+    }
+    return { method: 'PUT', url: `${base}/moderation-rules`, body }
+  }
+  return null
+}
 const kickUsernameToIdCache = new Map()
 
 // AutoMod hold-queue — per-broadcaster watch-registration throttle. Ext
@@ -10954,6 +11000,7 @@ async function handleMessage(message, sender, sendResponse) {
           sendResponse({ ok: false, error: 'missing params' })
           return
         }
+        const webOp = KICK_WEB_MOD_OPS.has(action)
         const cookie = await browser.cookies.get({ url: 'https://kick.com', name: 'XSRF-TOKEN' })
         if (!cookie?.value) {
           sendResponse({ ok: false, error: 'kick_not_logged_in' })
@@ -10988,6 +11035,33 @@ async function handleMessage(message, sender, sendResponse) {
             }
           }
         }
+        // web.kick.com routes want the CHANNEL id (not the chatroom id).
+        let webReq = null
+        if (webOp) {
+          let channelId = kickChannelNumIdCache.get(slug)
+          if (!channelId) {
+            const resp = await fetchWithTimeout(`https://kick.com/api/v2/channels/${encodeURIComponent(slug)}`)
+            if (resp.ok) {
+              const data = await resp.json().catch(() => null)
+              channelId = data?.id || null
+              if (channelId) {
+                if (kickChannelNumIdCache.size >= 100) {
+                  kickChannelNumIdCache.delete(kickChannelNumIdCache.keys().next().value)
+                }
+                kickChannelNumIdCache.set(slug, channelId)
+              }
+            }
+          }
+          if (!channelId) {
+            sendResponse({ ok: false, error: 'no_channel' })
+            return
+          }
+          webReq = kickWebModRequest(action, channelId, message)
+          if (!webReq) {
+            sendResponse({ ok: false, error: 'missing params' })
+            return
+          }
+        }
         // Prefer a tab actually on the target channel (most likely live + the
         // relevant session) over an arbitrary kick.com tab. The API call is
         // slug-parameterized and cookie-authed so any logged-in kick tab CAN
@@ -11009,6 +11083,7 @@ async function handleMessage(message, sender, sendResponse) {
                 action,
                 slug,
                 chatroomId,
+                web: webReq,
                 username: message.username || '',
                 durationMin: message.durationMin || 0,
                 reason: message.reason || '',

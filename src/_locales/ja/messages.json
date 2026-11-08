@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "マウスの下のチャット行に返信ボタンを表示します。返信は常に行メニューにあります（右クリック、タッチは長押し）"
+  },
+  "mc_kms_title": {
+    "message": "kick モツール"
+  },
+  "mc_kms_cell_words": {
+    "message": "ブロックワード"
+  },
+  "mc_kms_cell_filter": {
+    "message": "メッセージフィルター"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k で単語を選ぶ · d で削除 · / で追加"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k で行を選ぶ · 0-3 でレベル設定"
+  },
+  "mc_kms_word_ph": {
+    "message": "単語やフレーズを入力して enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "ブロックワードはまだありません"
+  },
+  "mc_kms_word_added": {
+    "message": "ブロックしました: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "ブロックを解除しました: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "すでにブロック済み: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "削除"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 オフ · 3 最も厳しい · スパムと意味不明: 0 オフ、1 オン"
+  },
+  "mc_kms_filter_saved": {
+    "message": "フィルターを保存しました"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "性的な内容"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "ヘイトスピーチ"
+  },
+  "mc_kms_cat_violence": {
+    "message": "暴力"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "薬物"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "武器"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "意味不明な文字列"
+  },
+  "mc_kms_cat_spam": {
+    "message": "スパム"
+  },
+  "mc_kms_signin": {
+    "message": "ブラウザのタブで kick にログインしてから、もう一度試してください"
+  },
+  "mc_kms_no_channel": {
+    "message": "先に kick のチャンネルタブを開いてください"
+  },
+  "mc_kms_err": {
+    "message": "kick に接続できません — もう一度試してください"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

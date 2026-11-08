@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "แสดงปุ่มตอบกลับที่แถวแชทใต้เมาส์ การตอบกลับมีในเมนูแถวเสมอ (คลิกขวา, กดค้างบนจอสัมผัส)"
+  },
+  "mc_kms_title": {
+    "message": "เครื่องมือม็อด kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "คำที่ถูกบล็อก"
+  },
+  "mc_kms_cell_filter": {
+    "message": "ตัวกรองข้อความ"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k เลือกคำ · d ลบ · / เพิ่มคำ"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k เลือกแถว · 0-3 ตั้งระดับ"
+  },
+  "mc_kms_word_ph": {
+    "message": "พิมพ์คำหรือวลี แล้วกด enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "ยังไม่มีคำที่ถูกบล็อก"
+  },
+  "mc_kms_word_added": {
+    "message": "บล็อกแล้ว: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "เลิกบล็อกแล้ว: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "บล็อกไว้แล้ว: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "ลบ"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 ปิด · 3 เข้มที่สุด · สแปมและข้อความมั่ว: 0 ปิด, 1 เปิด"
+  },
+  "mc_kms_filter_saved": {
+    "message": "บันทึกตัวกรองแล้ว"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "เนื้อหาทางเพศ"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "ถ้อยคำเกลียดชัง"
+  },
+  "mc_kms_cat_violence": {
+    "message": "ความรุนแรง"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "ยาเสพติด"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "อาวุธ"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "ข้อความมั่ว"
+  },
+  "mc_kms_cat_spam": {
+    "message": "สแปม"
+  },
+  "mc_kms_signin": {
+    "message": "ล็อกอิน kick ในแท็บเบราว์เซอร์ แล้วลองอีกครั้ง"
+  },
+  "mc_kms_no_channel": {
+    "message": "เปิดแท็บช่อง kick ก่อน"
+  },
+  "mc_kms_err": {
+    "message": "เชื่อมต่อ kick ไม่ได้ — ลองอีกครั้ง"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

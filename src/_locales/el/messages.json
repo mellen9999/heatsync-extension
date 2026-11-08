@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "εμφανίζει κουμπί απάντησης στη γραμμή συνομιλίας κάτω από το ποντίκι. η απάντηση υπάρχει πάντα στο μενού γραμμής (δεξί κλικ, παρατεταμένο πάτημα στην αφή)"
+  },
+  "mc_kms_title": {
+    "message": "εργαλεία συντονιστή kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "αποκλεισμένες λέξεις"
+  },
+  "mc_kms_cell_filter": {
+    "message": "φίλτρο μηνυμάτων"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k επιλογή λέξης · d αφαίρεση · / προσθήκη λέξης"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k επιλογή γραμμής · 0-3 ορίζει το επίπεδο"
+  },
+  "mc_kms_word_ph": {
+    "message": "γράψε μια λέξη ή φράση και πάτα enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "δεν υπάρχουν αποκλεισμένες λέξεις ακόμα"
+  },
+  "mc_kms_word_added": {
+    "message": "αποκλείστηκε: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "ξεμπλοκαρίστηκε: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "ήδη αποκλεισμένη: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "αφαίρεση"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 ανενεργό · 3 αυστηρότερο · spam και ασυναρτησίες: 0 ανενεργό, 1 ενεργό"
+  },
+  "mc_kms_filter_saved": {
+    "message": "το φίλτρο αποθηκεύτηκε"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "σεξουαλικό περιεχόμενο"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "ρητορική μίσους"
+  },
+  "mc_kms_cat_violence": {
+    "message": "βία"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "ναρκωτικά"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "όπλα"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "ασυναρτησίες"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "συνδέσου στο kick σε μια καρτέλα του προγράμματος περιήγησης και ξαναδοκίμασε"
+  },
+  "mc_kms_no_channel": {
+    "message": "άνοιξε πρώτα μια καρτέλα καναλιού kick"
+  },
+  "mc_kms_err": {
+    "message": "δεν έγινε σύνδεση με το kick — δοκίμασε ξανά"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

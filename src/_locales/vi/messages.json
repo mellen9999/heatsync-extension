@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "hiện nút trả lời trên dòng chat dưới con trỏ. trả lời luôn có trong menu dòng (chuột phải, nhấn giữ trên cảm ứng)"
+  },
+  "mc_kms_title": {
+    "message": "công cụ mod kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "từ bị chặn"
+  },
+  "mc_kms_cell_filter": {
+    "message": "bộ lọc tin nhắn"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k chọn từ · d xóa · / thêm từ"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k chọn dòng · 0-3 đặt mức"
+  },
+  "mc_kms_word_ph": {
+    "message": "nhập một từ hoặc cụm từ rồi nhấn enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "chưa có từ nào bị chặn"
+  },
+  "mc_kms_word_added": {
+    "message": "đã chặn: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "đã bỏ chặn: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "đã chặn rồi: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "xóa"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 tắt · 3 nghiêm nhất · spam và chữ vô nghĩa: 0 tắt, 1 bật"
+  },
+  "mc_kms_filter_saved": {
+    "message": "đã lưu bộ lọc"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "nội dung tình dục"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "lời lẽ thù ghét"
+  },
+  "mc_kms_cat_violence": {
+    "message": "bạo lực"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "ma túy"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "vũ khí"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "chữ vô nghĩa"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "đăng nhập kick trong một tab trình duyệt rồi thử lại"
+  },
+  "mc_kms_no_channel": {
+    "message": "hãy mở tab kênh kick trước"
+  },
+  "mc_kms_err": {
+    "message": "không kết nối được kick — thử lại"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

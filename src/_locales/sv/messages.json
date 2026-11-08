@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "visa en svarsknapp på chattraden under musen. svar finns alltid i radmenyn (högerklick, långt tryck på touch)"
+  },
+  "mc_kms_title": {
+    "message": "kicks moderatorverktyg"
+  },
+  "mc_kms_cell_words": {
+    "message": "blockerade ord"
+  },
+  "mc_kms_cell_filter": {
+    "message": "meddelandefilter"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k välj ord · d ta bort · / lägg till ord"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k välj rad · 0-3 sätter nivån"
+  },
+  "mc_kms_word_ph": {
+    "message": "lägg till ett ord eller en fras och tryck enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "inga blockerade ord än"
+  },
+  "mc_kms_word_added": {
+    "message": "blockerat: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "avblockerat: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "redan blockerat: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "ta bort"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 av · 3 strängast · spam och rappakalja: 0 av, 1 på"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filter sparat"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "sexuellt innehåll"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "hatretorik"
+  },
+  "mc_kms_cat_violence": {
+    "message": "våld"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "droger"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "vapen"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "rappakalja"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "logga in på kick i en webbläsarflik och försök igen"
+  },
+  "mc_kms_no_channel": {
+    "message": "öppna en kick-kanalflik först"
+  },
+  "mc_kms_err": {
+    "message": "kunde inte nå kick — försök igen"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

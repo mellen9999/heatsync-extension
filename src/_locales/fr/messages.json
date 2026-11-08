@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "affiche un bouton répondre sur la ligne du chat sous la souris. répondre reste toujours dans le menu de la ligne (clic droit, appui long au toucher)"
+  },
+  "mc_kms_title": {
+    "message": "outils de modération kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "mots bloqués"
+  },
+  "mc_kms_cell_filter": {
+    "message": "filtre de messages"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k choisir un mot · d retirer · / ajouter un mot"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k choisir une ligne · 0-3 règle le niveau"
+  },
+  "mc_kms_word_ph": {
+    "message": "tape un mot ou une phrase puis entrée"
+  },
+  "mc_kms_words_empty": {
+    "message": "aucun mot bloqué pour l'instant"
+  },
+  "mc_kms_word_added": {
+    "message": "bloqué : $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "débloqué : $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "déjà bloqué : $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "retirer"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 off · 3 le plus strict · spam et charabia : 0 off, 1 on"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filtre enregistré"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "contenu sexuel"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "discours haineux"
+  },
+  "mc_kms_cat_violence": {
+    "message": "violence"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "drogues"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "armes"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "charabia"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "connecte-toi à kick dans un onglet du navigateur, puis réessaie"
+  },
+  "mc_kms_no_channel": {
+    "message": "ouvre d'abord un onglet de chaîne kick"
+  },
+  "mc_kms_err": {
+    "message": "impossible de joindre kick — réessaie"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

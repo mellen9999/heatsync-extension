@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "마우스 아래의 채팅 줄에 답장 버튼을 표시합니다. 답장은 항상 줄 메뉴에 있습니다 (오른쪽 클릭, 터치는 길게 누르기)"
+  },
+  "mc_kms_title": {
+    "message": "kick 관리자 도구"
+  },
+  "mc_kms_cell_words": {
+    "message": "차단 단어"
+  },
+  "mc_kms_cell_filter": {
+    "message": "메시지 필터"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k 단어 선택 · d 삭제 · / 단어 추가"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k 줄 선택 · 0-3 단계 설정"
+  },
+  "mc_kms_word_ph": {
+    "message": "단어나 문구를 입력하고 enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "차단한 단어가 아직 없어요"
+  },
+  "mc_kms_word_added": {
+    "message": "차단됨: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "차단 해제됨: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "이미 차단됨: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "삭제"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 끔 · 3 가장 엄격 · 스팸과 의미 없는 글: 0 끔, 1 켬"
+  },
+  "mc_kms_filter_saved": {
+    "message": "필터를 저장했어요"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "성적인 내용"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "혐오 발언"
+  },
+  "mc_kms_cat_violence": {
+    "message": "폭력"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "마약"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "무기"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "의미 없는 글"
+  },
+  "mc_kms_cat_spam": {
+    "message": "스팸"
+  },
+  "mc_kms_signin": {
+    "message": "브라우저 탭에서 kick에 로그인한 뒤 다시 시도하세요"
+  },
+  "mc_kms_no_channel": {
+    "message": "먼저 kick 채널 탭을 여세요"
+  },
+  "mc_kms_err": {
+    "message": "kick에 연결할 수 없어요 — 다시 시도하세요"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

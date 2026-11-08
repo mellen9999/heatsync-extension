@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "näytä vastauspainike hiiren alla olevalla chat-rivillä. vastaus on aina rivivalikossa (oikea klikkaus, pitkä painallus kosketuksella)"
+  },
+  "mc_kms_title": {
+    "message": "kickin moderointityökalut"
+  },
+  "mc_kms_cell_words": {
+    "message": "estetyt sanat"
+  },
+  "mc_kms_cell_filter": {
+    "message": "viestisuodatin"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k valitse sana · d poista · / lisää sana"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k valitse rivi · 0-3 asettaa tason"
+  },
+  "mc_kms_word_ph": {
+    "message": "lisää sana tai fraasi ja paina enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "ei vielä estettyjä sanoja"
+  },
+  "mc_kms_word_added": {
+    "message": "estetty: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "esto poistettu: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "jo estetty: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "poista"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 pois · 3 tiukin · roskaposti ja sekasotku: 0 pois, 1 päällä"
+  },
+  "mc_kms_filter_saved": {
+    "message": "suodatin tallennettu"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "seksuaalinen sisältö"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "vihapuhe"
+  },
+  "mc_kms_cat_violence": {
+    "message": "väkivalta"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "huumeet"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "aseet"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "sekasotku"
+  },
+  "mc_kms_cat_spam": {
+    "message": "roskaposti"
+  },
+  "mc_kms_signin": {
+    "message": "kirjaudu kickiin selaimen välilehdellä ja yritä uudelleen"
+  },
+  "mc_kms_no_channel": {
+    "message": "avaa ensin kick-kanavan välilehti"
+  },
+  "mc_kms_err": {
+    "message": "kickiin ei saatu yhteyttä — yritä uudelleen"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

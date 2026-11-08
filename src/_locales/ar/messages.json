@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "أظهر زر رد على صف الدردشة تحت مؤشر الماوس. الرد متاح دائمًا في قائمة الصف (نقر يمين، ضغط مطول على اللمس)"
+  },
+  "mc_kms_title": {
+    "message": "أدوات مشرف kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "الكلمات المحظورة"
+  },
+  "mc_kms_cell_filter": {
+    "message": "مرشّح الرسائل"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k اختر كلمة · d إزالة · / إضافة كلمة"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k اختر صفًا · 0-3 لضبط المستوى"
+  },
+  "mc_kms_word_ph": {
+    "message": "أضف كلمة أو عبارة ثم اضغط enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "لا توجد كلمات محظورة بعد"
+  },
+  "mc_kms_word_added": {
+    "message": "تم الحظر: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "أُلغي الحظر: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "محظورة بالفعل: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "إزالة"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 متوقف · 3 الأشدّ · السبام والرسائل العشوائية: 0 متوقف، 1 مفعّل"
+  },
+  "mc_kms_filter_saved": {
+    "message": "تم حفظ المرشّح"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "محتوى جنسي"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "خطاب كراهية"
+  },
+  "mc_kms_cat_violence": {
+    "message": "عنف"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "مخدرات"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "أسلحة"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "كلام غير مفهوم"
+  },
+  "mc_kms_cat_spam": {
+    "message": "سبام"
+  },
+  "mc_kms_signin": {
+    "message": "سجّل الدخول إلى kick في تبويب المتصفح ثم حاول مجددًا"
+  },
+  "mc_kms_no_channel": {
+    "message": "افتح تبويب قناة kick أولًا"
+  },
+  "mc_kms_err": {
+    "message": "تعذّر الوصول إلى kick — حاول مجددًا"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

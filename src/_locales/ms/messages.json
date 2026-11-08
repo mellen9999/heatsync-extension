@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "papar butang balas pada baris sembang di bawah tetikus. balas sentiasa ada dalam menu baris (klik kanan, tekan lama pada skrin sentuh)"
+  },
+  "mc_kms_title": {
+    "message": "alat mod kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "perkataan disekat"
+  },
+  "mc_kms_cell_filter": {
+    "message": "penapis mesej"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k pilih perkataan · d buang · / tambah perkataan"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k pilih baris · 0-3 tetapkan tahap"
+  },
+  "mc_kms_word_ph": {
+    "message": "tambah perkataan atau frasa, kemudian enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "belum ada perkataan disekat"
+  },
+  "mc_kms_word_added": {
+    "message": "disekat: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "sekatan dibuang: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "sudah disekat: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "buang"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 mati · 3 paling ketat · spam dan teks rawak: 0 mati, 1 hidup"
+  },
+  "mc_kms_filter_saved": {
+    "message": "penapis disimpan"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "kandungan seksual"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "ucapan kebencian"
+  },
+  "mc_kms_cat_violence": {
+    "message": "keganasan"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "dadah"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "senjata"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "teks rawak"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "log masuk ke kick dalam tab pelayar, kemudian cuba lagi"
+  },
+  "mc_kms_no_channel": {
+    "message": "buka tab saluran kick dahulu"
+  },
+  "mc_kms_err": {
+    "message": "tidak dapat menghubungi kick — cuba lagi"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

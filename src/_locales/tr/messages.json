@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "fare altındaki sohbet satırında yanıt düğmesi gösterir. yanıt her zaman satır menüsünde (sağ tık, dokunmatikte uzun basma)"
+  },
+  "mc_kms_title": {
+    "message": "kick mod araçları"
+  },
+  "mc_kms_cell_words": {
+    "message": "engellenen kelimeler"
+  },
+  "mc_kms_cell_filter": {
+    "message": "mesaj filtresi"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k kelime seç · d kaldır · / kelime ekle"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k satır seç · 0-3 seviyeyi ayarlar"
+  },
+  "mc_kms_word_ph": {
+    "message": "bir kelime ya da ifade yaz, sonra enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "henüz engellenen kelime yok"
+  },
+  "mc_kms_word_added": {
+    "message": "engellendi: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "engeli kalktı: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "zaten engelli: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "kaldır"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 kapalı · 3 en sıkı · spam ve anlamsız yazı: 0 kapalı, 1 açık"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filtre kaydedildi"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "cinsel içerik"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "nefret söylemi"
+  },
+  "mc_kms_cat_violence": {
+    "message": "şiddet"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "uyuşturucu"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "silahlar"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "anlamsız yazı"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "tarayıcı sekmesinde kick'e giriş yap, sonra tekrar dene"
+  },
+  "mc_kms_no_channel": {
+    "message": "önce bir kick kanal sekmesi aç"
+  },
+  "mc_kms_err": {
+    "message": "kick'e ulaşılamadı — tekrar dene"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

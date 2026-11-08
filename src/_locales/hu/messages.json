@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "válasz gombot mutat az egér alatti chatsoron. a válasz mindig elérhető a sormenüben (jobb klikk, hosszú érintés)"
+  },
+  "mc_kms_title": {
+    "message": "kick moderátoreszközök"
+  },
+  "mc_kms_cell_words": {
+    "message": "tiltott szavak"
+  },
+  "mc_kms_cell_filter": {
+    "message": "üzenetszűrő"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k szó kiválasztása · d eltávolítás · / szó hozzáadása"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k sor kiválasztása · 0-3 beállítja a szintet"
+  },
+  "mc_kms_word_ph": {
+    "message": "írj be egy szót vagy kifejezést, majd enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "még nincs tiltott szó"
+  },
+  "mc_kms_word_added": {
+    "message": "tiltva: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "tiltás feloldva: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "már tiltva van: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "eltávolítás"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 ki · 3 legszigorúbb · spam és halandzsa: 0 ki, 1 be"
+  },
+  "mc_kms_filter_saved": {
+    "message": "szűrő mentve"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "szexuális tartalom"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "gyűlöletbeszéd"
+  },
+  "mc_kms_cat_violence": {
+    "message": "erőszak"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "drogok"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "fegyverek"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "halandzsa"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "jelentkezz be a kickre egy böngészőlapon, aztán próbáld újra"
+  },
+  "mc_kms_no_channel": {
+    "message": "előbb nyiss meg egy kick-csatorna lapot"
+  },
+  "mc_kms_err": {
+    "message": "a kick nem érhető el — próbáld újra"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

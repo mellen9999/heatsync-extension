@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "在鼠标所在的聊天行显示回复按钮。回复始终在行菜单中（右键，触屏长按）"
+  },
+  "mc_kms_title": {
+    "message": "kick 管理工具"
+  },
+  "mc_kms_cell_words": {
+    "message": "屏蔽词"
+  },
+  "mc_kms_cell_filter": {
+    "message": "消息过滤"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k 选词 · d 删除 · / 添加词"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k 选行 · 0-3 设置级别"
+  },
+  "mc_kms_word_ph": {
+    "message": "输入词或短语，然后按 enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "还没有屏蔽词"
+  },
+  "mc_kms_word_added": {
+    "message": "已屏蔽：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "已取消屏蔽：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "已经屏蔽：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "删除"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 关闭 · 3 最严格 · 垃圾信息和乱码：0 关闭，1 开启"
+  },
+  "mc_kms_filter_saved": {
+    "message": "过滤设置已保存"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "性内容"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "仇恨言论"
+  },
+  "mc_kms_cat_violence": {
+    "message": "暴力"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "毒品"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "武器"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "乱码"
+  },
+  "mc_kms_cat_spam": {
+    "message": "垃圾信息"
+  },
+  "mc_kms_signin": {
+    "message": "请先在浏览器标签页登录 kick，然后重试"
+  },
+  "mc_kms_no_channel": {
+    "message": "请先打开一个 kick 频道标签页"
+  },
+  "mc_kms_err": {
+    "message": "无法连接 kick — 请重试"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "показывает кнопку ответа на строке чата под мышью. ответ всегда есть в меню строки (правый клик, долгое нажатие на сенсоре)"
+  },
+  "mc_kms_title": {
+    "message": "инструменты модератора kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "запрещённые слова"
+  },
+  "mc_kms_cell_filter": {
+    "message": "фильтр сообщений"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k выбрать слово · d убрать · / добавить слово"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k выбрать строку · 0-3 задаёт уровень"
+  },
+  "mc_kms_word_ph": {
+    "message": "введите слово или фразу и нажмите enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "запрещённых слов пока нет"
+  },
+  "mc_kms_word_added": {
+    "message": "запрещено: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "разрешено снова: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "уже запрещено: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "убрать"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 выкл. · 3 строже всего · спам и бессмыслица: 0 выкл., 1 вкл."
+  },
+  "mc_kms_filter_saved": {
+    "message": "фильтр сохранён"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "сексуальный контент"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "язык вражды"
+  },
+  "mc_kms_cat_violence": {
+    "message": "насилие"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "наркотики"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "оружие"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "бессмыслица"
+  },
+  "mc_kms_cat_spam": {
+    "message": "спам"
+  },
+  "mc_kms_signin": {
+    "message": "войдите в kick во вкладке браузера и попробуйте снова"
+  },
+  "mc_kms_no_channel": {
+    "message": "сначала откройте вкладку канала kick"
+  },
+  "mc_kms_err": {
+    "message": "не удалось связаться с kick — попробуйте снова"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

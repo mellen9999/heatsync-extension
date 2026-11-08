@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "vis en svarknapp på chatraden under musen. svar finnes alltid i radmenyen (høyreklikk, langt trykk på touch)"
+  },
+  "mc_kms_title": {
+    "message": "kick-modverktøy"
+  },
+  "mc_kms_cell_words": {
+    "message": "blokkerte ord"
+  },
+  "mc_kms_cell_filter": {
+    "message": "meldingsfilter"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k velg ord · d fjern · / legg til ord"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k velg rad · 0-3 setter nivået"
+  },
+  "mc_kms_word_ph": {
+    "message": "legg til et ord eller en frase, trykk enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "ingen blokkerte ord ennå"
+  },
+  "mc_kms_word_added": {
+    "message": "blokkert: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "ikke lenger blokkert: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "allerede blokkert: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "fjern"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 av · 3 strengest · spam og tullete tekst: 0 av, 1 på"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filter lagret"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "seksuelt innhold"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "hatytringer"
+  },
+  "mc_kms_cat_violence": {
+    "message": "vold"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "narkotika"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "våpen"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "tullete tekst"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "logg inn på kick i en nettleserfane og prøv igjen"
+  },
+  "mc_kms_no_channel": {
+    "message": "åpne en kick-kanalfane først"
+  },
+  "mc_kms_err": {
+    "message": "får ikke kontakt med kick — prøv igjen"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

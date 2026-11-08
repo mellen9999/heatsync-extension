@@ -6630,5 +6630,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "show a reply button on the chat row under your mouse. reply is always in the row menu (right-click, long-press on touch)"
+  },
+  "mc_kms_title": {
+    "message": "kick mod tools"
+  },
+  "mc_kms_cell_words": {
+    "message": "blocked words"
+  },
+  "mc_kms_cell_filter": {
+    "message": "message filter"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k pick a word · d remove · / add a word"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k pick a row · 0-3 set the level"
+  },
+  "mc_kms_word_ph": {
+    "message": "add a word or phrase, then enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "no blocked words yet"
+  },
+  "mc_kms_word_added": {
+    "message": "blocked: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "unblocked: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "already blocked: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "remove"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 off · 3 strictest · spam and gibberish: 0 off, 1 on"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filter saved"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "sexual content"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "hate speech"
+  },
+  "mc_kms_cat_violence": {
+    "message": "violence"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "drugs"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "weapons"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "gibberish"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "log in to kick in a browser tab, then try again"
+  },
+  "mc_kms_no_channel": {
+    "message": "open a kick channel tab first"
+  },
+  "mc_kms_err": {
+    "message": "couldn't reach kick — try again"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

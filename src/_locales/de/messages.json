@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "zeigt einen antwort-button an der chatzeile unter der maus. antworten geht immer im zeilenmenü (rechtsklick, langes drücken am touchscreen)"
+  },
+  "mc_kms_title": {
+    "message": "kick-modtools"
+  },
+  "mc_kms_cell_words": {
+    "message": "gesperrte wörter"
+  },
+  "mc_kms_cell_filter": {
+    "message": "nachrichtenfilter"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k wort wählen · d entfernen · / wort hinzufügen"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k zeile wählen · 0-3 setzt die stufe"
+  },
+  "mc_kms_word_ph": {
+    "message": "wort oder satz eingeben, dann enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "noch keine gesperrten wörter"
+  },
+  "mc_kms_word_added": {
+    "message": "gesperrt: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "entsperrt: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "schon gesperrt: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "entfernen"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 aus · 3 am strengsten · spam und kauderwelsch: 0 aus, 1 an"
+  },
+  "mc_kms_filter_saved": {
+    "message": "filter gespeichert"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "sexuelle inhalte"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "hassrede"
+  },
+  "mc_kms_cat_violence": {
+    "message": "gewalt"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "drogen"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "waffen"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "kauderwelsch"
+  },
+  "mc_kms_cat_spam": {
+    "message": "spam"
+  },
+  "mc_kms_signin": {
+    "message": "melde dich in einem browser-tab bei kick an und versuche es nochmal"
+  },
+  "mc_kms_no_channel": {
+    "message": "öffne zuerst einen kick-kanal-tab"
+  },
+  "mc_kms_err": {
+    "message": "kick nicht erreichbar — nochmal versuchen"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

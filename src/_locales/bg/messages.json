@@ -6613,5 +6613,101 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "показва бутон за отговор на реда под мишката. отговорът винаги е в менюто на реда (десен клик, дълго натискане на тъч)"
+  },
+  "mc_kms_title": {
+    "message": "модераторски инструменти за kick"
+  },
+  "mc_kms_cell_words": {
+    "message": "забранени думи"
+  },
+  "mc_kms_cell_filter": {
+    "message": "филтър за съобщения"
+  },
+  "mc_kms_keys_words": {
+    "message": "j/k избор на дума · d премахване · / добавяне на дума"
+  },
+  "mc_kms_keys_filter": {
+    "message": "j/k избор на ред · 0-3 задава нивото"
+  },
+  "mc_kms_word_ph": {
+    "message": "добавете дума или фраза, после enter"
+  },
+  "mc_kms_words_empty": {
+    "message": "още няма забранени думи"
+  },
+  "mc_kms_word_added": {
+    "message": "забранено: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_removed": {
+    "message": "разрешено отново: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_exists": {
+    "message": "вече е забранено: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_kms_word_remove": {
+    "message": "премахни"
+  },
+  "mc_kms_filter_scale": {
+    "message": "0 изкл. · 3 най-строго · спам и безсмислици: 0 изкл., 1 вкл."
+  },
+  "mc_kms_filter_saved": {
+    "message": "филтърът е запазен"
+  },
+  "mc_kms_cat_sexual_content": {
+    "message": "сексуално съдържание"
+  },
+  "mc_kms_cat_hate_speech": {
+    "message": "език на омразата"
+  },
+  "mc_kms_cat_violence": {
+    "message": "насилие"
+  },
+  "mc_kms_cat_drugs": {
+    "message": "наркотици"
+  },
+  "mc_kms_cat_weapons": {
+    "message": "оръжия"
+  },
+  "mc_kms_cat_gibberish": {
+    "message": "безсмислен текст"
+  },
+  "mc_kms_cat_spam": {
+    "message": "спам"
+  },
+  "mc_kms_signin": {
+    "message": "влезте в kick в раздел на браузъра и опитайте отново"
+  },
+  "mc_kms_no_channel": {
+    "message": "първо отворете раздел с канал в kick"
+  },
+  "mc_kms_err": {
+    "message": "kick не отговаря — опитайте отново"
+  },
+  "mc_kms_role_mod": {
+    "message": "mod"
+  },
+  "mc_kms_role_vip": {
+    "message": "vip"
+  },
+  "mc_kms_role_og": {
+    "message": "og"
+  },
+  "mc_kms_role_bot": {
+    "message": "bot"
   }
 }

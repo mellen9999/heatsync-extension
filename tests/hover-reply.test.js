@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { SETTINGS } from '../src/lib/settings-schema.js'
+import { mainSource } from './main-src.js'
 
 /**
  * hoverReply: opt-in ↪ on the hovered row, default OFF. hover-reply.js runs for
@@ -12,7 +13,7 @@ const ROOT = join(import.meta.dir, '..')
 const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8')
 const SRC = read('src', 'multichat', 'hover-reply.js')
 const INPUT = read('src', 'multichat', 'input.js')
-const MAIN = read('src', 'multichat', 'main.js')
+const MAIN = mainSource()
 
 let Window = null
 try {

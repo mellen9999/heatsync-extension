@@ -550,6 +550,7 @@ describe('filter rules carry a sound and a volume', () => {
     expect(evaluateFilterRules(msg, null)).toEqual({
       hide: false,
       highlight: '#ff0000',
+      notify: false,
       sound: 'custom',
       soundId: 'r1',
       soundVolume: 65,
@@ -580,6 +581,7 @@ describe('filter rules carry a sound and a volume', () => {
     expect(evaluateFilterRules(msg, null)).toEqual({
       hide: true,
       highlight: null,
+      notify: false,
       sound: null,
       soundId: null,
       soundVolume: null,

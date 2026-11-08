@@ -907,6 +907,7 @@ const MULTICHAT_MODULES = [
   'chat-position.js',
   'panel-actions.js',
   'settings-ui.js',
+  'filter-rules-ui.js',
   'sound-ui.js',
   'mention-rules.js',
   'layout-link.js',

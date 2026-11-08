@@ -1251,13 +1251,16 @@ function handleYoutubeChatMsg(msg) {
   }
   // Highlight-rule audio cue — once, on live youtube arrival.
   if (_frYt?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frYt)
-  const isMent = isMention(ytMsg)
-  bumpStreamStats(ytChannelHint || ytEmoteKey, ytMsg, isMent)
+  // a highlight rule's "also notify me" lands in the mentions tab too, no login needed
+  const _mentReal = isMention(ytMsg)
+  const _mentRule = !_mentReal && ruleAlertsMention(ytMsg, _frYt)
+  const isMent = _mentReal || _mentRule
+  bumpStreamStats(ytChannelHint || ytEmoteKey, ytMsg, _mentReal)
   if (isMent) {
     mentionsBuffer.push(ytMsg)
     if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER)
     persistMentions()
-    notifyMention(ytMsg)
+    notifyMention(ytMsg, _mentRule)
     noteSeenEvent('mentions', ytMsg.time || Date.now())
     if (currentTab === 'mentions') {
       bumpSeen('mentions')

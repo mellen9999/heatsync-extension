@@ -1098,13 +1098,16 @@ async function init() {
     // Highlight-rule audio cue — once, on live arrival (this path is live-only;
     // history replay doesn't reach here). Own/hidden already returned above.
     if (_frTw?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frTw)
-    const isMent = isMention(msg)
-    bumpStreamStats(msg.channel, msg, isMent)
+    // a highlight rule's "also notify me" lands in the mentions tab too, no login needed
+    const _mentReal = isMention(msg)
+    const _mentRule = !_mentReal && ruleAlertsMention(msg, _frTw)
+    const isMent = _mentReal || _mentRule
+    bumpStreamStats(msg.channel, msg, _mentReal)
     if (isMent) {
       mentionsBuffer.push(msg)
       if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER)
       persistMentions()
-      notifyMention(msg)
+      notifyMention(msg, _mentRule)
       noteSeenEvent('mentions', msg.time || Date.now())
 
       if (currentTab === 'mentions') {
@@ -1203,13 +1206,16 @@ async function init() {
     }
     // Highlight-rule audio cue — once, on live kick arrival.
     if (_frKi?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frKi)
-    const isMent = isMention(msg)
-    bumpStreamStats(msg.channel, msg, isMent)
+    // a highlight rule's "also notify me" lands in the mentions tab too, no login needed
+    const _mentReal = isMention(msg)
+    const _mentRule = !_mentReal && ruleAlertsMention(msg, _frKi)
+    const isMent = _mentReal || _mentRule
+    bumpStreamStats(msg.channel, msg, _mentReal)
     if (isMent) {
       mentionsBuffer.push(msg)
       if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER)
       persistMentions()
-      notifyMention(msg)
+      notifyMention(msg, _mentRule)
       noteSeenEvent('mentions', msg.time || Date.now())
 
       if (currentTab === 'mentions') {

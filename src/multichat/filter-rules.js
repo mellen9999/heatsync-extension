@@ -339,6 +339,9 @@ function _frCompileOne(rule) {
     color: action === 'highlight' && rule.color && /^#[0-9a-f]{3,8}$/i.test(rule.color) ? rule.color : null,
     sound: action === 'highlight' && typeof rule.sound === 'string' && FR_SOUNDS.has(rule.sound) ? rule.sound : null,
     soundVolume: null,
+    // "also notify me": a matching highlight acts as a mention (mentions tab, tab
+    // flash, desktop notice) with no heatsync login. Strictly boolean, hide never.
+    notify: action === 'highlight' && rule.notify === true,
     scope,
     matchType: m.type,
     caseSensitive: cs,
@@ -432,36 +435,43 @@ function compileFilterRules(rules) {
  * Hot path — no per-call allocation when there are no rules for this scope.
  * @param {object} m           message object (text, user, badges, isFirstMsg, isAction, bits, replyTo)
  * @param {string|null} channelKey  channel tab id (ch.id) or null
- * @returns {{ hide: boolean, highlight: string|null, sound: string|null, soundId: string|null, soundVolume: number|null }}
+ * @returns {{ hide: boolean, highlight: string|null, notify: boolean, sound: string|null, soundId: string|null, soundVolume: number|null }}
+ *   notify: some matching highlight rule asked to also notify (see _frCompileOne).
  *   sound is the winning highlight rule's sound name; soundId (the rule's id,
  *   which keys its picked file) and soundVolume (0..100, null = shared volume)
  *   ride along so the player needs nothing else from the rule.
  */
 function evaluateFilterRules(m, channelKey) {
   const hasChannel = channelKey && _frByChannel.has(channelKey)
-  if (!_frAllRules.length && !hasChannel) return _frVerdict(false, null, null)
+  if (!_frAllRules.length && !hasChannel) return _frVerdict(false, null, null, false)
 
   const rules = hasChannel ? _frMergedByChannel.get(channelKey) : _frAllRules
 
   let highlight = null
   let soundRule = null
+  let notify = false
   for (let i = 0; i < rules.length; i++) {
     const rule = rules[i]
     if (!_frTest(rule, m)) continue
-    if (rule.action === 'hide') return _frVerdict(true, null, null)
-    if (rule.action === 'highlight' && highlight === null) {
-      highlight = rule.color
-      soundRule = rule
+    if (rule.action === 'hide') return _frVerdict(true, null, null, false)
+    if (rule.action === 'highlight') {
+      // the alert is every matching rule's own ask, not just the colour winner's
+      if (rule.notify) notify = true
+      if (highlight === null) {
+        highlight = rule.color
+        soundRule = rule
+      }
     }
   }
-  return _frVerdict(false, highlight, soundRule)
+  return _frVerdict(false, highlight, soundRule, notify)
 }
 
 // One verdict shape everywhere, so callers read the same fields on every path.
-function _frVerdict(hide, highlight, rule) {
+function _frVerdict(hide, highlight, rule, notify) {
   return {
     hide,
     highlight,
+    notify: !!notify,
     sound: rule ? rule.sound : null,
     soundId: rule?.sound ? rule.id : null,
     soundVolume: rule?.sound ? rule.soundVolume : null,
@@ -499,4 +509,35 @@ function _frTest(rule, m) {
   }
 }
 
-export { compileFilterRules, evaluateFilterRules }
+// How many of the newest chat rows the settings form tries an unsaved rule on.
+const FR_PREVIEW_LIMIT = 200
+
+/**
+ * Dry-run ONE unsaved rule against buffered rows — the settings form's live
+ * "matches N of the last 200 messages". It compiles with _frCompileOne and tests
+ * with _frTest, the same two functions the live path uses, so the count is
+ * exactly what saving the rule would catch. Chat rows only: notices, stream
+ * events and whispers carry a `type` and never reach evaluateFilterRules.
+ * @param {object} rule  a raw rule (match, action, scope…); id/enabled are forced
+ * @param {Array} msgs   buffered rows, oldest first
+ * @param {number} [limit]  newest chat rows to try, default FR_PREVIEW_LIMIT
+ * @returns {{ ok: false } | { ok: true, hits: number, total: number }}
+ *   ok:false = the rule would not compile (an expression that does not parse, an empty value)
+ */
+function previewFilterRule(rule, msgs, limit = FR_PREVIEW_LIMIT) {
+  const c = _frCompileOne({ ...rule, id: 'preview', enabled: true })
+  if (!c) return { ok: false }
+  let hits = 0
+  let total = 0
+  if (Array.isArray(msgs)) {
+    for (let i = msgs.length - 1; i >= 0 && total < limit; i--) {
+      const m = msgs[i]
+      if (!m || m.type || typeof m.text !== 'string') continue
+      total++
+      if (_frTest(c, m)) hits++
+    }
+  }
+  return { ok: true, hits, total }
+}
+
+export { compileFilterRules, evaluateFilterRules, previewFilterRule }

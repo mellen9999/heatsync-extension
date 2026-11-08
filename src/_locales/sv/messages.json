@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "visa en svarsknapp på chattraden under musen. svar finns alltid i radmenyn (högerklick, långt tryck på touch)"
+  },
+  "mc_tour_aria": {
+    "message": "kort rundtur"
+  },
+  "mc_tour_title": {
+    "message": "välkommen! de här sakerna är avstängda från start. klicka på en för att slå på den"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "visar klockslaget bredvid varje meddelande"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "peka på ett meddelande och klicka på ↪ för att svara"
+  },
+  "mc_tour_vi_tip": {
+    "message": "vim-tangenter för meddelanderutan: esc flyttar dig, i skriver igen. hoppa över om vim är nytt för dig"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m och ⛔ dyker upp när du pekar på ett meddelande. fler knappar finns i inställningar"
+  },
+  "mc_tour_more": {
+    "message": "mer i inställningar →"
+  },
+  "mc_tour_done": {
+    "message": "uppfattat"
+  },
+  "mc_tour_done_tip": {
+    "message": "stänger det här för gott. för att se det igen: inställningar › ?"
+  },
+  "mc_set_tour": {
+    "message": "kort rundtur"
+  },
+  "mc_set_tour_tip": {
+    "message": "det lilla introkortet från ditt första besök"
+  },
+  "mc_set_tour_btn": {
+    "message": "visa rundturen igen"
+  },
+  "welcome_get_title": {
+    "message": "det här får du"
+  },
+  "welcome_get_1": {
+    "message": "twitch-, kick- och youtube-chatt på ett ställe, med alla emotes (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "du behöver inget konto för att läsa chatten"
+  },
+  "welcome_get_3": {
+    "message": "ett konto ger dig egna emotes och inställningar på varje enhet"
+  },
+  "welcome_start_title": {
+    "message": "så kommer du igång"
+  },
+  "welcome_start_1": {
+    "message": "öppna vilken ström som helst på twitch, kick eller youtube. heatsync-chatten dyker upp av sig själv"
+  },
+  "welcome_start_2": {
+    "message": "ett litet kort visar vad som är avstängt. klicka på det du vill ha"
+  },
+  "welcome_start_3": {
+    "message": "för att chatta loggar du in på sajten som vanligt och skriver i rutan längst ner"
   }
 }

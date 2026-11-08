@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "zobrazí tlačítko odpovědi na řádku pod myší. odpověď je vždy v nabídce řádku (pravé tlačítko, dlouhý stisk na dotyku)"
+  },
+  "mc_tour_aria": {
+    "message": "uvítací prohlídka"
+  },
+  "mc_tour_title": {
+    "message": "vítej! tyhle věci jsou na začátku vypnuté. klikni na některou a zapni ji"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "zobrazí čas u každé zprávy"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "ukaž na zprávu a klikni na ↪ pro odpověď"
+  },
+  "mc_tour_vi_tip": {
+    "message": "klávesy vimu pro pole zprávy: esc pohybuje, i zase píše. přeskoč, pokud vim neznáš"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m a ⛔ se objeví, když na zprávu ukážeš. víc tlačítek najdeš v nastavení"
+  },
+  "mc_tour_more": {
+    "message": "víc v nastavení →"
+  },
+  "mc_tour_done": {
+    "message": "jasné"
+  },
+  "mc_tour_done_tip": {
+    "message": "zavře to napořád. znovu to uvidíš v: nastavení › ?"
+  },
+  "mc_set_tour": {
+    "message": "uvítací prohlídka"
+  },
+  "mc_set_tour_tip": {
+    "message": "malá úvodní karta z tvé první návštěvy"
+  },
+  "mc_set_tour_btn": {
+    "message": "ukázat prohlídku znovu"
+  },
+  "welcome_get_title": {
+    "message": "co dostaneš"
+  },
+  "welcome_get_1": {
+    "message": "chat z twitche, kicku a youtube na jednom místě, se všemi emotes (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "ke čtení chatu nepotřebuješ účet"
+  },
+  "welcome_get_3": {
+    "message": "účet přidá tvoje emotes a nastavení na každém zařízení"
+  },
+  "welcome_start_title": {
+    "message": "jak začít"
+  },
+  "welcome_start_1": {
+    "message": "otevři jakýkoli stream na twitchi, kicku nebo youtube. chat heatsync se objeví sám"
+  },
+  "welcome_start_2": {
+    "message": "malá karta ukazuje, co je vypnuté. klikni na to, co chceš"
+  },
+  "welcome_start_3": {
+    "message": "pro psaní se přihlas na webu jako obvykle a piš do pole dole"
   }
 }

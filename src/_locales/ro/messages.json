@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "afișează un buton de răspuns pe rândul de chat de sub mouse. răspunsul e mereu în meniul rândului (clic dreapta, apăsare lungă pe touch)"
+  },
+  "mc_tour_aria": {
+    "message": "tur de bun venit"
+  },
+  "mc_tour_title": {
+    "message": "bun venit! astea pornesc oprite. dă clic pe una ca s-o pornești"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "arată ora lângă fiecare mesaj"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "arată spre un mesaj și dă clic pe ↪ ca să răspunzi"
+  },
+  "mc_tour_vi_tip": {
+    "message": "taste vim pentru caseta de mesaj: esc te mută, i scrie din nou. sari peste dacă vim e nou pentru tine"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m și ⛔ apar când arăți spre un mesaj. mai multe butoane găsești în setări"
+  },
+  "mc_tour_more": {
+    "message": "mai multe în setări →"
+  },
+  "mc_tour_done": {
+    "message": "am înțeles"
+  },
+  "mc_tour_done_tip": {
+    "message": "închide asta pentru totdeauna. ca s-o vezi iar: setări › ?"
+  },
+  "mc_set_tour": {
+    "message": "tur de bun venit"
+  },
+  "mc_set_tour_tip": {
+    "message": "cardul mic de introducere de la prima ta vizită"
+  },
+  "mc_set_tour_btn": {
+    "message": "arată turul din nou"
+  },
+  "welcome_get_title": {
+    "message": "ce primești"
+  },
+  "welcome_get_1": {
+    "message": "chatul de pe twitch, kick și youtube într-un singur loc, cu toate emoturile (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "pentru a citi chatul nu ai nevoie de cont"
+  },
+  "welcome_get_3": {
+    "message": "un cont adaugă emoturile și setările tale pe fiecare dispozitiv"
+  },
+  "welcome_start_title": {
+    "message": "cum începi"
+  },
+  "welcome_start_1": {
+    "message": "deschide orice stream de pe twitch, kick sau youtube. chatul heatsync apare singur"
+  },
+  "welcome_start_2": {
+    "message": "un card mic arată ce e oprit. dă clic pe ce vrei"
+  },
+  "welcome_start_3": {
+    "message": "ca să scrii, conectează-te pe site ca de obicei și tastează în caseta de jos"
   }
 }

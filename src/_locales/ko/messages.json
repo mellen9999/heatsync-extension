@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "마우스 아래의 채팅 줄에 답장 버튼을 표시합니다. 답장은 항상 줄 메뉴에 있습니다 (오른쪽 클릭, 터치는 길게 누르기)"
+  },
+  "mc_tour_aria": {
+    "message": "환영 투어"
+  },
+  "mc_tour_title": {
+    "message": "환영해요! 이 기능들은 처음엔 꺼져 있어요. 켜고 싶은 걸 클릭하세요"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "모든 메시지 옆에 시간을 보여줘요"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "메시지에 마우스를 올리고 ↪ 를 클릭하면 답장해요"
+  },
+  "mc_tour_vi_tip": {
+    "message": "메시지 입력칸용 vim 키: esc로 이동, i로 다시 입력. vim이 낯설면 건너뛰세요"
+  },
+  "mc_tour_mod_tip": {
+    "message": "메시지에 마우스를 올리면 x, 10m, ⛔ 가 나타나요. 더 많은 버튼은 설정에서 고르세요"
+  },
+  "mc_tour_more": {
+    "message": "설정에서 더 보기 →"
+  },
+  "mc_tour_done": {
+    "message": "알겠어요"
+  },
+  "mc_tour_done_tip": {
+    "message": "이걸 완전히 닫아요. 다시 보려면: 설정 › ?"
+  },
+  "mc_set_tour": {
+    "message": "환영 투어"
+  },
+  "mc_set_tour_tip": {
+    "message": "첫 방문 때 본 작은 소개 카드"
+  },
+  "mc_set_tour_btn": {
+    "message": "투어 다시 보기"
+  },
+  "welcome_get_title": {
+    "message": "이런 걸 얻어요"
+  },
+  "welcome_get_1": {
+    "message": "twitch, kick, youtube 채팅을 한곳에서, 모든 이모트(7tv, bttv, ffz, heatsync)와 함께"
+  },
+  "welcome_get_2": {
+    "message": "채팅을 읽는 데는 계정이 필요 없어요"
+  },
+  "welcome_get_3": {
+    "message": "계정이 있으면 내 이모트와 설정을 모든 기기에서 쓸 수 있어요"
+  },
+  "welcome_start_title": {
+    "message": "시작하는 법"
+  },
+  "welcome_start_1": {
+    "message": "twitch, kick, youtube 방송 아무거나 여세요. heatsync 채팅이 저절로 나타나요"
+  },
+  "welcome_start_2": {
+    "message": "작은 카드가 꺼져 있는 것을 보여줘요. 원하는 걸 클릭하세요"
+  },
+  "welcome_start_3": {
+    "message": "채팅하려면 평소처럼 사이트에 로그인한 뒤 아래 입력칸에 입력하세요"
   }
 }

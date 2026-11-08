@@ -539,6 +539,19 @@ function _renderSearchResults() {
       actions.map((a) => a.html).join('') +
       '</div>'
   }
+  var helpActions = _setHelpActionRows()
+  var helpHits = helpActions.filter((a) => _rowMatches(a.hay, tokens))
+  total += helpActions.length
+  if (helpHits.length) {
+    count += helpHits.length
+    html +=
+      '<div class="hs-mc-settings-group">' +
+      '<div class="hs-mc-set-search-hdr" data-set-jump="help|">' +
+      escapeHtml(_setCatLabel('help')) +
+      '</div>' +
+      helpHits.map((a) => a.html).join('') +
+      '</div>'
+  }
   if (!count)
     html =
       '<div class="hs-mc-setting-row hs-mc-setting-note" style="color:#ffffff">' + t('common_no_matches') + '</div>'
@@ -621,6 +634,27 @@ const _SET_ACTION_ROWS = [
       '</div>',
   },
 ]
+
+// The first-run tour's way back. Lives in settings › ? (and in search): a person
+// who closed the card by accident, or wants it again, looks for help.
+function _setHelpActionRows() {
+  return [
+    {
+      hay: 'tour welcome intro introduction first run start guide help show again',
+      html:
+        '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
+        '<span class="hs-mc-setting-label" data-tip="' +
+        escapeHtml(t('mc_set_tour_tip')) +
+        '">' +
+        t('mc_set_tour') +
+        '</span>' +
+        '<button class="hs-mc-settings-btn" data-action="show-tour" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+        t('mc_set_tour_btn') +
+        '</button>' +
+        '</div>',
+    },
+  ]
+}
 
 function _renderBackupGroup() {
   return (
@@ -1165,6 +1199,9 @@ function _renderHelpPane() {
   }
   return (
     '<div class="hs-mc-set-help-pane">' +
+    _setHelpActionRows()
+      .map((a) => a.html)
+      .join('') +
     '<div class="hs-mc-set-help-title">' +
     t('mc_set_h_keys') +
     '</div>' +
@@ -1497,6 +1534,8 @@ function renderSettingsTab() {
         _exportAllSettings()
       } else if (action === 'import-settings') {
         _importAllSettings()
+      } else if (action === 'show-tour' && typeof tourReopen === 'function') {
+        tourReopen()
       }
       return
     }

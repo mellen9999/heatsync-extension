@@ -10644,6 +10644,8 @@
     if (editingChannel) return
     // The pinned bar follows the tab on screen (same rooms inside 30s: a repaint only)
     if (typeof pinSync === 'function') pinSync(id)
+    // The first-run tour card sits beside it; once it is seen this is one boolean check
+    if (typeof tourSync === 'function') tourSync(id)
     // Idempotent — ensures mod toolbar hover works even when extension reloads
     // mid-session (the overlay-init setTimeout doesn't re-fire).
     const _msgsForMod = document.getElementById('hs-mc-messages')
@@ -14468,6 +14470,13 @@
         try {
           document.documentElement.dataset.hsAutomodInit = `err:${e?.message || 'unknown'}`
         } catch (_) {}
+      }
+
+      // First-run tour card (tour.js): reads its seen flag, then draws on the next render
+      try {
+        if (typeof initTour === 'function') initTour()
+      } catch (e) {
+        log('tour init failed:', e?.message)
       }
 
       // /live_chat pop-out: subscribe to THIS window's stream (?v=<id>) and open

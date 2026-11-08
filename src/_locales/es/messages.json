@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "muestra un botón de responder en la fila del chat bajo el ratón. responder siempre está en el menú de la fila (clic derecho, pulsación larga en táctil)"
+  },
+  "mc_tour_aria": {
+    "message": "recorrido de bienvenida"
+  },
+  "mc_tour_title": {
+    "message": "¡hola! estas cosas empiezan apagadas. haz clic en una para encenderla"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "muestra la hora junto a cada mensaje"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "apunta a un mensaje y haz clic en ↪ para responderlo"
+  },
+  "mc_tour_vi_tip": {
+    "message": "teclas vim para el cuadro de mensaje: esc te mueve, i vuelve a escribir. sáltalo si vim es nuevo para ti"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m y ⛔ aparecen al apuntar a un mensaje. hay más botones en ajustes"
+  },
+  "mc_tour_more": {
+    "message": "más en ajustes →"
+  },
+  "mc_tour_done": {
+    "message": "entendido"
+  },
+  "mc_tour_done_tip": {
+    "message": "cierra esto para siempre. para verlo otra vez: ajustes › ?"
+  },
+  "mc_set_tour": {
+    "message": "recorrido de bienvenida"
+  },
+  "mc_set_tour_tip": {
+    "message": "la tarjeta de introducción de tu primera visita"
+  },
+  "mc_set_tour_btn": {
+    "message": "mostrar el recorrido otra vez"
+  },
+  "welcome_get_title": {
+    "message": "qué obtienes"
+  },
+  "welcome_get_1": {
+    "message": "el chat de twitch, kick y youtube en un solo lugar, con todos los emotes (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "para leer el chat no necesitas cuenta"
+  },
+  "welcome_get_3": {
+    "message": "una cuenta añade tus propios emotes y ajustes en cada dispositivo"
+  },
+  "welcome_start_title": {
+    "message": "cómo empezar"
+  },
+  "welcome_start_1": {
+    "message": "abre cualquier directo de twitch, kick o youtube. el chat de heatsync aparece solo"
+  },
+  "welcome_start_2": {
+    "message": "una tarjeta pequeña muestra lo que está apagado. haz clic en lo que quieras"
+  },
+  "welcome_start_3": {
+    "message": "para chatear, inicia sesión en el sitio como siempre y escribe en el cuadro de abajo"
   }
 }

@@ -6630,5 +6630,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "show a reply button on the chat row under your mouse. reply is always in the row menu (right-click, long-press on touch)"
+  },
+  "mc_tour_aria": {
+    "message": "welcome tour"
+  },
+  "mc_tour_title": {
+    "message": "welcome! these start off. click one to turn it on"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "show the time next to every message"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "point at a message, then click ↪ to reply to it"
+  },
+  "mc_tour_vi_tip": {
+    "message": "vim keys for the message box: esc moves around, i types again. skip it if vim is new to you"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m and ⛔ pop up when you point at a message. pick more in settings"
+  },
+  "mc_tour_more": {
+    "message": "more in settings →"
+  },
+  "mc_tour_done": {
+    "message": "got it"
+  },
+  "mc_tour_done_tip": {
+    "message": "close this for good. to see it again: settings › ?"
+  },
+  "mc_set_tour": {
+    "message": "welcome tour"
+  },
+  "mc_set_tour_tip": {
+    "message": "the little intro card you saw on your first visit"
+  },
+  "mc_set_tour_btn": {
+    "message": "show the tour again"
+  },
+  "welcome_get_title": {
+    "message": "what you get"
+  },
+  "welcome_get_1": {
+    "message": "twitch, kick and youtube chat in one place, with every emote (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "reading chat needs no account"
+  },
+  "welcome_get_3": {
+    "message": "an account adds your own emotes and settings, on every device"
+  },
+  "welcome_start_title": {
+    "message": "how to start"
+  },
+  "welcome_start_1": {
+    "message": "open any twitch, kick or youtube stream. heatsync chat appears by itself"
+  },
+  "welcome_start_2": {
+    "message": "a small card shows what's switched off. click what you want"
+  },
+  "welcome_start_3": {
+    "message": "to chat, log in on the site as usual, then type in the box at the bottom"
   }
 }

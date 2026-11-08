@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "affiche un bouton répondre sur la ligne du chat sous la souris. répondre reste toujours dans le menu de la ligne (clic droit, appui long au toucher)"
+  },
+  "mc_tour_aria": {
+    "message": "visite de bienvenue"
+  },
+  "mc_tour_title": {
+    "message": "bienvenue ! ces options sont désactivées au départ. clique sur une pour l'activer"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "affiche l'heure à côté de chaque message"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "pointe un message, puis clique sur ↪ pour y répondre"
+  },
+  "mc_tour_vi_tip": {
+    "message": "touches vim pour la zone de message : esc te déplace, i réécrit. passe si vim est nouveau pour toi"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m et ⛔ apparaissent quand tu pointes un message. d'autres boutons dans les réglages"
+  },
+  "mc_tour_more": {
+    "message": "plus dans les réglages →"
+  },
+  "mc_tour_done": {
+    "message": "compris"
+  },
+  "mc_tour_done_tip": {
+    "message": "ferme ceci pour de bon. pour le revoir : réglages › ?"
+  },
+  "mc_set_tour": {
+    "message": "visite de bienvenue"
+  },
+  "mc_set_tour_tip": {
+    "message": "la petite carte d'intro de ta première visite"
+  },
+  "mc_set_tour_btn": {
+    "message": "revoir la visite"
+  },
+  "welcome_get_title": {
+    "message": "ce que tu obtiens"
+  },
+  "welcome_get_1": {
+    "message": "le chat de twitch, kick et youtube au même endroit, avec toutes les emotes (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "lire le chat ne demande aucun compte"
+  },
+  "welcome_get_3": {
+    "message": "un compte ajoute tes propres emotes et réglages sur chaque appareil"
+  },
+  "welcome_start_title": {
+    "message": "comment démarrer"
+  },
+  "welcome_start_1": {
+    "message": "ouvre n'importe quel live twitch, kick ou youtube. le chat heatsync apparaît tout seul"
+  },
+  "welcome_start_2": {
+    "message": "une petite carte montre ce qui est désactivé. clique sur ce que tu veux"
+  },
+  "welcome_start_3": {
+    "message": "pour écrire, connecte-toi au site comme d'habitude, puis tape dans la zone en bas"
   }
 }

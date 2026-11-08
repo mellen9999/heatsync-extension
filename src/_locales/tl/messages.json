@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "magpakita ng reply button sa chat row sa ilalim ng mouse. laging nasa row menu ang reply (right-click, matagal na pindot sa touch)"
+  },
+  "mc_tour_aria": {
+    "message": "maikling tour"
+  },
+  "mc_tour_title": {
+    "message": "maligayang pagdating! nakapatay ang mga ito sa simula. i-click ang isa para i-on"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "ipinapakita ang oras sa tabi ng bawat mensahe"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "ituro ang mensahe, tapos i-click ang ↪ para sagutin ito"
+  },
+  "mc_tour_vi_tip": {
+    "message": "vim keys para sa message box: esc para gumalaw, i para mag-type ulit. laktawan kung bago sa iyo ang vim"
+  },
+  "mc_tour_mod_tip": {
+    "message": "lalabas ang x, 10m at ⛔ kapag itinuro mo ang mensahe. mas maraming button sa settings"
+  },
+  "mc_tour_more": {
+    "message": "higit pa sa settings →"
+  },
+  "mc_tour_done": {
+    "message": "gets ko na"
+  },
+  "mc_tour_done_tip": {
+    "message": "isinasara ito nang tuluyan. para makita ulit: settings › ?"
+  },
+  "mc_set_tour": {
+    "message": "maikling tour"
+  },
+  "mc_set_tour_tip": {
+    "message": "ang maliit na intro card mula sa una mong pagbisita"
+  },
+  "mc_set_tour_btn": {
+    "message": "ipakita ulit ang tour"
+  },
+  "welcome_get_title": {
+    "message": "ano ang makukuha mo"
+  },
+  "welcome_get_1": {
+    "message": "chat ng twitch, kick at youtube sa iisang lugar, kasama ang lahat ng emote (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "hindi kailangan ng account para magbasa ng chat"
+  },
+  "welcome_get_3": {
+    "message": "nagdadagdag ang account ng sarili mong emote at settings sa bawat device"
+  },
+  "welcome_start_title": {
+    "message": "paano magsimula"
+  },
+  "welcome_start_1": {
+    "message": "magbukas ng kahit anong stream sa twitch, kick o youtube. kusang lalabas ang heatsync chat"
+  },
+  "welcome_start_2": {
+    "message": "may maliit na card na nagpapakita kung ano ang naka-off. i-click ang gusto mo"
+  },
+  "welcome_start_3": {
+    "message": "para makipag-chat, mag-log in sa site gaya ng dati, tapos mag-type sa kahon sa ibaba"
   }
 }

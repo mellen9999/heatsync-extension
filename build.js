@@ -837,6 +837,7 @@ const MULTICHAT_MODULES = [
   'mod-suite-calls.js',
   'mod-suite.js',
   'pin-bar.js',
+  'tour.js',
   'hover-reply.js',
   'chat-modes.js',
   'share-callouts.js',

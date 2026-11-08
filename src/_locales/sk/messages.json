@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "zobrazí tlačidlo odpovede na riadku pod myšou. odpoveď je vždy v ponuke riadku (pravé tlačidlo, dlhé stlačenie na dotyku)"
+  },
+  "mc_tour_aria": {
+    "message": "uvítacia prehliadka"
+  },
+  "mc_tour_title": {
+    "message": "vitaj! tieto veci sú na začiatku vypnuté. klikni na niektorú a zapni ju"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "zobrazí čas pri každej správe"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "ukáž na správu a klikni na ↪ pre odpoveď"
+  },
+  "mc_tour_vi_tip": {
+    "message": "klávesy vimu pre pole správy: esc posúva, i znova píše. preskoč, ak vim nepoznáš"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m a ⛔ sa zobrazia, keď ukážeš na správu. viac tlačidiel nájdeš v nastaveniach"
+  },
+  "mc_tour_more": {
+    "message": "viac v nastaveniach →"
+  },
+  "mc_tour_done": {
+    "message": "jasné"
+  },
+  "mc_tour_done_tip": {
+    "message": "zavrie to navždy. znova to uvidíš v: nastavenia › ?"
+  },
+  "mc_set_tour": {
+    "message": "uvítacia prehliadka"
+  },
+  "mc_set_tour_tip": {
+    "message": "malá úvodná karta z tvojej prvej návštevy"
+  },
+  "mc_set_tour_btn": {
+    "message": "ukázať prehliadku znova"
+  },
+  "welcome_get_title": {
+    "message": "čo získaš"
+  },
+  "welcome_get_1": {
+    "message": "chat z twitchu, kicku a youtube na jednom mieste, so všetkými emotes (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "na čítanie chatu nepotrebuješ účet"
+  },
+  "welcome_get_3": {
+    "message": "účet pridá tvoje vlastné emotes a nastavenia na každom zariadení"
+  },
+  "welcome_start_title": {
+    "message": "ako začať"
+  },
+  "welcome_start_1": {
+    "message": "otvor akýkoľvek stream na twitchi, kicku alebo youtube. chat heatsync sa objaví sám"
+  },
+  "welcome_start_2": {
+    "message": "malá karta ukazuje, čo je vypnuté. klikni na to, čo chceš"
+  },
+  "welcome_start_3": {
+    "message": "pre písanie sa prihlás na webe ako zvyčajne a píš do poľa dole"
   }
 }

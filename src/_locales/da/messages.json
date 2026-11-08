@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "vis en svarknap på chatrækken under musen. svar findes altid i rækkemenuen (højreklik, langt tryk på touch)"
+  },
+  "mc_tour_aria": {
+    "message": "kort rundvisning"
+  },
+  "mc_tour_title": {
+    "message": "velkommen! disse ting er slået fra til at starte med. klik på en for at slå den til"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "vis klokkeslættet ved siden af hver besked"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "peg på en besked og klik på ↪ for at svare"
+  },
+  "mc_tour_vi_tip": {
+    "message": "vim-taster til beskedfeltet: esc flytter rundt, i skriver igen. spring over, hvis vim er nyt for dig"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m og ⛔ dukker op, når du peger på en besked. flere knapper findes i indstillinger"
+  },
+  "mc_tour_more": {
+    "message": "mere i indstillinger →"
+  },
+  "mc_tour_done": {
+    "message": "forstået"
+  },
+  "mc_tour_done_tip": {
+    "message": "lukker dette for altid. for at se det igen: indstillinger › ?"
+  },
+  "mc_set_tour": {
+    "message": "kort rundvisning"
+  },
+  "mc_set_tour_tip": {
+    "message": "det lille introkort fra dit første besøg"
+  },
+  "mc_set_tour_btn": {
+    "message": "vis rundvisningen igen"
+  },
+  "welcome_get_title": {
+    "message": "det får du"
+  },
+  "welcome_get_1": {
+    "message": "twitch-, kick- og youtube-chat ét sted, med alle emotes (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "du behøver ikke en konto for at læse chatten"
+  },
+  "welcome_get_3": {
+    "message": "en konto giver dig dine egne emotes og indstillinger på alle enheder"
+  },
+  "welcome_start_title": {
+    "message": "sådan kommer du i gang"
+  },
+  "welcome_start_1": {
+    "message": "åbn en hvilken som helst stream på twitch, kick eller youtube. heatsync-chatten dukker op af sig selv"
+  },
+  "welcome_start_2": {
+    "message": "et lille kort viser, hvad der er slået fra. klik på det, du vil have"
+  },
+  "welcome_start_3": {
+    "message": "for at chatte skal du logge ind på siden som sædvanlig og skrive i feltet nederst"
   }
 }

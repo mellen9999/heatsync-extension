@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "מציג כפתור תגובה בשורת הצ'אט שמתחת לעכבר. תגובה תמיד זמינה בתפריט השורה (קליק ימני, לחיצה ארוכה במגע)"
+  },
+  "mc_tour_aria": {
+    "message": "סיור היכרות"
+  },
+  "mc_tour_title": {
+    "message": "ברוך הבא! אלה כבויים בהתחלה. לחץ על אחד כדי להפעיל אותו"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "מציג את השעה ליד כל הודעה"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "הצבע על הודעה ולחץ על ↪ כדי להגיב לה"
+  },
+  "mc_tour_vi_tip": {
+    "message": "מקשי vim לתיבת ההודעה: esc לזוז, i לכתוב שוב. דלג אם vim חדש לך"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m ו-⛔ מופיעים כשמצביעים על הודעה. עוד כפתורים בהגדרות"
+  },
+  "mc_tour_more": {
+    "message": "עוד בהגדרות ←"
+  },
+  "mc_tour_done": {
+    "message": "הבנתי"
+  },
+  "mc_tour_done_tip": {
+    "message": "סוגר את זה לתמיד. כדי לראות שוב: הגדרות › ?"
+  },
+  "mc_set_tour": {
+    "message": "סיור היכרות"
+  },
+  "mc_set_tour_tip": {
+    "message": "כרטיס ההיכרות הקטן מהביקור הראשון שלך"
+  },
+  "mc_set_tour_btn": {
+    "message": "הצג את הסיור שוב"
+  },
+  "welcome_get_title": {
+    "message": "מה מקבלים"
+  },
+  "welcome_get_1": {
+    "message": "צ׳אט של twitch, kick ו-youtube במקום אחד, עם כל האימוטים (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "לקריאת הצ׳אט לא צריך חשבון"
+  },
+  "welcome_get_3": {
+    "message": "חשבון מוסיף את האימוטים וההגדרות שלך בכל מכשיר"
+  },
+  "welcome_start_title": {
+    "message": "איך מתחילים"
+  },
+  "welcome_start_1": {
+    "message": "פתח כל שידור ב-twitch, kick או youtube. הצ׳אט של heatsync מופיע מעצמו"
+  },
+  "welcome_start_2": {
+    "message": "כרטיס קטן מראה מה כבוי. לחץ על מה שאתה רוצה"
+  },
+  "welcome_start_3": {
+    "message": "כדי לכתוב בצ׳אט, התחבר לאתר כרגיל והקלד בתיבה שלמטה"
   }
 }

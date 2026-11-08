@@ -1,0 +1,69 @@
+
+    /* First-run tour (tour.js) — ONE card beside the pane, a sibling of the scroller
+       (never inside it, so bottom-follow is untouched), in flow above the rows so
+       it covers nothing, and never over the composer. Hierarchy is weight: the
+       setting's name is bold, its one-liner plain. State is a word (on / off) in
+       the same green / red the settings switch uses, so it reads without colour
+       too. Hover, focus and active are reverse video. Buttons set font: inherit. */
+    #hs-mc-tour {
+      flex: none;
+      display: flex;
+      flex-direction: column;
+      max-height: 50%;
+      overflow-y: auto;
+      background: #000;
+      border-bottom: 1px solid var(--hs-border);
+      font-size: 13px;
+      line-height: 18px;
+    }
+    #hs-mc-tour[hidden] { display: none; }
+    .hs-mc-tour-head { padding: 2px 6px; font-weight: 700; }
+    .hs-mc-tour-row,
+    .hs-mc-tour-more,
+    .hs-mc-tour-done {
+      font: inherit;
+      color: #fff;
+      background: #000;
+      border: 0;
+      border-radius: 0;
+      cursor: pointer;
+      text-align: start;
+    }
+    .hs-mc-tour-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0 6px;
+      width: 100%;
+      padding: 1px 6px;
+    }
+    .hs-mc-tour-row[hidden] { display: none; }
+    .hs-mc-tour-state { flex: none; min-width: 3ch; color: var(--hs-danger-dim); }
+    .hs-mc-tour-row.on .hs-mc-tour-state { color: var(--hs-ok); }
+    .hs-mc-tour-name { flex: none; font-weight: 700; }
+    .hs-mc-tour-tip { flex: 1 1 16ch; min-width: 0; overflow-wrap: anywhere; }
+    .hs-mc-tour-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 2px 6px;
+    }
+    .hs-mc-tour-more { padding: 0; text-decoration: underline; }
+    .hs-mc-tour-done { padding: 0 8px; border: 1px solid #fff; font-weight: 700; }
+    .hs-mc-tour-row:hover,
+    .hs-mc-tour-row:focus-visible,
+    .hs-mc-tour-row:active,
+    .hs-mc-tour-more:hover,
+    .hs-mc-tour-more:focus-visible,
+    .hs-mc-tour-more:active,
+    .hs-mc-tour-done:hover,
+    .hs-mc-tour-done:focus-visible,
+    .hs-mc-tour-done:active {
+      background: #fff;
+      color: #000;
+      outline: none;
+    }
+    .hs-mc-tour-row:hover .hs-mc-tour-state,
+    .hs-mc-tour-row:focus-visible .hs-mc-tour-state,
+    .hs-mc-tour-row:active .hs-mc-tour-state { color: #000; }

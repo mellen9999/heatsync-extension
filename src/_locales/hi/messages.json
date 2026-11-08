@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "माउस के नीचे वाली चैट पंक्ति पर जवाब बटन दिखाएँ। जवाब हमेशा पंक्ति मेनू में रहता है (राइट-क्लिक, टच पर देर तक दबाएँ)"
+  },
+  "mc_tour_aria": {
+    "message": "स्वागत टूर"
+  },
+  "mc_tour_title": {
+    "message": "स्वागत है! ये शुरू में बंद रहते हैं। किसी एक पर क्लिक करके उसे चालू करें"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "हर मैसेज के पास समय दिखाता है"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "किसी मैसेज पर पॉइंट करें, फिर जवाब देने के लिए ↪ पर क्लिक करें"
+  },
+  "mc_tour_vi_tip": {
+    "message": "मैसेज बॉक्स के लिए vim कीज़: esc से इधर-उधर जाएँ, i से फिर लिखें। vim नया हो तो छोड़ दें"
+  },
+  "mc_tour_mod_tip": {
+    "message": "मैसेज पर पॉइंट करने पर x, 10m और ⛔ दिखते हैं। और बटन सेटिंग्स में चुनें"
+  },
+  "mc_tour_more": {
+    "message": "सेटिंग्स में और →"
+  },
+  "mc_tour_done": {
+    "message": "समझ गया"
+  },
+  "mc_tour_done_tip": {
+    "message": "इसे हमेशा के लिए बंद करता है। फिर से देखने के लिए: सेटिंग्स › ?"
+  },
+  "mc_set_tour": {
+    "message": "स्वागत टूर"
+  },
+  "mc_set_tour_tip": {
+    "message": "आपकी पहली विज़िट पर दिखा छोटा परिचय कार्ड"
+  },
+  "mc_set_tour_btn": {
+    "message": "टूर फिर से दिखाएँ"
+  },
+  "welcome_get_title": {
+    "message": "आपको क्या मिलता है"
+  },
+  "welcome_get_1": {
+    "message": "twitch, kick और youtube की चैट एक जगह, सभी इमोट (7tv, bttv, ffz, heatsync) के साथ"
+  },
+  "welcome_get_2": {
+    "message": "चैट पढ़ने के लिए अकाउंट नहीं चाहिए"
+  },
+  "welcome_get_3": {
+    "message": "अकाउंट से आपके अपने इमोट और सेटिंग्स हर डिवाइस पर आ जाते हैं"
+  },
+  "welcome_start_title": {
+    "message": "शुरू कैसे करें"
+  },
+  "welcome_start_1": {
+    "message": "twitch, kick या youtube की कोई भी स्ट्रीम खोलें। heatsync चैट अपने आप दिखती है"
+  },
+  "welcome_start_2": {
+    "message": "एक छोटा कार्ड दिखाता है कि क्या बंद है। जो चाहिए उस पर क्लिक करें"
+  },
+  "welcome_start_3": {
+    "message": "चैट करने के लिए साइट पर हमेशा की तरह लॉग इन करें, फिर नीचे वाले बॉक्स में लिखें"
   }
 }

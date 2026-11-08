@@ -35,6 +35,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // Boot restore
 bgKickRestoreFromStorage()
 bgYtRestoreFromStorage()
+// A token saved by an older release moves onto the real key now, not whenever
+// the cookie happens to be unreadable. A failure just means a sign-in later.
+retrieveToken().catch((err) => log(' token migration failed:', err?.message))
 
 // Evaluation-complete marker. A service worker that throws partway through
 // still REGISTERS, so "a worker exists" proves nothing — scripts/smoke-extension.ts

@@ -33,7 +33,7 @@ computed on-device), and which of
 multichat/feed/dm/mentions were opened — merged server-side into a HyperLogLog
 and discarded, aggregate counts kept 90 days. Full detail in the privacy policy (https://heatsync.org/legal/privacy)
 ("health / kill-switch poll"). The user's emote inventory, preferences,
-blocked-emote list, channel/tab list, and an ENCRYPTED auth token are stored
+blocked-emote list, channel/tab list, and the auth token (sealed with a non-extractable key) are stored
 locally in browser.storage.local. Session cookies are read locally and never
 transmitted to anyone other than their originating first party.
 Also first-party: a chat link you hover or click is sent to heatsync.org

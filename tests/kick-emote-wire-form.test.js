@@ -142,7 +142,9 @@ describe('INVALID_EMOTE degrades to plain words', () => {
 
   function makeSender(responses) {
     const seen = []
-    const fatal = SEND.split('\n').find((l) => l.startsWith('const KICK_FATAL_SEND_ERRORS'))
+    // a multi-line statement: from its const to the closing `])`
+    const fatalAt = SEND.indexOf('const KICK_FATAL_SEND_ERRORS')
+    const fatal = SEND.slice(fatalAt, SEND.indexOf('])', fatalAt) + 2)
     const backoff = SEND.split('\n').find((l) => l.startsWith('const KICK_SEND_RETRY_BACKOFF_MS'))
     const fn = new Function(
       'seen',

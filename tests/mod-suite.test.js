@@ -23,16 +23,7 @@ const TOOLBAR = read('src', 'multichat', 'mod-toolbar.js')
 const BG = bgSource()
 const EN = JSON.parse(read('src', '_locales', 'en', 'messages.json'))
 
-let Window = null
-try {
-  Window = (await import('happy-dom')).Window
-} catch {
-  try {
-    const site = process.env.HS_SITE_DIR || join(ROOT, '..', 'heatsync')
-    Window = (await import(join(site, 'node_modules', 'happy-dom', 'lib', 'index.js'))).Window
-  } catch {}
-}
-const suite = Window ? describe : describe.skip
+import { Window } from 'happy-dom'
 
 const flush = () => new Promise((r) => setTimeout(r, 0))
 const req = (id, who, text, status = 'pending') => ({
@@ -102,7 +93,6 @@ const key = (k, target = win.document.body) =>
 const activeCell = () => win.document.querySelector('.hs-ms-cells .hs-ms-on').textContent
 
 beforeEach(() => {
-  if (!Window) return
   win = new Window()
   sent = []
   toasts = []
@@ -135,13 +125,12 @@ beforeEach(() => {
   boot()
 })
 afterEach(() => {
-  if (!Window) return
   globalThis.document = prevDocument
   globalThis.window = prevWindow
   win.close()
 })
 
-suite('mod suite panel — shield', () => {
+describe('mod suite panel — shield', () => {
   test('opens on shield and reads the channel state', async () => {
     expect(await open()).toBe(true)
     await flush()
@@ -190,7 +179,7 @@ suite('mod suite panel — shield', () => {
   })
 })
 
-suite('mod suite panel — states', () => {
+describe('mod suite panel — states', () => {
   test('missing scope shows allow + retry; allow opens the modsuite relink', async () => {
     reply = () => ({ ok: false, error: 'relink_required', message: '' })
     await open()
@@ -259,7 +248,7 @@ suite('mod suite panel — states', () => {
   })
 })
 
-suite('mod suite panel — unban requests', () => {
+describe('mod suite panel — unban requests', () => {
   test('lists newest first as text, never markup', async () => {
     await open('unban')
     await flush()
@@ -326,7 +315,7 @@ suite('mod suite panel — unban requests', () => {
   })
 })
 
-suite('mod suite panel — automod', () => {
+describe('mod suite panel — automod', () => {
   test('0-4 sets the overall level, optimistic, one key per call', async () => {
     await open('automod')
     await flush()
@@ -374,7 +363,7 @@ suite('mod suite panel — automod', () => {
   })
 })
 
-suite('mod suite panel — chatters', () => {
+describe('mod suite panel — chatters', () => {
   test('lists as text and filters by login or name; the filter owns its keys', async () => {
     await open('chatters')
     await flush()
@@ -409,7 +398,7 @@ suite('mod suite panel — chatters', () => {
   })
 })
 
-suite('warn + shoutout', () => {
+describe('warn + shoutout', () => {
   const field = () => win.document.querySelector('.hs-ms-input')
 
   test('the warn prompt sends the reason on enter', async () => {

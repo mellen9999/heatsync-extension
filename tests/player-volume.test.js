@@ -114,15 +114,9 @@ describe('the memory', () => {
 
 // ── the page glue, for real, in a DOM ────────────────────────────────────────
 
-let Window = null
-try {
-  Window = (await import('happy-dom')).Window
-} catch {
-  Window = null
-}
-const describeDom = Window ? describe : describe.skip
+import { Window } from 'happy-dom'
 
-describeDom('the glue — a player mounts, the page races us, the reader decides', () => {
+describe('the glue — a player mounts, the page races us, the reader decides', () => {
   let win
   let store
   let listeners

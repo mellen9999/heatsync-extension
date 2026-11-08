@@ -22,16 +22,7 @@ const TOOLBAR = read('src', 'multichat', 'mod-toolbar.js')
 const BG = bgSource()
 const EN = JSON.parse(read('src', '_locales', 'en', 'messages.json'))
 
-let Window = null
-try {
-  Window = (await import('happy-dom')).Window
-} catch {
-  try {
-    const site = process.env.HS_SITE_DIR || join(ROOT, '..', 'heatsync')
-    Window = (await import(join(site, 'node_modules', 'happy-dom', 'lib', 'index.js'))).Window
-  } catch {}
-}
-const suite = Window ? describe : describe.skip
+import { Window } from 'happy-dom'
 
 const flush = () => new Promise((r) => setTimeout(r, 0))
 const term = (id, text) => ({ id, text, created_at: '2026-10-03T00:00:00Z' })
@@ -79,7 +70,6 @@ const key = (k, target = win.document.body) =>
   target.dispatchEvent(new win.KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
 
 beforeEach(() => {
-  if (!Window) return
   win = new Window()
   sent = []
   toasts = []
@@ -91,13 +81,12 @@ beforeEach(() => {
   globalThis.window = win
 })
 afterEach(() => {
-  if (!Window) return
   globalThis.document = prevDocument
   globalThis.window = prevWindow
   win.close()
 })
 
-suite('blocked terms panel', () => {
+describe('blocked terms panel', () => {
   test('lists the terms and renders them as text, never markup', async () => {
     expect(await open()).toBe(true)
     await flush()

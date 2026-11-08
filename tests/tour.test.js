@@ -21,16 +21,7 @@ const MOD_TOOLBAR = read('src', 'multichat', 'mod-toolbar.js')
 const CATALOG = MOD_TOOLBAR.slice(MOD_TOOLBAR.indexOf('const MOD_BUTTON_CATALOG = {'), MOD_TOOLBAR.indexOf('\n}\n'))
 const CATALOG_IDS = [...CATALOG.matchAll(/^ {2}([a-z_0-9]+): \{/gm)].map((m) => m[1])
 
-let Window = null
-try {
-  Window = (await import('happy-dom')).Window
-} catch {
-  try {
-    const site = process.env.HS_SITE_DIR || join(ROOT, '..', 'heatsync')
-    Window = (await import(join(site, 'node_modules', 'happy-dom', 'lib', 'index.js'))).Window
-  } catch {}
-}
-const suite = Window ? describe : describe.skip
+import { Window } from 'happy-dom'
 
 const def = (key) => SETTINGS.find((s) => s.key === key)
 
@@ -108,7 +99,7 @@ describe('tour: wiring', () => {
   })
 })
 
-suite('tour: behavior', () => {
+describe('tour: behavior', () => {
   let win
   let doc
   let store // the fake chrome.storage.local

@@ -1367,7 +1367,7 @@ async function init() {
         // redeem text carries no channel, so a global text key would drop an
         // identical reward redeemed in a different channel as a false duplicate.
         const now = Date.now()
-        const dedupKey = `${channel} ${text}`
+        const dedupKey = `${channel}\0${text}`
         if (streamEventDedup.has(dedupKey) && now - streamEventDedup.get(dedupKey) < 60000) return
         streamEventDedup.set(dedupKey, now)
         // Prune old entries

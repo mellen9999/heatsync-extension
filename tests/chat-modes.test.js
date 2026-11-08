@@ -19,16 +19,8 @@ const BG = bgSource()
 const REG = read('src', 'multichat', 'slash-registry.js')
 const EN = JSON.parse(read('src', '_locales', 'en', 'messages.json'))
 
-let Window = null
-try {
-  Window = (await import('happy-dom')).Window
-} catch {
-  try {
-    const site = process.env.HS_SITE_DIR || join(ROOT, '..', 'heatsync')
-    Window = (await import(join(site, 'node_modules', 'happy-dom', 'lib', 'index.js'))).Window
-  } catch {}
-}
-const suite = Window ? describe : describe.skip
+import { Window } from 'happy-dom'
+
 const flush = () => new Promise((r) => setTimeout(r, 0))
 
 const SETTINGS = {
@@ -66,7 +58,6 @@ function load() {
 }
 
 beforeEach(() => {
-  if (!Window) return
   win = new Window()
   sent = []
   reply = (m) => (m.op === 'get' ? { ok: true, settings: SETTINGS } : { ok: true, settings: null })
@@ -76,7 +67,6 @@ beforeEach(() => {
   globalThis.window = win
 })
 afterEach(() => {
-  if (!Window) return
   globalThis.document = prevDocument
   globalThis.window = prevWindow
   win.close()
@@ -107,7 +97,7 @@ describe('cmBody — mode + value → helix fields', () => {
   })
 })
 
-suite('the modes cell', () => {
+describe('the modes cell', () => {
   async function mount() {
     const { cmMountControls } = load()
     const d = win.document

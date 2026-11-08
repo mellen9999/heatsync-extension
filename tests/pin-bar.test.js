@@ -19,16 +19,8 @@ const MAIN = mainSource()
 const BUILD = read('build.js')
 const EN = JSON.parse(read('src', '_locales', 'en', 'messages.json'))
 
-let Window = null
-try {
-  Window = (await import('happy-dom')).Window
-} catch {
-  try {
-    const site = process.env.HS_SITE_DIR || join(ROOT, '..', 'heatsync')
-    Window = (await import(join(site, 'node_modules', 'happy-dom', 'lib', 'index.js'))).Window
-  } catch {}
-}
-const suite = Window ? describe : describe.skip
+import { Window } from 'happy-dom'
+
 const flush = () => new Promise((r) => setTimeout(r, 0))
 
 const PIN = {
@@ -126,7 +118,6 @@ const keyOn = (k, target) => {
 }
 
 beforeEach(() => {
-  if (!Window) return
   win = new Window()
   sent = []
   toasts = []
@@ -137,13 +128,12 @@ beforeEach(() => {
   globalThis.window = win
 })
 afterEach(() => {
-  if (!Window) return
   globalThis.document = prevDocument
   globalThis.window = prevWindow
   win.close()
 })
 
-suite('pin bar', () => {
+describe('pin bar', () => {
   test('renders from the GET: label, author, message as text, one row', async () => {
     const p = mount()
     await p.pinSync('chan')

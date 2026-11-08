@@ -246,16 +246,8 @@ describe('doors', () => {
 })
 
 // ── the panel, for real, in a happy-dom pane ────────────────────────────────
-let Window = null
-try {
-  Window = (await import('happy-dom')).Window
-} catch {
-  try {
-    const site = process.env.HS_SITE_DIR || join(ROOT, '..', 'heatsync')
-    Window = (await import(join(site, 'node_modules', 'happy-dom', 'lib', 'index.js'))).Window
-  } catch {}
-}
-const suite = Window ? describe : describe.skip
+import { Window } from 'happy-dom'
+
 const flush = () => new Promise((r) => setTimeout(r, 0))
 
 let win
@@ -302,7 +294,6 @@ const activeCell = () => win.document.querySelector('.hs-ms-cells .hs-ms-on').te
 const addBox = () => win.document.querySelectorAll('.hs-ms-input')[0]
 
 beforeEach(() => {
-  if (!Window) return
   win = new Window()
   sent = []
   reply = (m) => {
@@ -337,13 +328,12 @@ beforeEach(() => {
   boot()
 })
 afterEach(() => {
-  if (!Window) return
   globalThis.document = prevDocument
   globalThis.window = prevWindow
   win.close()
 })
 
-suite('kick mod panel — blocked words', () => {
+describe('kick mod panel — blocked words', () => {
   test('opens on words, asks kick for the list, renders words as text', async () => {
     expect(await open()).toBe(true)
     await flush()
@@ -415,7 +405,7 @@ suite('kick mod panel — blocked words', () => {
   })
 })
 
-suite('kick mod panel — filter and chatters', () => {
+describe('kick mod panel — filter and chatters', () => {
   test('filter reads eight rows; a digit key sends all eight with the one changed', async () => {
     await open('filter')
     await flush()

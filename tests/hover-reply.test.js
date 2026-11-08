@@ -15,16 +15,7 @@ const SRC = read('src', 'multichat', 'hover-reply.js')
 const INPUT = read('src', 'multichat', 'input.js')
 const MAIN = mainSource()
 
-let Window = null
-try {
-  Window = (await import('happy-dom')).Window
-} catch {
-  try {
-    const site = process.env.HS_SITE_DIR || join(ROOT, '..', 'heatsync')
-    Window = (await import(join(site, 'node_modules', 'happy-dom', 'lib', 'index.js'))).Window
-  } catch {}
-}
-const suite = Window ? describe : describe.skip
+import { Window } from 'happy-dom'
 
 let win
 let api
@@ -62,7 +53,7 @@ function mount() {
 const over = (el, type = 'mouse') =>
   el.dispatchEvent(new win.PointerEvent('pointerover', { bubbles: true, pointerType: type }))
 
-suite('hoverReply', () => {
+describe('hoverReply', () => {
   beforeEach(() => {
     win = new Window()
     replies = []

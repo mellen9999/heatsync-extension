@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { readFileSync, realpathSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 /**
@@ -11,35 +11,13 @@ import { join } from 'node:path'
 const dir = join(import.meta.dir, '..', 'src', 'multichat')
 const code = ['x-glyph.js', 'pane-panel.js'].map((f) => readFileSync(join(dir, f), 'utf8')).join('\n')
 
-// happy-dom isn't an extension dependency; use the site checkout's copy when it is
-// reachable (HS_SITE_DIR, as the build does) and skip loudly when it is not.
-let Window = null
-try {
-  Window = (await import('happy-dom')).Window
-} catch {
-  // a worktree's node_modules is a symlink into the primary checkout, so its
-  // real path finds the sibling site repo where `../../heatsync` does not —
-  // without it this suite skipped in every worktree and rotted unseen
-  const root = join(import.meta.dir, '..')
-  let real = root
-  try {
-    real = join(realpathSync(join(root, 'node_modules')), '..')
-  } catch {}
-  for (const site of [process.env.HS_SITE_DIR, join(root, '..', 'heatsync'), join(real, '..', 'heatsync')]) {
-    if (Window || !site) continue
-    try {
-      Window = (await import(join(site, 'node_modules', 'happy-dom', 'lib', 'index.js'))).Window
-    } catch {}
-  }
-}
-const suite = Window ? describe : describe.skip
+import { Window } from 'happy-dom'
 
 let win
 let api
 let repaints
 
 beforeEach(() => {
-  if (!Window) return
   win = new Window()
   const d = win.document
   d.body.innerHTML =
@@ -62,7 +40,6 @@ beforeEach(() => {
   api._prev = prev
 })
 afterEach(() => {
-  if (!Window) return
   globalThis.document = api._prev.document
 })
 
@@ -70,7 +47,7 @@ const key = (k) =>
   win.document.dispatchEvent(new win.KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }))
 const row = () => win.document.getElementById('hs-mc-subrow')
 
-suite('hsConfirm full-pane panel', () => {
+describe('hsConfirm full-pane panel', () => {
   test('mounts in the message pane with the × alone in the row and buttons at the bottom', async () => {
     const p = api.hsConfirm('ban bob?', 'ban', ['spam'])
     const panel = win.document.querySelector('#hs-mc-messages > .hs-pane-panel')

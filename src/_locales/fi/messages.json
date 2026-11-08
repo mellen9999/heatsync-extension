@@ -1300,7 +1300,7 @@
     "message": "maininta-äänen voimakkuus"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "äänimerkin voimakkuus maininnasta. 0 = hiljainen. käyttää puhtaita WebAudio-ääniä, ei mukana tiedostoja."
+    "message": "kuinka kovaa maininta-ääni on. 0 = hiljainen"
   },
   "mc_settings_cross_follow_kick": {
     "message": "seuraa myös kickissä"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "chattaillaksesi kirjaudu sivustolle kuten aina ja kirjoita alaosan kenttään"
+  },
+  "mc_settings_mention_sound": {
+    "message": "maininta-ääni"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "mikä soi, kun sinut @mainitaan ja tämä välilehti on taustalla. sisäänrakennettu ääni tai oma tiedostosi"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "äänitiedosto"
+  },
+  "mc_sfx_opt_file": {
+    "message": "oma tiedostoni"
+  },
+  "mc_sfx_pick": {
+    "message": "valitse tiedosto"
+  },
+  "mc_sfx_play": {
+    "message": "toista"
+  },
+  "mc_sfx_remove": {
+    "message": "poista tiedosto"
+  },
+  "mc_sfx_note": {
+    "message": "omat äänitiedostosi pysyvät tällä laitteella: niitä ei synkronoida eikä viedä. vain ääntä, enintään 256 kt ja 10 sekuntia"
+  },
+  "mc_sfx_err_type": {
+    "message": "tämä ei ole äänitiedosto"
+  },
+  "mc_sfx_err_size": {
+    "message": "tiedosto on liian suuri. enintään 256 kt"
+  },
+  "mc_sfx_err_decode": {
+    "message": "ääntä ei voi lukea. kokeile toista tiedostoa"
+  },
+  "mc_sfx_err_long": {
+    "message": "ääni on liian pitkä. enintään 10 sekuntia"
+  },
+  "mc_sfx_err_save": {
+    "message": "ääntä ei voitu tallentaa tälle laitteelle"
+  },
+  "mc_sfx_missing": {
+    "message": "äänitiedostoa ei ole tällä laitteella. valitse se uudelleen"
+  },
+  "mc_sfx_volume": {
+    "message": "äänenvoimakkuus"
+  },
+  "mc_sfx_none": {
+    "message": "ei vielä tiedostoa"
   }
 }

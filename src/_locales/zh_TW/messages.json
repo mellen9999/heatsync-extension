@@ -1300,7 +1300,7 @@
     "message": "提及音量"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "被提及時提示音的音量。0 = 靜音。使用純 WebAudio 音調，不附帶音訊檔案。"
+    "message": "提及提示音有多大聲。0 = 靜音"
   },
   "mc_settings_cross_follow_kick": {
     "message": "同時在 kick 追蹤"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "要發言，請照常登入該網站，然後在底部輸入框裡輸入"
+  },
+  "mc_settings_mention_sound": {
+    "message": "提及提示音"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "此分頁在背景時被 @提及 會播放的聲音。內建聲音或你自己的檔案"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "聲音檔案"
+  },
+  "mc_sfx_opt_file": {
+    "message": "我的檔案"
+  },
+  "mc_sfx_pick": {
+    "message": "選擇檔案"
+  },
+  "mc_sfx_play": {
+    "message": "播放"
+  },
+  "mc_sfx_remove": {
+    "message": "移除檔案"
+  },
+  "mc_sfx_note": {
+    "message": "你自己的聲音檔案只保存在這台裝置上，不會同步也不會匯出。僅限音訊，最大 256 KB，最長 10 秒"
+  },
+  "mc_sfx_err_type": {
+    "message": "這不是音訊檔案"
+  },
+  "mc_sfx_err_size": {
+    "message": "檔案太大。最大 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "無法讀取這個聲音。換個檔案試試"
+  },
+  "mc_sfx_err_long": {
+    "message": "聲音太長。最長 10 秒"
+  },
+  "mc_sfx_err_save": {
+    "message": "無法在這台裝置上儲存該聲音"
+  },
+  "mc_sfx_missing": {
+    "message": "這台裝置上沒有這個聲音檔案。請重新選擇"
+  },
+  "mc_sfx_volume": {
+    "message": "音量"
+  },
+  "mc_sfx_none": {
+    "message": "還沒有檔案"
   }
 }

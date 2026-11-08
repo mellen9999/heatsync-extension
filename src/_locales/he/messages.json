@@ -1300,7 +1300,7 @@
     "message": "עוצמת צליל תיוג"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "עוצמת הצליל בתיוג. 0 = שקט. משתמש בטונים טהורים של WebAudio, בלי קובץ שמע."
+    "message": "עוצמת צליל האזכור. 0 = שקט"
   },
   "mc_settings_cross_follow_kick": {
     "message": "עקוב גם ב-kick"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "כדי לכתוב בצ׳אט, התחבר לאתר כרגיל והקלד בתיבה שלמטה"
+  },
+  "mc_settings_mention_sound": {
+    "message": "צליל אזכור"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "מה מתנגן כשמזכירים אותך ב־@ והלשונית ברקע. צליל מובנה או קובץ משלך"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "קובץ שמע"
+  },
+  "mc_sfx_opt_file": {
+    "message": "הקובץ שלי"
+  },
+  "mc_sfx_pick": {
+    "message": "בחירת קובץ"
+  },
+  "mc_sfx_play": {
+    "message": "ניגון"
+  },
+  "mc_sfx_remove": {
+    "message": "הסרת הקובץ"
+  },
+  "mc_sfx_note": {
+    "message": "קובצי השמע שלך נשארים במכשיר הזה: אף פעם לא מסונכרנים או מיוצאים. שמע בלבד, עד 256 KB ו־10 שניות"
+  },
+  "mc_sfx_err_type": {
+    "message": "זה לא קובץ שמע"
+  },
+  "mc_sfx_err_size": {
+    "message": "הקובץ גדול מדי. עד 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "אי אפשר לקרוא את הצליל הזה. נסו קובץ אחר"
+  },
+  "mc_sfx_err_long": {
+    "message": "הצליל ארוך מדי. עד 10 שניות"
+  },
+  "mc_sfx_err_save": {
+    "message": "לא ניתן לשמור את הצליל במכשיר הזה"
+  },
+  "mc_sfx_missing": {
+    "message": "קובץ הצליל הזה לא נמצא במכשיר הזה. בחרו אותו שוב"
+  },
+  "mc_sfx_volume": {
+    "message": "עוצמה"
+  },
+  "mc_sfx_none": {
+    "message": "אין קובץ עדיין"
   }
 }

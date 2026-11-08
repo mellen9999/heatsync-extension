@@ -1300,7 +1300,7 @@
     "message": "مستوى صوت الإشارة"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "مستوى صوت التنبيه عند الإشارة. 0 = صامت. يستخدم نغمات WebAudio نقية، بلا ملفات مرفقة."
+    "message": "مدى علو صوت الإشارة. 0 = صامت"
   },
   "mc_settings_cross_follow_kick": {
     "message": "تابع أيضًا على kick"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "للدردشة، سجّل الدخول في الموقع كالمعتاد ثم اكتب في المربع في الأسفل"
+  },
+  "mc_settings_mention_sound": {
+    "message": "صوت الإشارة"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "ما يُشغَّل عند الإشارة إليك بـ @ بينما هذا التبويب في الخلفية. صوت مدمج أو ملفك الخاص"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "ملف صوتي"
+  },
+  "mc_sfx_opt_file": {
+    "message": "ملفي"
+  },
+  "mc_sfx_pick": {
+    "message": "اختر ملفًا"
+  },
+  "mc_sfx_play": {
+    "message": "تشغيل"
+  },
+  "mc_sfx_remove": {
+    "message": "إزالة الملف"
+  },
+  "mc_sfx_note": {
+    "message": "ملفاتك الصوتية تبقى على هذا الجهاز: لا تُزامَن ولا تُصدَّر أبدًا. صوت فقط، بحد أقصى 256 كيلوبايت و10 ثوانٍ"
+  },
+  "mc_sfx_err_type": {
+    "message": "هذا ليس ملفًا صوتيًا"
+  },
+  "mc_sfx_err_size": {
+    "message": "الملف كبير جدًا. الحد الأقصى 256 كيلوبايت"
+  },
+  "mc_sfx_err_decode": {
+    "message": "تعذّرت قراءة هذا الصوت. جرّب ملفًا آخر"
+  },
+  "mc_sfx_err_long": {
+    "message": "الصوت طويل جدًا. الحد الأقصى 10 ثوانٍ"
+  },
+  "mc_sfx_err_save": {
+    "message": "تعذّر حفظ الصوت على هذا الجهاز"
+  },
+  "mc_sfx_missing": {
+    "message": "ملف الصوت هذا ليس على هذا الجهاز. اخترْه مرة أخرى"
+  },
+  "mc_sfx_volume": {
+    "message": "مستوى الصوت"
+  },
+  "mc_sfx_none": {
+    "message": "لا يوجد ملف بعد"
   }
 }

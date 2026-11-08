@@ -1300,7 +1300,7 @@
     "message": "メンション音量"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "メンション時のピン音の音量。0 = 無音。WebAudio の純音を使用、音声アセットなし。"
+    "message": "メンション音の大きさ。0 = 無音"
   },
   "mc_settings_cross_follow_kick": {
     "message": "kick でもフォロー"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "チャットするには、いつも通りサイトにログインして、下の入力欄に入力します"
+  },
+  "mc_settings_mention_sound": {
+    "message": "メンション音"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "このタブがバックグラウンドのときに @メンションされると鳴る音。内蔵音か自分のファイル"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "音声ファイル"
+  },
+  "mc_sfx_opt_file": {
+    "message": "マイファイル"
+  },
+  "mc_sfx_pick": {
+    "message": "ファイルを選ぶ"
+  },
+  "mc_sfx_play": {
+    "message": "再生"
+  },
+  "mc_sfx_remove": {
+    "message": "ファイルを削除"
+  },
+  "mc_sfx_note": {
+    "message": "自分の音声ファイルはこの端末にだけ残り、同期もエクスポートもされません。音声のみ、最大 256 KB・10 秒"
+  },
+  "mc_sfx_err_type": {
+    "message": "音声ファイルではありません"
+  },
+  "mc_sfx_err_size": {
+    "message": "ファイルが大きすぎます。最大 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "この音を読み込めません。別のファイルを試してください"
+  },
+  "mc_sfx_err_long": {
+    "message": "音が長すぎます。最大 10 秒"
+  },
+  "mc_sfx_err_save": {
+    "message": "この端末に音を保存できませんでした"
+  },
+  "mc_sfx_missing": {
+    "message": "この音声ファイルはこの端末にありません。もう一度選んでください"
+  },
+  "mc_sfx_volume": {
+    "message": "音量"
+  },
+  "mc_sfx_none": {
+    "message": "ファイルはまだありません"
   }
 }

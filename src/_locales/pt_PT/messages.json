@@ -1300,7 +1300,7 @@
     "message": "volume do som de menção"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "volume do aviso sonoro numa menção. 0 = silêncio. usa tons WebAudio puros, sem ficheiros."
+    "message": "o volume do som de menção. 0 = silêncio"
   },
   "mc_settings_cross_follow_kick": {
     "message": "seguir também na kick"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "para conversar, inicia sessão no site como de costume e escreve na caixa em baixo"
+  },
+  "mc_settings_mention_sound": {
+    "message": "som de menção"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "o que toca quando és @mencionado com este separador em segundo plano. um som incorporado ou o teu próprio ficheiro"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "ficheiro de som"
+  },
+  "mc_sfx_opt_file": {
+    "message": "o meu ficheiro"
+  },
+  "mc_sfx_pick": {
+    "message": "escolher ficheiro"
+  },
+  "mc_sfx_play": {
+    "message": "reproduzir"
+  },
+  "mc_sfx_remove": {
+    "message": "remover ficheiro"
+  },
+  "mc_sfx_note": {
+    "message": "os teus ficheiros de som ficam neste dispositivo: nunca são sincronizados nem exportados. só áudio, máx. 256 KB e 10 segundos"
+  },
+  "mc_sfx_err_type": {
+    "message": "isso não é um ficheiro de áudio"
+  },
+  "mc_sfx_err_size": {
+    "message": "o ficheiro é demasiado grande. máx. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "não foi possível ler esse som. tenta outro ficheiro"
+  },
+  "mc_sfx_err_long": {
+    "message": "o som é demasiado longo. máx. 10 segundos"
+  },
+  "mc_sfx_err_save": {
+    "message": "não foi possível guardar esse som neste dispositivo"
+  },
+  "mc_sfx_missing": {
+    "message": "esse ficheiro de som não está neste dispositivo. escolhe-o outra vez"
+  },
+  "mc_sfx_volume": {
+    "message": "volume"
+  },
+  "mc_sfx_none": {
+    "message": "ainda sem ficheiro"
   }
 }

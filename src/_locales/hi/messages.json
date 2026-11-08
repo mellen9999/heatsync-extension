@@ -1300,7 +1300,7 @@
     "message": "मेंशन साउंड वॉल्यूम"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "मेंशन पर ऑडियो पिंग का वॉल्यूम। 0 = शांत। शुद्ध WebAudio टोन इस्तेमाल करता है, कोई ऑडियो फ़ाइल नहीं।"
+    "message": "मेंशन की आवाज़ कितनी तेज़ हो। 0 = मौन"
   },
   "mc_settings_cross_follow_kick": {
     "message": "kick पर भी फ़ॉलो करो"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "चैट करने के लिए साइट पर हमेशा की तरह लॉग इन करें, फिर नीचे वाले बॉक्स में लिखें"
+  },
+  "mc_settings_mention_sound": {
+    "message": "मेंशन की आवाज़"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "जब यह टैब बैकग्राउंड में हो और कोई आपको @मेंशन करे तब क्या बजे। अंतर्निहित आवाज़ या आपकी अपनी फ़ाइल"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "ध्वनि फ़ाइल"
+  },
+  "mc_sfx_opt_file": {
+    "message": "मेरी फ़ाइल"
+  },
+  "mc_sfx_pick": {
+    "message": "फ़ाइल चुनें"
+  },
+  "mc_sfx_play": {
+    "message": "चलाएँ"
+  },
+  "mc_sfx_remove": {
+    "message": "फ़ाइल हटाएँ"
+  },
+  "mc_sfx_note": {
+    "message": "आपकी अपनी ध्वनि फ़ाइलें इसी डिवाइस पर रहती हैं: कभी सिंक या एक्सपोर्ट नहीं होतीं। सिर्फ़ ऑडियो, अधिकतम 256 KB और 10 सेकंड"
+  },
+  "mc_sfx_err_type": {
+    "message": "यह ऑडियो फ़ाइल नहीं है"
+  },
+  "mc_sfx_err_size": {
+    "message": "फ़ाइल बहुत बड़ी है। अधिकतम 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "यह आवाज़ पढ़ी नहीं जा सकी। दूसरी फ़ाइल आज़माएँ"
+  },
+  "mc_sfx_err_long": {
+    "message": "आवाज़ बहुत लंबी है। अधिकतम 10 सेकंड"
+  },
+  "mc_sfx_err_save": {
+    "message": "आवाज़ इस डिवाइस पर सहेजी नहीं जा सकी"
+  },
+  "mc_sfx_missing": {
+    "message": "यह ध्वनि फ़ाइल इस डिवाइस पर नहीं है। इसे फिर से चुनें"
+  },
+  "mc_sfx_volume": {
+    "message": "आवाज़ का स्तर"
+  },
+  "mc_sfx_none": {
+    "message": "अभी कोई फ़ाइल नहीं"
   }
 }

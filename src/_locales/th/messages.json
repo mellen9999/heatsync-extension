@@ -1300,7 +1300,7 @@
     "message": "ความดังเสียงแท็ก"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "ความดังเสียงปิงตอนถูกแท็ก 0 = เงียบ ใช้โทน WebAudio ล้วน ไม่มีไฟล์แนบ"
+    "message": "เสียงเมนชันดังแค่ไหน 0 = เงียบ"
   },
   "mc_settings_cross_follow_kick": {
     "message": "ติดตามบน kick ด้วย"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "ถ้าจะแชต ให้เข้าสู่ระบบในเว็บตามปกติ แล้วพิมพ์ในช่องด้านล่าง"
+  },
+  "mc_settings_mention_sound": {
+    "message": "เสียงเมนชัน"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "เสียงที่เล่นเมื่อมีคน @เมนชันคุณขณะที่แท็บนี้อยู่เบื้องหลัง เป็นเสียงในตัวหรือไฟล์ของคุณเอง"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "ไฟล์เสียง"
+  },
+  "mc_sfx_opt_file": {
+    "message": "ไฟล์ของฉัน"
+  },
+  "mc_sfx_pick": {
+    "message": "เลือกไฟล์"
+  },
+  "mc_sfx_play": {
+    "message": "เล่น"
+  },
+  "mc_sfx_remove": {
+    "message": "ลบไฟล์"
+  },
+  "mc_sfx_note": {
+    "message": "ไฟล์เสียงของคุณอยู่บนอุปกรณ์นี้เท่านั้น ไม่ซิงค์และไม่ส่งออก เฉพาะเสียง สูงสุด 256 KB และ 10 วินาที"
+  },
+  "mc_sfx_err_type": {
+    "message": "นี่ไม่ใช่ไฟล์เสียง"
+  },
+  "mc_sfx_err_size": {
+    "message": "ไฟล์ใหญ่เกินไป สูงสุด 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "อ่านเสียงนี้ไม่ได้ ลองไฟล์อื่น"
+  },
+  "mc_sfx_err_long": {
+    "message": "เสียงยาวเกินไป สูงสุด 10 วินาที"
+  },
+  "mc_sfx_err_save": {
+    "message": "บันทึกเสียงลงอุปกรณ์นี้ไม่ได้"
+  },
+  "mc_sfx_missing": {
+    "message": "ไม่มีไฟล์เสียงนี้บนอุปกรณ์นี้ เลือกอีกครั้ง"
+  },
+  "mc_sfx_volume": {
+    "message": "ระดับเสียง"
+  },
+  "mc_sfx_none": {
+    "message": "ยังไม่มีไฟล์"
   }
 }

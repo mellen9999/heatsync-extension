@@ -1300,7 +1300,7 @@
     "message": "гучність звуку згадки"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "гучність звукового сигналу при згадці. 0 = тихо. чисті тони WebAudio, без файлів."
+    "message": "наскільки гучний звук згадки. 0 = без звуку"
   },
   "mc_settings_cross_follow_kick": {
     "message": "також підписуватися на kick"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "щоб писати в чат, увійди на сайт як зазвичай і друкуй у полі внизу"
+  },
+  "mc_settings_mention_sound": {
+    "message": "звук згадки"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "що грає, коли вас @згадують, а вкладка у фоні. вбудований звук або ваш файл"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "звуковий файл"
+  },
+  "mc_sfx_opt_file": {
+    "message": "мій файл"
+  },
+  "mc_sfx_pick": {
+    "message": "вибрати файл"
+  },
+  "mc_sfx_play": {
+    "message": "відтворити"
+  },
+  "mc_sfx_remove": {
+    "message": "прибрати файл"
+  },
+  "mc_sfx_note": {
+    "message": "ваші звукові файли залишаються на цьому пристрої: вони не синхронізуються й не експортуються. лише аудіо, не більше 256 КБ і 10 секунд"
+  },
+  "mc_sfx_err_type": {
+    "message": "це не аудіофайл"
+  },
+  "mc_sfx_err_size": {
+    "message": "файл завеликий. не більше 256 КБ"
+  },
+  "mc_sfx_err_decode": {
+    "message": "не вдається прочитати цей звук. спробуйте інший файл"
+  },
+  "mc_sfx_err_long": {
+    "message": "звук задовгий. не більше 10 секунд"
+  },
+  "mc_sfx_err_save": {
+    "message": "не вдалося зберегти звук на цьому пристрої"
+  },
+  "mc_sfx_missing": {
+    "message": "цього звукового файлу немає на цьому пристрої. виберіть його знову"
+  },
+  "mc_sfx_volume": {
+    "message": "гучність"
+  },
+  "mc_sfx_none": {
+    "message": "файлу ще немає"
   }
 }

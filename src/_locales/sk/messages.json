@@ -1300,7 +1300,7 @@
     "message": "hlasitosť zvuku zmienky"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "hlasitosť zvuku pri zmienke. 0 = ticho. používa čisté tóny WebAudio, žiadny súbor."
+    "message": "ako hlasný je zvuk zmienky. 0 = ticho"
   },
   "mc_settings_cross_follow_kick": {
     "message": "nasledovať aj na kick"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "pre písanie sa prihlás na webe ako zvyčajne a píš do poľa dole"
+  },
+  "mc_settings_mention_sound": {
+    "message": "zvuk zmienky"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "čo sa prehrá, keď vás niekto @spomenie a táto karta je na pozadí. vstavaný zvuk alebo váš vlastný súbor"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "zvukový súbor"
+  },
+  "mc_sfx_opt_file": {
+    "message": "môj súbor"
+  },
+  "mc_sfx_pick": {
+    "message": "vybrať súbor"
+  },
+  "mc_sfx_play": {
+    "message": "prehrať"
+  },
+  "mc_sfx_remove": {
+    "message": "odstrániť súbor"
+  },
+  "mc_sfx_note": {
+    "message": "vaše vlastné zvukové súbory zostávajú v tomto zariadení: nikdy sa nesynchronizujú ani neexportujú. len zvuk, max. 256 KB a 10 sekúnd"
+  },
+  "mc_sfx_err_type": {
+    "message": "toto nie je zvukový súbor"
+  },
+  "mc_sfx_err_size": {
+    "message": "súbor je príliš veľký. max. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "tento zvuk sa nedá prečítať. skúste iný súbor"
+  },
+  "mc_sfx_err_long": {
+    "message": "zvuk je príliš dlhý. max. 10 sekúnd"
+  },
+  "mc_sfx_err_save": {
+    "message": "zvuk sa nepodarilo uložiť do tohto zariadenia"
+  },
+  "mc_sfx_missing": {
+    "message": "tento zvukový súbor v tomto zariadení nie je. vyberte ho znova"
+  },
+  "mc_sfx_volume": {
+    "message": "hlasitosť"
+  },
+  "mc_sfx_none": {
+    "message": "zatiaľ žiadny súbor"
   }
 }

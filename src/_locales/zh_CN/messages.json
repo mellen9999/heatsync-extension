@@ -1300,7 +1300,7 @@
     "message": "提及音量"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "被提及时提示音的音量。0 = 静音。使用纯 WebAudio 音调，不附带音频文件。"
+    "message": "提及提示音有多响。0 = 静音"
   },
   "mc_settings_cross_follow_kick": {
     "message": "同时在 kick 关注"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "要发言，请照常登录该网站，然后在底部输入框里输入"
+  },
+  "mc_settings_mention_sound": {
+    "message": "提及提示音"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "此标签页在后台时被 @提及 会播放的声音。内置声音或你自己的文件"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "声音文件"
+  },
+  "mc_sfx_opt_file": {
+    "message": "我的文件"
+  },
+  "mc_sfx_pick": {
+    "message": "选择文件"
+  },
+  "mc_sfx_play": {
+    "message": "播放"
+  },
+  "mc_sfx_remove": {
+    "message": "移除文件"
+  },
+  "mc_sfx_note": {
+    "message": "你自己的声音文件只保存在这台设备上，不会同步也不会导出。仅限音频，最大 256 KB，最长 10 秒"
+  },
+  "mc_sfx_err_type": {
+    "message": "这不是音频文件"
+  },
+  "mc_sfx_err_size": {
+    "message": "文件太大。最大 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "无法读取这个声音。换个文件试试"
+  },
+  "mc_sfx_err_long": {
+    "message": "声音太长。最长 10 秒"
+  },
+  "mc_sfx_err_save": {
+    "message": "无法在这台设备上保存该声音"
+  },
+  "mc_sfx_missing": {
+    "message": "这台设备上没有这个声音文件。请重新选择"
+  },
+  "mc_sfx_volume": {
+    "message": "音量"
+  },
+  "mc_sfx_none": {
+    "message": "还没有文件"
   }
 }

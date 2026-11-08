@@ -1250,7 +1250,7 @@ function handleYoutubeChatMsg(msg) {
     if (_frYt.hide) return
   }
   // Highlight-rule audio cue — once, on live youtube arrival.
-  if (_frYt?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frYt.sound)
+  if (_frYt?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frYt)
   const isMent = isMention(ytMsg)
   bumpStreamStats(ytChannelHint || ytEmoteKey, ytMsg, isMent)
   if (isMent) {

@@ -2760,14 +2760,10 @@
         Notification.requestPermission().catch(() => {})
       }
     },
-    mentionPing: (v) => {
-      if (!(v > 0)) return
-      if (typeof playMentionPing === 'function') {
-        try {
-          playMentionPing(v)
-        } catch (_) {}
-      }
-    },
+    mentionPing: (v) => previewMentionSound(v), // slider: hear the level just set
+    mentionSoundPick: (v) => previewMentionSound(undefined, v), // select: hear the sound just chosen
+    // the file's name is the setting: emptied (remove, reset to defaults) = the file on this device goes too
+    mentionSoundFile: (v) => v || sfxRemove(SFX_MENTION_KEY),
     // content-warning toggles PATCH the server; the local write is already
     // optimistic (setSetting persisted it) — roll back on failure. BG picks
     // up the storage change via onChanged and re-appends include_* params;
@@ -14957,7 +14953,7 @@
       }
       // Highlight-rule audio cue — once, on live arrival (this path is live-only;
       // history replay doesn't reach here). Own/hidden already returned above.
-      if (_frTw?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frTw.sound)
+      if (_frTw?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frTw)
       const isMent = isMention(msg)
       bumpStreamStats(msg.channel, msg, isMent)
       if (isMent) {
@@ -15062,7 +15058,7 @@
         if (_frKi.hide) return
       }
       // Highlight-rule audio cue — once, on live kick arrival.
-      if (_frKi?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frKi.sound)
+      if (_frKi?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frKi)
       const isMent = isMention(msg)
       bumpStreamStats(msg.channel, msg, isMent)
       if (isMent) {

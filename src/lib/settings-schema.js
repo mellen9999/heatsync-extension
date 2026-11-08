@@ -1091,6 +1091,52 @@ const SETTINGS = [
     control: 'pill',
   },
   {
+    key: 'mentionSound',
+    basic: true,
+    type: 'enum',
+    default: 'ping',
+    scope: 'sync',
+    category: 'notifs',
+    section: 'when you get @mentioned',
+    sectionKey: 'lib_sec_mentioned',
+    labelKey: 'mc_settings_mention_sound',
+    tipKey: 'mc_settings_mention_sound_desc',
+    control: 'select',
+    alias: 'mentionsound ping blip knock chime audio custom file',
+    apply: 'mentionSoundPick',
+    syncSilent: true,
+    // the first four are the built-in presets (SFX_PRESETS in multichat/sounds.js,
+    // pinned by tests/chat-sounds.test.js); 'custom' plays the file picked on this device
+    options: [
+      { value: 'ping', label: 'ping' },
+      { value: 'blip', label: 'blip' },
+      { value: 'knock', label: 'knock' },
+      { value: 'chime', label: 'chime' },
+      { value: 'custom', label: 'my file', labelKey: 'mc_sfx_opt_file' },
+    ],
+  },
+  {
+    // Name of the file picked for the @mention sound. The bytes never sync or
+    // export — they sit in chrome.storage.local on the device that picked them
+    // (hs_sfx_mention); only this label travels. Emptying it (remove, or
+    // reset to defaults) deletes the file. Rendered by sound-ui.js, not auto.
+    key: 'mentionSoundName',
+    basic: true,
+    type: 'text',
+    default: '',
+    scope: 'sync',
+    category: 'notifs',
+    section: 'when you get @mentioned',
+    sectionKey: 'lib_sec_mentioned',
+    labelKey: 'mc_settings_mention_sound_file',
+    tipKey: 'mc_sfx_note',
+    control: 'custom',
+    alias: 'mentionsoundfile upload audio mp3 wav ogg custom sound file',
+    apply: 'mentionSoundFile',
+    syncSilent: true,
+    maxLen: 60,
+  },
+  {
     key: 'mentionSoundVolume',
     basic: true, // day-one row — shows in the default (basic) settings view
     type: 'range',

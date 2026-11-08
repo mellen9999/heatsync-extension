@@ -1300,7 +1300,7 @@
     "message": "említés hangerő"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "hangjelzés hangereje említéskor. 0 = néma. tiszta WebAudio hangok, nincs csomagolt fájl."
+    "message": "milyen hangos a megemlítés hangja. 0 = néma"
   },
   "mc_settings_cross_follow_kick": {
     "message": "kövesd kicken is"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "a chateléshez jelentkezz be az oldalon, ahogy szoktál, és írj az alul lévő mezőbe"
+  },
+  "mc_settings_mention_sound": {
+    "message": "megemlítés hangja"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "mi szól, ha @megemlítenek, miközben ez a lap a háttérben van. beépített hang vagy saját fájl"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "hangfájl"
+  },
+  "mc_sfx_opt_file": {
+    "message": "saját fájlom"
+  },
+  "mc_sfx_pick": {
+    "message": "fájl kiválasztása"
+  },
+  "mc_sfx_play": {
+    "message": "lejátszás"
+  },
+  "mc_sfx_remove": {
+    "message": "fájl eltávolítása"
+  },
+  "mc_sfx_note": {
+    "message": "a saját hangfájljaid ezen az eszközön maradnak: soha nem szinkronizálódnak és nem exportálódnak. csak hang, legfeljebb 256 KB és 10 másodperc"
+  },
+  "mc_sfx_err_type": {
+    "message": "ez nem hangfájl"
+  },
+  "mc_sfx_err_size": {
+    "message": "a fájl túl nagy. legfeljebb 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "ez a hang nem olvasható. próbálj másik fájlt"
+  },
+  "mc_sfx_err_long": {
+    "message": "a hang túl hosszú. legfeljebb 10 másodperc"
+  },
+  "mc_sfx_err_save": {
+    "message": "a hangot nem sikerült elmenteni ezen az eszközön"
+  },
+  "mc_sfx_missing": {
+    "message": "ez a hangfájl nincs ezen az eszközön. válaszd ki újra"
+  },
+  "mc_sfx_volume": {
+    "message": "hangerő"
+  },
+  "mc_sfx_none": {
+    "message": "még nincs fájl"
   }
 }

@@ -1300,7 +1300,7 @@
     "message": "volym för omnämnandeljud"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "volym på ljudsignalen vid omnämnande. 0 = tyst. använder rena WebAudio-toner, ingen fil medföljer."
+    "message": "hur högt nämnljudet är. 0 = tyst"
   },
   "mc_settings_cross_follow_kick": {
     "message": "följ även på kick"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "för att chatta loggar du in på sajten som vanligt och skriver i rutan längst ner"
+  },
+  "mc_settings_mention_sound": {
+    "message": "nämnljud"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "vad som spelas när du @nämns medan den här fliken är i bakgrunden. ett inbyggt ljud eller din egen fil"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "ljudfil"
+  },
+  "mc_sfx_opt_file": {
+    "message": "min fil"
+  },
+  "mc_sfx_pick": {
+    "message": "välj fil"
+  },
+  "mc_sfx_play": {
+    "message": "spela upp"
+  },
+  "mc_sfx_remove": {
+    "message": "ta bort fil"
+  },
+  "mc_sfx_note": {
+    "message": "dina egna ljudfiler stannar på den här enheten: synkas eller exporteras aldrig. bara ljud, max 256 KB och 10 sekunder"
+  },
+  "mc_sfx_err_type": {
+    "message": "det är ingen ljudfil"
+  },
+  "mc_sfx_err_size": {
+    "message": "filen är för stor. max 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "det går inte att läsa ljudet. prova en annan fil"
+  },
+  "mc_sfx_err_long": {
+    "message": "ljudet är för långt. max 10 sekunder"
+  },
+  "mc_sfx_err_save": {
+    "message": "kunde inte spara ljudet på den här enheten"
+  },
+  "mc_sfx_missing": {
+    "message": "ljudfilen finns inte på den här enheten. välj den igen"
+  },
+  "mc_sfx_volume": {
+    "message": "volym"
+  },
+  "mc_sfx_none": {
+    "message": "ingen fil än"
   }
 }

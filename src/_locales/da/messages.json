@@ -1300,7 +1300,7 @@
     "message": "omtale-lydstyrke"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "lydstyrke for ping ved omtale. 0 = lydløs. bruger rene WebAudio-toner, ingen fil medfølger."
+    "message": "hvor høj omtalelyden er. 0 = lydløs"
   },
   "mc_settings_cross_follow_kick": {
     "message": "følg også på kick"
@@ -6673,5 +6673,53 @@
   },
   "welcome_start_3": {
     "message": "for at chatte skal du logge ind på siden som sædvanlig og skrive i feltet nederst"
+  },
+  "mc_settings_mention_sound": {
+    "message": "omtalelyd"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "hvad der afspilles, når du bliver @omtalt, mens fanen er i baggrunden. en indbygget lyd eller din egen fil"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "lydfil"
+  },
+  "mc_sfx_opt_file": {
+    "message": "min fil"
+  },
+  "mc_sfx_pick": {
+    "message": "vælg fil"
+  },
+  "mc_sfx_play": {
+    "message": "afspil"
+  },
+  "mc_sfx_remove": {
+    "message": "fjern fil"
+  },
+  "mc_sfx_note": {
+    "message": "dine egne lydfiler bliver på denne enhed: synkroniseres eller eksporteres aldrig. kun lyd, maks. 256 KB og 10 sekunder"
+  },
+  "mc_sfx_err_type": {
+    "message": "det er ikke en lydfil"
+  },
+  "mc_sfx_err_size": {
+    "message": "filen er for stor. maks. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "lyden kan ikke læses. prøv en anden fil"
+  },
+  "mc_sfx_err_long": {
+    "message": "lyden er for lang. maks. 10 sekunder"
+  },
+  "mc_sfx_err_save": {
+    "message": "kunne ikke gemme lyden på denne enhed"
+  },
+  "mc_sfx_missing": {
+    "message": "lydfilen findes ikke på denne enhed. vælg den igen"
+  },
+  "mc_sfx_volume": {
+    "message": "lydstyrke"
+  },
+  "mc_sfx_none": {
+    "message": "ingen fil endnu"
   }
 }

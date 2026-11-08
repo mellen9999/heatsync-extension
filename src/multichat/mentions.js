@@ -233,44 +233,54 @@ if (!_onceGuardsMentions.titleFlashFocusWired) {
   )
 }
 
-// User-tunable settings — sound, volume + flash toggle. Hydrated from sync
-// ui_settings; sync onChanged keeps them current cross-tab. Defaults: ping,
-// 0.3, flash on.
+// User-tunable settings — sound, volume, when the sound plays + flash toggle.
+// Hydrated from sync ui_settings; sync onChanged keeps them current cross-tab.
+// Defaults: ping, 0.3, only when away, flash on.
 let mentionSound = 'ping'
 let mentionSoundVolume = 0.3
 let mentionTitleFlash = true
+// 'away' = the mention sound only plays while this window is not focused (how it
+// always worked); 'always' = every mention, focused or not
+let mentionSoundWhen = 'away'
+function readMentionUi(ui) {
+  if (typeof ui.mentionSoundVolume === 'number') mentionSoundVolume = Math.max(0, Math.min(1, ui.mentionSoundVolume))
+  if (typeof ui.mentionSound === 'string') mentionSound = ui.mentionSound
+  if (typeof ui.mentionTitleFlash === 'boolean') mentionTitleFlash = ui.mentionTitleFlash
+  if (ui.mentionSoundWhen === 'away' || ui.mentionSoundWhen === 'always') mentionSoundWhen = ui.mentionSoundWhen
+}
 api.storage.sync
   .get(['ui_settings'])
-  .then((stored) => {
-    const ui = stored?.ui_settings || {}
-    if (typeof ui.mentionSoundVolume === 'number') mentionSoundVolume = Math.max(0, Math.min(1, ui.mentionSoundVolume))
-    if (typeof ui.mentionSound === 'string') mentionSound = ui.mentionSound
-    if (typeof ui.mentionTitleFlash === 'boolean') mentionTitleFlash = ui.mentionTitleFlash
-  })
+  .then((stored) => readMentionUi(stored?.ui_settings || {}))
   .catch(() => {})
 if (!_onceGuardsMentions.mentionAudioStorageListener) {
   _onceGuardsMentions.mentionAudioStorageListener = true
   cleanup.addListener(api.storage.onChanged, (changes, area) => {
-    if (area === 'sync' && changes.ui_settings?.newValue) {
-      const ui = changes.ui_settings.newValue
-      if (typeof ui.mentionSoundVolume === 'number')
-        mentionSoundVolume = Math.max(0, Math.min(1, ui.mentionSoundVolume))
-      if (typeof ui.mentionSound === 'string') mentionSound = ui.mentionSound
-      if (typeof ui.mentionTitleFlash === 'boolean') mentionTitleFlash = ui.mentionTitleFlash
-    }
+    if (area === 'sync' && changes.ui_settings?.newValue) readMentionUi(changes.ui_settings.newValue)
   })
 }
 
-function notifyMention(msg) {
+// A highlight rule with "also notify me" counts as a mention without a heatsync
+// login: it lands in the mentions tab, flashes the tab title and shows the
+// desktop notice, exactly like an @you. Same gates as a real mention — the
+// mentions switch, and a blocked user never pings. `verdict` is the row's
+// evaluateFilterRules() result; own messages never get one.
+function ruleAlertsMention(msg, verdict) {
+  if (!verdict?.notify) return false
+  if (!isEnabled('mentions')) return false
+  if (typeof isUserBlocked === 'function' && isUserBlocked(msg.user, msg.platform)) return false
+  return true
+}
+
+// viaRule: the alert is a highlight rule's "also notify me", not an @you — the
+// rule already played its own sound on arrival, so the mention ping stays out of it.
+function notifyMention(msg, viaRule) {
   // Always evaluate audio + title-flash even when system notif disabled — they
   // have their own gates. The original "return if notifs off" check killed the
   // tab-title flash for users who didn't want OS popups but did want a visual
   // cue. Each cue is independently configurable.
   const unfocused = !document.hasFocus()
-  if (unfocused) {
-    playMentionPing(mentionSoundVolume)
-    if (mentionTitleFlash) _titleFlashStart(msg.user || '')
-  }
+  if (!viaRule && (unfocused || mentionSoundWhen === 'always')) playMentionPing(mentionSoundVolume)
+  if (unfocused && mentionTitleFlash) _titleFlashStart(msg.user || '')
   if (!notificationsEnabled || !unfocused) return
   const channel = msg.channel ? ` in #${msg.channel}` : ''
   const title = `${msg.user}${channel}`

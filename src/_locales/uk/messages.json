@@ -1318,7 +1318,7 @@
     "message": "кнопки панелі mod"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "дії при наведенні на рядки чату, коли ти mod каналу — усе вимкнено за замовчуванням"
+    "message": "дії при наведенні на рядки чату, коли ти mod каналу. коли ти вперше стаєш mod, з'являється стартовий набір; змінюй його тут"
   },
   "mc_settings_mod_btn_delete": {
     "message": "видалити це повідомлення"
@@ -1411,7 +1411,7 @@
     "message": "правила фільтрів"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "фільтри підсвічування/приховування за правилами — ключове слово, regex, користувач, бейдж чи тип повідомлення; керуються в редакторі правил"
+    "message": "виділяй або ховай повідомлення за словом, шаблоном, користувачем, значком чи видом. правила додаються, змінюються й сортуються тут"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "гучність колесом миші"
@@ -5324,10 +5324,10 @@
     "message": "усі канали"
   },
   "mc_set_fr_t_keyword": {
-    "message": "ключове слово"
+    "message": "слово"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "шаблон"
   },
   "mc_set_fr_t_user": {
     "message": "користувач"
@@ -5336,13 +5336,13 @@
     "message": "бейдж"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "тип пов."
+    "message": "вид"
   },
   "mc_set_fr_t_expr": {
-    "message": "вираз"
+    "message": "складне"
   },
   "mc_set_fr_expr_tip": {
-    "message": "напр. first && !badge:subscriber — з'єднуй через && || ! ( ); поля user: badge: type: contains: regex:"
+    "message": "з'єднуй перевірки через && (і) || (або) ! (не), наприклад: first && !badge:subscriber. перевірки: first, action, reply, cheer, user:ім'я, badge:ім'я, contains:текст, regex:шаблон, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "значення..."
@@ -6678,7 +6678,7 @@
     "message": "звук згадки"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "що грає, коли вас @згадують, а вкладка у фоні. вбудований звук або ваш файл"
+    "message": "що грає, коли тебе @згадують. вбудований звук або твій файл"
   },
   "mc_settings_mention_sound_file": {
     "message": "звуковий файл"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "ім'я емоута не може бути порожнім чи з пробілами"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "ціле слово або фраза, наприклад: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "текстовий шаблон (regex), наприклад: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "ім'я однієї людини з чату, наприклад: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "усі, хто має значок, наприклад: moderator, subscriber або vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "вид повідомлення: first-message, action, reply або cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "підходить до $COUNT$ з останніх $TOTAL$ повідомлень",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "не підходить до жодного з останніх $TOTAL$ повідомлень",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "тут поки немає повідомлень, щоб це перевірити"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "це правило поки не працює. перевір, що ти написав"
+  },
+  "mc_set_fr_notify": {
+    "message": "ще й повідомляти мене"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "збіг вважається згадкою: він потрапляє у вкладку згадок, блимає заголовок вкладки і приходить сповіщення на робочому столі, якщо вони ввімкнені. акаунт не потрібен"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "звук згадки грає"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "коли грає звук згадки: лише поки ти в іншому вікні, або щоразу"
+  },
+  "mc_set_msw_away": {
+    "message": "лише коли мене немає"
+  },
+  "mc_set_msw_always": {
+    "message": "завжди"
+  },
+  "mc_mtb_seeded": {
+    "message": "у рядки чату додано кнопки mod: видалити, тайм-аут 10 хв, бан. змінити їх можна в налаштуваннях › mod"
   }
 }

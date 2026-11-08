@@ -1318,7 +1318,7 @@
     "message": "кнопки mod на панели"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "кнопки при наведении на строки чата, если ты mod канала — по умолчанию все выкл"
+    "message": "кнопки при наведении на строки чата, если ты mod канала. когда ты впервые становишься mod, появляется стартовый набор; поменяй его здесь"
   },
   "mc_settings_mod_btn_delete": {
     "message": "удалить это сообщение"
@@ -1411,7 +1411,7 @@
     "message": "правила фильтров"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "правила подсветки/скрытия по ключевому слову, regex, юзеру, значку или типу сообщения; управляются в редакторе правил"
+    "message": "выделяй или скрывай сообщения по слову, шаблону, пользователю, значку или виду. правила добавляются, меняются и сортируются здесь"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "громкость колесом"
@@ -5327,7 +5327,7 @@
     "message": "слово"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "шаблон"
   },
   "mc_set_fr_t_user": {
     "message": "пользователь"
@@ -5336,13 +5336,13 @@
     "message": "бейдж"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "тип сообщ."
+    "message": "вид"
   },
   "mc_set_fr_t_expr": {
-    "message": "выраж."
+    "message": "сложное"
   },
   "mc_set_fr_expr_tip": {
-    "message": "напр.: first && !badge:subscriber — связки && || ! ( ); поля user: badge: type: contains: regex:"
+    "message": "соединяй проверки через && (и) || (или) ! (не), например: first && !badge:subscriber. проверки: first, action, reply, cheer, user:имя, badge:имя, contains:текст, regex:шаблон, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "значение..."
@@ -6678,7 +6678,7 @@
     "message": "звук упоминания"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "что играет, когда вас @упоминают, а вкладка в фоне. встроенный звук или ваш файл"
+    "message": "что играет, когда тебя @упоминают. встроенный звук или твой файл"
   },
   "mc_settings_mention_sound_file": {
     "message": "звуковой файл"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "имя эмоута не может быть пустым или с пробелами"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "целое слово или фраза, например: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "текстовый шаблон (regex), например: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "имя одного человека из чата, например: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "все, у кого есть значок, например: moderator, subscriber или vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "вид сообщения: first-message, action, reply или cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "подходит к $COUNT$ из последних $TOTAL$ сообщений",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "не подходит ни к одному из последних $TOTAL$ сообщений",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "здесь пока нет сообщений, чтобы это проверить"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "это правило пока не работает. проверь, что ты написал"
+  },
+  "mc_set_fr_notify": {
+    "message": "ещё и сообщать мне"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "совпадение считается упоминанием: оно попадает во вкладку упоминаний, мигает заголовок вкладки и приходит уведомление на рабочем столе, если они включены. аккаунт не нужен"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "звук упоминания играет"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "когда играет звук упоминания: только пока ты в другом окне, или каждый раз"
+  },
+  "mc_set_msw_away": {
+    "message": "только когда меня нет"
+  },
+  "mc_set_msw_always": {
+    "message": "всегда"
+  },
+  "mc_mtb_seeded": {
+    "message": "в строки чата добавлены кнопки mod: удалить, таймаут 10 мин, бан. поменяй их в настройках › mod"
   }
 }

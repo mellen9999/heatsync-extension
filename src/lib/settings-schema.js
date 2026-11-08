@@ -1188,6 +1188,26 @@ const SETTINGS = [
     syncSilent: true,
     options: { min: 0, max: 1, step: 0.05 },
   },
+  {
+    // The @mention sound only ever played while this window was in the background;
+    // highlight-rule sounds always play. 'away' is that old behaviour (the default).
+    key: 'mentionSoundWhen',
+    basic: true,
+    type: 'enum',
+    default: 'away',
+    scope: 'sync',
+    category: 'notifs',
+    section: 'when you get @mentioned',
+    sectionKey: 'lib_sec_mentioned',
+    labelKey: 'mc_settings_mention_sound_when',
+    tipKey: 'mc_settings_mention_sound_when_desc',
+    control: 'select',
+    alias: 'mentionsoundwhen away focused always sound play',
+    options: [
+      { value: 'away', label: "only when i'm away", labelKey: 'mc_set_msw_away' },
+      { value: 'always', label: 'always', labelKey: 'mc_set_msw_always' },
+    ],
+  },
 
   // ── notifs / cross-platform follow ────────────────────────────────────
   {

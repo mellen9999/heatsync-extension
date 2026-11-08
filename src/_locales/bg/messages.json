@@ -1318,7 +1318,7 @@
     "message": "бутони на mod лентата"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "действия при посочване на редове в чата, когато си mod на канала — всички изключени по подразбиране"
+    "message": "действия при посочване на редове в чата, когато си mod на канала. първия път, когато си mod, се появява начален набор; промени го тук"
   },
   "mc_settings_mod_btn_delete": {
     "message": "изтрий това съобщение"
@@ -1411,7 +1411,7 @@
     "message": "правила за филтри"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "филтри за подчертаване/скриване по правило — keyword, regex, user, badge или msgtype; управляват се в редактора на правила"
+    "message": "подчертай или скрий съобщения по дума, шаблон, потребител, значка или вид. добавяй, редактирай и подреждай правилата тук"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "звук с колелото"
@@ -5324,10 +5324,10 @@
     "message": "всички канали"
   },
   "mc_set_fr_t_keyword": {
-    "message": "ключова дума"
+    "message": "дума"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "шаблон"
   },
   "mc_set_fr_t_user": {
     "message": "потребител"
@@ -5336,13 +5336,13 @@
     "message": "значка"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "тип съобщение"
+    "message": "вид"
   },
   "mc_set_fr_t_expr": {
-    "message": "израз"
+    "message": "разширено"
   },
   "mc_set_fr_expr_tip": {
-    "message": "напр. first && !badge:subscriber — свързвай с && || ! ( ); полета user: badge: type: contains: regex:"
+    "message": "свържи проверки с && (и) || (или) ! (не), напр.: first && !badge:subscriber. проверки: first, action, reply, cheer, user:име, badge:име, contains:текст, regex:шаблон, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "стойност..."
@@ -6678,7 +6678,7 @@
     "message": "звук при споменаване"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "какво се възпроизвежда, когато те @споменат, а този раздел е на заден план. вграден звук или собствен файл"
+    "message": "какво се възпроизвежда, когато те @споменат. вграден звук или собствен файл"
   },
   "mc_settings_mention_sound_file": {
     "message": "звуков файл"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "името на емотето не може да е празно или да има интервали"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "цяла дума или фраза, напр.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "текстов шаблон (regex), напр.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "името на един човек в чата, напр.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "всички с дадена значка, напр.: moderator, subscriber или vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "вид съобщение: first-message, action, reply или cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "съвпада с $COUNT$ от последните $TOTAL$ съобщения",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "не съвпада с нито едно от последните $TOTAL$ съобщения",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "тук още няма съобщения за изпробване"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "това правило още не работи. провери какво си написал"
+  },
+  "mc_set_fr_notify": {
+    "message": "и ме уведоми"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "съвпадението се брои като споменаване: показва се в раздела за споменавания, мига заглавието на таба и пуска известие на десктопа, ако са включени. не ти трябва акаунт"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "звукът при споменаване се пуска"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "кога се пуска звукът при споменаване: само докато си в друг прозорец, или всеки път"
+  },
+  "mc_set_msw_away": {
+    "message": "само когато не съм тук"
+  },
+  "mc_set_msw_always": {
+    "message": "винаги"
+  },
+  "mc_mtb_seeded": {
+    "message": "добавени са mod бутони към редовете в чата: изтрий, таймаут 10 мин, бан. промени ги в настройки › mod"
   }
 }

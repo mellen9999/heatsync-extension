@@ -1318,7 +1318,7 @@
     "message": "mod-værktøjslinjeknapper"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "hover-handlinger på chatrækker når du modder kanalen — alle fra som standard"
+    "message": "hover-handlinger på chatrækker når du er mod i kanalen. et startsæt dukker op første gang du er mod; ret det her"
   },
   "mc_settings_mod_btn_delete": {
     "message": "slet denne besked"
@@ -1411,7 +1411,7 @@
     "message": "filterregler"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "fremhævnings-/skjulfiltre pr. regel — keyword, regex, user, badge eller msgtype; styres i regeleditoren"
+    "message": "fremhæv eller skjul beskeder efter ord, mønster, bruger, badge eller slags. tilføj, rediger og sortér regler her"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "lydstyrke med musehjul"
@@ -5324,10 +5324,10 @@
     "message": "alle kanaler"
   },
   "mc_set_fr_t_keyword": {
-    "message": "nøgleord"
+    "message": "ord"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "mønster"
   },
   "mc_set_fr_t_user": {
     "message": "bruger"
@@ -5336,13 +5336,13 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "beskedtype"
+    "message": "slags"
   },
   "mc_set_fr_t_expr": {
-    "message": "udtryk"
+    "message": "avanceret"
   },
   "mc_set_fr_expr_tip": {
-    "message": "fx first && !badge:subscriber — sammensæt med && || ! ( ); felter user: badge: type: contains: regex:"
+    "message": "kombiner tests med && (og) || (eller) ! (ikke), fx: first && !badge:subscriber. tests: first, action, reply, cheer, user:navn, badge:navn, contains:tekst, regex:mønster, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "værdi..."
@@ -6678,7 +6678,7 @@
     "message": "omtalelyd"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "hvad der afspilles, når du bliver @omtalt, mens fanen er i baggrunden. en indbygget lyd eller din egen fil"
+    "message": "hvad der afspilles, når du bliver @omtalt. en indbygget lyd eller din egen fil"
   },
   "mc_settings_mention_sound_file": {
     "message": "lydfil"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "et emotenavn må ikke være tomt eller have mellemrum"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "et helt ord eller en frase, fx: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "et tekstmønster (regex), fx: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "én chatters navn, fx: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "alle med et badge, fx: moderator, subscriber eller vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "en slags besked: first-message, action, reply eller cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "matcher $COUNT$ af de sidste $TOTAL$ beskeder",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "matcher ingen af de sidste $TOTAL$ beskeder",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "ingen beskeder her endnu at prøve den på"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "reglen virker ikke endnu. tjek hvad du skrev"
+  },
+  "mc_set_fr_notify": {
+    "message": "giv mig også besked"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "et match tæller som en omtale: det vises i omtale-fanen, fanens titel blinker, og der kommer en skrivebordsnotifikation, hvis de er slået til. ingen konto nødvendig"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "omtalelyden afspilles"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "hvornår omtalelyden afspilles: kun mens du er i et andet vindue, eller hver gang"
+  },
+  "mc_set_msw_away": {
+    "message": "kun når jeg er væk"
+  },
+  "mc_set_msw_always": {
+    "message": "altid"
+  },
+  "mc_mtb_seeded": {
+    "message": "mod-knapper er tilføjet til chatrækkerne: slet, timeout 10 min, ban. ret dem i indstillinger › mod"
   }
 }

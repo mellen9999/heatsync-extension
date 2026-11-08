@@ -68,28 +68,34 @@ function sfxPresetLabel(n) {
   }
   return labels[n] || n
 }
-function sfxFormSoundOptions() {
+// `current` = the sound an edited rule already has: its option is selected, and
+// "my file" stays on offer when that rule already owns one (it is on this device).
+function sfxFormSoundOptions(current) {
+  const keep = current === SFX_CUSTOM
+  const picked = (n) => (n === current ? ' selected' : '')
   return (
     `<option value="none">${t('mc_set_fr_silent')}</option>` +
     Object.keys(SFX_PRESETS)
-      .map((n) => `<option value="${n}">${escapeHtml(sfxPresetLabel(n))}</option>`)
+      .map((n) => `<option value="${n}"${picked(n)}>${escapeHtml(sfxPresetLabel(n))}</option>`)
       .join('') +
-    `<option value="${SFX_CUSTOM}"${sfxPending ? ' selected' : ' disabled'}>${escapeHtml(t('mc_sfx_opt_file'))}</option>`
+    `<option value="${SFX_CUSTOM}"${sfxPending || keep ? ' selected' : ' disabled'}>${escapeHtml(t('mc_sfx_opt_file'))}</option>`
   )
 }
 
-function sfxPickLabel() {
-  return `♪ ${sfxPending ? sfxPending.n : t('mc_sfx_pick')}`
+// the file name shown on the pick button: the one just picked, else the one an edited rule already carries
+function sfxPickLabel(keptName) {
+  return `♪ ${sfxPending ? sfxPending.n : keptName || t('mc_sfx_pick')}`
 }
 
 // A new rule's volume starts at the shared mention volume, so a rule you add
 // sounds exactly like the ones you already have until you move the slider.
-function sfxRuleFormHtml() {
-  const vol = Math.round(Math.min(1, Math.max(0, mentionSoundVolume)) * 100)
+// `vol` (0..100) is the volume of a rule being edited, or a half-filled form.
+function sfxRuleFormHtml(vol, keptName) {
+  const shown = Number.isFinite(vol) ? vol : Math.round(Math.min(1, Math.max(0, mentionSoundVolume)) * 100)
   return (
-    `<input type="range" class="hs-mc-set-range" data-fr-field="vol" min="0" max="100" step="5" value="${vol}" style="width:70px" title="${escapeHtml(t('mc_sfx_volume'))}">` +
-    `<span class="hs-mc-set-range-val">${vol}</span>` +
-    `<button data-fr-action="pick" style="${FR_BTN};max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(t('mc_sfx_note'))}">${escapeHtml(sfxPickLabel())}</button>` +
+    `<input type="range" class="hs-mc-set-range" data-fr-field="vol" min="0" max="100" step="5" value="${shown}" style="width:70px" title="${escapeHtml(t('mc_sfx_volume'))}">` +
+    `<span class="hs-mc-set-range-val">${shown}</span>` +
+    `<button data-fr-action="pick" style="${FR_BTN};max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(t('mc_sfx_note'))}">${escapeHtml(sfxPickLabel(keptName))}</button>` +
     `<button data-fr-action="preview" style="${FR_BTN};padding:1px 4px" title="${escapeHtml(t('mc_sfx_play'))}">▶</button>`
   )
 }

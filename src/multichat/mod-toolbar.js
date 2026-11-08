@@ -58,6 +58,7 @@ const MOD_BUTTON_CATALOG = {
     durationSec: 1,
     needsMsgId: false,
     notKick: true, // kick's shortest timeout is a minute: a "purge" there would mute for 60s
+    notYt: true, // youtube's timeout is one fixed length, not a 1s clear
   },
   ban: { label: '⛔', titleKey: 'mc_mtb_t_ban', action: 'ban', durationSec: null, needsMsgId: false },
   unban: { label: '✓', titleKey: 'mc_mtb_t_unban', action: 'unban', durationSec: null, needsMsgId: false },
@@ -87,6 +88,45 @@ const MOD_BUTTON_CATALOG = {
 const DEFAULT_MOD_BUTTONS = []
 let modToolbarButtons = [...DEFAULT_MOD_BUTTONS]
 
+// ...but a new mod who never opened the settings saw no toolbar at all and had no
+// way to know it existed. So the FIRST time this viewer is confirmed a moderator,
+// and only if the buttons were never customised, they get a small starter set and
+// are told where to change it. "Never customised" = the storage key is absent:
+// every edit (including clearing the list) writes it, so an edit is never undone,
+// and a seed writes it too, so it only ever happens once.
+const STARTER_MOD_BUTTONS = ['delete_message', 'timeout_10m', 'ban']
+const MOD_BUTTONS_KEY = 'hs_mod_toolbar_buttons'
+const MOD_SEED_RETRY_MS = 1500
+const MOD_SEED_RETRIES = 20
+let _modSeedState = '' // '' = not yet | 'running' | 'done'
+function modSeedStarterButtons(tries = 0) {
+  if (_modSeedState) return
+  // Settings still loading: a write now would be overwritten by the hydration
+  // (it read storage before this landed). Ask again once it has finished.
+  if (typeof _settingsHydrated !== 'undefined' && !_settingsHydrated) {
+    if (tries < MOD_SEED_RETRIES) cleanup.setTimeout(() => modSeedStarterButtons(tries + 1), MOD_SEED_RETRY_MS)
+    return
+  }
+  _modSeedState = 'running'
+  ;(async () => {
+    try {
+      const stored = await browser.storage.local.get(MOD_BUTTONS_KEY)
+      if (MOD_BUTTONS_KEY in stored || modToolbarButtons.length) {
+        _modSeedState = 'done' // already customised (or already seeded): leave it alone, for good
+        return
+      }
+      if (!setSetting(MOD_BUTTONS_KEY, STARTER_MOD_BUTTONS)) {
+        _modSeedState = '' // not written: the next confirmed-mod answer tries again
+        return
+      }
+      _modSeedState = 'done'
+      showToast(t('mc_mtb_seeded'), 'info')
+    } catch (_) {
+      _modSeedState = '' // storage hiccup: nothing was written, try again next time
+    }
+  })()
+}
+
 // Per-channel mod state. Pre-fetch on tab/render so first hover doesn't lag.
 const _modStateCache = new Map()
 const _modStatePending = new Map()
@@ -107,6 +147,7 @@ async function isModFor(channel, { fresh = false } = {}) {
       const isMod = !!self?.isModerator
       // self is null until twitch knows who is asking — that is not a "no".
       if (self) _modStateCache.set(channel, isMod)
+      if (self && isMod) modSeedStarterButtons()
       return isMod
     } catch (_) {
       return false
@@ -149,6 +190,7 @@ async function isKickModFor(slug) {
       // uncached so the next interaction retries (mirrors the twitch side,
       // which is immune only because twitchGql throws on error).
       if (res?.ok) _kickModStateCache.set(slug, isMod)
+      if (res?.ok && isMod) modSeedStarterButtons()
       return isMod
     } catch (_) {
       return false
@@ -182,10 +224,12 @@ try {
   chrome.storage.local.get('hs_yt_mod_status', (v) => {
     void chrome.runtime.lastError
     _ytModState = !!v?.hs_yt_mod_status?.isMod
+    if (_ytModState) modSeedStarterButtons()
   })
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local' && changes.hs_yt_mod_status) {
       _ytModState = !!changes.hs_yt_mod_status.newValue?.isMod
+      if (_ytModState) modSeedStarterButtons()
     }
   })
 } catch (_) {}
@@ -233,8 +277,14 @@ function rebuildModToolbarButtons() {
     _modToolbar.appendChild(b)
   }
 }
+// youtube moderates one message at a time, through its own menu: it can delete,
+// time out (ONE fixed length — no 1m/10m/1h to pick), hide a user and unhide one
+const YT_MOD_ACTIONS = new Set(['delete', 'timeout', 'ban', 'unban'])
+const isYtPlatform = (p) => p === 'youtube' || p === 'yt'
 function gateModButtons(ctx) {
   if (!_modToolbar) return false
+  const yt = isYtPlatform(ctx.platform)
+  let ytTimeoutShown = false
   let anyVisible = false
   for (const btn of _modToolbar.querySelectorAll('.hs-mod-btn')) {
     const def = MOD_BUTTON_CATALOG[btn.dataset.modBtn]
@@ -243,6 +293,19 @@ function gateModButtons(ctx) {
     if (ok && def.twitchOnly && ctx.platform && ctx.platform !== 'twitch') ok = false
     if (ok && def.notKick && ctx.platform === 'kick') ok = false
     if (ok && !ctx.user) ok = false
+    // a youtube action is addressed by the message id, never by a name or a duration
+    if (ok && yt && (!ctx.msgId || def.notYt || !YT_MOD_ACTIONS.has(def.action))) ok = false
+    // every timeout button would do the same thing there: one is enough, and it says so
+    const ytTimeout = ok && yt && def.action === 'timeout'
+    if (ytTimeout) {
+      if (ytTimeoutShown) ok = false
+      ytTimeoutShown = true
+    }
+    // the one toolbar moves between rows: a youtube row's wording must not stick to a twitch row
+    if (def) {
+      btn.textContent = ytTimeout ? t('mc_input_timeout') : def.label
+      btn.title = t(ytTimeout ? 'mc_input_timeout' : def.titleKey)
+    }
     btn.style.display = ok ? '' : 'none'
     if (ok) anyVisible = true
   }
@@ -622,6 +685,7 @@ async function runModAction(id) {
   const def = MOD_BUTTON_CATALOG[id]
   if (!def || !_modCtx) return
   const { channel, user, login, msgId, row } = _modCtx
+  const platform = _modCtx.platform || 'twitch'
   if (def.action === 'blocked_terms') {
     detachModToolbar()
     openBlockedTerms(channel)
@@ -638,7 +702,7 @@ async function runModAction(id) {
   // Act on the row's own platform (twitch or kick), single-platform.
   const r = await dispatchModAction({
     channel,
-    platform: _modCtx.platform || 'twitch',
+    platform,
     action: def.action,
     target,
     durationSec: def.durationSec,
@@ -648,7 +712,9 @@ async function runModAction(id) {
   if (r?.anyOk && def.action === 'delete' && row) markClearedRow(row, t('mc_mod_label_deleted'))
   const label =
     def.action === 'timeout'
-      ? t('mc_mod_label_timed_out', [String(def.durationSec)])
+      ? isYtPlatform(platform)
+        ? t('mc_input_timed_out')
+        : t('mc_mod_label_timed_out', [String(def.durationSec)])
       : def.action === 'ban'
         ? t('mc_mod_label_banned')
         : def.action === 'unban'
@@ -673,14 +739,14 @@ function wireModToolbarHover(messagesEl) {
         return
       }
       const plat = row.dataset.msgPlatform
-      // YT mod actions live on the right-click menu (message-scoped, driven via
-      // YT's own moderation flow) — the hover toolbar stays twitch/kick only.
-      if (plat === 'youtube' || plat === 'yt') return
+      // YouTube is message-scoped (driven through YT's own moderation flow by the
+      // row's message id), so a yt row needs no channel name — the rest is the same
+      const isYt = isYtPlatform(plat)
       const channel = row.dataset.msgChannel
       const user = row.dataset.msgUser
       const login = row.dataset.msgLogin || row.dataset.msgUser
       const msgId = row.dataset.msgId
-      if (!channel || !user) return
+      if ((!channel && !isYt) || !user) return
       // Skip own messages — mod actions on yourself are nonsense UX. Use the
       // data-msg-self flag set at build time (currentUsername may be null at
       // hover time during pre-auth bootstrap); fall back to live compare.
@@ -689,12 +755,12 @@ function wireModToolbarHover(messagesEl) {
       // Sync gate per platform: twitch via GQL mod-state, kick via kick_mod_status.
       // Pre-fetch the right one so the next hover in this channel is instant.
       const isKick = plat === 'kick'
-      const amMod = isKick ? isKickModForSync(channel) : isModForSync(channel)
+      const amMod = isYt ? isYtModForSync() : isKick ? isKickModForSync(channel) : isModForSync(channel)
       if (!amMod) {
-        ;(isKick ? prefetchKickModFor : prefetchModFor)(channel)
+        if (!isYt) (isKick ? prefetchKickModFor : prefetchModFor)(channel)
         return
       }
-      const ctx = { channel, user, login, msgId, row, platform: plat || 'twitch' }
+      const ctx = { channel: channel || '', user, login, msgId, row, platform: plat || 'twitch' }
       _modCtx = ctx
       buildModToolbarOnce()
       if (!gateModButtons(ctx)) return

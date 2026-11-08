@@ -1318,7 +1318,7 @@
     "message": "mod-työkalupalkin napit"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "hover-toiminnot chat-riveillä kun olet kanavan mod — kaikki oletuksena pois"
+    "message": "hover-toiminnot chat-riveillä kun olet kanavan mod. ensimmäisellä kerralla modina saat aloitussarjan; muuta sitä tässä"
   },
   "mc_settings_mod_btn_delete": {
     "message": "poista tämä viesti"
@@ -1411,7 +1411,7 @@
     "message": "suodatussäännöt"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "sääntökohtaiset korosta/piilota-suodattimet — avainsana, regex, käyttäjä, badge tai msgtype; hallitaan sääntöeditorissa"
+    "message": "korosta tai piilota viestejä sanan, kuvion, käyttäjän, merkin tai lajin mukaan. lisää, muokkaa ja järjestä sääntöjä tässä"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "äänenvoimakkuus rullalla"
@@ -5324,10 +5324,10 @@
     "message": "kaikki kanavat"
   },
   "mc_set_fr_t_keyword": {
-    "message": "avainsana"
+    "message": "sana"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "kuvio"
   },
   "mc_set_fr_t_user": {
     "message": "käyttäjä"
@@ -5336,13 +5336,13 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "viestityyppi"
+    "message": "laji"
   },
   "mc_set_fr_t_expr": {
-    "message": "lauseke"
+    "message": "edistynyt"
   },
   "mc_set_fr_expr_tip": {
-    "message": "esim. first && !badge:subscriber — yhdistä merkeillä && || ! ( ); kentät user: badge: type: contains: regex:"
+    "message": "yhdistä testit merkeillä && (ja) || (tai) ! (ei), esim.: first && !badge:subscriber. testit: first, action, reply, cheer, user:nimi, badge:nimi, contains:teksti, regex:kuvio, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "arvo..."
@@ -6678,7 +6678,7 @@
     "message": "maininta-ääni"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "mikä soi, kun sinut @mainitaan ja tämä välilehti on taustalla. sisäänrakennettu ääni tai oma tiedostosi"
+    "message": "mikä soi, kun sinut @mainitaan. sisäänrakennettu ääni tai oma tiedostosi"
   },
   "mc_settings_mention_sound_file": {
     "message": "äänitiedosto"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "emoten nimi ei voi olla tyhjä eikä siinä saa olla välilyöntejä"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "kokonainen sana tai fraasi, esim.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "tekstikuvio (regex), esim.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "yhden katsojan nimi, esim.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "kaikki joilla on merkki, esim.: moderator, subscriber tai vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "viestin laji: first-message, action, reply tai cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "täsmää $COUNT$ viimeisestä $TOTAL$ viestistä",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "ei täsmää yhteenkään viimeisestä $TOTAL$ viestistä",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "täällä ei ole vielä viestejä kokeiltavaksi"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "tämä sääntö ei vielä toimi. tarkista mitä kirjoitit"
+  },
+  "mc_set_fr_notify": {
+    "message": "ilmoita minulle myös"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "osuma lasketaan maininnaksi: se näkyy mainintavälilehdellä, välilehden otsikko vilkkuu ja työpöytäilmoitus tulee, jos ne ovat päällä. tiliä ei tarvita"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "maininta-ääni soi"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "milloin maininta-ääni soi: vain kun olet toisessa ikkunassa, tai joka kerta"
+  },
+  "mc_set_msw_away": {
+    "message": "vain kun olen poissa"
+  },
+  "mc_set_msw_always": {
+    "message": "aina"
+  },
+  "mc_mtb_seeded": {
+    "message": "chat-riveille lisättiin mod-painikkeet: poista, timeout 10 min, ban. muuta niitä kohdassa asetukset › mod"
   }
 }

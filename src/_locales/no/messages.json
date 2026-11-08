@@ -1318,7 +1318,7 @@
     "message": "mod-verktøylinjeknapper"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "hover-handlinger på chatrader når du er mod i kanalen — alle av som standard"
+    "message": "hover-handlinger på chatrader når du er mod i kanalen. første gang du er mod dukker et startsett opp; endre det her"
   },
   "mc_settings_mod_btn_delete": {
     "message": "slett denne meldingen"
@@ -1411,7 +1411,7 @@
     "message": "filterregler"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "highlight/skjul-filtre per regel — nøkkelord, regex, bruker, merke eller meldingstype; styres i regelredigereren"
+    "message": "uthev eller skjul meldinger etter ord, mønster, bruker, merke eller slags. legg til, rediger og sorter regler her"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "volum med musehjul"
@@ -5324,10 +5324,10 @@
     "message": "alle kanaler"
   },
   "mc_set_fr_t_keyword": {
-    "message": "nøkkelord"
+    "message": "ord"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "mønster"
   },
   "mc_set_fr_t_user": {
     "message": "bruker"
@@ -5336,13 +5336,13 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "meldingstype"
+    "message": "slags"
   },
   "mc_set_fr_t_expr": {
-    "message": "uttrykk"
+    "message": "avansert"
   },
   "mc_set_fr_expr_tip": {
-    "message": "f.eks. first && !badge:subscriber — kombiner med && || ! ( ); felt user: badge: type: contains: regex:"
+    "message": "kombiner tester med && (og) || (eller) ! (ikke), f.eks.: first && !badge:subscriber. tester: first, action, reply, cheer, user:navn, badge:navn, contains:tekst, regex:mønster, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "verdi..."
@@ -6678,7 +6678,7 @@
     "message": "omtalelyd"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "hva som spilles når du blir @omtalt mens fanen er i bakgrunnen. en innebygd lyd eller din egen fil"
+    "message": "hva som spilles når du blir @omtalt. en innebygd lyd eller din egen fil"
   },
   "mc_settings_mention_sound_file": {
     "message": "lydfil"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "et emotenavn kan ikke være tomt eller ha mellomrom"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "et helt ord eller en frase, f.eks.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "et tekstmønster (regex), f.eks.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "navnet til én chatter, f.eks.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "alle med et merke, f.eks.: moderator, subscriber eller vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "en slags melding: first-message, action, reply eller cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "treffer $COUNT$ av de siste $TOTAL$ meldingene",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "treffer ingen av de siste $TOTAL$ meldingene",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "ingen meldinger her ennå å prøve den på"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "regelen virker ikke ennå. sjekk hva du skrev"
+  },
+  "mc_set_fr_notify": {
+    "message": "si også fra til meg"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "et treff teller som en omtale: det vises i omtale-fanen, fanetittelen blinker, og du får et skrivebordsvarsel hvis det er slått på. ingen konto nødvendig"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "omtalelyden spilles"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "når omtalelyden spilles: bare mens du er i et annet vindu, eller hver gang"
+  },
+  "mc_set_msw_away": {
+    "message": "bare når jeg er borte"
+  },
+  "mc_set_msw_always": {
+    "message": "alltid"
+  },
+  "mc_mtb_seeded": {
+    "message": "mod-knapper er lagt til på chatradene: slett, timeout 10 min, ban. endre dem i innstillinger › mod"
   }
 }

@@ -1318,7 +1318,7 @@
     "message": "botões da barra de mod"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "ações ao passar o mouse nas linhas do chat quando você é mod do canal — tudo desligado por padrão"
+    "message": "ações ao passar o mouse nas linhas do chat quando você é mod do canal. na primeira vez que você é mod aparece um conjunto inicial; mude aqui"
   },
   "mc_settings_mod_btn_delete": {
     "message": "apagar esta mensagem"
@@ -1411,7 +1411,7 @@
     "message": "regras de filtro"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "filtros de destacar/ocultar por regra — palavra-chave, regex, usuário, badge ou tipo de mensagem; gerenciados no editor de regras"
+    "message": "destaque ou esconda mensagens por palavra, padrão, usuário, emblema ou tipo. adicione, edite e ordene regras aqui"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "volume com a rodinha"
@@ -5324,10 +5324,10 @@
     "message": "todos os canais"
   },
   "mc_set_fr_t_keyword": {
-    "message": "palavra-chave"
+    "message": "palavra"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "padrão"
   },
   "mc_set_fr_t_user": {
     "message": "usuário"
@@ -5336,13 +5336,13 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "tipo de msg"
+    "message": "tipo"
   },
   "mc_set_fr_t_expr": {
-    "message": "expr"
+    "message": "avançado"
   },
   "mc_set_fr_expr_tip": {
-    "message": "ex.: first && !badge:subscriber — junte com && || ! ( ); campos user: badge: type: contains: regex:"
+    "message": "junte testes com && (e) || (ou) ! (não), como: first && !badge:subscriber. testes: first, action, reply, cheer, user:nome, badge:nome, contains:texto, regex:padrão, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "valor..."
@@ -6678,7 +6678,7 @@
     "message": "som de menção"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "o que toca quando você é @mencionado com esta aba em segundo plano. um som embutido ou seu próprio arquivo"
+    "message": "o que toca quando você é @mencionado. um som embutido ou seu próprio arquivo"
   },
   "mc_settings_mention_sound_file": {
     "message": "arquivo de som"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "o nome de um emote não pode ficar vazio nem ter espaços"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "uma palavra ou frase inteira, como: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "um padrão de texto (regex), como: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "o nome de uma pessoa do chat, como: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "todo mundo com um emblema, como: moderator, subscriber ou vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "um tipo de mensagem: first-message, action, reply ou cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "bate com $COUNT$ das últimas $TOTAL$ mensagens",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "não bate com nenhuma das últimas $TOTAL$ mensagens",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "ainda não há mensagens aqui para testar"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "essa regra ainda não funciona. confira o que você digitou"
+  },
+  "mc_set_fr_notify": {
+    "message": "me avisar também"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "uma correspondência conta como uma menção: aparece na aba de menções, faz o título da aba piscar e manda um aviso na área de trabalho se estiverem ligados. não precisa de conta"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "o som de menção toca"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "quando o som de menção toca: só enquanto você está em outra janela, ou sempre"
+  },
+  "mc_set_msw_away": {
+    "message": "só quando estou fora"
+  },
+  "mc_set_msw_always": {
+    "message": "sempre"
+  },
+  "mc_mtb_seeded": {
+    "message": "botões de mod adicionados às linhas do chat: apagar, timeout 10 min, ban. mude em configurações › mod"
   }
 }

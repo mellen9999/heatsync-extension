@@ -1318,7 +1318,7 @@
     "message": "mod-Toolbar-Buttons"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "hover-Aktionen an Chatzeilen, wenn du den Kanal modst — standardmäßig alle aus"
+    "message": "hover-aktionen an chatzeilen, wenn du den kanal modst. beim ersten mal als mod erscheint ein startset; ändere es hier"
   },
   "mc_settings_mod_btn_delete": {
     "message": "diese Nachricht löschen"
@@ -1411,7 +1411,7 @@
     "message": "filterregeln"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "highlight-/Ausblend-Filter pro Regel — keyword, regex, user, badge oder msgtype; verwaltet im Regel-Editor"
+    "message": "nachrichten nach wort, muster, nutzer, badge oder art hervorheben oder ausblenden. hier regeln hinzufügen, bearbeiten und sortieren"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "scrollrad-Lautstärke"
@@ -5324,10 +5324,10 @@
     "message": "alle kanäle"
   },
   "mc_set_fr_t_keyword": {
-    "message": "stichwort"
+    "message": "wort"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "muster"
   },
   "mc_set_fr_t_user": {
     "message": "nutzer"
@@ -5336,13 +5336,13 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "nachrichtentyp"
+    "message": "art"
   },
   "mc_set_fr_t_expr": {
-    "message": "ausdruck"
+    "message": "erweitert"
   },
   "mc_set_fr_expr_tip": {
-    "message": "z. b. first && !badge:subscriber — verknüpfen mit && || ! ( ); felder user: badge: type: contains: regex:"
+    "message": "verknüpfe tests mit && (und) || (oder) ! (nicht), z. b.: first && !badge:subscriber. tests: first, action, reply, cheer, user:name, badge:name, contains:text, regex:muster, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "wert..."
@@ -6678,7 +6678,7 @@
     "message": "erwähnungston"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "was bei einer @-Erwähnung abspielt, wenn dieser Tab im Hintergrund ist. ein eingebauter Ton oder deine eigene Datei"
+    "message": "was bei einer @-erwähnung abspielt. ein eingebauter ton oder deine eigene datei"
   },
   "mc_settings_mention_sound_file": {
     "message": "Tondatei"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "ein emote-name darf nicht leer sein oder leerzeichen enthalten"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "ein ganzes wort oder eine wortgruppe, z. b.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "ein textmuster (regex), z. b.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "der name eines chatters, z. b.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "alle mit einem badge, z. b.: moderator, subscriber oder vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "eine art nachricht: first-message, action, reply oder cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "passt auf $COUNT$ der letzten $TOTAL$ nachrichten",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "passt auf keine der letzten $TOTAL$ nachrichten",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "hier gibt es noch keine nachrichten zum ausprobieren"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "diese regel funktioniert noch nicht. prüf, was du getippt hast"
+  },
+  "mc_set_fr_notify": {
+    "message": "mich auch benachrichtigen"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "ein treffer zählt wie eine erwähnung: er erscheint im erwähnungen-tab, lässt den tab-titel blinken und löst eine desktop-benachrichtigung aus, wenn diese an sind. kein konto nötig"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "erwähnungston spielt"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "wann der erwähnungston spielt: nur wenn du in einem anderen fenster bist, oder jedes mal"
+  },
+  "mc_set_msw_away": {
+    "message": "nur wenn ich weg bin"
+  },
+  "mc_set_msw_always": {
+    "message": "immer"
+  },
+  "mc_mtb_seeded": {
+    "message": "mod-buttons zu den chatzeilen hinzugefügt: löschen, timeout 10 min, bann. ändere sie unter einstellungen › mod"
   }
 }

@@ -1318,7 +1318,7 @@
     "message": "tlačítka mod lišty"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "akce při najetí na řádky chatu, když kanál modeuješ — ve výchozím stavu vše vypnuto"
+    "message": "akce při najetí na řádky chatu, když jsi mod kanálu. poprvé, co jsi mod, se objeví startovní sada; změníš ji tady"
   },
   "mc_settings_mod_btn_delete": {
     "message": "smazat tuto zprávu"
@@ -1411,7 +1411,7 @@
     "message": "pravidla filtrů"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "zvýraznění/skrytí podle pravidel — keyword, regex, user, badge nebo msgtype; spravuje se v editoru pravidel"
+    "message": "zvýrazni nebo skryj zprávy podle slova, vzoru, uživatele, odznaku nebo druhu. pravidla tu přidáš, upravíš i seřadíš"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "hlasitost kolečkem"
@@ -5324,10 +5324,10 @@
     "message": "všechny kanály"
   },
   "mc_set_fr_t_keyword": {
-    "message": "klíčové slovo"
+    "message": "slovo"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "vzor"
   },
   "mc_set_fr_t_user": {
     "message": "uživatel"
@@ -5336,13 +5336,13 @@
     "message": "odznak"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "typ zprávy"
+    "message": "druh"
   },
   "mc_set_fr_t_expr": {
-    "message": "výraz"
+    "message": "pokročilé"
   },
   "mc_set_fr_expr_tip": {
-    "message": "např. first && !badge:subscriber — spojuj pomocí && || ! ( ); pole user: badge: type: contains: regex:"
+    "message": "spojuj testy pomocí && (a) || (nebo) ! (ne), např.: first && !badge:subscriber. testy: first, action, reply, cheer, user:jméno, badge:jméno, contains:text, regex:vzor, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "hodnota..."
@@ -6678,7 +6678,7 @@
     "message": "zvuk zmínky"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "co se přehraje, když vás někdo @zmíní a tento panel je na pozadí. vestavěný zvuk, nebo váš vlastní soubor"
+    "message": "co se přehraje, když vás někdo @zmíní. vestavěný zvuk, nebo váš vlastní soubor"
   },
   "mc_settings_mention_sound_file": {
     "message": "zvukový soubor"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "název emote nesmí být prázdný ani obsahovat mezery"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "celé slovo nebo fráze, např.: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "textový vzor (regex), např.: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "jméno jednoho diváka, např.: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "všichni s odznakem, např.: moderator, subscriber nebo vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "druh zprávy: first-message, action, reply nebo cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "odpovídá $COUNT$ z posledních $TOTAL$ zpráv",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "neodpovídá žádná z posledních $TOTAL$ zpráv",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "zatím tu nejsou žádné zprávy k vyzkoušení"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "pravidlo zatím nefunguje. zkontroluj, co jsi napsal"
+  },
+  "mc_set_fr_notify": {
+    "message": "a upozornit mě"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "shoda se počítá jako zmínka: objeví se na panelu zmínek, zabliká název tabu a pošle oznámení na plochu, pokud jsou zapnutá. účet není potřeba"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "zvuk zmínky hraje"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "kdy hraje zvuk zmínky: jen když jste v jiném okně, nebo pokaždé"
+  },
+  "mc_set_msw_away": {
+    "message": "jen když jsem pryč"
+  },
+  "mc_set_msw_always": {
+    "message": "vždy"
+  },
+  "mc_mtb_seeded": {
+    "message": "do řádků chatu přibyla mod tlačítka: smazat, timeout 10 min, ban. změníš je v nastavení › mod"
   }
 }

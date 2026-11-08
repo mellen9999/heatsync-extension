@@ -1318,7 +1318,7 @@
     "message": "כפתורי סרגל mod"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "פעולות במעבר עכבר על שורות צ'אט כשאתה mod בערוץ — הכול כבוי כברירת מחדל"
+    "message": "פעולות במעבר עכבר על שורות צ'אט כשאתה mod בערוץ. בפעם הראשונה שאתה mod מופיעה ערכת פתיחה; שנה אותה כאן"
   },
   "mc_settings_mod_btn_delete": {
     "message": "מחק את ההודעה הזו"
@@ -1411,7 +1411,7 @@
     "message": "כללי סינון"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "פילטרי הדגשה/הסתרה לפי כלל — מילת מפתח, regex, משתמש, תג או msgtype; מנוהלים בעורך הכללים"
+    "message": "הדגש או הסתר הודעות לפי מילה, תבנית, משתמש, תג או סוג. הוסף, ערוך וסדר כללים כאן"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "עוצמה עם גלגלת"
@@ -5324,10 +5324,10 @@
     "message": "כל הערוצים"
   },
   "mc_set_fr_t_keyword": {
-    "message": "מילת מפתח"
+    "message": "מילה"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "תבנית"
   },
   "mc_set_fr_t_user": {
     "message": "משתמש"
@@ -5336,13 +5336,13 @@
     "message": "תג"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "סוג הודעה"
+    "message": "סוג"
   },
   "mc_set_fr_t_expr": {
-    "message": "ביטוי"
+    "message": "מתקדם"
   },
   "mc_set_fr_expr_tip": {
-    "message": "למשל first && !badge:subscriber — חיבור עם && || ! ( ); שדות user: badge: type: contains: regex:"
+    "message": "חבר בדיקות עם && (וגם) || (או) ! (לא), למשל: first && !badge:subscriber. בדיקות: first, action, reply, cheer, user:שם, badge:שם, contains:טקסט, regex:תבנית, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "ערך..."
@@ -6678,7 +6678,7 @@
     "message": "צליל אזכור"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "מה מתנגן כשמזכירים אותך ב־@ והלשונית ברקע. צליל מובנה או קובץ משלך"
+    "message": "מה מתנגן כשמזכירים אותך ב־@. צליל מובנה או קובץ משלך"
   },
   "mc_settings_mention_sound_file": {
     "message": "קובץ שמע"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "שם אימוט לא יכול להיות ריק או לכלול רווחים"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "מילה או ביטוי שלם, למשל: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "תבנית טקסט (regex), למשל: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "השם של צ'אטר אחד, למשל: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "כל מי שיש לו תג, למשל: moderator, subscriber או vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "סוג של הודעה: first-message, action, reply או cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "מתאים ל-$COUNT$ מתוך $TOTAL$ ההודעות האחרונות",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "לא מתאים לאף אחת מ-$TOTAL$ ההודעות האחרונות",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "עדיין אין כאן הודעות לנסות עליהן"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "הכלל עדיין לא עובד. בדוק מה הקלדת"
+  },
+  "mc_set_fr_notify": {
+    "message": "ותתריע לי גם"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "התאמה נחשבת כאזכור: היא מופיעה בלשונית האזכורים, כותרת הלשונית מהבהבת ומגיעה התראת שולחן עבודה אם הן פעילות. לא צריך חשבון"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "צליל האזכור מתנגן"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "מתי צליל האזכור מתנגן: רק כשאתה בחלון אחר, או בכל פעם"
+  },
+  "mc_set_msw_away": {
+    "message": "רק כשאני לא כאן"
+  },
+  "mc_set_msw_always": {
+    "message": "תמיד"
+  },
+  "mc_mtb_seeded": {
+    "message": "נוספו כפתורי mod לשורות הצ'אט: מחיקה, timeout ל-10 דקות, ban. אפשר לשנות אותם בהגדרות › mod"
   }
 }

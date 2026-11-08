@@ -1318,7 +1318,7 @@
     "message": "nút thanh công cụ mod"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "thao tác khi rê chuột lên dòng chat nếu bạn là mod của kênh — mặc định tắt hết"
+    "message": "thao tác khi rê chuột lên dòng chat nếu bạn là mod của kênh. lần đầu làm mod sẽ có một bộ khởi đầu; đổi ở đây"
   },
   "mc_settings_mod_btn_delete": {
     "message": "xóa tin nhắn này"
@@ -1411,7 +1411,7 @@
     "message": "quy tắc lọc"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "bộ lọc làm nổi bật/ẩn theo quy tắc — từ khóa, regex, người dùng, huy hiệu hoặc loại tin nhắn; quản lý trong trình soạn quy tắc"
+    "message": "làm nổi bật hoặc ẩn tin nhắn theo từ, mẫu, người dùng, huy hiệu hoặc loại. thêm, sửa và sắp xếp quy tắc ngay tại đây"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "âm lượng bằng con lăn"
@@ -5324,10 +5324,10 @@
     "message": "tất cả kênh"
   },
   "mc_set_fr_t_keyword": {
-    "message": "từ khóa"
+    "message": "từ"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "mẫu"
   },
   "mc_set_fr_t_user": {
     "message": "người dùng"
@@ -5336,13 +5336,13 @@
     "message": "huy hiệu"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "loại tin"
+    "message": "loại"
   },
   "mc_set_fr_t_expr": {
-    "message": "biểu thức"
+    "message": "nâng cao"
   },
   "mc_set_fr_expr_tip": {
-    "message": "vd first && !badge:subscriber — nối bằng && || ! ( ); trường user: badge: type: contains: regex:"
+    "message": "nối các điều kiện bằng && (và) || (hoặc) ! (không), ví dụ: first && !badge:subscriber. điều kiện: first, action, reply, cheer, user:tên, badge:tên, contains:văn bản, regex:mẫu, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "giá trị…"
@@ -6678,7 +6678,7 @@
     "message": "âm báo nhắc tên"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "âm phát khi bạn được @nhắc tên lúc tab này ở nền. âm có sẵn hoặc tệp của riêng bạn"
+    "message": "âm phát khi bạn được @nhắc tên. âm có sẵn hoặc tệp của riêng bạn"
   },
   "mc_settings_mention_sound_file": {
     "message": "tệp âm thanh"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "tên emote không được trống hoặc có dấu cách"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "một từ hoặc cụm từ nguyên vẹn, ví dụ: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "một mẫu văn bản (regex), ví dụ: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "tên một người trong chat, ví dụ: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "mọi người có huy hiệu, ví dụ: moderator, subscriber hoặc vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "một loại tin nhắn: first-message, action, reply hoặc cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "khớp $COUNT$ trong $TOTAL$ tin nhắn gần nhất",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "không khớp tin nào trong $TOTAL$ tin nhắn gần nhất",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "ở đây chưa có tin nhắn nào để thử"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "quy tắc này chưa chạy được. kiểm tra lại những gì bạn gõ"
+  },
+  "mc_set_fr_notify": {
+    "message": "báo cho tôi nữa"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "khớp thì tính như một lần nhắc tên: hiện ở tab nhắc tên, tiêu đề tab nhấp nháy và có thông báo trên màn hình nếu đang bật. không cần tài khoản"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "âm nhắc tên phát"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "khi nào âm nhắc tên phát: chỉ khi bạn đang ở cửa sổ khác, hoặc mọi lúc"
+  },
+  "mc_set_msw_away": {
+    "message": "chỉ khi tôi đi vắng"
+  },
+  "mc_set_msw_always": {
+    "message": "luôn luôn"
+  },
+  "mc_mtb_seeded": {
+    "message": "đã thêm nút mod vào các dòng chat: xóa, timeout 10 phút, ban. đổi trong cài đặt › mod"
   }
 }

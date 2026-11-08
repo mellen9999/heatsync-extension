@@ -1318,7 +1318,7 @@
     "message": "butang bar alat mod"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "tindakan hover pada baris sembang bila kau mod saluran — semua mati secara lalai"
+    "message": "tindakan hover pada baris sembang bila kau mod saluran. kali pertama jadi mod, satu set permulaan muncul; ubah di sini"
   },
   "mc_settings_mod_btn_delete": {
     "message": "padam mesej ini"
@@ -1411,7 +1411,7 @@
     "message": "peraturan penapis"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "penapis sorot/sorok setiap peraturan — kata kunci, regex, pengguna, lencana atau jenis mesej; diurus melalui editor peraturan"
+    "message": "serlahkan atau sembunyikan mesej mengikut perkataan, corak, pengguna, lencana atau jenis. tambah, ubah dan susun peraturan di sini"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "kelantangan roda tatal"
@@ -5324,10 +5324,10 @@
     "message": "semua saluran"
   },
   "mc_set_fr_t_keyword": {
-    "message": "kata kunci"
+    "message": "perkataan"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "corak"
   },
   "mc_set_fr_t_user": {
     "message": "pengguna"
@@ -5336,13 +5336,13 @@
     "message": "lencana"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "jenis mesej"
+    "message": "jenis"
   },
   "mc_set_fr_t_expr": {
-    "message": "ekspresi"
+    "message": "lanjutan"
   },
   "mc_set_fr_expr_tip": {
-    "message": "cth first && !badge:subscriber — sambung dengan && || ! ( ); medan user: badge: type: contains: regex:"
+    "message": "sambung ujian dengan && (dan) || (atau) ! (bukan), cth: first && !badge:subscriber. ujian: first, action, reply, cheer, user:nama, badge:nama, contains:teks, regex:corak, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "nilai..."
@@ -6678,7 +6678,7 @@
     "message": "bunyi sebutan"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "apa yang dimainkan apabila anda di-@sebut semasa tab ini di latar belakang. bunyi terbina dalam atau fail anda sendiri"
+    "message": "apa yang dimainkan apabila anda di-@sebut. bunyi terbina dalam atau fail anda sendiri"
   },
   "mc_settings_mention_sound_file": {
     "message": "fail bunyi"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "nama emote tidak boleh kosong atau ada ruang"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "satu perkataan atau frasa penuh, cth: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "corak teks (regex), cth: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "nama seorang penyembang, cth: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "semua yang ada lencana, cth: moderator, subscriber atau vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "sejenis mesej: first-message, action, reply atau cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "sepadan dengan $COUNT$ daripada $TOTAL$ mesej terakhir",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "tidak sepadan dengan mana-mana daripada $TOTAL$ mesej terakhir",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "belum ada mesej di sini untuk dicuba"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "peraturan ini belum berfungsi. semak apa yang kau taip"
+  },
+  "mc_set_fr_notify": {
+    "message": "beritahu aku juga"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "padanan dikira seperti sebutan: ia muncul dalam tab sebutan, tajuk tab berkelip dan pemberitahuan desktop dihantar jika dihidupkan. tak perlu akaun"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "bunyi sebutan dimainkan"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "bila bunyi sebutan dimainkan: hanya semasa anda di tetingkap lain, atau setiap kali"
+  },
+  "mc_set_msw_away": {
+    "message": "hanya bila saya pergi"
+  },
+  "mc_set_msw_always": {
+    "message": "sentiasa"
+  },
+  "mc_mtb_seeded": {
+    "message": "butang mod ditambah pada baris sembang: padam, timeout 10 min, ban. ubah di tetapan › mod"
   }
 }

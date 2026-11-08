@@ -1318,7 +1318,7 @@
     "message": "tombol toolbar mod"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "aksi saat hover di baris chat kalau kamu mod channel itu — semua mati secara default"
+    "message": "aksi saat hover di baris chat kalau kamu mod channel. pertama kali jadi mod, muncul satu set awal; ubah di sini"
   },
   "mc_settings_mod_btn_delete": {
     "message": "hapus pesan ini"
@@ -1411,7 +1411,7 @@
     "message": "aturan filter"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "filter sorot/sembunyikan per aturan — kata kunci, regex, pengguna, lencana, atau tipe pesan; diatur lewat editor aturan"
+    "message": "sorot atau sembunyikan pesan berdasarkan kata, pola, pengguna, badge atau jenis. tambah, ubah, dan urutkan aturan di sini"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "volume scroll"
@@ -5324,10 +5324,10 @@
     "message": "semua channel"
   },
   "mc_set_fr_t_keyword": {
-    "message": "kata kunci"
+    "message": "kata"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "pola"
   },
   "mc_set_fr_t_user": {
     "message": "pengguna"
@@ -5336,13 +5336,13 @@
     "message": "badge"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "tipe pesan"
+    "message": "jenis"
   },
   "mc_set_fr_t_expr": {
-    "message": "ekspresi"
+    "message": "lanjutan"
   },
   "mc_set_fr_expr_tip": {
-    "message": "mis. first && !badge:subscriber — gabung dengan && || ! ( ); bidang user: badge: type: contains: regex:"
+    "message": "gabungkan tes dengan && (dan) || (atau) ! (bukan), misalnya: first && !badge:subscriber. tes: first, action, reply, cheer, user:nama, badge:nama, contains:teks, regex:pola, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "nilai..."
@@ -6678,7 +6678,7 @@
     "message": "suara sebutan"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "yang diputar saat kamu di-@sebut ketika tab ini di latar belakang. suara bawaan atau file milikmu sendiri"
+    "message": "yang diputar saat kamu di-@sebut. suara bawaan atau file milikmu sendiri"
   },
   "mc_settings_mention_sound_file": {
     "message": "file suara"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "nama emote tidak boleh kosong atau berisi spasi"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "satu kata atau frasa utuh, misalnya: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "pola teks (regex), misalnya: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "nama satu orang di chat, misalnya: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "semua yang punya badge, misalnya: moderator, subscriber atau vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "jenis pesan: first-message, action, reply atau cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "cocok dengan $COUNT$ dari $TOTAL$ pesan terakhir",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "tidak cocok dengan satu pun dari $TOTAL$ pesan terakhir",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "belum ada pesan di sini untuk dicoba"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "aturan ini belum berfungsi. cek lagi yang kamu ketik"
+  },
+  "mc_set_fr_notify": {
+    "message": "beri tahu aku juga"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "kecocokan dihitung seperti sebutan: muncul di tab sebutan, judul tab berkedip, dan notifikasi desktop muncul kalau diaktifkan. tidak perlu akun"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "suara sebutan diputar"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "kapan suara sebutan diputar: hanya saat kamu di jendela lain, atau setiap kali"
+  },
+  "mc_set_msw_away": {
+    "message": "hanya saat aku pergi"
+  },
+  "mc_set_msw_always": {
+    "message": "selalu"
+  },
+  "mc_mtb_seeded": {
+    "message": "tombol mod ditambahkan ke baris chat: hapus, timeout 10 mnt, ban. ubah di pengaturan › mod"
   }
 }

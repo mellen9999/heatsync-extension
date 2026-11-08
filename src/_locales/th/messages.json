@@ -1318,7 +1318,7 @@
     "message": "ปุ่มเครื่องมือ mod"
   },
   "mc_settings_mod_toolbar_buttons_desc": {
-    "message": "การกระทำเมื่อเอาเมาส์ชี้แถวแชทตอนคุณเป็น mod ของช่อง — ปิดทั้งหมดเป็นค่าเริ่มต้น"
+    "message": "การกระทำเมื่อเอาเมาส์ชี้แถวแชทตอนคุณเป็น mod ของช่อง ครั้งแรกที่เป็น mod จะมีชุดเริ่มต้นให้ เปลี่ยนได้ที่นี่"
   },
   "mc_settings_mod_btn_delete": {
     "message": "ลบข้อความนี้"
@@ -1411,7 +1411,7 @@
     "message": "กฎตัวกรอง"
   },
   "mc_settings_filter_rules_desc": {
-    "message": "ตัวกรองไฮไลต์/ซ่อนทีละกฎ — คำสำคัญ, regex, ผู้ใช้, ป้าย หรือชนิดข้อความ จัดการผ่านตัวแก้ไขกฎ"
+    "message": "ไฮไลต์หรือซ่อนข้อความตามคำ รูปแบบ ผู้ใช้ ป้าย หรือชนิด เพิ่ม แก้ไข และจัดลำดับกฎได้ที่นี่"
   },
   "mc_settings_scroll_wheel_volume": {
     "message": "ปรับเสียงด้วยลูกกลิ้ง"
@@ -5324,10 +5324,10 @@
     "message": "ทุกช่อง"
   },
   "mc_set_fr_t_keyword": {
-    "message": "คีย์เวิร์ด"
+    "message": "คำ"
   },
   "mc_set_fr_t_regex": {
-    "message": "regex"
+    "message": "รูปแบบ"
   },
   "mc_set_fr_t_user": {
     "message": "ผู้ใช้"
@@ -5336,13 +5336,13 @@
     "message": "แบดจ์"
   },
   "mc_set_fr_t_msgtype": {
-    "message": "ประเภทข้อความ"
+    "message": "ชนิด"
   },
   "mc_set_fr_t_expr": {
-    "message": "นิพจน์"
+    "message": "ขั้นสูง"
   },
   "mc_set_fr_expr_tip": {
-    "message": "เช่น first && !badge:subscriber — เชื่อมด้วย && || ! ( ); ฟิลด์ user: badge: type: contains: regex:"
+    "message": "ต่อเงื่อนไขด้วย && (และ) || (หรือ) ! (ไม่) เช่น: first && !badge:subscriber เงื่อนไข: first, action, reply, cheer, user:ชื่อ, badge:ชื่อ, contains:ข้อความ, regex:รูปแบบ, bits > 100"
   },
   "mc_set_fr_value_ph": {
     "message": "ค่า..."
@@ -6678,7 +6678,7 @@
     "message": "เสียงเมนชัน"
   },
   "mc_settings_mention_sound_desc": {
-    "message": "เสียงที่เล่นเมื่อมีคน @เมนชันคุณขณะที่แท็บนี้อยู่เบื้องหลัง เป็นเสียงในตัวหรือไฟล์ของคุณเอง"
+    "message": "เสียงที่เล่นเมื่อมีคน @เมนชันคุณ เป็นเสียงในตัวหรือไฟล์ของคุณเอง"
   },
   "mc_settings_mention_sound_file": {
     "message": "ไฟล์เสียง"
@@ -7108,5 +7108,66 @@
   },
   "mc_emote_upload_name_bad": {
     "message": "ชื่ออีโมตห้ามว่างหรือมีช่องว่าง"
+  },
+  "mc_set_fr_hint_keyword": {
+    "message": "คำหรือวลีเต็มๆ เช่น: gg"
+  },
+  "mc_set_fr_hint_regex": {
+    "message": "รูปแบบข้อความ (regex) เช่น: ^!(play|skip)"
+  },
+  "mc_set_fr_hint_user": {
+    "message": "ชื่อของคนในแชทหนึ่งคน เช่น: nightbot"
+  },
+  "mc_set_fr_hint_badge": {
+    "message": "ทุกคนที่มีป้าย เช่น: moderator, subscriber หรือ vip"
+  },
+  "mc_set_fr_hint_msgtype": {
+    "message": "ชนิดของข้อความ: first-message, action, reply หรือ cheer"
+  },
+  "mc_set_fr_pv_n": {
+    "message": "ตรงกับ $COUNT$ จาก $TOTAL$ ข้อความล่าสุด",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_set_fr_pv_none": {
+    "message": "ไม่ตรงกับข้อความใดใน $TOTAL$ ข้อความล่าสุด",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_set_fr_pv_empty": {
+    "message": "ที่นี่ยังไม่มีข้อความให้ลอง"
+  },
+  "mc_set_fr_pv_bad": {
+    "message": "กฎนี้ยังใช้ไม่ได้ ลองเช็กสิ่งที่พิมพ์อีกที"
+  },
+  "mc_set_fr_notify": {
+    "message": "แจ้งฉันด้วย"
+  },
+  "mc_set_fr_notify_tip": {
+    "message": "ถ้าตรงกัน จะนับเหมือนการเมนชัน: ขึ้นในแท็บเมนชัน ชื่อแท็บกะพริบ และมีการแจ้งเตือนบนเดสก์ท็อปถ้าเปิดไว้ ไม่ต้องมีบัญชี"
+  },
+  "mc_settings_mention_sound_when": {
+    "message": "เสียงเมนชันเล่นเมื่อ"
+  },
+  "mc_settings_mention_sound_when_desc": {
+    "message": "เสียงเมนชันเล่นเมื่อไหร่: เฉพาะตอนที่คุณอยู่หน้าต่างอื่น หรือทุกครั้ง"
+  },
+  "mc_set_msw_away": {
+    "message": "เฉพาะตอนที่ฉันไม่อยู่"
+  },
+  "mc_set_msw_always": {
+    "message": "ทุกครั้ง"
+  },
+  "mc_mtb_seeded": {
+    "message": "เพิ่มปุ่ม mod ที่แถวแชทแล้ว: ลบ, timeout 10 นาที, ban เปลี่ยนได้ที่ ตั้งค่า › mod"
   }
 }

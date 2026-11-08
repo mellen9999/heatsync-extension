@@ -73,7 +73,7 @@ beforeEach(() => {
     win.MutationObserver,
     t,
     {
-      emit: (type, p) => calls.status.push(p.text),
+      emit: (_type, p) => calls.status.push(p.text),
       dismissByKey: (type, key) => calls.dismissed.push([type, key]),
     },
     (row) => (row?.dataset?.noreply ? null : { id: row.dataset.msgKey }),

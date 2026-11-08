@@ -148,7 +148,7 @@ function enterRowMode() {
   const msgsEl = _rowModeMsgsEl()
   // chat hidden (the `\` toggle) or not laid out: no rows to look at, and the
   // key must fall through to whatever else wanted it
-  if (!msgsEl || !msgsEl.getClientRects?.().length) return false
+  if (!msgsEl?.getClientRects?.().length) return false
   const rows = rowModeRows()
   if (!rows.length) return false
   const composer = document.getElementById('hs-mc-input')

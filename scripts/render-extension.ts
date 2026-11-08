@@ -37,6 +37,7 @@ import { kickSendCheck } from './render/kick-send'
 import { closeContext, errors, fail, checks } from './render/lib'
 import { pickerClickCheck } from './render/picker'
 import { platformsGeometry } from './render/platforms-geometry'
+import { rowKeysCheck } from './render/row-keys'
 import { soundCheck } from './render/sounds'
 import { tabCompleteCheck } from './render/tab-complete'
 import { tourCheck } from './render/tour'
@@ -117,6 +118,12 @@ try {
   // source and confirms it still says what it used to. This one types, presses
   // Tab, and reads what came out.
   await tabCompleteCheck()
+
+  // ── the chat rows, for someone who never touches the mouse ───────────────
+  // Row mode (alt+r), the row's right-click menu as a real ARIA menu, reply by
+  // key, a tab's "move" items, and the screen reader modes. All of it is focus,
+  // paint and key handling — nothing a grep of the source can vouch for.
+  await rowKeysCheck()
 
   // ── the first-run tour card ───────────────────────────────────────────────
   // A fresh profile is a first run: the card must be there, change the real

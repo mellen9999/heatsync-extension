@@ -201,8 +201,8 @@ function renderRecent(recent, esc) {
     let body = unlink(r.messageHtml) || esc(r.message)
     // partial links ("watch?v=…") read as links here too — defused again below so
     // the row stays inert, but they carry the link class/colour
-    // @ts-ignore — extension-only globals, probed with typeof
-    if (typeof linkifyPartialLinks === 'function' && (typeof partialLinksEnabled === 'undefined' || partialLinksEnabled)) {
+    // @ts-ignore — extension-only global, probed with typeof
+    if (typeof linkifyPartialLinks === 'function') {
       // @ts-ignore
       body = unlink(linkifyPartialLinks(body))
     }

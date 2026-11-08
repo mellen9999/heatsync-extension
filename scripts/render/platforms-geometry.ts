@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import { PLATFORMS, errors, fail, fixtureHtml, ok } from './lib'
+import { PLATFORMS, errors, fail, fixtureHtml, ok, stable, until } from './lib'
 
 /** Read every box the layout code writes, in one pass. */
 async function geometry(p: any) {
@@ -136,8 +136,8 @@ export async function platformsGeometry(ctx: any) {
       .catch(() => fail('the tab bar was never rebuilt after the host page removed it'))
     ok(`${plat.name}: bars are rebuilt after the host page tears them out`)
 
-    // Let the rebuild settle, then re-run the same measurement that bites.
-    await p.waitForTimeout(1000)
+    // Let the rebuild settle (the overlay holds one box for a beat), then re-run the measurement that bites.
+    await stable(p, '#hs-mc-overlay', 500, 8000)
     const g2 = await geometry(p)
     for (const [name, v] of Object.entries(g2)) {
       if (v === null) fail(`#hs-mc-${name} is missing after the rebuild`)
@@ -160,13 +160,18 @@ export async function platformsGeometry(ctx: any) {
   // Driven through the extension's own supported rotate message (main.js listens
   // for 'heatsync-rotate-tabs' from the page's own origin), not by poking
   // internals, so the test exercises the real path a user takes.
-  const rotate = async () => {
-    await p.evaluate(() => window.postMessage({ type: 'heatsync-rotate-tabs' }, location.origin))
-    await p.waitForTimeout(600)
-    return p.evaluate(() => {
+  const dock = () =>
+    p.evaluate(() => {
       const c = [...document.body.classList].find((x) => x.startsWith('hs-tabs-'))
       return c ? c.replace('hs-tabs-', '') : '?'
     })
+  const rotate = async () => {
+    const before = await dock()
+    await p.evaluate(() => window.postMessage({ type: 'heatsync-rotate-tabs' }, location.origin))
+    // the body class names the new dock; the layout under it has to hold still before it is measured
+    await until(p, async () => (await dock()) !== before, 5000)
+    await stable(p, '#hs-mc-overlay', 400, 5000)
+    return dock()
   }
 
   /**

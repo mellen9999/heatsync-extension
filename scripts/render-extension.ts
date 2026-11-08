@@ -3,9 +3,9 @@
  *
  *   bun run test:render
  *
- * Why this exists: 143 of 145 test files never touch a DOM. The suite asserts
- * that source text contains expected substrings, which is a drift tripwire, not
- * a safety net — and every expensive bug in this project's history has been a
+ * Why this exists: most test files never touch a DOM. Many assert that source
+ * text contains expected substrings, which is a drift tripwire, not a safety
+ * net — and every expensive bug in this project's history has been a
  * RENDERING bug found by eye, days later. Chip smear, blurry text, paints frozen
  * at frame 0, white video, the player-collapse trio, and an overlay showing an
  * inch of chat. Not one of them was catchable by grepping source.

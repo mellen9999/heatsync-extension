@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { launchWithExtension } from '../lib/chromium'
-import { PLATFORMS, closeContext, errors, fail, fixtureHtml, ok, until } from './lib'
+import { PLATFORMS, closeContext, errors, fail, fixtureHtml, observe, ok, stable, until } from './lib'
 
 /**
  * The first-run tour card, as a person meets it: a fresh profile opens a chat,
@@ -93,7 +93,7 @@ export async function tourCheck() {
       })
 
     // a row to look at, delivered the way real chat is
-    for (let i = 0; i < 20 && (await sendRow('TOUR1', 'tour probe row')) !== 'sent'; i++) await p.waitForTimeout(500)
+    await until(p, async () => (await sendRow('TOUR1', 'tour probe row')) === 'sent', 10_000)
     if (!(await until(p, async () => (await rowCount()) > 0))) fail('no chat row ever rendered in the tour fixture')
 
     // ── first open: the card is there ────────────────────────────────────
@@ -168,7 +168,8 @@ export async function tourCheck() {
 
     // ── the settings way back to the tour is below; first, the keyboard ───
     await p.click('#hs-mc-tabbar [data-tab="tourchan"]')
-    await p.waitForTimeout(500)
+    await p.waitForSelector('#hs-mc-tabbar [data-tab="tourchan"].active', { timeout: 8000 })
+    await stable(p, '#hs-mc-messages', 300, 8000)
     // the pointer resting over the panel is the case where a bare space is claimed as typing
     const box = await (await p.$('#hs-mc-messages'))!.boundingBox()
     await p.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2)
@@ -200,7 +201,7 @@ export async function tourCheck() {
     // ── a fresh page load: never again ────────────────────────────────────
     await p.reload({ waitUntil: 'domcontentloaded' })
     await p.waitForSelector('#hs-mc-messages', { timeout: 25_000 })
-    await p.waitForTimeout(4000)
+    await observe(p, 4000, 'the card is decided once storage has been read; it must not appear after that')
     if (await cardShown()) fail('the tour came back after a reload')
     ok('after a reload the card stays gone')
 

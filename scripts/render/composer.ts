@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { launchWithExtension } from '../lib/chromium'
 import { startMockIrc } from '../lib/mock-irc'
-import { PLATFORMS, closeContext, errors, fail, fixtureHtml, ok, until } from './lib'
+import { PLATFORMS, closeContext, errors, fail, fixtureHtml, observe, ok, until } from './lib'
 
 /** A 32x32 opaque tile, so picker tiles lay out like real emotes instead of 1px specks. */
 const TILE_PNG = Buffer.from(
@@ -190,7 +190,7 @@ export async function composerAndPickerCheck() {
     await p.reload({ waitUntil: 'domcontentloaded' })
     await p.waitForSelector('#hs-mc-input', { timeout: 25_000 })
     await p.click('#hs-mc-input')
-    await p.waitForTimeout(1500) // long enough for a (wrongly) surviving list to have loaded
+    await observe(p, 1500, 'long enough for a (wrongly) surviving sent-history list to have loaded')
     await p.keyboard.press('ArrowUp')
     if ((await composerText()) !== '') fail('ArrowUp still recalled a message after "clear sent history" and a reload')
     ok('settings has "remember sent messages" (on) and "clear sent history" wipes the stored list for good')

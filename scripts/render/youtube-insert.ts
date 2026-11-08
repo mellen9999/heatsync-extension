@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { launchWithExtension } from '../lib/chromium'
-import { closeContext, errors, fail, fixtureHtml, ok } from './lib'
+import { closeContext, errors, fail, fixtureHtml, observe, ok, retryUntil, stable } from './lib'
 
 /**
  * A /live_chat page is the only place heatsync-button.js and youtube-content.js
@@ -29,7 +29,7 @@ export async function ytInsertCheck() {
     const p = await c.newPage()
     p.on('pageerror', (e: unknown) => errors.push(`yt-insert: ${String(e).slice(0, 300)}`))
     await p.goto('https://www.youtube.com/live_chat?v=RENDERCHECKX', { waitUntil: 'domcontentloaded' })
-    await p.waitForTimeout(3000)
+    await p.waitForSelector('yt-live-chat-text-input-field-renderer div#input', { timeout: 15_000 })
 
     const readInput = () =>
       p.evaluate(
@@ -39,7 +39,8 @@ export async function ytInsertCheck() {
 
     const ep = await c.newPage()
     await ep.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
-    const sent = await ep.evaluate(
+    const drive = () =>
+      ep.evaluate(
       () =>
         new Promise((res) => {
           try {
@@ -58,9 +59,20 @@ export async function ytInsertCheck() {
           }
         }),
     )
+    // A content script that has not registered its handler yet drops the message without a word, so
+    // hand it the emote again (an insert is harmless to repeat) until the control one lands.
+    let sent = 'never sent'
+    const landed = await retryUntil(
+      p,
+      async () => {
+        sent = (await drive()) as string
+      },
+      async () => (await readInput()).includes('VIA_TABS'),
+      { every: 1500, ms: 20_000 },
+    )
     await ep.close()
     if (sent !== 'sent') fail(`could not drive the insert check: ${sent}`)
-    await p.waitForTimeout(1500)
+    if (landed) await observe(p, 600, 'the runtime.sendMessage copy would arrive beside the tabs one, if it ever did')
 
     const after = await readInput()
     // Control. If this fails the comparison below means nothing.

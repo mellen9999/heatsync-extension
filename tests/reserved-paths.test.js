@@ -57,7 +57,7 @@ function extractSetLiteral(src, name) {
 describe('hand-duplicated copies stay in lockstep (build.js enforces this at build time too)', () => {
   const canonical = [...RESERVED_PATHS].sort()
 
-  for (const file of [BG_LABEL, 'chrome/popup.js', 'chrome/early-layout.js']) {
+  for (const file of [BG_LABEL, 'src/content/popup.js', 'src/content/early-layout.js']) {
     test(`${file} declares a RESERVED_PATHS literal matching src/lib/reserved-paths.js`, () => {
       const copy = extractSetLiteral(sourceOf(file), 'RESERVED_PATHS')
       expect(copy).not.toBeNull()
@@ -74,11 +74,11 @@ describe('no divergent reserved-path list grew back', () => {
 
   for (const file of [
     ...MAIN_PART_FILES.map((p) => `src/multichat/${p}`),
-    'chrome/content.js',
-    'chrome/heatsync-button.js',
+    'src/content/content.js',
+    'src/content/heatsync-button.js',
     BG_LABEL,
-    'chrome/early-layout.js',
-    'chrome/popup.js',
+    'src/content/early-layout.js',
+    'src/content/popup.js',
   ]) {
     test(`${file} has no inline reserved-path array literal`, () => {
       const src = sourceOf(file)
@@ -93,8 +93,8 @@ describe('no divergent reserved-path list grew back', () => {
     expect(mainSource()).toContain('const NON_CHANNEL_PATHS = RESERVED_PATHS')
   })
 
-  test('chrome/content.js aliases TWITCH_EXCLUDED_PATHS to the shared constant', () => {
-    expect(read('chrome/content.js')).toContain('const TWITCH_EXCLUDED_PATHS = RESERVED_PATHS')
+  test('src/content/content.js aliases TWITCH_EXCLUDED_PATHS to the shared constant', () => {
+    expect(read('src/content/content.js')).toContain('const TWITCH_EXCLUDED_PATHS = RESERVED_PATHS')
   })
 
   test('build.js embeds reserved-paths.js into the content scripts that reference it', () => {

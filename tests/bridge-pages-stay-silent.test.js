@@ -17,8 +17,8 @@ import { join } from 'node:path'
 import { mainSource } from './main-src.js'
 
 const ROOT = join(import.meta.dir, '..')
-const EARLY = readFileSync(join(ROOT, 'chrome', 'early-layout.js'), 'utf8')
-const CONTENT = readFileSync(join(ROOT, 'chrome', 'content.js'), 'utf8')
+const EARLY = readFileSync(join(ROOT, 'src', 'content', 'early-layout.js'), 'utf8')
+const CONTENT = readFileSync(join(ROOT, 'src', 'content', 'content.js'), 'utf8')
 
 /** early-layout.js against a fake document; true when it painted the prepaint bar */
 function paints({ hostname, pathname, hash = '' }) {

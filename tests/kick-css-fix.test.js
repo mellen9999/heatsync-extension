@@ -7,7 +7,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-new Function(readFileSync(new URL('../chrome/kick-css-fix.js', import.meta.url), 'utf8'))()
+new Function(readFileSync(new URL('../src/content/kick-css-fix.js', import.meta.url), 'utf8'))()
 const { rewrite, plan } = globalThis.__hsKickCssFix
 
 describe('kick css rewrite', () => {

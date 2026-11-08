@@ -565,13 +565,13 @@ function checkUiSyncBlocklistParity() {
 }
 
 // Guard: userKey / userSetMatches are inlined in 3 files (src/lib/user-key.js,
-// chrome/background.js, chrome/content.js) — the SW can't import and content.js
+// chrome/background.js, src/content/content.js) — the SW can't import and content.js
 // must load standalone. A drift here would ship silently. Fail the build.
 function checkUserKeyParity() {
   const files = [
     ['src/lib/user-key.js', readFileSync(join(__dirname, 'src', 'lib', 'user-key.js'), 'utf8')],
     ['chrome/background.js', readBackgroundSource()],
-    ['chrome/content.js', readFileSync(join(__dirname, 'chrome', 'content.js'), 'utf8')],
+    ['src/content/content.js', readFileSync(join(__dirname, 'src', 'content', 'content.js'), 'utf8')],
   ]
   for (const name of ['userKey', 'userSetMatches']) {
     const bodies = files.map(([label, src]) => [label, extractFnBody(src, name)])
@@ -615,9 +615,9 @@ function checkReservedPathsParity() {
 
   const files = [
     ['chrome/background.js', join(__dirname, 'chrome', 'background.js')],
-    ['chrome/popup.js', join(__dirname, 'chrome', 'popup.js')],
-    ['chrome/early-layout.js', join(__dirname, 'chrome', 'early-layout.js')],
-    ['chrome/kick-css-fix.js', join(__dirname, 'chrome', 'kick-css-fix.js')],
+    ['src/content/popup.js', join(__dirname, 'src', 'content', 'popup.js')],
+    ['src/content/early-layout.js', join(__dirname, 'src', 'content', 'early-layout.js')],
+    ['src/content/kick-css-fix.js', join(__dirname, 'src', 'content', 'kick-css-fix.js')],
   ]
   for (const [label, path] of files) {
     const text = label === 'chrome/background.js' ? readBackgroundSource() : readFileSync(path, 'utf8')
@@ -635,14 +635,14 @@ function checkReservedPathsParity() {
 }
 
 // Guard 7: escapeHtml coverage parity.
-// Three local copies of escapeHtml exist (src/lib/utils.js, chrome/chat-injector.js,
-// chrome/heatsync-button.js). Each must escape all five dangerous HTML chars.
+// Three local copies of escapeHtml exist (src/lib/utils.js, src/content/chat-injector.js,
+// src/content/heatsync-button.js). Each must escape all five dangerous HTML chars.
 // This guard fails the build if any copy drops an escape — preventing XSS regressions.
 function checkEscapeHtmlCoverage() {
   const files = [
     { label: 'src/lib/utils.js', path: join(__dirname, 'src', 'lib', 'utils.js') },
-    { label: 'chrome/chat-injector.js', path: join(__dirname, 'chrome', 'chat-injector.js') },
-    { label: 'chrome/heatsync-button.js', path: join(__dirname, 'chrome', 'heatsync-button.js') },
+    { label: 'src/content/chat-injector.js', path: join(__dirname, 'src', 'content', 'chat-injector.js') },
+    { label: 'src/content/heatsync-button.js', path: join(__dirname, 'src', 'content', 'heatsync-button.js') },
   ]
   // Five required escape mappings: input char → at least one of the accepted output forms
   const REQUIRED = [
@@ -689,6 +689,10 @@ function checkEscapeHtmlCoverage() {
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const SRC_DIR = join(__dirname, 'src')
+// hand-written page/popup scripts live in src/content; chrome/ holds only the
+// static html/css/icons plus generated manifest + _locales
+const CONTENT_DIR = join(SRC_DIR, 'content')
+const handSource = (file) => join(file.endsWith('.js') ? CONTENT_DIR : join(__dirname, 'chrome'), file)
 const CHROME_OUT = join(__dirname, 'dist', 'chrome')
 const FIREFOX_OUT = join(__dirname, 'dist', 'firefox')
 
@@ -1222,7 +1226,7 @@ function build(browser) {
   // Bundle remaining content scripts (non-multichat)
   for (const file of CONTENT_SCRIPTS) {
     if (file.startsWith('multichat-')) continue // already handled above
-    const srcPath = join(chromeDir, file)
+    const srcPath = handSource(file)
     if (!existsSync(srcPath)) {
       console.log(`  Skip ${file} (not found)`)
       continue
@@ -1260,16 +1264,16 @@ function build(browser) {
 
   // Copy other files
   for (const file of COPY_FILES) {
-    // background.js is generated from src/background/* (BG_PARTS); the rest are hand-written in chrome/.
+    // background.js is generated from src/background/* (BG_PARTS); the rest are hand-written (js in src/content/, html/css in chrome/).
     if (file === 'background.js') {
       writeFileSync(join(outDir, file), readBackgroundSource())
       continue
     }
-    const srcPath = join(chromeDir, file)
+    const srcPath = handSource(file)
     if (!existsSync(srcPath)) continue
     cpSync(srcPath, join(outDir, file))
   }
-  console.log(`  Copied ${COPY_FILES.filter((f) => existsSync(join(chromeDir, f))).length} files`)
+  console.log(`  Copied ${COPY_FILES.filter((f) => existsSync(handSource(f))).length} files`)
 
   // emoji-data.iso.js: byte-identical copy of emoji-data.js for ISOLATED-world
   // content_scripts entries. Chrome injects a given FILE once per frame — on

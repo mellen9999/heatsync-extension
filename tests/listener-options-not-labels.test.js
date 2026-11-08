@@ -109,16 +109,16 @@ describe('cleanup.addEventListener', () => {
     // The MAIN-world copy in autocomplete-hook.js keeps its own lifecycle
     // object and needs the same reading, or a call written for the shared one
     // silently loses its capture flag there.
-    expect(readFileSync('chrome/autocomplete-hook.js', 'utf8')).toContain("const aIsLabel = typeof a === 'string'")
+    expect(readFileSync('src/content/autocomplete-hook.js', 'utf8')).toContain("const aIsLabel = typeof a === 'string'")
   })
 
   test('the five listeners that need capture still have it', () => {
     const need = [
-      ['chrome/autocomplete-hook.js', 'image-error-handler'],
-      ['chrome/content.js', 'input-modifier-backspace'],
-      ['chrome/content.js', 'emote-click'],
-      ['chrome/content.js', 'native-twitch-block-contextmenu'],
-      ['chrome/content.js', 'emote-contextmenu'],
+      ['src/content/autocomplete-hook.js', 'image-error-handler'],
+      ['src/content/content.js', 'input-modifier-backspace'],
+      ['src/content/content.js', 'emote-click'],
+      ['src/content/content.js', 'native-twitch-block-contextmenu'],
+      ['src/content/content.js', 'emote-contextmenu'],
     ]
     for (const [file, label] of need) {
       const src = readFileSync(file, 'utf8')

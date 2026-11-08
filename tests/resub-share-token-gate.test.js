@@ -236,8 +236,8 @@ describe('an unreadable twitch key builds the token from ids we hold', () => {
   })
 })
 
-describe('the page-world token reader (chrome/twitch-callout-token.js)', () => {
-  const SRC = readFileSync(new URL('../chrome/twitch-callout-token.js', import.meta.url), 'utf8')
+describe('the page-world token reader (src/content/twitch-callout-token.js)', () => {
+  const SRC = readFileSync(new URL('../src/content/twitch-callout-token.js', import.meta.url), 'utf8')
   const tok = (u, c, n, k) => btoa(`${u}:${c}:${n}:${k}`)
 
   // a window/document just big enough to run the script for real

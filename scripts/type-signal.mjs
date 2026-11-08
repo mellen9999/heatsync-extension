@@ -3,7 +3,7 @@
  * The crash-class type errors in the BUILT extension, held at zero.
  *
  * WHY THE BUILT OUTPUT AND NOT src/: build.js concatenates src/lib/** and
- * src/multichat/** into each content script, so the files in chrome/ and src/
+ * src/multichat/** into each content script, so the files in src/
  * are fragments that reference names their siblings declare. Checking those
  * gives 2,175 "cannot find name" errors, all noise. dist/chrome/*.js is what
  * actually ships and what actually has to resolve — a missing name there is a

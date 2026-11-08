@@ -11,7 +11,7 @@ import { mainSource } from './main-src.js'
 
 const root = join(import.meta.dir, '..')
 const main = mainSource()
-const early = readFileSync(join(root, 'chrome', 'early-layout.js'), 'utf8')
+const early = readFileSync(join(root, 'src', 'content', 'early-layout.js'), 'utf8')
 const schema = readFileSync(join(root, 'src', 'lib', 'settings-schema.js'), 'utf8')
 
 describe('per-site overlay off', () => {

@@ -28,7 +28,7 @@ import { join } from 'node:path'
 const ROOT = join(import.meta.dir, '..')
 const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8')
 
-const CONTENT = read('chrome', 'content.js')
+const CONTENT = read('src', 'content', 'content.js')
 const CARD = read('src', 'multichat', 'profile-card.js')
 
 /** The first `n` chars of a function body, brace-matched from its signature. */

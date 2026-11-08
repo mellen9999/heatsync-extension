@@ -5,7 +5,7 @@ import { ytHasModItems, ytItemModEndpoint, ytItemText, ytMatchModAction, ytResol
 // gets Remove / Put user in timeout / Hide user / Unhide user (each with a
 // moderate token) plus Report/Block; a non-mod gets only Report/Block. Verified
 // live: a non-mod account returns exactly the Report (FLAG) item + one
-// endpoint-less entry — see the moderation section of chrome/youtube-content.js.
+// endpoint-less entry — see the moderation section of src/content/youtube-content.js.
 
 const item = (icon, text, serviceEndpoint) => ({
   menuServiceItemRenderer: {

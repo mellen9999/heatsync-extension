@@ -59,7 +59,7 @@ jobs:
         run: bun test
 
       - name: lint
-        run: bunx @biomejs/biome check src/ chrome/ tests/ build.js
+        run: bunx @biomejs/biome check src/ tests/ build.js
 
       # tests/ is held to zero warnings (src/ still carries some, so the line
       # above stays warn-tolerant). A warning in a test is a dead import or an
@@ -70,7 +70,7 @@ jobs:
       - name: typecheck
         run: bun run typecheck
 
-      # The root typecheck has checkJs:false and excludes chrome/ and
+      # The root typecheck has checkJs:false and leaves out src/content/ and
       # src/multichat/ — about 95% of the product. This one checks the BUILT
       # output (the concatenation is what actually has to resolve) and holds
       # the crash-class errors at zero. `build` above already produced

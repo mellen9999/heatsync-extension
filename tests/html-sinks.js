@@ -48,7 +48,7 @@ import ts from 'typescript'
  * look-alike (escapeTextHtml escapes `& < >` but not quotes) does not belong.
  */
 export const ESCAPE_HELPERS = new Set([
-  'escapeHtml', // src/lib/utils.js (and the identical copies in chrome/chat-injector.js, chrome/heatsync-button.js)
+  'escapeHtml', // src/lib/utils.js (and the identical copies in src/content/chat-injector.js, src/content/heatsync-button.js)
   'safeUrl', // http(s) only, returns the parsed href
   'sanitizeColor', // hex only
   'sanitizeEmbedId', // [A-Za-z0-9_-] only

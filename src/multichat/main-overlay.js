@@ -931,7 +931,7 @@ function showInputBar() {
   _updateMcLayout?.()
 }
 
-// vi-mode (chrome/vi-mode.js, same isolated world) reports "normal mode
+// vi-mode (src/content/vi-mode.js, same isolated world) reports "normal mode
 // settled on an empty composer" — the keyboard-first "done here" signal.
 // A keyboard-only flow never blurs on its own, so without this the empty
 // bar could never auto-hide (the focused-composer guard blocked forever).

@@ -18,11 +18,11 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const ROOT = join(import.meta.dir, '..')
-const AC_SRC = readFileSync(join(ROOT, 'chrome/autocomplete-hook.js'), 'utf8')
-const CONTENT_SRC = readFileSync(join(ROOT, 'chrome/content.js'), 'utf8')
-const SHARED_SRC = readFileSync(join(ROOT, 'chrome/shared-utils.js'), 'utf8')
-const KICK_SRC = readFileSync(join(ROOT, 'chrome/kick-autocomplete-hook.js'), 'utf8')
-const YT_SRC = readFileSync(join(ROOT, 'chrome/youtube-content.js'), 'utf8')
+const AC_SRC = readFileSync(join(ROOT, 'src/content/autocomplete-hook.js'), 'utf8')
+const CONTENT_SRC = readFileSync(join(ROOT, 'src/content/content.js'), 'utf8')
+const SHARED_SRC = readFileSync(join(ROOT, 'src/content/shared-utils.js'), 'utf8')
+const KICK_SRC = readFileSync(join(ROOT, 'src/content/kick-autocomplete-hook.js'), 'utf8')
+const YT_SRC = readFileSync(join(ROOT, 'src/content/youtube-content.js'), 'utf8')
 
 describe('the MAIN-world twitch hook cannot trigger an upload', () => {
   test('no api_upload reachable from autocomplete-hook.js', () => {

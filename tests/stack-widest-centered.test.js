@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-const css = readFileSync(new URL('../chrome/content.js', import.meta.url), 'utf8')
+const css = readFileSync(new URL('../src/content/content.js', import.meta.url), 'utf8')
 
 // a wide overlay (a curtain) used to be absolutely centred on a narrow base and spilled left over the
 // username; a collapsed stack is now one grid cell as wide as its widest emote, the rest centred in it

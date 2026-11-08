@@ -15,7 +15,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-const SRC = readFileSync(new URL('../chrome/early-layout.js', import.meta.url), 'utf8')
+const SRC = readFileSync(new URL('../src/content/early-layout.js', import.meta.url), 'utf8')
 
 /** Minimal DOM + window good enough for early-layout's document_start work. */
 function makeEnv({ path = '/xqc', panelWidth = null } = {}) {

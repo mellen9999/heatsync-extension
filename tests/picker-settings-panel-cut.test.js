@@ -9,7 +9,7 @@ import { RETIRED_UI_KEYS } from '../src/lib/utils.js'
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 
 test('the picker no longer writes settings at all', () => {
-  const src = read('chrome/heatsync-button.js')
+  const src = read('src/content/heatsync-button.js')
   for (const s of [
     'renderSettings',
     'saveExtensionSettings',
@@ -24,7 +24,7 @@ test('emoteWysiwyg maps onto wysiwygEnabled', () => {
   const def = SETTINGS.find((d) => d.key === 'wysiwygEnabled')
   expect(def.legacy({ emoteWysiwyg: false }, {})).toBe(false)
   expect(def.legacy({}, {})).toBeUndefined()
-  const hook = read('chrome/autocomplete-hook.js')
+  const hook = read('src/content/autocomplete-hook.js')
   expect(hook).not.toContain('emoteWysiwyg')
   expect(hook).toContain('settings.wysiwygEnabled')
 })
@@ -43,7 +43,7 @@ test('the panel keys are retired', () => {
 })
 
 test('nothing reads them any more', () => {
-  const content = read('chrome/content.js')
+  const content = read('src/content/content.js')
   for (const k of ['hideChatHeader', 'highlightMentions', 'showCosmetics', 'rightClickBlockMode'])
     expect(content).not.toMatch(new RegExp(`\\b${k}\\b`))
 })

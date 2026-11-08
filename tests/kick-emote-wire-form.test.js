@@ -163,7 +163,7 @@ describe('INVALID_EMOTE degrades to plain words', () => {
 
   test('a rejected emote is stripped and the message still delivers', async () => {
     // code is the machine-readable field the relay sets from kick's raw body
-    // (see chrome/content.js kickSendErrorCode) — the retry decision never
+    // (see src/content/content.js kickSendErrorCode) — the retry decision never
     // parses the human-readable `error` text.
     const { fn, seen } = makeSender([
       { ok: false, error: 'kick rejected the message (400)', status: 400, code: 'invalid_emote' },

@@ -9,7 +9,7 @@ fail=0
 run() { printf '  %-12s' "$1"; if eval "$2" >/dev/null 2>&1; then echo "ok"; else echo "FAIL"; fail=1; fi; }
 
 echo "pre-push gate:"
-run lint      "bunx @biomejs/biome check src/ chrome/ tests/ build.js"
+run lint      "bunx @biomejs/biome check src/ tests/ build.js"
 run typecheck "bun run typecheck"
 run version   "bun tests/check-versions.js"
 run bundle    "bun run build.js chrome --minify && bun run build.js firefox --minify && bun scripts/check-bundle-budget.ts"

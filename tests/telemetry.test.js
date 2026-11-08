@@ -36,9 +36,9 @@ const TRACKER_PATTERNS = [
   /\bga\s*\(\s*['"](create|send)\b/i,
 ]
 
-// Scan ALL ext source: src/ (the logic) + chrome/ (every content script,
-// background, glue, popup). Comprehensive — a tracker import anywhere fails CI.
-const ROOTS = ['src', 'chrome']
+// Scan ALL ext source: src/ holds the logic, every hand-written content script
+// (src/content), the background parts and the popup. A tracker import anywhere fails CI.
+const ROOTS = ['src']
 
 function jsFiles(dir) {
   const out = []

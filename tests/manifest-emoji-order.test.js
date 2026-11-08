@@ -126,7 +126,7 @@ test('a malformed dataset fails the build instead of shipping a partial file', (
 })
 
 test('autocomplete-hook.js reads nothing but EMOJI_PAIRS from the emoji data', () => {
-  const hook = readFileSync(join(ROOT, 'chrome', 'autocomplete-hook.js'), 'utf8')
+  const hook = readFileSync(join(ROOT, 'src', 'content', 'autocomplete-hook.js'), 'utf8')
   expect(hook).not.toMatch(/EMOJI_DATA/)
   expect(hook).toMatch(/typeof EMOJI_PAIRS !== 'undefined' \? EMOJI_PAIRS : \[\]/)
 })

@@ -1320,7 +1320,7 @@ function _markOverlayRenderOk(ok) {
   } catch (_) {}
   // A successful mount pass proves this boot didn't hit the failure loop —
   // reset early-layout.js's pre-arm retry budget so the NEXT load gets a
-  // clean slate (see chrome/early-layout.js's takeoverArms gate).
+  // clean slate (see src/content/early-layout.js's takeoverArms gate).
   if (ok) {
     try {
       localStorage.setItem('hs_layout_takeoverArms', '0')

@@ -123,7 +123,7 @@ describe('nothing bound is undocumented', () => {
   })
 
   test("vi mode's cheat sheet carries the row mode line", () => {
-    expect(read('chrome', 'vi-mode.js')).toContain("hsViT('cs_vi_cheatsheet_rows')")
+    expect(read('src', 'content', 'vi-mode.js')).toContain("hsViT('cs_vi_cheatsheet_rows')")
   })
 })
 

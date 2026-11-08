@@ -38,15 +38,15 @@ describe('multichat catalog dedupe is on the exact name', () => {
 
 describe('native bridges', () => {
   test('twitch hook ranks the spelled twin first, among exacts', () => {
-    const s = read('chrome', 'autocomplete-hook.js')
+    const s = read('src', 'content', 'autocomplete-hook.js')
     expect(s).toContain('r._spelled = name === search')
     expect(s).toContain('if (a._exact && a._spelled !== b._spelled) return a._spelled ? -1 : 1')
   })
   test('twitch remote merge orders the typed spelling before a case twin', () => {
-    expect(read('chrome', 'autocomplete-hook.js')).toContain("(a.name || '') === search ? 0")
+    expect(read('src', 'content', 'autocomplete-hook.js')).toContain("(a.name || '') === search ? 0")
   })
   test('kick hook ranks the spelled twin first and dedupes on the exact name', () => {
-    const s = read('chrome', 'kick-autocomplete-hook.js')
+    const s = read('src', 'content', 'kick-autocomplete-hook.js')
     expect(s).toContain('(a.name === query) !== (b.name === query)')
     expect(s).toContain('if (seen.has(e.name)) continue')
   })
@@ -54,7 +54,7 @@ describe('native bridges', () => {
 
 describe('picker search', () => {
   test('fuzzyScore puts the twin spelled as typed above its case twin', () => {
-    const s = read('chrome', 'heatsync-button.js')
+    const s = read('src', 'content', 'heatsync-button.js')
     const m = s.match(/function fuzzyScore\(query, name\) \{[\s\S]*?\n {4}\}\n/)
     const score = new Function('searchTyped', `${m[0]}; return fuzzyScore`)('kekw')
     expect(score('kekw', 'kekw')).toBeGreaterThan(score('kekw', 'KEKW'))

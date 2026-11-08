@@ -411,7 +411,7 @@
     if (!paint) return
     // 7TV paints stand down for a saved heatsync paint — inline style outranks
     // the hsp-<hash> class rule, so without this a 7TV batch resolving second
-    // erases a paid paint. Same guard as chrome/content.js.
+    // erases a paid paint. Same guard as src/content/content.js.
     if (el?.classList) {
       for (const c of el.classList) if (c.startsWith('hsp-')) return
     }
@@ -1493,7 +1493,7 @@
   }
 
   // Emoji shortcode (':prefix') completion — same EMOJI_DATA global emoji-data.iso.js
-  // defines for the Kick hook (chrome/kick-autocomplete-hook.js), loaded earlier in
+  // defines for the Kick hook (src/content/kick-autocomplete-hook.js), loaded earlier in
   // this frame per the manifest so it's already a global by the time this runs.
   const EMOJI_ENTRIES = typeof EMOJI_DATA !== 'undefined' ? EMOJI_DATA : []
   function searchYtEmoji(query) {
@@ -2199,7 +2199,7 @@
       // el.id === el.data.id), and that's the same id the tap reports upstream,
       // so the row is a direct id lookup. Both this and the menu token come off
       // DOM attributes, never `el.data` — `.data` is a page-world Polymer
-      // property and reads as undefined here (see chrome/yt-data-bridge.js,
+      // property and reads as undefined here (see src/content/yt-data-bridge.js,
       // which mirrors both across the world boundary for exactly this reason).
       const row = msgId ? document.getElementById(msgId) : null
       if (!row) return { ok: false, error: 'message_not_found' }

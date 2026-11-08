@@ -73,7 +73,7 @@ const ALLOWLIST = {
   'src/multichat/settings-ui.js': 1,
   // feed posts the server stores pre-escaped; the client neutralises any bare `<` again before use
   'src/multichat/social.js': 1,
-  'chrome/chat-injector.js': 2,
+  'src/content/chat-injector.js': 2,
 }
 
 const files = sourceFiles()
@@ -94,7 +94,7 @@ describe('html sink ratchet', () => {
     const total = [...found.values()].reduce((n, f) => n + f.total, 0)
     expect(files.length).toBeGreaterThan(120)
     expect(total).toBeGreaterThan(60)
-    for (const f of ['src/multichat/main-messages.js', 'src/multichat/tooltips.js', 'chrome/chat-injector.js']) {
+    for (const f of ['src/multichat/main-messages.js', 'src/multichat/tooltips.js', 'src/content/chat-injector.js']) {
       expect(found.has(f)).toBe(true)
     }
   })

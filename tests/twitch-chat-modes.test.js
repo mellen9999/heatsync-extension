@@ -203,7 +203,7 @@ describe('kick chat modes', () => {
     expect(fn).toContain('kick did not apply it')
   })
   test('the relay hands the row back', () => {
-    const C = readFileSync(join(ROOT, 'chrome', 'content.js'), 'utf8')
+    const C = readFileSync(join(ROOT, 'src', 'content', 'content.js'), 'utf8')
     expect(C).toContain('sendResponse({ ok: true, row })')
   })
   test('composer refuses unique-chat on a kick-only channel instead of no-oping', () => {

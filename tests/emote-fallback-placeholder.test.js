@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-const src = readFileSync(new URL('../chrome/shared-utils.js', import.meta.url), 'utf8')
+const src = readFileSync(new URL('../src/content/shared-utils.js', import.meta.url), 'utf8')
 
 // the continuity proxy hid a tab-completed emote's placeholder url from the page-world fixer:
 // the echo of your own message stayed a broken image

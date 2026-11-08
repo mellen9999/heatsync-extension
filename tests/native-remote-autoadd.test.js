@@ -1,6 +1,6 @@
 /**
  * Native-chat remote-completion auto-add — trackRemoteCompletion /
- * flushRemoteCompletionsOnSend (chrome/autocomplete-hook.js).
+ * flushRemoteCompletionsOnSend (src/content/autocomplete-hook.js).
  *
  * Regression anchor: tab-completing a remote 7TV catalog emote in NATIVE
  * twitch chat never added it to the viewer's set — the overlay input did
@@ -18,7 +18,7 @@ import { beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const HOOK_SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'autocomplete-hook.js'), 'utf8')
+const HOOK_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'autocomplete-hook.js'), 'utf8')
 const start = HOOK_SRC.indexOf('const _remoteCompletions')
 const end = HOOK_SRC.indexOf('// Track preloaded emote names')
 if (start === -1 || end === -1 || end <= start) throw new Error('remote-completion carve markers not found')

@@ -102,7 +102,7 @@ describe('sign-in goes to the chooser', () => {
     for (const f of ['notifs.js', 'whispers.js']) expect(mc(f)).not.toMatch(/api\/auth\/login(?!\?scopes)/)
     expect(mc('bootstrap.js')).toContain("const HS_LOGIN_URL = 'https://heatsync.org/login'")
     expect(read('chrome', 'welcome.html')).toContain('href="https://heatsync.org/login"')
-    expect(read('chrome', 'heatsync-button.js')).not.toContain('api/auth/login')
+    expect(read('src', 'content', 'heatsync-button.js')).not.toContain('api/auth/login')
   })
 })
 

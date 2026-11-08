@@ -165,7 +165,7 @@ const CONFIG = {
 
     // Kick chat containers — fallback ARRAY consumed via qsArray/qsaArray
     // (src/lib/utils.js): tries each entry in order, first match wins.
-    // Order preserves the priority already live in chrome/content.js's
+    // Order preserves the priority already live in src/content/content.js's
     // findChatContainer() cascade (inner scrollable div, then the message
     // list root, then the outer room) with config.js's class-based
     // defensive fallbacks appended after — a strict superset, never a

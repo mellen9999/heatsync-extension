@@ -4,7 +4,7 @@ import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const src = readFileSync(join(import.meta.dir, '..', 'chrome', 'content.js'), 'utf8')
+const src = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'content.js'), 'utf8')
 const fn = (name) => {
   const i = src.indexOf(`  function ${name}(`)
   const j = src.indexOf('\n  }\n', i)

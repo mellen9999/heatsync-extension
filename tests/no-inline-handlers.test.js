@@ -33,7 +33,7 @@ const INLINE_ATTR = /\son[a-z]+\s*=\s*["'][^"']/gi
 describe('injected markup', () => {
   test('scanned a real tree, so an empty pass is impossible', () => {
     expect(FILES.length).toBeGreaterThan(40)
-    expect(FILES.some((f) => f.endsWith('chrome/heatsync-button.js'))).toBe(true)
+    expect(FILES.some((f) => f.endsWith('src/content/heatsync-button.js'))).toBe(true)
   })
 
   test('recognises the shape it forbids', () => {

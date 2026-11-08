@@ -331,7 +331,7 @@ describe('colour doctrine — 8 colours', () => {
   test('reads the source tree at all', () => {
     expect(FILES.length).toBeGreaterThan(40)
     expect(FILES.some((f) => f.rel === 'src/multichat/styles/00-palette.css')).toBe(true)
-    expect(FILES.some((f) => f.rel === 'chrome/content.js')).toBe(true)
+    expect(FILES.some((f) => f.rel === 'src/content/content.js')).toBe(true)
   })
 
   test('the exempt list names real files', () => {

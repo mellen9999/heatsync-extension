@@ -5,9 +5,9 @@ const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 
 // kick and youtube inputs hold plain text only: the emotes in what you typed show in a strip above the box
 test('kick and yt mount the shared emote strip', () => {
-  expect(read('chrome/shared-utils.js')).toMatch(/mountEmoteStrip,/)
-  expect(read('chrome/kick-autocomplete-hook.js')).toMatch(/window\.HS\?\.mountEmoteStrip\(/)
-  expect(read('chrome/youtube-content.js')).toMatch(/window\.HS\?\.mountEmoteStrip\(/)
+  expect(read('src/content/shared-utils.js')).toMatch(/mountEmoteStrip,/)
+  expect(read('src/content/kick-autocomplete-hook.js')).toMatch(/window\.HS\?\.mountEmoteStrip\(/)
+  expect(read('src/content/youtube-content.js')).toMatch(/window\.HS\?\.mountEmoteStrip\(/)
 })
 
 for (const name of ['chrome', 'firefox']) {

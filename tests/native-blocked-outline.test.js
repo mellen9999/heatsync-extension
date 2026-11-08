@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-const src = readFileSync(new URL('../chrome/content.js', import.meta.url), 'utf8')
+const src = readFileSync(new URL('../src/content/content.js', import.meta.url), 'utf8')
 
 // opacity 0 hid the dashed outline with the picture, leaving a blocked emote nothing to right-click
 test('a blocked native emote hides its picture, keeps its dashed outline', () => {

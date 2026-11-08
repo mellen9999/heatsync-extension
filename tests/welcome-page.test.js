@@ -12,7 +12,7 @@ import { Window } from 'happy-dom'
 
 const ROOT = join(import.meta.dir, '..')
 const HTML = readFileSync(join(ROOT, 'chrome', 'welcome.html'), 'utf8')
-const JS = readFileSync(join(ROOT, 'chrome', 'welcome.js'), 'utf8')
+const JS = readFileSync(join(ROOT, 'src', 'content', 'welcome.js'), 'utf8')
 const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages.json'), 'utf8'))
 
 const flush = () => new Promise((r) => setTimeout(r, 5))

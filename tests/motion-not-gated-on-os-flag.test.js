@@ -34,7 +34,7 @@ const ROOT = join(import.meta.dir, '..')
 const CONTENT_MOTION = [
   join('src', 'multichat', 'paints.js'),
   join('src', 'multichat', 'styles', '10-emotes.css'),
-  join('chrome', 'youtube-content.js'),
+  join('src', 'content', 'youtube-content.js'),
   join('src', 'lib', 'paint-spec.js'),
   join('src', 'lib', 'scene-spec.js'),
 ]

@@ -2,12 +2,12 @@
 //
 // Before this file, the same idea existed as a dozen divergent, hand-drifted
 // copies: src/multichat/main.js (NON_CHANNEL_PATHS, KICK_RESERVED_PATHS, and
-// a third kick nav-capture `reserved` set), chrome/content.js
+// a third kick nav-capture `reserved` set), src/content/content.js
 // (TWITCH_EXCLUDED_PATHS plus four more inline excluded/kickExcluded
-// literals), chrome/heatsync-button.js (twitch+kick literals),
-// chrome/early-layout.js (twitch+kick literals), chrome/background.js
+// literals), src/content/heatsync-button.js (twitch+kick literals),
+// src/content/early-layout.js (twitch+kick literals), chrome/background.js
 // (BG_NON_CHANNEL_PATHS plus a `skip` set in get_watching_channels), and
-// chrome/popup.js (twitch+kick literals). Divergence let real garbage slugs
+// src/content/popup.js (twitch+kick literals). Divergence let real garbage slugs
 // (kick.com/video/<id>, 'moderator', 'videos') get treated as channel names —
 // persisted into joined_extra_channels, IRC-joined, given ghost tabs. This is
 // the union of every one of those copies plus the platform-reserved paths

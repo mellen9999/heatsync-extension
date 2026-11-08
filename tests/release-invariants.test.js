@@ -77,7 +77,7 @@ describe('kick send retry loop is bounded', () => {
     expect(fn).toMatch(/if \(replyRef && [^)]*\)/)
     expect(fn).toContain('replyRef = null')
     // emote branch: guarded on body still containing a token, which it strips.
-    // Checked via the relay's machine-readable `code` field (chrome/content.js
+    // Checked via the relay's machine-readable `code` field (src/content/content.js
     // kickSendErrorCode), not by matching kick's raw error text.
     expect(fn).toMatch(/code === 'invalid_emote'[\s\S]{0,120}body\s*=/)
   })

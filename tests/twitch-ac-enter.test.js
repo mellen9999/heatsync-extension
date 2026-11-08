@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-const src = readFileSync(new URL('../chrome/autocomplete-hook.js', import.meta.url), 'utf8')
+const src = readFileSync(new URL('../src/content/autocomplete-hook.js', import.meta.url), 'utf8')
 
 // Twitch accepts its open list on Enter: heatsync matches offered for plain typing made the first Enter
 // swap the last word for an emote instead of sending

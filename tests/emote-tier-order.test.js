@@ -45,7 +45,7 @@ test('background.js carries the same two orders as lib', () => {
 })
 
 // native chat: the sender's pick is the line's pick
-const src = read('chrome/content.js')
+const src = read('src/content/content.js')
 const fnSrc = (name) => {
   const i = src.indexOf(`  function ${name}(`)
   return src.slice(i, src.indexOf('\n  }\n', i) + 4)

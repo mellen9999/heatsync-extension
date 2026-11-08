@@ -10,7 +10,7 @@ import { join } from 'node:path'
 
 const ROOT = join(import.meta.dir, '..')
 const TARGETS = readFileSync(join(ROOT, 'src', 'multichat', 'send-targets.js'), 'utf8')
-const YTC = readFileSync(join(ROOT, 'chrome', 'youtube-content.js'), 'utf8')
+const YTC = readFileSync(join(ROOT, 'src', 'content', 'youtube-content.js'), 'utf8')
 // src/_locales is the source of truth — build.js copies it over chrome/_locales
 // and dist/*/_locales. Asserting against the copy would have passed while the
 // real strings were missing (it did, once).

@@ -286,7 +286,7 @@ async function _consumeCalloutToken(channel, token, text) {
 // The overlay is an isolated-world script, and React's fiber pointers are
 // expandos on the page's own world — fiberTokenScan sees nothing from here in
 // a real browser (it only works where the worlds are one: tests, devtools).
-// chrome/twitch-callout-token.js runs in the page's world, reads every
+// src/content/twitch-callout-token.js runs in the page's world, reads every
 // callout's key there and answers over window events. Resolves [] on silence.
 function readCalloutTokens(timeoutMs = 1500) {
   return new Promise((resolve) => {

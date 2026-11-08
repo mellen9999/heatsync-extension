@@ -1095,7 +1095,7 @@ const SLASH_COMMANDS = slashCommandsFor('ext')
 
 const slashAcState = { active: false, matches: [], index: 0 }
 
-// vi-mode (chrome/vi-mode.js, same isolated world) asks this before treating
+// vi-mode (src/content/vi-mode.js, same isolated world) asks this before treating
 // Escape as enter-normal-mode. Every composer overlay closes on Escape via
 // its own handler — vi's window-capture intercept starved them all: the
 // dropdown stayed open, the user got dumped into normal mode mid-message,

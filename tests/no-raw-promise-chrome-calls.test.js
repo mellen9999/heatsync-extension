@@ -31,7 +31,7 @@ function jsFiles(dir) {
     .map((f) => join(dir, f))
 }
 
-const FILES = [...jsFiles('chrome'), ...jsFiles('src/lib'), ...jsFiles('src/multichat')]
+const FILES = [...jsFiles('chrome'), ...jsFiles('src/content'), ...jsFiles('src/lib'), ...jsFiles('src/multichat')]
 
 // await chrome.X(...) / chrome.X(...).then( / chrome.X(...).catch( / chrome.X(...).finally(
 const PROMISE_STYLE_RE =

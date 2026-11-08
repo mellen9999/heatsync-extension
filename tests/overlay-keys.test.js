@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const SRC = join(import.meta.dir, '..', 'src', 'multichat')
-const VI = join(import.meta.dir, '..', 'chrome', 'vi-mode.js')
+const VI = join(import.meta.dir, '..', 'src', 'content', 'vi-mode.js')
 const read = (f) => readFileSync(join(SRC, f), 'utf8')
 
 // Pull the pure registry out of the bundle-scope module and run it for real.

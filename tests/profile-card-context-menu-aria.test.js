@@ -17,7 +17,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const SRC = readFileSync(join(new URL('..', import.meta.url).pathname, 'chrome', 'content.js'), 'utf8')
+const SRC = readFileSync(join(new URL('..', import.meta.url).pathname, 'src', 'content', 'content.js'), 'utf8')
 const CARD = readFileSync(join(new URL('..', import.meta.url).pathname, 'src', 'multichat', 'profile-card.js'), 'utf8')
 
 describe('profile card — role=dialog + focus management', () => {

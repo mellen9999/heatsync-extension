@@ -22,12 +22,12 @@ const ROOT = join(import.meta.dir, '..')
 
 // Every script that touches native twitch/kick/youtube chat rows.
 const NATIVE_CHAT_SCRIPTS = [
-  'chrome/content.js',
-  'chrome/youtube-content.js',
-  'chrome/chat-injector.js',
-  'chrome/twitch-chat-intercept.js',
-  'chrome/kick-chat-intercept.js',
-  'chrome/early-inject-main.js',
+  'src/content/content.js',
+  'src/content/youtube-content.js',
+  'src/content/chat-injector.js',
+  'src/content/twitch-chat-intercept.js',
+  'src/content/kick-chat-intercept.js',
+  'src/content/early-inject-main.js',
 ]
 
 // Heatsync-paint APPLICATION symbols. Reading the `hsp-` class is allowed and
@@ -58,7 +58,7 @@ describe('R2 — heatsync cosmetics stay off native chat', () => {
 })
 
 describe('R4 — a 7TV paint stands down for a saved heatsync paint, not the reverse', () => {
-  for (const file of ['chrome/content.js', 'chrome/youtube-content.js']) {
+  for (const file of ['src/content/content.js', 'src/content/youtube-content.js']) {
     test(`${file} checks for an hsp- class before applying a 7TV paint`, () => {
       const src = readFileSync(join(ROOT, file), 'utf8')
       const fn = src.slice(src.indexOf('function applyPaintToElement'))

@@ -2,7 +2,7 @@ import { expect, test } from 'bun:test'
 import { classifyYtMembership, classifyYtRendererType, parseYtGiftCount } from '../src/lib/utils.js'
 
 // ── classifyYtRendererType ────────────────────────────────────────────────────
-// Tag names verified against chrome/youtube-content.js's SUPPORTED_RENDERERS
+// Tag names verified against src/content/youtube-content.js's SUPPORTED_RENDERERS
 // allowlist + real yt-live-chat DOM renderer tags.
 
 test('classifyYtRendererType: text message renderer falls to default text type', () => {

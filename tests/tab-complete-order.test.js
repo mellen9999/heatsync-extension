@@ -266,13 +266,13 @@ describe('emote frecency store', () => {
   })
 })
 
-// ── native-chat hook (chrome/autocomplete-hook.js) parity guards ────────────
+// ── native-chat hook (src/content/autocomplete-hook.js) parity guards ────────────
 // The MAIN-world hook can't import emotes.js/input.js, so its frecency store
 // and all three of its completion sorts (getMatches dropdown, remote-merge
 // cycle, local cycle rebuild) duplicate the logic by design. These guards
 // keep the copies from drifting — the original kko bug shipped exactly
 // because two sort sites disagreed.
-const HOOK_SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'autocomplete-hook.js'), 'utf8')
+const HOOK_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'autocomplete-hook.js'), 'utf8')
 
 describe('autocomplete-hook.js — stays in lockstep with the multichat', () => {
   test('shares the frecency localStorage key and half-life with emotes.js', () => {
@@ -307,7 +307,7 @@ describe('autocomplete-hook.js — stays in lockstep with the multichat', () => 
   test('every sort that ranks exacts puts the channel emote first among same-name exacts', () => {
     // two sorts in autocomplete-hook.js (dropdown + local cycle rebuild) and kick's
     expect(HOOK_SRC.match(/\(a\.(_tier|tier) === 0\) !== \(b\.\1 === 0\)/g)?.length).toBe(2)
-    const KICK_SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'kick-autocomplete-hook.js'), 'utf8')
+    const KICK_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'kick-autocomplete-hook.js'), 'utf8')
     expect(KICK_SRC).toContain('(a.tier === 0) !== (b.tier === 0)')
   })
 

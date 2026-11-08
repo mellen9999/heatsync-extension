@@ -14,7 +14,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'early-inject-main.js'), 'utf8')
+const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'early-inject-main.js'), 'utf8')
 
 describe('integrity capture stamps an expiry', () => {
   test('header-capture (Client-Integrity) sets gql.integrityExp', () => {

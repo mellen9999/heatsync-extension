@@ -12,7 +12,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const CONTENT = readFileSync(join(import.meta.dir, '..', 'chrome', 'content.js'), 'utf8')
+const CONTENT = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'content.js'), 'utf8')
 
 function extractFn(src, name) {
   const marker = `function ${name}(`

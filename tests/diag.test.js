@@ -286,7 +286,7 @@ describe('diag is actually wired, not just shipped', () => {
 
   test('swallow() has real call sites', () => {
     const files = [
-      'chrome/content.js',
+      'src/content/content.js',
       'src/multichat/bootstrap.js',
       'src/multichat/kick-host.js',
       'src/multichat/feed-embed.js',
@@ -310,7 +310,7 @@ describe('diag is actually wired, not just shipped', () => {
   test('the two busy-listener copies stay instrumented together', () => {
     // content.js and bootstrap.js carry the same block; this repo's recorded
     // bug shape is one copy of a duplicated thing drifting.
-    expect(SRC('chrome/content.js')).toContain("swallow(e, 'busy-listener-content')")
+    expect(SRC('src/content/content.js')).toContain("swallow(e, 'busy-listener-content')")
     expect(SRC('src/multichat/bootstrap.js')).toContain("swallow(e, 'busy-listener-multichat')")
   })
 })

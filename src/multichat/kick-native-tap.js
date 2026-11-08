@@ -1,4 +1,4 @@
-// Kick page-level chat tap — ISOLATED-world half of chrome/kick-chat-intercept.js.
+// Kick page-level chat tap — ISOLATED-world half of src/content/kick-chat-intercept.js.
 //
 // Third transport line for the CURRENT kick page channel. Primary transports
 // (BG service-worker Pusher tap + server webhook relay) cover every joined

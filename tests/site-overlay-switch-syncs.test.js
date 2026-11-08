@@ -34,10 +34,10 @@ test('refuses anything that is not a site overlay gate', () => {
 })
 
 test('the popup and the page helper write through the service worker only', () => {
-  const popup = read('chrome/popup.js')
+  const popup = read('src/content/popup.js')
   expect(popup).toContain("type: 'site_overlay_set'")
   expect(popup).not.toContain('storage.sync.set')
-  const shared = read('chrome/shared-utils.js')
+  const shared = read('src/content/shared-utils.js')
   const fn = shared.slice(shared.indexOf('async function setSiteOverlay('))
   expect(fn.slice(0, 600)).toContain("type: 'site_overlay_set'")
 })

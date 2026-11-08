@@ -55,7 +55,7 @@ describe('platform picker tabs', () => {
 
   test('twitch and kick get a native chat row that is the per-site switch, with the way back on the hs button', () => {
     const twitch = src('twitch-api.js')
-    const btn = readFileSync(join(import.meta.dir, '..', 'chrome', 'heatsync-button.js'), 'utf8')
+    const btn = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'heatsync-button.js'), 'utf8')
     expect(tabs).toContain('window.HS.setSiteOverlay(gate, false)')
     expect(tabs).toContain('prepend(nativeChatRow())')
     expect(twitch).toContain('nativeChatRow()')
@@ -76,7 +76,7 @@ describe('kick native chat hide', () => {
 
 describe('twitch and kick with heatsync chat off', () => {
   test('no picker button, just a back bar over the native chat column', () => {
-    const btn = readFileSync(join(import.meta.dir, '..', 'chrome', 'heatsync-button.js'), 'utf8')
+    const btn = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'heatsync-button.js'), 'utf8')
     const init = btn.slice(btn.indexOf('async function init()'))
     expect(init.indexOf('mountNativeBackBar(gate)')).toBeGreaterThan(-1)
     expect(init.indexOf('mountNativeBackBar(gate)')).toBeLessThan(init.indexOf('cleanupOrphanedElements()'))

@@ -37,13 +37,13 @@ import { mainSource } from './main-src.js'
 const ROOT = join(import.meta.dir, '..')
 const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8')
 
-const PCARD_EARLY_SRC = read('chrome', 'pcard-early.js')
+const PCARD_EARLY_SRC = read('src', 'content', 'pcard-early.js')
 const MAIN = mainSource()
 const CARD = read('src', 'multichat', 'profile-card.js')
 const INPUT = read('src', 'multichat', 'input.js')
 const EMOTES = read('src', 'multichat', 'emotes.js')
 const SOCIAL = read('src', 'multichat', 'social.js')
-const CONTENT = read('chrome', 'content.js')
+const CONTENT = read('src', 'content', 'content.js')
 
 /** The first `n` chars of a function body, brace-matched from its signature. */
 function body(src, signature, n = 1200) {

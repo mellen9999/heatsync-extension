@@ -7,6 +7,6 @@
 declare const __HS_DEV_BUILD__: boolean
 declare const __HS_HOST__: 'twitch' | 'kick' | 'youtube'
 
-// chrome/shared-utils.js assigns window.HS and the manifest loads it before
+// src/content/shared-utils.js assigns window.HS and the manifest loads it before
 // every consumer in the same isolated world, so the bare name resolves.
 declare const HS: any

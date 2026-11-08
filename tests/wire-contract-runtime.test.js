@@ -141,15 +141,15 @@ describe('runtime.sendMessage wire contract', () => {
   })
 
   test('youtube emote insert is a direct call, not a message', () => {
-    const btn = readFileSync(join(ROOT, 'chrome', 'heatsync-button.js'), 'utf8')
-    const yt = readFileSync(join(ROOT, 'chrome', 'youtube-content.js'), 'utf8')
+    const btn = readFileSync(join(ROOT, 'src', 'content', 'heatsync-button.js'), 'utf8')
+    const yt = readFileSync(join(ROOT, 'src', 'content', 'youtube-content.js'), 'utf8')
     expect(yt).toContain('window.__hsYtInsertEmote = handleInsertEmote')
     expect(btn).toContain('window.__hsYtInsertEmote(emoteName)')
     expect(btn).not.toContain("type: 'youtube_insert_emote'")
   })
 
   test('the caller guards on the function existing, and still inserts if it does not', () => {
-    const btn = readFileSync(join(ROOT, 'chrome', 'heatsync-button.js'), 'utf8')
+    const btn = readFileSync(join(ROOT, 'src', 'content', 'heatsync-button.js'), 'utf8')
     const at = btn.indexOf("platform === 'youtube' && typeof window.__hsYtInsertEmote === 'function'")
     expect(at, 'the existence guard is gone — a missing function would throw').toBeGreaterThan(-1)
     // The else arm is the execCommand path, so an unloaded youtube-content.js

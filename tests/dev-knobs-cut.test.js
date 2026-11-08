@@ -48,8 +48,8 @@ test('a stored feature switch no longer gates anything at boot', () => {
 
 test('nothing reads the cut keys', () => {
   const checks = {
-    'chrome/content.js': ['debugLogging', 'subsystems?.cosmetics'],
-    'chrome/player-volume.js': ['channelVolumeTwitch', 'channelVolumeKick', 'channelVolumeYouTube'],
+    'src/content/content.js': ['debugLogging', 'subsystems?.cosmetics'],
+    'src/content/player-volume.js': ['channelVolumeTwitch', 'channelVolumeKick', 'channelVolumeYouTube'],
     'src/multichat/cross-follow.js': ['crossFollowTwitchNotify'],
     'src/multichat/settings-ui.js': ['crashTelemetry', '_loadCrashLog'],
     'src/multichat/main.js': [

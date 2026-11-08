@@ -4,7 +4,7 @@ import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const read = (p) => readFileSync(join(import.meta.dir, '..', 'chrome', p), 'utf8')
+const read = (p) => readFileSync(join(import.meta.dir, '..', 'src', 'content', p), 'utf8')
 
 for (const file of ['content.js', 'youtube-content.js']) {
   test(`${file} asks storage for both block lists and unions them`, () => {

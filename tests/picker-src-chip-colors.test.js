@@ -21,7 +21,7 @@ test('every active provider chip has a ring that is not the white fill', () => {
 })
 
 test('the popout opts out of page-recolouring dark-mode extensions', () => {
-  const early = readFileSync(join(import.meta.dir, '..', 'chrome', 'early-layout.js'), 'utf8')
+  const early = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'early-layout.js'), 'utf8')
   expect(early).toMatch(
     /if \(isPopout\) \{\s*const lock = document\.createElement\('meta'\)\s*lock\.name = 'darkreader-lock'/,
   )

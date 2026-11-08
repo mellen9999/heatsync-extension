@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-const src = readFileSync(new URL('../chrome/youtube-content.js', import.meta.url), 'utf8')
+const src = readFileSync(new URL('../src/content/youtube-content.js', import.meta.url), 'utf8')
 
 // youtube replaces the chat input while the page settles; listeners and a dropdown bound to the first
 // node died with it, so tab complete "did nothing" until a later re-setup happened to catch the final node

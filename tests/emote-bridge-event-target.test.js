@@ -6,9 +6,9 @@ import { join } from 'node:path'
  * The `heatsync-emotes-updated` notification must not depend on which content
  * script ran first.
  *
- * The bug: `chrome/autocomplete-hook.js` attached its listener to the
+ * The bug: `src/content/autocomplete-hook.js` attached its listener to the
  * `#heatsync-emote-bridge` element at load. That element is created by
- * `chrome/content.js` — which the manifest registers in a LATER content_scripts
+ * `src/content/content.js` — which the manifest registers in a LATER content_scripts
  * group (autocomplete-hook is MAIN world, content.js is ISOLATED, both
  * document_end, and chrome runs same-run_at groups in manifest order). So the
  * lookup returned null, a silent `if (bridge)` skipped the whole registration,
@@ -26,8 +26,8 @@ import { join } from 'node:path'
  */
 
 const ROOT = join(import.meta.dir, '..')
-const HOOK = readFileSync(join(ROOT, 'chrome', 'autocomplete-hook.js'), 'utf8')
-const CONTENT = readFileSync(join(ROOT, 'chrome', 'content.js'), 'utf8')
+const HOOK = readFileSync(join(ROOT, 'src', 'content', 'autocomplete-hook.js'), 'utf8')
+const CONTENT = readFileSync(join(ROOT, 'src', 'content', 'content.js'), 'utf8')
 const MANIFEST = JSON.parse(readFileSync(join(ROOT, 'src', 'manifests', 'chrome.json'), 'utf8'))
 
 const EVENT = 'heatsync-emotes-updated'

@@ -409,7 +409,7 @@ function debounce(fn, ms = 100) {
 // YOUTUBE LIVE CHAT EVENT CLASSIFICATION
 // ============================================
 // Pure parsing helpers for yt-live-chat's special renderers — shared between
-// chrome/youtube-content.js (DOM extraction) and the multichat overlay (event
+// src/content/youtube-content.js (DOM extraction) and the multichat overlay (event
 // banner dispatch in social.js) so tag-name → type and text-pattern → subtype
 // logic lives in exactly one place.
 
@@ -471,7 +471,7 @@ function parseYtGiftCount(systemText) {
 // YOUTUBE LIVE CHAT MODERATION
 // ============================================
 // Pure logic for driving YouTube's OWN moderation flow (get_item_context_menu
-// → moderate). Lives here — not inside chrome/youtube-content.js's IIFE — so it
+// → moderate). Lives here — not inside src/content/youtube-content.js's IIFE — so it
 // is unit-tested against realistic menu JSON (tests/yt-moderation.test.js). YT
 // moderation can't be self-verified live without a moderator account, so this
 // pure layer is where correctness is locked in.

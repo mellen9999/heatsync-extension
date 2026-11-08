@@ -1,5 +1,5 @@
 /**
- * Every channel remembers its own volume (chrome/player-volume.js), on the
+ * Every channel remembers its own volume (src/content/player-volume.js), on the
  * native sites AND inside the player iframes heatsync.org and the chat link
  * embeds draw. ennortix: "i created a js script with chatgpt that overwrites the
  * value of the volume slider and I could separate channel in it with a default
@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const ROOT = join(import.meta.dir, '..')
-const SRC = readFileSync(join(ROOT, 'chrome', 'player-volume.js'), 'utf8')
+const SRC = readFileSync(join(ROOT, 'src', 'content', 'player-volume.js'), 'utf8')
 
 function loadCore() {
   globalThis.__hsPlayerVolumeLoaded = false

@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 
-const src = readFileSync(new URL('../chrome/kick-autocomplete-hook.js', import.meta.url), 'utf8')
+const src = readFileSync(new URL('../src/content/kick-autocomplete-hook.js', import.meta.url), 'utf8')
 
 // kick's editor learns the selection from `selectionchange`: an edit in the same tick as sel.modify
 // lands at the caret ("kappa"+Tab left "kappa" and appended nothing useful)

@@ -6,7 +6,7 @@
  * the platform's own app root (#root twitch, #__next kick), falling back to
  * documentElement/body only when that root isn't present.
  *
- * F11-2 — chrome/youtube-content.js: ytHsPaintCache (uid -> spec) is
+ * F11-2 — src/content/youtube-content.js: ytHsPaintCache (uid -> spec) is
  * FIFO-capped, but the accumulated distinct-hash sheet rules (ytHsPaintHashes)
  * were never pruned when their owning cache entries got evicted. Fixed with
  * a cap + rebuild-from-surviving-entries.
@@ -21,7 +21,7 @@ const KICK_HOST = readFileSync(join(ROOT, 'src', 'multichat', 'kick-host.js'), '
 const MAIN = ['main.js', 'share-callouts.js']
   .map((f) => readFileSync(join(ROOT, 'src', 'multichat', f), 'utf8'))
   .join('\n')
-const YT_CONTENT = readFileSync(join(ROOT, 'chrome', 'youtube-content.js'), 'utf8')
+const YT_CONTENT = readFileSync(join(ROOT, 'src', 'content', 'youtube-content.js'), 'utf8')
 
 describe('F11-1: one-shot wait-for-element observers scope off document root, not documentElement/body', () => {
   test('twitch-host.js armBodyWatch observes #root, not body', () => {

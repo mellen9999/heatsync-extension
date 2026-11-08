@@ -24,7 +24,7 @@ test('namePaintsOn reads both shapes', () => {
 })
 
 test('content.js reads the raw ui_settings value through namePaintsOn', () => {
-  const src = readFileSync(new URL('../chrome/content.js', import.meta.url), 'utf8')
+  const src = readFileSync(new URL('../src/content/content.js', import.meta.url), 'utf8')
   expect(src).toContain('hsPaintsEnabled = namePaintsOn(settings.showNamePaints)')
   expect(src).not.toContain('settings.showNamePaints !== false')
 })

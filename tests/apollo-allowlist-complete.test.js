@@ -32,7 +32,7 @@ import { join } from 'node:path'
 
 const ROOT = join(import.meta.dir, '..')
 
-const ALLOWLIST_FILE = join(ROOT, 'chrome', 'early-inject-main.js')
+const ALLOWLIST_FILE = join(ROOT, 'src', 'content', 'early-inject-main.js')
 
 function allowedMutations() {
   const src = readFileSync(ALLOWLIST_FILE, 'utf8')

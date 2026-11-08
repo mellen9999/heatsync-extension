@@ -1492,7 +1492,7 @@ const SETTINGS = [
   },
 
   {
-    // Read by chrome/player-volume.js, a content script that runs inside the
+    // Read by src/content/player-volume.js, a content script that runs inside the
     // player frames themselves and reads ui_settings straight from storage —
     // so no runtimeVar/apply here, and it follows a change live via
     // storage.onChanged.

@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { rankEmotePool } from '../src/lib/utils.js'
 
 const root = join(import.meta.dir, '..')
-const yt = readFileSync(join(root, 'chrome', 'youtube-content.js'), 'utf8')
+const yt = readFileSync(join(root, 'src', 'content', 'youtube-content.js'), 'utf8')
 const i = yt.indexOf('  function rebuildEmoteMap(')
 const body = yt.slice(i, yt.indexOf('\n  }\n', i) + 4)
 

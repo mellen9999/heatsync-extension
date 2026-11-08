@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 
 // content.js is an IIFE (not importable); the browser run (scripts/render-emote-collisions-native.ts)
 // is the behavior oracle, these pin the two rules it caught.
-const src = readFileSync(new URL('../chrome/content.js', import.meta.url), 'utf8')
+const src = readFileSync(new URL('../src/content/content.js', import.meta.url), 'utf8')
 
 test('a native wrapper is "yours" only by the exact emote hash, never by name', () => {
   expect(src).not.toContain('inventoryNameSet')

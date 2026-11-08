@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const ROOT = new URL('..', import.meta.url).pathname
-const SRC = readFileSync(join(ROOT, 'chrome', 'platform-detector.js'), 'utf8')
+const SRC = readFileSync(join(ROOT, 'src', 'content', 'platform-detector.js'), 'utf8')
 
 function extractFn(src, name) {
   const start = src.indexOf(`function ${name}(`)

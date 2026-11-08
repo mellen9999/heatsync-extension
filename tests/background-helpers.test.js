@@ -976,7 +976,7 @@ describe('bgIrcSafeChannel (JOIN/PART interpolate raw IRC lines)', () => {
 // ── emote CDN allowlist parity: background.js ↔ early-inject-main.js ─────────
 
 describe('EMOTE_CDN allowlist parity across worlds', () => {
-  const EARLY_SRC = readFileSync(new URL('../chrome/early-inject-main.js', import.meta.url), 'utf8')
+  const EARLY_SRC = readFileSync(new URL('../src/content/early-inject-main.js', import.meta.url), 'utf8')
   const earlyRe = EARLY_SRC.match(/const EMOTE_CDN_RE\s*=\s*\n?\s*(\/\^https[^\n]*\/)/)
   const bgRe = BG_SRC.match(/const EMOTE_CDN_PATTERN\s*=\s*\n?\s*(\/\^https[^\n]*\/)/)
 

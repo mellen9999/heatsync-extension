@@ -1,7 +1,7 @@
 /**
  * D3: YouTube defaults big streams to 'Top chat' (server-side filtered), so
  * the relay reads a filtered stream instead of everything. ensureLiveChatMode
- * (chrome/youtube-content.js) switches the view-selector dropdown to 'Live
+ * (src/content/youtube-content.js) switches the view-selector dropdown to 'Live
  * chat' on attach. DOM shape below is copied from a live capture (lofi girl's
  * 24/7 stream, 2026-09-06): yt-live-chat-header-renderer > #view-selector >
  * yt-sort-filter-sub-menu-renderer#live-chat-view-selector-sub-menu >
@@ -21,7 +21,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { t } from './t-stub.js'
 
-const YTC = readFileSync(join(import.meta.dir, '..', 'chrome', 'youtube-content.js'), 'utf8')
+const YTC = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'youtube-content.js'), 'utf8')
 
 function extractFn(name) {
   const marker = `function ${name}(`

@@ -26,7 +26,7 @@ const PANEL_SRC = [
   .join('\n')
 const PANEL_FILE = read('src', 'multichat', 'kick-mod-suite.js')
 const BG = bgSource()
-const CONTENT = read('chrome', 'content.js')
+const CONTENT = read('src', 'content', 'content.js')
 const INPUT = read('src', 'multichat', 'input.js')
 
 // the request builder, carved out of the service worker the way other tests do

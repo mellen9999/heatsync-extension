@@ -1161,7 +1161,7 @@ function renderEmoteSections(sections, emptyMsg = t('mc_emote_no_loaded'), opts)
 
 // Empty-inventory cold-start: point a fresh/logged-out-of-emotes user straight
 // at the one-click channel import instead of a dead-end "no emotes" message.
-// Mirrors chrome/heatsync-button.js's renderInventoryColdStart pattern; button
+// Mirrors src/content/heatsync-button.js's renderInventoryColdStart pattern; button
 // reuses the existing .hs-mc-load-more style (no new button chrome).
 function renderEmoteColdStart(channel) {
   const safeCh = escapeHtml(channel)
@@ -1174,7 +1174,7 @@ function renderEmoteColdStart(channel) {
 }
 
 // One-click "import all of a channel's 7TV/BTTV/FFZ emotes into your set" —
-// same server endpoint as chrome/heatsync-button.js's hsImportChannel.
+// same server endpoint as src/content/heatsync-button.js's hsImportChannel.
 async function hsMcImportChannelEmotes(btn, channel) {
   if (!channel || btn.disabled) return
   btn.disabled = true

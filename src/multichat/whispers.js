@@ -407,8 +407,8 @@ function handleIncomingDm(data) {
 // via Apollo's link chain (fingerprint + session correlation). The SendWhisper
 // Document is loaded from Twitch's webpack by searchTerm. Mirrors _followMutation.
 async function sendTwitchWhisperDirect(toUserId, message) {
-  const { token } = await getTwitchAuthTokenAsync()
-  if (!token) return { ok: false, noToken: true }
+  const { loggedIn } = await getTwitchLoginAsync()
+  if (!loggedIn) return { ok: false, noToken: true }
   const nonce = crypto?.randomUUID?.() || `${Date.now()}_${Math.random().toString(36).slice(2, 12)}`
   const variables = { input: { recipientUserID: String(toUserId), message: String(message), nonce } }
   const result = await apolloMutate({ searchTerm: 'SendWhisper', variables, resultField: 'sendWhisper' })

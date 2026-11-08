@@ -334,12 +334,11 @@ async function deriveResubToken(channel, months) {
   }
   try {
     if (!(months > 0) || !channel) return gap('no channel/months')
-    // The auth cookie is not readable from every window (a popout is not on
-    // twitch.tv) — the async getter falls back to the background's cookie API.
-    const { token } = await getTwitchAuthTokenAsync()
-    // Own id: helix when we hold a token, else the same GQL lookup any channel
-    // goes through (we know our own login).
-    let selfId = token ? await eswFetchSelfUserId(token) : null
+    // Own id: helix when there is a twitch login (the background makes the call
+    // — the auth cookie is not readable from every window, and it never needs to
+    // be), else the same GQL lookup any channel goes through (we know our own
+    // login).
+    let selfId = await eswFetchSelfUserId()
     if (!selfId && currentUsername) selfId = await resolveTwitchChannelId(currentUsername)
     if (!selfId) return gap('own user id unknown')
     const channelId = await resolveTwitchChannelId(channel)

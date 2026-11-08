@@ -675,6 +675,96 @@ async function getAuthCookie({ fresh = false } = {}) {
   return null
 }
 
+// ============================================
+// TWITCH SESSION — the twitch.tv login cookie stays in this worker
+// ============================================
+// `auth-token` on twitch.tv is the user's twitch login. Content scripts used to
+// ask for it by value (`get_twitch_auth_token`) for four different jobs, and
+// three of them never needed the value:
+//   - "is there a twitch login, and whose"  → twitch_auth_status (yes/no + name)
+//   - helix lookups: own user id, the whisper subscription → twitch_helix; the
+//     worker makes the call, the answer leaves, the token does not
+//   - the authed chat socket on kick/youtube pages must send `PASS oauth:<token>`
+//     from the page's own WebSocket → get_twitch_auth_token, still handed out
+//     (that one job), but only to the overlay's top frame on a twitch / kick /
+//     youtube tab. Never to heatsync.org, a subframe, the popup or another
+//     extension. Moving that socket into this worker is the step that would
+//     make the value stay here for good.
+const TWITCH_WEB_CLIENT_ID = 'kimne78kx3ncx6brgo4mv6wki5h1ko'
+const TWITCH_SESSION_HOSTS = /^https:\/\/((?:[a-z0-9-]+\.)*twitch\.tv|(?:[a-z0-9-]+\.)*kick\.com|www\.youtube\.com)$/
+
+// Who may use the twitch login at all: this extension's own content script, in
+// the TOP frame of a tab that is on twitch / kick / youtube. The frame's own
+// url and the tab's must be the same origin (a page cannot dress an iframe up as
+// the tab). Anything else — heatsync.org, an iframe, no tab at all — is refused.
+function twitchSessionSenderOk(sender) {
+  try {
+    if (!sender || sender.id !== browser.runtime.id) return false
+    if (!sender.tab || sender.tab.id == null || sender.frameId !== 0) return false
+    const frame = new URL(sender.url || '')
+    if (frame.origin !== new URL(sender.tab.url || '').origin) return false
+    return TWITCH_SESSION_HOSTS.test(frame.origin)
+  } catch {
+    return false
+  }
+}
+
+// The twitch cookie, read fresh each time (it rotates; a copy held for hours
+// goes stale). username falls back to the heatsync-linked twitch name: the
+// stored identity, not a fetchUserInfo() local, which was once a ReferenceError
+// here that read as "signed out".
+async function readTwitchSession() {
+  const [tokenCookie, nameCookie, stored] = await Promise.all([
+    browser.cookies.get({ url: 'https://www.twitch.tv', name: 'auth-token' }),
+    browser.cookies.get({ url: 'https://www.twitch.tv', name: 'name' }),
+    browser.storage.local.get('user_info'),
+  ])
+  return {
+    token: tokenCookie?.value || null,
+    username: nameCookie?.value
+      ? decodeURIComponent(nameCookie.value).toLowerCase()
+      : stored?.user_info?.twitch_username || null,
+  }
+}
+
+// The two helix calls the overlay needs, by name. Not a proxy: no other path, no
+// caller-chosen url or body.
+//   self_id            → { ok, id }
+//   whisper_subscribe  → { ok, status }   args: { sessionId, userId }
+async function twitchHelix(op, args = {}) {
+  const { token } = await readTwitchSession()
+  if (!token) return { ok: false, error: 'no_token' }
+  const headers = { 'Client-Id': TWITCH_WEB_CLIENT_ID, Authorization: `Bearer ${token}` }
+  if (op === 'self_id') {
+    const resp = await fetchWithTimeout('https://api.twitch.tv/helix/users', { headers, credentials: 'omit' }, 8000)
+    if (!resp.ok) return { ok: false, status: resp.status, error: `helix ${resp.status}` }
+    const id = (await resp.json().catch(() => null))?.data?.[0]?.id
+    return id ? { ok: true, id: String(id) } : { ok: false, error: 'no_id' }
+  }
+  if (op === 'whisper_subscribe') {
+    const sessionId = String(args.sessionId ?? '')
+    const userId = String(args.userId ?? '')
+    if (!/^[\w-]{8,200}$/.test(sessionId) || !/^\d{1,20}$/.test(userId)) return { ok: false, error: 'bad_args' }
+    const resp = await fetchWithTimeout(
+      'https://api.twitch.tv/helix/eventsub/subscriptions',
+      {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        credentials: 'omit',
+        body: JSON.stringify({
+          type: 'user.whisper.message',
+          version: '1',
+          condition: { user_id: userId },
+          transport: { method: 'websocket', session_id: sessionId },
+        }),
+      },
+      8000,
+    )
+    return { ok: resp.status === 202, status: resp.status }
+  }
+  return { ok: false, error: 'unknown_op' }
+}
+
 // Fetch user's emote inventory via HTTP
 // Normalize a server added_at (ISO string / epoch ms) to epoch ms, 0 = unknown.
 // Unknown fails OPEN at render (the emote draws ungated), so a bad parse can

@@ -219,7 +219,7 @@ async function _twitchFollow(targetID, follow, disableNotifications, _targetSlug
 // platform's own cookies in the background; a failed probe reads as no session.
 async function _hasPlatformSession(platform) {
   try {
-    if (platform === 'twitch') return !!(await getTwitchAuthTokenAsync()).token
+    if (platform === 'twitch') return !!(await getTwitchLoginAsync()).loggedIn
     return !!(await safeSendMessage({ type: 'kick_session_status' }))?.loggedIn
   } catch (_) {
     return false

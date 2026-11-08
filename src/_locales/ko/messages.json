@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "2026년 7월 전에 계정을 만들었어요. 처음 천 명쯤 안에 들어요"
+  },
+  "mc_emote_upload": {
+    "message": "업로드"
+  },
+  "mc_emote_upload_tip": {
+    "message": "이 컴퓨터의 그림으로 나만의 이모트를 추가해요"
+  },
+  "mc_emote_upload_name": {
+    "message": "이모트 이름을 정해요"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "취소"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "받을 수 없는 그림이에요. png, gif, webp, jpg, avif를 써 주세요"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "heatsync 안전 검사가 그 그림을 막았어요"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "추가됐지만 표시됐어요: $CATS$. 일부는 콘텐츠 경고 뒤에서 보게 돼요",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "$NAME$ 이모트가 이미 있어요. 다른 이름을 골라 주세요",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "오늘 업로드 한도에 도달했어요. 내일 다시 해 주세요"
+  },
+  "mc_emote_upload_slow": {
+    "message": "업로드가 너무 많아요. 1분 기다렸다가 다시 해 주세요"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "이모트 이름은 비워 둘 수 없고 띄어쓰기도 안 돼요"
   }
 }

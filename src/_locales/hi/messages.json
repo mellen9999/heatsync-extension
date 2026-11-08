@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "आपका खाता जुलाई 2026 से पहले बना, पहले लगभग एक हज़ार में"
+  },
+  "mc_emote_upload": {
+    "message": "अपलोड"
+  },
+  "mc_emote_upload_tip": {
+    "message": "इस कंप्यूटर की किसी तस्वीर से अपना इमोट जोड़ें"
+  },
+  "mc_emote_upload_name": {
+    "message": "अपने इमोट का नाम रखें"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "रद्द करें"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "यह ऐसी तस्वीर नहीं है जो हम लेते हैं। png, gif, webp, jpg या avif इस्तेमाल करें"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "heatsync की सुरक्षा जाँच ने उस तस्वीर को रोक दिया"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "जुड़ गया, लेकिन चिह्नित हुआ: $CATS$. कुछ लोग इसे सामग्री चेतावनी के पीछे देखेंगे",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "आपके पास $NAME$ नाम का इमोट पहले से है। दूसरा नाम चुनें",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "आज की अपलोड सीमा पूरी हो गई। कल फिर कोशिश करें"
+  },
+  "mc_emote_upload_slow": {
+    "message": "बहुत ज़्यादा अपलोड। एक मिनट रुककर फिर कोशिश करें"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "इमोट का नाम खाली नहीं हो सकता और उसमें खाली जगह नहीं होनी चाहिए"
   }
 }

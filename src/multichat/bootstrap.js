@@ -1038,9 +1038,16 @@ const cleanup = {
   // future { once: true } or { capture: true } would behave correctly under a
   // test harness and be ignored in the browser. Non-object args (emotes.js
   // passes a debug label) are ignored, as they always were.
+  //
+  // Returns a function that takes THIS listener down again. The handler is
+  // wrapped before it is registered, so removeEventListener(event, handler)
+  // never matched anything — a caller that must detach early (the emote
+  // picker's document click + Esc, per open) keeps this instead.
   addEventListener(target, event, handler, opts) {
     const o = opts && typeof opts === 'object' ? { ...opts, signal: mcSignal } : { signal: mcSignal }
-    target.addEventListener(event, _hsPerfWrap(handler, 0, `event:${event}`), o)
+    const wrapped = _hsPerfWrap(handler, 0, `event:${event}`)
+    target.addEventListener(event, wrapped, o)
+    return () => target.removeEventListener(event, wrapped, o)
   },
   // For chrome.runtime.onMessage / chrome.storage.onChanged etc — APIs that
   // expose addListener/removeListener but ignore AbortSignal.

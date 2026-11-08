@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "hesabın temmuz 2026'dan önce açıldı, ilk bin kişi arasında"
+  },
+  "mc_emote_upload": {
+    "message": "yükle"
+  },
+  "mc_emote_upload_tip": {
+    "message": "bu bilgisayardaki bir resimden kendi emote'unu ekle"
+  },
+  "mc_emote_upload_name": {
+    "message": "emote'una bir ad ver"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "iptal"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "bu kabul ettiğimiz bir resim değil. png, gif, webp, jpg veya avif kullan"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "heatsync güvenlik kontrolü o resmi engelledi"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "eklendi ama işaretlendi: $CATS$. bazı kişiler onu içerik uyarısının arkasında görür",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "$NAME$ adında bir emote'un zaten var. başka bir ad seç",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "bugünkü yükleme sınırına ulaştın. yarın tekrar dene"
+  },
+  "mc_emote_upload_slow": {
+    "message": "çok fazla yükleme. bir dakika bekle ve tekrar dene"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "emote adı boş olamaz ve boşluk içeremez"
   }
 }

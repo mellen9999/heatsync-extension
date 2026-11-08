@@ -161,7 +161,7 @@ describe('the resolution cache cannot outlive the answer', () => {
     // Dragging a window to a monitor with a different pixel ratio changes the
     // rung without the setting moving. A cache keyed on emoteSize would keep
     // serving the old screen's file for the rest of the session.
-    const fn = carve('function getChatResUrl(url) {', '\n}')
+    const fn = carve('function getChatResUrl(url, variants) {', '\n}')
     expect(fn, 'getChatResUrl not found').toBeTruthy()
     const body = fn.replace(/^\s*\/\/.*$/gm, '')
     expect(body).toContain('hsWantedRung()')

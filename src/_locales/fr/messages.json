@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "ton compte a été créé avant juillet 2026, parmi les mille premiers environ"
+  },
+  "mc_emote_upload": {
+    "message": "téléverser"
+  },
+  "mc_emote_upload_tip": {
+    "message": "ajoute ton propre emote depuis une image de cet ordinateur"
+  },
+  "mc_emote_upload_name": {
+    "message": "donne un nom à ton emote"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "annuler"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "ce n'est pas une image que nous acceptons. utilise png, gif, webp, jpg ou avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "le contrôle de sécurité de heatsync a bloqué cette image"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "ajouté, mais signalé : $CATS$. certains la verront derrière un avertissement de contenu",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "tu as déjà un emote nommé $NAME$. choisis un autre nom",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "tu as atteint la limite de téléversements du jour. réessaie demain"
+  },
+  "mc_emote_upload_slow": {
+    "message": "trop de téléversements. attends une minute puis réessaie"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "un nom d'emote ne peut pas être vide ni contenir d'espaces"
   }
 }

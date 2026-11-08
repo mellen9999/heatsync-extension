@@ -6613,5 +6613,48 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "показва бутон за отговор на реда под мишката. отговорът винаги е в менюто на реда (десен клик, дълго натискане на тъч)"
+  },
+  "mc_emote_upload": {
+    "message": "качи"
+  },
+  "mc_emote_upload_tip": {
+    "message": "добави свое емоте от снимка на този компютър"
+  },
+  "mc_emote_upload_name": {
+    "message": "име на емотето"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "отказ"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "това не е снимка, която приемаме. ползвай png, gif, webp, jpg или avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "проверката за безопасност на heatsync блокира тази снимка"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "добавено, но маркирано: $CATS$. някои хора го виждат зад предупреждение за съдържание",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "вече имаш емоте с име $NAME$. избери друго име",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "стигна лимита за качване днес. опитай утре"
+  },
+  "mc_emote_upload_slow": {
+    "message": "твърде много качвания. изчакай минута и опитай пак"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "името на емотето не може да е празно или да има интервали"
   }
 }

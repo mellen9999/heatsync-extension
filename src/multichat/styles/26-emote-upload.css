@@ -1,0 +1,39 @@
+    /* Picker header: upload your own emote (emote-upload.js). One line under the
+       search box — button, then the name form once a file is picked, then a
+       plain-words status. Square, terminal; hover/active = reverse video. */
+    .hs-mc-upload { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 6px; font-size: 13px; }
+    .hs-mc-upload [hidden] { display: none !important; }
+    .hs-mc-upload-form { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+    .hs-mc-upload button:not(.hs-x) {
+      background: transparent;
+      color: #fff;
+      border: 1px solid #fff;
+      border-radius: 0;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 3px 8px;
+      line-height: 15px;
+      cursor: pointer;
+      transition: none;
+    }
+    .hs-mc-upload button:not(.hs-x):hover,
+    .hs-mc-upload button:not(.hs-x):active,
+    .hs-mc-upload button:not(.hs-x):focus-visible { background: #fff !important; color: #000 !important; outline: none; }
+    .hs-mc-upload button:not(.hs-x):disabled { opacity: 1; text-decoration: line-through; cursor: default; }
+    #hs-mc-upload-name {
+      flex: 1;
+      min-width: 0;
+      padding: 4px 8px;
+      background: #000;
+      color: #fff;
+      border: 1px solid var(--hs-border);
+      border-radius: 0;
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+      box-sizing: border-box;
+    }
+    #hs-mc-upload-name:focus { border-color: #fff; }
+    .hs-mc-upload-status { color: var(--brand-dim); }
+    .hs-mc-upload-status.error { color: #ff0000; }

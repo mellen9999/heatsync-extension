@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "tvůj účet vznikl před červencem 2026, mezi prvním tisícem"
+  },
+  "mc_emote_upload": {
+    "message": "nahrát"
+  },
+  "mc_emote_upload_tip": {
+    "message": "přidej si vlastní emote z obrázku v tomto počítači"
+  },
+  "mc_emote_upload_name": {
+    "message": "pojmenuj emote"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "zrušit"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "tohle není obrázek, který bereme. použij png, gif, webp, jpg nebo avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "bezpečnostní kontrola heatsync tento obrázek zablokovala"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "přidáno, ale označeno: $CATS$. někteří lidé ho uvidí za upozorněním na obsah",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "emote s názvem $NAME$ už máš. vyber jiný název",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "dosáhl jsi dnešního limitu nahrávání. zkus to zítra"
+  },
+  "mc_emote_upload_slow": {
+    "message": "příliš mnoho nahrávání. počkej minutu a zkus to znovu"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "název emote nesmí být prázdný ani obsahovat mezery"
   }
 }

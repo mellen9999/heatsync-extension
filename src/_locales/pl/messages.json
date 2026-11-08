@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "twoje konto powstało przed lipcem 2026, wśród pierwszego tysiąca mniej więcej"
+  },
+  "mc_emote_upload": {
+    "message": "wgraj"
+  },
+  "mc_emote_upload_tip": {
+    "message": "dodaj własny emote z obrazka na tym komputerze"
+  },
+  "mc_emote_upload_name": {
+    "message": "nazwij swój emote"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "anuluj"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "to nie jest obraz, który przyjmujemy. użyj png, gif, webp, jpg lub avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "kontrola bezpieczeństwa heatsync zablokowała ten obraz"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "dodano, ale oznaczono: $CATS$. niektórzy zobaczą go za ostrzeżeniem o treści",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "masz już emote o nazwie $NAME$. wybierz inną nazwę",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "osiągnięto dzisiejszy limit wgrywania. spróbuj jutro"
+  },
+  "mc_emote_upload_slow": {
+    "message": "za dużo wgrań. poczekaj minutę i spróbuj ponownie"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "nazwa emote nie może być pusta ani zawierać spacji"
   }
 }

@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "din konto blev lavet før juli 2026, blandt de første tusind eller deromkring"
+  },
+  "mc_emote_upload": {
+    "message": "upload"
+  },
+  "mc_emote_upload_tip": {
+    "message": "tilføj din egen emote fra et billede på denne computer"
+  },
+  "mc_emote_upload_name": {
+    "message": "giv din emote et navn"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "annuller"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "det er ikke et billede, vi tager imod. brug png, gif, webp, jpg eller avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "heatsyncs sikkerhedstjek blokerede billedet"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "tilføjet, men markeret: $CATS$. nogle folk ser den bag en indholdsadvarsel",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "du har allerede en emote med navnet $NAME$. vælg et andet navn",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "du har nået dagens uploadgrænse. prøv igen i morgen"
+  },
+  "mc_emote_upload_slow": {
+    "message": "for mange uploads. vent et minut og prøv igen"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "et emotenavn må ikke være tomt eller have mellemrum"
   }
 }

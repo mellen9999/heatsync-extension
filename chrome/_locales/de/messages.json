@@ -6613,5 +6613,48 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "zeigt einen antwort-button an der chatzeile unter der maus. antworten geht immer im zeilenmenü (rechtsklick, langes drücken am touchscreen)"
+  },
+  "mc_emote_upload": {
+    "message": "hochladen"
+  },
+  "mc_emote_upload_tip": {
+    "message": "füge dein eigenes emote aus einem bild auf diesem computer hinzu"
+  },
+  "mc_emote_upload_name": {
+    "message": "gib deinem emote einen namen"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "abbrechen"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "das ist kein bild, das wir annehmen. nimm png, gif, webp, jpg oder avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "der sicherheitscheck von heatsync hat dieses bild blockiert"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "hinzugefügt, aber markiert: $CATS$. manche sehen es hinter einer inhaltswarnung",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "du hast schon ein emote namens $NAME$. wähle einen anderen namen",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "du hast das upload-limit für heute erreicht. versuch es morgen wieder"
+  },
+  "mc_emote_upload_slow": {
+    "message": "zu viele uploads. warte eine minute und versuch es dann nochmal"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "ein emote-name darf nicht leer sein oder leerzeichen enthalten"
   }
 }

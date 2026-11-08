@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "你的帳號在 2026 年 7 月之前建立，大約是最早的一千人之一"
+  },
+  "mc_emote_upload": {
+    "message": "上傳"
+  },
+  "mc_emote_upload_tip": {
+    "message": "用這台電腦上的圖片新增你自己的表情"
+  },
+  "mc_emote_upload_name": {
+    "message": "幫你的表情取個名字"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "取消"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "這不是我們接受的圖片。請用 png、gif、webp、jpg 或 avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "heatsync 的安全檢查擋下了這張圖片"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "已新增，但被標記：$CATS$。有些人會在內容警告後面看到它",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "你已經有叫 $NAME$ 的表情了。換個名字吧",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "今天的上傳次數已用完。明天再試"
+  },
+  "mc_emote_upload_slow": {
+    "message": "上傳太多了。等一分鐘再試"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "表情名字不能為空，也不能有空格"
   }
 }

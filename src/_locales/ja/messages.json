@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "アカウントを2026年7月より前に作りました。最初の1000人ほどの中です"
+  },
+  "mc_emote_upload": {
+    "message": "アップロード"
+  },
+  "mc_emote_upload_tip": {
+    "message": "このパソコンの画像から自分のエモートを追加"
+  },
+  "mc_emote_upload_name": {
+    "message": "エモートに名前をつける"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "キャンセル"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "対応していない画像です。png、gif、webp、jpg、avif を使ってください"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "heatsync の安全チェックでその画像はブロックされました"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "追加しました。ただし次のフラグがつきました: $CATS$。コンテンツ警告つきで表示される人もいます",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "$NAME$ という名前のエモートはすでにあります。別の名前にしてください",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "今日のアップロード上限に達しました。明日もう一度どうぞ"
+  },
+  "mc_emote_upload_slow": {
+    "message": "アップロードが多すぎます。1分待ってからもう一度"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "エモート名は空にできず、スペースも入れられません"
   }
 }

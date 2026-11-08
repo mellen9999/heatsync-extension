@@ -4622,7 +4622,7 @@
         (e) => {
           const img = e.target
           if (!(img instanceof HTMLImageElement)) return
-          if (!img.classList.contains('hs-mc-emote')) return
+          if (!img.classList.contains('hs-mc-emote') || hsOwnCopyFallback(img)) return
           const tries = +(img.dataset.hsRetries || 0)
           if (tries >= 3 || !img.src || !img.isConnected) return
           img.dataset.hsRetries = String(tries + 1)
@@ -12737,9 +12737,8 @@
               if (e.slot != null) c.slot = e.slot
             }
             if (e.url) {
-              // Recover overlay flag for emotes whose server row is pre-zero_width
-              // (DB column added 2026-05-23; rows added before that have FALSE).
-              // The 7TV channel/global caches still carry the flag — borrow it so
+              // Recover overlay flag for rows added before the zero_width column (2026-05-23,
+              // they read FALSE): the 7TV channel/global caches still carry it — borrow it so
               // a viewer's pre-existing CarrotTime/wavE stacks without re-adding.
               const zwFromAny = typeof zeroWidthFromAnyCache === 'function' ? zeroWidthFromAnyCache(e.name) : false
               viewerPersonalEmotes.set(e.name, {
@@ -12749,6 +12748,7 @@
                 hash: e.hash,
                 slot: e.slot,
                 zeroWidth: !!(e.zero_width ?? e.zeroWidth ?? zwFromAny),
+                variants: e.variants,
                 // BG-normalized epoch ms — inventory-time render gate
                 addedAt: e.addedAt || 0,
                 // server CW annotation — own msgs hide these at render when

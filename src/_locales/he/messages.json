@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "החשבון שלך נוצר לפני יולי 2026, בין האלף הראשונים בערך"
+  },
+  "mc_emote_upload": {
+    "message": "העלאה"
+  },
+  "mc_emote_upload_tip": {
+    "message": "הוסף אימוט משלך מתמונה במחשב הזה"
+  },
+  "mc_emote_upload_name": {
+    "message": "תן שם לאימוט"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "ביטול"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "זו לא תמונה שאנחנו מקבלים. השתמש ב-png, gif, webp, jpg או avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "בדיקת האבטחה של heatsync חסמה את התמונה"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "נוסף, אבל סומן: $CATS$. חלק מהאנשים יראו אותו מאחורי אזהרת תוכן",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "כבר יש לך אימוט בשם $NAME$. בחר שם אחר",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "הגעת למגבלת ההעלאות להיום. נסה מחר"
+  },
+  "mc_emote_upload_slow": {
+    "message": "יותר מדי העלאות. המתן דקה ונסה שוב"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "שם אימוט לא יכול להיות ריק או לכלול רווחים"
   }
 }

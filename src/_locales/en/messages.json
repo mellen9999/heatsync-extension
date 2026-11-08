@@ -7082,5 +7082,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "your account was made before july 2026, among the first thousand or so"
+  },
+  "mc_emote_upload": {
+    "message": "upload"
+  },
+  "mc_emote_upload_tip": {
+    "message": "add your own emote from a picture on this computer"
+  },
+  "mc_emote_upload_name": {
+    "message": "name your emote"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "cancel"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "that is not a picture we take. use png, gif, webp, jpg or avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "heatsync's safety check blocked that picture"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "added, but flagged: $CATS$. some people see it behind a content warning",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "you already have an emote named $NAME$. pick another name",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "you hit today's upload limit. try again tomorrow"
+  },
+  "mc_emote_upload_slow": {
+    "message": "too many uploads. wait a minute, then try again"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "an emote name can't be empty or have spaces"
   }
 }

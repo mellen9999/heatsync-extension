@@ -6613,5 +6613,48 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "在鼠标所在的聊天行显示回复按钮。回复始终在行菜单中（右键，触屏长按）"
+  },
+  "mc_emote_upload": {
+    "message": "上传"
+  },
+  "mc_emote_upload_tip": {
+    "message": "用这台电脑上的图片添加你自己的表情"
+  },
+  "mc_emote_upload_name": {
+    "message": "给你的表情起个名字"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "取消"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "这不是我们接受的图片。请用 png、gif、webp、jpg 或 avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "heatsync 的安全检查拦下了这张图片"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "已添加，但被标记：$CATS$。有些人会在内容警告后面看到它",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "你已经有叫 $NAME$ 的表情了。换个名字吧",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "今天的上传次数已用完。明天再试"
+  },
+  "mc_emote_upload_slow": {
+    "message": "上传太多了。等一分钟再试"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "表情名字不能为空，也不能有空格"
   }
 }

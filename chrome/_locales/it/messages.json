@@ -6613,5 +6613,48 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "mostra un pulsante rispondi sulla riga della chat sotto il mouse. rispondi è sempre nel menu della riga (clic destro, pressione lunga al tocco)"
+  },
+  "mc_emote_upload": {
+    "message": "carica"
+  },
+  "mc_emote_upload_tip": {
+    "message": "aggiungi un tuo emote da un'immagine su questo computer"
+  },
+  "mc_emote_upload_name": {
+    "message": "dai un nome al tuo emote"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "annulla"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "non è un'immagine che accettiamo. usa png, gif, webp, jpg o avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "il controllo di sicurezza di heatsync ha bloccato quell'immagine"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "aggiunto, ma segnalato: $CATS$. alcune persone lo vedranno dietro un avviso sui contenuti",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "hai già un emote chiamato $NAME$. scegli un altro nome",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "hai raggiunto il limite di caricamenti di oggi. riprova domani"
+  },
+  "mc_emote_upload_slow": {
+    "message": "troppi caricamenti. aspetta un minuto e riprova"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "il nome di un emote non può essere vuoto né avere spazi"
   }
 }

@@ -785,9 +785,12 @@ function isViewerEmoteUrl(name, url, hash) {
 
 let _resCacheSize = 1
 const _resCache = new Map()
-function getChatResUrl(url) {
+function getChatResUrl(url, variants) {
   if (!url) return url
   const want = hsWantedRung()
+  // An advertised-variants emote is a handful of regex steps and its answer
+  // depends on the record, not just the url, so it skips the url-keyed cache.
+  if (variants) return hsOwnRungUrl(url, want, variants)
   // Keyed on the EFFECTIVE rung, not on emoteSize: dragging the window to a
   // monitor with a different pixel ratio changes the answer without the
   // setting moving, and a cache keyed on the setting would keep serving the
@@ -1380,6 +1383,7 @@ function showEmotePicker(tab = null) {
             <svg class="hs-mc-search-icon" width="14" height="14" viewBox="0 0 20 20"><path fill="#000" d="M13.74 12.33l4.04 4.04a1 1 0 01-1.42 1.42l-4.04-4.04a7 7 0 111.42-1.42zM9 14A5 5 0 109 4a5 5 0 000 10z"/></svg>
             <input type="text" id="hs-mc-emote-search" placeholder="${t('mc_emote_search_placeholder')}" autocomplete="off" role="combobox" aria-label="${t('mc_emote_search_placeholder')}" aria-controls="hs-mc-emote-list" aria-autocomplete="list">
           </div>
+          ${mcEmoteUploadHtml()}
         </div>
         <div class="hs-mc-picker-scroll" id="hs-mc-emote-grid">
           ${renderEmoteSections(sections)}
@@ -1502,6 +1506,7 @@ function showEmotePicker(tab = null) {
   hsWireGifTab(picker)
   hsWireEmojiTab(picker)
   hsWirePickerNav(picker)
+  mcEmoteUploadWire(picker)
 
   // Emote size controls
   picker.querySelectorAll('.hs-mc-size-btn').forEach((btn) => {
@@ -1944,7 +1949,7 @@ function createInputEmoteImg(emoteName) {
   if (hsEmoteHiddenForViewer(emote)) return null
   const img = document.createElement('img')
   img.className = 'hs-input-emote'
-  img.src = getChatResUrl(emote.url)
+  img.src = getChatResUrl(emote.url, emote.variants)
   img.alt = emoteName
   img.dataset.emoteName = emoteName
   img.draggable = false
@@ -3842,6 +3847,7 @@ async function loadEmotes() {
             source,
             state: 'owned',
             zeroWidth: !!(e.zero_width ?? e.zeroWidth),
+            variants: Array.isArray(e.variants) ? e.variants : undefined,
             subscription: !!e.subscription,
             hash: e.hash || undefined,
             slot: e.slot,
@@ -4769,7 +4775,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       let state = isBlocked ? 'blocked' : cached?.state || 'channel'
       if (state === 'unadded' && (inventoryEmotes.has(emoteName) || inventoryEmotes.has(rawEmoteName))) state = 'owned'
       const safeName = escapeHtml(rawEmoteName)
-      const chatUrl = getChatResUrl(finalUrl)
+      const chatUrl = getChatResUrl(finalUrl, cached?.variants)
       const safeUrlAttr = escapeHtml(chatUrl)
       const safeSrc = escapeHtml(staticEmoteSrc(chatUrl, cached?.animated === true))
       const animAttr = cached?.animated === true ? ' data-animated="1"' : ''
@@ -4951,7 +4957,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       )
         state = 'owned'
       const source = escapeHtml(emote.source || 'unknown')
-      const rawChatUrl = getChatResUrl(emote.url)
+      const rawChatUrl = getChatResUrl(emote.url, emote.variants)
       const imgSrc = escapeHtml(rawChatUrl)
       const staticSrc = escapeHtml(staticEmoteSrc(rawChatUrl, emote.animated === true))
       const animAttr = emote.animated === true ? ' data-animated="1"' : ''

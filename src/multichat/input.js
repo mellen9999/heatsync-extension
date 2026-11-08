@@ -1539,10 +1539,7 @@ function initInput() {
       if (picker?.classList.contains('visible')) {
         picker.classList.remove('visible')
         hideInputBar()
-        if (_pickerCloseHandler) {
-          document.removeEventListener('click', _pickerCloseHandler)
-          _pickerCloseHandler = null
-        }
+        detachPickerCloseHandlers()
       } else {
         showEmotePicker()
         // detail 0 = Enter/Space on the button: a keyboard reader, who lands in the search box

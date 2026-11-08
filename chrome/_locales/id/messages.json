@@ -6613,5 +6613,48 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "tampilkan tombol balas pada baris chat di bawah mouse. balas selalu ada di menu baris (klik kanan, tekan lama di layar sentuh)"
+  },
+  "mc_emote_upload": {
+    "message": "unggah"
+  },
+  "mc_emote_upload_tip": {
+    "message": "tambahkan emote sendiri dari gambar di komputer ini"
+  },
+  "mc_emote_upload_name": {
+    "message": "beri nama emote-mu"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "batal"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "itu bukan gambar yang kami terima. pakai png, gif, webp, jpg, atau avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "pemeriksaan keamanan heatsync memblokir gambar itu"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "ditambahkan, tapi ditandai: $CATS$. sebagian orang melihatnya di balik peringatan konten",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "kamu sudah punya emote bernama $NAME$. pilih nama lain",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "batas unggah hari ini tercapai. coba lagi besok"
+  },
+  "mc_emote_upload_slow": {
+    "message": "terlalu banyak unggahan. tunggu semenit lalu coba lagi"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "nama emote tidak boleh kosong atau berisi spasi"
   }
 }

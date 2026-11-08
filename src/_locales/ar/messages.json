@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "أُنشئ حسابك قبل يوليو 2026، ضمن أول ألف تقريبا"
+  },
+  "mc_emote_upload": {
+    "message": "رفع"
+  },
+  "mc_emote_upload_tip": {
+    "message": "أضف إيموتك الخاص من صورة على هذا الجهاز"
+  },
+  "mc_emote_upload_name": {
+    "message": "سمِّ الإيموت"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "إلغاء"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "هذا ليس ملف صورة مدعومًا. استخدم png أو gif أو webp أو jpg أو avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "فحص الأمان في heatsync منع هذه الصورة"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "تمت الإضافة لكن تم وسمها: $CATS$. سيراها بعض الناس خلف تحذير محتوى",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "لديك بالفعل إيموت باسم $NAME$. اختر اسمًا آخر",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "وصلت إلى حد الرفع اليوم. حاول غدًا"
+  },
+  "mc_emote_upload_slow": {
+    "message": "رفع كثير جدًا. انتظر دقيقة ثم حاول مجددًا"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "لا يمكن أن يكون اسم الإيموت فارغًا أو يحتوي على مسافات"
   }
 }

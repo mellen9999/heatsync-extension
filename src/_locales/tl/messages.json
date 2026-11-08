@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "ginawa ang account mo bago ang hulyo 2026, kasama sa unang isang libo o mahigit"
+  },
+  "mc_emote_upload": {
+    "message": "i-upload"
+  },
+  "mc_emote_upload_tip": {
+    "message": "magdagdag ng sarili mong emote mula sa larawan sa computer na ito"
+  },
+  "mc_emote_upload_name": {
+    "message": "pangalanan ang emote mo"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "kanselahin"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "hindi iyan larawang tinatanggap namin. gumamit ng png, gif, webp, jpg o avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "hinarang ng safety check ng heatsync ang larawang iyon"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "naidagdag, pero na-flag: $CATS$. may ilang makakakita nito sa likod ng babala sa content",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "may emote ka na na pinangalanang $NAME$. pumili ng ibang pangalan",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "naabot mo na ang limit sa upload ngayon. subukan bukas"
+  },
+  "mc_emote_upload_slow": {
+    "message": "masyadong maraming upload. maghintay ng isang minuto at subukan ulit"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "hindi puwedeng walang laman o may espasyo ang pangalan ng emote"
   }
 }

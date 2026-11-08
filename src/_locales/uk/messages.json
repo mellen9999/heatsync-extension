@@ -7065,5 +7065,48 @@
   },
   "mc_badge_early_supporter_how": {
     "message": "твій акаунт створено до липня 2026, серед перших тисячі чи близько того"
+  },
+  "mc_emote_upload": {
+    "message": "завантажити"
+  },
+  "mc_emote_upload_tip": {
+    "message": "додай свій емоут із картинки на цьому комп'ютері"
+  },
+  "mc_emote_upload_name": {
+    "message": "назви свій емоут"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "скасувати"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "це не картинка, яку ми приймаємо. використай png, gif, webp, jpg або avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "перевірка безпеки heatsync заблокувала цю картинку"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "додано, але позначено: $CATS$. дехто побачить його за попередженням про вміст",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "у тебе вже є емоут з іменем $NAME$. обери інше ім'я",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "ти досяг сьогоднішнього ліміту завантажень. спробуй завтра"
+  },
+  "mc_emote_upload_slow": {
+    "message": "забагато завантажень. зачекай хвилину й спробуй знову"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "ім'я емоута не може бути порожнім чи з пробілами"
   }
 }

@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "fare altındaki sohbet satırında yanıt düğmesi gösterir. yanıt her zaman satır menüsünde (sağ tık, dokunmatikte uzun basma)"
+  },
+  "mc_tour_aria": {
+    "message": "hoş geldin turu"
+  },
+  "mc_tour_title": {
+    "message": "hoş geldin! bunlar başta kapalı. açmak istediğine tıkla"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "her mesajın yanında saati gösterir"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "bir mesajın üzerine gel ve yanıtlamak için ↪ simgesine tıkla"
+  },
+  "mc_tour_vi_tip": {
+    "message": "mesaj kutusu için vim tuşları: esc ile gezinirsin, i ile yine yazarsın. vim sana yeniyse atla"
+  },
+  "mc_tour_mod_tip": {
+    "message": "bir mesajın üzerine gelince x, 10m ve ⛔ çıkar. daha fazla düğme ayarlarda"
+  },
+  "mc_tour_more": {
+    "message": "ayarlarda daha fazlası →"
+  },
+  "mc_tour_done": {
+    "message": "anladım"
+  },
+  "mc_tour_done_tip": {
+    "message": "bunu kalıcı olarak kapatır. tekrar görmek için: ayarlar › ?"
+  },
+  "mc_set_tour": {
+    "message": "hoş geldin turu"
+  },
+  "mc_set_tour_tip": {
+    "message": "ilk ziyaretinde gördüğün küçük tanıtım kartı"
+  },
+  "mc_set_tour_btn": {
+    "message": "turu tekrar göster"
+  },
+  "welcome_get_title": {
+    "message": "neler kazanırsın"
+  },
+  "welcome_get_1": {
+    "message": "twitch, kick ve youtube sohbeti tek yerde, tüm emote'larla (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "sohbeti okumak için hesap gerekmez"
+  },
+  "welcome_get_3": {
+    "message": "hesap, kendi emote'larını ve ayarlarını her cihaza getirir"
+  },
+  "welcome_start_title": {
+    "message": "nasıl başlanır"
+  },
+  "welcome_start_1": {
+    "message": "twitch, kick veya youtube'da herhangi bir yayını aç. heatsync sohbeti kendiliğinden çıkar"
+  },
+  "welcome_start_2": {
+    "message": "küçük bir kart nelerin kapalı olduğunu gösterir. istediğine tıkla"
+  },
+  "welcome_start_3": {
+    "message": "sohbet etmek için siteye her zamanki gibi giriş yap, sonra alttaki kutuya yaz"
   }
 }

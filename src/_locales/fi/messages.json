@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "näytä vastauspainike hiiren alla olevalla chat-rivillä. vastaus on aina rivivalikossa (oikea klikkaus, pitkä painallus kosketuksella)"
+  },
+  "mc_tour_aria": {
+    "message": "tervetuloesittely"
+  },
+  "mc_tour_title": {
+    "message": "tervetuloa! nämä ovat aluksi pois päältä. napsauta yhtä ottaaksesi sen käyttöön"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "näyttää kellonajan jokaisen viestin vieressä"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "osoita viestiä ja napsauta ↪ vastataksesi siihen"
+  },
+  "mc_tour_vi_tip": {
+    "message": "vim-näppäimet viestikenttään: esc liikuttaa, i kirjoittaa taas. ohita, jos vim on sinulle uusi"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m ja ⛔ ilmestyvät, kun osoitat viestiä. lisää nappeja löytyy asetuksista"
+  },
+  "mc_tour_more": {
+    "message": "lisää asetuksissa →"
+  },
+  "mc_tour_done": {
+    "message": "selvä"
+  },
+  "mc_tour_done_tip": {
+    "message": "sulkee tämän pysyvästi. nähdäksesi sen uudelleen: asetukset › ?"
+  },
+  "mc_set_tour": {
+    "message": "tervetuloesittely"
+  },
+  "mc_set_tour_tip": {
+    "message": "pieni esittelykortti ensimmäiseltä käyntikerraltasi"
+  },
+  "mc_set_tour_btn": {
+    "message": "näytä esittely uudelleen"
+  },
+  "welcome_get_title": {
+    "message": "mitä saat"
+  },
+  "welcome_get_1": {
+    "message": "twitch-, kick- ja youtube-chat yhdessä paikassa, kaikilla emojeilla (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "chatin lukemiseen ei tarvita tiliä"
+  },
+  "welcome_get_3": {
+    "message": "tili tuo omat emojisi ja asetuksesi jokaiselle laitteelle"
+  },
+  "welcome_start_title": {
+    "message": "näin pääset alkuun"
+  },
+  "welcome_start_1": {
+    "message": "avaa mikä tahansa twitch-, kick- tai youtube-lähetys. heatsync-chat ilmestyy itsestään"
+  },
+  "welcome_start_2": {
+    "message": "pieni kortti näyttää, mikä on pois päältä. napsauta sitä, mitä haluat"
+  },
+  "welcome_start_3": {
+    "message": "chattaillaksesi kirjaudu sivustolle kuten aina ja kirjoita alaosan kenttään"
   }
 }

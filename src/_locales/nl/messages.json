@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "toon een antwoordknop op de chatregel onder je muis. antwoorden zit altijd in het regelmenu (rechtsklik, lang drukken op touch)"
+  },
+  "mc_tour_aria": {
+    "message": "korte rondleiding"
+  },
+  "mc_tour_title": {
+    "message": "welkom! deze dingen staan eerst uit. klik op een ding om het aan te zetten"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "toont de tijd naast elk bericht"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "wijs naar een bericht en klik op ↪ om te antwoorden"
+  },
+  "mc_tour_vi_tip": {
+    "message": "vim-toetsen voor het berichtvak: esc beweegt, i typt weer. sla over als vim nieuw voor je is"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m en ⛔ verschijnen als je naar een bericht wijst. meer knoppen vind je in instellingen"
+  },
+  "mc_tour_more": {
+    "message": "meer in instellingen →"
+  },
+  "mc_tour_done": {
+    "message": "begrepen"
+  },
+  "mc_tour_done_tip": {
+    "message": "sluit dit voorgoed. om het weer te zien: instellingen › ?"
+  },
+  "mc_set_tour": {
+    "message": "korte rondleiding"
+  },
+  "mc_set_tour_tip": {
+    "message": "het kleine introkaartje van je eerste bezoek"
+  },
+  "mc_set_tour_btn": {
+    "message": "toon de rondleiding opnieuw"
+  },
+  "welcome_get_title": {
+    "message": "dit krijg je"
+  },
+  "welcome_get_1": {
+    "message": "twitch-, kick- en youtube-chat op één plek, met alle emotes (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "chat lezen kan zonder account"
+  },
+  "welcome_get_3": {
+    "message": "een account voegt je eigen emotes en instellingen toe op elk apparaat"
+  },
+  "welcome_start_title": {
+    "message": "zo begin je"
+  },
+  "welcome_start_1": {
+    "message": "open een willekeurige stream op twitch, kick of youtube. de heatsync-chat verschijnt vanzelf"
+  },
+  "welcome_start_2": {
+    "message": "een klein kaartje toont wat uit staat. klik op wat je wilt"
+  },
+  "welcome_start_3": {
+    "message": "om te chatten log je zoals altijd in op de site en typ je in het vak onderaan"
   }
 }

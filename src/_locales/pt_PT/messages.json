@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "mostra um botão de responder na linha do chat sob o rato. responder está sempre no menu da linha (clique direito, toque longo)"
+  },
+  "mc_tour_aria": {
+    "message": "visita de boas-vindas"
+  },
+  "mc_tour_title": {
+    "message": "olá! estas coisas começam desligadas. clica numa para a ligar"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "mostra a hora ao lado de cada mensagem"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "aponta para uma mensagem e clica em ↪ para responder"
+  },
+  "mc_tour_vi_tip": {
+    "message": "teclas vim para a caixa de mensagem: esc move, i volta a escrever. salta se o vim for novidade para ti"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m e ⛔ aparecem quando apontas para uma mensagem. há mais botões nas definições"
+  },
+  "mc_tour_more": {
+    "message": "mais nas definições →"
+  },
+  "mc_tour_done": {
+    "message": "percebi"
+  },
+  "mc_tour_done_tip": {
+    "message": "fecha isto para sempre. para ver outra vez: definições › ?"
+  },
+  "mc_set_tour": {
+    "message": "visita de boas-vindas"
+  },
+  "mc_set_tour_tip": {
+    "message": "o cartão de introdução da tua primeira visita"
+  },
+  "mc_set_tour_btn": {
+    "message": "mostrar a visita outra vez"
+  },
+  "welcome_get_title": {
+    "message": "o que ganhas"
+  },
+  "welcome_get_1": {
+    "message": "o chat da twitch, kick e youtube num só sítio, com todos os emotes (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "ler o chat não precisa de conta"
+  },
+  "welcome_get_3": {
+    "message": "uma conta traz os teus próprios emotes e definições para cada dispositivo"
+  },
+  "welcome_start_title": {
+    "message": "como começar"
+  },
+  "welcome_start_1": {
+    "message": "abre qualquer emissão da twitch, kick ou youtube. o chat do heatsync aparece sozinho"
+  },
+  "welcome_start_2": {
+    "message": "um cartão pequeno mostra o que está desligado. clica no que quiseres"
+  },
+  "welcome_start_3": {
+    "message": "para conversar, inicia sessão no site como de costume e escreve na caixa em baixo"
   }
 }

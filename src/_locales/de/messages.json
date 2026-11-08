@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "zeigt einen antwort-button an der chatzeile unter der maus. antworten geht immer im zeilenmenü (rechtsklick, langes drücken am touchscreen)"
+  },
+  "mc_tour_aria": {
+    "message": "kurze tour"
+  },
+  "mc_tour_title": {
+    "message": "willkommen! diese Dinge sind am Anfang aus. klick auf eins, um es einzuschalten"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "zeigt die Uhrzeit neben jeder Nachricht"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "zeig auf eine Nachricht und klick auf ↪, um zu antworten"
+  },
+  "mc_tour_vi_tip": {
+    "message": "vim-Tasten für das Nachrichtenfeld: esc bewegt dich, i schreibt wieder. lass es aus, wenn Vim neu für dich ist"
+  },
+  "mc_tour_mod_tip": {
+    "message": "x, 10m und ⛔ erscheinen, wenn du auf eine Nachricht zeigst. mehr Buttons gibt es in den Einstellungen"
+  },
+  "mc_tour_more": {
+    "message": "mehr in den Einstellungen →"
+  },
+  "mc_tour_done": {
+    "message": "verstanden"
+  },
+  "mc_tour_done_tip": {
+    "message": "schließt das für immer. um es wieder zu sehen: Einstellungen › ?"
+  },
+  "mc_set_tour": {
+    "message": "kurze tour"
+  },
+  "mc_set_tour_tip": {
+    "message": "die kleine Einführungskarte von deinem ersten Besuch"
+  },
+  "mc_set_tour_btn": {
+    "message": "tour nochmal zeigen"
+  },
+  "welcome_get_title": {
+    "message": "das bekommst du"
+  },
+  "welcome_get_1": {
+    "message": "twitch-, kick- und youtube-Chat an einem Ort, mit allen Emotes (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "zum Chat lesen brauchst du kein Konto"
+  },
+  "welcome_get_3": {
+    "message": "ein Konto bringt deine eigenen Emotes und Einstellungen auf jedes Gerät"
+  },
+  "welcome_start_title": {
+    "message": "so startest du"
+  },
+  "welcome_start_1": {
+    "message": "öffne einen beliebigen Stream auf twitch, kick oder youtube. der heatsync-Chat erscheint von selbst"
+  },
+  "welcome_start_2": {
+    "message": "eine kleine Karte zeigt, was ausgeschaltet ist. klick auf das, was du willst"
+  },
+  "welcome_start_3": {
+    "message": "zum Chatten meldest du dich wie gewohnt auf der Seite an und tippst ins Feld unten"
   }
 }

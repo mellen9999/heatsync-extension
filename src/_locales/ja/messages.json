@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "マウスの下のチャット行に返信ボタンを表示します。返信は常に行メニューにあります（右クリック、タッチは長押し）"
+  },
+  "mc_tour_aria": {
+    "message": "ウェルカムツアー"
+  },
+  "mc_tour_title": {
+    "message": "ようこそ！これらは最初はオフです。使いたいものをクリックしてオンにしましょう"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "各メッセージの横に時刻を表示します"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "メッセージにカーソルを合わせて ↪ をクリックすると返信できます"
+  },
+  "mc_tour_vi_tip": {
+    "message": "メッセージ欄用の vim キー：esc で移動、i でまた入力。vim を知らなければスキップしてOK"
+  },
+  "mc_tour_mod_tip": {
+    "message": "メッセージにカーソルを合わせると x、10m、⛔ が出ます。ほかのボタンは設定で選べます"
+  },
+  "mc_tour_more": {
+    "message": "設定でもっと見る →"
+  },
+  "mc_tour_done": {
+    "message": "わかった"
+  },
+  "mc_tour_done_tip": {
+    "message": "これを完全に閉じます。もう一度見るには：設定 › ?"
+  },
+  "mc_set_tour": {
+    "message": "ウェルカムツアー"
+  },
+  "mc_set_tour_tip": {
+    "message": "初めて訪れたときに見た小さな紹介カード"
+  },
+  "mc_set_tour_btn": {
+    "message": "ツアーをもう一度見る"
+  },
+  "welcome_get_title": {
+    "message": "できること"
+  },
+  "welcome_get_1": {
+    "message": "twitch・kick・youtube のチャットをひとつの場所で。すべてのエモート（7tv、bttv、ffz、heatsync）つき"
+  },
+  "welcome_get_2": {
+    "message": "チャットを読むだけならアカウントは不要です"
+  },
+  "welcome_get_3": {
+    "message": "アカウントがあると、自分のエモートと設定がどの端末でも使えます"
+  },
+  "welcome_start_title": {
+    "message": "はじめかた"
+  },
+  "welcome_start_1": {
+    "message": "twitch・kick・youtube のどの配信でも開いてください。heatsync のチャットが自動で表示されます"
+  },
+  "welcome_start_2": {
+    "message": "小さなカードでオフのものがわかります。使いたいものをクリックしてください"
+  },
+  "welcome_start_3": {
+    "message": "チャットするには、いつも通りサイトにログインして、下の入力欄に入力します"
   }
 }

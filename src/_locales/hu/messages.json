@@ -6613,5 +6613,65 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "válasz gombot mutat az egér alatti chatsoron. a válasz mindig elérhető a sormenüben (jobb klikk, hosszú érintés)"
+  },
+  "mc_tour_aria": {
+    "message": "üdvözlő túra"
+  },
+  "mc_tour_title": {
+    "message": "üdv! ezek alapból ki vannak kapcsolva. kattints az egyikre, hogy bekapcsold"
+  },
+  "mc_tour_timestamps_tip": {
+    "message": "megmutatja az időt minden üzenet mellett"
+  },
+  "mc_tour_hover_reply_tip": {
+    "message": "mutass egy üzenetre, és kattints a ↪-ra a válaszhoz"
+  },
+  "mc_tour_vi_tip": {
+    "message": "vim billentyűk az üzenetmezőhöz: az esc mozgat, az i újra ír. hagyd ki, ha a vim új neked"
+  },
+  "mc_tour_mod_tip": {
+    "message": "az x, 10m és ⛔ megjelennek, ha egy üzenetre mutatsz. több gomb a beállításokban"
+  },
+  "mc_tour_more": {
+    "message": "több a beállításokban →"
+  },
+  "mc_tour_done": {
+    "message": "értem"
+  },
+  "mc_tour_done_tip": {
+    "message": "ezt végleg bezárja. hogy újra lásd: beállítások › ?"
+  },
+  "mc_set_tour": {
+    "message": "üdvözlő túra"
+  },
+  "mc_set_tour_tip": {
+    "message": "a kis bemutató kártya az első látogatásodról"
+  },
+  "mc_set_tour_btn": {
+    "message": "túra újra megjelenítése"
+  },
+  "welcome_get_title": {
+    "message": "mit kapsz"
+  },
+  "welcome_get_1": {
+    "message": "twitch, kick és youtube chat egy helyen, minden emote-tal (7tv, bttv, ffz, heatsync)"
+  },
+  "welcome_get_2": {
+    "message": "a chat olvasásához nem kell fiók"
+  },
+  "welcome_get_3": {
+    "message": "a fiók hozzáadja a saját emote-jaidat és beállításaidat minden eszközön"
+  },
+  "welcome_start_title": {
+    "message": "hogyan kezdj hozzá"
+  },
+  "welcome_start_1": {
+    "message": "nyiss meg bármilyen twitch, kick vagy youtube streamet. a heatsync chat magától megjelenik"
+  },
+  "welcome_start_2": {
+    "message": "egy kis kártya mutatja, mi van kikapcsolva. kattints arra, amit szeretnél"
+  },
+  "welcome_start_3": {
+    "message": "a chateléshez jelentkezz be az oldalon, ahogy szoktál, és írj az alul lévő mezőbe"
   }
 }

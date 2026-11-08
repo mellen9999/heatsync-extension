@@ -11,11 +11,14 @@ const menu = src.slice(
 )
 const form = mgmt.slice(mgmt.indexOf('function showEditChannelForm('))
 
-describe('channel tab right-click menu: exactly edit + remove', () => {
-  test('only two items', () => {
-    const items = [...menu.matchAll(/mkItem\(t\('([^']+)'\)/g)].map((m) => m[1])
-    expect(items).toEqual(['mc_ctx_edit', 'mc_ctx_remove'])
+describe('channel tab right-click menu: edit, move, remove', () => {
+  test('edit first, remove last (red), the move items between them — nothing else', () => {
+    // every mkItem call, in order: the fixed ones name their catalog key, the move
+    // items come from channelMoveOptions (tests/tab-move-menu.test.js)
+    const items = [...menu.matchAll(/mkItem\((t\('([^']+)'\)|mv\.label)/g)].map((m) => m[2] || 'move')
+    expect(items).toEqual(['mc_ctx_edit', 'move', 'mc_ctx_remove'])
     expect(menu).toContain("mkItem(t('mc_ctx_remove'), 'var(--hs-danger)'")
+    expect(menu).toContain('for (const mv of channelMoveOptions(tabId, strip))')
   })
 
   test('the old controls are gone from the menu', () => {

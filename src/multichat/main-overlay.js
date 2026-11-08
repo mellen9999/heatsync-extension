@@ -490,6 +490,14 @@ function createTabBar() {
     }
 
     mkItem(t('mc_ctx_edit'), '#fff', () => showEditChannelForm(tabId))
+    // reorder with the mouse — the same moveChannelOrder tab mode's J/K calls
+    const strip = { vertical: tabPosition === 'left' || tabPosition === 'right', rtl: HS_DIR() === 'rtl' }
+    for (const mv of channelMoveOptions(tabId, strip)) {
+      mkItem(mv.label, '#fff', () => {
+        if (moveChannelOrder(tabId, mv.delta))
+          tabBarElement?.querySelector(`.hs-mc-tab[data-tab="${CSS.escape(tabId)}"]`)?.focus()
+      })
+    }
     mkItem(t('mc_ctx_remove'), 'var(--hs-danger)', () => removeChannel(tabId))
 
     // Append then clamp to viewport so it doesn't overflow off-screen

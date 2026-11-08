@@ -147,6 +147,8 @@ export async function tourCheck() {
 
     // ── first open: the card is there ────────────────────────────────────
     if (!(await until(p, cardShown))) fail('first open on a fresh profile: the tour card never appeared')
+    // before any click: the card appearing must not pull focus out of the composer
+    if (await p.evaluate(() => !!document.activeElement?.closest('#hs-mc-tour'))) fail('the tour card took focus on its own')
     ok('first open on a fresh profile shows the tour card')
 
     // ── six cards, one idea each ─────────────────────────────────────────
@@ -175,6 +177,9 @@ export async function tourCheck() {
     if (!(await until(p, cardShown, 15_000))) fail('the tour card did not come back after a reload mid-tour')
     if ((await reading()).n !== '3/6') fail(`after a reload the tour should resume on card 3, it shows "${(await reading()).n}"`)
     ok('a reload mid-tour resumes on the card the viewer stopped at')
+    // the reload cleared the chat: put a row back for the switch checks below
+    for (let i = 0; i < 20 && (await sendRow('TOUR1', 'tour probe row')) !== 'sent'; i++) await p.waitForTimeout(500)
+    if (!(await until(p, async () => (await rowCount()) > 0))) fail('no chat row after the reload')
     for (let i = 0; i < 3; i++) await next()
     if ((await reading()).n !== '6/6') fail('could not reach the last card')
 
@@ -205,7 +210,6 @@ export async function tourCheck() {
         insideOverlay: tour.top >= overlay.top - 1 && tour.bottom <= overlay.bottom + 1,
         coversComposer: hit(tour, input),
         paneLeft: Math.round(msgs.height),
-        focusInCard: !!document.activeElement?.closest('#hs-mc-tour'),
       }
     })
     if (!g) fail('could not measure the tour card against the pane and composer')
@@ -213,7 +217,6 @@ export async function tourCheck() {
       if (!g.aboveRows) fail('the tour card overlaps the message rows')
       if (!g.insideOverlay) fail('the tour card spills outside the overlay')
       if (g.coversComposer) fail('the tour card covers the composer')
-      if (g.focusInCard) fail('the tour card took focus on its own')
       if (g.paneLeft < 120) fail(`the card leaves only ${g.paneLeft}px for chat`)
       ok(`the card sits above the rows, clear of the composer, with ${g.paneLeft}px of chat left and no focus taken`)
     }
@@ -310,9 +313,7 @@ export async function tourCheck() {
     ok('"skip" on any card closes it again for good and forgets the step')
 
     // ── settings › ?: the sending checklist ──────────────────────────────
-    await p.click('#hs-mc-tabbar [data-tab="settings"]')
-    await p.waitForSelector('.hs-mc-set-subtab[data-set-subtab="help"]', { timeout: 10_000 })
-    await p.click('.hs-mc-set-subtab[data-set-subtab="help"]')
+    // settings › ? is still the open pane from the replay step above
     await p.waitForSelector('[data-send-row="kick"]', { timeout: 10_000 })
     const verdict = async (id: string) =>
       p.evaluate(

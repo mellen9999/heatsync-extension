@@ -36,7 +36,9 @@ import { startMockIrc } from './lib/mock-irc'
  * Each URL is chosen so main.js takes a BODY-MOUNT path and no React tree has
  * to be faked:
  *  - twitch: a non-channel url (no `.channel-root`).
- *  - kick:   a RESERVED path (`/browse`), which main.js treats as non-channel.
+ *  - kick:   a channel path (`/renderkick`). kick mounts only on channel routes
+ *            (isKickChannelRoute, an allowlist since bdae2917) — a reserved path
+ *            like `/browse` correctly never mounts.
  *  - youtube: a /watch url with a fake `ytd-live-chat-frame#chat` + a
  *    non-replay iframe src — checkYtLive() (main.js) reads exactly that DOM
  *    shape to decide "this page has its own live stream", which is what
@@ -62,9 +64,14 @@ const PLATFORMS = [
   },
   {
     name: 'kick',
-    url: 'https://kick.com/browse',
+    url: 'https://kick.com/renderkick',
     glob: 'https://kick.com/**',
-    body: '<div id="host-content" style="height:100vh">host page</div>',
+    // a channel route mounts into kick's chatroom element (waitForMount in
+    // main.js), so the fixture carries the same shape the send check uses
+    body:
+      '<div id="host-content" style="height:100vh">host page</div>' +
+      '<div id="channel-chatroom"><div id="chatroom-messages"><div class="no-scrollbar"></div></div>' +
+      '<div id="chatwrap"><div class="editor-input" contenteditable="true"></div></div></div>',
     rerender: false,
   },
   {
@@ -173,11 +180,14 @@ async function gatePolarity(subsystems: Record<string, boolean>) {
     const p = await c.newPage()
     p.on('pageerror', (e: unknown) => errors.push(`gate: ${String(e).slice(0, 300)}`))
     await p.goto('https://www.twitch.tv/gatechan', { waitUntil: 'domcontentloaded' })
-    await p.waitForSelector('#hs-mc-messages', { timeout: 25_000 })
+    const twitchOn = subsystems['overlay-twitch'] !== false
+    if (twitchOn) await p.waitForSelector('#hs-mc-messages', { timeout: 25_000 })
     await p.waitForTimeout(4500)
+    const mounted = await p.evaluate(() => !!document.getElementById('hs-mc-overlay'))
 
     const seen: string[] = await sw.evaluate(() => (globalThis as any).__gateSeen)
     const wire = [...new Set(seen.filter((t) => /^(bg_irc_join|bg_kick_history|youtube_ws_subscribe)$/.test(t)))].sort()
+    if (!twitchOn) return { wire, mounted, twitch: false, kick: false, yt: false }
 
     // Drive one live message per platform through the real background→tab wire.
     const drv = await c.newPage()
@@ -217,7 +227,7 @@ async function gatePolarity(subsystems: Record<string, boolean>) {
       [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].map((r) => (r.textContent || '').trim()),
     )
     const hit = (needle: string) => texts.some((t) => t.includes(needle))
-    return { wire, twitch: hit('GATEPROBE_TWITCH'), kick: hit('GATEPROBE_KICK'), yt: hit('GATEPROBE_YT') }
+    return { wire, mounted, twitch: hit('GATEPROBE_TWITCH'), kick: hit('GATEPROBE_KICK'), yt: hit('GATEPROBE_YT') }
   } finally {
     await closeContext(c, 'check', prof)
     rmSync(prof, { recursive: true, force: true })
@@ -1274,8 +1284,8 @@ async function gifsTabCheck() {
     const tabs = await p.$$eval('#hs-mc-emote-picker .hs-mc-picker-tab', (els: any[]) =>
       els.map((e) => e.dataset.tab),
     )
-    if (JSON.stringify(tabs) !== JSON.stringify(['emotes', 'gifs', 'twitch'])) {
-      fail(`the picker's tab bar is ${JSON.stringify(tabs)} — expected emotes, gifs, twitch on a twitch page`)
+    if (JSON.stringify(tabs) !== JSON.stringify(['emotes', 'emoji', 'gifs', 'twitch'])) {
+      fail(`the picker's tab bar is ${JSON.stringify(tabs)} — expected emotes, emoji, gifs, twitch on a twitch page`)
     }
     ok(`the tab bar carries all three tabs (${tabs.join(', ')})`)
 
@@ -1400,37 +1410,35 @@ async function gifsTabCheck() {
 }
 
 async function gateCheck() {
-  console.log('\n── subsystem kill-switches ──')
+  // The user's off switch is per site (settings › subsystems › heatsync on
+  // twitch / kick / youtube): off = heatsync never mounts there and the page
+  // keeps its own chat. The older per-chat switches (irc-twitch, chat-kick,
+  // chat-youtube) were retired in fc45eeba — a stored false for them is reset
+  // to on at boot — so they are not the thing to test.
+  console.log('\n── per-site off switch ──')
 
   // ON first: if this fails the OFF result below means nothing.
-  const on = await gatePolarity({ 'irc-twitch': true, 'chat-kick': true, 'chat-youtube': true })
+  const on = await gatePolarity({ 'overlay-twitch': true, 'overlay-kick': true, 'overlay-youtube': true })
   for (const [k, label] of [['twitch', 'twitch'], ['kick', 'kick'], ['yt', 'youtube']] as const) {
     if (!(on as any)[k]) {
       fail(
-        `with every chat subsystem ON, a ${label} message never rendered — this check cannot ` +
-          'distinguish a working kill-switch from broken chat, so it is reporting the latter',
+        `with heatsync ON for twitch, a ${label} message never rendered in the twitch overlay — this check ` +
+          'cannot distinguish a working off switch from broken chat, so it is reporting the latter',
       )
     }
   }
-  ok(`switches ON: twitch, kick and youtube all render (wire: ${on.wire.join(', ') || 'none'})`)
+  ok(`switch ON: twitch, kick and youtube all render (wire: ${on.wire.join(', ') || 'none'})`)
 
-  const off = await gatePolarity({ 'irc-twitch': false, 'chat-kick': false, 'chat-youtube': false })
+  const off = await gatePolarity({ 'overlay-twitch': false, 'overlay-kick': true, 'overlay-youtube': true })
+  if (off.mounted) fail('with heatsync OFF for twitch the overlay still mounted on a twitch page')
+  ok('switch OFF: no overlay on twitch, the page keeps its own chat')
   if (off.wire.length) {
     fail(
-      `with every chat subsystem OFF the overlay still asked the background for: ${off.wire.join(', ')} — ` +
+      `with heatsync OFF for twitch the page still asked the background for: ${off.wire.join(', ')} — ` +
         'the switch stops the render but not the work',
     )
   }
-  ok('switches OFF: the overlay asks the background for nothing')
-
-  const leaked = (['twitch', 'kick', 'yt'] as const).filter((k) => (off as any)[k])
-  if (leaked.length) {
-    fail(
-      `with every chat subsystem OFF these still rendered: ${leaked.join(', ')} — ` +
-        'a kill-switch that does not kill is worse than no switch',
-    )
-  }
-  ok('switches OFF: nothing renders on any of the three platforms')
+  ok('switch OFF: the twitch page asks the background for nothing')
 }
 
 try {
@@ -1444,9 +1452,16 @@ try {
   // Never touch production from a test.
   await ctx.route('https://heatsync.org/**', (r: any) => r.abort())
   for (const plat of PLATFORMS) {
-    await ctx.route(plat.glob, (r: any) =>
-      r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(plat.body) }),
-    )
+    await ctx.route(plat.glob, (r: any) => {
+      // a kick channel page asks kick's api for the channel/chatroom ids;
+      // answer as json so the mount path sees a real channel, not html
+      const u = r.request().url()
+      if (u.includes('/api/v2/channels/')) {
+        return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ id: 111, chatroom: { id: 222 } }) })
+      }
+      if (u.includes('/api/')) return r.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
+      r.fulfill({ status: 200, contentType: 'text/html', body: fixtureHtml(plat.body) })
+    })
   }
 
   // Seed one saved channel via an extension page (chrome.storage isn't

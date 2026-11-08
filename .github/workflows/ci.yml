@@ -1,8 +1,10 @@
 name: ci
 
-# PR + manual dispatch only — push triggers disabled to conserve Actions
-# minutes during solo pre-launch work. Re-enable after June 1 reset if needed.
+# every push to main, every PR, and by hand. the repo is public, so hosted
+# runner minutes are free — a red main must be visible the moment it lands.
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -82,6 +84,12 @@ jobs:
       - name: smoke (built extension boots in chrome)
         run: bun scripts/smoke-extension.ts
 
+      # The real-browser render suite (mock irc, all three platforms, picker,
+      # composer, per-site off switch). Off CI it sat red for six days while
+      # three fixtures drifted from deliberate product changes — nobody ran it.
+      - name: render (overlay geometry + behaviour in a real browser)
+        run: bun scripts/render-extension.ts
+
   notify-failure:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -95,11 +103,6 @@ jobs:
     # for a HAND DISPATCH off main — the one run nobody needs telling about
     # (2026-10-14: that is what the `ext ci FAILED branch main` page was).
     # Naming the event as well as the ref is what makes it mean what it says.
-    #
-    # Push triggers are off in this repo to conserve Actions minutes (see the
-    # note on `on:`), so this job cannot fire at all today, and a red main here
-    # is invisible by that deliberate choice rather than by this gate. Written
-    # for the day pushes come back, so it does not have to be remembered then.
     #
     # `cancelled()` too: a job killed by its own timeout-minutes concludes
     # `cancelled`, so a bare `failure()` is skipped and a HANG pages nobody

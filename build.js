@@ -878,6 +878,7 @@ const MULTICHAT_MODULES = [
   'cross-follow.js',
   'sent-history.js',
   'composer-attrs.js',
+  'ctx-menu.js',
   'input.js',
   'profile-card.js',
   'chat-logs.js',

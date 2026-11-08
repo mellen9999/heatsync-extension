@@ -48,10 +48,11 @@ function _frSafeRegex(src, flags) {
   }
 }
 
-// Valid highlight-sound names — kept in sync with FILTER_SOUND_PRESETS in
-// mentions.js (the player). An unknown/absent name compiles to null = silent.
-// Inlined (not imported) so this module stays self-contained + unit-testable.
-const FR_SOUNDS = new Set(['ping', 'blip', 'knock', 'chime'])
+// Valid highlight-sound names — SFX_PRESETS in sounds.js (the player) plus
+// 'custom', the rule's own picked file. An unknown/absent name compiles to
+// null = silent. Inlined (not imported) so this module stays self-contained +
+// unit-testable; tests/chat-sounds.test.js fails if the two lists drift.
+const FR_SOUNDS = new Set(['ping', 'blip', 'knock', 'chime', 'custom'])
 
 // ── boolean expression engine (match type 'expr') ─────────────────────────────
 // Chatterino-style composable filters — "user:bob && !badge:subscriber", "first
@@ -337,12 +338,19 @@ function _frCompileOne(rule) {
     action,
     color: action === 'highlight' && rule.color && /^#[0-9a-f]{3,8}$/i.test(rule.color) ? rule.color : null,
     sound: action === 'highlight' && typeof rule.sound === 'string' && FR_SOUNDS.has(rule.sound) ? rule.sound : null,
+    soundVolume: null,
     scope,
     matchType: m.type,
     caseSensitive: cs,
     value: '',
     re: null,
     ast: null,
+  }
+
+  // 0..100, whole numbers. Absent or junk = null = follow the shared chat-sounds
+  // volume, which is exactly how every rule sounded before volumes existed.
+  if (c.sound && typeof rule.soundVolume === 'number' && Number.isFinite(rule.soundVolume)) {
+    c.soundVolume = Math.round(Math.min(100, Math.max(0, rule.soundVolume)))
   }
 
   switch (m.type) {
@@ -424,26 +432,40 @@ function compileFilterRules(rules) {
  * Hot path — no per-call allocation when there are no rules for this scope.
  * @param {object} m           message object (text, user, badges, isFirstMsg, isAction, bits, replyTo)
  * @param {string|null} channelKey  channel tab id (ch.id) or null
- * @returns {{ hide: boolean, highlight: string|null, sound: string|null }}
+ * @returns {{ hide: boolean, highlight: string|null, sound: string|null, soundId: string|null, soundVolume: number|null }}
+ *   sound is the winning highlight rule's sound name; soundId (the rule's id,
+ *   which keys its picked file) and soundVolume (0..100, null = shared volume)
+ *   ride along so the player needs nothing else from the rule.
  */
 function evaluateFilterRules(m, channelKey) {
   const hasChannel = channelKey && _frByChannel.has(channelKey)
-  if (!_frAllRules.length && !hasChannel) return { hide: false, highlight: null, sound: null }
+  if (!_frAllRules.length && !hasChannel) return _frVerdict(false, null, null)
 
   const rules = hasChannel ? _frMergedByChannel.get(channelKey) : _frAllRules
 
   let highlight = null
-  let sound = null
+  let soundRule = null
   for (let i = 0; i < rules.length; i++) {
     const rule = rules[i]
     if (!_frTest(rule, m)) continue
-    if (rule.action === 'hide') return { hide: true, highlight: null, sound: null }
+    if (rule.action === 'hide') return _frVerdict(true, null, null)
     if (rule.action === 'highlight' && highlight === null) {
       highlight = rule.color
-      sound = rule.sound
+      soundRule = rule
     }
   }
-  return { hide: false, highlight, sound }
+  return _frVerdict(false, highlight, soundRule)
+}
+
+// One verdict shape everywhere, so callers read the same fields on every path.
+function _frVerdict(hide, highlight, rule) {
+  return {
+    hide,
+    highlight,
+    sound: rule ? rule.sound : null,
+    soundId: rule?.sound ? rule.id : null,
+    soundVolume: rule?.sound ? rule.soundVolume : null,
+  }
 }
 
 function _frTest(rule, m) {

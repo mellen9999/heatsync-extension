@@ -1300,7 +1300,7 @@
     "message": "erwähnungs-Lautstärke"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "lautstärke des Signaltons bei Erwähnung. 0 = stumm. nutzt reine WebAudio-Töne, keine Datei mitgeliefert."
+    "message": "wie laut der Erwähnungston ist. 0 = stumm"
   },
   "mc_settings_cross_follow_kick": {
     "message": "auch auf kick folgen"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "zeigt einen antwort-button an der chatzeile unter der maus. antworten geht immer im zeilenmenü (rechtsklick, langes drücken am touchscreen)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "erwähnungston"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "was bei einer @-Erwähnung abspielt, wenn dieser Tab im Hintergrund ist. ein eingebauter Ton oder deine eigene Datei"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "Tondatei"
+  },
+  "mc_sfx_opt_file": {
+    "message": "meine Datei"
+  },
+  "mc_sfx_pick": {
+    "message": "Datei wählen"
+  },
+  "mc_sfx_play": {
+    "message": "abspielen"
+  },
+  "mc_sfx_remove": {
+    "message": "Datei entfernen"
+  },
+  "mc_sfx_note": {
+    "message": "deine eigenen Tondateien bleiben auf diesem Gerät, nie synchronisiert oder exportiert. nur Audio, max. 256 KB, max. 10 Sekunden"
+  },
+  "mc_sfx_err_type": {
+    "message": "das ist keine Audiodatei"
+  },
+  "mc_sfx_err_size": {
+    "message": "die Datei ist zu groß. max. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "dieser Ton lässt sich nicht lesen. versuch eine andere Datei"
+  },
+  "mc_sfx_err_long": {
+    "message": "der Ton ist zu lang. max. 10 Sekunden"
+  },
+  "mc_sfx_err_save": {
+    "message": "der Ton konnte auf diesem Gerät nicht gespeichert werden"
+  },
+  "mc_sfx_missing": {
+    "message": "diese Tondatei ist nicht auf diesem Gerät. wähle sie erneut"
+  },
+  "mc_sfx_volume": {
+    "message": "lautstärke"
+  },
+  "mc_sfx_none": {
+    "message": "noch keine Datei"
   }
 }

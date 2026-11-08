@@ -1300,7 +1300,7 @@
     "message": "lakas ng tunog ng mention"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "lakas ng audio ping kapag na-mention. 0 = tahimik. gumagamit ng purong WebAudio tone, walang kasamang file."
+    "message": "gaano kalakas ang tunog ng mention. 0 = tahimik"
   },
   "mc_settings_cross_follow_kick": {
     "message": "i-follow din sa kick"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "magpakita ng reply button sa chat row sa ilalim ng mouse. laging nasa row menu ang reply (right-click, matagal na pindot sa touch)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "tunog ng mention"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "ang tutunog kapag ikaw ay na-@mention habang nasa background ang tab na ito. built-in na tunog o sarili mong file"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "sound file"
+  },
+  "mc_sfx_opt_file": {
+    "message": "aking file"
+  },
+  "mc_sfx_pick": {
+    "message": "pumili ng file"
+  },
+  "mc_sfx_play": {
+    "message": "i-play"
+  },
+  "mc_sfx_remove": {
+    "message": "alisin ang file"
+  },
+  "mc_sfx_note": {
+    "message": "nananatili sa device na ito ang sarili mong mga sound file: hindi kailanman sini-sync o ine-export. audio lang, hanggang 256 KB at 10 segundo"
+  },
+  "mc_sfx_err_type": {
+    "message": "hindi iyan audio file"
+  },
+  "mc_sfx_err_size": {
+    "message": "masyadong malaki ang file. hanggang 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "hindi mabasa ang tunog na iyon. sumubok ng ibang file"
+  },
+  "mc_sfx_err_long": {
+    "message": "masyadong mahaba ang tunog. hanggang 10 segundo"
+  },
+  "mc_sfx_err_save": {
+    "message": "hindi nasave ang tunog sa device na ito"
+  },
+  "mc_sfx_missing": {
+    "message": "wala sa device na ito ang sound file na iyon. piliin ulit"
+  },
+  "mc_sfx_volume": {
+    "message": "lakas ng tunog"
+  },
+  "mc_sfx_none": {
+    "message": "wala pang file"
   }
 }

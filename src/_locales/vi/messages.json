@@ -1300,7 +1300,7 @@
     "message": "âm lượng âm báo nhắc tên"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "âm lượng tiếng ping khi bị nhắc tên. 0 = im lặng. dùng âm WebAudio thuần, không kèm file."
+    "message": "âm báo nhắc tên to cỡ nào. 0 = im lặng"
   },
   "mc_settings_cross_follow_kick": {
     "message": "theo dõi cả trên kick"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "hiện nút trả lời trên dòng chat dưới con trỏ. trả lời luôn có trong menu dòng (chuột phải, nhấn giữ trên cảm ứng)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "âm báo nhắc tên"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "âm phát khi bạn được @nhắc tên lúc tab này ở nền. âm có sẵn hoặc tệp của riêng bạn"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "tệp âm thanh"
+  },
+  "mc_sfx_opt_file": {
+    "message": "tệp của tôi"
+  },
+  "mc_sfx_pick": {
+    "message": "chọn tệp"
+  },
+  "mc_sfx_play": {
+    "message": "phát"
+  },
+  "mc_sfx_remove": {
+    "message": "gỡ tệp"
+  },
+  "mc_sfx_note": {
+    "message": "tệp âm thanh của bạn chỉ ở trên thiết bị này: không bao giờ được đồng bộ hay xuất ra. chỉ âm thanh, tối đa 256 KB và 10 giây"
+  },
+  "mc_sfx_err_type": {
+    "message": "đó không phải tệp âm thanh"
+  },
+  "mc_sfx_err_size": {
+    "message": "tệp quá lớn. tối đa 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "không đọc được âm thanh này. thử tệp khác"
+  },
+  "mc_sfx_err_long": {
+    "message": "âm thanh quá dài. tối đa 10 giây"
+  },
+  "mc_sfx_err_save": {
+    "message": "không lưu được âm thanh trên thiết bị này"
+  },
+  "mc_sfx_missing": {
+    "message": "tệp âm thanh này không có trên thiết bị này. hãy chọn lại"
+  },
+  "mc_sfx_volume": {
+    "message": "âm lượng"
+  },
+  "mc_sfx_none": {
+    "message": "chưa có tệp"
   }
 }

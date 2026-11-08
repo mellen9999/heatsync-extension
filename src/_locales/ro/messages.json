@@ -1300,7 +1300,7 @@
     "message": "volum sunet mențiune"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "volumul semnalului sonor la mențiune. 0 = mut. folosește tonuri WebAudio pure, fără fișiere."
+    "message": "cât de tare e sunetul de mențiune. 0 = mut"
   },
   "mc_settings_cross_follow_kick": {
     "message": "urmărește și pe kick"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "afișează un buton de răspuns pe rândul de chat de sub mouse. răspunsul e mereu în meniul rândului (clic dreapta, apăsare lungă pe touch)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "sunet de mențiune"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "ce se aude când ești @menționat și fila e în fundal. un sunet încorporat sau propriul fișier"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "fișier de sunet"
+  },
+  "mc_sfx_opt_file": {
+    "message": "fișierul meu"
+  },
+  "mc_sfx_pick": {
+    "message": "alege fișier"
+  },
+  "mc_sfx_play": {
+    "message": "redă"
+  },
+  "mc_sfx_remove": {
+    "message": "elimină fișierul"
+  },
+  "mc_sfx_note": {
+    "message": "fișierele tale de sunet rămân pe acest dispozitiv: nu se sincronizează și nu se exportă niciodată. doar audio, max. 256 KB și 10 secunde"
+  },
+  "mc_sfx_err_type": {
+    "message": "nu este un fișier audio"
+  },
+  "mc_sfx_err_size": {
+    "message": "fișierul este prea mare. max. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "sunetul nu poate fi citit. încearcă alt fișier"
+  },
+  "mc_sfx_err_long": {
+    "message": "sunetul este prea lung. max. 10 secunde"
+  },
+  "mc_sfx_err_save": {
+    "message": "sunetul nu a putut fi salvat pe acest dispozitiv"
+  },
+  "mc_sfx_missing": {
+    "message": "fișierul de sunet nu este pe acest dispozitiv. alege-l din nou"
+  },
+  "mc_sfx_volume": {
+    "message": "volum"
+  },
+  "mc_sfx_none": {
+    "message": "niciun fișier încă"
   }
 }

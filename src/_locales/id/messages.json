@@ -1300,7 +1300,7 @@
     "message": "volume suara mention"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "volume ping audio saat mention. 0 = hening. pakai nada WebAudio murni, tanpa aset."
+    "message": "seberapa keras suara sebutan. 0 = senyap"
   },
   "mc_settings_cross_follow_kick": {
     "message": "ikuti juga di kick"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "tampilkan tombol balas pada baris chat di bawah mouse. balas selalu ada di menu baris (klik kanan, tekan lama di layar sentuh)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "suara sebutan"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "yang diputar saat kamu di-@sebut ketika tab ini di latar belakang. suara bawaan atau file milikmu sendiri"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "file suara"
+  },
+  "mc_sfx_opt_file": {
+    "message": "file saya"
+  },
+  "mc_sfx_pick": {
+    "message": "pilih file"
+  },
+  "mc_sfx_play": {
+    "message": "putar"
+  },
+  "mc_sfx_remove": {
+    "message": "hapus file"
+  },
+  "mc_sfx_note": {
+    "message": "file suara milikmu tetap di perangkat ini: tidak pernah disinkronkan atau diekspor. hanya audio, maks. 256 KB dan 10 detik"
+  },
+  "mc_sfx_err_type": {
+    "message": "itu bukan file audio"
+  },
+  "mc_sfx_err_size": {
+    "message": "file terlalu besar. maks. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "suara itu tidak bisa dibaca. coba file lain"
+  },
+  "mc_sfx_err_long": {
+    "message": "suara terlalu panjang. maks. 10 detik"
+  },
+  "mc_sfx_err_save": {
+    "message": "suara tidak bisa disimpan di perangkat ini"
+  },
+  "mc_sfx_missing": {
+    "message": "file suara itu tidak ada di perangkat ini. pilih lagi"
+  },
+  "mc_sfx_volume": {
+    "message": "volume"
+  },
+  "mc_sfx_none": {
+    "message": "belum ada file"
   }
 }

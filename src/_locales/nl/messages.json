@@ -1300,7 +1300,7 @@
     "message": "volume vermeldingsgeluid"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "volume van de pieptoon bij een vermelding. 0 = stil. gebruikt pure WebAudio-tonen, geen bestanden."
+    "message": "hoe hard het vermeldingsgeluid is. 0 = stil"
   },
   "mc_settings_cross_follow_kick": {
     "message": "volg ook op kick"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "toon een antwoordknop op de chatregel onder je muis. antwoorden zit altijd in het regelmenu (rechtsklik, lang drukken op touch)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "vermeldingsgeluid"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "wat er klinkt als iemand je @vermeldt terwijl dit tabblad op de achtergrond staat. een ingebouwd geluid of je eigen bestand"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "geluidsbestand"
+  },
+  "mc_sfx_opt_file": {
+    "message": "mijn bestand"
+  },
+  "mc_sfx_pick": {
+    "message": "kies bestand"
+  },
+  "mc_sfx_play": {
+    "message": "afspelen"
+  },
+  "mc_sfx_remove": {
+    "message": "bestand verwijderen"
+  },
+  "mc_sfx_note": {
+    "message": "je eigen geluidsbestanden blijven op dit apparaat: nooit gesynchroniseerd of geëxporteerd. alleen audio, max. 256 KB en 10 seconden"
+  },
+  "mc_sfx_err_type": {
+    "message": "dat is geen audiobestand"
+  },
+  "mc_sfx_err_size": {
+    "message": "het bestand is te groot. max. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "dit geluid kan niet worden gelezen. probeer een ander bestand"
+  },
+  "mc_sfx_err_long": {
+    "message": "het geluid is te lang. max. 10 seconden"
+  },
+  "mc_sfx_err_save": {
+    "message": "kon dat geluid niet opslaan op dit apparaat"
+  },
+  "mc_sfx_missing": {
+    "message": "dat geluidsbestand staat niet op dit apparaat. kies het opnieuw"
+  },
+  "mc_sfx_volume": {
+    "message": "volume"
+  },
+  "mc_sfx_none": {
+    "message": "nog geen bestand"
   }
 }

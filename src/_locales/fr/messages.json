@@ -1300,7 +1300,7 @@
     "message": "volume du son de mention"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "volume du ping sonore à la mention. 0 = silencieux. utilise de purs tons WebAudio, aucun fichier embarqué."
+    "message": "volume du son de mention. 0 = muet"
   },
   "mc_settings_cross_follow_kick": {
     "message": "suivre aussi sur kick"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "affiche un bouton répondre sur la ligne du chat sous la souris. répondre reste toujours dans le menu de la ligne (clic droit, appui long au toucher)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "son de mention"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "ce qui joue quand on t'@mentionne alors que cet onglet est en arrière-plan. un son intégré ou ton propre fichier"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "fichier son"
+  },
+  "mc_sfx_opt_file": {
+    "message": "mon fichier"
+  },
+  "mc_sfx_pick": {
+    "message": "choisir un fichier"
+  },
+  "mc_sfx_play": {
+    "message": "écouter"
+  },
+  "mc_sfx_remove": {
+    "message": "retirer le fichier"
+  },
+  "mc_sfx_note": {
+    "message": "tes fichiers son restent sur cet appareil : jamais synchronisés ni exportés. audio seulement, 256 Ko max, 10 secondes max"
+  },
+  "mc_sfx_err_type": {
+    "message": "ce n'est pas un fichier audio"
+  },
+  "mc_sfx_err_size": {
+    "message": "fichier trop gros. 256 Ko max"
+  },
+  "mc_sfx_err_decode": {
+    "message": "impossible de lire ce son. essaie un autre fichier"
+  },
+  "mc_sfx_err_long": {
+    "message": "ce son est trop long. 10 secondes max"
+  },
+  "mc_sfx_err_save": {
+    "message": "impossible d'enregistrer ce son sur cet appareil"
+  },
+  "mc_sfx_missing": {
+    "message": "ce fichier son n'est pas sur cet appareil. choisis-le à nouveau"
+  },
+  "mc_sfx_volume": {
+    "message": "volume"
+  },
+  "mc_sfx_none": {
+    "message": "pas encore de fichier"
   }
 }

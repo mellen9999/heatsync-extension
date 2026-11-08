@@ -1300,7 +1300,7 @@
     "message": "kelantangan bunyi sebutan"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "kelantangan bunyi ping bila disebut. 0 = senyap. guna nada WebAudio tulen, tiada fail disertakan."
+    "message": "sekuat mana bunyi sebutan. 0 = senyap"
   },
   "mc_settings_cross_follow_kick": {
     "message": "ikut di kick juga"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "papar butang balas pada baris sembang di bawah tetikus. balas sentiasa ada dalam menu baris (klik kanan, tekan lama pada skrin sentuh)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "bunyi sebutan"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "apa yang dimainkan apabila anda di-@sebut semasa tab ini di latar belakang. bunyi terbina dalam atau fail anda sendiri"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "fail bunyi"
+  },
+  "mc_sfx_opt_file": {
+    "message": "fail saya"
+  },
+  "mc_sfx_pick": {
+    "message": "pilih fail"
+  },
+  "mc_sfx_play": {
+    "message": "main"
+  },
+  "mc_sfx_remove": {
+    "message": "buang fail"
+  },
+  "mc_sfx_note": {
+    "message": "fail bunyi anda sendiri kekal pada peranti ini: tidak pernah disegerakkan atau dieksport. audio sahaja, maks. 256 KB dan 10 saat"
+  },
+  "mc_sfx_err_type": {
+    "message": "itu bukan fail audio"
+  },
+  "mc_sfx_err_size": {
+    "message": "fail terlalu besar. maks. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "bunyi itu tidak dapat dibaca. cuba fail lain"
+  },
+  "mc_sfx_err_long": {
+    "message": "bunyi terlalu panjang. maks. 10 saat"
+  },
+  "mc_sfx_err_save": {
+    "message": "bunyi tidak dapat disimpan pada peranti ini"
+  },
+  "mc_sfx_missing": {
+    "message": "fail bunyi itu tiada pada peranti ini. pilih semula"
+  },
+  "mc_sfx_volume": {
+    "message": "kelantangan"
+  },
+  "mc_sfx_none": {
+    "message": "belum ada fail"
   }
 }

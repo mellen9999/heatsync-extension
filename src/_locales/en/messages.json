@@ -1301,7 +1301,7 @@
     "message": "mention sound volume"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "audio ping volume on mention. 0 = silent. uses pure WebAudio tones, no asset shipped."
+    "message": "how loud the mention sound is. 0 = silent"
   },
   "mc_settings_cross_follow_kick": {
     "message": "also follow on kick"
@@ -6630,5 +6630,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "show a reply button on the chat row under your mouse. reply is always in the row menu (right-click, long-press on touch)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "mention sound"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "what plays when you get @mentioned while this tab is in the background. a built-in sound, or your own file"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "sound file"
+  },
+  "mc_sfx_opt_file": {
+    "message": "my file"
+  },
+  "mc_sfx_pick": {
+    "message": "pick file"
+  },
+  "mc_sfx_play": {
+    "message": "play"
+  },
+  "mc_sfx_remove": {
+    "message": "remove file"
+  },
+  "mc_sfx_note": {
+    "message": "your own sound files stay on this device, never synced or exported. audio only, 256 kb max, 10 seconds max"
+  },
+  "mc_sfx_err_type": {
+    "message": "that is not an audio file"
+  },
+  "mc_sfx_err_size": {
+    "message": "that file is too big. 256 kb max"
+  },
+  "mc_sfx_err_decode": {
+    "message": "can't read that sound. try another file"
+  },
+  "mc_sfx_err_long": {
+    "message": "that sound is too long. 10 seconds max"
+  },
+  "mc_sfx_err_save": {
+    "message": "couldn't save that sound on this device"
+  },
+  "mc_sfx_missing": {
+    "message": "that sound file isn't on this device. pick it again"
+  },
+  "mc_sfx_volume": {
+    "message": "volume"
+  },
+  "mc_sfx_none": {
+    "message": "no file yet"
   }
 }

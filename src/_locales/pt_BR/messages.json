@@ -1300,7 +1300,7 @@
     "message": "volume do som de menção"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "volume do ping de áudio ao ser mencionado. 0 = silencioso. usa tons WebAudio puros, sem arquivos."
+    "message": "o volume do som de menção. 0 = mudo"
   },
   "mc_settings_cross_follow_kick": {
     "message": "seguir também na kick"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "mostra um botão de responder na linha do chat sob o mouse. responder sempre fica no menu da linha (clique direito, toque longo)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "som de menção"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "o que toca quando você é @mencionado com esta aba em segundo plano. um som embutido ou seu próprio arquivo"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "arquivo de som"
+  },
+  "mc_sfx_opt_file": {
+    "message": "meu arquivo"
+  },
+  "mc_sfx_pick": {
+    "message": "escolher arquivo"
+  },
+  "mc_sfx_play": {
+    "message": "tocar"
+  },
+  "mc_sfx_remove": {
+    "message": "remover arquivo"
+  },
+  "mc_sfx_note": {
+    "message": "seus arquivos de som ficam neste dispositivo: nunca são sincronizados nem exportados. só áudio, máx. 256 KB e 10 segundos"
+  },
+  "mc_sfx_err_type": {
+    "message": "isso não é um arquivo de áudio"
+  },
+  "mc_sfx_err_size": {
+    "message": "o arquivo é grande demais. máx. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "não foi possível ler esse som. tente outro arquivo"
+  },
+  "mc_sfx_err_long": {
+    "message": "o som é longo demais. máx. 10 segundos"
+  },
+  "mc_sfx_err_save": {
+    "message": "não foi possível salvar esse som neste dispositivo"
+  },
+  "mc_sfx_missing": {
+    "message": "esse arquivo de som não está neste dispositivo. escolha-o de novo"
+  },
+  "mc_sfx_volume": {
+    "message": "volume"
+  },
+  "mc_sfx_none": {
+    "message": "nenhum arquivo ainda"
   }
 }

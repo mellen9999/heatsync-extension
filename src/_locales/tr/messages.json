@@ -1300,7 +1300,7 @@
     "message": "bahsetme sesi seviyesi"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "bahsedilince çalan sesin seviyesi. 0 = sessiz. saf WebAudio tonları kullanır, dosya yok."
+    "message": "bahsedilme sesinin ne kadar yüksek olduğu. 0 = sessiz"
   },
   "mc_settings_cross_follow_kick": {
     "message": "kick'te de takip et"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "fare altındaki sohbet satırında yanıt düğmesi gösterir. yanıt her zaman satır menüsünde (sağ tık, dokunmatikte uzun basma)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "bahsedilme sesi"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "bu sekme arka plandayken @bahsedildiğinde ne çalacağı. yerleşik bir ses ya da kendi dosyan"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "ses dosyası"
+  },
+  "mc_sfx_opt_file": {
+    "message": "dosyam"
+  },
+  "mc_sfx_pick": {
+    "message": "dosya seç"
+  },
+  "mc_sfx_play": {
+    "message": "çal"
+  },
+  "mc_sfx_remove": {
+    "message": "dosyayı kaldır"
+  },
+  "mc_sfx_note": {
+    "message": "kendi ses dosyaların bu cihazda kalır: asla eşitlenmez ya da dışa aktarılmaz. yalnızca ses, en fazla 256 KB ve 10 saniye"
+  },
+  "mc_sfx_err_type": {
+    "message": "bu bir ses dosyası değil"
+  },
+  "mc_sfx_err_size": {
+    "message": "dosya çok büyük. en fazla 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "bu ses okunamıyor. başka bir dosya dene"
+  },
+  "mc_sfx_err_long": {
+    "message": "ses çok uzun. en fazla 10 saniye"
+  },
+  "mc_sfx_err_save": {
+    "message": "ses bu cihaza kaydedilemedi"
+  },
+  "mc_sfx_missing": {
+    "message": "bu ses dosyası bu cihazda yok. yeniden seç"
+  },
+  "mc_sfx_volume": {
+    "message": "ses düzeyi"
+  },
+  "mc_sfx_none": {
+    "message": "henüz dosya yok"
   }
 }

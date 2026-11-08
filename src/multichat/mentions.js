@@ -149,124 +149,35 @@ async function resolveNotifIcon(name, platform, knownAvatar) {
   }
 }
 
-// Mention audio cue — pure Web Audio synth (no asset shipped, can't fail to
-// load). Two-tone 880→1175 Hz ping with quick decay envelope. Volume gated by
-// ui_settings.mentionSoundVolume (0..1, default 0.3). 0 = silent.
-let _mentionAudioCtx = null
-let _mentionAudioIdleTimer = null
-// Grace before parking the context after the last tone. A running AudioContext
-// holds the audio render thread and the output device open for as long as it is
-// resumed — so a single mention used to leave a wakeup source running for the
-// rest of the session. The grace keeps a burst of pings from thrashing
-// resume/suspend, and it is generous because suspending is only worth doing
-// once the room has actually gone quiet.
-const MENTION_AUDIO_IDLE_MS = 2000
-function _getMentionAudioCtx() {
-  if (_mentionAudioCtx) return _mentionAudioCtx
-  try {
-    const AC = window.AudioContext || window.webkitAudioContext
-    if (!AC) return null
-    _mentionAudioCtx = new AC()
-    return _mentionAudioCtx
-  } catch {
-    return null
-  }
+// Audio cues — the engine (presets, picked files, rate limit, suspended-context
+// handling) is sounds.js; this file owns the settings it reads and the two ways
+// a cue gets asked for. Both run every message through the same player, so a
+// raid of matching messages is rate-limited there, once.
+//
+// @mention sound: ui_settings.mentionSound (a preset, or 'custom' = the file in
+// hs_sfx_mention) at ui_settings.mentionSoundVolume (0..1, default 0.3, 0 =
+// silent). `preview` plays it now, unthrottled — the settings controls use it.
+function playMentionPing(volume, opts) {
+  // junk in storage must never mute a mention: anything unknown plays the ping
+  const picked = opts?.name || mentionSound
+  const name = picked === SFX_CUSTOM || SFX_PRESETS[picked] ? picked : 'ping'
+  return sfxPlay({ name, key: SFX_MENTION_KEY, volume, buf: opts?.buf }, 'mention', !!opts?.preview)
 }
 
-/** Resume the context to play, and schedule it back to suspended once the tail
- * of the sound has finished. `tailSec` is the end of the last scheduled tone,
- * relative to now. Called again before the timer fires, it just re-arms. */
-function _armMentionAudio(ctx, tailSec) {
-  try {
-    if (ctx.state === 'suspended') ctx.resume()
-  } catch {}
-  if (_mentionAudioIdleTimer) {
-    cleanup.clearTimeout(_mentionAudioIdleTimer)
-    _mentionAudioIdleTimer = null
-  }
-  const waitMs = Math.max(0, tailSec * 1000) + MENTION_AUDIO_IDLE_MS
-  _mentionAudioIdleTimer = cleanup.setTimeout(() => {
-    _mentionAudioIdleTimer = null
-    try {
-      if (_mentionAudioCtx?.state === 'running') _mentionAudioCtx.suspend()
-    } catch {}
-  }, waitMs)
-}
-function playMentionPing(volume) {
-  if (!(volume > 0)) return
-  const ctx = _getMentionAudioCtx()
-  if (!ctx) return
-  try {
-    _armMentionAudio(ctx, 0.32)
-    const now = ctx.currentTime
-    const gain = ctx.createGain()
-    gain.gain.setValueAtTime(0, now)
-    gain.gain.linearRampToValueAtTime(Math.min(1, volume) * 0.35, now + 0.01)
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3)
-    gain.connect(ctx.destination)
-    const o1 = ctx.createOscillator()
-    o1.type = 'sine'
-    o1.frequency.setValueAtTime(880, now)
-    o1.connect(gain)
-    o1.start(now)
-    o1.stop(now + 0.32)
-    const o2 = ctx.createOscillator()
-    o2.type = 'sine'
-    o2.frequency.setValueAtTime(1175, now + 0.08)
-    o2.connect(gain)
-    o2.start(now + 0.08)
-    o2.stop(now + 0.32)
-  } catch {}
+// Settings controls: hear the @mention sound now. The slider passes the volume
+// it just set; the sound select passes the name it just picked (the module copy
+// of either only catches up on the storage event, after this runs).
+function previewMentionSound(volume, name) {
+  return playMentionPing(volume ?? mentionSoundVolume, { name, preview: true })
 }
 
-// Filter-rule highlight cues — same pure Web Audio synth, a few named presets so
-// a highlight rule can carry an optional audible tag. Throttled (one per 1.2s)
-// so a burst of matches can't machine-gun. Shares ui_settings.mentionSoundVolume
-// (one "chat sounds" knob); 0 = silent. Unknown name → no-op.
-const FILTER_SOUND_PRESETS = {
-  ping: [
-    { f: 880, t0: 0, d: 0.32 },
-    { f: 1175, t0: 0.08, d: 0.24 },
-  ],
-  blip: [{ f: 1320, t0: 0, d: 0.12 }],
-  knock: [
-    { f: 200, t0: 0, d: 0.1 },
-    { f: 200, t0: 0.13, d: 0.1 },
-  ],
-  chime: [
-    { f: 660, t0: 0, d: 0.18 },
-    { f: 880, t0: 0.09, d: 0.18 },
-    { f: 1318, t0: 0.18, d: 0.26 },
-  ],
-}
-let _lastFilterSoundMs = 0
-function playFilterRuleSound(name) {
-  const preset = FILTER_SOUND_PRESETS[name]
-  if (!preset) return
-  const volume = mentionSoundVolume
-  if (!(volume > 0)) return
-  const now = Date.now()
-  if (now - _lastFilterSoundMs < 1200) return // throttle bursty matches
-  _lastFilterSoundMs = now
-  const ctx = _getMentionAudioCtx()
-  if (!ctx) return
-  try {
-    _armMentionAudio(ctx, Math.max(...preset.map((tone) => tone.t0 + tone.d)) + 0.02)
-    const t = ctx.currentTime
-    for (const tone of preset) {
-      const gain = ctx.createGain()
-      gain.gain.setValueAtTime(0, t + tone.t0)
-      gain.gain.linearRampToValueAtTime(Math.min(1, volume) * 0.35, t + tone.t0 + 0.01)
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + tone.t0 + tone.d)
-      gain.connect(ctx.destination)
-      const o = ctx.createOscillator()
-      o.type = 'sine'
-      o.frequency.setValueAtTime(tone.f, t + tone.t0)
-      o.connect(gain)
-      o.start(t + tone.t0)
-      o.stop(t + tone.t0 + tone.d + 0.02)
-    }
-  } catch {}
+// Highlight-rule cue: the rule's own sound at its own volume, or — for a rule
+// that never set one — the shared mentionSoundVolume, exactly as before rules
+// had volumes. `verdict` is evaluateFilterRules()'s result (filter-rules.js).
+function playFilterRuleSound(verdict) {
+  if (!verdict?.sound) return
+  const volume = verdict.soundVolume == null ? mentionSoundVolume : verdict.soundVolume / 100
+  return sfxPlay({ name: verdict.sound, key: sfxRuleKey(verdict.soundId), volume }, 'rule', false)
 }
 
 // Tab title flash — when an @mention arrives while the tab is unfocused,
@@ -322,9 +233,10 @@ if (!_onceGuardsMentions.titleFlashFocusWired) {
   )
 }
 
-// User-tunable settings — volume + flash toggle. Hydrated from sync
-// ui_settings; sync onChanged keeps them current cross-tab. Defaults: sound
+// User-tunable settings — sound, volume + flash toggle. Hydrated from sync
+// ui_settings; sync onChanged keeps them current cross-tab. Defaults: ping,
 // 0.3, flash on.
+let mentionSound = 'ping'
 let mentionSoundVolume = 0.3
 let mentionTitleFlash = true
 api.storage.sync
@@ -332,6 +244,7 @@ api.storage.sync
   .then((stored) => {
     const ui = stored?.ui_settings || {}
     if (typeof ui.mentionSoundVolume === 'number') mentionSoundVolume = Math.max(0, Math.min(1, ui.mentionSoundVolume))
+    if (typeof ui.mentionSound === 'string') mentionSound = ui.mentionSound
     if (typeof ui.mentionTitleFlash === 'boolean') mentionTitleFlash = ui.mentionTitleFlash
   })
   .catch(() => {})
@@ -342,6 +255,7 @@ if (!_onceGuardsMentions.mentionAudioStorageListener) {
       const ui = changes.ui_settings.newValue
       if (typeof ui.mentionSoundVolume === 'number')
         mentionSoundVolume = Math.max(0, Math.min(1, ui.mentionSoundVolume))
+      if (typeof ui.mentionSound === 'string') mentionSound = ui.mentionSound
       if (typeof ui.mentionTitleFlash === 'boolean') mentionTitleFlash = ui.mentionTitleFlash
     }
   })

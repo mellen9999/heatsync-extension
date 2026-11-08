@@ -1300,7 +1300,7 @@
     "message": "멘션 소리 크기"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "멘션 시 알림음 크기. 0 = 무음. 순수 WebAudio 음을 쓰고 음원 파일 없음."
+    "message": "멘션 소리의 크기. 0 = 무음"
   },
   "mc_settings_cross_follow_kick": {
     "message": "kick에서도 팔로우"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "마우스 아래의 채팅 줄에 답장 버튼을 표시합니다. 답장은 항상 줄 메뉴에 있습니다 (오른쪽 클릭, 터치는 길게 누르기)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "멘션 소리"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "이 탭이 백그라운드일 때 @멘션되면 나는 소리. 내장 소리 또는 내 파일"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "소리 파일"
+  },
+  "mc_sfx_opt_file": {
+    "message": "내 파일"
+  },
+  "mc_sfx_pick": {
+    "message": "파일 선택"
+  },
+  "mc_sfx_play": {
+    "message": "재생"
+  },
+  "mc_sfx_remove": {
+    "message": "파일 제거"
+  },
+  "mc_sfx_note": {
+    "message": "내 소리 파일은 이 기기에만 남으며 동기화나 내보내기가 되지 않습니다. 오디오만, 최대 256 KB, 10초"
+  },
+  "mc_sfx_err_type": {
+    "message": "오디오 파일이 아닙니다"
+  },
+  "mc_sfx_err_size": {
+    "message": "파일이 너무 큽니다. 최대 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "이 소리를 읽을 수 없습니다. 다른 파일을 시도하세요"
+  },
+  "mc_sfx_err_long": {
+    "message": "소리가 너무 깁니다. 최대 10초"
+  },
+  "mc_sfx_err_save": {
+    "message": "이 기기에 소리를 저장하지 못했습니다"
+  },
+  "mc_sfx_missing": {
+    "message": "이 소리 파일이 이 기기에 없습니다. 다시 선택하세요"
+  },
+  "mc_sfx_volume": {
+    "message": "볼륨"
+  },
+  "mc_sfx_none": {
+    "message": "아직 파일 없음"
   }
 }

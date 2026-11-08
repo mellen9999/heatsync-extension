@@ -1300,7 +1300,7 @@
     "message": "volumen del sonido de mención"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "volumen del ping de audio al mencionarte. 0 = silencio. usa tonos WebAudio puros, sin archivos."
+    "message": "qué tan fuerte suena la mención. 0 = silencio"
   },
   "mc_settings_cross_follow_kick": {
     "message": "seguir también en kick"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "muestra un botón de responder en la fila del chat bajo el ratón. responder siempre está en el menú de la fila (clic derecho, pulsación larga en táctil)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "sonido de mención"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "qué suena cuando te @mencionan con esta pestaña en segundo plano. un sonido integrado o tu propio archivo"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "archivo de sonido"
+  },
+  "mc_sfx_opt_file": {
+    "message": "mi archivo"
+  },
+  "mc_sfx_pick": {
+    "message": "elegir archivo"
+  },
+  "mc_sfx_play": {
+    "message": "reproducir"
+  },
+  "mc_sfx_remove": {
+    "message": "quitar archivo"
+  },
+  "mc_sfx_note": {
+    "message": "tus archivos de sonido se quedan en este dispositivo: nunca se sincronizan ni se exportan. solo audio, máx. 256 KB y 10 segundos"
+  },
+  "mc_sfx_err_type": {
+    "message": "eso no es un archivo de audio"
+  },
+  "mc_sfx_err_size": {
+    "message": "el archivo es demasiado grande. máx. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "no se puede leer ese sonido. prueba con otro archivo"
+  },
+  "mc_sfx_err_long": {
+    "message": "el sonido es demasiado largo. máx. 10 segundos"
+  },
+  "mc_sfx_err_save": {
+    "message": "no se pudo guardar ese sonido en este dispositivo"
+  },
+  "mc_sfx_missing": {
+    "message": "ese archivo de sonido no está en este dispositivo. elígelo de nuevo"
+  },
+  "mc_sfx_volume": {
+    "message": "volumen"
+  },
+  "mc_sfx_none": {
+    "message": "aún sin archivo"
   }
 }

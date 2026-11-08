@@ -1300,7 +1300,7 @@
     "message": "głośność dźwięku wzmianki"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "głośność sygnału przy wzmiance. 0 = cisza. używa czystych tonów WebAudio, bez plików."
+    "message": "jak głośny jest dźwięk wzmianki. 0 = cisza"
   },
   "mc_settings_cross_follow_kick": {
     "message": "obserwuj też na kick"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "pokazuje przycisk odpowiedzi na wierszu czatu pod myszą. odpowiedź jest zawsze w menu wiersza (prawy przycisk, długie przytrzymanie na dotyku)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "dźwięk wzmianki"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "co gra, gdy ktoś Cię @wspomni, a ta karta jest w tle. wbudowany dźwięk albo własny plik"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "plik dźwiękowy"
+  },
+  "mc_sfx_opt_file": {
+    "message": "mój plik"
+  },
+  "mc_sfx_pick": {
+    "message": "wybierz plik"
+  },
+  "mc_sfx_play": {
+    "message": "odtwórz"
+  },
+  "mc_sfx_remove": {
+    "message": "usuń plik"
+  },
+  "mc_sfx_note": {
+    "message": "Twoje pliki dźwiękowe zostają na tym urządzeniu: nigdy nie są synchronizowane ani eksportowane. tylko audio, maks. 256 KB i 10 sekund"
+  },
+  "mc_sfx_err_type": {
+    "message": "to nie jest plik audio"
+  },
+  "mc_sfx_err_size": {
+    "message": "plik jest za duży. maks. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "nie można odczytać tego dźwięku. spróbuj innego pliku"
+  },
+  "mc_sfx_err_long": {
+    "message": "dźwięk jest za długi. maks. 10 sekund"
+  },
+  "mc_sfx_err_save": {
+    "message": "nie udało się zapisać dźwięku na tym urządzeniu"
+  },
+  "mc_sfx_missing": {
+    "message": "tego pliku dźwiękowego nie ma na tym urządzeniu. wybierz go ponownie"
+  },
+  "mc_sfx_volume": {
+    "message": "głośność"
+  },
+  "mc_sfx_none": {
+    "message": "brak pliku"
   }
 }

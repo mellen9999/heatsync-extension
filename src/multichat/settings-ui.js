@@ -200,8 +200,12 @@ function _syncRowModEdge(el, def, opt) {
 
 function _rowsForDef(def) {
   var rows = []
-  // Custom-rendered entries (e.g. filter rules editor) skip auto-row generation.
-  if (def.control === 'custom') return rows
+  // Custom-rendered entries (e.g. filter rules editor) skip auto-row generation;
+  // the one exception hand-renders its own row (sound-ui.js).
+  if (def.control === 'custom') {
+    if (def.key === 'mentionSoundName') rows.push(sfxMentionRow(def))
+    return rows
+  }
   var base = (
     _setLabel(def) +
     ' ' +
@@ -736,9 +740,17 @@ function _renderFilterRuleRow(r) {
         ';border:1px solid #ffffff;flex-shrink:0"></span>'
       : '') +
     (r.action === 'highlight' && r.sound
-      ? '<span style="color:#ffffff;font-size:13px;flex-shrink:0" title="' +
-        escapeHtml(t('mc_set_fr_sound', [String(r.sound)])) +
-        '">♪</span>'
+      ? '<button data-fr-action="play" data-fr-id="' +
+        id +
+        '" style="' +
+        FR_BTN +
+        ';color:#ffffff;flex-shrink:0;padding:1px 4px" title="' +
+        escapeHtml(
+          t('mc_set_fr_sound', [String(r.sound === 'custom' ? r.soundName || t('mc_sfx_opt_file') : r.sound)]),
+        ) +
+        '">♪' +
+        (typeof r.soundVolume === 'number' ? escapeHtml(String(Math.round(r.soundVolume))) : '') +
+        '</button>'
       : '') +
     '<span style="color:#ffffff;font-size:13px;flex-shrink:0">' +
     scopeLabel +
@@ -832,14 +844,9 @@ function _renderFilterRuleAddForm() {
     ';width:62px" title="' +
     escapeHtml(t('mc_set_fr_sound_tip')) +
     '">' +
-    '<option value="none">' +
-    t('mc_set_fr_silent') +
-    '</option>' +
-    '<option value="ping">ping</option>' +
-    '<option value="blip">blip</option>' +
-    '<option value="knock">knock</option>' +
-    '<option value="chime">chime</option>' +
+    sfxFormSoundOptions() +
     '</select>' +
+    sfxRuleFormHtml() +
     '<label style="display:flex;align-items:center;gap:2px;color:#ffffff;font-size:13px;cursor:pointer;flex-shrink:0" title="' +
     escapeHtml(t('mc_set_fr_case')) +
     '">' +
@@ -855,6 +862,7 @@ function _renderFilterRuleAddForm() {
     t('mc_set_fr_add_btn') +
     '</button>' +
     '</div>' +
+    sfxNoteHtml(';padding-left:0') +
     '</div>'
   )
 }
@@ -897,9 +905,16 @@ function _handleFilterRuleAction(el, _panelRoot) {
   if (action === 'delete' && id) {
     var delIdx = rules.findIndex((r) => String(r.id) === id)
     if (delIdx !== -1) {
+      // the rule's own sound file goes with it — nothing else points at it
+      if (rules[delIdx].sound === SFX_CUSTOM) sfxRemove(sfxRuleKey(rules[delIdx].id))
       rules.splice(delIdx, 1)
       _saveFilterRules(rules)
     }
+    return
+  }
+
+  if (action === 'pick' || action === 'preview' || action === 'play') {
+    sfxRuleAction(action, el)
     return
   }
 
@@ -933,6 +948,8 @@ function _handleFilterRuleAction(el, _panelRoot) {
     var ruleAct = actEl ? actEl.value : 'highlight'
     var ruleCol = colEl ? colEl.value : '#ffff00'
     var ruleSound = soundEl ? soundEl.value : 'none'
+    var volEl = form.querySelector('[data-fr-field="vol"]')
+    var ruleVol = volEl ? Math.round(Number(volEl.value)) : null
     var ruleCs = csEl ? !!csEl.checked : false
     var ruleScope = scopeEl ? scopeEl.value : 'all'
     if (!ruleVal) {
@@ -952,12 +969,35 @@ function _handleFilterRuleAction(el, _panelRoot) {
       match: { type: ruleType, value: ruleVal, caseSensitive: ruleCs },
       action: ruleAct,
     }
+    var ruleFile = null
     if (ruleAct === 'highlight') {
       newRule.color = ruleCol
-      if (ruleSound && ruleSound !== 'none') newRule.sound = ruleSound
+      if (ruleSound === SFX_CUSTOM && sfxPending) {
+        ruleFile = sfxPending
+        newRule.sound = SFX_CUSTOM
+        newRule.soundName = ruleFile.n // the name travels with the rule; the file stays on this device
+      } else if (ruleSound && ruleSound !== 'none' && ruleSound !== SFX_CUSTOM) {
+        newRule.sound = ruleSound
+      }
+      if (newRule.sound && ruleVol !== null && Number.isFinite(ruleVol)) newRule.soundVolume = ruleVol
     }
-    rules.push(newRule)
-    _saveFilterRules(rules)
+    if (!ruleFile) {
+      rules.push(newRule)
+      _saveFilterRules(rules)
+      return
+    }
+    // the file is saved first: a rule must never point at a sound that failed
+    // to land. Rules are re-read after the wait, not trusted from before it.
+    sfxSave(sfxRuleKey(newRule.id), ruleFile).then((saved) => {
+      if (!saved) {
+        showToast(t('mc_sfx_err_save'), 'error')
+        return
+      }
+      sfxPending = null
+      var fresh = _getRawFilterRules()
+      fresh.push(newRule)
+      _saveFilterRules(fresh)
+    })
     return
   }
 }
@@ -1023,9 +1063,11 @@ function _renderCategoryPaneInner(cat) {
 // local-mirror keys (local) into a single JSON. Import: file picker → JSON parse → schema-validate → merge into
 // storage. Both areas restored. Errors toast, don't throw.
 // Private stores that must NEVER ride an export: mention/chat buffers, per-user notes, whispers, crash
-// ring ("captured locally only"). Import skips the same set so a crafted file
-// can't overwrite them either.
-var _SETTINGS_PRIVATE_KEY_RE = /^hs_(mentions_v2|user_notes|errors|irc_|kick_|yt_|whisper)/
+// ring ("captured locally only"), and the picked sound files (hs_sfx_*: up to
+// 256 kb each, per device by design — rules and the mention sound export only
+// the file's name). Import skips the same set so a crafted file can't overwrite
+// them either.
+var _SETTINGS_PRIVATE_KEY_RE = /^hs_(mentions_v2|user_notes|errors|irc_|kick_|yt_|whisper|sfx_)/
 // local-mirror settings (keyword highlights, filter rules) live under
 // unprefixed mirror keys — allowlist them alongside the hs_/viewer_ namespaces
 // or the export silently drops them (derived from the registry, never hand-listed)
@@ -1216,7 +1258,11 @@ function _setRowActivate(row) {
     return
   }
   const ctl = row.querySelector('select[data-set-key], input[data-set-key], textarea[data-set-key]')
-  if (ctl) ctl.focus()
+  if (ctl) {
+    ctl.focus()
+    return
+  }
+  row.querySelector('[data-sfx-action="pick"]')?.click() // the sound-file row: Enter opens the dialog
 }
 function _setRowAdjust(row, dir) {
   const def = _setRowDef(row)
@@ -1547,6 +1593,13 @@ function renderSettingsTab() {
       return
     }
 
+    // Chat sound file controls (@mention sound row) — data-sfx-action
+    var sfxEl = e.target.closest('[data-sfx-action]')
+    if (sfxEl) {
+      sfxHandleAction(sfxEl)
+      return
+    }
+
     // Mention rule editor (server-side rules) — data-mr-action
     var mrEl = e.target.closest('[data-mr-action]')
     if (mrEl && !/^(SELECT|INPUT|TEXTAREA)$/.test(mrEl.tagName)) {
@@ -1614,6 +1667,12 @@ function renderSettingsTab() {
           fresh.setSelectionRange(fresh.value.length, fresh.value.length)
         }
       }, 150)
+      return
+    }
+    var frVol = e.target.closest('[data-fr-field="vol"]')
+    if (frVol) {
+      var frVolVal = frVol.nextElementSibling
+      if (frVolVal) frVolVal.textContent = frVol.value
       return
     }
     var regInput = e.target.closest('[data-set-key]')

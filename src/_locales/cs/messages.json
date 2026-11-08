@@ -1300,7 +1300,7 @@
     "message": "hlasitost zmínky"
   },
   "mc_settings_mention_volume_desc": {
-    "message": "hlasitost zvukového pingu při zmínce. 0 = ticho. používá čisté tóny WebAudio, žádný soubor v balíčku."
+    "message": "jak hlasitý je zvuk zmínky. 0 = ticho"
   },
   "mc_settings_cross_follow_kick": {
     "message": "sledovat i na kick"
@@ -6613,5 +6613,53 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "zobrazí tlačítko odpovědi na řádku pod myší. odpověď je vždy v nabídce řádku (pravé tlačítko, dlouhý stisk na dotyku)"
+  },
+  "mc_settings_mention_sound": {
+    "message": "zvuk zmínky"
+  },
+  "mc_settings_mention_sound_desc": {
+    "message": "co se přehraje, když vás někdo @zmíní a tento panel je na pozadí. vestavěný zvuk, nebo váš vlastní soubor"
+  },
+  "mc_settings_mention_sound_file": {
+    "message": "zvukový soubor"
+  },
+  "mc_sfx_opt_file": {
+    "message": "můj soubor"
+  },
+  "mc_sfx_pick": {
+    "message": "vybrat soubor"
+  },
+  "mc_sfx_play": {
+    "message": "přehrát"
+  },
+  "mc_sfx_remove": {
+    "message": "odebrat soubor"
+  },
+  "mc_sfx_note": {
+    "message": "vaše vlastní zvukové soubory zůstávají v tomto zařízení: nikdy se nesynchronizují ani neexportují. jen zvuk, max. 256 KB a 10 sekund"
+  },
+  "mc_sfx_err_type": {
+    "message": "to není zvukový soubor"
+  },
+  "mc_sfx_err_size": {
+    "message": "soubor je příliš velký. max. 256 KB"
+  },
+  "mc_sfx_err_decode": {
+    "message": "tento zvuk nejde přečíst. zkuste jiný soubor"
+  },
+  "mc_sfx_err_long": {
+    "message": "zvuk je příliš dlouhý. max. 10 sekund"
+  },
+  "mc_sfx_err_save": {
+    "message": "zvuk se nepodařilo uložit do tohoto zařízení"
+  },
+  "mc_sfx_missing": {
+    "message": "tento zvukový soubor v tomto zařízení není. vyberte ho znovu"
+  },
+  "mc_sfx_volume": {
+    "message": "hlasitost"
+  },
+  "mc_sfx_none": {
+    "message": "zatím žádný soubor"
   }
 }

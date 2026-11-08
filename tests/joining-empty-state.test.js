@@ -22,8 +22,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 
 function sliceBetween(startMarker, endMarker) {
   const s = MAIN_SRC.indexOf(startMarker)
@@ -33,7 +34,7 @@ function sliceBetween(startMarker, endMarker) {
   return MAIN_SRC.slice(s, e)
 }
 
-const FN_SRC = sliceBetween('function trackJoin(tabId, p) {', '\n  /* Is this lowercase channel name live')
+const FN_SRC = sliceBetween('function trackJoin(tabId, p) {', '\n/* Is this lowercase channel name live')
 
 // Fresh scope per test: trackJoin closes over _tabJoining, currentTab,
 // renderMessages and JOIN_STALL_MS in main.js.
@@ -171,7 +172,7 @@ describe('never-connected tabs', () => {
     // The marks land in startNetwork's idle slice, after the panel's first
     // paint — gating on _tabJoining alone left "no messages yet" on screen for
     // that whole window. Verified live on a throttled link 2026-08-05.
-    const fn = sliceBetween('function isTabConnecting(id) {', '\n  /* Mark a tab as joining')
+    const fn = sliceBetween('function isTabConnecting(id) {', '\n/* Mark a tab as joining')
     // never settled a leg on a tab that has legs => still connecting
     expect(fn).toContain('if (!settledAt) return true')
     // a settled join is not the same as chat arriving — hold the copy briefly
@@ -179,7 +180,7 @@ describe('never-connected tabs', () => {
   })
 
   test('a legless tab is genuinely empty, not "connecting…"', () => {
-    const fn = sliceBetween('function tabHasChatLegs(id) {', '\n  /* Mark a tab as joining')
+    const fn = sliceBetween('function tabHasChatLegs(id) {', '\n/* Mark a tab as joining')
     expect(fn).toContain("if (id === 'live') return !!getCurrentChannel() || !!getLiveChannel()")
     expect(fn).toContain('ch?.twitch || ch?.kick || ch?.youtube')
   })

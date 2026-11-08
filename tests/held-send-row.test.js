@@ -8,11 +8,12 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const src = (f) => readFileSync(join(import.meta.dir, '..', 'src', f), 'utf8')
 const authIrc = src('multichat/auth-irc.js')
 const irc = src('multichat/irc.js')
-const main = src('multichat/main.js')
+const main = mainSource()
 const input = src('multichat/input.js')
 const en = JSON.parse(src('_locales/en/messages.json'))
 

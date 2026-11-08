@@ -24,9 +24,10 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const BG = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
-const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 
 /** // comments stripped: the fix QUOTES the old expression to explain it, and
  *  prose about a bug must not be able to satisfy a check for the bug. */

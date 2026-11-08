@@ -7,8 +7,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const SRC = mainSource()
 const passA = SRC.slice(SRC.indexOf('// PASS A: index existing DOM'), SRC.indexOf('// PASS B: walk desired list'))
 
 describe('render reconcile and the video player', () => {

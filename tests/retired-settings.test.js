@@ -2,6 +2,7 @@ import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { SETTINGS } from '../src/lib/settings-schema.js'
 import { RETIRED_UI_KEYS } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
 // Keys the settings pass removed keep arriving for months — from old builds,
 // from the server's ui_state, from chrome.storage.sync blobs written before
@@ -9,7 +10,7 @@ import { RETIRED_UI_KEYS } from '../src/lib/utils.js'
 // has migrated their values the stored blob drops them (8 KB sync quota).
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 const BG = read('chrome/background.js')
-const MAIN = read('src/multichat/main.js')
+const MAIN = mainSource()
 
 function extractFn(name) {
   const start = BG.indexOf(`function ${name}(`)

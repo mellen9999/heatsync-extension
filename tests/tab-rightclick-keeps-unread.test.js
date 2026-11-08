@@ -6,8 +6,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const SRC = mainSource()
 const at = SRC.indexOf("container.addEventListener('contextmenu', (e) => {")
 const handler = SRC.slice(at, SRC.indexOf('// Live tab gets platform edit context menu', at))
 
@@ -22,7 +23,7 @@ describe('tab right-click', () => {
 
   test('the clear leaves has-new and a channel tab count alone', () => {
     expect(handler).toContain("classList.remove('has-mentions', 'has-stream-event', 'has-whispers')")
-    expect(handler).toContain('if (mcIsReservedTab(tabId)) {\n          markTabRead(tabId)')
+    expect(handler).toContain('if (mcIsReservedTab(tabId)) {\n        markTabRead(tabId)')
   })
 
   test('mentions / whispers drop the unread flag too, so they never sit white', () => {

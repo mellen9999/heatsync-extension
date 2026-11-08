@@ -4,6 +4,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const src = (f) => readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
 
@@ -14,7 +15,7 @@ test('the profile lookup writes through setKnownColor, flagged native only for a
 })
 
 test('a resolved mention repaints with the known color first', () => {
-  const m = src('main.js')
+  const m = mainSource()
   expect(m).toContain('sanitizeColor(knownColors.get(lower) || c)')
   expect(m).toContain("setKnownColor(lower, knownColors.get(lower) || c || '#fff', resolvedUid, 'twitch', false)")
 })
@@ -26,7 +27,7 @@ test('a linked twitch account resolves to its twitch color before the heatsync p
 })
 
 test('setKnownColor: a real twitch color is never overwritten by a non-native one', () => {
-  const m = src('main.js')
+  const m = mainSource()
   const start = m.indexOf('const _nativeTwitchColor = new Set()')
   const body = m.slice(start, m.indexOf('// Live username-color sync', start))
   const run = new Function(

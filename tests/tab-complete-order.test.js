@@ -21,6 +21,7 @@
 import { beforeEach, describe, expect, setSystemTime, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 // ── carve compareAcMatches out of input.js ──────────────────────────────────
 const INPUT_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
@@ -331,7 +332,7 @@ describe('autocomplete-hook.js — stays in lockstep with the multichat', () => 
 })
 
 describe('moment ¶ shift-click paste (main.js) — in-chat visibility loop', () => {
-  const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const MAIN_SRC = mainSource()
   test('shift-click pastes into the input, never auto-sends, and appends to a draft', () => {
     const s = MAIN_SRC.indexOf("if (m.type === 'moment')")
     const body = MAIN_SRC.slice(s, s + 3000)

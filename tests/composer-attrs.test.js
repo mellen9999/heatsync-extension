@@ -16,6 +16,7 @@ import { beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { SETTINGS } from '../src/lib/settings-schema.js'
+import { mainSource } from './main-src.js'
 
 const ROOT = join(import.meta.dir, '..')
 const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages.json'), 'utf8'))
@@ -81,7 +82,7 @@ describe('spellcheck setting', () => {
     expect(def.scope).toBe('local')
     expect(def.apply).toBe('spellcheck')
     expect(def.applyOnLoad).toBe(true)
-    expect(read('src/multichat/main.js')).toMatch(/spellcheck: \(v\) => hsApplySpellcheck\(v\)/)
+    expect(mainSource()).toMatch(/spellcheck: \(v\) => hsApplySpellcheck\(v\)/)
   })
 
   test('only an explicit true turns it on', () => {

@@ -8,6 +8,7 @@ import {
   hsMarksValidLogin,
   hsMarksWear,
 } from '../src/multichat/name-marks.js'
+import { mainSource } from './main-src.js'
 
 describe('heat bar tiers (heatsync-chat contract)', () => {
   const ladder = [
@@ -130,7 +131,7 @@ describe('wiring', () => {
     expect(at('name-marks-data.js')).toBeLessThan(at('mod-toolbar.js'))
   })
   test('twitch rows carry the marks span after the badges, before the avatar', () => {
-    const m = read('src/multichat/main.js')
+    const m = mainSource()
     expect(m).toContain("plat === 'twitch' ? hsMarksRowHtml(")
     expect(m).toContain('${badges}${marksHtml}${avatarHtml}')
   })

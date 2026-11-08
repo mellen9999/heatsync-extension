@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { SETTINGS } from '../src/lib/settings-schema.js'
+import { mainSource } from './main-src.js'
 
 /**
  * First-run tour card (tour.js). The card is a thin skin over the real
@@ -12,7 +13,7 @@ import { SETTINGS } from '../src/lib/settings-schema.js'
 const ROOT = join(import.meta.dir, '..')
 const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8')
 const SRC = read('src', 'multichat', 'tour.js')
-const MAIN = read('src', 'multichat', 'main.js')
+const MAIN = mainSource()
 const SETTINGS_UI = read('src', 'multichat', 'settings-ui.js')
 const BUILD = read('build.js')
 const EN = JSON.parse(read('src', '_locales', 'en', 'messages.json'))

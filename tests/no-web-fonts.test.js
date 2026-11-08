@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
+import { MAIN_PART_FILES } from './main-src.js'
 
 /**
  * Zero web fonts. Mirrors heatsync.org's tests/unit/no-web-fonts.test.ts.
@@ -34,7 +35,7 @@ function code(text, rel) {
 }
 
 // the only live mentions allowed: migrating a stored retired choice to monospace
-const MIGRATION = new Set(['src/lib/settings-schema.js', 'src/multichat/main.js'])
+const MIGRATION = new Set(['src/lib/settings-schema.js', ...MAIN_PART_FILES.map((p) => `src/multichat/${p}`)])
 const SOURCE = TRACKED.filter((p) => /\.(js|css|html|json)$/.test(p)).filter(
   (p) => !/_locales|multichat-core|multichat-twitch|emoji-data|chrome\/manifest\.json/.test(p),
 )

@@ -1,8 +1,9 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 // The live-dot helpers sit inside main.js's closure — slice their source and run it for real.
-const MAIN = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const MAIN = mainSource()
 const a = MAIN.indexOf('const _LIVE_PLATS')
 const b = MAIN.indexOf("// Channels we've already surfaced")
 if (a < 0 || b < a) throw new Error('live helper markers moved')

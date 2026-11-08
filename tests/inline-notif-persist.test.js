@@ -1,13 +1,14 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 /**
  * Inline [OP]/[RE] rows survive an ext reload: saveInlineNotif writes them to
  * storage, restoreInlineNotifs puts them back into every channel buffer at
  * their real time, once. The shipped source runs against stubbed globals.
  */
-const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const SRC = mainSource()
 const start = SRC.indexOf('const INLINE_NOTIF_KEY')
 const end = SRC.indexOf('// Dedup: track recent server-sourced YouTube messages')
 const BLOCK = SRC.slice(start, end)

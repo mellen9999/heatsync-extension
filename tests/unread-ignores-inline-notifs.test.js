@@ -6,8 +6,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const SRC = mainSource()
 const fnSrc = SRC.slice(
   SRC.indexOf('function applyUnreadIndicatorForTab'),
   SRC.indexOf('// YouTube global state (per-channel only now'),

@@ -12,8 +12,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 
 describe('overlay bottom inset is measured, never a constant', () => {
   test('every overlay style.bottom write interpolates a measured value', () => {

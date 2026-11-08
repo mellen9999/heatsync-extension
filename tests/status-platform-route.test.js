@@ -1,7 +1,8 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
-const MAIN = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const MAIN = mainSource()
 const API = readFileSync(new URL('../src/multichat/twitch-api.js', import.meta.url), 'utf8')
 
 test('/status routes a kick slug to kick, never to a twitch lookup', () => {

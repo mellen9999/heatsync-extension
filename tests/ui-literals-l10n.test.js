@@ -5,9 +5,11 @@
  */
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 const EN = JSON.parse(readFileSync(new URL('../src/_locales/en/messages.json', import.meta.url), 'utf8'))
-const src = (f) => readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')
+const src = (f) =>
+  f === 'main.js' ? mainSource() : readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')
 
 const USES = {
   'main.js': ['mc_tagcard_you', 'mc_bits_n', 'mc_reply_blocked', 'mc_moment_permalink'],

@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 // the mentions tab survives a restart (rust a5deb0c parity). Pins the contract:
 // owner-scoped, bounded, expiring, and gone when the account changes or logs out.
-const MAIN = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const MAIN = mainSource()
 
 describe('mentions persist across restart', () => {
   test('bounded and written to chrome.storage.local under an owner', () => {

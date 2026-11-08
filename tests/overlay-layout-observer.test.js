@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 /**
  * The overlay's ResizeObserver must be re-pointed whenever the tab bar or input
@@ -35,7 +36,7 @@ import { join } from 'node:path'
  * fixture, and this file is what holds the line.
  */
 
-const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 
 /** Slice from an anchor to its matching closing brace. */
 function spanFrom(src, anchor) {

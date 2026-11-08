@@ -1,5 +1,6 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 const rd = (f) => readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')
 
@@ -11,8 +12,8 @@ test('youtube chatters get a chat-logs entry and an @handle still joins its live
 })
 
 test('"my logs" never borrows the twitch login on a kick/yt tab', () => {
-  const m = rd('main.js')
+  const m = mainSource()
   const at = m.indexOf('logs: (pane, ctx) => {')
-  const body = m.slice(at, m.indexOf('\n    },', at))
+  const body = m.slice(at, m.indexOf('\n  },', at))
   expect(body).toContain("platform === 'twitch' ? currentUsername : ''")
 })

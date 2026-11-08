@@ -1,8 +1,9 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { userKey } from '../src/lib/user-key.js'
+import { mainSource } from './main-src.js'
 
-const MAIN = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const MAIN = mainSource()
 const a = MAIN.indexOf('function setKnownColor(')
 const b = MAIN.indexOf('// Live username-color sync')
 if (a < 0 || b < a) throw new Error('setKnownColor markers moved')

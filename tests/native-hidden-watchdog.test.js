@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 /**
  * The dead-man switch that restores native Twitch chat.
@@ -25,7 +26,7 @@ import { readFileSync } from 'node:fs'
  *    a single occurrence has to carry enough to tell them apart.
  */
 
-const MAIN = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const MAIN = mainSource()
 const TAP = readFileSync(new URL('../src/multichat/native-tap.js', import.meta.url), 'utf8')
 
 const watchdog = (() => {

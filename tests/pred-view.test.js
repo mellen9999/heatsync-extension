@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 /**
  * Predictions & polls as a full chat-area surface.
@@ -12,7 +13,8 @@ import { join } from 'node:path'
  * three traps that make a takeover view silently break.
  */
 
-const SRC = (f) => readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
+const SRC = (f) =>
+  f === 'main.js' ? mainSource() : readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
 const STYLES = join(import.meta.dir, '..', 'src', 'multichat', 'styles')
 
 describe('pred view wiring', () => {

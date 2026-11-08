@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 /**
  * The overlay's core semantics for assistive tech.
@@ -17,7 +18,7 @@ import { join } from 'node:path'
  * which is why every call site goes through setTabActive.
  */
 
-const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 
 describe('overlay aria', () => {
   test('the message list is a labelled log', () => {

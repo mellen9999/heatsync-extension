@@ -1,10 +1,11 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 // the 'live' tab is the temp tab: page channel's name, underlined, hidden when a
 // saved tab covers that channel or the page has none. internal id stays 'live'.
 const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8')
-const main = read('../src/multichat/main.js')
+const main = mainSource()
 const input = read('../src/multichat/input.js')
 const css = read('../src/multichat/styles/02-tab-bar.css')
 const en = JSON.parse(read('../src/_locales/en/messages.json'))

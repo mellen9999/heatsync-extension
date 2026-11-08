@@ -17,6 +17,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { RESERVED_PATHS } from '../src/lib/reserved-paths.js'
+import { MAIN_PART_FILES, mainSource } from './main-src.js'
 
 const read = (p) => readFileSync(join(import.meta.dir, '..', p), 'utf8')
 
@@ -67,7 +68,7 @@ describe('no divergent reserved-path list grew back', () => {
   const SIGNATURE = /\[\s*['"](?:directory|categories|browse|moderator)['"],?\s*['"](?:following|settings|category)['"]/
 
   for (const file of [
-    'src/multichat/main.js',
+    ...MAIN_PART_FILES.map((p) => `src/multichat/${p}`),
     'chrome/content.js',
     'chrome/heatsync-button.js',
     'chrome/background.js',
@@ -84,8 +85,7 @@ describe('no divergent reserved-path list grew back', () => {
   }
 
   test('src/multichat/main.js aliases NON_CHANNEL_PATHS to the shared constant', () => {
-    const src = read('src/multichat/main.js')
-    expect(src).toContain('const NON_CHANNEL_PATHS = RESERVED_PATHS')
+    expect(mainSource()).toContain('const NON_CHANNEL_PATHS = RESERVED_PATHS')
   })
 
   test('chrome/content.js aliases TWITCH_EXCLUDED_PATHS to the shared constant', () => {

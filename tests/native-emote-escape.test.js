@@ -19,8 +19,9 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { escapeHtml } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
-const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 
 function sliceBetween(startMarker, endMarker) {
   const s = MAIN_SRC.indexOf(startMarker)

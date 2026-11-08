@@ -2,10 +2,12 @@ import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { coerceSettingValue, SETTINGS, userSubsystemGates } from '../src/lib/settings-schema.js'
 import { RETIRED_UI_KEYS } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
 // Developer and tuning knobs left the settings page: each one's value is now
 // the default it already had for nearly everyone, and nothing reads the key.
-const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
+const read = (p) =>
+  p === 'src/multichat/main.js' ? mainSource() : readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 const CUT_SYNC = [
   'debugLogging',
   'crashTelemetry',
@@ -41,7 +43,7 @@ test('a stored feature switch no longer gates anything at boot', () => {
     'overlay-youtube': true,
   })
   expect(userSubsystemGates(null)).toEqual({ 'overlay-twitch': true, 'overlay-kick': true, 'overlay-youtube': true })
-  expect(read('src/multichat/main.js')).toContain('_gatesAtBoot = userSubsystemGates(stored)')
+  expect(mainSource()).toContain('_gatesAtBoot = userSubsystemGates(stored)')
 })
 
 test('nothing reads the cut keys', () => {

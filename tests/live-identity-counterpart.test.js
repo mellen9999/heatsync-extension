@@ -9,6 +9,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { liveIdentityCounterpart } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
 const ok = (twitch, kick) => ({ ok: true, identity: { twitch, kick, youtube: null } })
 
@@ -42,7 +43,7 @@ describe('liveIdentityCounterpart', () => {
 })
 
 describe('live tab wiring', () => {
-  const main = readFileSync(join(import.meta.dir, '../src/multichat/main.js'), 'utf8')
+  const main = mainSource()
   const social = readFileSync(join(import.meta.dir, '../src/multichat/social.js'), 'utf8')
   const mgmt = readFileSync(join(import.meta.dir, '../src/multichat/channel-mgmt.js'), 'utf8')
 

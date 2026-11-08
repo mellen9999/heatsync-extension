@@ -8,6 +8,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'irc.js'), 'utf8')
 
@@ -80,10 +81,10 @@ test('no history push straight onto a ring remains', () => {
 })
 
 test('the render merge re-sorts any run that arrives out of order', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/function fairMerge\(sources\) \{\s*sources = sources\.map\(_ordSortedRun\)/)
   const s = main.indexOf('function _ordSortedRun(')
-  const sortRun = new Function('ordOf', `${main.slice(s, main.indexOf('\n  }\n', s) + 4)}; return _ordSortedRun`)(ordOf)
+  const sortRun = new Function('ordOf', `${main.slice(s, main.indexOf('\n}\n', s) + 3)}; return _ordSortedRun`)(ordOf)
   const ok = [{ time: 1 }, { time: 2 }]
   expect(sortRun(ok)).toBe(ok)
   const bad = [{ time: 5 }, { time: 9 }, { time: 7 }, { time: 8 }]
@@ -92,14 +93,14 @@ test('the render merge re-sorts any run that arrives out of order', () => {
 })
 
 test('a render watchdog logs why chat stopped painting and repaints when nothing blocks it', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/function renderStallCheck\(\)/)
   expect(main).toMatch(/__hsDiag\?\.\('render_stall'/)
   expect(main).toMatch(/cleanup\.setInterval\(renderStallCheck, 2500\)/)
 })
 
 test('an ingest gap on a busy channel re-registers interest and re-pulls the BG ring', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/function ingestGapCheck\(\)/)
   expect(main).toMatch(/__hsDiag\?\.\('ingest_gap'/)
   expect(main).toMatch(/irc\._refreshFromBg\?\.\(ch\)/)
@@ -107,66 +108,66 @@ test('an ingest gap on a busy channel re-registers interest and re-pulls the BG 
 })
 
 test('stall check heals the key index from the DOM and logs index_desync', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/function _reconcileMsgKeyIndex\(/)
   expect(main).toMatch(/_reconcileMsgKeyIndex\(msgsEl\)/)
   expect(main).toMatch(/'index_desync'/)
 })
 
 test('thrash detector logs dom_thrash and rebuilds the pane', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/function domThrashCheck\(/)
   expect(main).toMatch(/cleanup\.setInterval\(domThrashCheck, 2000\)/)
   expect(main).toMatch(/'dom_thrash'/)
 })
 
 test('unpinned view is logged and re-pinned', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/hsDiagLog\('unpinned'/)
 })
 
 test('long animation frames are recorded with attribution', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/hsDiagLog\('long_frame'/)
   expect(main).toMatch(/watchLongFrames\(\)/)
 })
 
 test('multi-platform render debounce cannot be held forever by a frozen rAF', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/nowMp - _multiPlatformRenderAt > 500/)
   expect(main).toMatch(/cleanup\.setTimeout\(run, 500\)/)
   expect(main).toMatch(/hs-popout'\)\) \{\s*_hiddenSkippedAppend = true/)
 })
 
 test('a quiet pane on a busy channel logs which side went quiet', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/hsDiagLog\('dom_quiet'/)
 })
 
 test('stripe flicker is counted and logged with its mid-insert count', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/hsDiagLog\('zebra_flicker'/)
 })
 
 test('alt+shift+d dumps the pane state to the diag ring', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/hsDiagLog\('manual_dump'/)
   expect(main).toMatch(/e\.code === 'KeyD'/)
 })
 
 test('a popout never waits on rAF or the 1s starved timer', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/function rafOrTimeout\(fn\) \{[\s\S]{0,700}hs-popout'\)\) \{\s*cleanup\.setTimeout\(fn, 16\)/)
 })
 
 test('a new row anchors on the lowest placed row, never on a shared cursor', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   expect(main).toMatch(/if \(prevNode\) after = prevNode\.nextSibling/)
   expect(main).not.toMatch(/domIdx/)
 })
 
 test('a live line never lands above a row already on screen', () => {
-  const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+  const src = mainSource()
   expect(src).toMatch(/div\._hsAt = 1/)
   expect(src).toMatch(/settledEnd &&\s*m\.ord != null/)
 })

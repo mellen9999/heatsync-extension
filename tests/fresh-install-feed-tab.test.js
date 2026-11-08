@@ -19,8 +19,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 
 function sliceBetween(marker, endMarker) {
   const start = MAIN_SRC.indexOf(marker)
@@ -31,7 +32,7 @@ function sliceBetween(marker, endMarker) {
 }
 
 const REGISTRY_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'tab-registry.js'), 'utf8')
-const TABS_SRC = `${REGISTRY_SRC}\n${sliceBetween('  const HIDABLE_TABS = ', '  // Timestamps on messages')}`
+const TABS_SRC = `${REGISTRY_SRC}\n${sliceBetween('const HIDABLE_TABS = ', '// Timestamps on messages')}`
 
 function makeHarness({ hiddenTabs, local = {}, sync = {}, hydrated = true } = {}) {
   const settings = { hiddenTabs }

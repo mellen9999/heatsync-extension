@@ -9,8 +9,9 @@ import { join } from 'node:path'
 import { isPaintLookupSafeId } from '../src/lib/paint-spec.js'
 import { escapeHtml } from '../src/lib/utils.js'
 import { historyWentLiveEvent, streamEventUserId } from '../src/multichat/stream-line-ids.js'
+import { mainSource } from './main-src.js'
 
-const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 const IRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'irc.js'), 'utf8')
 const BG = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
 

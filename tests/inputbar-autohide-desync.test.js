@@ -34,14 +34,15 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
-const start = SRC.indexOf('  function syncInputBarVisible(')
-const end = SRC.indexOf('  function createOverlay(')
+const SRC = mainSource()
+const start = SRC.indexOf('function syncInputBarVisible(')
+const end = SRC.indexOf('function createOverlay(')
 if (start === -1 || end === -1 || end <= start) throw new Error('carve markers not found')
 const CARVE = SRC.slice(start, end)
 
-const predSrc = SRC.slice(SRC.indexOf('  function tabSendsToChat('), SRC.indexOf('  // The DOM class is the truth'))
+const predSrc = SRC.slice(SRC.indexOf('function tabSendsToChat('), SRC.indexOf('// The DOM class is the truth'))
 const makePredicates = (liveChannel, channelIds) =>
   new Function('getLiveChannel', 'getChannelById', `${predSrc}; return { tabSendsToChat, tabAcceptsInput }`)(
     () => liveChannel,

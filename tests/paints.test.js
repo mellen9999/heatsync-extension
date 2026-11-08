@@ -27,6 +27,7 @@ import {
   setHsColorEntry,
   setHsPaintEntry,
 } from '../src/multichat/paints.js'
+import { mainSource } from './main-src.js'
 
 // Reference copy of the SHARED djb2 username-colour contract (website
 // client/utils/color-utils.js usernameColor + server chat-log-permalinks.ts).
@@ -688,7 +689,7 @@ describe('--hs-name-c — a painted name keeps the colour it would have worn, fo
     const dir = join(import.meta.dir, '../src/multichat')
     let stamps = 0
     for (const f of ['main.js', 'whispers.js', 'tooltips.js', 'name-style.js']) {
-      const src = readFileSync(join(dir, f), 'utf8')
+      const src = f === 'main.js' ? mainSource() : readFileSync(join(dir, f), 'utf8')
       for (const m of src.matchAll(/--hsp-t:\$\{paintPhaseNow\(\)\};(\$\{hsNameColourDecl\()?/g)) {
         stamps++
         expect(m[1], `${f}: a painted name's style stamps --hsp-t with no --hs-name-c`).toBeDefined()

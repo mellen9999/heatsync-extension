@@ -20,9 +20,10 @@
 
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 const IRC_SRC = readFileSync(new URL('../src/multichat/irc.js', import.meta.url), 'utf8')
-const MAIN_SRC = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const MAIN_SRC = mainSource()
 
 describe('duplicate carrying reply context is not silently discarded', () => {
   test('irc dedup emits reply-ctx instead of dropping the richer copy', () => {

@@ -14,10 +14,11 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const BG_SRC = readFileSync(new URL('../chrome/background.js', import.meta.url), 'utf8')
 const ROOT = join(import.meta.dir, '..')
-const MAIN = readFileSync(join(ROOT, 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 const ROWS_CSS = readFileSync(join(ROOT, 'src', 'multichat', 'styles', '08-message-rows.css'), 'utf8')
 
 function sliceBetween(startMarker, endMarker) {

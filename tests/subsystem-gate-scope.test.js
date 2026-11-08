@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 /**
  * A subsystem kill-switch must disable its OWN subsystem, all of it, and
@@ -21,7 +22,7 @@ import { join } from 'node:path'
  * each family checking the switch that names it.
  */
 
-const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 const SOCIAL = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'social.js'), 'utf8')
 
 /** Body of listenForSocialEvents, brace-matched from its declaration. */
@@ -56,7 +57,7 @@ describe('subsystem gate scope', () => {
   })
 
   test('registration is unconditional — no gate can be right for all four', () => {
-    expect(MAIN).toContain('\n    listenForSocialEvents()')
+    expect(MAIN).toContain('\n  listenForSocialEvents()')
     expect(MAIN).not.toMatch(/if \([^\n]*\) listenForSocialEvents\(\)/)
   })
 

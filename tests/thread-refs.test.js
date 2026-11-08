@@ -14,12 +14,13 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { escapeHtml, outsideTags } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
 globalThis.escapeHtml = escapeHtml
 // these transforms skip whole <a>…</a> spans via the shared helper
 globalThis.outsideTags = outsideTags
 
-const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 
 function sliceBetween(startMarker, endMarker) {
   const s = MAIN_SRC.indexOf(startMarker)
@@ -29,7 +30,7 @@ function sliceBetween(startMarker, endMarker) {
   return MAIN_SRC.slice(s, e)
 }
 
-const fnSrc = sliceBetween('function highlightThreadRefsInHtml(html) {', '\n  // Scroll helper — reused by both')
+const fnSrc = sliceBetween('function highlightThreadRefsInHtml(html) {', '\n// Scroll helper — reused by both')
 
 const { highlightThreadRefsInHtml } = new Function(
   `function highlightThreadRefsInHtml(html) {${fnSrc.slice(fnSrc.indexOf('{') + 1)}\nreturn { highlightThreadRefsInHtml }`,

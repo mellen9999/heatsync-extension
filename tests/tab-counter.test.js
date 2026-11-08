@@ -9,11 +9,12 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const dir = (...p) => join(import.meta.dir, '..', ...p)
 const SRC = readFileSync(dir('src', 'multichat', 'tab-counter.js'), 'utf8')
 const SCHEMA = readFileSync(dir('src', 'lib', 'settings-schema.js'), 'utf8')
-const MAIN = readFileSync(dir('src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 const SOCIAL = readFileSync(dir('src', 'multichat', 'social.js'), 'utf8')
 const CHANNEL_MGMT = readFileSync(dir('src', 'multichat', 'channel-mgmt.js'), 'utf8')
 const EN = JSON.parse(readFileSync(dir('src', '_locales', 'en', 'messages.json'), 'utf8'))

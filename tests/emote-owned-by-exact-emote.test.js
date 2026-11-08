@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import * as mods from '../src/lib/modifiers.js'
 import { escapeHtml, unescapeHtml } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
 globalThis.escapeHtml = escapeHtml
 globalThis.unescapeHtml = unescapeHtml
@@ -85,7 +86,7 @@ test("a sender-set W stamped 'owned' by name is not yours when your W is a diffe
 })
 
 test('post-render reconcile and add-to-inventory judge a wrapper by its emote, not its name', () => {
-  const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const main = mainSource()
   const i = main.indexOf('function reconcileHeatsyncEmoteStates')
   const body = main.slice(i, i + 1200)
   expect(body).toContain('emoteIsBlocked(name, wEmote)')

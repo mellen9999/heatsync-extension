@@ -8,6 +8,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'emotes.js'), 'utf8')
 const start = SRC.indexOf('async function _removeEmoteFromInventory(')
@@ -34,7 +35,7 @@ describe('remove from set is optimistic', () => {
 })
 
 describe('a poll that raced the delete cannot put the emote back', () => {
-  const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+  const MAIN = mainSource()
   const inv = MAIN.slice(MAIN.indexOf("msg.type === 'inventory_update'"))
 
   test('removal stamps the name, rollback and re-add clear it', () => {

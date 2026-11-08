@@ -1,8 +1,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 const read = (f) => readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')
-const src = read('main.js')
+const src = mainSource()
 const mgmt = read('channel-mgmt.js')
 const menu = src.slice(
   src.indexOf('// Channel tabs get edit/remove context menu'),

@@ -14,11 +14,12 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const dir = (...p) => join(import.meta.dir, '..', ...p)
 const API = readFileSync(dir('src', 'multichat', 'twitch-api.js'), 'utf8')
 const COSMETICS = readFileSync(dir('src', 'multichat', 'cosmetics.js'), 'utf8')
-const MAIN = readFileSync(dir('src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 const SCHEMA = readFileSync(dir('src', 'lib', 'settings-schema.js'), 'utf8')
 const EN = JSON.parse(readFileSync(dir('src', '_locales', 'en', 'messages.json'), 'utf8'))
 

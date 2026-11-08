@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 const read = (f) => readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')
 
@@ -14,7 +15,7 @@ describe('emote stack tooltip', () => {
 })
 
 describe('hover hold and the "N new" button', () => {
-  const src = read('main.js')
+  const src = mainSource()
 
   test('a render while the pointer holds the feed does not count or show new messages', () => {
     const at = src.indexOf('if (isScrolledUp && !opts?.bypassScrollPause)')
@@ -33,7 +34,7 @@ describe('hover hold and the "N new" button', () => {
   })
 
   test('the hold flag is shared, not private to the scroll wiring', () => {
-    expect(src).toMatch(/\n {2}let hoverHeld = false/)
+    expect(src).toMatch(/\nlet hoverHeld = false/)
     expect(src).not.toMatch(/\n {6}let hoverHeld = false/)
   })
 })

@@ -6,9 +6,10 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const src = (f) => readFileSync(join(import.meta.dir, '..', 'src', f), 'utf8')
-const main = src('multichat/main.js')
+const main = mainSource()
 const css = src('multichat/styles/17-platform-position.css')
 
 describe('youtube owns the chat', () => {

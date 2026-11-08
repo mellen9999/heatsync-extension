@@ -6,8 +6,9 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { hsLiveChannelEntry, streamEventPlatform, streamEventUrl } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
-const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 
 describe('streamEventPlatform', () => {
   test('youtube / yt / kick map through, anything else is twitch', () => {

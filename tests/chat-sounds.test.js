@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { compileFilterRules, evaluateFilterRules } from '../src/multichat/filter-rules.js'
+import { mainSource } from './main-src.js'
 
 /**
  * Chat sounds: presets or a picked audio file, per-rule volume, one rate limit.
@@ -736,7 +737,7 @@ describe('mentions.js wiring', () => {
   })
 
   test('main.js wires the three appliers; the file goes only when its name is emptied', () => {
-    const main = read('src', 'multichat', 'main.js')
+    const main = mainSource()
     expect(main).toContain('mentionPing: (v) => previewMentionSound(v)')
     expect(main).toContain('mentionSoundPick: (v) => previewMentionSound(undefined, v)')
     expect(main).toContain('mentionSoundFile: (v) => v || sfxRemove(SFX_MENTION_KEY)')
@@ -746,7 +747,7 @@ describe('mentions.js wiring', () => {
 
   test('all three chat handlers hand the player the whole verdict', () => {
     for (const f of ['main.js', 'social.js']) {
-      const src = read('src', 'multichat', f)
+      const src = f === 'main.js' ? mainSource() : read('src', 'multichat', f)
       expect(src).not.toMatch(/playFilterRuleSound\(_fr\w+\.sound\)/)
       expect(src).toMatch(/playFilterRuleSound\(_fr(Tw|Ki|Yt)\)/)
     }

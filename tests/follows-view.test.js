@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 const rd = (f) => readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')
 const F = new Function(
@@ -38,7 +39,7 @@ describe('follows view', () => {
     expect(F.followsWatchUrl({ platform: 'kick', username: 'x' })).toBe('https://kick.com/x')
   })
   test('wired: snapshot feeds it, a key opens it', () => {
-    const main = rd('main.js')
+    const main = mainSource()
     expect(main).toContain('followsSet(snapshot)')
     expect(main).toContain("registerOverlayKey('f', () => openFollowsView())")
     expect(main).toContain('followsKeyHandler')

@@ -35,8 +35,9 @@ import {
   visualNowOrd,
 } from '../src/lib/utils.js'
 import { CircularBuffer } from '../src/multichat/irc.js'
+import { mainSource } from './main-src.js'
 
-const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 const SOCIAL_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'social.js'), 'utf8')
 
 function sliceBetween(src, startMarker, endMarker) {
@@ -49,7 +50,7 @@ function sliceBetween(src, startMarker, endMarker) {
 
 // ── mergeSortedRuns / fairMerge / byTimeStable / stableMsgId (main.js) ──────
 
-const mergeSrc = sliceBetween(MAIN_SRC, 'function mergeSortedRuns(runs) {', '\n  function msgKeyOf(m) {')
+const mergeSrc = sliceBetween(MAIN_SRC, 'function mergeSortedRuns(runs) {', '\nfunction msgKeyOf(m) {')
 
 function loadMerge({ domRenderCap = 500, devBuild = true } = {}) {
   const build = new Function(

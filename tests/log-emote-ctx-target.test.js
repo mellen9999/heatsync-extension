@@ -1,5 +1,6 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 const src = readFileSync(new URL('../src/multichat/input.js', import.meta.url), 'utf8')
 
@@ -16,7 +17,7 @@ test('a lone zero-width log emote stays interactive (zw only on a real overlay)'
 })
 
 test('same-name log emotes join the cross-highlight / block / flash set', () => {
-  const m = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+  const m = mainSource()
   const q = m.slice(m.indexOf('function queryEmoteWrappers'), m.indexOf('function trimChildren'))
   expect(q).toMatch(/hs-card-log-body img\[alt=/)
   expect(q).toMatch(/hs-cl-emote\[alt=/)
@@ -37,7 +38,7 @@ test('a card still opens anonymously when the stored heatsync token is rejected 
 })
 
 test('zebra: zebraOfInsert walks past the embed player to the real previous row', () => {
-  const main = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+  const main = mainSource()
   const fn = main.slice(main.indexOf('function zebraOfInsert'), main.indexOf('// ─── Multistream auto-detect'))
   expect(fn).toMatch(/while \(\s*prevDiv &&\s*\(prevDiv\.id === 'hs-mc-embed-player'/)
   expect(fn).toMatch(/prevDiv = prevDiv\.previousElementSibling/)
@@ -68,7 +69,7 @@ test("blocked card-line emote: the pinned size out-ranks the card's width:auto !
 
 test('whispers and inline dms resolve channel emotes via the all-channels map', () => {
   for (const f of ['whispers.js', 'main.js']) {
-    const t = readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')
+    const t = f === 'main.js' ? mainSource() : readFileSync(new URL(`../src/multichat/${f}`, import.meta.url), 'utf8')
     expect(t).toMatch(/processEmotes\(escapeHtml\(m\.text\), null, hsAnyChannelEmotes\(\)/)
   }
 })
@@ -82,7 +83,7 @@ test('kick no-channel pages lift the top bar out of the squeezed body', () => {
 })
 
 test('event row click opens the channel on its live tab, not the last active tab', () => {
-  const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+  const src = mainSource()
   expect(src).toMatch(/window\.open\(streamEventUrl\(evtPlat, ch\)/)
   expect(src).toMatch(/location\.hash === '#hs-live'\) \{\s*_savedActiveTab = 'live'/)
   expect(src).toMatch(
@@ -96,7 +97,7 @@ test('live tabs reserve room for the live dot so the unread count never sits und
 })
 
 test('a row inserted mid-list restripes everything after it', () => {
-  const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+  const src = mainSource()
   expect(src).toMatch(/function zebraRepaint\(msgsEl, from\)/)
   expect(src).toMatch(/if \(after\) zebraFrom = zebraFrom || div/)
   expect(src).toMatch(/if \(zebraFrom\) zebraRepaint\(msgsEl, zebraFrom\)/)

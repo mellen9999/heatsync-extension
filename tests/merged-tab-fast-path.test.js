@@ -20,9 +20,10 @@ import { afterAll, beforeAll, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { ordOf, sortedInsert } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
 const ROOT = join(import.meta.dir, '..')
-const MAIN_SRC = readFileSync(join(ROOT, 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 const MT_SRC = readFileSync(join(ROOT, 'src', 'multichat', 'merged-tab.js'), 'utf8')
 
 function sliceBetween(src, a, b) {
@@ -32,7 +33,7 @@ function sliceBetween(src, a, b) {
   return src.slice(s, e)
 }
 
-const mergeSrc = sliceBetween(MAIN_SRC, 'function mergeSortedRuns(runs) {', '\n  function msgKeyOf(m) {')
+const mergeSrc = sliceBetween(MAIN_SRC, 'function mergeSortedRuns(runs) {', '\nfunction msgKeyOf(m) {')
 function loadMerge(cap) {
   return new Function(
     'ordOf',
@@ -365,7 +366,7 @@ describe('mergedTabSources: one resolver for the render and the gate', () => {
 })
 
 describe('wiring in main.js', () => {
-  const append = sliceBetween(MAIN_SRC, '  function appendMessage(msg, tabId) {', '  // Render epoch')
+  const append = sliceBetween(MAIN_SRC, 'function appendMessage(msg, tabId) {', '// Render epoch')
   test('a merged tab asks the gate before appending, and the render otherwise', () => {
     expect(append).toMatch(/const merged = isMultiPlatformTab\(tabId\)/)
     expect(append).toMatch(/if \(merged && !mtCanAppend\(msg, tabId, _ff\.dups\)\) \{\s*scheduleMergedRender\(\)/)

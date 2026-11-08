@@ -4,8 +4,10 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const src = (f) => readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
+const src = (f) =>
+  f === 'main.js' ? mainSource() : readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
 const emotes = src('emotes.js')
 const tabs = src('platform-tabs.js')
 const css = src('styles/17-platform-position.css')
@@ -90,9 +92,7 @@ describe('cold list first paint', () => {
     expect(main).toContain('growFirstPaint(id)')
     expect(main).toContain('toRender = toRender.slice(-_cap)')
     // the half-filled list must be whole before snapshotTabState caches it (a restore only appends)
-    expect(main.indexOf('finishFirstPaint()\n    flushHeldOlder()\n    snapshotTabState(currentTab)')).toBeGreaterThan(
-      -1,
-    )
+    expect(main.indexOf('finishFirstPaint()\n  flushHeldOlder()\n  snapshotTabState(currentTab)')).toBeGreaterThan(-1)
     // a tab back from the cache mounts only the newest rows; the older ones return in chunks, and the
     // whole-list diff and the cache snapshot both put them back first
     expect(main).toContain('holdOlderRows(tabId, cache.frag)')

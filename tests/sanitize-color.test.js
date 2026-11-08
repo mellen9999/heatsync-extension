@@ -28,8 +28,9 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { boostReadability } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
-const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 
 function sliceBetween(startMarker, endMarker) {
   const s = MAIN_SRC.indexOf(startMarker)
@@ -47,7 +48,7 @@ const colorReDecl = sliceBetween('const COLOR_RE = ', '\n')
 // above sanitizeColor, plus the function body itself.
 const sanitizeColorSrc = sliceBetween(
   'let _colorCacheReadable = readableNamesEnabled',
-  '\n  // Get platform overrides for the current live channel',
+  '\n// Get platform overrides for the current live channel',
 )
 
 /** Fresh instance per call — each test gets its own `_colorCache` Map so

@@ -7,13 +7,14 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 
 function sliceFn(name) {
   const s = MAIN_SRC.indexOf(`function ${name}(`)
   if (s === -1) throw new Error(`function not found: ${name}`)
-  return MAIN_SRC.slice(s, MAIN_SRC.indexOf('\n  }\n', s) + 4)
+  return MAIN_SRC.slice(s, MAIN_SRC.indexOf('\n}\n', s) + 3)
 }
 
 const NO_ZEBRA = new Set(['stream-event', 'feed-post', 'inline-dm', 'moment', 'cmd-receipt', 'automod-hold'])

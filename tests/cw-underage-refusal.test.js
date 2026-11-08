@@ -1,10 +1,11 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 // an under-18 account (or one with no birth year) is refused by the server's
 // age-verify; the toggle must roll back and show the server's reason, not the
 // generic "try again" save-failed toast
-const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const src = mainSource()
 
 test('age-verify refusal rolls back declined and surfaces the server reason', () => {
   const at = src.indexOf("av?.code === 'AGE_REQUIRED'")

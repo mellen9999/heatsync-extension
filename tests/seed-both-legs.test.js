@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { mcHealEntries, mcMergeLegs, mcSeedAdoptLegs } from '../src/multichat/seed-legs.js'
+import { mainSource } from './main-src.js'
 
 const reply =
   (body, ok = true) =>
@@ -67,7 +68,7 @@ describe('storage merge never loses a leg', () => {
   })
 })
 
-const src = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const src = mainSource()
 
 describe('wiring', () => {
   test('seed calls the adopt probe and save merges legs', () => {

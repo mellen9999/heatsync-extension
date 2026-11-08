@@ -2,6 +2,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const rd = (...p) => readFileSync(join(import.meta.dir, '..', ...p), 'utf8')
 const view = rd('src/multichat/img-view.js')
@@ -18,7 +19,7 @@ describe('img tag peek', () => {
     expect(held).not.toContain("createElement('img')")
   })
   test('the row stamps the flags on the tag and no underline or pointer', () => {
-    const main = rd('src/multichat/main.js')
+    const main = mainSource()
     expect(main).toContain('data-cats=')
     expect(main).not.toContain('style="text-decoration:underline"${mediaSrc')
     expect(rd('src/multichat/styles/24-img-view.css')).not.toMatch(/hs-feed-media-tag\[data-src\] \{\s*cursor/)

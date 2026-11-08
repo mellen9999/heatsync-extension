@@ -14,6 +14,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'social.js'), 'utf8')
 
@@ -74,13 +75,13 @@ describe('buildFeedInlineNotif media tag', () => {
     })
     test('text only has none; the main.js row wires data-src', () => {
       expect(src()).toBeNull()
-      const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+      const main = mainSource()
       expect(main).toContain('mediaSrc: m.mediaSrc')
       expect(main).toContain('data-src=')
     })
   })
   test('the main.js row carries it through the saved shape', () => {
-    const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+    const main = mainSource()
     expect(main).toContain('mediaTag: m.mediaTag')
     expect(main).toContain('hs-feed-media-tag')
   })

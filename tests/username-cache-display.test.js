@@ -13,8 +13,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 const start = MAIN_SRC.indexOf('const usernameCache = new Set()')
 const end = MAIN_SRC.indexOf('// Username → color map for @mention coloring')
 if (start === -1 || end === -1 || end <= start) throw new Error('addUsername carve markers not found')

@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 // 7TV emote add/remove notices must outlive reloads: a week of storage, a
 // timed dupe check (not text-only), and a cap that sheds ordinary events first.
-const SRC = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const SRC = mainSource()
 const a = SRC.indexOf('const STREAM_EVENTS_MAX')
 const b = SRC.indexOf('let streamEventsLoaded')
 const c = SRC.indexOf('const isEmoteEvent')

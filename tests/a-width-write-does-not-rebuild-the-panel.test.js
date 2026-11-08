@@ -1,8 +1,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 
 describe('the column watcher rebuilds only for twitch', () => {
   test('a style-only mutation (our own width write) skips ensureUIElements + renderMessages', () => {

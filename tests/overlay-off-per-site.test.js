@@ -7,9 +7,10 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const root = join(import.meta.dir, '..')
-const main = readFileSync(join(root, 'src', 'multichat', 'main.js'), 'utf8')
+const main = mainSource()
 const early = readFileSync(join(root, 'chrome', 'early-layout.js'), 'utf8')
 const schema = readFileSync(join(root, 'src', 'lib', 'settings-schema.js'), 'utf8')
 

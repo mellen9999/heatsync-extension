@@ -18,8 +18,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const main = mainSource()
 const bg = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
 
 describe('rAF starvation guard (inverse visibility wedge)', () => {

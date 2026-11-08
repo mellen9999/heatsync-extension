@@ -1,10 +1,11 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { mainSource } from './main-src.js'
 
 // a built-in tab (feed, live, add…) is not a twitch login: rendering it must not ask twitch
 // "is the viewer a mod of feed" (an extra gql call, and its answer cached forever)
 const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8')
-const main = read('../src/multichat/main.js')
+const main = mainSource()
 const registry = read('../src/multichat/tab-registry.js')
 
 const a = main.indexOf('// Pre-fetch isMod for the active channel')

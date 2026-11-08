@@ -15,10 +15,11 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
-const start = SRC.indexOf('  function injectInlineNotif(notifType, msg, opts = {}) {')
-const end = SRC.indexOf('\n  // Font family + size')
+const SRC = mainSource()
+const start = SRC.indexOf('function injectInlineNotif(notifType, msg, opts = {}) {')
+const end = SRC.indexOf('\n// Font family + size')
 const fnSrc = SRC.slice(start, end)
 
 function harness({ currentTab = 'chanA' } = {}) {

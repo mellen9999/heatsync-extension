@@ -35,8 +35,9 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { escapeHtml, outsideTags } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
-const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 
 function sliceBetween(marker, endMarker) {
   const start = MAIN_SRC.indexOf(marker)
@@ -49,12 +50,12 @@ function sliceBetween(marker, endMarker) {
 // Real source of both the stopword list and the highlighter, evaluated against
 // stubs for the surrounding overlay state.
 const STOPWORDS_SRC = sliceBetween(
-  '  const BARE_MENTION_STOPWORDS = new Set(',
-  '  // Highlight @mentions and bare known usernames',
+  'const BARE_MENTION_STOPWORDS = new Set(',
+  '// Highlight @mentions and bare known usernames',
 )
 const HIGHLIGHT_SRC = sliceBetween(
-  '  function highlightMentionsInHtml(html, platform) {',
-  '\n  // DOM-node twin of highlightHashtagsInHtml',
+  'function highlightMentionsInHtml(html, platform) {',
+  '\n// DOM-node twin of highlightHashtagsInHtml',
 )
 
 function makeHighlighter({ colors = [], spoke = [] } = {}) {

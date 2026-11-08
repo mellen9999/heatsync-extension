@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 /**
  * The pinned bar (pin-bar.js): renders from the GET, follows live pin_set /
@@ -13,7 +14,7 @@ const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8')
 const SRC = ['x-glyph.js', 'pin-bar.js'].map((f) => read('src', 'multichat', f)).join('\n')
 const BG = read('chrome', 'background.js')
 const INPUT = read('src', 'multichat', 'input.js')
-const MAIN = read('src', 'multichat', 'main.js')
+const MAIN = mainSource()
 const BUILD = read('build.js')
 const EN = JSON.parse(read('src', '_locales', 'en', 'messages.json'))
 

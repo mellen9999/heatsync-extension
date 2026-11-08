@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { isPaintLookupSafeId } from '../src/lib/paint-spec.js'
 import { escapeHtml } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
 // A went-live / switch row names the streamer like a chat row: colour, paint
 // and the third-party badges keyed to the twitch id chat already resolved.
@@ -97,12 +98,12 @@ describe('stream-event streamer name', () => {
     }
   })
   test('the row looks an unheard streamer up and marks it for late badges', () => {
-    const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+    const main = mainSource()
     expect(main).toContain('resolve: !isYtEvent')
     expect(main).toContain('data-hs-nbadge')
   })
   test('the row puts the badges before the name', () => {
-    const main = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+    const main = mainSource()
     expect(main).toContain('evtBadges +')
   })
 })

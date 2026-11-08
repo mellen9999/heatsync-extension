@@ -48,6 +48,7 @@ import { join } from 'node:path'
 import * as mods from '../src/lib/modifiers.js'
 import { userKey } from '../src/lib/user-key.js'
 import { escapeHtml, outsideTags } from '../src/lib/utils.js'
+import { mainSource } from './main-src.js'
 
 globalThis.escapeHtml = escapeHtml
 // these transforms skip whole <a>…</a> spans via the shared helper
@@ -86,7 +87,7 @@ const { channelEmoteCaches, emoteCache, processEmotes } = await import('../src/m
 // it can't be imported directly. Extract the exact source text via markers
 // (same eval-harness pattern as tests/background-helpers.test.js) and run it
 // in an isolated scope with its real free-variable dependencies stubbed.
-const MAIN_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 
 function sliceBetween(startMarker, endMarker) {
   const s = MAIN_SRC.indexOf(startMarker)
@@ -98,7 +99,7 @@ function sliceBetween(startMarker, endMarker) {
 
 const highlightSrc = sliceBetween(
   'function highlightMentionsInHtml(html, platform) {',
-  '\n  // DOM-node twin of highlightHashtagsInHtml',
+  '\n// DOM-node twin of highlightHashtagsInHtml',
 )
 
 const { highlightMentionsInHtml } = new Function(

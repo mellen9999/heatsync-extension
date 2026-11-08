@@ -21,11 +21,12 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const ROOT = join(import.meta.dir, '..')
 const INPUT_SRC = readFileSync(join(ROOT, 'src/multichat/input.js'), 'utf8')
 const EMBED_SRC = readFileSync(join(ROOT, 'src/multichat/feed-embed.js'), 'utf8')
-const MAIN_SRC = readFileSync(join(ROOT, 'src/multichat/main.js'), 'utf8')
+const MAIN_SRC = mainSource()
 const BG_SRC = readFileSync(join(ROOT, 'chrome/background.js'), 'utf8')
 
 function sliceFn(src, name) {

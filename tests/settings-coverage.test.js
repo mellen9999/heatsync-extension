@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 /**
  * Does a setting cover what its label says?
@@ -21,7 +22,7 @@ import { join } from 'node:path'
 
 const ROOT = join(import.meta.dir, '..')
 const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8')
-const MAIN = read('src', 'multichat', 'main.js')
+const MAIN = mainSource()
 const SOCIAL = read('src', 'multichat', 'social.js')
 const TOOLBAR = read('src', 'multichat', 'mod-toolbar.js')
 

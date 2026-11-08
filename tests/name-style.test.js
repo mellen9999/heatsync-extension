@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { isPaintLookupSafeId } from '../src/lib/paint-spec.js'
 import { escapeHtml } from '../src/lib/utils.js'
 import { hsUsernameColor } from '../src/multichat/paints.js'
+import { mainSource } from './main-src.js'
 
 // name-style.js leans on bundle globals (build.js concatenates the modules);
 // give it the real ones it can have standalone and a stand-in for the rest.
@@ -66,7 +67,7 @@ describe('hsNameColour', () => {
 
 describe('wiring — every name surface goes through the one helper', () => {
   const dir = join(import.meta.dir, '..', 'src', 'multichat')
-  const src = (f) => readFileSync(join(dir, f), 'utf8')
+  const src = (f) => (f === 'main.js' ? mainSource() : readFileSync(join(dir, f), 'utf8'))
   const uses = {
     'social.js': [
       'feedAuthorLink',

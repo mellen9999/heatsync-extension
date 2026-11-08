@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 /**
  * Where a subsystem switch has to live.
@@ -29,7 +30,7 @@ const ROOT = join(import.meta.dir, '..')
 const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8')
 
 const IRC = read('src', 'multichat', 'irc.js')
-const MAIN = read('src', 'multichat', 'main.js')
+const MAIN = mainSource()
 const SOCIAL = read('src', 'multichat', 'social.js')
 const COSMETICS = read('src', 'multichat', 'cosmetics.js')
 const WHISPERS = read('src', 'multichat', 'whispers.js')
@@ -169,7 +170,7 @@ describe('the gate helper itself', () => {
     // for every caller that runs before the snapshot. loadConfig() was one such
     // caller, 131 lines early, which is how chat-youtube:false still subscribed
     // every saved channel.
-    const fn = body(MAIN, '  function gateAtBoot(id) {', 700)
+    const fn = body(MAIN, 'function gateAtBoot(id) {', 700)
     expect(fn).toContain('if (_gatesAtBoot == null) return isEnabled(id)')
     expect(fn).not.toMatch(/return\s+_gatesAtBoot\?\.\[id\]/)
   })
@@ -185,7 +186,7 @@ describe('the gate helper itself', () => {
   test('the snapshot does not read the un-hydrated settings registry', () => {
     // getSetting() falls back to the schema default — all true — this early,
     // which would be the same silent yes by another route.
-    const fn = body(MAIN, '  async function snapshotGates() {', 700)
+    const fn = body(MAIN, 'async function snapshotGates() {', 700)
     expect(fn).toContain('cachedUiSettings()')
     expect(fn).not.toContain("getSetting('subsystems')")
   })

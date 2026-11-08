@@ -4,6 +4,7 @@ import { SETTINGS } from '../src/lib/settings-schema.js'
 import { RETIRED_UI_KEYS } from '../src/lib/utils.js'
 import { compileFilterRules, evaluateFilterRules } from '../src/multichat/filter-rules.js'
 import { legacyFilterRules, mergeFilterRules } from '../src/multichat/filter-rules-legacy.js'
+import { mainSource } from './main-src.js'
 
 // Four old text filters (automod patterns, automod all-caps, muted words,
 // highlight words) fold into chatFilterRules, once, on load. The engine is
@@ -97,7 +98,7 @@ test('the four filters are gone from the registry and retired', () => {
 })
 
 test('the fold runs after the boot seed, writes the rules before it lets go of the old values', () => {
-  const main = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+  const main = mainSource()
   const fn = main.slice(main.indexOf('async function retireSettings('), main.indexOf('// Registry-derived reset'))
   const write = fn.indexOf('await browser.storage.local.set({ chat_filter_rules: json })')
   const drop = fn.indexOf("browser.storage.local.remove(['hs_mute_keywords', 'keyword_highlights'")

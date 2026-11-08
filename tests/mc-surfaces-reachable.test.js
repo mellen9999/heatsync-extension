@@ -17,6 +17,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { MAIN_PART_FILES, mainSource } from './main-src.js'
 
 const MC = join(import.meta.dir, '..', 'src', 'multichat')
 const read = (f) => readFileSync(join(MC, f), 'utf8')
@@ -88,7 +89,7 @@ describe('openers are shortcuts to a cell, never the door', () => {
     expect(read('channel-mgmt.js')).toMatch(
       /function showEditLivePlatforms\(\) \{[^}]*switchTab\('live', 'platforms'\)/,
     )
-    expect(read('main.js').match(/showEditLivePlatforms\(\)/g).length).toBeGreaterThanOrEqual(2)
+    expect(mainSource().match(/showEditLivePlatforms\(\)/g).length).toBeGreaterThanOrEqual(2)
   })
 
   test('the empty-feed button switches to the discover tab', () => {
@@ -102,7 +103,7 @@ describe('openers are shortcuts to a cell, never the door', () => {
       ['mountLiveStreamSummary', 'stream-stats.js'],
     ]) {
       for (const f of files) {
-        if (f === def || f === 'main.js') continue
+        if (f === def || MAIN_PART_FILES.includes(f)) continue
         expect(read(f), `${f} calls ${fn} itself`).not.toMatch(new RegExp(`(?<!function )\\b${fn}\\(`))
       }
     }
@@ -131,8 +132,8 @@ describe('openers are shortcuts to a cell, never the door', () => {
 
 describe('switching cell inside a tab', () => {
   test('a settings cell change is detected before switchTab records it (else the pane never repaints)', () => {
-    const m = read('main.js')
-    const fast = m.indexOf('applySub(id, nextSub, subOpts)\n      return')
+    const m = mainSource()
+    const fast = m.indexOf('applySub(id, nextSub, subOpts)\n    return')
     const rec = m.indexOf("if (id === 'settings' && nextSub) _setSettingsSubtab(nextSub)")
     expect(fast).toBeGreaterThan(0)
     expect(rec).toBeGreaterThan(fast)
@@ -140,8 +141,8 @@ describe('switching cell inside a tab', () => {
 })
 
 describe('every cell has somewhere to land', () => {
-  const MAIN = read('main.js')
-  const panes = MAIN.match(/const MC_SUB_PANES = \{([\s\S]*?)\n {2}\}\n/)?.[1] || ''
+  const MAIN = mainSource()
+  const panes = MAIN.match(/const MC_SUB_PANES = \{([\s\S]*?)\n\}\n/)?.[1] || ''
 
   test('each non-home channel cell has a pane renderer', () => {
     expect(panes.length).toBeGreaterThan(0)
@@ -165,17 +166,17 @@ describe('no sub-strip on channel tabs, /status is the hub', () => {
   })
 
   test('renderSubRow hides the row when the tab does not show it', () => {
-    expect(read('main.js')).toMatch(/!mcShowsRow\(currentTab\)/)
+    expect(mainSource()).toMatch(/!mcShowsRow\(currentTab\)/)
   })
 
   test('the status pane has a x and links to summary, my logs and platforms', () => {
-    const m = read('main.js')
-    const hub = m.match(/function _paneHub\(ctx\) \{([\s\S]*?)\n {2}\}\n/)?.[1] || ''
+    const m = mainSource()
+    const hub = m.match(/function _paneHub\(ctx\) \{([\s\S]*?)\n\}\n/)?.[1] || ''
     expect(hub).toMatch(/hsXButton\([^\n]*mcLeaveSubPane\)/)
     expect(hub).toMatch(/link\('summary', ctx\.tab, 'summary'\)/)
     expect(hub).toMatch(/link\('my logs', ctx\.tab, 'logs'\)/)
     expect(hub).toMatch(/ctx\.tab === 'live'\) link\('platforms', 'live', 'platforms'\)/)
-    const status = m.match(/status: async \(pane, ctx\) => \{([\s\S]*?)\n {4}\},/)?.[1] || ''
+    const status = m.match(/status: async \(pane, ctx\) => \{([\s\S]*?)\n {2}\},/)?.[1] || ''
     expect(status).toMatch(/_paneHub\(ctx\)/)
     expect(status).toMatch(/pane\.prepend\(hub\)/) // the error state keeps the hub
     expect(status).toMatch(/replaceChildren\(hub, panel\)/)

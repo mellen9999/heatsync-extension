@@ -32,12 +32,13 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
 const ROOT = join(import.meta.dir, '..')
 const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8')
 
 const PCARD_EARLY_SRC = read('chrome', 'pcard-early.js')
-const MAIN = read('src', 'multichat', 'main.js')
+const MAIN = mainSource()
 const CARD = read('src', 'multichat', 'profile-card.js')
 const INPUT = read('src', 'multichat', 'input.js')
 const EMOTES = read('src', 'multichat', 'emotes.js')

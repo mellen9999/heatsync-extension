@@ -5,8 +5,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { mcMergeLegs } from '../src/multichat/seed-legs.js'
+import { mainSource } from './main-src.js'
 
-const SRC = readFileSync(new URL('../src/multichat/main.js', import.meta.url), 'utf8')
+const SRC = mainSource()
 
 function slice(startMarker, endMarker) {
   const s = SRC.indexOf(startMarker)
@@ -17,7 +18,7 @@ function slice(startMarker, endMarker) {
 }
 
 // The union block, lifted verbatim and wrapped in a harness.
-const UNION = slice('const stored = (await browser.storage.local.get(STORAGE_KEY))', '      } catch {}')
+const UNION = slice('const stored = (await browser.storage.local.get(STORAGE_KEY))', '\n    } catch {}')
 
 function run({ mine, theirs, lastPersisted }) {
   const persistable = { channels: [...mine] }

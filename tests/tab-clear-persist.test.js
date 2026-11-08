@@ -5,8 +5,9 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mainSource } from './main-src.js'
 
-const MAIN = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main.js'), 'utf8')
+const MAIN = mainSource()
 
 test('right-click clear stamps tabSeenAt for channel tabs', () => {
   const at = MAIN.indexOf("container.addEventListener('contextmenu'")

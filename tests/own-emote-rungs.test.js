@@ -21,6 +21,7 @@ import { join } from 'node:path'
 import * as mods from '../src/lib/modifiers.js'
 import { EMOTE_TIER_ORDER, resolveEmoteProviderWinner } from '../src/lib/utils.js'
 import { hsEmoteDimAttr, hsOwnCanonicalUrl, hsOwnCopyFallback, hsOwnRungUrl } from './emote-rungs-src.js'
+import './emote-rungs-globals.js'
 
 const CDN = 'https://cdn.heatsync.org/uploads'
 const ORIGIN = 'https://heatsync.org/uploads'
@@ -216,9 +217,6 @@ globalThis.getCurrentChannel = () => 'chan-a'
 globalThis.getLiveChannel = () => 'chan-a'
 globalThis.resolveEmoteProviderWinner = resolveEmoteProviderWinner
 globalThis.EMOTE_TIER_ORDER = EMOTE_TIER_ORDER
-globalThis.hsOwnRungUrl = hsOwnRungUrl
-globalThis.hsEmoteDimAttr = hsEmoteDimAttr
-globalThis.hsOwnCanonicalUrl = hsOwnCanonicalUrl
 
 const { _buildChannelEmoteCache, channelEmoteCaches } = await import('../src/multichat/emotes.js')
 

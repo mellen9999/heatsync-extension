@@ -3,6 +3,7 @@
 import { expect, test } from 'bun:test'
 import * as mods from '../src/lib/modifiers.js'
 import { escapeHtml, unescapeHtml } from '../src/lib/utils.js'
+import './emote-rungs-globals.js'
 
 globalThis.escapeHtml = escapeHtml
 globalThis.unescapeHtml = unescapeHtml

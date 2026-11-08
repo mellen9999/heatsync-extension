@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import * as mods from '../src/lib/modifiers.js'
 import { escapeHtml, unescapeHtml } from '../src/lib/utils.js'
 import { mainSource } from './main-src.js'
+import './emote-rungs-globals.js'
 
 globalThis.escapeHtml = escapeHtml
 globalThis.unescapeHtml = unescapeHtml

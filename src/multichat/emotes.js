@@ -301,7 +301,10 @@ async function mcSearchHsApi(q, signal, opts) {
     // protocol (chip + endpoint param), so the rendered emote stays consistent.
     provider: 'heatsync',
     id: e.id,
-    animated: !!e.animated,
+    // No `animated` here on purpose: the search endpoint reports false for every
+    // upload, animated webp included, so the flag says nothing. Whether a heatsync
+    // file moves is the file's business — deriveStaticEmoteSrc never reads the
+    // flag for these urls (it always proxies a still unless animation is 'always').
   }))
 }
 
@@ -830,7 +833,8 @@ function getHighResUrl(url) {
   if (url.includes('static-cdn.jtvnw.net')) {
     return url.replace('/1.0', '/3.0').replace('/2.0', '/3.0')
   }
-  return url
+  // our own uploads: the chat shows a smaller copy, a tooltip wants the original
+  return hsOwnCanonicalUrl(url)
 }
 
 /**
@@ -3658,6 +3662,8 @@ function _buildChannelEmoteCache(ch, emotes, platform) {
       os: e.os,
       _plat: platform,
       hash: e.hash || undefined,
+      // our own uploads: smaller copies + natural size (emote-rungs.js)
+      ...(source === 'heatsync' ? { variants: e.variants, width: e.width, height: e.height } : null),
       nsfw: !!(e.flags & 65536),
       // heatsync's own scan (weapons/drugs/gore/hate/sexual), stamped on by the
       // background from /api/channel/:c/emotes — the render gate hides the
@@ -4803,7 +4809,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const kickCwCat = _kickCwRaw ? escapeHtml(_kickCwRaw) : ''
       const imgHtmlRaw = kickCwCat
         ? _hsCwBoxHtml(kickCwCat, safeName, _boxW)
-        : `<span class="hs-mc-emote-wrapper hs-state-${state}${nsfwClass}${cropClass}" data-kick-id="${emoteId}" data-emote-name="${safeName}" data-emote-url="${safeUrlAttr}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${wAttr}><img src="${safeSrc}" alt="${safeName}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${safeName}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
+        : `<span class="hs-mc-emote-wrapper hs-state-${state}${nsfwClass}${cropClass}" data-kick-id="${emoteId}" data-emote-name="${safeName}" data-emote-url="${safeUrlAttr}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${wAttr}><img src="${safeSrc}" alt="${safeName}"${hsEmoteDimAttr(cached)} class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${safeName}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
       if (isOverlay && pendingStack) {
         const itemMods = pendingMods.slice()
         const itemHue = pendingHue
@@ -5020,7 +5026,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       const cwCat = _cwRaw ? escapeHtml(_cwRaw) : ''
       const imgHtmlRaw = cwCat
         ? _hsCwBoxHtml(cwCat, displayName, _boxW)
-        : `<span class="hs-mc-emote-wrapper hs-state-${state}${staleClass}${nsfwClass}" data-emote-name="${displayName}" data-emote-url="${imgSrc}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${staleAttr}${wAttr}><img src="${staticSrc}" alt="${displayName}" class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${displayName}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
+        : `<span class="hs-mc-emote-wrapper hs-state-${state}${staleClass}${nsfwClass}" data-emote-name="${displayName}" data-emote-url="${imgSrc}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${staleAttr}${wAttr}><img src="${staticSrc}" alt="${displayName}"${hsEmoteDimAttr(emote)} class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${displayName}" data-state="${state}" data-source="${source}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
 
       // Build the new item — inline-glued suffix mod attaches to THIS emote
       // (e.g. "RainTimew!" → wide RainTime, not wide whatever-was-base).

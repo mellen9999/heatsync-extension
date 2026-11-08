@@ -7373,5 +7373,8 @@
         "content": "$2"
       }
     }
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "لم تُحمَّل صفحة kick في الوقت المناسب"
   }
 }

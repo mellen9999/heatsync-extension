@@ -824,6 +824,7 @@ const HsNotifs = (() => {
         send_failed: t('mc_notif_r_send_failed'),
         kick_not_logged_in: t('mc_notif_r_kick_not_logged_in'),
         no_kick_tab: t('mc_notif_r_no_kick_tab'),
+        kick_bridge_timeout: t('mc_notif_r_kick_bridge_timeout'),
         no_channel: t('mc_notif_r_no_channel'),
         // Deliberately not worded as a failure: kick may well have posted it
         // (see kick-send.js KICK_SEND_TIMEOUT_MS). "retry" here is an informed

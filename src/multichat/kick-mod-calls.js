@@ -26,6 +26,7 @@ function kmFail(res) {
   const err = String(res?.error || '')
   if (err === 'kick_not_logged_in' || err === 'no_kick_tab')
     return { ok: false, view: 'auth', message: t('mc_kms_signin') }
+  if (err === 'kick_bridge_timeout') return { ok: false, view: 'error', message: t('mc_notif_r_kick_bridge_timeout') }
   if (res?.status === 401 || res?.status === 403) return { ok: false, view: 'notmod', message: t('mc_ms_not_mod') }
   if (err === 'no_channel' || err === 'missing params') return { ok: false, view: 'error', message: t('mc_kms_err') }
   return { ok: false, view: 'error', message: err || t('mc_kms_err') }

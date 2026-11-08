@@ -93,13 +93,13 @@ function showKillSwitchBanner(reason, msg) {
 }
 
 async function init() {
-  // BG-created send-bridge tab (#hs-bridge on the live_chat url): stay
-  // completely silent. Booting the multichat here rebound the single
-  // __live_yt_auto__ WS slot to the bridge's videoId (killing the watch
-  // tab's live feed on reconnect) and its popout overlay hid the native
+  // BG-created send-bridge tab (#hs-bridge: the yt live_chat url, kick's
+  // privacy page): stay completely silent. Booting the multichat here rebound
+  // the single __live_yt_auto__ WS slot to the bridge's videoId (killing the
+  // watch tab's live feed on reconnect) and its popout overlay hid the native
   // chat — the tab BG activates for youtube sign-in showed no login UI.
-  // youtube-content.js (the actual relay) runs regardless of this guard.
-  if (hostPlatform === 'yt' && location.hash.includes('hs-bridge')) return
+  // youtube-content.js / content.js (the actual relays) run regardless of this guard.
+  if (location.hash.includes('hs-bridge')) return
   _initMarks = [['init', Math.round(performance.now())]]
   let isPopout = false
   if (hostPlatform === 'yt') {

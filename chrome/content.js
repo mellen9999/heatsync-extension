@@ -162,6 +162,7 @@
     } catch (_) {}
     try {
       chrome.runtime.onMessage.removeListener(_onMessageKickRelay)
+      chrome.runtime.onMessage.removeListener(_onMessageKickPing)
     } catch (_) {}
     try {
       chrome.storage.onChanged.removeListener(_onStorageChanged)
@@ -3692,7 +3693,7 @@
             sendResponse({ ok: false, error: explainKickSendError(r.status, ''), status: r.status, code: null }),
           )
       })
-      // A 10s AbortSignal.timeout beats kick-send.js's own 11s sentinel, so the
+      // A 10s AbortSignal.timeout beats kick-send.js's own 30s sentinel, so the
       // abort — not the sentinel — is what sendKickMessage sees. Normalize it to
       // the literal 'timeout' so it hits the no-auto-retry path (the POST may
       // already be live in chat; retrying would double-post). Other errors keep
@@ -3869,6 +3870,19 @@
   if (window.location.hostname.includes('kick.com')) {
     chrome.runtime.onMessage.removeListener(_onMessageKickModRelay)
     chrome.runtime.onMessage.addListener(_onMessageKickModRelay)
+  }
+
+  // Kick bridge ready signal. background opens a hidden kick.com tab when a send
+  // has none to ride and polls this until it answers. Registered AFTER the three
+  // relay listeners above, in the same synchronous pass, so an answer means send,
+  // chat-mode and mod relays are all listening.
+  function _onMessageKickPing(message, _sender, sendResponse) {
+    if (message.type !== 'kick_bridge_ping') return
+    sendResponse({ ok: true })
+  }
+  if (window.location.hostname.includes('kick.com')) {
+    chrome.runtime.onMessage.removeListener(_onMessageKickPing)
+    chrome.runtime.onMessage.addListener(_onMessageKickPing)
   }
 
   // Debounce reprocessing so rapid emote updates only trigger one pass

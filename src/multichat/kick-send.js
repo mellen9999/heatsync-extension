@@ -3,8 +3,16 @@
 const kickChannelIdCache = new Map()
 const KICK_CHANNEL_ID_CACHE_MAX = 200
 
-// Failures we never retry — they're user-actionable, not transient.
-const KICK_FATAL_SEND_ERRORS = new Set(['no_channel', 'no_kick_tab', 'kick_not_logged_in', 'missing params'])
+// Failures we never retry — they're user-actionable, not transient. A bridge tab
+// that never answered already waited its full window; the toast's retry is the
+// user's call, not three more silent waits.
+const KICK_FATAL_SEND_ERRORS = new Set([
+  'no_channel',
+  'no_kick_tab',
+  'kick_bridge_timeout',
+  'kick_not_logged_in',
+  'missing params',
+])
 
 // Exceeds the relay POST's own AbortSignal.timeout (10s in content.js
 // kick_send_relay) so a timeout here means the POST is done waiting too.
@@ -16,7 +24,13 @@ const KICK_FATAL_SEND_ERRORS = new Set(['no_channel', 'no_kick_tab', 'kick_not_l
 // post. This used to auto-retry on the claim that outwaiting the abort made
 // the first attempt "dead"; it doesn't, and the guarantee was fiction. A
 // timeout now returns unconfirmed and stops, and the user decides.
-const KICK_SEND_TIMEOUT_MS = 11000
+//
+// Sized for the cold path too: with no kick tab open background opens a hidden
+// one and waits for its page (up to 9s, twice if the user closes it mid-wait)
+// BEFORE the 10s POST starts. A sentinel under that sum would call a send that
+// is still on its way "unconfirmed". Background answers long before this on every
+// normal path — it only fires if the service worker itself went away.
+const KICK_SEND_TIMEOUT_MS = 30000
 const KICK_SEND_RETRY_BACKOFF_MS = [750, 1500]
 
 async function resolveKickChannelId(slug) {
@@ -181,7 +195,11 @@ async function setKickChatMode(slug, mode, value) {
   }
   if (!chatroomId) return { ok: false, error: 'kick chatroom not found' }
   const resp = await safeSendMessage({ type: 'kick_set_chat_mode', chatroomId, body })
-  if (!resp?.ok) return { ok: false, error: resp?.error || 'kick_set_failed' }
+  if (!resp?.ok) {
+    // the toast shows this text as is — a relay code gets its words here
+    const words = { kick_bridge_timeout: 'mc_notif_r_kick_bridge_timeout', no_kick_tab: 'mc_notif_r_no_kick_tab' }
+    return { ok: false, error: (words[resp?.error] && t(words[resp.error])) || resp?.error || 'kick_set_failed' }
+  }
   // Confirm against the row kick echoed back. A 200 alone proves nothing — the
   // 422 that caught the nested-body guess returned no change at all.
   if (!kickChatModeMatches(mode, value, resp.row)) {

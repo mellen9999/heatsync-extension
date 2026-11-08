@@ -2,6 +2,52 @@
 // build.js concatenates src/background/* in BG_PARTS order into background.js (the service worker cannot import);
 // one scope, so a later part may read an earlier part's constants, never the reverse.
 
+// The channel-owner lookup. The same login is three different people across
+// platforms (a twitch "ninja" is not a kick "ninja"), so the route is told which
+// platform's channel this is; the bare-name form has to guess. A platform it has no
+// word for (never expected) sends no param — the guess, as before.
+function channelOwnerEmotesUrl(channelName, platform) {
+  const p = canonPlatform(platform)
+  const q = p === 'twitch' || p === 'kick' || p === 'youtube' ? `?platform=${p}` : ''
+  return withNsfwParam(`${API_URL}/api/emotes/user/${encodeURIComponent(channelName)}${q}`)
+}
+
+// A channel-owner emote off the wire, kept to what render uses. `variants` (the
+// smaller copies of the file) and width/height (the natural size — lets the chat
+// reserve the emote's box before the file arrives) are optional: a server that
+// sends neither yields exactly the {name,url,hash,provider} record this has
+// always been. Everything is bounded here and re-checked where it is used
+// (multichat emote-rungs.js), so a bad payload costs a missing optimisation,
+// never a wrong picture.
+//   variants  list ["1x","2x",...]  or  object {"1x": url, "2x": url, ...}
+function mapChannelOwnerEmote(e) {
+  const out = {
+    name: e.name,
+    url: absUrl(e.url),
+    hash: e.hash || e.name,
+    provider: e.provider || 'upload',
+  }
+  const v = e.variants
+  if (Array.isArray(v)) {
+    const rungs = v.filter((r) => typeof r === 'string' && /^[1-4]x$/.test(r)).slice(0, 4)
+    if (rungs.length) out.variants = rungs
+  } else if (v && typeof v === 'object') {
+    const rungs = {}
+    for (const r of ['1x', '2x', '3x', '4x']) {
+      const u = typeof v[r] === 'string' ? absUrl(v[r]) : null
+      if (u && u.length <= 300 && EMOTE_CDN_PATTERN.test(u)) rungs[r] = u
+    }
+    if (Object.keys(rungs).length) out.variants = rungs
+  }
+  const w = Number(e.width)
+  const h = Number(e.height)
+  if (Number.isInteger(w) && Number.isInteger(h) && w > 0 && h > 0 && w <= 4096 && h <= 4096) {
+    out.width = w
+    out.height = h
+  }
+  return out
+}
+
 // Fetch channel owner's emotes (public API) + third-party channel emotes
 async function fetchChannelOwnerEmotes(channelName, channelId = null, platform = 'twitch') {
   const key = chKey(platform, channelName)
@@ -46,9 +92,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     // lookupTwitchUserId for a Kick/YouTube channelName, that's a cross-platform
     // identity bleed (wrong user's emotes/cosmetics attached to this channel).
     const [heatsyncResult, resolvedChannelId] = await Promise.all([
-      fetchWithTimeout(withNsfwParam(`${API_URL}/api/emotes/user/${encodeURIComponent(channelName)}`)).catch(
-        () => null,
-      ),
+      fetchWithTimeout(channelOwnerEmotesUrl(channelName, platform)).catch(() => null),
       platform === 'twitch' && !channelId
         ? lookupTwitchUserId(channelName)
         : platform === 'youtube' && !/^UC[\w-]{20,}$/i.test(String(channelId || ''))
@@ -71,12 +115,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
       // heatsyncEmotes stays [] (default); flow continues to third-party tasks
     } else if (heatsyncResult?.ok) {
       const data = await heatsyncResult.json()
-      heatsyncEmotes = (data.emotes || []).map((e) => ({
-        name: e.name,
-        url: absUrl(e.url),
-        hash: e.hash || e.name,
-        provider: e.provider || 'upload',
-      }))
+      heatsyncEmotes = (data.emotes || []).map(mapChannelOwnerEmote)
     }
     channelId = resolvedChannelId
 
@@ -424,6 +463,7 @@ async function fetch7TVEmotes() {
     }
 
     const data = await response.json()
+    stvCheckShape('global', data)
     const emotes = sanitizeEmoteList(
       (data?.emotes || []).map((e) => ({
         name: e.name,
@@ -440,6 +480,7 @@ async function fetch7TVEmotes() {
     } catch {}
     return emotes
   } catch (_error) {
+    stvCheckParse('global', _error)
     return []
   }
 }
@@ -757,6 +798,8 @@ function ensure7TVConnection() {
       seventvLastData = Date.now()
       try {
         const message = JSON.parse(event.data)
+        const frameProblem = stvEnvelopeProblem(message)
+        if (frameProblem) stvCanary('stv-canary:schema', 'events', frameProblem)
 
         if (message.op === 0) {
           // Dispatch event
@@ -789,6 +832,7 @@ function ensure7TVConnection() {
           log(' 7TV EventAPI: Subscription acknowledged:', subType, 'for', subId?.slice(0, 12))
         }
       } catch (err) {
+        stvCheckParse('events', err)
         console.error('[heatsync] 7TV EventAPI: Parse error:', err)
       }
     }
@@ -986,6 +1030,7 @@ async function capture7TVPersonalEntitlement(body) {
     const res = await fetchWithTimeout(`https://7tv.io/v3/emote-sets/${setId}`)
     if (!res.ok) return
     const data = await res.json()
+    stvCheckShape('set', data)
     const out = {}
     for (const e of data?.emotes || []) {
       if (!e?.name || !e?.id) continue
@@ -1370,9 +1415,48 @@ function bttvRoomToKey(room) {
   return null
 }
 
+// BTTV Pro PERSONAL emotes. BTTV has no per-user lookup endpoint to ask (its
+// REST answers /3/cached/users/<provider>/<id> with the CHANNEL set only): a Pro
+// user's personal set reaches other clients as one `lookup_user` push on this
+// socket, sent when that user's own client announces itself in a room we have
+// joined. So this is push-only, and coverage is whoever has announced while we
+// were listening — a Pro chatter we have not heard yet renders as text, exactly
+// as before. Captured per twitch id and merged into get_sender_emotes beside the
+// 7tv personal sets (the same cross-user pipeline).
+//   { name, providerId, channel: 'twitch:<room>', pro, emotes: [{ id, code, animated, width, height, … }] }
+const bttvPersonalSets = new Map() // twitch uid -> { name: emoteData }
+function captureBTTVPersonalSet(data) {
+  // a twitch room's announcement is a twitch user's (BTTV also serves youtube)
+  if (!String(data?.channel || '').startsWith('twitch:')) return
+  const uid = String(data.providerId || '')
+  if (!/^\d{1,20}$/.test(uid) || !Array.isArray(data.emotes)) return
+  const out = {}
+  for (const e of data.emotes.slice(0, 100)) {
+    // same id and name bounds the channel emotes get (emote_create above)
+    if (!e || typeof e.id !== 'string' || !/^[a-f0-9]{24}$/i.test(e.id)) continue
+    if (typeof e.code !== 'string' || !e.code || e.code.length > 100) continue
+    out[e.code] = {
+      url: `https://cdn.betterttv.net/emote/${e.id}/1x.webp`,
+      source: 'bttv',
+      state: 'global',
+      zeroWidth: false,
+      hash: e.id,
+      animated: e.animated === true,
+      os: bttvOversize(e),
+    }
+  }
+  // an announcement with no emotes is the user dropping their set
+  if (Object.keys(out).length) {
+    bttvPersonalSets.set(uid, out)
+    if (bttvPersonalSets.size > 2000) bttvPersonalSets.delete(bttvPersonalSets.keys().next().value)
+    log(' BTTV Live: personal set captured for', uid, '—', Object.keys(out).length, 'emotes')
+  } else if (!bttvPersonalSets.delete(uid)) return
+  // a sender's emotes are cached for minutes — drop this one so the next message sees the change
+  globalThis.__senderEmoteCache?.delete?.(`twitch:${uid}`)
+}
+
 function handleBTTVSocketEvent(name, data) {
-  // lookup_user (BTTV Pro personal emotes/badges) deliberately unhandled —
-  // personal-emote rendering is a separate cross-user pipeline.
+  if (name === 'lookup_user') return captureBTTVPersonalSet(data)
   if (name !== 'emote_create' && name !== 'emote_delete' && name !== 'emote_update') return
   const key = bttvRoomToKey(String(data.channel || ''))
   if (!key) return
@@ -1670,9 +1754,13 @@ async function poll7TVEmoteSet() {
       }
       if (!response.ok) continue
       const data = await response.json()
+      // A user answer the parser cannot read means "no emotes" below — and the diff
+      // after it would then call every emote removed. Record it and sit this one out.
+      if (stvCheckShape('user', data)) continue
 
       const emoteSet = await resolve7TVEmoteSet(data)
       if (!emoteSet?.emotes) continue
+      if (stvCheckShape('set', emoteSet)) continue
 
       // Check if emote set ID changed (user recreated their set)
       const knownSetId = seventvEmoteSetIds.get(key)

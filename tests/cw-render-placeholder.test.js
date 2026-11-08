@@ -15,6 +15,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { escapeHtml, unescapeHtml } from '../src/lib/utils.js'
+import { hsEmoteDimAttr } from './emote-rungs-src.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'emotes.js'), 'utf8')
 
@@ -50,6 +51,7 @@ const renderEmoteHtml = new Function(
   'getSetting',
   'isViewerEmote',
   'emoteIsBlocked',
+  'hsEmoteDimAttr',
   // emoteFromInv is declared upstream of the carved slice in processEmotes
   // (provenance flag for data-inv); default false here — attribution has its
   // own coverage in emote-inventory-gate.test.js.
@@ -78,6 +80,7 @@ function render(word, emote, overrides = {}) {
     (name, e) =>
       (overrides.blocked || new Set()).has(name) ||
       !!(e?.hash && (overrides.blockedHashes || new Set()).has(String(e.hash))),
+    hsEmoteDimAttr,
   )
 }
 
@@ -165,5 +168,34 @@ describe('processEmotes — own emotes honor the owner cw toggles (cwCats)', () 
   test('unknown category never hides (forward-compat)', () => {
     const html = render('Odd', { url: URL, state: 'owned', cwCats: ['newcat'] }, { getSetting: () => false })
     expect(html).toContain('<img')
+  })
+})
+
+describe("processEmotes — the box is reserved from the emote's natural size", () => {
+  const imgTag = (html) => html.match(/<img [^>]*>/)[0]
+
+  test('an emote with a measured size carries width + height on its img', () => {
+    const html = render('Wide', { url: URL, state: 'channel', source: 'heatsync', width: 256, height: 64 })
+    expect(imgTag(html)).toContain(' width="256" height="64"')
+  })
+
+  test('no measured size → no attributes, exactly the img it always was', () => {
+    const html = render('Plain', { url: URL, state: 'channel', source: 'heatsync' })
+    expect(imgTag(html)).not.toContain('width=')
+    expect(imgTag(html)).not.toContain('height=')
+  })
+
+  test('a half-known or hostile size is dropped, never written into the markup', () => {
+    for (const bad of [
+      { width: 256 },
+      { width: 0, height: 64 },
+      { width: '256" onerror="x', height: 64 },
+      { width: 256.5, height: 64 },
+      { width: 99999, height: 64 },
+    ]) {
+      const html = render('Bad', { url: URL, state: 'channel', source: 'heatsync', ...bad })
+      expect(imgTag(html)).not.toContain('width=')
+      expect(imgTag(html)).not.toContain('onerror')
+    }
   })
 })

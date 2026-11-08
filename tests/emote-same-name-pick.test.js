@@ -11,6 +11,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import * as mods from '../src/lib/modifiers.js'
 import { escapeHtml, unescapeHtml } from '../src/lib/utils.js'
+import './emote-rungs-globals.js'
 
 // ── source order ─────────────────────────────────────────────────────────────
 

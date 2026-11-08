@@ -7390,5 +7390,8 @@
         "content": "$2"
       }
     }
+  },
+  "mc_notif_r_kick_bridge_timeout": {
+    "message": "kick page did not load in time"
   }
 }

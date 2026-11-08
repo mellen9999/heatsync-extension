@@ -17,7 +17,7 @@ import { describe, expect, test } from 'bun:test'
 import { bgSource } from './bg-src.js'
 
 const BG_SRC = bgSource()
-const start = BG_SRC.indexOf('const ytBridgeTabs = new Map()')
+const start = BG_SRC.indexOf('const TAB_BRIDGE_MARK')
 const end = BG_SRC.indexOf('// ========== COSMETICS', start)
 const CARVED = BG_SRC.slice(start, end)
 

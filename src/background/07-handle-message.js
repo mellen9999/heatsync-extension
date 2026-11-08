@@ -1478,11 +1478,6 @@ async function handleMessage(message, sender, sendResponse) {
         }
         // Bearer required since kick's 2026-07 auth change (see sendKickMessageViaTab)
         const session = await browser.cookies.get({ url: 'https://kick.com', name: 'session_token' })
-        const tabs = await browser.tabs.query({ url: '*://*.kick.com/*' })
-        if (!tabs || tabs.length === 0) {
-          sendResponse({ ok: false, error: 'no_kick_tab' })
-          return
-        }
         // For delete we need the chatroomId — resolve once per slug, cached.
         let chatroomId = null
         if (action === 'delete') {
@@ -1535,44 +1530,28 @@ async function handleMessage(message, sender, sendResponse) {
         // Prefer a tab actually on the target channel (most likely live + the
         // relevant session) over an arbitrary kick.com tab. The API call is
         // slug-parameterized and cookie-authed so any logged-in kick tab CAN
-        // execute it, but a frozen/unrelated tab is a worse bet. Then walk the
-        // health-ranked rest — a discarded/stale tab throws "Receiving end does
-        // not exist" instantly, so retrying siblings costs nothing (same trap
-        // as sendKickMessageViaTab).
-        const ranked = rankKickRelayTabs(tabs)
-        const onSlug = ranked.find((t) => (t.url || '').toLowerCase().includes(`/${slug}`))
-        const candidates = onSlug ? [onSlug, ...ranked.filter((t) => t !== onSlug)] : ranked
-        let result = null
-        for (const relayTab of candidates) {
-          // Deadline: a hung renderer would otherwise leave tabs.sendMessage
-          // pending forever, hanging the mod command with no feedback. Fail loud.
-          result = await Promise.race([
-            browser.tabs
-              .sendMessage(relayTab.id, {
-                type: 'kick_mod_relay',
-                action,
-                slug,
-                chatroomId,
-                web: webReq,
-                username: message.username || '',
-                durationMin: message.durationMin || 0,
-                reason: message.reason || '',
-                messageId: message.messageId || '',
-                xsrfToken: cookie.value,
-                sessionToken: session?.value || '',
-                // .catch keeps a late rejection (tab port closes after the timeout
-                // already won the race) from becoming an unhandled promise rejection.
-              })
-              .catch((e) => ({ ok: false, error: e?.message || 'kick relay failed' })),
-            new Promise((res) =>
-              setTimeout(() => res({ ok: false, error: 'kick tab unresponsive — reload kick.com' }), 12000),
-            ),
-          ])
-          // ok:true or a real API response (e.g. kick 403) ends the walk — only
-          // relay-transport failures justify trying another tab.
-          if (result?.ok || (result && !/Receiving end|kick relay failed|unresponsive/.test(result.error || ''))) break
-        }
-        sendResponse(result || { ok: false, error: 'no response from tab' })
+        // execute it, but a frozen/unrelated tab is a worse bet. Then the rest,
+        // health-ranked, then the hidden bridge tab when none can hear it
+        // (relayViaKickTab). The 12s deadline keeps a hung renderer from
+        // hanging the mod command with no feedback: fail loud.
+        sendResponse(
+          await relayViaKickTab(
+            {
+              type: 'kick_mod_relay',
+              action,
+              slug,
+              chatroomId,
+              web: webReq,
+              username: message.username || '',
+              durationMin: message.durationMin || 0,
+              reason: message.reason || '',
+              messageId: message.messageId || '',
+              xsrfToken: cookie.value,
+              sessionToken: session?.value || '',
+            },
+            { prefer: (t) => (t.url || '').toLowerCase().includes(`/${slug}`), deadlineMs: 12000 },
+          ),
+        )
       } catch (e) {
         log('kick_mod_action error:', e.message)
         sendResponse({ ok: false, error: e.message })
@@ -2404,13 +2383,17 @@ async function handleMessage(message, sender, sendResponse) {
             return
           }
           // A sender's emotes = their heatsync set + their 7TV paid personal set
-          // (captured live from EventAPI entitlements). Not their CHANNEL's
+          // (captured live from EventAPI entitlements) + their BTTV Pro personal
+          // set (captured from the socket's lookup_user push). Not their CHANNEL's
           // 7TV/BTTV set: that isn't theirs to post elsewhere — 7TV, BTTV and the
           // site all render it as text — and fetching it cost two third-party
           // calls per new chatter, ~1,500 a minute in a busy chat, mostly 404s.
           const collected = {}
           const hs = { emotes: hsBatch[key] || [] }
           const uid = key.startsWith('twitch:') ? key.slice(7) : null
+          // BTTV Pro personal set first, so the same name from 7TV or heatsync wins
+          const bttvPersonal = uid ? bttvPersonalSets.get(uid) : null
+          if (bttvPersonal) Object.assign(collected, bttvPersonal)
           const personal = uid ? seventvPersonalSets.get(uid) : null
           if (personal) Object.assign(collected, personal)
           // HeatSync personal set — overrides provider entries because it's the

@@ -785,9 +785,12 @@ function isViewerEmoteUrl(name, url, hash) {
 
 let _resCacheSize = 1
 const _resCache = new Map()
-function getChatResUrl(url) {
+function getChatResUrl(url, variants) {
   if (!url) return url
   const want = hsWantedRung()
+  // An advertised-variants emote is a handful of regex steps and its answer
+  // depends on the record, not just the url, so it skips the url-keyed cache.
+  if (variants) return hsOwnRungUrl(url, want, variants)
   // Keyed on the EFFECTIVE rung, not on emoteSize: dragging the window to a
   // monitor with a different pixel ratio changes the answer without the
   // setting moving, and a cache keyed on the setting would keep serving the
@@ -1380,6 +1383,7 @@ function showEmotePicker(tab = null) {
             <svg class="hs-mc-search-icon" width="14" height="14" viewBox="0 0 20 20"><path fill="#000" d="M13.74 12.33l4.04 4.04a1 1 0 01-1.42 1.42l-4.04-4.04a7 7 0 111.42-1.42zM9 14A5 5 0 109 4a5 5 0 000 10z"/></svg>
             <input type="text" id="hs-mc-emote-search" placeholder="${t('mc_emote_search_placeholder')}" autocomplete="off">
           </div>
+          ${mcEmoteUploadHtml()}
         </div>
         <div class="hs-mc-picker-scroll" id="hs-mc-emote-grid">
           ${renderEmoteSections(sections)}
@@ -1501,6 +1505,7 @@ function showEmotePicker(tab = null) {
 
   hsWireGifTab(picker)
   hsWireEmojiTab(picker)
+  mcEmoteUploadWire(picker)
 
   // Emote size controls
   picker.querySelectorAll('.hs-mc-size-btn').forEach((btn) => {
@@ -1681,53 +1686,6 @@ function showEmotePicker(tab = null) {
   if (pickerTab === 'gifs') hsOnGifTabShown()
 
   attachPickerCloseHandler(picker)
-}
-
-let _pickerEscHandler = null
-
-/** Take down the document-level close handlers. */
-function detachPickerCloseHandlers() {
-  if (_pickerCloseHandler) document.removeEventListener('click', _pickerCloseHandler)
-  if (_pickerEscHandler) document.removeEventListener('keydown', _pickerEscHandler)
-  _pickerCloseHandler = null
-  _pickerEscHandler = null
-}
-
-/**
- * The one way to close the panel from code.
- *
- * Those document handlers self-remove when THEY close the picker, so anything
- * that closes it on its own has to take them down too — or the next Escape
- * still runs hideInputBar(), over a composer the reader is typing into. A gif
- * pick is the first close that does not go through them.
- *
- * `keepInput` is for exactly that case: the panel goes away, the composer does
- * not, because the reader is mid-send with a url already in the box.
- */
-function closeEmotePickerPanel({ keepInput = false } = {}) {
-  const picker = document.getElementById('hs-mc-emote-picker')
-  if (!picker) return
-  picker.classList.remove('visible')
-  if (!keepInput) hideInputBar()
-  stopPredictionPoll()
-  detachPickerCloseHandlers()
-}
-
-function attachPickerCloseHandler(picker) {
-  detachPickerCloseHandlers()
-  cleanup.setTimeout(() => {
-    _pickerCloseHandler = (e) => {
-      if (mcSignal?.aborted) return detachPickerCloseHandlers()
-      if (!picker.contains(e.target) && !e.target.closest('#hs-mc-emote-btn')) closeEmotePickerPanel()
-    }
-    _pickerEscHandler = (e) => {
-      if (e.key !== 'Escape') return
-      if (mcSignal?.aborted) return detachPickerCloseHandlers()
-      closeEmotePickerPanel()
-    }
-    cleanup.addEventListener(document, 'click', _pickerCloseHandler, 'mc-picker-close')
-    cleanup.addEventListener(document, 'keydown', _pickerEscHandler, 'mc-picker-esc')
-  }, 0)
 }
 
 /** Size the open picker to exactly the message list's box.
@@ -1990,7 +1948,7 @@ function createInputEmoteImg(emoteName) {
   if (hsEmoteHiddenForViewer(emote)) return null
   const img = document.createElement('img')
   img.className = 'hs-input-emote'
-  img.src = getChatResUrl(emote.url)
+  img.src = getChatResUrl(emote.url, emote.variants)
   img.alt = emoteName
   img.dataset.emoteName = emoteName
   img.draggable = false
@@ -3888,6 +3846,7 @@ async function loadEmotes() {
             source,
             state: 'owned',
             zeroWidth: !!(e.zero_width ?? e.zeroWidth),
+            variants: Array.isArray(e.variants) ? e.variants : undefined,
             subscription: !!e.subscription,
             hash: e.hash || undefined,
             slot: e.slot,
@@ -4815,7 +4774,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       let state = isBlocked ? 'blocked' : cached?.state || 'channel'
       if (state === 'unadded' && (inventoryEmotes.has(emoteName) || inventoryEmotes.has(rawEmoteName))) state = 'owned'
       const safeName = escapeHtml(rawEmoteName)
-      const chatUrl = getChatResUrl(finalUrl)
+      const chatUrl = getChatResUrl(finalUrl, cached?.variants)
       const safeUrlAttr = escapeHtml(chatUrl)
       const safeSrc = escapeHtml(staticEmoteSrc(chatUrl, cached?.animated === true))
       const animAttr = cached?.animated === true ? ' data-animated="1"' : ''
@@ -4997,7 +4956,7 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       )
         state = 'owned'
       const source = escapeHtml(emote.source || 'unknown')
-      const rawChatUrl = getChatResUrl(emote.url)
+      const rawChatUrl = getChatResUrl(emote.url, emote.variants)
       const imgSrc = escapeHtml(rawChatUrl)
       const staticSrc = escapeHtml(staticEmoteSrc(rawChatUrl, emote.animated === true))
       const animAttr = emote.animated === true ? ' data-animated="1"' : ''

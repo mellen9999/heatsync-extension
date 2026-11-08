@@ -1544,10 +1544,7 @@ function initInput() {
       if (picker?.classList.contains('visible')) {
         picker.classList.remove('visible')
         hideInputBar()
-        if (_pickerCloseHandler) {
-          document.removeEventListener('click', _pickerCloseHandler)
-          _pickerCloseHandler = null
-        }
+        detachPickerCloseHandlers()
       } else {
         showEmotePicker()
       }

@@ -6613,5 +6613,48 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "показывает кнопку ответа на строке чата под мышью. ответ всегда есть в меню строки (правый клик, долгое нажатие на сенсоре)"
+  },
+  "mc_emote_upload": {
+    "message": "загрузить"
+  },
+  "mc_emote_upload_tip": {
+    "message": "добавь свой эмоут из картинки на этом компьютере"
+  },
+  "mc_emote_upload_name": {
+    "message": "назови свой эмоут"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "отмена"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "это не картинка, которую мы принимаем. используй png, gif, webp, jpg или avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "проверка безопасности heatsync заблокировала эту картинку"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "добавлено, но помечено: $CATS$. некоторые увидят его за предупреждением о контенте",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "у тебя уже есть эмоут с именем $NAME$. выбери другое имя",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "ты достиг сегодняшнего лимита загрузок. попробуй завтра"
+  },
+  "mc_emote_upload_slow": {
+    "message": "слишком много загрузок. подожди минуту и попробуй снова"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "имя эмоута не может быть пустым или с пробелами"
   }
 }

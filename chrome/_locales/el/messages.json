@@ -6613,5 +6613,48 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "εμφανίζει κουμπί απάντησης στη γραμμή συνομιλίας κάτω από το ποντίκι. η απάντηση υπάρχει πάντα στο μενού γραμμής (δεξί κλικ, παρατεταμένο πάτημα στην αφή)"
+  },
+  "mc_emote_upload": {
+    "message": "ανέβασμα"
+  },
+  "mc_emote_upload_tip": {
+    "message": "πρόσθεσε το δικό σου emote από μια εικόνα σε αυτόν τον υπολογιστή"
+  },
+  "mc_emote_upload_name": {
+    "message": "δώσε όνομα στο emote"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "ακύρωση"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "αυτό δεν είναι εικόνα που δεχόμαστε. χρησιμοποίησε png, gif, webp, jpg ή avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "ο έλεγχος ασφαλείας του heatsync μπλόκαρε αυτή την εικόνα"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "προστέθηκε, αλλά επισημάνθηκε: $CATS$. μερικοί θα το δουν πίσω από προειδοποίηση περιεχομένου",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "έχεις ήδη emote με όνομα $NAME$. διάλεξε άλλο όνομα",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "έφτασες το σημερινό όριο ανεβάσματος. δοκίμασε αύριο"
+  },
+  "mc_emote_upload_slow": {
+    "message": "πάρα πολλά ανεβάσματα. περίμενε ένα λεπτό και ξαναδοκίμασε"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "το όνομα του emote δεν μπορεί να είναι κενό ή να έχει κενά"
   }
 }

@@ -6613,5 +6613,48 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "toon een antwoordknop op de chatregel onder je muis. antwoorden zit altijd in het regelmenu (rechtsklik, lang drukken op touch)"
+  },
+  "mc_emote_upload": {
+    "message": "uploaden"
+  },
+  "mc_emote_upload_tip": {
+    "message": "voeg je eigen emote toe vanuit een plaatje op deze computer"
+  },
+  "mc_emote_upload_name": {
+    "message": "geef je emote een naam"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "annuleren"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "dat is geen plaatje dat we aannemen. gebruik png, gif, webp, jpg of avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "de veiligheidscheck van heatsync blokkeerde dat plaatje"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "toegevoegd, maar gemarkeerd: $CATS$. sommige mensen zien het achter een inhoudswaarschuwing",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "je hebt al een emote met de naam $NAME$. kies een andere naam",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "je hebt de uploadlimiet van vandaag bereikt. probeer het morgen weer"
+  },
+  "mc_emote_upload_slow": {
+    "message": "te veel uploads. wacht een minuut en probeer opnieuw"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "een emote-naam mag niet leeg zijn of spaties hebben"
   }
 }

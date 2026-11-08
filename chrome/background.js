@@ -2362,6 +2362,8 @@ function fetchEmoteInventory() {
         slot: emote.slot_number,
         usage_count: emote.usage_count,
         zero_width: !!emote.zero_width, // 7TV overlay flag — drives stacking in chat
+        // own uploads' smaller copies the server lists (["1x","2x","3x","4x"]); absent = url only
+        variants: Array.isArray(emote.variants) ? emote.variants : undefined,
         nsfw: !!emote.nsfw, // v1.6 — cyan-dashed border + tooltip suffix
         // Inventory-time stamp (epoch ms) — own messages older than this stay
         // text at render (a collect never retro-imagifies your own history)
@@ -8356,18 +8358,24 @@ function broadcastEmoteUsage(emoteName, emoteHash, senderTabId = null) {
 }
 
 // Add emote to your set (for global emotes clicked in chat) - returns success/failure
-async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false, replace = false) {
+//
+// `opts` is for the picker's own-upload flow: `source: 'upload'` (the server
+// keys ownership + hard-delete on it), the upload's phash/width/height, and
+// `quiet` — the caller reports every outcome in its own words, so none of the
+// failure broadcasts (a second, English-only toast) go out.
+async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false, replace = false, opts = {}) {
   try {
     const authToken = await getAuthCookie()
     if (!authToken) {
-      broadcastToTabs({
-        type: 'emote_add_failed',
-        emoteName,
-        error: 'Not logged in - visit heatsync.org to log in',
-        // Distinct flag so the panel shows a one-click login nudge instead of a
-        // transient error toast — the #1 reason emotes "don't work" for people.
-        notLoggedIn: true,
-      })
+      if (!opts.quiet)
+        broadcastToTabs({
+          type: 'emote_add_failed',
+          emoteName,
+          error: 'Not logged in - visit heatsync.org to log in',
+          // Distinct flag so the panel shows a one-click login nudge instead of a
+          // transient error toast — the #1 reason emotes "don't work" for people.
+          notLoggedIn: true,
+        })
       return { success: false, error: 'Not logged in' }
     }
 
@@ -8388,9 +8396,11 @@ async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false,
         emoteUrl,
         emoteName,
         customName: emoteName,
-        source: 'extension',
-        sourceId: emoteHash,
+        source: opts.source || 'extension',
+        sourceId: opts.source ? null : emoteHash,
         zeroWidth: !!zeroWidth,
+        ...(opts.phash ? { phash: String(opts.phash).slice(0, 512) } : {}),
+        ...(opts.width > 0 && opts.height > 0 ? { width: opts.width, height: opts.height } : {}),
         ...(replace ? { replace: true } : {}),
       }),
     })
@@ -8398,11 +8408,12 @@ async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false,
     const data = await response.json().catch(() => ({ error: `HTTP ${response.status} (non-JSON body)` }))
 
     if (!response.ok) {
-      broadcastToTabs({
-        type: 'emote_add_failed',
-        emoteName,
-        error: data.error || `Server error (${response.status})`,
-      })
+      if (!opts.quiet)
+        broadcastToTabs({
+          type: 'emote_add_failed',
+          emoteName,
+          error: data.error || `Server error (${response.status})`,
+        })
       return { success: false, error: data.error || `HTTP ${response.status}` }
     }
 
@@ -8445,11 +8456,12 @@ async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false,
 
     return { success: true, slot: data.slot, hash: data.hash || emoteHash, alreadyExists: data.alreadyExists }
   } catch (error) {
-    broadcastToTabs({
-      type: 'emote_add_failed',
-      emoteName,
-      error: error.message || 'Network error',
-    })
+    if (!opts.quiet)
+      broadcastToTabs({
+        type: 'emote_add_failed',
+        emoteName,
+        error: error.message || 'Network error',
+      })
     return { success: false, error: error.message || 'Network error' }
   }
 }
@@ -10381,7 +10393,22 @@ async function handleMessage(message, sender, sendResponse) {
       message.emoteUrl,
       message.zeroWidth,
       message.replace === true,
+      message.upload
+        ? {
+            source: 'upload',
+            quiet: true,
+            phash: message.upload.phash,
+            width: message.upload.width,
+            height: message.upload.height,
+          }
+        : {},
     ).then((result) => {
+      // A fresh upload is only usable once the content scripts hold the server's
+      // row for it (size, smaller copies): refetch now rather than wait out the throttle.
+      if (message.upload && result?.success) {
+        lastInventoryFetch = 0
+        fetchEmoteInventory().catch(() => {})
+      }
       sendResponse(result)
     })
     return true // Keep channel open for async response
@@ -11215,6 +11242,10 @@ async function handleMessage(message, sender, sendResponse) {
         for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
         const form = new FormData()
         form.append('file', new Blob([bytes], { type: mime }), String(message.name || 'paste'))
+        // The picker's emote upload: the server stores it as an emote (128px
+        // tall, smaller copies beside it) and the answer carries what the add
+        // that follows needs.
+        if (message.emote === true) form.append('type', 'emote')
 
         const doUpload = async (token) => {
           const opts = { method: 'POST', body: form, headers: {} }
@@ -11247,7 +11278,21 @@ async function handleMessage(message, sender, sendResponse) {
         // "Unrecognized command: /uploads/...". The message never reaches chat.
         // The render chokepoint already absolutizes for feed/thread, but a chat
         // send has no chokepoint: the raw text is the wire payload.
-        sendResponse({ ok: true, url: absUrl(data.url) })
+        sendResponse({
+          ok: true,
+          url: absUrl(data.url),
+          ...(message.emote === true
+            ? {
+                phash: data.phash,
+                width: data.width,
+                height: data.height,
+                // categories the scan flagged but still hosted (a content warning, not a block)
+                flagged: Array.isArray(data.moderationResult?.flaggedCategories)
+                  ? data.moderationResult.flaggedCategories.slice(0, 8)
+                  : [],
+              }
+            : {}),
+        })
       } catch (err) {
         sendResponse({ ok: false, error: err.message })
       }
@@ -11896,6 +11941,7 @@ async function handleMessage(message, sender, sendResponse) {
               state: 'global',
               zeroWidth: !!(e.zero_width ?? e.zeroWidth ?? prevZW),
               hash: e.hash || '',
+              variants: Array.isArray(e.variants) ? e.variants : undefined,
               nsfw: !!e.nsfw, // v1.6 — cyan dashed border in chat + picker
             }
             // The upper bound, from a historical pairing (a name they USED with an

@@ -6613,5 +6613,48 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "válasz gombot mutat az egér alatti chatsoron. a válasz mindig elérhető a sormenüben (jobb klikk, hosszú érintés)"
+  },
+  "mc_emote_upload": {
+    "message": "feltöltés"
+  },
+  "mc_emote_upload_tip": {
+    "message": "adj hozzá saját emote-ot egy képből ezen a számítógépen"
+  },
+  "mc_emote_upload_name": {
+    "message": "nevezd el az emote-ot"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "mégse"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "ez nem olyan kép, amit elfogadunk. használj png, gif, webp, jpg vagy avif fájlt"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "a heatsync biztonsági ellenőrzése blokkolta a képet"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "hozzáadva, de megjelölve: $CATS$. páran tartalmi figyelmeztetés mögött látják",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "már van $NAME$ nevű emote-od. válassz másik nevet",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "elérted a mai feltöltési korlátot. próbáld holnap"
+  },
+  "mc_emote_upload_slow": {
+    "message": "túl sok feltöltés. várj egy percet, aztán próbáld újra"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "az emote neve nem lehet üres, és nem lehet benne szóköz"
   }
 }

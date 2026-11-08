@@ -6613,5 +6613,48 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "afișează un buton de răspuns pe rândul de chat de sub mouse. răspunsul e mereu în meniul rândului (clic dreapta, apăsare lungă pe touch)"
+  },
+  "mc_emote_upload": {
+    "message": "încarcă"
+  },
+  "mc_emote_upload_tip": {
+    "message": "adaugă propriul emote dintr-o imagine de pe acest calculator"
+  },
+  "mc_emote_upload_name": {
+    "message": "dă un nume emote-ului"
+  },
+  "mc_emote_upload_cancel": {
+    "message": "anulează"
+  },
+  "mc_emote_upload_bad_type": {
+    "message": "nu e o imagine pe care o acceptăm. folosește png, gif, webp, jpg sau avif"
+  },
+  "mc_emote_upload_blocked": {
+    "message": "verificarea de siguranță heatsync a blocat imaginea"
+  },
+  "mc_emote_upload_flagged": {
+    "message": "adăugat, dar marcat: $CATS$. unii oameni îl văd în spatele unui avertisment de conținut",
+    "placeholders": {
+      "cats": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_taken": {
+    "message": "ai deja un emote numit $NAME$. alege alt nume",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_upload_limit": {
+    "message": "ai atins limita de încărcări de azi. încearcă mâine"
+  },
+  "mc_emote_upload_slow": {
+    "message": "prea multe încărcări. așteaptă un minut și încearcă din nou"
+  },
+  "mc_emote_upload_name_bad": {
+    "message": "numele unui emote nu poate fi gol și nu poate avea spații"
   }
 }

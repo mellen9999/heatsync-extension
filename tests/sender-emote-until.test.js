@@ -19,8 +19,9 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import * as mods from '../src/lib/modifiers.js'
 import { escapeHtml, unescapeHtml } from '../src/lib/utils.js'
+import { bgSource } from './bg-src.js'
 
-const BG_SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const BG_SRC = bgSource()
 const between = (from, to) => {
   const a = BG_SRC.indexOf(from)
   const b = BG_SRC.indexOf(to, a)

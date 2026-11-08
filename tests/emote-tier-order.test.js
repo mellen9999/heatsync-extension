@@ -4,6 +4,7 @@ import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { EMOTE_TIER_ORDER, rankEmotePool, resolveEmoteProviderWinner } from '../src/lib/utils.js'
+import { bgSource } from './bg-src.js'
 
 const root = join(import.meta.dir, '..')
 const read = (p) => readFileSync(join(root, p), 'utf8')
@@ -36,7 +37,7 @@ test('multichat pool merge picks the same winner as the order', () => {
 })
 
 test('background.js carries the same two orders as lib', () => {
-  const bg = read('chrome/background.js')
+  const bg = bgSource()
   const m = bg.match(/const EMOTE_TIER_ORDER = \{\s*channel: (\[[^\]]*\]),\s*global: (\[[^\]]*\]),?\s*\}/)
   expect(m).not.toBeNull()
   expect(JSON.parse(m[1].replace(/'/g, '"'))).toEqual(EMOTE_TIER_ORDER.channel)

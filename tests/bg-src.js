@@ -1,0 +1,37 @@
+// background.js as one string, in bundle order.
+//
+// background.js is generated: build.js concatenates src/background/* in
+// BG_PARTS order (the service worker cannot import). A test that slices a
+// function or a region out of "background.js" reads it from here, so a
+// function moving between parts never moves a test. The list below is pinned
+// to build.js's by bg-parts-match-build.test.js.
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const BG_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'background')
+
+/** bundle order */
+export const BG_PART_FILES = [
+  '01-core.js',
+  '02-auth-live.js',
+  '03-identity-cosmetics.js',
+  '04-emotes.js',
+  '05-ws.js',
+  '06-message-gate.js',
+  '07-handle-message.js',
+  '08-diag-push.js',
+  '09-irc.js',
+  '10-kick-yt.js',
+  '11-boot.js',
+]
+
+/** absolute paths of every part, bundle order */
+export const BG_PART_PATHS = BG_PART_FILES.map((f) => join(BG_DIR, f))
+
+let cached = null
+/** every part joined in bundle order — the program background.js carries */
+export function bgSource() {
+  if (cached == null) cached = BG_PART_PATHS.map((p) => readFileSync(p, 'utf8')).join('\n')
+  return cached
+}

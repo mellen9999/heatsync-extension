@@ -30,8 +30,9 @@
 
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { bgSource } from './bg-src.js'
 
-const BG_SRC = readFileSync(new URL('../chrome/background.js', import.meta.url), 'utf8')
+const BG_SRC = bgSource()
 
 /** Extract `function name(...) { ... }` up to its closing brace on its own line. */
 function extractFn(name) {

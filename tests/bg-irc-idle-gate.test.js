@@ -16,8 +16,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
-const BG_SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const BG_SRC = bgSource()
 
 // Carve scheduleWsIdleCheck's body so the assertions can't be satisfied by
 // stray matches elsewhere in the 13k-line file.

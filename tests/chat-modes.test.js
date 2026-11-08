@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
 /**
  * Chat modes through heatsync.org's /api/mod/chat-settings: the cell reads the
@@ -14,7 +15,7 @@ const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8')
 const MODES = read('src', 'multichat', 'chat-modes.js')
 const INPUT = read('src', 'multichat', 'input.js')
 const API = read('src', 'multichat', 'twitch-api.js')
-const BG = read('chrome', 'background.js')
+const BG = bgSource()
 const REG = read('src', 'multichat', 'slash-registry.js')
 const EN = JSON.parse(read('src', '_locales', 'en', 'messages.json'))
 

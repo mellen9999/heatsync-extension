@@ -1,8 +1,9 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { bgSource } from './bg-src.js'
 
 // resolveYtChannelId lives in chrome/background.js (not importable) — slice + eval with stubs.
-const src = readFileSync(new URL('../chrome/background.js', import.meta.url), 'utf8')
+const src = bgSource()
 const a = src.indexOf('async function resolveYtChannelId')
 const b = src.indexOf('let twitchIdPersistTimer')
 if (a < 0 || b < a) throw new Error('resolveYtChannelId markers moved')

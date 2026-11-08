@@ -11,6 +11,8 @@ chrome/multichat.js
 CLAUDE.md
 store-assets/
 build.log
-# generated from src/data/emoji-data.js by build.js — one source, two world-specific copies
+# build output — built into dist/ only; a stale copy here is removed by the next build
+chrome/multichat-core.js
+chrome/background.js
 chrome/emoji-data.iso.js
 chrome/emoji-data.main.js

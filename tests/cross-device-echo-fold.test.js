@@ -16,11 +16,12 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
 const INPUT_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 const SOCIAL_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'social.js'), 'utf8')
 const IRC_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'irc.js'), 'utf8')
-const BG_SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const BG_SRC = bgSource()
 
 const foldStart = INPUT_SRC.indexOf('function retroFoldOwnEchoes()')
 const foldEnd = INPUT_SRC.indexOf('\nfunction ', foldStart + 10)

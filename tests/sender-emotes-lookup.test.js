@@ -11,8 +11,9 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
-const BG = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 const at = BG.indexOf("message.type === 'get_sender_emotes'")
 const handler = BG.slice(at, BG.indexOf("message.type === 'get_bulk_badges'", at))
 

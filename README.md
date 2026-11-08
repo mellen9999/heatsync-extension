@@ -37,7 +37,7 @@ bun run build.js firefox   # → dist/firefox/
 bun run build.js --package # both + signed zips + source zip
 ```
 
-every build runs the test suite first, then `node --check` on the output. add `--minify` for a release-sized bundle — the tracked `chrome/multichat-core.js` is always committed from a `--minify` build, and without it the diff is ~10k lines of unminified css. a build lands in `dist/<browser>.staging` and swaps into `dist/<browser>` only when it passes, so a failed build never leaves a half-built folder.
+every build runs the test suite first, then `node --check` on the output. add `--minify` for a release-sized bundle. the bundles (`multichat-core.js`, `background.js`) are build output, not tracked — `src/multichat/` and `src/background/` are the source. a build lands in `dist/<browser>.staging` and swaps into `dist/<browser>` only when it passes, so a failed build never leaves a half-built folder.
 
 `--package` minifies, and emits `dist/heatsync-{chrome,firefox}-X.Y.Z.zip` plus `dist/heatsync-source-X.Y.Z.zip` for AMO review.
 

@@ -1,5 +1,6 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { bgSource } from './bg-src.js'
 
 // The per-site overlay switch (popup, the page's way back, the overlay's own
 // hs-off) wrote chrome.storage.sync alone. The boot merge then pulled the
@@ -8,7 +9,7 @@ import { readFileSync } from 'node:fs'
 // service worker, which stores it and sends the same ui-state:sync patch the
 // settings page's writes ride.
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
-const BG = read('chrome/background.js')
+const BG = bgSource()
 
 function extractFn(name) {
   const start = BG.indexOf(`function ${name}(`)

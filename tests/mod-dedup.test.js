@@ -1,6 +1,7 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
 // Extracts the SHIPPED `bgIrcDupModNotice` from chrome/background.js by name and
 // evals it in isolation, so this guards the real code (not a copy). It collapses
@@ -8,7 +9,7 @@ import { join } from 'node:path'
 // transports (direct IRC + server EventSub fanout, etc.) — including EventSub's
 // bogus "permanently banned" line when it loses a timeout's duration.
 function loadBgIrcDupModNotice() {
-  const src = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+  const src = bgSource()
   const start = src.indexOf('function bgIrcDupModNotice')
   if (start < 0) throw new Error('bgIrcDupModNotice not found in background.js')
   // balanced-brace scan to the closing brace

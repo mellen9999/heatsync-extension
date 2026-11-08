@@ -13,8 +13,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
-const BG = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 const fn = (name) => {
   const at = BG.indexOf(`function ${name}(`)
   if (at === -1) throw new Error(`${name} not found — source drifted`)

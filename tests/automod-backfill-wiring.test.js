@@ -12,8 +12,9 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
-const BG = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 const QUEUE = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'automod-queue.js'), 'utf8')
 
 test('background.js has exactly one hold normalizer', () => {

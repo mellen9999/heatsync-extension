@@ -74,7 +74,19 @@ const EXEMPT_HEX = new Map([
   // the name-contrast lift measures against the stripe; pinned to --hs-zebra by tests/utils-extra.test.js
   ['src/lib/utils.js', new Set(['444444'])],
   [
-    'chrome/background.js',
+    'src/background/05-ws.js',
+    new Set([
+      '53fc18', // kick default name colour
+    ]),
+  ],
+  [
+    'src/background/07-handle-message.js',
+    new Set([
+      '53fc18', // kick default name colour
+    ]),
+  ],
+  [
+    'src/background/10-kick-yt.js',
     new Set([
       '53fc18', // kick default name colour
       'e62117',

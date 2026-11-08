@@ -6,8 +6,9 @@
  */
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { bgSource } from './bg-src.js'
 
-const SRC = readFileSync(new URL('../chrome/background.js', import.meta.url), 'utf8')
+const SRC = bgSource()
 const start = SRC.indexOf('function signedOutNoticeDue(')
 const end = SRC.indexOf('function fetchEmoteInventory(')
 if (start === -1 || end === -1) throw new Error('signed-out block markers missing in chrome/background.js')

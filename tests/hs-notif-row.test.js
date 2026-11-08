@@ -3,10 +3,11 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 import { t } from './en-t.js'
 
 const ROOT = join(import.meta.dir, '..')
-const BG = readFileSync(join(ROOT, 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 const MENTIONS = readFileSync(join(ROOT, 'src', 'multichat', 'mentions.js'), 'utf8')
 
 const slice = (src, from, to) => src.slice(src.indexOf(from), src.indexOf(to))

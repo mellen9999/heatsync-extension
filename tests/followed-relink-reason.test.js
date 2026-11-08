@@ -13,9 +13,10 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
 const ROOT = join(import.meta.dir, '..')
-const BG = readFileSync(join(ROOT, 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 const MGMT = readFileSync(join(ROOT, 'src', 'multichat', 'channel-mgmt.js'), 'utf8')
 const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages.json'), 'utf8'))
 

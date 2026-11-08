@@ -188,26 +188,20 @@ test('src/lib/cleanup.js re-exports the bundle-scope cleanup binding', () => {
   expect(/\nconst cleanup = window\.heatsyncCleanup\s*$/m.test(src)).toBe(true)
 })
 
-// ── checked-in chrome/ freshness ────────────────────────────────────────────
-// chrome/multichat-core.js (and its siblings) are TRACKED build output, not
-// hand-edited source — `git clone` + "load unpacked" reads them straight off
-// disk with no build step in between. A src/ change committed without a
-// matching `bun run build.js` rebuild ships a stale chrome/ that throws at
-// load ("sanitizeUiSettings is not defined", "RESERVED_PATHS is not defined")
-// — exactly what shipped in store build 1.7.75. Every content-script bundle
-// carries a build stamp (a digest of src/ + build.js, swapped in from
-// bootstrap.js's '__HS_BUILD_STAMP__' literal) — compare it against the
-// CURRENT repo state the same way build.js computes it. A mismatch means
-// chrome/ was built from a different src/ than the one checked out right now.
+// ── built bundle freshness ───────────────────────────────────────────────────
+// The bundles are not tracked: `bun run build.js` makes them from src/. What
+// can still go stale is a dist/ built from an older src/ and then zipped or
+// loaded (store build 1.7.75 shipped a bundle that threw "RESERVED_PATHS is not
+// defined" for exactly that reason, when the bundle was still committed). Every
+// content-script bundle carries a build stamp (a digest of src/ + build.js,
+// swapped in from bootstrap.js's '__HS_BUILD_STAMP__' literal) — compare it
+// against the CURRENT repo state the same way build.js computes it.
 //
-// Gated on HS_VERIFY_DIST like the rest of this file's t()-tests, so plain
-// `bun test` (build.js's pre-build gate, before chrome/ has been rebuilt)
-// never deadlocks against itself — but it runs standalone too, with no build
-// step required: `HS_VERIFY_DIST=1 bun test tests/build.test.js` against a
-// fresh checkout is exactly the CI check that would have caught 1.7.75.
-t('chrome/multichat-core.js build stamp is the digest of this src/', () => {
-  const src = readFileSync(join(ROOT, 'chrome', 'multichat-core.js'), 'utf8')
-  const m = src.match(/build:\s*'([0-9a-f]{12})'/)
+// Gated on HS_VERIFY_DIST like the rest of this file's t()-tests: it needs a
+// built dist/, which build.js's pre-build `bun test` does not have yet.
+t('dist/chrome/multichat-core.js build stamp is the digest of this src/', () => {
+  const src = readFileSync(join(ROOT, 'dist', 'chrome', 'multichat-core.js'), 'utf8')
+  const m = src.match(/build:\s*['"]([0-9a-f]{12})['"]/)
   expect(m).not.toBeNull()
   // The same digest every machine computes for the same inputs — so this
   // holds on a plain checkout, which the old `<sha>-<minute>` stamp never could.

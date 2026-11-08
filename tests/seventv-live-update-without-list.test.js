@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
 /**
  * A live 7TV add or removal is announced, and never rewrites a channel's emote
@@ -14,7 +15,7 @@ import { join } from 'node:path'
  * Runs the real handler, cut out of background.js, against stubbed state.
  */
 
-const BG = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 const SRC = BG.slice(BG.indexOf('function handle7TVEmoteSetUpdate('), BG.indexOf('// ========== BTTV Live Socket'))
 
 function load(map, setIds) {

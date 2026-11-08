@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
 /**
  * BTTV Live Socket — the extension joins sockets.betterttv.net rooms so BTTV
@@ -19,7 +20,7 @@ import { join } from 'node:path'
  */
 
 const ROOT = join(import.meta.dir, '..')
-const BG = readFileSync(join(ROOT, 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 const MANIFEST_CHROME = readFileSync(join(ROOT, 'src', 'manifests', 'chrome.json'), 'utf8')
 const MANIFEST_FIREFOX = readFileSync(join(ROOT, 'src', 'manifests', 'firefox.json'), 'utf8')
 

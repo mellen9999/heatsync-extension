@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import ts from 'typescript'
+import { bgSource } from './bg-src.js'
 
 /**
  * chrome.runtime.sendMessage does NOT reach content scripts.
@@ -27,7 +28,7 @@ import ts from 'typescript'
  */
 
 const ROOT = join(import.meta.dir, '..')
-const BG = readFileSync(join(ROOT, 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 
 function sources() {
   const out = []

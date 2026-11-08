@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { SLASH_REGISTRY } from '../src/multichat/slash-registry.js'
+import { bgSource } from './bg-src.js'
 
 /**
  * Kick mod tools: blocked words, message filter, chatters (kick-mod-calls.js +
@@ -24,7 +25,7 @@ const PANEL_SRC = [
   .map((f) => readFileSync(join(dir, f), 'utf8'))
   .join('\n')
 const PANEL_FILE = read('src', 'multichat', 'kick-mod-suite.js')
-const BG = read('chrome', 'background.js')
+const BG = bgSource()
 const CONTENT = read('chrome', 'content.js')
 const INPUT = read('src', 'multichat', 'input.js')
 

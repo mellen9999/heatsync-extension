@@ -19,8 +19,9 @@
 import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
-const SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const SRC = bgSource()
 
 /** The helper's exact source text, start marker to its closing brace. */
 function helperSource() {

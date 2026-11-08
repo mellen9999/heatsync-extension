@@ -16,8 +16,9 @@
 
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { bgSource } from './bg-src.js'
 
-const BG_SRC = readFileSync(new URL('../chrome/background.js', import.meta.url), 'utf8')
+const BG_SRC = bgSource()
 
 /** Slice a top-level function's full source text by name. */
 function extractFn(name) {

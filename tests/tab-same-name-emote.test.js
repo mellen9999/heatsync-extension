@@ -23,6 +23,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 import { t } from './t-stub.js'
 
 const read = (f) => readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
@@ -305,7 +306,7 @@ describe('4. sending a picked variant', () => {
 })
 
 const ADD = slice(EMOTES, '// Add emote to inventory (click-to-add', '// Swap what you own under a name')
-const BG = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 const BG_ADD = slice(BG, 'async function addToInventory(', '// Coalesce concurrent removes')
 
 describe('4b. swapEmoteInInventory: ONE add carrying replace, rolled back on refusal', () => {

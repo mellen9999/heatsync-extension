@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import ts from 'typescript'
+import { bgSource } from './bg-src.js'
 
 /**
  * The MV3 message contract, enforced on the router.
@@ -20,8 +21,7 @@ import ts from 'typescript'
  * 6,462 lines for a 2,577-line function because it did not understand strings.
  */
 
-const FILE = join(import.meta.dir, '..', 'chrome', 'background.js')
-const src = ts.createSourceFile(FILE, readFileSync(FILE, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
+const src = ts.createSourceFile('background.js', bgSource(), ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
 const lineOf = (n) => src.getLineAndCharacterOfPosition(n.getStart(src)).line + 1
 
 function findHandler() {

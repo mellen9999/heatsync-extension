@@ -7,8 +7,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
-const SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const SRC = bgSource()
 const handle = SRC.slice(SRC.indexOf('function bgIrcHandleLine(line) {'))
 const watchdog = SRC.slice(SRC.indexOf('// Per-channel watchdog'), SRC.indexOf('// 20s interval (was 30s)'))
 

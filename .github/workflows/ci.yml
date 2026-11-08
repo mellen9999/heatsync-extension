@@ -31,22 +31,22 @@ jobs:
         # release.yml; keep the two in sync.
         run: bun install --frozen-lockfile
 
-      # --minify is how the tracked chrome/ bundle is built (a plain build is
-      # ~220KB larger and would never match it).
+      # --minify is the release-sized build; the budget step below measures it.
       - name: build
         run: bun run build.js --minify
 
       # Per-file + total bytes against scripts/bundle-budgets.json. Needs the
-      # firefox build too (the chrome one above is the tracked one).
+      # firefox build too.
       - name: bundle size budget
         run: |
           bun run build.js firefox --minify
           bun scripts/check-bundle-budget.ts
 
-      # The tracked bundle is the build of this src/ — a src edit that shipped
-      # without a rebuild (1.7.75) fails here, in the open, instead of on a
-      # user's tab.
-      - name: tracked bundle matches this build
+      # The bundles are gitignored build output; what chrome/ still tracks
+      # (manifest.json, _locales) is generated from src/manifests and
+      # src/_locales, and a src edit committed without a rebuild fails here, in
+      # the open, instead of on a user's tab.
+      - name: tracked outputs under chrome/ match this build
         run: git diff --exit-code --stat -- chrome/
 
       - name: test

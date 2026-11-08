@@ -13,8 +13,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
-const BG_SRC = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const BG_SRC = bgSource()
 
 const MARKER = 'if (res.ok || res.status === 409 || res.status === 400) {'
 if (!BG_SRC.includes(MARKER)) {

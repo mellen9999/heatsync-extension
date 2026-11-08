@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import ts from 'typescript'
+import { bgSource } from './bg-src.js'
 
 /**
  * The websocket is a two-ended contract and only one end was ever checked.
@@ -14,7 +15,6 @@ import ts from 'typescript'
  * guard, so this never blocks a standalone clone.
  */
 
-const EXT = join(import.meta.dir, '..', 'chrome', 'background.js')
 /**
  * The sibling repo, found from either a normal checkout or a worktree. Inside
  * `.worktrees/<name>/` the projects dir is two levels further up than it looks
@@ -27,7 +27,7 @@ const siteRoot = ['..', '../..', '../../..', '../../../..']
 
 /** Types handled by handleWSMessage, via the AST — not regex. */
 function handledTypes() {
-  const src = ts.createSourceFile(EXT, readFileSync(EXT, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
+  const src = ts.createSourceFile('background.js', bgSource(), ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
   let fn = null
   const findFn = (n) => {
     if (ts.isFunctionDeclaration(n) && n.name?.text === 'handleWSMessage') fn = n

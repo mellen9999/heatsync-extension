@@ -20,8 +20,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
-const bg = readFileSync(join(import.meta.dir, '..', 'chrome', 'background.js'), 'utf8')
+const bg = bgSource()
 
 describe('kick ban classification', () => {
   test('permanence is the absence of an expiry, not an elapsed one', () => {

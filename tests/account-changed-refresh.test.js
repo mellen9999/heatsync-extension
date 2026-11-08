@@ -11,8 +11,9 @@
 
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { bgSource } from './bg-src.js'
 
-const BG = readFileSync(new URL('../chrome/background.js', import.meta.url), 'utf8')
+const BG = bgSource()
 const handler = BG.slice(
   BG.indexOf('function handleWSMessage('),
   BG.indexOf('\n}', BG.indexOf('function handleWSMessage(')),

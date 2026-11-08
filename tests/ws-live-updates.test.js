@@ -8,9 +8,10 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
 const ROOT = join(import.meta.dir, '..')
-const BG = readFileSync(join(ROOT, 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 const src = (f) => readFileSync(join(ROOT, 'src', 'multichat', f), 'utf8')
 
 function extractFn(code, name) {

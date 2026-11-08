@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { bgSource } from './bg-src.js'
 
 /**
  * BTTV/FFZ live-update poll — the delivery guarantee where no socket exists.
@@ -21,7 +22,7 @@ import { join } from 'node:path'
  */
 
 const ROOT = join(import.meta.dir, '..')
-const BG = readFileSync(join(ROOT, 'chrome', 'background.js'), 'utf8')
+const BG = bgSource()
 
 describe('bttv/ffz poll', () => {
   const pollBlock = BG.slice(BG.indexOf('async function pollThirdPartyEmotes'))

@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { SETTINGS } from '../src/lib/settings-schema.js'
 import { SLASH_REGISTRY, slashAliasMap, slashCommandsFor } from '../src/multichat/slash-registry.js'
+import { bgSource } from './bg-src.js'
 
 /**
  * The mod suite (mod-suite.js + mod-suite-calls.js): shield / unban requests /
@@ -19,7 +20,7 @@ const PANEL = ['x-glyph.js', 'pane-panel.js', 'mod-suite-calls.js', 'mod-suite.j
   .join('\n')
 const INPUT = read('src', 'multichat', 'input.js')
 const TOOLBAR = read('src', 'multichat', 'mod-toolbar.js')
-const BG = read('chrome', 'background.js')
+const BG = bgSource()
 const EN = JSON.parse(read('src', '_locales', 'en', 'messages.json'))
 
 let Window = null

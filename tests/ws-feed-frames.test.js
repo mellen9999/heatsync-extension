@@ -1,8 +1,9 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
+import { bgSource } from './bg-src.js'
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
-const BG = rd('chrome/background.js')
+const BG = bgSource()
 const SOCIAL = rd('src/multichat/social.js')
 const WHISPERS = rd('src/multichat/whispers.js')
 const cut = (src, a, b) => src.slice(src.indexOf(a), src.indexOf(b, src.indexOf(a)))

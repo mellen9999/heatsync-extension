@@ -1184,11 +1184,21 @@ function build(browser) {
   const lib = readLib()
   const mcSrcPath = join(SRC_DIR, 'multichat', 'main.js')
 
-  // Self-heal: retired bundle names — multichat.js (pre per-platform split)
-  // and multichat-{twitch,kick,youtube}.js (pre shared-core split). None are
-  // referenced by any manifest anymore, but a stale copy bloats unpacked dev
-  // loads by megabytes, so remove them whenever we build.
-  for (const stale of ['multichat.js', 'multichat-twitch.js', 'multichat-kick.js', 'multichat-youtube.js']) {
+  // Self-heal: build output that used to be written into chrome/ — retired
+  // bundle names (multichat.js, multichat-{twitch,kick,youtube}.js) and, since
+  // the bundles stopped being tracked, multichat-core.js, background.js and
+  // the two emoji-data copies. Nothing reads them from chrome/; a stale copy
+  // would only be scanned by the source guards as if it were source.
+  for (const stale of [
+    'multichat.js',
+    'multichat-twitch.js',
+    'multichat-kick.js',
+    'multichat-youtube.js',
+    'multichat-core.js',
+    'background.js',
+    'emoji-data.iso.js',
+    'emoji-data.main.js',
+  ]) {
     const p = join(chromeDir, stale)
     if (existsSync(p)) {
       rmSync(p)
@@ -1201,10 +1211,6 @@ function build(browser) {
     const outFile = 'multichat-core.js'
     const bundled = bundleContentScript(mcSrcPath, lib, readMultichatModules())
     writeFileSync(join(outDir, outFile), bundled)
-    // Write to chrome/ so unpacked extension loads the bundled version
-    if (browser === 'chrome') {
-      writeFileSync(join(chromeDir, outFile), bundled)
-    }
     console.log(`  Bundled ${outFile}`)
   }
 
@@ -1248,11 +1254,12 @@ function build(browser) {
   }
 
   // Copy other files
-  // background.js is generated from src/background/* — written into chrome/ first so the
-  // dev-load dir and the COPY_FILES loop below both carry this build's concat.
-  writeFileSync(join(chromeDir, 'background.js'), readBackgroundSource())
-
   for (const file of COPY_FILES) {
+    // background.js is generated from src/background/* (BG_PARTS); the rest are hand-written in chrome/.
+    if (file === 'background.js') {
+      writeFileSync(join(outDir, file), readBackgroundSource())
+      continue
+    }
     const srcPath = join(chromeDir, file)
     if (!existsSync(srcPath)) continue
     cpSync(srcPath, join(outDir, file))
@@ -1269,20 +1276,15 @@ function build(browser) {
   // the single-parse win that 43f297b's unbundling was after.
   const emojiSrc = join(SRC_DIR, 'data', 'emoji-data.js')
   cpSync(emojiSrc, join(outDir, 'emoji-data.iso.js'))
-  // Also write the iso copy into chrome/ — manifest.json (mirrored below for
-  // the unpacked dev extension) references emoji-data.iso.js in its
-  // content_scripts entries; without it the dev-loaded chrome/ dir is
-  // un-loadable. The source is src/data/emoji-data.js; both copies are
-  // generated and gitignored, so the three can never disagree.
-  if (browser === 'chrome') cpSync(emojiSrc, join(chromeDir, 'emoji-data.iso.js'))
+  // The source is src/data/emoji-data.js; both shipped copies are generated
+  // into dist only, so the three can never disagree.
 
   // emoji-data.main.js: the PAGE-world copy (twitch only), cut to [name, emoji] —
   // all autocomplete-hook.js reads. It used to load emoji-data.js whole, so every
   // twitch page parsed the 118KB dataset twice. The source itself is not shipped:
-  // src/data/emoji-data.js is what both copies are made from. Same dev-load rule as above.
+  // src/data/emoji-data.js is what both copies are made from.
   const emojiMain = emojiPairsSource(readFileSync(emojiSrc, 'utf8'))
   writeFileSync(join(outDir, 'emoji-data.main.js'), emojiMain)
-  if (browser === 'chrome') writeFileSync(join(chromeDir, 'emoji-data.main.js'), emojiMain)
 
   // Copy assets
   for (const file of ASSETS) {

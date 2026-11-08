@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { SETTINGS } from '../src/lib/settings-schema.js'
 import { SLASH_REGISTRY, slashAliasMap, slashCommandsFor } from '../src/multichat/slash-registry.js'
+import { bgSource } from './bg-src.js'
 
 /**
  * The blocked-terms panel (blocked-terms.js): list / add / delete / filter,
@@ -18,7 +19,7 @@ const PANEL = ['x-glyph.js', 'pane-panel.js', 'blocked-terms.js']
   .join('\n')
 const INPUT = read('src', 'multichat', 'input.js')
 const TOOLBAR = read('src', 'multichat', 'mod-toolbar.js')
-const BG = read('chrome', 'background.js')
+const BG = bgSource()
 const EN = JSON.parse(read('src', '_locales', 'en', 'messages.json'))
 
 let Window = null

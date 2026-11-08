@@ -20,7 +20,7 @@ const ROW = {
   badge_url: 'https://static-cdn.jtvnw.net/badges/v1/x/1',
 }
 
-function rig(tr = t) {
+function rig(tr = t, extra = {}) {
   let onMessage = null
   const rows = []
   const document = {
@@ -45,6 +45,9 @@ function rig(tr = t) {
     isSelf: (m) => m.user === 'me',
     pinAfterInPlaceUpdate: () => {},
     t: tr,
+    getHsBadgeId: undefined,
+    badgeById: undefined,
+    ...extra,
   }
   const names = Object.keys(env)
   const api = new Function(...names, `${code}; return { _hsmSets, hsMarksRowHtml }`)(...names.map((k) => env[k]))
@@ -58,6 +61,20 @@ function rig(tr = t) {
   }
   return { api, row, send: (msg) => onMessage(msg) }
 }
+
+describe("a picked heatsync badge takes the flame's place", () => {
+  const flameFor = (badges) => {
+    const r = rig(t, {
+      getHsBadgeId: (uid) => badges[uid] ?? null,
+      badgeById: (id) => (id === 'ember' ? { id } : null),
+    })
+    return r.api.hsMarksRowHtml({ user: 'me', userId: '42', platform: 'twitch' }, '42')
+  }
+  test('no badge: the flame shows', () => expect(flameFor({})).toContain('hs-mark-flame'))
+  test('a badge: no flame', () => expect(flameFor({ 42: 'ember' })).not.toContain('hs-mark-flame'))
+  test('an id this build cannot draw keeps the flame', () =>
+    expect(flameFor({ 42: 'from_the_future' })).toContain('hs-mark-flame'))
+})
 
 describe('the flame and heat titles speak the viewer language', () => {
   const pseudo = (key) => `<${key}>`

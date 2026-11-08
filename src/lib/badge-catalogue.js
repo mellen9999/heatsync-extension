@@ -26,7 +26,7 @@
  */
 
 /** Bump when an entry is added or its rule changes. */
-export const BADGE_CATALOGUE_VERSION = 1
+export const BADGE_CATALOGUE_VERSION = 2
 
 /**
  * Accounts created before this instant are "early supporters". Taken from the
@@ -97,23 +97,22 @@ export function earnedBadgeIds(facts) {
 }
 
 /**
- * The one badge a user shows. `choice` is their saved pick: null/undefined =
- * automatic (the best they have earned), 'none' = show nothing, an id = that
- * badge. A pick they no longer qualify for (Plus lapsed) falls back to
- * automatic rather than showing something they did not choose.
+ * The one badge a user shows: only what they picked, and only while they still
+ * have it. Nothing is shown automatically — the 🔥 already says "heatsync user",
+ * a picked badge takes its place, and two marks on one name is one too many.
+ * null/undefined/'none' = nothing; a pick they no longer qualify for (Plus
+ * lapsed) = nothing, never a badge they did not choose.
  *
  * @param {string[]} earned from earnedBadgeIds()
  * @param {string|null|undefined} choice
  * @returns {string|null}
  */
 export function displayedBadgeId(earned, choice) {
-  if (!earned || earned.length === 0) return null
-  if (choice === BADGE_CHOICE_NONE) return null
-  if (choice && earned.includes(choice)) return choice
-  return earned[0]
+  if (!choice || choice === BADGE_CHOICE_NONE || !Array.isArray(earned)) return null
+  return earned.includes(choice) ? choice : null
 }
 
-/** Is `choice` something a user may save? (null = automatic, 'none', or a known id.) */
+/** Is `choice` something a user may save? (null or 'none' = nothing, else a known id.) */
 export function isValidBadgeChoice(choice) {
   return choice === null || choice === BADGE_CHOICE_NONE || BY_ID.has(choice)
 }

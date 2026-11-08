@@ -759,6 +759,8 @@ async function flushHsPaintBatch() {
     }
     if (badgeChanged.length && typeof applyHsPlusTenureToVisible === 'function')
       applyHsPlusTenureToVisible(badgeChanged)
+    // the flame steps aside for a badge (name-marks-data.js), and comes back when it goes
+    if (badgeChanged.length && typeof hsMarksRepaint === 'function') hsMarksRepaint(new Set(badgeChanged))
   }
 
   if (paints) {

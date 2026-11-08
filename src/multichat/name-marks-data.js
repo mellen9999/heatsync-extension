@@ -131,6 +131,12 @@ function hsMarksOnHeatPush(updates) {
 }
 
 /** a sender emote set is "known" when it holds a live emote: we have seen heatsync content from them */
+/** does this chatter show a heatsync badge this build can draw? (badges.js, lib/badge-catalogue.js) */
+function hsMarksBadged(uid) {
+  if (!uid || typeof getHsBadgeId !== 'function' || typeof badgeById !== 'function') return false
+  return !!badgeById(getHsBadgeId(uid))
+}
+
 function hsMarksKnown(uid) {
   const set = uid && typeof getSenderEmotes === 'function' ? getSenderEmotes(`twitch:${uid}`) : null
   if (!set?.size) return false
@@ -161,7 +167,8 @@ function hsMarksRowHtml(m, uid) {
   const login = String(m?.user ?? '').toLowerCase()
   const flair = flairOn && /^\d{1,20}$/.test(uid) ? _hsmGet('flair', uid) : null
   const heat = (flameOn || barsOn) && hsMarksValidLogin(login) ? _hsmGet('heat', login) : 0
-  const wear = hsMarksWear(flameOn, barsOn, flameOn && hsMarksKnown(uid), isSelf(m), heat)
+  // a picked heatsync badge takes the flame's place: one heatsync mark per name
+  const wear = hsMarksWear(flameOn && !hsMarksBadged(uid), barsOn, flameOn && hsMarksKnown(uid), isSelf(m), heat)
   return `<span class="hs-mc-marks">${hsMarksL10n(hsMarksHtml(flair, wear))}</span>`
 }
 

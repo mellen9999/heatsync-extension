@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "μπήκες"
   },
-  "welcome_explain": {
-    "message": "συνδέσου στο heatsync.org για να χρησιμοποιείς τα emotes και τις ρυθμίσεις σου σε κάθε συνομιλία"
-  },
   "welcome_close": {
     "message": "κλείσιμο"
   },
@@ -595,7 +592,7 @@
     "message": "τα url στο chat γίνονται κλικάρισμα"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k κύλιση, g/G κορυφή/κάτω, / αναζήτηση"
+    "message": "πλήκτρα vim: j/k κύλιση, g/G πάνω/κάτω, / αναζήτηση. για όσους ξέρουν vim"
   },
   "mc_settings_zebra_desc": {
     "message": "εναλλακτική σκίαση γραμμών"
@@ -610,7 +607,7 @@
     "message": "εικόνες προφίλ"
   },
   "mc_settings_avatars_desc": {
-    "message": "avatars δίπλα στα ονόματα χρηστών"
+    "message": "εικόνες προφίλ δίπλα στα ονόματα χρηστών"
   },
   "mc_settings_inline_notifs": {
     "message": "ενσωματωμένες ειδοποιήσεις"
@@ -909,7 +906,7 @@
     "message": "δεν συνδέθηκες"
   },
   "mc_input_auth_failed": {
-    "message": "η ταυτοποίηση απέτυχε — συνδέσου ξανά στο Twitch"
+    "message": "η σύνδεση απέτυχε — συνδέσου ξανά στο twitch"
   },
   "mc_social_back": {
     "message": "<- πίσω"
@@ -1156,7 +1153,7 @@
     "message": "σε ποια άκρη δένεται η μπάρα καρτελών του multichat"
   },
   "mc_settings_chat_position": {
-    "message": "πλευρά chat"
+    "message": "πλευρά του chat"
   },
   "mc_settings_chat_position_desc": {
     "message": "σε ποια πλευρά του player δένεται το πάνελ chat — το hidden το κρύβει (το πλήκτρο \\ εναλλάσσει)"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 ημέρες"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (καθαρισμός μηνυμάτων, 1s)"
+    "message": "καθαρισμός των μηνυμάτων του (timeout 1 δευτερολέπτου)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "μόνιμο ban"
@@ -2698,10 +2695,10 @@
     "message": "άνοιξε το stream του youtube για αποστολή"
   },
   "mc_yt_send_restricted": {
-    "message": "το chat του yt είναι περιορισμένο για αυτό το stream"
+    "message": "η συνομιλία του youtube είναι περιορισμένη σε αυτό το stream"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — δεν γίνεται chat εδώ",
+    "message": "youtube: $REASON$ — δεν μπορείς να γράψεις εδώ",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 ημέρες"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — καθαρισμός μηνυμάτων του χρήστη (timeout 1δ)"
+    "message": "καθαρισμός των μηνυμάτων αυτού του χρήστη (timeout 1 δευτερολέπτου)"
   },
   "mc_mtb_t_ban": {
     "message": "μόνιμο ban"
@@ -4799,7 +4796,7 @@
     "message": "+ προσθήκη καναλιού"
   },
   "mc_main_idwarn": {
-    "message": "τα emotes σου δεν θα εμφανίζονται στους άλλους εδώ — λογαριασμός heatsync $ACCT$, συνομιλείς ως $IDENT$ — $LINK$",
+    "message": "οι άλλοι δεν βλέπουν τα emotes σου εδώ — ο λογαριασμός σου στο heatsync είναι $ACCT$ αλλά γράφεις ως $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "φίλτρο — /regex/ ή @user"
+    "message": "αναζήτηση στη συνομιλία — μια λέξη ή @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ πόντοι",
@@ -5091,7 +5088,7 @@
     "message": "-- ΚΑΡΤΕΛΕΣ --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "αποτυχία ταυτοποίησης twitch"
+    "message": "η σύνδεση στο twitch απέτυχε"
   },
   "mc_notif_r_no_user": {
     "message": "δεν υπάρχει όνομα χρήστη twitch"
@@ -5280,22 +5277,22 @@
     "message": "σύστημα · αντίγραφο / επαναφορά"
   },
   "mc_set_export_tip": {
-    "message": "εξαγωγή ui_settings + όλων των κλειδιών hs_* σε αρχείο JSON. μεταφέρσιμο μεταξύ συσκευών και browsers."
+    "message": "αποθηκεύει όλες τις ρυθμίσεις σου σε ένα αρχείο. χρησιμοποίησέ το σε άλλη συσκευή ή browser"
   },
   "mc_set_export": {
     "message": "εξαγωγή ρυθμίσεων"
   },
   "mc_set_export_btn": {
-    "message": "λήψη .json"
+    "message": "αποθήκευση σε αρχείο"
   },
   "mc_set_import_tip": {
-    "message": "επαναφορά από αρχείο JSON που εξήχθη παλαιότερα. συγχωνεύεται με τις υπάρχουσες ρυθμίσεις."
+    "message": "φορτώνει ρυθμίσεις που είχες αποθηκεύσει. προστίθενται σε αυτές που έχεις"
   },
   "mc_set_import": {
     "message": "εισαγωγή ρυθμίσεων"
   },
   "mc_set_import_btn": {
-    "message": "φόρτωση .json"
+    "message": "φόρτωση από αρχείο"
   },
   "mc_set_reset_all_title": {
     "message": "επαναφορά όλων των ρυθμίσεων σε όλες τις σελίδες"
@@ -6365,7 +6362,7 @@
     "message": "ανάρτηση thread στο feed σου στο heatsync"
   },
   "slash_desc_re": {
-    "message": "απάντηση στο τελευταίο [OP] που φαίνεται στη συνομιλία"
+    "message": "απάντηση στην τελευταία ανάρτηση του feed που φαίνεται στη συνομιλία"
   },
   "slash_desc_dm": {
     "message": "αποστολή DM heatsync· χωρίς μήνυμα ανοίγει η συνομιλία"
@@ -6407,7 +6404,7 @@
     "message": "εκκαθάριση της τρέχουσας καρτέλας μόνο για εσένα"
   },
   "slash_desc_mute": {
-    "message": "σίγαση κάποιου για 24ω, σε όλους τους συνδεδεμένους λογαριασμούς του"
+    "message": "σίγαση κάποιου για 24 ώρες, σε όλους τους συνδεδεμένους λογαριασμούς του"
   },
   "slash_desc_unmute": {
     "message": "άρση σίγασης"
@@ -6455,7 +6452,7 @@
     "message": "διαγραφή ενός μηνύματος"
   },
   "slash_desc_nuke": {
-    "message": "μαζική διαγραφή πρόσφατων μηνυμάτων που περιέχουν έναν όρο"
+    "message": "διαγραφή πολλών πρόσφατων μηνυμάτων με μια λέξη, με τη μία"
   },
   "slash_desc_announce": {
     "message": "ανάρτηση ανακοίνωσης, προαιρετικά έγχρωμης"
@@ -6491,7 +6488,7 @@
     "message": "άνοιγμα αιτημάτων unban"
   },
   "slash_desc_slow": {
-    "message": "αργή λειτουργία, προεπιλογή 30δ"
+    "message": "αργή λειτουργία: οι άνθρωποι περιμένουν ανάμεσα στα μηνύματα, προεπιλογή 30 δευτερόλεπτα"
   },
   "slash_desc_followers": {
     "message": "λειτουργία μόνο ακόλουθοι"
@@ -6503,7 +6500,7 @@
     "message": "λειτουργία μόνο συνδρομητές"
   },
   "slash_desc_unique": {
-    "message": "λειτουργία μοναδικής συνομιλίας· μόνο twitch, το kick δεν έχει αντίστοιχο"
+    "message": "χωρίς επαναλαμβανόμενα μηνύματα (μοναδική συνομιλία)· μόνο twitch"
   },
   "slash_desc_poll": {
     "message": "δημιουργία δημοσκόπησης, 2-5 επιλογές"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "σύντομη ξενάγηση"
   },
-  "mc_tour_title": {
-    "message": "καλώς ήρθες! αυτά ξεκινούν απενεργοποιημένα. κάνε κλικ σε ένα για να το ενεργοποιήσεις"
-  },
   "mc_tour_timestamps_tip": {
     "message": "δείχνει την ώρα δίπλα σε κάθε μήνυμα"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "εμφάνιση της ξενάγησης ξανά"
   },
-  "welcome_get_title": {
-    "message": "τι παίρνεις"
-  },
-  "welcome_get_1": {
-    "message": "συνομιλία twitch, kick και youtube σε ένα μέρος, με όλα τα emotes (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "για να διαβάζεις τη συνομιλία δεν χρειάζεσαι λογαριασμό"
   },
-  "welcome_get_3": {
-    "message": "ο λογαριασμός προσθέτει τα δικά σου emotes και ρυθμίσεις σε κάθε συσκευή"
-  },
-  "welcome_start_title": {
-    "message": "πώς να ξεκινήσεις"
-  },
   "welcome_start_1": {
     "message": "άνοιξε οποιοδήποτε stream σε twitch, kick ή youtube. η συνομιλία heatsync εμφανίζεται μόνη της"
-  },
-  "welcome_start_2": {
-    "message": "μια μικρή κάρτα δείχνει τι είναι απενεργοποιημένο. κάνε κλικ σε ό,τι θέλεις"
-  },
-  "welcome_start_3": {
-    "message": "για να συνομιλήσεις, συνδέσου στον ιστότοπο όπως συνήθως και πληκτρολόγησε στο πλαίσιο κάτω"
   },
   "mc_settings_mention_sound": {
     "message": "ήχος αναφοράς"
@@ -7376,5 +7352,89 @@
   },
   "mc_notif_r_kick_bridge_timeout": {
     "message": "η σελίδα του kick δεν φορτώθηκε εγκαίρως"
+  },
+  "mc_tour_menu_t": {
+    "message": "δεξί κλικ σε ένα μήνυμα"
+  },
+  "mc_tour_menu_d": {
+    "message": "ανοίγει ένα μενού: απάντηση, αντιγραφή, σίγαση, follow και άλλα. στο κινητό πάτα και κράτα"
+  },
+  "mc_tour_cmd_t": {
+    "message": "γράψε / για εντολές"
+  },
+  "mc_tour_cmd_d": {
+    "message": "στο πλαίσιο κάτω κάτω. εμφανίζεται μια λίστα. το /help τις δείχνει όλες"
+  },
+  "mc_tour_find_t": {
+    "message": "βρες ένα μήνυμα"
+  },
+  "mc_tour_find_d": {
+    "message": "γράψε μια λέξη ή ένα όνομα στο πλαίσιο πάνω. μένουν μόνο τα μηνύματα που ταιριάζουν"
+  },
+  "mc_tour_tabs_t": {
+    "message": "περισσότερα κανάλια"
+  },
+  "mc_tour_tabs_d": {
+    "message": "κάνε κλικ στο + για να προσθέσεις κανάλι. τα alt+1 έως alt+9 πηδούν ανάμεσα στις καρτέλες"
+  },
+  "mc_tour_settings_t": {
+    "message": "ρυθμίσεις"
+  },
+  "mc_tour_settings_d": {
+    "message": "το κουμπί ⚙. το ? μέσα έχει βοήθεια, τον έλεγχο σύνδεσης και ξανά αυτή την ξενάγηση"
+  },
+  "mc_tour_switches_t": {
+    "message": "αυτά ξεκινούν κλειστά. κάνε κλικ σε ένα για να το ανοίξεις"
+  },
+  "mc_tour_next": {
+    "message": "επόμενο →"
+  },
+  "mc_tour_back": {
+    "message": "← πίσω"
+  },
+  "mc_tour_skip": {
+    "message": "παράλειψη"
+  },
+  "welcome_s1_t": {
+    "message": "άνοιξε ένα stream"
+  },
+  "welcome_s1_tour": {
+    "message": "την πρώτη φορά εμφανίζεται μια σύντομη ξενάγηση. παράλειψέ την όποτε θες"
+  },
+  "welcome_s2_t": {
+    "message": "κρύψε και δείξε τη συνομιλία"
+  },
+  "welcome_s2_d": {
+    "message": "το κουμπί απόκρυψης στη μπάρα καρτελών της συνομιλίας την κρύβει. κάνε κλικ στη λεπτή λευκή λωρίδα στην άκρη της σελίδας για να τη φέρεις πίσω"
+  },
+  "welcome_s3_t": {
+    "message": "σύνδεση (προαιρετικά)"
+  },
+  "welcome_s3_d": {
+    "message": "με έναν λογαριασμό στέλνεις σε twitch, kick και youtube μαζί και χρησιμοποιείς τα δικά σου emotes σε κάθε συσκευή"
+  },
+  "mc_mtb_l_purge": {
+    "message": "σβήσιμο"
+  },
+  "mc_mtb_l_bt": {
+    "message": "λέξεις"
+  },
+  "mc_mtb_l_mt": {
+    "message": "εργαλεία"
+  },
+  "mc_send_title": {
+    "message": "αποστολή"
+  },
+  "mc_send_hint": {
+    "message": "για να στείλεις από εδώ, συνδέσου μία φορά σε κάθε ιστότοπο. για ανάγνωση δεν χρειάζεσαι λογαριασμό"
+  },
+  "mc_send_in": {
+    "message": "έχεις συνδεθεί"
+  },
+  "mc_send_out": {
+    "message": "δεν έχεις συνδεθεί"
+  },
+  "mc_send_unknown": {
+    "message": "άγνωστο"
   }
 }

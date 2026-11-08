@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "du bist drin"
   },
-  "welcome_explain": {
-    "message": "melde dich bei heatsync.org an, um deine Emotes und Einstellungen in jedem Chat zu nutzen"
-  },
   "welcome_close": {
     "message": "schließen"
   },
@@ -595,7 +592,7 @@
     "message": "URLs im Chat werden klickbar"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k scrollen, g/G oben/unten, / suchen"
+    "message": "vim-Tasten: j/k scrollen, g/G oben/unten, / suchen. für alle, die vim kennen"
   },
   "mc_settings_zebra_desc": {
     "message": "wechselnde Zeilenschattierung"
@@ -610,7 +607,7 @@
     "message": "profilbilder"
   },
   "mc_settings_avatars_desc": {
-    "message": "Profilbilder neben Benutzernamen"
+    "message": "profilbilder neben Benutzernamen"
   },
   "mc_settings_inline_notifs": {
     "message": "inline-benachrichtigungen"
@@ -909,7 +906,7 @@
     "message": "nicht eingeloggt"
   },
   "mc_input_auth_failed": {
-    "message": "auth fehlgeschlagen — erneut bei Twitch einloggen"
+    "message": "anmeldung fehlgeschlagen — melde dich noch mal bei twitch an"
   },
   "mc_social_back": {
     "message": "<- zurück"
@@ -1156,7 +1153,7 @@
     "message": "an welchem Rand die multichat-Tab-Leiste andockt"
   },
   "mc_settings_chat_position": {
-    "message": "chat-Dockseite"
+    "message": "chat-Seite"
   },
   "mc_settings_chat_position_desc": {
     "message": "an welcher Seite des Players das Chat-Panel andockt — hidden versteckt es (Taste \\ schaltet um)"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 Tage"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (Nachrichten löschen, 1s)"
+    "message": "ihre Nachrichten löschen (1 Sekunde timeout)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "permanenter Ban"
@@ -2698,10 +2695,10 @@
     "message": "öffne den youtube-Stream, um zu senden"
   },
   "mc_yt_send_restricted": {
-    "message": "yt-Chat ist für diesen Stream eingeschränkt"
+    "message": "der youtube-Chat ist für diesen Stream eingeschränkt"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — hier kein Chat möglich",
+    "message": "youtube: $REASON$ — hier kannst du nicht chatten",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -3601,7 +3598,7 @@
     "message": "max"
   },
   "mc_twapi_amt": {
-    "message": "menge"
+    "message": "anzahl"
   },
   "mc_twapi_bet": {
     "message": "einsatz"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 tage"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — nachrichten dieses nutzers löschen (1s timeout)"
+    "message": "nachrichten dieses Nutzers löschen (1 Sekunde timeout)"
   },
   "mc_mtb_t_ban": {
     "message": "permanenter bann"
@@ -4799,7 +4796,7 @@
     "message": "+ kanal hinzufügen"
   },
   "mc_main_idwarn": {
-    "message": "deine emotes werden hier für andere nicht angezeigt — heatsync-konto $ACCT$, chat als $IDENT$ — $LINK$",
+    "message": "andere sehen deine Emotes hier nicht — dein heatsync-Konto ist $ACCT$, aber du chattest als $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "filter — /regex/ oder @user"
+    "message": "im Chat suchen — ein Wort oder @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ pkt",
@@ -5091,7 +5088,7 @@
     "message": "-- TABS --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch-anmeldung fehlgeschlagen"
+    "message": "anmeldung bei twitch fehlgeschlagen"
   },
   "mc_notif_r_no_user": {
     "message": "kein twitch-nutzername"
@@ -5280,22 +5277,22 @@
     "message": "system · backup / wiederherstellen"
   },
   "mc_set_export_tip": {
-    "message": "ui_settings + alle hs_*-schlüssel in eine JSON-datei sichern. übertragbar zwischen geräten und browsern."
+    "message": "speichert alle deine Einstellungen in einer Datei. nutze sie auf einem anderen Gerät oder Browser"
   },
   "mc_set_export": {
     "message": "einstellungen exportieren"
   },
   "mc_set_export_btn": {
-    "message": ".json herunterladen"
+    "message": "in Datei speichern"
   },
   "mc_set_import_tip": {
-    "message": "aus einer zuvor exportierten JSON-datei wiederherstellen. wird mit den bestehenden einstellungen zusammengeführt."
+    "message": "lädt Einstellungen, die du vorher gespeichert hast. sie kommen zu denen, die du schon hast, dazu"
   },
   "mc_set_import": {
     "message": "einstellungen importieren"
   },
   "mc_set_import_btn": {
-    "message": ".json laden"
+    "message": "aus Datei laden"
   },
   "mc_set_reset_all_title": {
     "message": "alle einstellungen auf allen seiten zurücksetzen"
@@ -6365,7 +6362,7 @@
     "message": "einen thread in deinen heatsync-feed posten"
   },
   "slash_desc_re": {
-    "message": "auf das letzte [OP] im chat antworten"
+    "message": "auf den letzten Feed-Beitrag im Chat antworten"
   },
   "slash_desc_dm": {
     "message": "heatsync-DM senden; ohne nachricht öffnet sich die unterhaltung"
@@ -6407,7 +6404,7 @@
     "message": "aktuellen tab nur für dich leeren"
   },
   "slash_desc_mute": {
-    "message": "jemanden 24h stummschalten, über alle verknüpften konten"
+    "message": "jemanden 24 Stunden stummschalten, auf allen verknüpften Konten"
   },
   "slash_desc_unmute": {
     "message": "stummschaltung aufheben"
@@ -6455,7 +6452,7 @@
     "message": "eine einzelne nachricht löschen"
   },
   "slash_desc_nuke": {
-    "message": "letzte nachrichten mit einem begriff gesammelt löschen"
+    "message": "viele letzte Nachrichten mit einem Wort auf einmal löschen"
   },
   "slash_desc_announce": {
     "message": "eine ankündigung posten, optional farbig"
@@ -6491,7 +6488,7 @@
     "message": "entbannungsanfragen öffnen"
   },
   "slash_desc_slow": {
-    "message": "langsam-modus, standard 30s"
+    "message": "langsamer Modus: man muss zwischen Nachrichten warten, Standard 30 Sekunden"
   },
   "slash_desc_followers": {
     "message": "nur-follower-modus"
@@ -6503,7 +6500,7 @@
     "message": "nur-abonnenten-modus"
   },
   "slash_desc_unique": {
-    "message": "einzigartiger-chat-modus; nur twitch, kick hat kein pendant"
+    "message": "keine wiederholten Nachrichten (einzigartiger Chat); nur twitch"
   },
   "slash_desc_poll": {
     "message": "umfrage erstellen, 2-5 optionen"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "kurze tour"
   },
-  "mc_tour_title": {
-    "message": "willkommen! diese Dinge sind am Anfang aus. klick auf eins, um es einzuschalten"
-  },
   "mc_tour_timestamps_tip": {
     "message": "zeigt die Uhrzeit neben jeder Nachricht"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "tour nochmal zeigen"
   },
-  "welcome_get_title": {
-    "message": "das bekommst du"
-  },
-  "welcome_get_1": {
-    "message": "twitch-, kick- und youtube-Chat an einem Ort, mit allen Emotes (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "zum Chat lesen brauchst du kein Konto"
   },
-  "welcome_get_3": {
-    "message": "ein Konto bringt deine eigenen Emotes und Einstellungen auf jedes Gerät"
-  },
-  "welcome_start_title": {
-    "message": "so startest du"
-  },
   "welcome_start_1": {
     "message": "öffne einen beliebigen Stream auf twitch, kick oder youtube. der heatsync-Chat erscheint von selbst"
-  },
-  "welcome_start_2": {
-    "message": "eine kleine Karte zeigt, was ausgeschaltet ist. klick auf das, was du willst"
-  },
-  "welcome_start_3": {
-    "message": "zum Chatten meldest du dich wie gewohnt auf der Seite an und tippst ins Feld unten"
   },
   "mc_settings_mention_sound": {
     "message": "erwähnungston"
@@ -7376,5 +7352,89 @@
   },
   "mc_notif_r_kick_bridge_timeout": {
     "message": "kick-seite wurde nicht rechtzeitig geladen"
+  },
+  "mc_tour_menu_t": {
+    "message": "rechtsklick auf eine Nachricht"
+  },
+  "mc_tour_menu_d": {
+    "message": "ein Menü öffnet sich: antworten, kopieren, stummschalten, folgen und mehr. auf dem Handy: gedrückt halten"
+  },
+  "mc_tour_cmd_t": {
+    "message": "tippe / für Befehle"
+  },
+  "mc_tour_cmd_d": {
+    "message": "im Feld ganz unten. eine Liste erscheint. /help zeigt alle"
+  },
+  "mc_tour_find_t": {
+    "message": "eine Nachricht finden"
+  },
+  "mc_tour_find_d": {
+    "message": "tippe ein Wort oder einen Namen in das Feld oben. nur passende Nachrichten bleiben"
+  },
+  "mc_tour_tabs_t": {
+    "message": "mehr Kanäle"
+  },
+  "mc_tour_tabs_d": {
+    "message": "klick auf +, um einen Kanal hinzuzufügen. mit alt+1 bis alt+9 springst du zwischen den Tabs"
+  },
+  "mc_tour_settings_t": {
+    "message": "einstellungen"
+  },
+  "mc_tour_settings_d": {
+    "message": "der ⚙-Button. ? darin hat Hilfe, den Anmelde-Check und diese Tour noch einmal"
+  },
+  "mc_tour_switches_t": {
+    "message": "diese sind am Anfang aus. klick auf einen zum Einschalten"
+  },
+  "mc_tour_next": {
+    "message": "weiter →"
+  },
+  "mc_tour_back": {
+    "message": "← zurück"
+  },
+  "mc_tour_skip": {
+    "message": "überspringen"
+  },
+  "welcome_s1_t": {
+    "message": "öffne einen Stream"
+  },
+  "welcome_s1_tour": {
+    "message": "beim ersten Mal erscheint eine kurze Tour. du kannst sie jederzeit überspringen"
+  },
+  "welcome_s2_t": {
+    "message": "chat ausblenden und einblenden"
+  },
+  "welcome_s2_d": {
+    "message": "der Ausblenden-Button in der Tab-Leiste des Chats versteckt ihn. klick auf den dünnen weißen Streifen am Seitenrand, um ihn zurückzuholen"
+  },
+  "welcome_s3_t": {
+    "message": "melde dich an (optional)"
+  },
+  "welcome_s3_d": {
+    "message": "mit einem Konto kannst du an twitch, kick und youtube gleichzeitig senden und deine eigenen Emotes auf jedem Gerät nutzen"
+  },
+  "mc_mtb_l_purge": {
+    "message": "löschen"
+  },
+  "mc_mtb_l_bt": {
+    "message": "wörter"
+  },
+  "mc_mtb_l_mt": {
+    "message": "tools"
+  },
+  "mc_send_title": {
+    "message": "senden"
+  },
+  "mc_send_hint": {
+    "message": "um von hier zu senden, melde dich einmal auf jeder Seite an. zum Lesen brauchst du kein Konto"
+  },
+  "mc_send_in": {
+    "message": "angemeldet"
+  },
+  "mc_send_out": {
+    "message": "nicht angemeldet"
+  },
+  "mc_send_unknown": {
+    "message": "unbekannt"
   }
 }

@@ -1,10 +1,12 @@
 
     /* First-run tour (tour.js) — ONE card beside the pane, a sibling of the scroller
        (never inside it, so bottom-follow is untouched), in flow above the rows so
-       it covers nothing, and never over the composer. Hierarchy is weight: the
-       setting's name is bold, its one-liner plain. State is a word (on / off) in
-       the same green / red the settings switch uses, so it reads without colour
-       too. Hover, focus and active are reverse video. Buttons set font: inherit. */
+       it covers nothing, and never over the composer. It shows one step at a time:
+       the step count (dim), a bold title, one or two plain lines. The last step is
+       the four switches: the setting's name is bold, its one-liner plain, state is a
+       word (on / off) in the same green / red the settings switch uses, so it reads
+       without colour too. Hover, focus and active are reverse video. Buttons set
+       font: inherit. */
     #hs-mc-tour {
       flex: none;
       display: flex;
@@ -18,8 +20,13 @@
     }
     #hs-mc-tour[hidden] { display: none; }
     .hs-mc-tour-head { padding: 2px 6px; font-weight: 700; }
+    .hs-mc-tour-n { margin-inline-end: 1ch; font-weight: 400; }
+    .hs-mc-tour-d { padding: 0 6px; overflow-wrap: anywhere; }
+    .hs-mc-tour-d[hidden] { display: none; }
     .hs-mc-tour-row,
     .hs-mc-tour-more,
+    .hs-mc-tour-back,
+    .hs-mc-tour-next,
     .hs-mc-tour-done {
       font: inherit;
       color: #fff;
@@ -49,14 +56,26 @@
       gap: 6px;
       padding: 2px 6px;
     }
+    .hs-mc-tour-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .hs-mc-tour-nav [hidden] { display: none; }
     .hs-mc-tour-more { padding: 0; text-decoration: underline; }
-    .hs-mc-tour-done { padding: 0 8px; border: 1px solid #fff; font-weight: 700; }
+    .hs-mc-tour-back,
+    .hs-mc-tour-next,
+    .hs-mc-tour-done { padding: 0 8px; border: 1px solid #fff; }
+    .hs-mc-tour-next,
+    .hs-mc-tour-done { font-weight: 700; }
     .hs-mc-tour-row:hover,
     .hs-mc-tour-row:focus-visible,
     .hs-mc-tour-row:active,
     .hs-mc-tour-more:hover,
     .hs-mc-tour-more:focus-visible,
     .hs-mc-tour-more:active,
+    .hs-mc-tour-back:hover,
+    .hs-mc-tour-back:focus-visible,
+    .hs-mc-tour-back:active,
+    .hs-mc-tour-next:hover,
+    .hs-mc-tour-next:focus-visible,
+    .hs-mc-tour-next:active,
     .hs-mc-tour-done:hover,
     .hs-mc-tour-done:focus-visible,
     .hs-mc-tour-done:active {

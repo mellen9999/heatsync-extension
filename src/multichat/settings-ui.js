@@ -272,9 +272,11 @@ function _rowsForDef(def) {
       var member = getSetting(def.key).includes(o.value)
       var active = def.invertDisplay ? !member : member
       var mMod = _rowModified(def, o)
-      var mTag = o.tag
+      // the button's face: a glyph/short code as is, or a word that is translated (tagKey)
+      var mFace = o.tagKey ? t(o.tagKey) : o.tag
+      var mTag = mFace
         ? '<span style="font-family:monospace;color:#fff;margin-right:6px;min-width:34px;display:inline-block">' +
-          escapeHtml(o.tag) +
+          escapeHtml(mFace) +
           '</span>'
         : ''
       rows.push({
@@ -659,12 +661,13 @@ const _SET_ACTION_ROWS = [
   },
 ]
 
-// The first-run tour's way back. Lives in settings › ? (and in search): a person
-// who closed the card by accident, or wants it again, looks for help.
+// The two getting-started rows of settings › ? (and of search): the first-run tour's way back —
+// a person who closed the card by accident, or wants it again, looks for help — and the
+// "sending" checklist (send-status.js): which of twitch / kick / youtube are signed in.
 function _setHelpActionRows() {
   return [
     {
-      hay: 'tour welcome intro introduction first run start guide help show again',
+      hay: 'tour welcome intro introduction first run start guide help show again replay',
       html:
         '<div class="hs-mc-setting-row hs-mc-setting-row-split">' +
         '<span class="hs-mc-setting-label" data-tip="' +
@@ -676,6 +679,10 @@ function _setHelpActionRows() {
         t('mc_set_tour_btn') +
         '</button>' +
         '</div>',
+    },
+    {
+      hay: 'sending send sign in signed log in login account twitch kick youtube checklist chat help',
+      html: sendStatusGroupHtml(),
     },
   ]
 }
@@ -1252,6 +1259,9 @@ function renderSettingsTab() {
     '</div>' +
     '</div>'
 
+  // the sending checklist (settings › ? and search) answers after the pane is drawn
+  sendStatusFill(msgsEl)
+
   // Controls render with live values inline (getSetting); only keyboard
   // focus needs restoring.
   if (_setFocusRow) {
@@ -1287,6 +1297,8 @@ function renderSettingsTab() {
         _importAllSettings()
       } else if (action === 'show-tour' && typeof tourReopen === 'function') {
         tourReopen()
+      } else if (action === 'send-login') {
+        sendStatusLogin(settingsActionBtn.dataset.plat)
       } else if (action === 'clear-sent-history') {
         hsSentHistoryClear().then(() => showToast(t('mc_set_clear_sent_done'), 'info'))
       }

@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "olet sisällä"
   },
-  "welcome_explain": {
-    "message": "kirjaudu heatsync.orgiin käyttääksesi emojejasi ja asetuksiasi jokaisessa chatissa"
-  },
   "welcome_close": {
     "message": "sulje"
   },
@@ -595,7 +592,7 @@
     "message": "url:t chatissa muuttuvat klikattaviksi"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k vieritys, g/G ylös/alas, / haku"
+    "message": "vim-näppäimet: j/k vieritys, g/G ylös/alas, / haku. vimin osaaville"
   },
   "mc_settings_zebra_desc": {
     "message": "vuorotteleva rivien varjostus"
@@ -607,7 +604,7 @@
     "message": "aikaleima jokaisessa viestissä"
   },
   "mc_settings_show_avatars": {
-    "message": "pfp:t"
+    "message": "profiilikuvat"
   },
   "mc_settings_avatars_desc": {
     "message": "profiilikuvat käyttäjänimien vieressä"
@@ -909,7 +906,7 @@
     "message": "ei kirjautunut"
   },
   "mc_input_auth_failed": {
-    "message": "todennus epäonnistui — kirjaudu uudelleen Twitchiin"
+    "message": "kirjautuminen epäonnistui — kirjaudu twitchiin uudelleen"
   },
   "mc_social_back": {
     "message": "<- takaisin"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 päivää"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (tyhjennä viestit, 1s)"
+    "message": "tyhjennä hänen viestinsä (1 sekunnin timeout)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "pysyvä banni"
@@ -2698,10 +2695,10 @@
     "message": "avaa youtube-stream lähettääksesi"
   },
   "mc_yt_send_restricted": {
-    "message": "yt-chat on rajoitettu tälle streamille"
+    "message": "youtuben chat on rajoitettu tälle streamille"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — ei voi chattailla täällä",
+    "message": "youtube: $REASON$ — täällä ei voi chatata",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 päivää"
   },
   "mc_mtb_t_purge": {
-    "message": "puhdistus — tyhjentää käyttäjän viestit (1s timeout)"
+    "message": "tyhjennä tämän käyttäjän viestit (1 sekunnin timeout)"
   },
   "mc_mtb_t_ban": {
     "message": "pysyvä banni"
@@ -4799,7 +4796,7 @@
     "message": "+ lisää kanava"
   },
   "mc_main_idwarn": {
-    "message": "emotesi eivät näy muille täällä — heatsync-tili $ACCT$, chattaat nimellä $IDENT$ — $LINK$",
+    "message": "muut eivät näe emotejasi täällä — heatsync-tilisi on $ACCT$, mutta chattaat nimellä $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "suodatin — /regex/ tai @user"
+    "message": "hae chatista — sana tai @nimi"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ p",
@@ -5091,7 +5088,7 @@
     "message": "-- VÄLILEHDET --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch-tunnistautuminen epäonnistui"
+    "message": "twitch-kirjautuminen epäonnistui"
   },
   "mc_notif_r_no_user": {
     "message": "ei twitch-käyttäjänimeä"
@@ -5280,22 +5277,22 @@
     "message": "järjestelmä · varmuuskopio / palautus"
   },
   "mc_set_export_tip": {
-    "message": "vie ui_settings + kaikki hs_*-avaimet JSON-tiedostoon. siirrettävä laitteiden ja selainten välillä."
+    "message": "tallenna kaikki asetuksesi tiedostoon. käytä sitä toisella laitteella tai selaimella"
   },
   "mc_set_export": {
     "message": "vie asetukset"
   },
   "mc_set_export_btn": {
-    "message": "lataa .json"
+    "message": "tallenna tiedostoon"
   },
   "mc_set_import_tip": {
-    "message": "palauta aiemmin viedystä JSON-tiedostosta. yhdistyy nykyisiin asetuksiin."
+    "message": "lataa aiemmin tallentamasi asetukset. ne lisätään nykyisiin asetuksiin"
   },
   "mc_set_import": {
     "message": "tuo asetukset"
   },
   "mc_set_import_btn": {
-    "message": "lataa .json"
+    "message": "lataa tiedostosta"
   },
   "mc_set_reset_all_title": {
     "message": "nollaa kaikki asetukset kaikilla sivuilla"
@@ -6365,7 +6362,7 @@
     "message": "postaa ketju heatsync-feediisi"
   },
   "slash_desc_re": {
-    "message": "vastaa chatissa viimeksi näytettyyn [OP]-viestiin"
+    "message": "vastaa viimeiseen chatissa näytettyyn feed-postaukseen"
   },
   "slash_desc_dm": {
     "message": "lähetä heatsync-DM; ilman viestiä avaa keskustelun"
@@ -6407,7 +6404,7 @@
     "message": "tyhjennä nykyinen välilehti vain sinulta"
   },
   "slash_desc_mute": {
-    "message": "mykistä joku 24h kaikilla hänen yhdistetyillä tileillään"
+    "message": "mykistä joku 24 tunniksi kaikilla hänen yhdistetyillä tileillään"
   },
   "slash_desc_unmute": {
     "message": "poista mykistys"
@@ -6455,7 +6452,7 @@
     "message": "poista yksittäinen viesti"
   },
   "slash_desc_nuke": {
-    "message": "poista joukolla viimeaikaiset viestit, jotka sisältävät termin"
+    "message": "poista kerralla paljon viimeaikaisia viestejä, joissa on tietty sana"
   },
   "slash_desc_announce": {
     "message": "postaa ilmoitus, halutessa värillisenä"
@@ -6491,7 +6488,7 @@
     "message": "avaa banni-poistopyynnöt"
   },
   "slash_desc_slow": {
-    "message": "hidastustila, oletus 30s"
+    "message": "hidastustila: viestien välillä pitää odottaa, oletus 30 sekuntia"
   },
   "slash_desc_followers": {
     "message": "vain seuraajat -tila"
@@ -6503,7 +6500,7 @@
     "message": "vain tilaajat -tila"
   },
   "slash_desc_unique": {
-    "message": "uniikki chat -tila; vain twitch, kickissä ei ole vastaavaa"
+    "message": "ei toistoviestejä (uniikki chat); vain twitch"
   },
   "slash_desc_poll": {
     "message": "luo äänestys, 2-5 vaihtoehtoa"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "tervetuloesittely"
   },
-  "mc_tour_title": {
-    "message": "tervetuloa! nämä ovat aluksi pois päältä. napsauta yhtä ottaaksesi sen käyttöön"
-  },
   "mc_tour_timestamps_tip": {
     "message": "näyttää kellonajan jokaisen viestin vieressä"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "näytä esittely uudelleen"
   },
-  "welcome_get_title": {
-    "message": "mitä saat"
-  },
-  "welcome_get_1": {
-    "message": "twitch-, kick- ja youtube-chat yhdessä paikassa, kaikilla emojeilla (7tv, bttv, ffz, heatsync)"
-  },
   "welcome_get_2": {
     "message": "chatin lukemiseen ei tarvita tiliä"
   },
-  "welcome_get_3": {
-    "message": "tili tuo omat emojisi ja asetuksesi jokaiselle laitteelle"
-  },
-  "welcome_start_title": {
-    "message": "näin pääset alkuun"
-  },
   "welcome_start_1": {
     "message": "avaa mikä tahansa twitch-, kick- tai youtube-lähetys. heatsync-chat ilmestyy itsestään"
-  },
-  "welcome_start_2": {
-    "message": "pieni kortti näyttää, mikä on pois päältä. napsauta sitä, mitä haluat"
-  },
-  "welcome_start_3": {
-    "message": "chattaillaksesi kirjaudu sivustolle kuten aina ja kirjoita alaosan kenttään"
   },
   "mc_settings_mention_sound": {
     "message": "maininta-ääni"
@@ -7376,5 +7352,89 @@
   },
   "mc_notif_r_kick_bridge_timeout": {
     "message": "kick-sivu ei latautunut ajoissa"
+  },
+  "mc_tour_menu_t": {
+    "message": "napsauta viestiä hiiren oikealla"
+  },
+  "mc_tour_menu_d": {
+    "message": "valikko aukeaa: vastaa, kopioi, mykistä, seuraa ja muuta. puhelimella paina pitkään"
+  },
+  "mc_tour_cmd_t": {
+    "message": "kirjoita / komentoja varten"
+  },
+  "mc_tour_cmd_d": {
+    "message": "alareunan kenttään. lista ponnahtaa esiin. /help näyttää kaikki"
+  },
+  "mc_tour_find_t": {
+    "message": "etsi viesti"
+  },
+  "mc_tour_find_d": {
+    "message": "kirjoita sana tai nimi ylhäällä olevaan kenttään. vain osuvat viestit jäävät näkyviin"
+  },
+  "mc_tour_tabs_t": {
+    "message": "lisää kanavia"
+  },
+  "mc_tour_tabs_d": {
+    "message": "lisää kanava napsauttamalla +. alt+1 – alt+9 vaihtavat välilehteä"
+  },
+  "mc_tour_settings_t": {
+    "message": "asetukset"
+  },
+  "mc_tour_settings_d": {
+    "message": "⚙-nappi. sen sisällä ? näyttää ohjeen, kirjautumistarkistukset ja tämän esittelyn uudestaan"
+  },
+  "mc_tour_switches_t": {
+    "message": "nämä ovat aluksi pois päältä. napsauta yhtä laittaaksesi sen päälle"
+  },
+  "mc_tour_next": {
+    "message": "seuraava →"
+  },
+  "mc_tour_back": {
+    "message": "← takaisin"
+  },
+  "mc_tour_skip": {
+    "message": "ohita"
+  },
+  "welcome_s1_t": {
+    "message": "avaa lähetys"
+  },
+  "welcome_s1_tour": {
+    "message": "lyhyt esittely ilmestyy ensimmäisellä kerralla. ohita se milloin vain"
+  },
+  "welcome_s2_t": {
+    "message": "piilota ja näytä chat"
+  },
+  "welcome_s2_d": {
+    "message": "chatin välilehtipalkin piilotusnappi kätkee sen. tuo se takaisin napsauttamalla sivun reunan ohutta valkoista kaistaa"
+  },
+  "welcome_s3_t": {
+    "message": "kirjaudu sisään (vapaaehtoista)"
+  },
+  "welcome_s3_d": {
+    "message": "tilillä voit lähettää viestejä twitchiin, kickiin ja youtubeen kerralla ja käyttää omia emotejasi joka laitteella"
+  },
+  "mc_mtb_l_purge": {
+    "message": "tyhjennä"
+  },
+  "mc_mtb_l_bt": {
+    "message": "sanat"
+  },
+  "mc_mtb_l_mt": {
+    "message": "työkalut"
+  },
+  "mc_send_title": {
+    "message": "lähetys"
+  },
+  "mc_send_hint": {
+    "message": "lähettääksesi täältä kirjaudu kerran jokaiselle sivustolle. lukemiseen ei tarvita tiliä"
+  },
+  "mc_send_in": {
+    "message": "kirjautunut"
+  },
+  "mc_send_out": {
+    "message": "ei kirjautunut"
+  },
+  "mc_send_unknown": {
+    "message": "ei tietoa"
   }
 }

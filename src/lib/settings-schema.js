@@ -71,7 +71,7 @@ import { namePaintsOn } from './utils.js'
 //              rollback; main.js derives CW_CATS from these
 
 /**
- * @typedef {{ value: *, label?: string, labelKey?: string, tip?: string, tipKey?: string, default?: boolean, tag?: string, color?: string, borderColor?: string, applies?: 'live'|'reload' }} SettingOption
+ * @typedef {{ value: *, label?: string, labelKey?: string, tip?: string, tipKey?: string, default?: boolean, tag?: string, tagKey?: string, color?: string, borderColor?: string, applies?: 'live'|'reload' }} SettingOption
  */
 
 /**
@@ -1287,11 +1287,11 @@ const SETTINGS = [
       { value: 'timeout_1h', tag: '1h', labelKey: 'mc_settings_mod_btn_timeout_1h' },
       { value: 'timeout_24h', tag: '24h', labelKey: 'mc_settings_mod_btn_timeout_24h' },
       { value: 'timeout_7d', tag: '7d', labelKey: 'mc_settings_mod_btn_timeout_7d' },
-      { value: 'purge', tag: 'purge', labelKey: 'mc_settings_mod_btn_purge' },
+      { value: 'purge', tagKey: 'mc_mtb_l_purge', labelKey: 'mc_settings_mod_btn_purge' },
       { value: 'ban', tag: '⛔', labelKey: 'mc_settings_mod_btn_ban' },
       { value: 'unban', tag: '✓', labelKey: 'mc_settings_mod_btn_unban' },
-      { value: 'blocked_terms', tag: 'bt', labelKey: 'mc_settings_mod_btn_blocked_terms' },
-      { value: 'mod_tools', tag: 'mt', labelKey: 'mc_ms_title' },
+      { value: 'blocked_terms', tagKey: 'mc_mtb_l_bt', labelKey: 'mc_settings_mod_btn_blocked_terms' },
+      { value: 'mod_tools', tagKey: 'mc_mtb_l_mt', labelKey: 'mc_ms_title' },
     ],
   },
 

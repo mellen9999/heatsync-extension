@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "준비 완료"
   },
-  "welcome_explain": {
-    "message": "heatsync.org에 로그인하면 모든 채팅에서 이모트와 설정을 사용할 수 있어요"
-  },
   "welcome_close": {
     "message": "닫기"
   },
@@ -595,7 +592,7 @@
     "message": "채팅의 url이 클릭 가능해짐"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k 스크롤, g/G 위/아래, / 검색"
+    "message": "vim 키: j/k 스크롤, g/G 맨 위/아래, / 검색. vim을 아는 사람용"
   },
   "mc_settings_zebra_desc": {
     "message": "교번 행 음영"
@@ -610,7 +607,7 @@
     "message": "프로필 사진"
   },
   "mc_settings_avatars_desc": {
-    "message": "사용자 이름 옆에 아바타"
+    "message": "사용자 이름 옆에 프로필 사진"
   },
   "mc_settings_inline_notifs": {
     "message": "인라인 알림"
@@ -909,7 +906,7 @@
     "message": "로그인하지 않음"
   },
   "mc_input_auth_failed": {
-    "message": "인증 실패 — twitch에 다시 로그인"
+    "message": "로그인 실패 — twitch에 다시 로그인"
   },
   "mc_social_back": {
     "message": "<- 뒤로"
@@ -1156,7 +1153,7 @@
     "message": "multichat 탭 바를 붙일 가장자리"
   },
   "mc_settings_chat_position": {
-    "message": "채팅 도킹 쪽"
+    "message": "채팅 위치"
   },
   "mc_settings_chat_position_desc": {
     "message": "채팅 패널을 플레이어 어느 쪽에 붙일지 — hidden은 숨김 (\\ 키로 토글)"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7일"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (메시지 지우기, 1초)"
+    "message": "그 유저의 메시지 지우기 (1초 timeout)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "영구 ban"
@@ -2698,10 +2695,10 @@
     "message": "보내려면 youtube 방송을 열어"
   },
   "mc_yt_send_restricted": {
-    "message": "이 방송은 yt 채팅이 제한됨"
+    "message": "이 방송은 youtube 채팅이 제한됨"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — 여기선 채팅 불가",
+    "message": "youtube: $REASON$ — 여기선 채팅 불가",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -3601,7 +3598,7 @@
     "message": "최대"
   },
   "mc_twapi_amt": {
-    "message": "수량"
+    "message": "포인트 수"
   },
   "mc_twapi_bet": {
     "message": "베팅"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7일"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — 이 유저의 메시지 지우기 (1초 timeout)"
+    "message": "이 유저의 메시지 지우기 (1초 timeout)"
   },
   "mc_mtb_t_ban": {
     "message": "영구 ban"
@@ -4799,7 +4796,7 @@
     "message": "+ 채널 추가"
   },
   "mc_main_idwarn": {
-    "message": "여기선 내 emote가 다른 사람에게 안 보여 — heatsync 계정 $ACCT$, 채팅 계정 $IDENT$ — $LINK$",
+    "message": "여기선 다른 사람에게 내 이모트가 안 보여 — heatsync 계정: $ACCT$, 채팅 계정: $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "필터 — /regex/ 또는 @user"
+    "message": "채팅 검색 — 단어 또는 @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ 포인트",
@@ -5091,7 +5088,7 @@
     "message": "-- 탭 --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch 인증 실패"
+    "message": "twitch 로그인 실패"
   },
   "mc_notif_r_no_user": {
     "message": "twitch 사용자명 없음"
@@ -5280,22 +5277,22 @@
     "message": "시스템 · 백업 / 복원"
   },
   "mc_set_export_tip": {
-    "message": "ui_settings와 모든 hs_* 키를 JSON 파일로 저장. 기기와 브라우저 간 이동 가능."
+    "message": "모든 설정을 파일로 저장해요. 다른 기기나 브라우저에서 쓸 수 있어요"
   },
   "mc_set_export": {
     "message": "설정 내보내기"
   },
   "mc_set_export_btn": {
-    "message": ".json 다운로드"
+    "message": "파일로 저장"
   },
   "mc_set_import_tip": {
-    "message": "이전에 내보낸 JSON 파일에서 복원. 기존 설정에 병합돼."
+    "message": "전에 저장한 설정을 불러와요. 지금 설정에 더해져요"
   },
   "mc_set_import": {
     "message": "설정 가져오기"
   },
   "mc_set_import_btn": {
-    "message": ".json 불러오기"
+    "message": "파일에서 불러오기"
   },
   "mc_set_reset_all_title": {
     "message": "모든 페이지의 모든 설정 초기화"
@@ -6365,7 +6362,7 @@
     "message": "heatsync 피드에 스레드 올리기"
   },
   "slash_desc_re": {
-    "message": "채팅에 보이는 마지막 [OP]에 답글"
+    "message": "채팅에 보이는 마지막 피드 글에 답글"
   },
   "slash_desc_dm": {
     "message": "heatsync DM 보내기; 메시지 없으면 대화 열기"
@@ -6407,7 +6404,7 @@
     "message": "현재 탭을 나에게만 비우기"
   },
   "slash_desc_mute": {
-    "message": "연결된 계정 전체에서 24시간 뮤트"
+    "message": "연결된 모든 계정에서 24시간 뮤트"
   },
   "slash_desc_unmute": {
     "message": "뮤트 해제"
@@ -6455,7 +6452,7 @@
     "message": "메시지 하나 삭제"
   },
   "slash_desc_nuke": {
-    "message": "특정 단어가 든 최근 메시지 일괄 삭제"
+    "message": "어떤 단어가 들어간 최근 메시지를 한꺼번에 삭제"
   },
   "slash_desc_announce": {
     "message": "공지 올리기, 색상 선택 가능"
@@ -6491,7 +6488,7 @@
     "message": "unban 요청 열기"
   },
   "slash_desc_slow": {
-    "message": "슬로우 모드, 기본 30초"
+    "message": "슬로우 모드: 메시지 사이에 기다려요, 기본 30초"
   },
   "slash_desc_followers": {
     "message": "팔로워 전용 모드"
@@ -6503,7 +6500,7 @@
     "message": "구독자 전용 모드"
   },
   "slash_desc_unique": {
-    "message": "고유 채팅 모드; twitch만, kick엔 없음"
+    "message": "같은 말 반복 금지 (고유 채팅). twitch만"
   },
   "slash_desc_poll": {
     "message": "투표 만들기, 선택지 2-5개"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "환영 투어"
   },
-  "mc_tour_title": {
-    "message": "환영해요! 이 기능들은 처음엔 꺼져 있어요. 켜고 싶은 걸 클릭하세요"
-  },
   "mc_tour_timestamps_tip": {
     "message": "모든 메시지 옆에 시간을 보여줘요"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "투어 다시 보기"
   },
-  "welcome_get_title": {
-    "message": "이런 걸 얻어요"
-  },
-  "welcome_get_1": {
-    "message": "twitch, kick, youtube 채팅을 한곳에서, 모든 이모트(7tv, bttv, ffz, heatsync)와 함께"
-  },
   "welcome_get_2": {
     "message": "채팅을 읽는 데는 계정이 필요 없어요"
   },
-  "welcome_get_3": {
-    "message": "계정이 있으면 내 이모트와 설정을 모든 기기에서 쓸 수 있어요"
-  },
-  "welcome_start_title": {
-    "message": "시작하는 법"
-  },
   "welcome_start_1": {
     "message": "twitch, kick, youtube 방송 아무거나 여세요. heatsync 채팅이 저절로 나타나요"
-  },
-  "welcome_start_2": {
-    "message": "작은 카드가 꺼져 있는 것을 보여줘요. 원하는 걸 클릭하세요"
-  },
-  "welcome_start_3": {
-    "message": "채팅하려면 평소처럼 사이트에 로그인한 뒤 아래 입력칸에 입력하세요"
   },
   "mc_settings_mention_sound": {
     "message": "멘션 소리"
@@ -7376,5 +7352,89 @@
   },
   "mc_notif_r_kick_bridge_timeout": {
     "message": "kick 페이지가 제때 로드되지 않았어요"
+  },
+  "mc_tour_menu_t": {
+    "message": "메시지를 우클릭"
+  },
+  "mc_tour_menu_d": {
+    "message": "메뉴가 열려요: 답장, 복사, 뮤트, 팔로우 등. 폰에서는 길게 눌러요"
+  },
+  "mc_tour_cmd_t": {
+    "message": "/ 를 입력하면 명령어"
+  },
+  "mc_tour_cmd_d": {
+    "message": "맨 아래 입력칸에서요. 목록이 떠요. /help 로 전부 볼 수 있어요"
+  },
+  "mc_tour_find_t": {
+    "message": "메시지 찾기"
+  },
+  "mc_tour_find_d": {
+    "message": "맨 위 칸에 단어나 이름을 입력해요. 맞는 메시지만 남아요"
+  },
+  "mc_tour_tabs_t": {
+    "message": "다른 채널"
+  },
+  "mc_tour_tabs_d": {
+    "message": "+ 를 눌러 채널을 추가해요. alt+1 부터 alt+9 로 탭을 옮겨요"
+  },
+  "mc_tour_settings_t": {
+    "message": "설정"
+  },
+  "mc_tour_settings_d": {
+    "message": "⚙ 버튼이에요. 안의 ? 에 도움말, 로그인 확인, 이 투어가 있어요"
+  },
+  "mc_tour_switches_t": {
+    "message": "이 스위치들은 꺼져 있어요. 눌러서 켜요"
+  },
+  "mc_tour_next": {
+    "message": "다음 →"
+  },
+  "mc_tour_back": {
+    "message": "← 뒤로"
+  },
+  "mc_tour_skip": {
+    "message": "건너뛰기"
+  },
+  "welcome_s1_t": {
+    "message": "방송 열기"
+  },
+  "welcome_s1_tour": {
+    "message": "처음에 짧은 투어가 나와요. 언제든 건너뛸 수 있어요"
+  },
+  "welcome_s2_t": {
+    "message": "채팅 숨기기와 보이기"
+  },
+  "welcome_s2_d": {
+    "message": "채팅 탭 바의 숨김 버튼으로 치워요. 다시 보려면 페이지 가장자리의 얇은 흰 띠를 눌러요"
+  },
+  "welcome_s3_t": {
+    "message": "로그인 (선택)"
+  },
+  "welcome_s3_d": {
+    "message": "계정이 있으면 twitch, kick, youtube에 한 번에 보내고, 내 이모트를 모든 기기에서 쓸 수 있어요"
+  },
+  "mc_mtb_l_purge": {
+    "message": "지우기"
+  },
+  "mc_mtb_l_bt": {
+    "message": "단어"
+  },
+  "mc_mtb_l_mt": {
+    "message": "도구"
+  },
+  "mc_send_title": {
+    "message": "보내기"
+  },
+  "mc_send_hint": {
+    "message": "여기서 보내려면 각 사이트에 한 번씩 로그인해요. 읽기만 하는 건 계정이 필요 없어요"
+  },
+  "mc_send_in": {
+    "message": "로그인됨"
+  },
+  "mc_send_out": {
+    "message": "로그인 안 됨"
+  },
+  "mc_send_unknown": {
+    "message": "알 수 없음"
   }
 }

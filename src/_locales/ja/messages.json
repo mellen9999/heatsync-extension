@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "準備完了"
   },
-  "welcome_explain": {
-    "message": "heatsync.org にログインすると、すべてのチャットでエモートと設定を使えます"
-  },
   "welcome_close": {
     "message": "閉じる"
   },
@@ -595,7 +592,7 @@
     "message": "チャットのurlがクリック可能になる"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/kスクロール、g/G上/下、/検索"
+    "message": "vim キー: j/k でスクロール、g/G で上/下、/ で検索。vim を知っている人向け"
   },
   "mc_settings_zebra_desc": {
     "message": "交互の行シェーディング"
@@ -607,10 +604,10 @@
     "message": "各メッセージにタイムスタンプ"
   },
   "mc_settings_show_avatars": {
-    "message": "アイコン"
+    "message": "プロフィール画像"
   },
   "mc_settings_avatars_desc": {
-    "message": "ユーザー名の横にアバター"
+    "message": "ユーザー名の横にプロフィール画像"
   },
   "mc_settings_inline_notifs": {
     "message": "インライン通知"
@@ -909,7 +906,7 @@
     "message": "ログインしていません"
   },
   "mc_input_auth_failed": {
-    "message": "認証失敗 — twitchに再ログイン"
+    "message": "ログイン失敗 — twitch にもう一度ログインして"
   },
   "mc_social_back": {
     "message": "<- 戻る"
@@ -1156,7 +1153,7 @@
     "message": "multichat のタブバーを固定する辺"
   },
   "mc_settings_chat_position": {
-    "message": "チャットの固定側"
+    "message": "チャットを置く側"
   },
   "mc_settings_chat_position_desc": {
     "message": "チャットパネルをプレーヤーのどちら側に固定するか — hidden で隠す (\\ キーで切替)"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7日"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (メッセージを消去、1秒)"
+    "message": "その人のメッセージを消す (1秒 timeout)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "永久 ban"
@@ -2698,10 +2695,10 @@
     "message": "送信するには youtube の配信を開いて"
   },
   "mc_yt_send_restricted": {
-    "message": "この配信では yt チャットが制限されている"
+    "message": "この配信の youtube チャットは制限されている"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — ここではチャットできない",
+    "message": "youtube: $REASON$ — ここではチャットできない",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -3601,7 +3598,7 @@
     "message": "最大"
   },
   "mc_twapi_amt": {
-    "message": "額"
+    "message": "ポイント数"
   },
   "mc_twapi_bet": {
     "message": "ベット"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7日"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — このユーザーのメッセージを消去 (1秒 timeout)"
+    "message": "このユーザーのメッセージを消す (1秒 timeout)"
   },
   "mc_mtb_t_ban": {
     "message": "永久 ban"
@@ -4799,7 +4796,7 @@
     "message": "+ チャンネルを追加"
   },
   "mc_main_idwarn": {
-    "message": "ここではあなたのエモートが他の人に表示されない — heatsync アカウント $ACCT$、チャットは $IDENT$ として — $LINK$",
+    "message": "ここではほかの人にあなたのエモートが見えない — heatsync アカウントは $ACCT$、チャットは $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "フィルター — /regex/ または @user"
+    "message": "チャットを検索 — 言葉か @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ pt",
@@ -5091,7 +5088,7 @@
     "message": "-- タブ --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch 認証に失敗"
+    "message": "twitch のログインに失敗"
   },
   "mc_notif_r_no_user": {
     "message": "twitch ユーザー名なし"
@@ -5280,22 +5277,22 @@
     "message": "システム · バックアップ / 復元"
   },
   "mc_set_export_tip": {
-    "message": "ui_settings とすべての hs_* キーを JSON ファイルに書き出す。端末やブラウザをまたいで使える。"
+    "message": "設定をすべてファイルに保存します。ほかの端末やブラウザで使えます"
   },
   "mc_set_export": {
     "message": "設定をエクスポート"
   },
   "mc_set_export_btn": {
-    "message": ".json をダウンロード"
+    "message": "ファイルに保存"
   },
   "mc_set_import_tip": {
-    "message": "エクスポート済みの JSON ファイルから復元。既存の設定にマージされる。"
+    "message": "前に保存した設定を読み込みます。今の設定に追加されます"
   },
   "mc_set_import": {
     "message": "設定をインポート"
   },
   "mc_set_import_btn": {
-    "message": ".json を読み込む"
+    "message": "ファイルから読み込む"
   },
   "mc_set_reset_all_title": {
     "message": "すべてのページのすべての設定をリセット"
@@ -6365,7 +6362,7 @@
     "message": "heatsync フィードにスレッドを投稿"
   },
   "slash_desc_re": {
-    "message": "チャットに表示された直近の [OP] に返信"
+    "message": "チャットに出た最新のフィード投稿に返信"
   },
   "slash_desc_dm": {
     "message": "heatsync dm を送信。メッセージなしで会話を開く"
@@ -6407,7 +6404,7 @@
     "message": "現在のタブを自分だけクリア"
   },
   "slash_desc_mute": {
-    "message": "連携アカウントすべてで 24時間ミュート"
+    "message": "相手を24時間ミュート。連携しているアカウントすべてが対象"
   },
   "slash_desc_unmute": {
     "message": "ミュートを解除"
@@ -6455,7 +6452,7 @@
     "message": "メッセージを 1 件削除"
   },
   "slash_desc_nuke": {
-    "message": "指定語を含む直近のメッセージを一括削除"
+    "message": "ある言葉を含む最近のメッセージをまとめて削除"
   },
   "slash_desc_announce": {
     "message": "お知らせを投稿 (色指定も可)"
@@ -6491,7 +6488,7 @@
     "message": "unban リクエストを開く"
   },
   "slash_desc_slow": {
-    "message": "スローモード (既定 30秒)"
+    "message": "スローモード: メッセージの間に待ち時間を入れる。標準は30秒"
   },
   "slash_desc_followers": {
     "message": "フォロワー限定モード"
@@ -6503,7 +6500,7 @@
     "message": "サブスク限定モード"
   },
   "slash_desc_unique": {
-    "message": "ユニークチャットモード。twitch のみ、kick に相当機能なし"
+    "message": "同じメッセージの連投を禁止 (ユニークチャット)。twitch のみ"
   },
   "slash_desc_poll": {
     "message": "投票を作成 (選択肢 2〜5)"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "ウェルカムツアー"
   },
-  "mc_tour_title": {
-    "message": "ようこそ！これらは最初はオフです。使いたいものをクリックしてオンにしましょう"
-  },
   "mc_tour_timestamps_tip": {
     "message": "各メッセージの横に時刻を表示します"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "ツアーをもう一度見る"
   },
-  "welcome_get_title": {
-    "message": "できること"
-  },
-  "welcome_get_1": {
-    "message": "twitch・kick・youtube のチャットをひとつの場所で。すべてのエモート（7tv、bttv、ffz、heatsync）つき"
-  },
   "welcome_get_2": {
     "message": "チャットを読むだけならアカウントは不要です"
   },
-  "welcome_get_3": {
-    "message": "アカウントがあると、自分のエモートと設定がどの端末でも使えます"
-  },
-  "welcome_start_title": {
-    "message": "はじめかた"
-  },
   "welcome_start_1": {
     "message": "twitch・kick・youtube のどの配信でも開いてください。heatsync のチャットが自動で表示されます"
-  },
-  "welcome_start_2": {
-    "message": "小さなカードでオフのものがわかります。使いたいものをクリックしてください"
-  },
-  "welcome_start_3": {
-    "message": "チャットするには、いつも通りサイトにログインして、下の入力欄に入力します"
   },
   "mc_settings_mention_sound": {
     "message": "メンション音"
@@ -7376,5 +7352,89 @@
   },
   "mc_notif_r_kick_bridge_timeout": {
     "message": "kickのページが時間内に読み込まれませんでした"
+  },
+  "mc_tour_menu_t": {
+    "message": "メッセージを右クリック"
+  },
+  "mc_tour_menu_d": {
+    "message": "メニューが開きます: 返信、コピー、ミュート、フォローなど。スマホは長押し"
+  },
+  "mc_tour_cmd_t": {
+    "message": "/ でコマンド入力"
+  },
+  "mc_tour_cmd_d": {
+    "message": "画面下の入力欄で。リストが出ます。/help で全部見られます"
+  },
+  "mc_tour_find_t": {
+    "message": "メッセージを探す"
+  },
+  "mc_tour_find_d": {
+    "message": "上のボックスに言葉か名前を入力。合うメッセージだけが残ります"
+  },
+  "mc_tour_tabs_t": {
+    "message": "ほかのチャンネル"
+  },
+  "mc_tour_tabs_d": {
+    "message": "+ を押してチャンネルを追加。alt+1 から alt+9 でタブを切り替え"
+  },
+  "mc_tour_settings_t": {
+    "message": "設定"
+  },
+  "mc_tour_settings_d": {
+    "message": "⚙ ボタン。中の ? にヘルプ、ログインの確認、このツアーがあります"
+  },
+  "mc_tour_switches_t": {
+    "message": "これらは最初オフ。押すとオンになります"
+  },
+  "mc_tour_next": {
+    "message": "次へ →"
+  },
+  "mc_tour_back": {
+    "message": "← 戻る"
+  },
+  "mc_tour_skip": {
+    "message": "スキップ"
+  },
+  "welcome_s1_t": {
+    "message": "配信を開く"
+  },
+  "welcome_s1_tour": {
+    "message": "最初に短いツアーが出ます。いつでもスキップできます"
+  },
+  "welcome_s2_t": {
+    "message": "チャットを隠す・表示する"
+  },
+  "welcome_s2_d": {
+    "message": "チャットのタブバーにある隠すボタンでしまえます。戻すには、ページの端にある細い白い線をクリック"
+  },
+  "welcome_s3_t": {
+    "message": "ログイン (任意)"
+  },
+  "welcome_s3_d": {
+    "message": "アカウントがあれば、twitch・kick・youtube に一度に送れて、自分のエモートをどの端末でも使えます"
+  },
+  "mc_mtb_l_purge": {
+    "message": "消す"
+  },
+  "mc_mtb_l_bt": {
+    "message": "ブロック語"
+  },
+  "mc_mtb_l_mt": {
+    "message": "ツール"
+  },
+  "mc_send_title": {
+    "message": "送信"
+  },
+  "mc_send_hint": {
+    "message": "ここから送るには、各サイトで一度ログインしてください。読むだけならアカウントは不要です"
+  },
+  "mc_send_in": {
+    "message": "ログイン済み"
+  },
+  "mc_send_out": {
+    "message": "未ログイン"
+  },
+  "mc_send_unknown": {
+    "message": "わからない"
   }
 }

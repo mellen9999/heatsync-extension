@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "तुम अंदर हो"
   },
-  "welcome_explain": {
-    "message": "अपने इमोट और सेटिंग्स हर चैट में इस्तेमाल करने के लिए heatsync.org पर साइन इन करें"
-  },
   "welcome_close": {
     "message": "बंद करें"
   },
@@ -595,7 +592,7 @@
     "message": "चैट में url क्लिक करने योग्य बनते हैं"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k स्क्रॉल, g/G ऊपर/नीचे, / खोजें"
+    "message": "vim कीज़: j/k स्क्रॉल, g/G ऊपर/नीचे, / खोज। vim जानने वालों के लिए"
   },
   "mc_settings_zebra_desc": {
     "message": "वैकल्पिक पंक्ति छायांकन"
@@ -610,7 +607,7 @@
     "message": "प्रोफ़ाइल फ़ोटो"
   },
   "mc_settings_avatars_desc": {
-    "message": "उपयोगकर्ता नामों के पास अवतार"
+    "message": "यूज़रनेम के पास प्रोफ़ाइल फ़ोटो"
   },
   "mc_settings_inline_notifs": {
     "message": "इनलाइन सूचनाएं"
@@ -909,7 +906,7 @@
     "message": "लॉग इन नहीं"
   },
   "mc_input_auth_failed": {
-    "message": "प्रमाणीकरण विफल — Twitch पर पुनः लॉगिन करें"
+    "message": "साइन इन नहीं हुआ — twitch में फिर से लॉग इन करो"
   },
   "mc_social_back": {
     "message": "<- वापस"
@@ -1156,7 +1153,7 @@
     "message": "multichat टैब बार किस किनारे पर लगे"
   },
   "mc_settings_chat_position": {
-    "message": "चैट डॉक की तरफ़"
+    "message": "चैट की तरफ़"
   },
   "mc_settings_chat_position_desc": {
     "message": "चैट पैनल प्लेयर की किस तरफ़ लगे — hidden उसे छिपा देता है (\\ कुंजी से टॉगल)"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 दिन"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (मैसेज साफ़ करो, 1s)"
+    "message": "उनके मैसेज साफ़ करो (1 सेकंड timeout)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "परमानेंट बैन"
@@ -2698,10 +2695,10 @@
     "message": "भेजने के लिए youtube स्ट्रीम खोलो"
   },
   "mc_yt_send_restricted": {
-    "message": "इस स्ट्रीम के लिए yt चैट प्रतिबंधित है"
+    "message": "इस स्ट्रीम में youtube चैट पर पाबंदी है"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — यहाँ चैट नहीं कर सकते",
+    "message": "youtube: $REASON$ — यहाँ चैट नहीं कर सकते",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 दिन"
   },
   "mc_mtb_t_purge": {
-    "message": "purge — इस यूज़र के मैसेज साफ़ करो (1 सेक timeout)"
+    "message": "इस यूज़र के मैसेज साफ़ करो (1 सेकंड timeout)"
   },
   "mc_mtb_t_ban": {
     "message": "हमेशा के लिए ban"
@@ -4799,7 +4796,7 @@
     "message": "+ चैनल जोड़ो"
   },
   "mc_main_idwarn": {
-    "message": "तुम्हारे emotes यहाँ दूसरों को नहीं दिखेंगे — heatsync अकाउंट $ACCT$, चैट $IDENT$ से — $LINK$",
+    "message": "दूसरे यहाँ तुम्हारे emotes नहीं देख सकते — तुम्हारा heatsync अकाउंट $ACCT$ है पर तुम $IDENT$ नाम से चैट कर रहे हो — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "फ़िल्टर — /regex/ या @user"
+    "message": "चैट में खोजो — कोई शब्द या @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ पॉइंट",
@@ -5091,7 +5088,7 @@
     "message": "-- टैब --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "twitch ऑथ फ़ेल"
+    "message": "twitch में साइन इन नहीं हुआ"
   },
   "mc_notif_r_no_user": {
     "message": "twitch यूज़रनेम नहीं"
@@ -5280,22 +5277,22 @@
     "message": "सिस्टम · बैकअप / रीस्टोर"
   },
   "mc_set_export_tip": {
-    "message": "ui_settings और सारी hs_* कुंजियाँ एक JSON फ़ाइल में डालता है। डिवाइस और ब्राउज़र बदलने पर भी चलती है।"
+    "message": "अपनी सारी सेटिंग्स एक फ़ाइल में सेव करो। इसे दूसरे डिवाइस या ब्राउज़र में इस्तेमाल करो"
   },
   "mc_set_export": {
     "message": "सेटिंग्स एक्सपोर्ट"
   },
   "mc_set_export_btn": {
-    "message": ".json डाउनलोड करो"
+    "message": "फ़ाइल में सेव करो"
   },
   "mc_set_import_tip": {
-    "message": "पहले एक्सपोर्ट की JSON फ़ाइल से रीस्टोर करो। मौजूदा सेटिंग्स में मिल जाती है।"
+    "message": "पहले सेव की हुई सेटिंग्स लोड करो। वे तुम्हारी मौजूदा सेटिंग्स में जुड़ जाती हैं"
   },
   "mc_set_import": {
     "message": "सेटिंग्स इम्पोर्ट"
   },
   "mc_set_import_btn": {
-    "message": ".json लोड करो"
+    "message": "फ़ाइल से लोड करो"
   },
   "mc_set_reset_all_title": {
     "message": "हर पेज की हर सेटिंग रीसेट करो"
@@ -6365,7 +6362,7 @@
     "message": "अपने heatsync फ़ीड पर थ्रेड पोस्ट करो"
   },
   "slash_desc_re": {
-    "message": "चैट में दिखे आखिरी [OP] को जवाब दो"
+    "message": "चैट में दिखी आखिरी फ़ीड पोस्ट को जवाब दो"
   },
   "slash_desc_dm": {
     "message": "heatsync DM भेजो; मैसेज के बिना बातचीत खुलती है"
@@ -6455,7 +6452,7 @@
     "message": "एक मैसेज हटाओ"
   },
   "slash_desc_nuke": {
-    "message": "किसी शब्द वाले हाल के मैसेज एक साथ हटाओ"
+    "message": "किसी शब्द वाले बहुत सारे हाल के मैसेज एक साथ हटाओ"
   },
   "slash_desc_announce": {
     "message": "अनाउंसमेंट पोस्ट करो, चाहो तो रंगीन"
@@ -6491,7 +6488,7 @@
     "message": "unban अनुरोध खोलो"
   },
   "slash_desc_slow": {
-    "message": "धीमा मोड, डिफ़ॉल्ट 30 सेक"
+    "message": "धीमा मोड: मैसेज के बीच रुकना पड़ता है, डिफ़ॉल्ट 30 सेकंड"
   },
   "slash_desc_followers": {
     "message": "सिर्फ़ फ़ॉलोअर मोड"
@@ -6503,7 +6500,7 @@
     "message": "सिर्फ़ सब्सक्राइबर मोड"
   },
   "slash_desc_unique": {
-    "message": "यूनिक चैट मोड; सिर्फ़ twitch, kick में इसका बराबर नहीं"
+    "message": "कोई मैसेज दोबारा नहीं (यूनिक चैट); सिर्फ़ twitch"
   },
   "slash_desc_poll": {
     "message": "पोल बनाओ, 2-5 विकल्प"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "स्वागत टूर"
   },
-  "mc_tour_title": {
-    "message": "स्वागत है! ये शुरू में बंद रहते हैं। किसी एक पर क्लिक करके उसे चालू करें"
-  },
   "mc_tour_timestamps_tip": {
     "message": "हर मैसेज के पास समय दिखाता है"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "टूर फिर से दिखाएँ"
   },
-  "welcome_get_title": {
-    "message": "आपको क्या मिलता है"
-  },
-  "welcome_get_1": {
-    "message": "twitch, kick और youtube की चैट एक जगह, सभी इमोट (7tv, bttv, ffz, heatsync) के साथ"
-  },
   "welcome_get_2": {
     "message": "चैट पढ़ने के लिए अकाउंट नहीं चाहिए"
   },
-  "welcome_get_3": {
-    "message": "अकाउंट से आपके अपने इमोट और सेटिंग्स हर डिवाइस पर आ जाते हैं"
-  },
-  "welcome_start_title": {
-    "message": "शुरू कैसे करें"
-  },
   "welcome_start_1": {
     "message": "twitch, kick या youtube की कोई भी स्ट्रीम खोलें। heatsync चैट अपने आप दिखती है"
-  },
-  "welcome_start_2": {
-    "message": "एक छोटा कार्ड दिखाता है कि क्या बंद है। जो चाहिए उस पर क्लिक करें"
-  },
-  "welcome_start_3": {
-    "message": "चैट करने के लिए साइट पर हमेशा की तरह लॉग इन करें, फिर नीचे वाले बॉक्स में लिखें"
   },
   "mc_settings_mention_sound": {
     "message": "मेंशन की आवाज़"
@@ -7376,5 +7352,89 @@
   },
   "mc_notif_r_kick_bridge_timeout": {
     "message": "kick पेज समय पर लोड नहीं हुआ"
+  },
+  "mc_tour_menu_t": {
+    "message": "किसी मैसेज पर राइट-क्लिक करें"
+  },
+  "mc_tour_menu_d": {
+    "message": "एक मेन्यू खुलता है: जवाब, कॉपी, म्यूट, फ़ॉलो और बहुत कुछ। फ़ोन पर, दबाकर रखें"
+  },
+  "mc_tour_cmd_t": {
+    "message": "कमांड के लिए / टाइप करें"
+  },
+  "mc_tour_cmd_d": {
+    "message": "नीचे वाले बॉक्स में। एक लिस्ट खुलती है। /help सारे कमांड दिखाता है"
+  },
+  "mc_tour_find_t": {
+    "message": "मैसेज खोजें"
+  },
+  "mc_tour_find_d": {
+    "message": "ऊपर वाले बॉक्स में कोई शब्द या नाम टाइप करें। सिर्फ़ मिलते-जुलते मैसेज बचते हैं"
+  },
+  "mc_tour_tabs_t": {
+    "message": "और चैनल"
+  },
+  "mc_tour_tabs_d": {
+    "message": "चैनल जोड़ने के लिए + पर क्लिक करें। alt+1 से alt+9 टैब बदलते हैं"
+  },
+  "mc_tour_settings_t": {
+    "message": "सेटिंग्स"
+  },
+  "mc_tour_settings_d": {
+    "message": "⚙ बटन। इसके अंदर ? में मदद, आपके साइन इन की जाँच और यह टूर फिर से है"
+  },
+  "mc_tour_switches_t": {
+    "message": "ये पहले से बंद हैं। चालू करने के लिए किसी पर क्लिक करें"
+  },
+  "mc_tour_next": {
+    "message": "आगे →"
+  },
+  "mc_tour_back": {
+    "message": "← पीछे"
+  },
+  "mc_tour_skip": {
+    "message": "छोड़ें"
+  },
+  "welcome_s1_t": {
+    "message": "कोई स्ट्रीम खोलें"
+  },
+  "welcome_s1_tour": {
+    "message": "पहली बार एक छोटा टूर दिखता है। इसे कभी भी छोड़ सकते हैं"
+  },
+  "welcome_s2_t": {
+    "message": "चैट छिपाएँ और दिखाएँ"
+  },
+  "welcome_s2_d": {
+    "message": "चैट के टैब बार में छिपाने वाला बटन उसे हटा देता है। उसे वापस लाने के लिए पेज के किनारे की पतली सफ़ेद पट्टी पर क्लिक करें"
+  },
+  "welcome_s3_t": {
+    "message": "साइन इन करें (ज़रूरी नहीं)"
+  },
+  "welcome_s3_d": {
+    "message": "अकाउंट से आप twitch, kick और youtube पर एक साथ भेज सकते हैं, और हर डिवाइस पर अपने emotes इस्तेमाल कर सकते हैं"
+  },
+  "mc_mtb_l_purge": {
+    "message": "साफ़"
+  },
+  "mc_mtb_l_bt": {
+    "message": "शब्द"
+  },
+  "mc_mtb_l_mt": {
+    "message": "टूल"
+  },
+  "mc_send_title": {
+    "message": "भेजना"
+  },
+  "mc_send_hint": {
+    "message": "यहाँ से भेजने के लिए हर साइट पर एक बार साइन इन करें। पढ़ने के लिए अकाउंट नहीं चाहिए"
+  },
+  "mc_send_in": {
+    "message": "साइन इन है"
+  },
+  "mc_send_out": {
+    "message": "साइन इन नहीं है"
+  },
+  "mc_send_unknown": {
+    "message": "पता नहीं चला"
   }
 }

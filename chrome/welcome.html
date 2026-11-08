@@ -41,47 +41,41 @@
       font-size: 18px;
       font-weight: 400;
     }
-    .cta {
-      width: 100%;
-      max-width: 340px;
-      align-self: center;
-      padding: 10px 20px;
-      background: #fff;
-      color: #000;
+    .lead { text-align: center; }
+    .steps { list-style: none; display: flex; flex-direction: column; gap: 14px; counter-reset: step; }
+    .steps li { display: flex; flex-direction: column; gap: 6px; padding-left: 3ch; position: relative; }
+    .steps li::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+    }
+    .steps h2 { font-size: 15px; font-weight: 700; text-decoration: underline; }
+    .go { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cta, .cta-alt, .cta-close {
+      font: inherit;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 6px 14px;
       text-decoration: none;
       text-align: center;
-      font-size: 15px;
-      border: 1px solid #fff;
+      border-radius: 0;
+      cursor: pointer;
     }
-    .cta:hover, .cta:focus-visible {
+    .cta { background: #fff; color: #000; border: 1px solid #fff; }
+    .cta-alt, .cta-close { background: #000; color: #fff; border: 1px solid #fff; }
+    .cta-alt { align-self: flex-start; }
+    .cta-close { align-self: center; }
+    .cta:hover, .cta:focus-visible, .cta:active,
+    .cta-alt:hover, .cta-alt:focus-visible, .cta-alt:active,
+    .cta-close:hover, .cta-close:focus-visible, .cta-close:active {
       background: #fff;
       color: #000;
       border-color: #fff;
       outline: none;
     }
-    .cta-close {
-      align-self: center;
-      font: inherit;
-      font-size: 13px;
-      cursor: pointer;
-      background: #000;
-      color: #fff;
-      border: 1px solid #fff;
-      padding: 8px 16px;
-    }
-    .cta-close:hover, .cta-close:focus-visible {
-      background: #fff;
-      color: #000;
-      outline: none;
-    }
-    .explain { text-align: center; }
-    .ok { color: #00ff00; font-size: 15px; text-align: center; }
-    .info { display: flex; flex-direction: column; gap: 10px; }
-    .info section { display: flex; flex-direction: column; gap: 2px; }
-    .info h2 { font-size: 13px; font-weight: 700; text-decoration: underline; }
-    .info ul { list-style: none; display: flex; flex-direction: column; gap: 2px; }
-    .info li { display: flex; gap: 1ch; }
-    .info li::before { content: '\203A'; flex: none; }
+    .ok { color: #00ff00; font-size: 15px; }
     [hidden] { display: none !important; }
     footer {
       display: flex;
@@ -102,33 +96,32 @@
     <header>
       <img src="icon-48.png" alt="">
       <h1 data-i18n="welcome_title">heatsync</h1>
+      <p class="lead" data-i18n="welcome_get_2">reading chat needs no account</p>
     </header>
 
-    <p class="explain" data-i18n="welcome_explain">sign in to heatsync.org to use your emotes and settings in every chat</p>
-
-    <a class="cta" data-when="out" href="https://heatsync.org/login"
-       target="_blank" rel="noopener" data-i18n="welcome_cta_kick">sign in →</a>
-
-    <p class="ok" data-when="in" hidden><span class="check">✓</span> <span data-i18n="welcome_done_title">you're in</span></p>
-
-    <div class="info">
-      <section>
-        <h2 data-i18n="welcome_get_title">what you get</h2>
-        <ul>
-          <li data-i18n="welcome_get_1">twitch, kick and youtube chat in one place, with every emote (7tv, bttv, ffz, heatsync)</li>
-          <li data-i18n="welcome_get_2">reading chat needs no account</li>
-          <li data-i18n="welcome_get_3">an account adds your own emotes and settings, on every device</li>
-        </ul>
-      </section>
-      <section>
-        <h2 data-i18n="welcome_start_title">how to start</h2>
-        <ul>
-          <li data-i18n="welcome_start_1">open any twitch, kick or youtube stream. heatsync chat appears by itself</li>
-          <li data-i18n="welcome_start_2">a small card shows what's switched off. click what you want</li>
-          <li data-i18n="welcome_start_3">to chat, log in on the site as usual, then type in the box at the bottom</li>
-        </ul>
-      </section>
-    </div>
+    <ol class="steps">
+      <li>
+        <h2 data-i18n="welcome_s1_t">open a stream</h2>
+        <p data-i18n="welcome_start_1">open any twitch, kick or youtube stream. heatsync chat appears by itself</p>
+        <div class="go">
+          <a class="cta" href="https://www.twitch.tv/" target="_blank" rel="noopener">twitch.tv</a>
+          <a class="cta" href="https://kick.com/" target="_blank" rel="noopener">kick.com</a>
+          <a class="cta" href="https://www.youtube.com/live" target="_blank" rel="noopener">youtube.com/live</a>
+        </div>
+        <p class="hint" data-i18n="welcome_s1_tour">a short tour shows up the first time. skip it any time</p>
+      </li>
+      <li>
+        <h2 data-i18n="welcome_s2_t">hide and show the chat</h2>
+        <p data-i18n="welcome_s2_d">the hide button in the chat's tab bar tucks it away. click the thin white strip at the edge of the page to bring it back</p>
+      </li>
+      <li>
+        <h2 data-i18n="welcome_s3_t">sign in (optional)</h2>
+        <p data-i18n="welcome_s3_d">an account lets you send to twitch, kick and youtube at once, and use your own emotes on every device</p>
+        <a class="cta-alt" data-when="out" href="https://heatsync.org/login"
+           target="_blank" rel="noopener" data-i18n="welcome_cta_kick">sign in →</a>
+        <p class="ok" data-when="in" hidden><span class="check">✓</span> <span data-i18n="welcome_done_title">you're in</span></p>
+      </li>
+    </ol>
 
     <button type="button" class="cta-close" id="hs-close-btn" data-i18n="welcome_close">close</button>
 

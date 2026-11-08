@@ -78,9 +78,6 @@
   "welcome_done_title": {
     "message": "أنت جاهز"
   },
-  "welcome_explain": {
-    "message": "سجّل الدخول إلى heatsync.org لاستخدام إيموتاتك وإعداداتك في كل دردشة"
-  },
   "welcome_close": {
     "message": "إغلاق"
   },
@@ -595,7 +592,7 @@
     "message": "تصبح الروابط قابلة للنقر في الدردشة"
   },
   "mc_settings_vi_mode_desc": {
-    "message": "j/k تمرير، g/G أعلى/أسفل، / بحث"
+    "message": "مفاتيح vim: j/k للتمرير، g/G للأعلى/الأسفل، / للبحث. لمن يعرف vim"
   },
   "mc_settings_zebra_desc": {
     "message": "تظليل صفوف متناوب"
@@ -607,10 +604,10 @@
     "message": "طابع زمني على كل رسالة"
   },
   "mc_settings_show_avatars": {
-    "message": "الصور الرمزية"
+    "message": "الصور الشخصية"
   },
   "mc_settings_avatars_desc": {
-    "message": "الصور الرمزية بجانب أسماء المستخدمين"
+    "message": "الصور الشخصية بجانب أسماء المستخدمين"
   },
   "mc_settings_inline_notifs": {
     "message": "إشعارات داخل النص"
@@ -909,7 +906,7 @@
     "message": "غير مسجّل"
   },
   "mc_input_auth_failed": {
-    "message": "فشل التوثيق — أعد تسجيل الدخول إلى Twitch"
+    "message": "فشل تسجيل الدخول — سجّل الدخول إلى twitch من جديد"
   },
   "mc_social_back": {
     "message": "<- رجوع"
@@ -1156,7 +1153,7 @@
     "message": "أي حافة يلتصق بها شريط تبويبات multichat"
   },
   "mc_settings_chat_position": {
-    "message": "جهة تثبيت الدردشة"
+    "message": "جهة الدردشة"
   },
   "mc_settings_chat_position_desc": {
     "message": "أي جانب من المشغّل تلتصق به لوحة الدردشة — hidden يخفيها (المفتاح \\ يبدّل)"
@@ -1339,7 +1336,7 @@
     "message": "timeout 7 أيام"
   },
   "mc_settings_mod_btn_purge": {
-    "message": "purge (مسح الرسائل، 1s)"
+    "message": "امسح رسائله (timeout لمدة ثانية)"
   },
   "mc_settings_mod_btn_ban": {
     "message": "حظر دائم"
@@ -2698,10 +2695,10 @@
     "message": "افتح بث youtube للإرسال"
   },
   "mc_yt_send_restricted": {
-    "message": "دردشة yt مقيّدة في هذا البث"
+    "message": "دردشة youtube مقيّدة في هذا البث"
   },
   "mc_yt_send_restricted_reason": {
-    "message": "yt: $REASON$ — لا يمكنك الكتابة هنا",
+    "message": "youtube: $REASON$ — لا يمكنك الكتابة هنا",
     "placeholders": {
       "reason": {
         "content": "$1"
@@ -3601,7 +3598,7 @@
     "message": "الأقصى"
   },
   "mc_twapi_amt": {
-    "message": "المبلغ"
+    "message": "الكمية"
   },
   "mc_twapi_bet": {
     "message": "راهن"
@@ -4716,7 +4713,7 @@
     "message": "timeout 7 أيام"
   },
   "mc_mtb_t_purge": {
-    "message": "تنظيف — مسح رسائل هذا المستخدم (timeout ثانية)"
+    "message": "امسح رسائل هذا المستخدم (timeout لمدة ثانية)"
   },
   "mc_mtb_t_ban": {
     "message": "حظر دائم"
@@ -4799,7 +4796,7 @@
     "message": "+ إضافة قناة"
   },
   "mc_main_idwarn": {
-    "message": "إيموتس لن تظهر للآخرين هنا — حساب heatsync $ACCT$، تدردش باسم $IDENT$ — $LINK$",
+    "message": "لا يستطيع الآخرون رؤية الإيموتس الخاصة بك هنا — حسابك في heatsync هو $ACCT$ لكنك تدردش باسم $IDENT$ — $LINK$",
     "placeholders": {
       "acct": {
         "content": "$1"
@@ -4898,7 +4895,7 @@
     }
   },
   "mc_main_filter_ph": {
-    "message": "تصفية — /regex/ أو @user"
+    "message": "ابحث في الدردشة — كلمة أو @name"
   },
   "mc_main_redeem_pts": {
     "message": "$COST$ نقطة",
@@ -5091,7 +5088,7 @@
     "message": "-- التبويبات --"
   },
   "mc_notif_r_auth_failed": {
-    "message": "فشلت مصادقة twitch"
+    "message": "فشل تسجيل الدخول إلى twitch"
   },
   "mc_notif_r_no_user": {
     "message": "لا اسم مستخدم twitch"
@@ -5280,22 +5277,22 @@
     "message": "النظام · نسخ احتياطي / استعادة"
   },
   "mc_set_export_tip": {
-    "message": "تفريغ ui_settings وكل مفاتيح hs_* في ملف JSON. قابل للنقل بين الأجهزة والمتصفحات."
+    "message": "احفظ كل إعداداتك في ملف. استخدمه على جهاز أو متصفح آخر"
   },
   "mc_set_export": {
     "message": "تصدير الإعدادات"
   },
   "mc_set_export_btn": {
-    "message": "تنزيل .json"
+    "message": "احفظ في ملف"
   },
   "mc_set_import_tip": {
-    "message": "استعادة من ملف JSON مُصدَّر سابقًا. يُدمج مع الإعدادات الحالية."
+    "message": "حمّل إعدادات حفظتها من قبل. تُضاف إلى إعداداتك الحالية"
   },
   "mc_set_import": {
     "message": "استيراد الإعدادات"
   },
   "mc_set_import_btn": {
-    "message": "تحميل .json"
+    "message": "حمّل من ملف"
   },
   "mc_set_reset_all_title": {
     "message": "إعادة ضبط كل إعداد في كل صفحة"
@@ -6365,7 +6362,7 @@
     "message": "انشر موضوعًا على خلاصة heatsync"
   },
   "slash_desc_re": {
-    "message": "رد على آخر [OP] ظاهر في الدردشة"
+    "message": "رد على آخر منشور من الخلاصة ظهر في الدردشة"
   },
   "slash_desc_dm": {
     "message": "أرسل رسالة DM على heatsync؛ بلا رسالة تفتح المحادثة"
@@ -6407,7 +6404,7 @@
     "message": "امسح التبويب الحالي لك فقط"
   },
   "slash_desc_mute": {
-    "message": "اكتم أحدًا لمدة 24 ساعة، عبر حساباته المربوطة"
+    "message": "اكتم شخصًا لمدة 24 ساعة، على كل حساباته المربوطة"
   },
   "slash_desc_unmute": {
     "message": "ألغِ الكتم"
@@ -6455,7 +6452,7 @@
     "message": "احذف رسالة واحدة"
   },
   "slash_desc_nuke": {
-    "message": "احذف بالجملة الرسائل الأخيرة التي تحتوي مصطلحًا"
+    "message": "احذف دفعة واحدة رسائل كثيرة حديثة فيها كلمة معيّنة"
   },
   "slash_desc_announce": {
     "message": "انشر إعلانًا، بلون اختياريًا"
@@ -6491,7 +6488,7 @@
     "message": "افتح طلبات رفع الحظر"
   },
   "slash_desc_slow": {
-    "message": "الوضع البطيء، الافتراضي 30ث"
+    "message": "الوضع البطيء: ينتظر الناس بين الرسائل، والافتراضي 30 ثانية"
   },
   "slash_desc_followers": {
     "message": "وضع المتابعين فقط"
@@ -6503,7 +6500,7 @@
     "message": "وضع المشتركين فقط"
   },
   "slash_desc_unique": {
-    "message": "وضع الدردشة الفريدة؛ twitch فقط، kick لا يملك مقابلًا"
+    "message": "بلا رسائل مكررة (دردشة فريدة)؛ twitch فقط"
   },
   "slash_desc_poll": {
     "message": "أنشئ استطلاعًا، 2-5 خيارات"
@@ -6617,9 +6614,6 @@
   "mc_tour_aria": {
     "message": "جولة الترحيب"
   },
-  "mc_tour_title": {
-    "message": "أهلاً بك! هذه الخيارات متوقفة في البداية. اضغط على أي منها لتشغيله"
-  },
   "mc_tour_timestamps_tip": {
     "message": "اعرض الوقت بجانب كل رسالة"
   },
@@ -6650,29 +6644,11 @@
   "mc_set_tour_btn": {
     "message": "أظهر الجولة مجددًا"
   },
-  "welcome_get_title": {
-    "message": "ما ستحصل عليه"
-  },
-  "welcome_get_1": {
-    "message": "دردشة twitch وkick وyoutube في مكان واحد، مع كل الإيموتات (7tv وbttv وffz وheatsync)"
-  },
   "welcome_get_2": {
     "message": "قراءة الدردشة لا تحتاج إلى حساب"
   },
-  "welcome_get_3": {
-    "message": "الحساب يضيف إيموتاتك وإعداداتك الخاصة على كل جهاز"
-  },
-  "welcome_start_title": {
-    "message": "كيف تبدأ"
-  },
   "welcome_start_1": {
     "message": "افتح أي بث على twitch أو kick أو youtube. تظهر دردشة heatsync من تلقاء نفسها"
-  },
-  "welcome_start_2": {
-    "message": "بطاقة صغيرة تعرض ما هو متوقف. اضغط على ما تريده"
-  },
-  "welcome_start_3": {
-    "message": "للدردشة، سجّل الدخول في الموقع كالمعتاد ثم اكتب في المربع في الأسفل"
   },
   "mc_settings_mention_sound": {
     "message": "صوت الإشارة"
@@ -7376,5 +7352,89 @@
   },
   "mc_notif_r_kick_bridge_timeout": {
     "message": "لم تُحمَّل صفحة kick في الوقت المناسب"
+  },
+  "mc_tour_menu_t": {
+    "message": "اضغط بزر الفأرة الأيمن على رسالة"
+  },
+  "mc_tour_menu_d": {
+    "message": "تفتح قائمة: رد ونسخ واكتم وتابع وأكثر. على الهاتف اضغط مطولًا"
+  },
+  "mc_tour_cmd_t": {
+    "message": "اكتب / للأوامر"
+  },
+  "mc_tour_cmd_d": {
+    "message": "في المربع في الأسفل. تظهر قائمة. /help يعرض كل الأوامر"
+  },
+  "mc_tour_find_t": {
+    "message": "ابحث عن رسالة"
+  },
+  "mc_tour_find_d": {
+    "message": "اكتب كلمة أو اسمًا في المربع في الأعلى. تبقى الرسائل المطابقة فقط"
+  },
+  "mc_tour_tabs_t": {
+    "message": "قنوات أكثر"
+  },
+  "mc_tour_tabs_d": {
+    "message": "اضغط + لإضافة قناة. alt+1 إلى alt+9 تنقلك بين التبويبات"
+  },
+  "mc_tour_settings_t": {
+    "message": "الإعدادات"
+  },
+  "mc_tour_settings_d": {
+    "message": "زر ⚙. في ? بالداخل مساعدة وفحص تسجيل الدخول وهذه الجولة مرة أخرى"
+  },
+  "mc_tour_switches_t": {
+    "message": "هذه مطفأة في البداية. اضغط على واحد لتشغيله"
+  },
+  "mc_tour_next": {
+    "message": "التالي ←"
+  },
+  "mc_tour_back": {
+    "message": "→ رجوع"
+  },
+  "mc_tour_skip": {
+    "message": "تخطي"
+  },
+  "welcome_s1_t": {
+    "message": "افتح بثًّا"
+  },
+  "welcome_s1_tour": {
+    "message": "تظهر جولة قصيرة في أول مرة. يمكنك تخطيها في أي وقت"
+  },
+  "welcome_s2_t": {
+    "message": "أخفِ الدردشة وأظهرها"
+  },
+  "welcome_s2_d": {
+    "message": "زر الإخفاء في شريط تبويبات الدردشة يخفيها. اضغط على الشريط الأبيض الرفيع عند حافة الصفحة لإعادتها"
+  },
+  "welcome_s3_t": {
+    "message": "سجّل الدخول (اختياري)"
+  },
+  "welcome_s3_d": {
+    "message": "الحساب يتيح لك الإرسال إلى twitch وkick وyoutube معًا، واستخدام إيموتسك الخاصة على كل جهاز"
+  },
+  "mc_mtb_l_purge": {
+    "message": "مسح"
+  },
+  "mc_mtb_l_bt": {
+    "message": "كلمات"
+  },
+  "mc_mtb_l_mt": {
+    "message": "أدوات"
+  },
+  "mc_send_title": {
+    "message": "الإرسال"
+  },
+  "mc_send_hint": {
+    "message": "للإرسال من هنا، سجّل الدخول مرة واحدة في كل موقع. القراءة لا تحتاج إلى حساب"
+  },
+  "mc_send_in": {
+    "message": "مسجّل الدخول"
+  },
+  "mc_send_out": {
+    "message": "غير مسجّل الدخول"
+  },
+  "mc_send_unknown": {
+    "message": "غير معروف"
   }
 }

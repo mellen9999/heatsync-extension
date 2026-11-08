@@ -1,14 +1,18 @@
 // first-run tour — one small card above the chat pane, shown once per device.
 //
-// The overlay replaces the site's own chat, and four useful things ship OFF
-// (timestamps, the hover reply button, vi keys, the mod hover buttons), so a new
-// viewer had no way to learn they exist. The card names each one in a line and
-// puts its switch right there.
+// The overlay replaces the site's own chat, so a new viewer could not see what it
+// does: the row menu, the commands, the search box, the tabs, where settings are,
+// and four useful switches that ship OFF (timestamps, the hover reply button, vi
+// keys, the mod hover buttons). The card walks through them one card at a time,
+// one idea each, one or two short lines; the last card holds the switches.
 //
-//   initTour()          read the seen flag, listen for changes (once)
+//   initTour()          read the seen flag + saved step, listen for changes (once)
 //   tourSync(tabId)     the tab on screen changed / the pane repainted: draw or
 //                       hide the card, and re-ask whether the mod row applies
-//   tourReopen()        settings › ? › "show the tour again"
+//   tourReopen()        settings › ? › "show the tour again" (back to the first card)
+//
+// Progress: the step is kept in storage so a reload (or the next page) resumes where
+// the viewer stopped. "skip" and "got it" are the same thing, seen for good — Esc too.
 //
 // Each switch writes the REAL registry key through setSetting — the exact call the
 // settings panel makes — so the two can never disagree, in either direction. The
@@ -19,12 +23,16 @@
 //
 // The card sits beside #hs-mc-messages, never inside the scroller (bottom-follow
 // is untouched), and never takes focus on its own: it appears, it waits. Only an
-// explicit "show the tour again" moves focus to it.
-//
-// "got it" and Esc are the same thing: seen for good. The flag is per device
-// (chrome.storage.local), not a synced setting.
+// explicit "show the tour again" moves focus to it. ← → (when focus is in the card)
+// go back / next; no bare printable key is used, the composer owns those.
+// The flag is per device (chrome.storage.local), not a synced setting.
 
 const TOUR_SEEN_KEY = 'hs_tour_seen'
+const TOUR_STEP_KEY = 'hs_tour_step'
+// The cards, in order. A card's words are mc_tour_<id>_t (title) and mc_tour_<id>_d (one or
+// two short lines). The last one has no line of its own: it is the switches below.
+const TOUR_STEPS = ['menu', 'cmd', 'find', 'tabs', 'settings', 'switches']
+const TOUR_LAST = TOUR_STEPS.length - 1
 const TOUR_MOD_KEY = 'hs_mod_toolbar_buttons'
 // What the mod switch turns on. The full list stays off by default on purpose
 // (clutter); this is the smallest set a mod reaches for first, and the rest is
@@ -40,6 +48,7 @@ const TOUR_ROWS = [
 ]
 
 let tourSeen = null // null = flag not read yet, false = show the card, true = done for good
+let tourStep = 0 // index into TOUR_STEPS: the card on screen
 let tourWired = false
 let tourNode = null
 let tourModOk = false
@@ -79,29 +88,41 @@ function tourNodeEnsure() {
   n.hidden = true
   n.setAttribute('role', 'region')
   n.setAttribute('aria-label', t('mc_tour_aria'))
-  n.append(tourEl('div', 'hs-mc-tour-head', t('mc_tour_title')))
+  const head = tourEl('div', 'hs-mc-tour-head')
+  const line = tourEl('div', 'hs-mc-tour-d')
+  // a card change is announced; the first draw is not (a live region only speaks changes)
+  head.setAttribute('aria-live', 'polite')
+  line.setAttribute('aria-live', 'polite')
+  head.append(tourEl('span', 'hs-mc-tour-n'), tourEl('span', 'hs-mc-tour-t'))
+  n.append(head, line)
   for (const r of TOUR_ROWS) {
     const b = tourEl('button', 'hs-mc-tour-row')
     b.type = 'button'
     b.setAttribute('role', 'switch')
     b.dataset.tourKey = r.key
-    if (r.mod) {
-      b.dataset.tourMod = '1'
-      b.hidden = true
-    }
+    if (r.mod) b.dataset.tourMod = '1'
+    b.hidden = true
     // the state word is for eyes; the switch role + aria-checked carry it for everything else
     const state = tourEl('span', 'hs-mc-tour-state')
     state.setAttribute('aria-hidden', 'true')
     b.append(state, tourEl('span', 'hs-mc-tour-name', t(r.labelKey)), tourEl('span', 'hs-mc-tour-tip', t(r.tipKey)))
     n.append(b)
   }
+  const btn = (cls, text) => {
+    const b = tourEl('button', cls, text)
+    b.type = 'button'
+    return b
+  }
   const foot = tourEl('div', 'hs-mc-tour-foot')
-  const more = tourEl('button', 'hs-mc-tour-more', t('mc_tour_more'))
-  more.type = 'button'
-  const done = tourEl('button', 'hs-mc-tour-done', t('mc_tour_done'))
-  done.type = 'button'
+  const nav = tourEl('div', 'hs-mc-tour-nav')
+  nav.append(
+    btn('hs-mc-tour-back', t('mc_tour_back')),
+    btn('hs-mc-tour-next', t('mc_tour_next')),
+    btn('hs-mc-tour-more', t('mc_tour_more')),
+  )
+  const done = btn('hs-mc-tour-done')
   done.title = t('mc_tour_done_tip')
-  foot.append(more, done)
+  foot.append(nav, done)
   n.append(foot)
   n.addEventListener('click', tourOnClick)
   n.addEventListener('keydown', tourOnKey)
@@ -111,13 +132,28 @@ function tourNodeEnsure() {
   return n
 }
 
-// state of every switch, from the settings themselves. Touches the DOM only where a value changed.
+// The card on screen, and the state of every switch (from the settings themselves). Touches the
+// DOM only where something changed.
 function tourPaint() {
   const n = tourNode
   if (!n || n.hidden) return
+  const last = tourStep === TOUR_LAST
+  if (n.dataset.tourShown !== String(tourStep)) {
+    n.dataset.tourShown = String(tourStep)
+    const id = TOUR_STEPS[tourStep]
+    n.querySelector('.hs-mc-tour-n').textContent = `${tourStep + 1}/${TOUR_STEPS.length}`
+    n.querySelector('.hs-mc-tour-t').textContent = t(`mc_tour_${id}_t`)
+    const line = n.querySelector('.hs-mc-tour-d')
+    line.hidden = last
+    line.textContent = last ? '' : t(`mc_tour_${id}_d`)
+    n.querySelector('.hs-mc-tour-back').hidden = tourStep === 0
+    n.querySelector('.hs-mc-tour-next').hidden = last
+    n.querySelector('.hs-mc-tour-more').hidden = !last
+    n.querySelector('.hs-mc-tour-done').textContent = t(last ? 'mc_tour_done' : 'mc_tour_skip')
+  }
   const stateOf = (on) => t(on ? 'mc_cm_on' : 'mc_cm_off')
   for (const b of n.querySelectorAll('.hs-mc-tour-row')) {
-    if (b.dataset.tourMod) b.hidden = !tourModOk
+    b.hidden = !last || (!!b.dataset.tourMod && !tourModOk)
     const on = tourIsOn(b.dataset.tourKey)
     if (b.getAttribute('aria-checked') === String(on)) continue
     b.setAttribute('aria-checked', String(on))
@@ -162,7 +198,7 @@ function tourSync(tabId) {
   if (tourSeen !== false) return
   const n = tourNodeEnsure()
   if (!n) return
-  tourAskMod(tabId)
+  if (tourStep === TOUR_LAST) tourAskMod(tabId)
   if (n.hidden) {
     n.hidden = false
     tourRepin()
@@ -183,6 +219,11 @@ function tourSaveFailed() {
   } catch (_) {}
 }
 
+// a saved step is only trusted when it is a card that exists
+function tourClampStep(v) {
+  return Number.isInteger(v) && v >= 0 && v <= TOUR_LAST ? v : 0
+}
+
 // seen for good. Focus that was in the card goes back to the composer, not to nowhere.
 function tourDone() {
   if (tourSeen === true) return
@@ -191,13 +232,33 @@ function tourDone() {
   tourHide()
   if (hadFocus) document.getElementById('hs-mc-input')?.focus()
   browser.storage.local.set({ [TOUR_SEEN_KEY]: true }).catch(tourSaveFailed)
+  browser.storage.local.remove(TOUR_STEP_KEY).catch(() => {}) // the step is a nicety, never worth a toast
+}
+
+// Go to a card. Keeps the keyboard where it was: a button that just hid itself (back on the first
+// card, next on the last) hands focus to the one that took its place.
+function tourGo(step) {
+  const next = tourClampStep(step)
+  const n = tourNode
+  if (!n || next === tourStep) return
+  const had = n.contains(document.activeElement)
+  tourStep = next
+  if (tourStep === TOUR_LAST) tourAskMod(currentTab)
+  tourPaint()
+  tourRepin()
+  const a = document.activeElement
+  if (had && (!n.contains(a) || a.hidden)) {
+    n.querySelector('.hs-mc-tour-next:not([hidden]), .hs-mc-tour-done')?.focus()
+  }
+  browser.storage.local.set({ [TOUR_STEP_KEY]: tourStep }).catch(() => {})
 }
 
 function tourReopen() {
   tourSeen = false
-  browser.storage.local.remove(TOUR_SEEN_KEY).catch(tourSaveFailed)
+  tourStep = 0
+  browser.storage.local.remove([TOUR_SEEN_KEY, TOUR_STEP_KEY]).catch(tourSaveFailed)
   tourSync(currentTab)
-  tourNode?.querySelector('.hs-mc-tour-row:not([hidden])')?.focus()
+  tourNode?.querySelector('.hs-mc-tour-next')?.focus()
 }
 
 function tourToggle(key) {
@@ -213,16 +274,24 @@ function tourOnClick(e) {
   const row = e.target.closest('.hs-mc-tour-row')
   if (row) return tourToggle(row.dataset.tourKey)
   if (e.target.closest('.hs-mc-tour-done')) return tourDone()
+  if (e.target.closest('.hs-mc-tour-next')) return tourGo(tourStep + 1)
+  if (e.target.closest('.hs-mc-tour-back')) return tourGo(tourStep - 1)
   if (e.target.closest('.hs-mc-tour-more')) switchTab('settings')
 }
 
-// Esc closes. Space is handled here, not left to the button: the page treats a bare
-// space over the panel as typing (type-to-focus) and would put it in the composer.
+// Esc closes. ← → go back / next (mirrored in a right-to-left layout). Space is handled here, not
+// left to the button: the page treats a bare space over the panel as typing (type-to-focus) and
+// would put it in the composer.
 function tourOnKey(e) {
   if (e.key === 'Escape' && !e.defaultPrevented) {
     e.preventDefault()
     e.stopPropagation()
     tourDone()
+  } else if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !(e.ctrlKey || e.altKey || e.metaKey || e.shiftKey)) {
+    e.preventDefault()
+    e.stopPropagation()
+    const rtl = !!tourNode?.closest('[dir="rtl"]')
+    tourGo(tourStep + ((e.key === 'ArrowRight') !== rtl ? 1 : -1))
   } else if (e.key === ' ' && e.target.closest('button')) {
     e.preventDefault()
     if (!e.repeat) e.target.closest('button').click()
@@ -236,9 +305,10 @@ function initTour() {
   if (tourWired) return
   tourWired = true
   browser.storage.local
-    .get(TOUR_SEEN_KEY)
+    .get([TOUR_SEEN_KEY, TOUR_STEP_KEY])
     .then((d) => {
       tourSeen = d?.[TOUR_SEEN_KEY] === true
+      tourStep = tourClampStep(d?.[TOUR_STEP_KEY])
       tourSync(currentTab)
     })
     .catch(() => {
@@ -248,7 +318,10 @@ function initTour() {
     if (area === 'local' && TOUR_SEEN_KEY in changes) {
       tourSeen = changes[TOUR_SEEN_KEY].newValue === true
       if (tourSeen) tourHide()
-      else tourSync(currentTab)
+      else {
+        tourStep = 0 // brought back from another tab or from settings: start over
+        tourSync(currentTab)
+      }
     } else if (tourSeen === false && (changes.ui_settings || TOUR_MOD_KEY in changes)) {
       // after settings' own listener has updated its cache
       cleanup.setTimeout(tourPaint, 0)

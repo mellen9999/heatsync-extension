@@ -373,6 +373,22 @@ async function readKickSession() {
   return { cookie, session }
 }
 
+// Is this browser signed in to youtube? One boolean for the "sending" checklist, from the presence of
+// youtube's own login cookies (any one of them) — the values are never read out of this function.
+// null when the cookie store cannot be read: "could not tell" is not "signed out".
+async function readYoutubeSignedIn() {
+  try {
+    const found = await Promise.all(
+      ['SAPISID', '__Secure-3PAPISID', 'LOGIN_INFO'].map((name) =>
+        browser.cookies.get({ url: 'https://www.youtube.com', name }),
+      ),
+    )
+    return found.some((c) => !!c?.value)
+  } catch {
+    return null
+  }
+}
+
 // A relay that provably never reached a page: nothing was listening, or the tab
 // is gone. Only such a failure may be retried on another tab — one that took the
 // message and died mid-way ("message port closed") may already have posted it.

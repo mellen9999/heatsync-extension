@@ -442,6 +442,9 @@ async function buildDiagSnapshot() {
     out.sw.wsHs = _wsLabel(socket)
   } catch {}
   try {
+    out.sw.relays = await relayDiagSummary()
+  } catch {}
+  try {
     out.sw.inventory = Array.isArray(emoteInventory) ? emoteInventory.length : 0
   } catch {}
   try {

@@ -643,6 +643,217 @@ function wsDebugNote(evt, extra) {
   }, 2000)
 }
 
+// ============================================
+// RELAYED SENDS — what the server may ask this browser to post as the user
+// ============================================
+// yt:relay_send / kick:relay_send. The legit flow: the user presses Enter in
+// the heatsync.org composer, the server tries the platform's own API, and when
+// it cannot (no linked token / scope) it asks the user's browser to post with
+// the platform login only the browser has.
+//
+// The frame carries nothing this extension can verify (reqId, target and text
+// are all chosen by the server), so it is not trusted on its own. Before a
+// relayed send runs it must clear, in order:
+//   1. a real user action: a keypress or tap on heatsync.org in THIS browser
+//      within RELAY_GESTURE_MS. content.js reports only events the browser
+//      itself produced (event.isTrusted); a page script cannot fake one. This is
+//      also what stops a second signed-in browser from posting the same line.
+//   2. a request id not seen before (a replayed frame does nothing)
+//   3. not the same text to the same place within RELAY_DUP_MS
+//   4. at least RELAY_MIN_GAP_MS since the last one to that place, and under
+//      RELAY_PER_TARGET_PER_MIN there / RELAY_GLOBAL_PER_MIN overall. The
+//      server's own bucket (5 per 30 s per user) binds first, so a real person
+//      never meets these; a server that misbehaves does.
+// A relay that is refused, fails or lands is written to hs_relay_log (last 50,
+// local only), and the popup's "errors" copy carries its counts.
+//
+// What this does NOT bind: which text. A compromised server could still ride a
+// real keypress, within these caps. Binding a send to its exact text needs the
+// site to say what the user typed (see the report this shipped with).
+const RELAY_GESTURE_MS = 30_000
+const RELAY_DUP_MS = 10_000
+const RELAY_MIN_GAP_MS = 1_000
+const RELAY_PER_TARGET_PER_MIN = 15
+const RELAY_GLOBAL_PER_MIN = 20
+const RELAY_REQ_MEMORY_MS = 120_000
+const RELAY_TEXT_MAX = { youtube: 200, kick: 500 }
+const RELAY_LOG_KEY = 'hs_relay_log'
+const RELAY_LOG_MAX = 50
+const SITE_GESTURE_KEY = 'hs_site_gesture'
+
+const _relay = {
+  admitted: [], // { at, to } of sends let through, last minute
+  lastByTarget: new Map(), // to → at of the last one let through
+  dupAt: new Map(), // to|text → at
+  reqIds: new Map(), // reqId → at
+  gestureAt: 0,
+  logP: null, // the stored log, loaded once
+  logTimer: null,
+}
+
+// A heatsync.org tab saw a trusted keypress/tap. Only the heatsync.org top
+// frame of a tab counts. Answers whether it was taken.
+function noteSiteGesture(sender, now = Date.now()) {
+  try {
+    if (sender?.id !== browser.runtime.id || !sender.tab || sender.frameId !== 0) return false
+    if (new URL(sender.url || '').origin !== 'https://heatsync.org') return false
+  } catch {
+    return false
+  }
+  _relay.gestureAt = now
+  // survives a worker restart between the keypress and the relay frame
+  try {
+    browser.storage.session?.set?.({ [SITE_GESTURE_KEY]: now })?.catch?.(() => {})
+  } catch {}
+  return true
+}
+
+async function siteGestureAge(now = Date.now()) {
+  if (!_relay.gestureAt) {
+    try {
+      const got = await browser.storage.session?.get?.(SITE_GESTURE_KEY)
+      _relay.gestureAt = Number(got?.[SITE_GESTURE_KEY]) || 0
+    } catch {}
+  }
+  return _relay.gestureAt ? now - _relay.gestureAt : Number.POSITIVE_INFINITY
+}
+
+const relayTextKey = (text) => text.trim().toLowerCase().replace(/\s+/g, ' ')
+
+// Decide, and on yes record the send as under way. Sync, so two frames in one
+// tick cannot both pass. Answers null to proceed or the refusal code.
+// platform: 'youtube' | 'kick'; target: videoId | channel.
+function admitRelay({ platform, target, text, reqId }, gestureAgeMs, now = Date.now()) {
+  if (typeof reqId !== 'string' || !reqId || reqId.length > 64) return 'invalid_request'
+  const targetOk =
+    typeof target === 'string' &&
+    (platform === 'youtube' ? YT_VIDEO_ID.test(target) : /^[a-z0-9_-]{1,64}$/i.test(target))
+  if (!targetOk) return platform === 'youtube' ? 'invalid_video_id' : 'invalid_channel'
+  if (typeof text !== 'string' || !text.trim() || text.length > (RELAY_TEXT_MAX[platform] || 200)) return 'invalid_text'
+  const seen = _relay.reqIds.get(reqId)
+  if (seen !== undefined && now - seen <= RELAY_REQ_MEMORY_MS) return 'duplicate_request'
+  if (!Number.isFinite(gestureAgeMs) || gestureAgeMs > RELAY_GESTURE_MS) return 'no_user_action'
+
+  const to = `${platform}:${target.toLowerCase()}`
+  const dupKey = `${to}|${relayTextKey(text)}`
+  const dupAt = _relay.dupAt.get(dupKey)
+  if (dupAt !== undefined && now - dupAt < RELAY_DUP_MS) return 'duplicate_message'
+
+  while (_relay.admitted.length && now - _relay.admitted[0].at > 60_000) _relay.admitted.shift()
+  const last = _relay.lastByTarget.get(to)
+  if (last !== undefined && now - last < RELAY_MIN_GAP_MS) return 'rate_limited'
+  if (_relay.admitted.length >= RELAY_GLOBAL_PER_MIN) return 'rate_limited'
+  if (_relay.admitted.filter((a) => a.to === to).length >= RELAY_PER_TARGET_PER_MIN) return 'rate_limited'
+
+  _relay.admitted.push({ at: now, to })
+  _relay.lastByTarget.set(to, now)
+  _relay.dupAt.set(dupKey, now)
+  _relay.reqIds.set(reqId, now)
+  pruneRelayMap(_relay.reqIds, now, RELAY_REQ_MEMORY_MS, 200)
+  pruneRelayMap(_relay.dupAt, now, RELAY_DUP_MS, 200)
+  pruneRelayMap(_relay.lastByTarget, now, 60_000, 100)
+  return null
+}
+
+// Stale entries go first, then the oldest, so the maps stay small however much arrives.
+function pruneRelayMap(m, now, ttlMs, max) {
+  for (const [k, at] of m) if (now - at > ttlMs) m.delete(k)
+  while (m.size > max) m.delete(m.keys().next().value)
+}
+
+// A send that was let through but did not land may be tried again at once.
+function releaseRelay({ platform, target, text }) {
+  const to = `${platform}:${String(target).toLowerCase()}`
+  _relay.dupAt.delete(`${to}|${relayTextKey(String(text))}`)
+}
+
+// The local record the user can read: last 50 relayed sends, newest last.
+// Repeats of the same outcome to the same place fold into one row with a count,
+// so a flood of refusals cannot push the real entries out.
+function relayLog() {
+  if (!_relay.logP) {
+    _relay.logP = browser.storage.local
+      .get(RELAY_LOG_KEY)
+      .then((got) => (Array.isArray(got?.[RELAY_LOG_KEY]) ? got[RELAY_LOG_KEY] : []))
+      .catch(() => [])
+  }
+  return _relay.logP
+}
+
+async function noteRelay({ platform, target, text, outcome }, now = Date.now()) {
+  try {
+    const rows = await relayLog()
+    const to = String(target || '').slice(0, 64)
+    const prev = rows[rows.length - 1]
+    if (prev && prev.p === platform && prev.to === to && prev.r === outcome && now - prev.t < 60_000) {
+      prev.t = now
+      prev.c = (prev.c || 1) + 1
+    } else {
+      rows.push({
+        t: now,
+        p: platform,
+        to,
+        n: String(text || '').length,
+        x: String(text || '').slice(0, 40),
+        r: outcome,
+      })
+      while (rows.length > RELAY_LOG_MAX) rows.shift()
+    }
+    if (_relay.logTimer) return
+    _relay.logTimer = setTimeout(() => {
+      _relay.logTimer = null
+      browser.storage.local.set({ [RELAY_LOG_KEY]: rows.slice() }).catch(() => {})
+    }, 1000)
+  } catch {}
+}
+
+// The popup's diag copy: counts and where, never the text.
+async function relayDiagSummary(now = Date.now()) {
+  const rows = await relayLog()
+  const outcomes = {}
+  for (const r of rows) outcomes[r.r] = (outcomes[r.r] || 0) + (r.c || 1)
+  return {
+    gestureAgeMs: _relay.gestureAt ? now - _relay.gestureAt : null,
+    outcomes,
+    recent: rows.slice(-10).map((r) => ({ ageMs: now - r.t, p: r.p, to: r.to, r: r.r, c: r.c || 1 })),
+  }
+}
+
+// One relayed send, start to ack. `run` does the platform work and answers
+// { ok, error?, ... }; the guard decides whether it may run at all.
+async function runGuardedRelay(relay, run) {
+  try {
+    return await guardedRelayInner(relay, run)
+  } catch (e) {
+    // fail closed and loud: a guard that cannot decide does not send
+    log(' relay guard error:', e?.message)
+    return { ok: false, error: 'relay_guard_error' }
+  }
+}
+
+async function guardedRelayInner({ platform, target, text, reqId }, run) {
+  const gestureAge = await siteGestureAge()
+  const refusal = admitRelay({ platform, target, text, reqId }, gestureAge)
+  if (refusal) {
+    await noteRelay({ platform, target, text, outcome: `refused:${refusal}` })
+    return { ok: false, error: refusal }
+  }
+  let result
+  try {
+    result = (await run()) || { ok: false, error: 'no_response' }
+  } catch (e) {
+    result = { ok: false, error: e?.message || 'unknown' }
+  }
+  if (!result.ok) releaseRelay({ platform, target, text })
+  await noteRelay({
+    platform,
+    target,
+    text,
+    outcome: result.ok ? 'sent' : `failed:${String(result.error || 'unknown').slice(0, 40)}`,
+  })
+  return result
+}
+
 async function connectWebSocket() {
   // Explicit connect intent ends the idle state — only the automatic
   // revival paths (watchdog alarm, scheduleReconnect, online) honor it.
@@ -1626,30 +1837,22 @@ function handleWSMessage(msg) {
         // Server is asking us to DOM-inject text into youtube.com's live chat.
         // Find a tab on this videoId, hand off to youtube-content's existing
         // youtube_send_relay path, ack back over the WS so the originating
-        // website socket knows whether it landed.
+        // website socket knows whether it landed. Guarded: see RELAYED SENDS.
         ;(async () => {
           const reqId = msg.reqId
           const videoId = msg.videoId
           const text = msg.text
-          let ok = false
-          let error
-          let ytUsername
-          try {
-            if (!videoId || typeof videoId !== 'string') {
-              error = 'invalid_video_id'
-            } else if (!text || typeof text !== 'string' || text.length === 0 || text.length > 200) {
-              error = 'invalid_text'
-            } else {
-              const result = await sendYoutubeChat({ videoId, text })
-              ok = !!result.ok
-              error = result.error
-              ytUsername = result.ytUsername
-            }
-          } catch (e) {
-            error = e?.message || 'unknown'
-          } finally {
-            wsSendDirect({ type: 'yt:relay_ack', reqId, ok, ytUsername, error })
-          }
+          const result = await runGuardedRelay({ platform: 'youtube', target: videoId, text, reqId }, async () => {
+            const r = await sendYoutubeChat({ videoId, text })
+            return { ok: !!r.ok, error: r.error, ytUsername: r.ytUsername }
+          })
+          wsSendDirect({
+            type: 'yt:relay_ack',
+            reqId,
+            ok: !!result.ok,
+            ytUsername: result.ytUsername,
+            error: result.error,
+          })
         })()
         break
 
@@ -1660,32 +1863,18 @@ function handleWSMessage(msg) {
         // that channel's page, so ANY kick.com tab works as the messaging
         // origin. Reuses the same resolve/send helpers as the local
         // kick_resolve_channel / kick_send_message runtime-message flow.
+        // Guarded: see RELAYED SENDS.
         ;(async () => {
           const reqId = msg.reqId
           const channel = msg.channel
           const text = msg.text
-          let ok = false
-          let error
-          try {
-            if (!channel || typeof channel !== 'string') {
-              error = 'invalid_channel'
-            } else if (!text || typeof text !== 'string' || text.length === 0 || text.length > 500) {
-              error = 'invalid_text'
-            } else {
-              const resolved = await resolveKickChannelIdBg(channel.toLowerCase())
-              if (!resolved.channelId) {
-                error = 'no_channel'
-              } else {
-                const result = await sendKickMessageViaTab(resolved.channelId, text)
-                ok = !!result?.ok
-                error = result?.error
-              }
-            }
-          } catch (e) {
-            error = e?.message || 'unknown'
-          } finally {
-            wsSendDirect({ type: 'kick:relay_ack', reqId, ok, error })
-          }
+          const result = await runGuardedRelay({ platform: 'kick', target: channel, text, reqId }, async () => {
+            const resolved = await resolveKickChannelIdBg(channel.toLowerCase())
+            if (!resolved.channelId) return { ok: false, error: 'no_channel' }
+            const r = await sendKickMessageViaTab(resolved.channelId, text)
+            return { ok: !!r?.ok, error: r?.error }
+          })
+          wsSendDirect({ type: 'kick:relay_ack', reqId, ok: !!result.ok, error: result.error })
         })()
         break
 

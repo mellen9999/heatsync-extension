@@ -120,6 +120,26 @@
         chrome.runtime.sendMessage({ type: 'notifs_viewed' })
       } catch {}
     })
+
+    // Evidence that a person is at this tab. A send the server relays through
+    // this browser (kick / youtube) runs only within seconds of one of these;
+    // the background keeps the time and nothing else. event.isTrusted is true
+    // only for input the browser itself produced — a page script's
+    // dispatchEvent() is false — so the site's own code cannot manufacture it.
+    // At most one report per 5 s; the window it opens is 30 s.
+    let lastGestureAt = 0
+    const reportGesture = (event) => {
+      if (!event.isTrusted) return
+      const now = Date.now()
+      if (now - lastGestureAt < 5000) return
+      lastGestureAt = now
+      try {
+        chrome.runtime.sendMessage({ type: 'site_gesture' })
+      } catch {}
+    }
+    for (const type of ['keydown', 'pointerdown']) {
+      window.addEventListener(type, reportGesture, { capture: true, passive: true })
+    }
     return
   }
 

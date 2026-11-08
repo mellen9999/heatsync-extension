@@ -1415,9 +1415,48 @@ function bttvRoomToKey(room) {
   return null
 }
 
+// BTTV Pro PERSONAL emotes. BTTV has no per-user lookup endpoint to ask (its
+// REST answers /3/cached/users/<provider>/<id> with the CHANNEL set only): a Pro
+// user's personal set reaches other clients as one `lookup_user` push on this
+// socket, sent when that user's own client announces itself in a room we have
+// joined. So this is push-only, and coverage is whoever has announced while we
+// were listening — a Pro chatter we have not heard yet renders as text, exactly
+// as before. Captured per twitch id and merged into get_sender_emotes beside the
+// 7tv personal sets (the same cross-user pipeline).
+//   { name, providerId, channel: 'twitch:<room>', pro, emotes: [{ id, code, animated, width, height, … }] }
+const bttvPersonalSets = new Map() // twitch uid -> { name: emoteData }
+function captureBTTVPersonalSet(data) {
+  // a twitch room's announcement is a twitch user's (BTTV also serves youtube)
+  if (!String(data?.channel || '').startsWith('twitch:')) return
+  const uid = String(data.providerId || '')
+  if (!/^\d{1,20}$/.test(uid) || !Array.isArray(data.emotes)) return
+  const out = {}
+  for (const e of data.emotes.slice(0, 100)) {
+    // same id and name bounds the channel emotes get (emote_create above)
+    if (!e || typeof e.id !== 'string' || !/^[a-f0-9]{24}$/i.test(e.id)) continue
+    if (typeof e.code !== 'string' || !e.code || e.code.length > 100) continue
+    out[e.code] = {
+      url: `https://cdn.betterttv.net/emote/${e.id}/1x.webp`,
+      source: 'bttv',
+      state: 'global',
+      zeroWidth: false,
+      hash: e.id,
+      animated: e.animated === true,
+      os: bttvOversize(e),
+    }
+  }
+  // an announcement with no emotes is the user dropping their set
+  if (Object.keys(out).length) {
+    bttvPersonalSets.set(uid, out)
+    if (bttvPersonalSets.size > 2000) bttvPersonalSets.delete(bttvPersonalSets.keys().next().value)
+    log(' BTTV Live: personal set captured for', uid, '—', Object.keys(out).length, 'emotes')
+  } else if (!bttvPersonalSets.delete(uid)) return
+  // a sender's emotes are cached for minutes — drop this one so the next message sees the change
+  globalThis.__senderEmoteCache?.delete?.(`twitch:${uid}`)
+}
+
 function handleBTTVSocketEvent(name, data) {
-  // lookup_user (BTTV Pro personal emotes/badges) deliberately unhandled —
-  // personal-emote rendering is a separate cross-user pipeline.
+  if (name === 'lookup_user') return captureBTTVPersonalSet(data)
   if (name !== 'emote_create' && name !== 'emote_delete' && name !== 'emote_update') return
   const key = bttvRoomToKey(String(data.channel || ''))
   if (!key) return

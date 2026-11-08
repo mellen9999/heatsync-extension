@@ -2383,13 +2383,17 @@ async function handleMessage(message, sender, sendResponse) {
             return
           }
           // A sender's emotes = their heatsync set + their 7TV paid personal set
-          // (captured live from EventAPI entitlements). Not their CHANNEL's
+          // (captured live from EventAPI entitlements) + their BTTV Pro personal
+          // set (captured from the socket's lookup_user push). Not their CHANNEL's
           // 7TV/BTTV set: that isn't theirs to post elsewhere — 7TV, BTTV and the
           // site all render it as text — and fetching it cost two third-party
           // calls per new chatter, ~1,500 a minute in a busy chat, mostly 404s.
           const collected = {}
           const hs = { emotes: hsBatch[key] || [] }
           const uid = key.startsWith('twitch:') ? key.slice(7) : null
+          // BTTV Pro personal set first, so the same name from 7TV or heatsync wins
+          const bttvPersonal = uid ? bttvPersonalSets.get(uid) : null
+          if (bttvPersonal) Object.assign(collected, bttvPersonal)
           const personal = uid ? seventvPersonalSets.get(uid) : null
           if (personal) Object.assign(collected, personal)
           // HeatSync personal set — overrides provider entries because it's the

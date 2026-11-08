@@ -11,7 +11,8 @@ const src = (f) => readFileSync(new URL(`../src/multichat/${f}`, import.meta.url
 
 const USES = {
   'main.js': ['mc_tagcard_you', 'mc_bits_n', 'mc_reply_blocked', 'mc_moment_permalink'],
-  'settings-ui.js': ['mc_set_reload', 'mc_set_snd_ping', 'mc_set_snd_blip', 'mc_set_snd_knock', 'mc_set_snd_chime'],
+  'settings-ui.js': ['mc_set_reload'],
+  'sound-ui.js': ['mc_set_snd_ping', 'mc_set_snd_blip', 'mc_set_snd_knock', 'mc_set_snd_chime'],
   'mentions.js': [
     'mc_mention_reply_post',
     'mc_mention_reply_reply',

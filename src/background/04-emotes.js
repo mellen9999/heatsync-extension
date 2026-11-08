@@ -2,6 +2,52 @@
 // build.js concatenates src/background/* in BG_PARTS order into background.js (the service worker cannot import);
 // one scope, so a later part may read an earlier part's constants, never the reverse.
 
+// The channel-owner lookup. The same login is three different people across
+// platforms (a twitch "ninja" is not a kick "ninja"), so the route is told which
+// platform's channel this is; the bare-name form has to guess. A platform it has no
+// word for (never expected) sends no param — the guess, as before.
+function channelOwnerEmotesUrl(channelName, platform) {
+  const p = canonPlatform(platform)
+  const q = p === 'twitch' || p === 'kick' || p === 'youtube' ? `?platform=${p}` : ''
+  return withNsfwParam(`${API_URL}/api/emotes/user/${encodeURIComponent(channelName)}${q}`)
+}
+
+// A channel-owner emote off the wire, kept to what render uses. `variants` (the
+// smaller copies of the file) and width/height (the natural size — lets the chat
+// reserve the emote's box before the file arrives) are optional: a server that
+// sends neither yields exactly the {name,url,hash,provider} record this has
+// always been. Everything is bounded here and re-checked where it is used
+// (multichat emote-rungs.js), so a bad payload costs a missing optimisation,
+// never a wrong picture.
+//   variants  list ["1x","2x",...]  or  object {"1x": url, "2x": url, ...}
+function mapChannelOwnerEmote(e) {
+  const out = {
+    name: e.name,
+    url: absUrl(e.url),
+    hash: e.hash || e.name,
+    provider: e.provider || 'upload',
+  }
+  const v = e.variants
+  if (Array.isArray(v)) {
+    const rungs = v.filter((r) => typeof r === 'string' && /^[1-4]x$/.test(r)).slice(0, 4)
+    if (rungs.length) out.variants = rungs
+  } else if (v && typeof v === 'object') {
+    const rungs = {}
+    for (const r of ['1x', '2x', '3x', '4x']) {
+      const u = typeof v[r] === 'string' ? absUrl(v[r]) : null
+      if (u && u.length <= 300 && EMOTE_CDN_PATTERN.test(u)) rungs[r] = u
+    }
+    if (Object.keys(rungs).length) out.variants = rungs
+  }
+  const w = Number(e.width)
+  const h = Number(e.height)
+  if (Number.isInteger(w) && Number.isInteger(h) && w > 0 && h > 0 && w <= 4096 && h <= 4096) {
+    out.width = w
+    out.height = h
+  }
+  return out
+}
+
 // Fetch channel owner's emotes (public API) + third-party channel emotes
 async function fetchChannelOwnerEmotes(channelName, channelId = null, platform = 'twitch') {
   const key = chKey(platform, channelName)
@@ -46,9 +92,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     // lookupTwitchUserId for a Kick/YouTube channelName, that's a cross-platform
     // identity bleed (wrong user's emotes/cosmetics attached to this channel).
     const [heatsyncResult, resolvedChannelId] = await Promise.all([
-      fetchWithTimeout(withNsfwParam(`${API_URL}/api/emotes/user/${encodeURIComponent(channelName)}`)).catch(
-        () => null,
-      ),
+      fetchWithTimeout(channelOwnerEmotesUrl(channelName, platform)).catch(() => null),
       platform === 'twitch' && !channelId
         ? lookupTwitchUserId(channelName)
         : platform === 'youtube' && !/^UC[\w-]{20,}$/i.test(String(channelId || ''))
@@ -71,12 +115,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
       // heatsyncEmotes stays [] (default); flow continues to third-party tasks
     } else if (heatsyncResult?.ok) {
       const data = await heatsyncResult.json()
-      heatsyncEmotes = (data.emotes || []).map((e) => ({
-        name: e.name,
-        url: absUrl(e.url),
-        hash: e.hash || e.name,
-        provider: e.provider || 'upload',
-      }))
+      heatsyncEmotes = (data.emotes || []).map(mapChannelOwnerEmote)
     }
     channelId = resolvedChannelId
 

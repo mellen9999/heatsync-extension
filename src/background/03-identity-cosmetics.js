@@ -984,11 +984,13 @@ async function fetch7TVChannelEmotes(channelName, channelId = null, platform = '
       }
     }
 
+    stvCheckShape('user', data)
     const emoteSet = await resolve7TVEmoteSet(data)
     if (!emoteSet) {
       log(' 7TV: No emote set found for', identifier)
       return [] // genuine: user has no emote set
     }
+    stvCheckShape('set', emoteSet)
 
     const emoteList = emoteSet.emotes || []
     log(' 7TV: Found', emoteList.length, 'emotes for', identifier, '(set ID:', `${emoteSet.id})`)
@@ -1015,6 +1017,7 @@ async function fetch7TVChannelEmotes(channelName, channelId = null, platform = '
     }
     return { emotes, setId: emoteSet.id }
   } catch (error) {
+    stvCheckParse('user', error)
     // Aborts (timeouts) are expected for slow channels; demote to log so the
     // console isn't spammed with red errors during normal operation.
     const isAbort = error?.name === 'AbortError' || /aborted/i.test(error?.message || '')

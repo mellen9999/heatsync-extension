@@ -463,6 +463,7 @@ async function fetch7TVEmotes() {
     }
 
     const data = await response.json()
+    stvCheckShape('global', data)
     const emotes = sanitizeEmoteList(
       (data?.emotes || []).map((e) => ({
         name: e.name,
@@ -479,6 +480,7 @@ async function fetch7TVEmotes() {
     } catch {}
     return emotes
   } catch (_error) {
+    stvCheckParse('global', _error)
     return []
   }
 }
@@ -796,6 +798,8 @@ function ensure7TVConnection() {
       seventvLastData = Date.now()
       try {
         const message = JSON.parse(event.data)
+        const frameProblem = stvEnvelopeProblem(message)
+        if (frameProblem) stvCanary('stv-canary:schema', 'events', frameProblem)
 
         if (message.op === 0) {
           // Dispatch event
@@ -828,6 +832,7 @@ function ensure7TVConnection() {
           log(' 7TV EventAPI: Subscription acknowledged:', subType, 'for', subId?.slice(0, 12))
         }
       } catch (err) {
+        stvCheckParse('events', err)
         console.error('[heatsync] 7TV EventAPI: Parse error:', err)
       }
     }
@@ -1025,6 +1030,7 @@ async function capture7TVPersonalEntitlement(body) {
     const res = await fetchWithTimeout(`https://7tv.io/v3/emote-sets/${setId}`)
     if (!res.ok) return
     const data = await res.json()
+    stvCheckShape('set', data)
     const out = {}
     for (const e of data?.emotes || []) {
       if (!e?.name || !e?.id) continue
@@ -1709,9 +1715,13 @@ async function poll7TVEmoteSet() {
       }
       if (!response.ok) continue
       const data = await response.json()
+      // A user answer the parser cannot read means "no emotes" below — and the diff
+      // after it would then call every emote removed. Record it and sit this one out.
+      if (stvCheckShape('user', data)) continue
 
       const emoteSet = await resolve7TVEmoteSet(data)
       if (!emoteSet?.emotes) continue
+      if (stvCheckShape('set', emoteSet)) continue
 
       // Check if emote set ID changed (user recreated their set)
       const knownSetId = seventvEmoteSetIds.get(key)

@@ -183,6 +183,133 @@ async function settleErrorBody(resp) {
   return new Response(body, { status: resp.status, statusText: resp.statusText, headers: resp.headers })
 }
 
+// ── 7tv v3 canary ───────────────────────────────────────────────────────────
+// We ride 7tv's v3 REST (7tv.io/v3) and EventAPI (events.7tv.io/v3) and have
+// chosen not to move to their newer API. The cost of that call is finding out
+// late: when v3 is switched off or reshaped, every channel quietly loses its 7tv
+// emotes and nothing says why. These three signals are what a retiring API
+// sends first, and each lands ONCE (per 6h) in the error ring the popup's "copy
+// errors" exports — the same ring src/lib/diag.js writes — under a stable code:
+//
+//   stv-canary:sunset  a Sunset / Deprecation header came back
+//   stv-canary:gone    410 — the endpoint is gone
+//   stv-canary:schema  a 200 the parsers cannot read (not json, or the fields
+//                      they take emotes from are missing)
+//
+// Recording only. Nothing here changes what a caller gets back, throws, or
+// blocks: v3 failing stays the soft failure it always was. Bodies are never
+// read or cloned here (settleErrorBody's note on why); the shape checks run on
+// the parsed data a parser already holds.
+const STV_CANARY_KEY = 'hs_stv_canary'
+const STV_CANARY_TTL_MS = 6 * 60 * 60 * 1000
+let stvCanarySeen = null // `${code}|${kind}` -> last recorded ts; loaded once per SW life
+let stvCanaryLoad = null
+
+function stvKindOf(url) {
+  const m = /^https:\/\/(?:7tv\.io|heatsync\.org\/api\/7tv)\/v3\/([a-z-]+)(\/global)?/.exec(String(url))
+  if (!m) return null
+  if (m[1] === 'users') return 'user'
+  if (m[1] === 'emote-sets') return m[2] ? 'global' : 'set'
+  return m[1] === 'gql' ? 'gql' : 'rest'
+}
+
+async function stvCanary(code, kind, detail) {
+  try {
+    const key = `${code}|${kind}`
+    const now = Date.now()
+    if (!stvCanarySeen) {
+      stvCanaryLoad ||= browser.storage.local.get(STV_CANARY_KEY).then(
+        (got) => {
+          const saved = got?.[STV_CANARY_KEY]
+          stvCanarySeen = saved && typeof saved === 'object' ? { ...saved } : {}
+        },
+        () => {
+          stvCanarySeen = {}
+        },
+      )
+      await stvCanaryLoad
+    }
+    if (now - (Number(stvCanarySeen[key]) || 0) < STV_CANARY_TTL_MS) return
+    stvCanarySeen[key] = now
+    const rep = globalThis.__hsErrorReporterSw
+    rep?.capture?.({
+      ts: now,
+      type: 'diag',
+      plat: 'sw',
+      ver: rep.ver,
+      url: 'background',
+      msg: `${code} ${kind}: ${String(detail).slice(0, 200)}`,
+      stack: code,
+    })
+    browser.storage.local.set({ [STV_CANARY_KEY]: stvCanarySeen }).catch(() => {})
+  } catch (_) {}
+}
+
+// What a v3 answer says about v3 itself — headers and status only. The report
+// names the kind of call, never the url (a channel's id or name has no business
+// in a report someone pastes).
+function stvCanaryResponse(url, resp) {
+  try {
+    const kind = stvKindOf(url)
+    if (!kind || !resp?.headers) return
+    if (resp.status === 410) stvCanary('stv-canary:gone', kind, '410 gone')
+    for (const h of ['sunset', 'deprecation']) {
+      const v = (resp.headers.get(h) || '').trim()
+      // `Deprecation: false` is a server saying it is NOT deprecated
+      if (v && v.toLowerCase() !== 'false') stvCanary('stv-canary:sunset', kind, `${h}: ${v.slice(0, 80)}`)
+    }
+    const type = resp.headers.get('content-type')
+    if (resp.ok && resp.status !== 204 && type && !/json/i.test(type))
+      stvCanary('stv-canary:schema', kind, `answered ${type.slice(0, 40)}, not json`)
+  } catch (_) {}
+}
+
+// Can the parsers read this? '' when yes, else why not. `user` is a /users/*
+// lookup, `set` an emote set (channel, global or personal) — the two shapes the
+// emote loaders take emotes from. Only what a parser actually needs is checked:
+// a field 7tv adds is not a problem, a field they lean on going missing is.
+const STV_USER_KEYS = ['emote_set', 'emote_set_id', 'user', 'emote_sets', 'connections', 'username']
+function stvShapeProblem(kind, data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return 'body is not an object'
+  if (kind === 'user') {
+    // /users/<platform>/<id> carries emote_set + emote_set_id + user; the plain /users/<id>
+    // (the username fallback) carries emote_sets + connections instead. Neither leaning on
+    // any of them is a payload that has stopped being a user.
+    if (!STV_USER_KEYS.some((k) => k in data)) return 'none of the fields a user lookup carries'
+    if (data.emote_set != null && typeof data.emote_set !== 'object') return 'emote_set is not an object'
+    return ''
+  }
+  const list = data.emotes
+  if (list == null) return ''
+  if (!Array.isArray(list)) return 'emotes is not a list'
+  for (const e of list.slice(0, 5)) {
+    if (!e || typeof e.id !== 'string' || typeof e.name !== 'string') return 'an emote has no id or name'
+  }
+  return ''
+}
+
+// An EventAPI frame: a numeric op, and per op the one field the handlers read
+// (hello → session_id, dispatch → type).
+function stvEnvelopeProblem(message) {
+  if (typeof message?.op !== 'number') return 'frame has no numeric op'
+  if (message.op === 1 && typeof message.d?.session_id !== 'string') return 'hello has no session_id'
+  if (message.op === 0 && typeof message.d?.type !== 'string') return 'dispatch has no type'
+  return ''
+}
+
+// A body that would not parse as json at all — same code, same kind.
+function stvCheckParse(kind, err) {
+  if (err instanceof SyntaxError) stvCanary('stv-canary:schema', kind, 'body is not json')
+}
+
+// Record a shape problem; true when there was one (the poll uses that to skip a
+// diff it cannot trust). `kind` is user|set|global|events.
+function stvCheckShape(kind, data) {
+  const why = stvShapeProblem(kind === 'global' ? 'set' : kind, data)
+  if (why) stvCanary('stv-canary:schema', kind, why)
+  return !!why
+}
+
 async function fetchWithTimeout(url, opts = {}, ms = 10000) {
   const is7tvGet =
     typeof url === 'string' && url.startsWith('https://7tv.io/') && (opts.method || 'GET').toUpperCase() === 'GET'
@@ -244,6 +371,7 @@ async function fetchWithTimeout(url, opts = {}, ms = 10000) {
     clearTimeout(timer)
     if (backoffManaged) heatsyncInflightAborts.delete(ctrl)
   }
+  stvCanaryResponse(url, resp)
   if (thirdParty && resp.status === 429) {
     const n = parseInt(resp.headers.get('retry-after') || '', 10)
     thirdPartyBackoffUntil.set(host, Date.now() + (n > 0 ? Math.min(300, n) * 1000 : 30_000))

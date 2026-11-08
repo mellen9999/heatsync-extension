@@ -142,7 +142,7 @@ describe('what gets said', () => {
 describe('wired into the page', () => {
   test('every live mention goes through notifyMention, which tells sr-announce first thing', () => {
     const src = read('src', 'multichat', 'mentions.js')
-    const body = src.slice(src.indexOf('function notifyMention(msg) {'))
+    const body = src.slice(src.search(/function notifyMention\(msg\b[^)]*\) \{/))
     const first = body
       .split('\n')
       .slice(1)

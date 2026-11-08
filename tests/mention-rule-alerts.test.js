@@ -109,7 +109,7 @@ describe('ruleAlertsMention', () => {
 
 describe('notifyMention + the mention sound setting', () => {
   function load({ focused = false, when = 'away', notifs = true, flash = true } = {}) {
-    const calls = { ping: [], flash: [], fired: [] }
+    const calls = { ping: [], flash: [], fired: [], sr: [] }
     const g = {
       document: { hasFocus: () => focused },
       playMentionPing: (v) => calls.ping.push(v),
@@ -120,6 +120,7 @@ describe('notifyMention + the mention sound setting', () => {
       truncateSafe: (s) => s,
       resolveNotifIcon: () => Promise.resolve('icon'),
       fireNotification: (title, body) => calls.fired.push([title, body]),
+      srAnnounceMention: (m) => calls.sr.push(m),
     }
     const api = new Function(
       ...Object.keys(g),

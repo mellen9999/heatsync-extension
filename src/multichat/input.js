@@ -1189,7 +1189,7 @@ function createInputBar() {
     <span id="hs-mc-send-tag" hidden></span>
     ${inputHtml}
     <input type="file" id="hs-mc-attach-input" accept="image/*,video/*" hidden>
-    <button id="hs-mc-attach-btn" type="button" title="${t('mc_input_attach')}" aria-label="${t('mc_input_attach')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18"></rect><circle cx="8.5" cy="8.5" r="1.6" fill="currentColor" stroke="none"></circle><path d="M21 15l-5-5L4 21"></path></svg></button>
+    <button id="hs-mc-attach-btn" type="button" title="${t('mc_input_attach')}" aria-label="${t('mc_input_attach')}">+</button>
     <button id="hs-mc-emote-btn" title="${t('mc_input_emote_picker')}" aria-label="${t('mc_input_emote_picker')}"><img src="${iconUrl}" data-src="${iconUrl}" data-src-black="${iconBlackUrl}" alt="hs"></button>
   `
 

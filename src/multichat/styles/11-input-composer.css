@@ -401,10 +401,10 @@
       background: #fff;
     }
 
-    /* Attach button — same 28px square as the heatsync button; monochrome image
-       glyph via currentColor so hover inverts to black-on-white like everything else. */
+    /* Attach button — same 28px square as the heatsync button; a big bold "+" as on
+       heatsync.org and the apps (text glyph, never an svg). Hover inverts like everything else. */
     #hs-mc-attach-btn {
-      padding: 2px;
+      padding: 0;
       width: 28px;
       height: 28px;
       background: #000;
@@ -416,11 +416,7 @@
       justify-content: center;
       flex-shrink: 0;
       transition: none;
-    }
-    #hs-mc-attach-btn svg {
-      width: 20px;
-      height: 20px;
-      display: block;
+      font: 700 24px/1 monospace;
     }
     #hs-mc-attach-btn:hover {
       background: #fff;

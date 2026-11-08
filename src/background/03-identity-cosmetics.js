@@ -1208,6 +1208,12 @@ async function fetchBulkBadges() {
       fetchWithTimeout('https://api.frankerfacez.com/v1/badges/ids'),
       fetchWithTimeout('https://heatsync.org/api/chatterino-badges'),
     ])
+    // Nothing answered: give back the stamp so the next call retries now, not at the TTL.
+    const anyOk = [bttvResp, ffzResp, chatterinoResp].some((r) => r.status === 'fulfilled' && r.value.ok)
+    if (!anyOk) {
+      badgesFetchedAt = 0
+      return
+    }
     if (bttvResp.status === 'fulfilled' && bttvResp.value.ok) {
       const data = await bttvResp.value.json()
       bttvBadgeMap.clear()

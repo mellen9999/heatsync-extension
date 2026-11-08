@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "vis en svarknapp på chatraden under musen. svar finnes alltid i radmenyen (høyreklikk, langt trykk på touch)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "husk sendte meldinger"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "pil opp og pil ned henter fram sendte meldinger igjen, også etter omlasting. blir på denne enheten og synkroniseres aldri. av: bare til omlasting"
+  },
+  "mc_settings_spellcheck": {
+    "message": "stavekontroll"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "understreker feilstavede ord i meldingsfeltet"
+  },
+  "mc_set_clear_sent": {
+    "message": "tøm sendt-historikk"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "glem meldingene pil opp og pil ned henter fram, på denne enheten"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "tøm"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "sendt-historikk tømt"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "emote-forslag"
+  },
+  "mc_a11y_ac_names": {
+    "message": "navneforslag"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "kommandoforslag"
   }
 }

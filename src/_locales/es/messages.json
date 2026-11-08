@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "muestra un botón de responder en la fila del chat bajo el ratón. responder siempre está en el menú de la fila (clic derecho, pulsación larga en táctil)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "recordar mensajes enviados"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "las flechas arriba y abajo traen de vuelta lo enviado, incluso tras recargar. se queda en este dispositivo y nunca se sincroniza. desactivado: solo hasta recargar"
+  },
+  "mc_settings_spellcheck": {
+    "message": "corrector ortográfico"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "subraya las palabras mal escritas en la caja de mensaje"
+  },
+  "mc_set_clear_sent": {
+    "message": "borrar historial de enviados"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "olvida los mensajes que traen las flechas arriba y abajo, en este dispositivo"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "borrar"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "historial de enviados borrado"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "sugerencias de emotes"
+  },
+  "mc_a11y_ac_names": {
+    "message": "sugerencias de nombres"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "sugerencias de comandos"
   }
 }

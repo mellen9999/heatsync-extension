@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "vis en svarknap på chatrækken under musen. svar findes altid i rækkemenuen (højreklik, langt tryk på touch)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "husk sendte beskeder"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "op- og ned-piletasterne henter det sendte frem igen, også efter en genindlæsning. bliver på denne enhed og synkroniseres aldrig. fra: kun indtil genindlæsning"
+  },
+  "mc_settings_spellcheck": {
+    "message": "stavekontrol"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "understreger forkert stavede ord i beskedfeltet"
+  },
+  "mc_set_clear_sent": {
+    "message": "ryd sendt historik"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "glem de beskeder, op- og ned-piletasterne henter frem, på denne enhed"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "ryd"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "sendt historik ryddet"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "emote-forslag"
+  },
+  "mc_a11y_ac_names": {
+    "message": "navneforslag"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "kommandoforslag"
   }
 }

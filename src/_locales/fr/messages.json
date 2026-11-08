@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "affiche un bouton répondre sur la ligne du chat sous la souris. répondre reste toujours dans le menu de la ligne (clic droit, appui long au toucher)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "mémoriser les messages envoyés"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "les flèches haut et bas rappellent les messages envoyés, même après un rechargement. reste sur cet appareil, jamais synchronisé. désactivé : seulement jusqu'au rechargement"
+  },
+  "mc_settings_spellcheck": {
+    "message": "correcteur orthographique"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "souligne les mots mal orthographiés dans la zone de message"
+  },
+  "mc_set_clear_sent": {
+    "message": "effacer l'historique des envois"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "oublie les messages que rappellent les flèches haut et bas, sur cet appareil"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "effacer"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "historique des envois effacé"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "suggestions d'emotes"
+  },
+  "mc_a11y_ac_names": {
+    "message": "suggestions de noms"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "suggestions de commandes"
   }
 }

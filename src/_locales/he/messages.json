@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "מציג כפתור תגובה בשורת הצ'אט שמתחת לעכבר. תגובה תמיד זמינה בתפריט השורה (קליק ימני, לחיצה ארוכה במגע)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "זכור הודעות שנשלחו"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "חצי המקשים למעלה ולמטה מחזירים מה שנשלח, גם אחרי טעינה מחדש. נשאר במכשיר הזה ולא מסונכרן לעולם. כבוי: רק עד לטעינה מחדש"
+  },
+  "mc_settings_spellcheck": {
+    "message": "בדיקת איות"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "מסמן בקו תחתון מילים עם שגיאות כתיב בתיבת ההודעה"
+  },
+  "mc_set_clear_sent": {
+    "message": "נקה היסטוריית שליחה"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "שוכח את ההודעות שחצי המקשים למעלה ולמטה מחזירים, במכשיר הזה"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "נקה"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "היסטוריית השליחה נוקתה"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "הצעות אימוטים"
+  },
+  "mc_a11y_ac_names": {
+    "message": "הצעות שמות"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "הצעות פקודות"
   }
 }

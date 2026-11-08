@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "マウスの下のチャット行に返信ボタンを表示します。返信は常に行メニューにあります（右クリック、タッチは長押し）"
+  },
+  "mc_settings_remember_sent": {
+    "message": "送信したメッセージを覚える"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "↑↓キーで送信済みのメッセージを呼び出せる。再読み込みしても残る。この端末だけに保存し、同期はしない。オフ: 再読み込みまで"
+  },
+  "mc_settings_spellcheck": {
+    "message": "スペルチェック"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "メッセージ欄のつづりの誤りに下線を引く"
+  },
+  "mc_set_clear_sent": {
+    "message": "送信履歴を消去"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "この端末で ↑↓キーが呼び出すメッセージを消す"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "消去"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "送信履歴を消去しました"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "エモートの候補"
+  },
+  "mc_a11y_ac_names": {
+    "message": "名前の候補"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "コマンドの候補"
   }
 }

@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "แสดงปุ่มตอบกลับที่แถวแชทใต้เมาส์ การตอบกลับมีในเมนูแถวเสมอ (คลิกขวา, กดค้างบนจอสัมผัส)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "จำข้อความที่ส่งแล้ว"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "ปุ่มลูกศรขึ้นและลงเรียกข้อความที่ส่งไปกลับมา แม้โหลดหน้าใหม่ เก็บไว้ในอุปกรณ์นี้เท่านั้นและไม่ซิงก์เลย ปิด: จำถึงแค่โหลดใหม่"
+  },
+  "mc_settings_spellcheck": {
+    "message": "ตรวจการสะกด"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "ขีดเส้นใต้คำที่สะกดผิดในช่องข้อความ"
+  },
+  "mc_set_clear_sent": {
+    "message": "ล้างประวัติที่ส่งแล้ว"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "ลืมข้อความที่ปุ่มลูกศรขึ้นและลงเรียกกลับมา ในอุปกรณ์นี้"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "ล้าง"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "ล้างประวัติที่ส่งแล้ว"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "คำแนะนำอีโมต"
+  },
+  "mc_a11y_ac_names": {
+    "message": "คำแนะนำชื่อ"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "คำแนะนำคำสั่ง"
   }
 }

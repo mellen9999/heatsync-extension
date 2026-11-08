@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "마우스 아래의 채팅 줄에 답장 버튼을 표시합니다. 답장은 항상 줄 메뉴에 있습니다 (오른쪽 클릭, 터치는 길게 누르기)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "보낸 메시지 기억"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "위·아래 화살표 키로 보낸 메시지를 다시 불러옴. 새로고침해도 유지. 이 기기에만 저장되고 동기화되지 않음. 끄면 새로고침 전까지만"
+  },
+  "mc_settings_spellcheck": {
+    "message": "맞춤법 검사"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "메시지 입력창에서 철자가 틀린 단어에 밑줄 표시"
+  },
+  "mc_set_clear_sent": {
+    "message": "보낸 기록 지우기"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "이 기기에서 위·아래 화살표 키로 불러오는 메시지를 지움"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "지우기"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "보낸 기록 지움"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "emote 추천"
+  },
+  "mc_a11y_ac_names": {
+    "message": "이름 추천"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "명령어 추천"
   }
 }

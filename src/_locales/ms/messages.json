@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "papar butang balas pada baris sembang di bawah tetikus. balas sentiasa ada dalam menu baris (klik kanan, tekan lama pada skrin sentuh)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "ingat mesej yang dihantar"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "kekunci anak panah atas dan bawah memanggil semula mesej yang dihantar, malah selepas muat semula. kekal pada peranti ini dan tidak pernah disegerakkan. mati: hanya sehingga muat semula"
+  },
+  "mc_settings_spellcheck": {
+    "message": "semakan ejaan"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "garis bawah perkataan yang salah eja dalam kotak mesej"
+  },
+  "mc_set_clear_sent": {
+    "message": "kosongkan sejarah dihantar"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "lupakan mesej yang dipanggil oleh kekunci anak panah atas dan bawah, pada peranti ini"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "kosongkan"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "sejarah dihantar dikosongkan"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "cadangan emote"
+  },
+  "mc_a11y_ac_names": {
+    "message": "cadangan nama"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "cadangan arahan"
   }
 }

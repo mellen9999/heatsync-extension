@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "zeigt einen antwort-button an der chatzeile unter der maus. antworten geht immer im zeilenmenü (rechtsklick, langes drücken am touchscreen)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "gesendete nachrichten merken"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "die pfeiltasten hoch und runter holen gesendete nachrichten zurück, auch nach einem neuladen. bleibt auf diesem gerät und wird nie synchronisiert. aus: nur bis zum neuladen"
+  },
+  "mc_settings_spellcheck": {
+    "message": "rechtschreibprüfung"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "unterstreicht falsch geschriebene wörter im nachrichtenfeld"
+  },
+  "mc_set_clear_sent": {
+    "message": "gesendeten verlauf löschen"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "vergisst die nachrichten, die die pfeiltasten hoch und runter zurückholen, auf diesem gerät"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "löschen"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "gesendeter verlauf gelöscht"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "emote-vorschläge"
+  },
+  "mc_a11y_ac_names": {
+    "message": "namensvorschläge"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "befehlsvorschläge"
   }
 }

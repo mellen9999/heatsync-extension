@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "toon een antwoordknop op de chatregel onder je muis. antwoorden zit altijd in het regelmenu (rechtsklik, lang drukken op touch)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "verzonden berichten onthouden"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "de pijltjes omhoog en omlaag halen verzonden berichten terug, ook na herladen. blijft op dit apparaat en wordt nooit gesynchroniseerd. uit: alleen tot het herladen"
+  },
+  "mc_settings_spellcheck": {
+    "message": "spellingcontrole"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "onderstreept verkeerd gespelde woorden in het berichtvak"
+  },
+  "mc_set_clear_sent": {
+    "message": "verzonden geschiedenis wissen"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "vergeet de berichten die de pijltjes omhoog en omlaag terughalen, op dit apparaat"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "wissen"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "verzonden geschiedenis gewist"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "emote-suggesties"
+  },
+  "mc_a11y_ac_names": {
+    "message": "naamsuggesties"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "commandosuggesties"
   }
 }

@@ -755,6 +755,40 @@ const SETTINGS = [
     runtimeVar: 'viModeEnabled',
     apply: 'viMode',
   },
+  {
+    // Up/Down in the composer bring back what you sent. On: the list also survives a reload,
+    // kept in chrome.storage.local only (sent-history.js). Off: this page only, nothing stored.
+    // sent-history.js watches this key itself, so there is no applier.
+    key: 'hs_remember_sent',
+    basic: true,
+    type: 'bool',
+    default: true,
+    scope: 'local',
+    category: 'chat',
+    section: 'input',
+    sectionKey: 'btn_settings_input',
+    labelKey: 'mc_settings_remember_sent',
+    tipKey: 'mc_settings_remember_sent_desc',
+    control: 'pill',
+    alias: 'history up down arrow recall sent messages privacy',
+  },
+  {
+    // Default off, as the composer has always been. Read at build time of the composer and
+    // pushed live by the applier, so it takes effect without a reload.
+    key: 'hs_spellcheck',
+    type: 'bool',
+    default: false,
+    scope: 'local',
+    category: 'chat',
+    section: 'input',
+    sectionKey: 'btn_settings_input',
+    labelKey: 'mc_settings_spellcheck',
+    tipKey: 'mc_settings_spellcheck_desc',
+    control: 'pill',
+    alias: 'spell check squiggle typo red underline',
+    apply: 'spellcheck',
+    applyOnLoad: true,
+  },
 
   // ── chat / messages ───────────────────────────────────────────────────
   {

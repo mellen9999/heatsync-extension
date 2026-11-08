@@ -6613,5 +6613,38 @@
   },
   "mc_settings_hover_reply_desc": {
     "message": "माउस के नीचे वाली चैट पंक्ति पर जवाब बटन दिखाएँ। जवाब हमेशा पंक्ति मेनू में रहता है (राइट-क्लिक, टच पर देर तक दबाएँ)"
+  },
+  "mc_settings_remember_sent": {
+    "message": "भेजे गए संदेश याद रखो"
+  },
+  "mc_settings_remember_sent_desc": {
+    "message": "ऊपर और नीचे के तीर वही वापस लाते हैं जो भेजा गया था, रीलोड के बाद भी। सिर्फ़ इसी डिवाइस पर रहता है, कभी सिंक नहीं होता। बंद: सिर्फ़ रीलोड तक"
+  },
+  "mc_settings_spellcheck": {
+    "message": "वर्तनी जाँच"
+  },
+  "mc_settings_spellcheck_desc": {
+    "message": "संदेश बॉक्स में गलत वर्तनी वाले शब्दों के नीचे रेखा खींचता है"
+  },
+  "mc_set_clear_sent": {
+    "message": "भेजे गए का इतिहास साफ़ करो"
+  },
+  "mc_set_clear_sent_tip": {
+    "message": "इस डिवाइस पर ऊपर और नीचे के तीर जो संदेश वापस लाते हैं, उन्हें भुला दो"
+  },
+  "mc_set_clear_sent_btn": {
+    "message": "साफ़ करो"
+  },
+  "mc_set_clear_sent_done": {
+    "message": "भेजे गए का इतिहास साफ़ हो गया"
+  },
+  "mc_a11y_ac_emotes": {
+    "message": "इमोट सुझाव"
+  },
+  "mc_a11y_ac_names": {
+    "message": "नाम सुझाव"
+  },
+  "mc_a11y_ac_commands": {
+    "message": "कमांड सुझाव"
   }
 }

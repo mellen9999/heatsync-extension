@@ -2,7 +2,7 @@ import { beforeEach, expect, test } from 'bun:test'
 import { SETTINGS } from '../src/lib/settings-schema.js'
 import { RETIRED_UI_KEYS } from '../src/lib/utils.js'
 import { compileFilterRules, evaluateFilterRules } from '../src/multichat/filter-rules.js'
-import { legacyFilterRules, mergeFilterRules } from '../src/multichat/filter-rules-legacy.js'
+import { LEGACY_LOCAL_KEYS, legacyFilterRules, mergeFilterRules } from '../src/multichat/filter-rules-legacy.js'
 import { mainSource } from './main-src.js'
 
 // Four old text filters (automod patterns, automod all-caps, muted words,
@@ -100,8 +100,9 @@ test('the fold runs after the boot seed, writes the rules before it lets go of t
   const main = mainSource()
   const fn = main.slice(main.indexOf('async function retireSettings('), main.indexOf('// Registry-derived reset'))
   const write = fn.indexOf('await browser.storage.local.set({ chat_filter_rules: json })')
-  const drop = fn.indexOf("browser.storage.local.remove(['hs_mute_keywords', 'keyword_highlights'")
+  const drop = fn.indexOf('browser.storage.local.remove(LEGACY_LOCAL_KEYS)')
   expect(write).toBeGreaterThan(-1)
   expect(drop).toBeGreaterThan(write)
+  expect(LEGACY_LOCAL_KEYS).toEqual(['hs_mute_keywords', 'keyword_highlights'])
   expect(main).not.toMatch(/shouldAutomod|compileAutomod|_muteKeywordsRegex|keywordHighlightsRegex/)
 })

@@ -882,10 +882,13 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ ok: false, error: 'patch must be a plain object' })
       return true
     }
-    // dropRetired: the overlay has migrated this device's retired keys — clear them from the blob
+    // dropRetired: the overlay has migrated this device's retired keys — clear them from the blob.
+    // A list names just those (native chat folds only the old filter keys); a non-retired key is ignored.
+    const dr = message.dropRetired
+    const drop = dr === true ? [...RETIRED_UI_KEYS] : Array.isArray(dr) ? dr.filter((k) => RETIRED_UI_KEYS.has(k)) : []
     uiSettingsRmw((ui) => {
       const next = { ...ui, ...patch }
-      if (message.dropRetired === true) for (const k of RETIRED_UI_KEYS) delete next[k]
+      for (const k of drop) delete next[k]
       return sanitizeUiSettings(next)
     })
       .then((r) => sendResponse(r?.ok ? { ok: true } : { ok: false, error: r?.error || 'write failed' }))

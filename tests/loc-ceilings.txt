@@ -1,5 +1,5 @@
 # god-file ceilings: <max lines> <path>  # why. raise only with a reason in the same commit
-10266 src/content/content.js  # 2026-11-08: moved from chrome/ (was unscanned there); ceiling = size at the move
+10293 src/content/content.js  # 2026-11-08: moved from chrome/ (was unscanned there); +27 native filter-rule wiring (logic lives in native-filter-rules.js)
 9855 src/multichat/input.js  # baseline
 5310 src/multichat/emotes.js  # baseline
 5123 src/content/heatsync-button.js  # 2026-11-08: moved from chrome/ (was unscanned there); ceiling = size at the move

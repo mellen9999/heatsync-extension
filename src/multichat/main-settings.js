@@ -1030,33 +1030,19 @@ async function retireSettings() {
   try {
     const [synced, local] = await Promise.all([
       browser.storage.sync.get('ui_settings'),
-      browser.storage.local.get(['hs_mute_keywords', 'keyword_highlights', 'chat_filter_rules']),
+      browser.storage.local.get([...LEGACY_LOCAL_KEYS, 'chat_filter_rules']),
     ])
     const ui = synced?.ui_settings || {}
     // The four old text filters become chat filter rules (filter-rules-legacy.js).
     // The rules are written before the old values go, so a closed tab loses nothing.
-    const added = legacyFilterRules({
-      automodRegex: ui.automodRegex,
-      automodAllCaps: ui.automodAllCaps,
-      muteKeywords: local.hs_mute_keywords,
-      // pre-overflow installs still hold highlight words in the sync blob
-      keywordHighlights: typeof local.keyword_highlights === 'string' ? local.keyword_highlights : ui.keywordHighlights,
-    })
-    if (added.length) {
-      let cur
-      try {
-        cur = JSON.parse(local.chat_filter_rules || '[]')
-      } catch {}
-      // unreadable rules: keep every old value and leave the rules alone
-      if (!Array.isArray(cur)) return
-      const next = mergeFilterRules(cur, added)
-      if (next.length !== cur.length) {
-        const json = JSON.stringify(next)
-        await browser.storage.local.set({ chat_filter_rules: json })
-        setSetting('chatFilterRules', json)
-      }
+    const json = foldLegacyFilters(ui, local)
+    // unreadable rules: keep every old value and leave the rules alone
+    if (json === false) return
+    if (json) {
+      await browser.storage.local.set({ chat_filter_rules: json })
+      setSetting('chatFilterRules', json)
     }
-    await browser.storage.local.remove(['hs_mute_keywords', 'keyword_highlights'])
+    await browser.storage.local.remove(LEGACY_LOCAL_KEYS)
     if (!Object.keys(ui).some((k) => RETIRED_UI_KEYS.has(k))) return
     await safeSendMessage({ type: 'ui_settings_rmw', patch: {}, dropRetired: true })
     invalidateUiSettingsCache()

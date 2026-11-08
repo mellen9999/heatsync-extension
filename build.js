@@ -793,6 +793,22 @@ const LIB_EXTRAS = {
   'chat-injector.js': [],
 }
 
+// Self-contained modules (no imports) a non-multichat entry embeds after its
+// lib, in dependency order — the same files the multichat bundles embed, so
+// there is one copy of the logic, not a fork. A missing file fails the build.
+//   youtube-content.js renders HeatSync spec paints on the NATIVE yt surface:
+//     ALL of the paint compiler, in order. This once appended paint-spec.js
+//     alone; stripExports removes its `import { … } from './paint-core.js'`
+//     lines, so every helper it leaned on (fnv1a, HEX_RE, buildSceneCss, …)
+//     was undefined — 56 ReferenceErrors no typeof guard on an entry point can see.
+//   content.js runs the chat filter rules on native twitch/kick rows (highlight
+//     words with the overlay off) and folds the old text filters into them
+//     (content/native-filter-rules.js is the content-side half).
+const ENTRY_MODULES = {
+  'youtube-content.js': ['lib/paint-core.js', 'lib/scene-spec.js', 'lib/stv-paint-css.js', 'lib/paint-spec.js'],
+  'content.js': ['multichat/filter-rules.js', 'multichat/filter-rules-legacy.js', 'content/native-filter-rules.js'],
+}
+
 // Read lib files — full set by default, or core + the named extras.
 function readLib(extras = null) {
   const libDir = join(SRC_DIR, 'lib')
@@ -1235,27 +1251,9 @@ function build(browser) {
     // (LIB_EXTRAS). verifyLibSlim fails the build if the source drifts.
     const extras = LIB_EXTRAS[file] ?? []
     verifyLibSlim(file, readFileSync(srcPath, 'utf8'), extras)
-    // youtube-content renders HeatSync spec paints on the NATIVE yt surface,
-    // so it gets the paint-spec compiler appended to its lib — same embed the
-    // multichat bundles use (readMultichatModules). Other content scripts
-    // don't pay for it.
-    //
-    // ALL THREE, in dependency order. This used to append paint-spec.js alone
-    // while claiming to match the multichat embed. stripExports removes the
-    // `import { … } from './paint-core.js'` lines, so what landed in the
-    // bundle was a compiler whose every helper — fnv1a, HEX_RE, isPlainObject,
-    // syncDelayCalc, buildSceneCss, validateSceneSpec — was undefined: 56
-    // ReferenceErrors waiting in one file. The typeof guard the old comment
-    // relied on only covers the entry points, and an entry point that EXISTS
-    // and throws is exactly what a typeof guard cannot see.
     let libFor = readLib(extras)
-    if (file === 'youtube-content.js') {
-      for (const mod of ['paint-core.js', 'scene-spec.js', 'stv-paint-css.js', 'paint-spec.js']) {
-        const p = join(SRC_DIR, 'lib', mod)
-        if (existsSync(p)) {
-          libFor = `${libFor}\n// --- lib/${mod} ---\n${stripExports(readFileSync(p, 'utf8'))}\n`
-        }
-      }
+    for (const mod of ENTRY_MODULES[file] ?? []) {
+      libFor = `${libFor}\n// --- ${mod} ---\n${stripExports(readFileSync(join(SRC_DIR, mod), 'utf8'))}\n`
     }
     const bundled = bundleContentScript(srcPath, libFor, null)
     writeFileSync(join(outDir, file), bundled)

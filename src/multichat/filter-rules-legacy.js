@@ -1,5 +1,6 @@
-// The four old text filters, folded into chatFilterRules once (retireSettings
-// in main.js). Each becomes ordinary rules the unchanged engine
+// The four old text filters, folded into chatFilterRules once — by the overlay
+// (retireSettings, main-settings.js) and by native chat on a site where the
+// overlay is off (content.js), through foldLegacyFilters below. Each becomes ordinary rules the unchanged engine
 // (filter-rules.js) already runs — nothing here evaluates a message.
 //   automodRegex      one hide rule per line, the line as a case-insensitive pattern
 //   automodAllCaps    one hide rule: no lower case, 8+ capitals, 11+ chars
@@ -71,4 +72,35 @@ function mergeFilterRules(existing, added) {
   return existing.concat(added.filter((r) => !have.has(sig(r))))
 }
 
-export { legacyFilterRules, mergeFilterRules }
+// Where the old filters lived: device-local keys, and ui_settings keys (also
+// RETIRED_UI_KEYS). The fold lets go of both once their rules are written.
+const LEGACY_LOCAL_KEYS = ['hs_mute_keywords', 'keyword_highlights']
+const LEGACY_UI_KEYS = ['automodRegex', 'automodAllCaps', 'keywordHighlights']
+
+/**
+ * The stored half of the fold, one copy for every caller: what chat_filter_rules
+ * becomes once the old filters are in it.
+ * @param {object} ui     the ui_settings sync blob
+ * @param {object} local  storage.local holding chat_filter_rules + LEGACY_LOCAL_KEYS
+ * @returns {string|null|false} the new chat_filter_rules JSON; null = nothing to add;
+ *   false = the stored rules are unreadable, so touch nothing (old values stay put)
+ */
+function foldLegacyFilters(ui, local) {
+  const added = legacyFilterRules({
+    automodRegex: ui?.automodRegex,
+    automodAllCaps: ui?.automodAllCaps,
+    muteKeywords: local?.hs_mute_keywords,
+    // pre-overflow installs still hold highlight words in the sync blob
+    keywordHighlights: typeof local?.keyword_highlights === 'string' ? local.keyword_highlights : ui?.keywordHighlights,
+  })
+  if (!added.length) return null
+  let cur
+  try {
+    cur = JSON.parse(local?.chat_filter_rules || '[]')
+  } catch {}
+  if (!Array.isArray(cur)) return false
+  const next = mergeFilterRules(cur, added)
+  return next.length !== cur.length ? JSON.stringify(next) : null
+}
+
+export { foldLegacyFilters, LEGACY_LOCAL_KEYS, LEGACY_UI_KEYS, legacyFilterRules, mergeFilterRules }

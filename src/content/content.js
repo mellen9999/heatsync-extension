@@ -655,6 +655,10 @@
       rebuildUserColorMap(changes.hs_user_colors.newValue)
       applyUserColorsToVisibleMessages()
     }
+    if (areaName === 'local' && changes.chat_filter_rules) {
+      nativeRules.load(changes.chat_filter_rules.newValue)
+      nativeRules.repaint()
+    }
     if (changes.hs_dim_timeouts) dimTimeoutsEnabled = changes.hs_dim_timeouts.newValue !== false
     // User notes — refresh the native cache when the overlay (or another tab) writes.
     if (changes[HS_NOTE_STORE_KEY]) _noteSetBlob(changes[HS_NOTE_STORE_KEY].newValue)
@@ -773,6 +777,20 @@
       rebuildUserColorMap(d.hs_user_colors)
     })
     .catch(() => {})
+
+  // Highlight rules on native rows, and the old-filter fold with the overlay off
+  // on this site (native-filter-rules.js — the overlay's engine, embedded by build.js)
+  const nativeRules = createNativeFilterRules({
+    document,
+    storage: browser.storage,
+    send: safeSendMessage,
+    site: isKick ? 'kick' : 'twitch',
+    me: () => getCurrentUsername() || '',
+    engine: { compileFilterRules, evaluateFilterRules },
+    legacy: { foldLegacyFilters, LEGACY_LOCAL_KEYS, LEGACY_UI_KEYS },
+    syncEligible: isLargeKeySyncEligible,
+  })
+  nativeRules.start()
 
   // User color picker popup (right-click username → open)
   // hs-exempt-start: swatches are the USER's name-colour choices, not our chrome
@@ -1977,6 +1995,13 @@
     50%  { filter: hue-rotate(180deg) saturate(1.4); }
     75%  { filter: hue-rotate(270deg) saturate(1.4); }
     100% { filter: hue-rotate(360deg) saturate(1.4); }
+  }
+
+  /* Highlight rule match on a native row (native-filter-rules.js) */
+  .chat-line__message.hs-keyword-match,
+  .hs-keyword-match {
+    background-color: #000000 !important;
+    box-shadow: inset 0 0 0 1px #ffffff !important;
   }
 
   /* Show deleted/timeout messages (toggle .hs-show-cleared on <html>) */
@@ -5637,6 +5662,8 @@
 
     // Highlight mentions of current user (FFZ-style red background on entire line)
     highlightUserMentions(messageElement, usernameElement, textElements)
+    // Highlight rules (the overlay's chat filter rules, highlight action)
+    nativeRules.highlight(messageElement, username, textElements)
 
     // Apply per-user color override (right-click on username sets color)
     if (_userColors.size && username) applyUserColorToMessage(messageElement, username)

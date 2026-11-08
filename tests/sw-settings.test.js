@@ -66,6 +66,14 @@ describe('ui_settings_rmw (a page changing a setting)', () => {
     expect(ui(sw)).toEqual({ zebra: true, fontSize: 15 })
   })
 
+  test('dropRetired as a list clears only those retired keys, never a live one', async () => {
+    const sw = await boot({
+      storage: { sync: { ui_settings: { zebra: true, keywordHighlights: 'pog', emoteWysiwyg: true } } },
+    })
+    await patch(sw, {}, { dropRetired: ['keywordHighlights', 'zebra'] })
+    expect(ui(sw)).toEqual({ zebra: true, emoteWysiwyg: true })
+  })
+
   test('a throttled write is retried once after a second', async () => {
     const sw = await boot()
     sw.storage.sync.fail('set', new Error('MAX_WRITE_OPERATIONS_PER_MINUTE exceeded'))

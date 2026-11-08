@@ -301,7 +301,10 @@ async function mcSearchHsApi(q, signal, opts) {
     // protocol (chip + endpoint param), so the rendered emote stays consistent.
     provider: 'heatsync',
     id: e.id,
-    animated: !!e.animated,
+    // No `animated` here on purpose: the search endpoint reports false for every
+    // upload, animated webp included, so the flag says nothing. Whether a heatsync
+    // file moves is the file's business — deriveStaticEmoteSrc never reads the
+    // flag for these urls (it always proxies a still unless animation is 'always').
   }))
 }
 

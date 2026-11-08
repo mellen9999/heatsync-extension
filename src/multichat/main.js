@@ -9268,6 +9268,25 @@
   // Check if a tab has multiple platform sources active (needs fair merge)
   let _multiPlatformRenderTimer = null
   let _multiPlatformRenderAt = 0
+  // Ask for the real render on the next frame (one request at a time).
+  function scheduleMergedRender() {
+    // The pending handle is only trusted for 500ms: a window the browser
+    // calls hidden never runs its rAF, and a handle that never clears would
+    // swallow every later message here (frozen pane until a full repaint).
+    const nowMp = Date.now()
+    if (!_multiPlatformRenderTimer || nowMp - _multiPlatformRenderAt > 500) {
+      _multiPlatformRenderAt = nowMp
+      let ran = false
+      const run = () => {
+        if (ran) return
+        ran = true
+        _multiPlatformRenderTimer = null
+        renderMessages(currentTab)
+      }
+      _multiPlatformRenderTimer = rafOrTimeout(run)
+      cleanup.setTimeout(run, 500)
+    }
+  }
   function isMultiPlatformTab(tabId) {
     if (tabId === 'live') {
       const curCh = getLiveChannel()
@@ -9510,26 +9529,14 @@
       _lastMsgTextByTab.set(tabId, msg.text)
     }
 
-    // Multi-platform tabs: skip appendMessage (trimChildren is platform-blind
-    // and lets the fastest source push others out). Debounce to renderMessages
-    // which has fair per-platform capping.
-    if (isMultiPlatformTab(tabId)) {
-      // The pending handle is only trusted for 500ms: a window the browser
-      // calls hidden never runs its rAF, and a handle that never clears would
-      // swallow every later message here (frozen pane until a full repaint).
-      const nowMp = Date.now()
-      if (!_multiPlatformRenderTimer || nowMp - _multiPlatformRenderAt > 500) {
-        _multiPlatformRenderAt = nowMp
-        let ran = false
-        const run = () => {
-          if (ran) return
-          ran = true
-          _multiPlatformRenderTimer = null
-          renderMessages(currentTab)
-        }
-        _multiPlatformRenderTimer = rafOrTimeout(run)
-        cleanup.setTimeout(run, 500)
-      }
+    // Merged tabs: a plain live line is appended below like on any tab, but
+    // never trimmed by it (trimChildren is platform-blind and lets the fastest
+    // source push the others out): the trim is the real render's, fair per
+    // platform, and it runs soon (merged-tab.js). Anything the render has to see
+    // first goes to it now.
+    const merged = isMultiPlatformTab(tabId)
+    if (merged && !mtCanAppend(msg, tabId, _ff.dups)) {
+      scheduleMergedRender()
       return true // tell caller we handled it
     }
 
@@ -9584,7 +9591,8 @@
     // trim back down to it — one Range op per ~50 messages instead of one per
     // message at steady state. Every other trim site stays exact-cap (tab
     // restore paths assume ≤ cap).
-    if (msgsEl.childElementCount > DOM_RENDER_CAP + 50) trimMessagesEl(msgsEl, DOM_RENDER_CAP)
+    if (merged) mtNoteAppend()
+    else if (msgsEl.childElementCount > DOM_RENDER_CAP + 50) trimMessagesEl(msgsEl, DOM_RENDER_CAP)
 
     // Apply mute to just this message — strip content for muted users.
     // msg.user is the sender; avoid a DOM scan to recompute it. Routes
@@ -9718,6 +9726,23 @@
     return run
   }
 
+  // Co-live detection. When every source's newest msg lands within ~10 min
+  // of each other AND is fresh (<1h old), both platforms are streaming now
+  // — a firehose twitch can drown a trickle YT/kick, so the per-source floor
+  // below applies to preserve fairness. Otherwise (offline channel with sparse
+  // recent traffic, or sources timestamps far apart) let chronological order
+  // rule so older historical msgs from a sparse source don't get amputated.
+  // ordOf (not raw .time): a live-paced YT source's newest msg may carry a
+  // true send time far behind its display ord — coLive must read the SAME
+  // key everything else sorts/merges on, or a paced YT source could look
+  // "not co-live" by wall-clock time while rendering interleaved as if it were.
+  // One function, because merged-tab.js asks the same question to know when
+  // a plain append is still safe.
+  function fairCoLive(newestOrds) {
+    const hi = Math.max(...newestOrds)
+    return hi - Math.min(...newestOrds) < 10 * 60 * 1000 && hi > Date.now() - 60 * 60 * 1000
+  }
+
   function fairMerge(sources) {
     sources = sources.map(_ordSortedRun)
     if (MC_DEBUG)
@@ -9738,23 +9763,7 @@
       return s.length <= limit ? s.slice() : s.slice(-limit)
     }
 
-    // Co-live detection. When every source's newest msg lands within ~10 min
-    // of each other AND is fresh (<1h old), both platforms are streaming now
-    // — a firehose twitch can drown a trickle YT/kick, so apply the
-    // proportional per-source cap to preserve fairness. Otherwise (offline
-    // channel with sparse recent traffic, or sources timestamps far apart)
-    // let chronological order rule so older historical msgs from a sparse
-    // source don't get amputated by a too-small slice(-250).
-    // ordOf (not raw .time): a live-paced YT source's newest msg may carry a
-    // true send time far behind its display ord — coLive must read the SAME
-    // key everything else sorts/merges on, or a paced YT source could look
-    // "not co-live" by wall-clock time while rendering interleaved as if it were.
-    const maxTimes = active.map((s) => ordOf(s[s.length - 1]) || 0)
-    const newestMax = Math.max(...maxTimes)
-    const oldestMax = Math.min(...maxTimes)
-    const CO_LIVE_WINDOW_MS = 10 * 60 * 1000
-    const RECENT_THRESHOLD_MS = 60 * 60 * 1000
-    const coLive = newestMax - oldestMax < CO_LIVE_WINDOW_MS && newestMax > Date.now() - RECENT_THRESHOLD_MS
+    const coLive = fairCoLive(active.map((s) => ordOf(s[s.length - 1]) || 0))
 
     if (coLive) {
       // Anti-drown WITHOUT retroactive eviction. The old proportional cap
@@ -10622,6 +10631,7 @@
 
   function renderMessages(id, opts) {
     const t0 = performance.now()
+    mtNoteRender(id, null) // the pane is about to change; a merged render below says what it left
     _renderCalls++
     _lastRenderAt = Date.now()
     try {
@@ -10764,63 +10774,18 @@
     }
 
     let msgs = []
+    let mtSrcs = null // the merged tab's sources, for mtNoteRender below
     if (id === 'mentions') {
       msgs = mentionsBuffer
     } else if (id === 'add') {
       hideMultistreamBanner()
       renderAddChannelForm(msgsEl)
       return
-    } else if (id === 'live') {
-      const curCh = getLiveChannel()
-      const platNames = getLivePlatformNames()
-      // Use platform-specific names (may differ from curCh if overridden).
-      // yt: no same-name fallback — curCh is a videoId/@handle, not a
-      // twitch/kick channel (same rule as the boot auto-join; falling back
-      // here silently re-joined the ghost videoId channel on every render).
-      const urlChFallback = hostPlatform === 'yt' ? '' : curCh
-      const twitchCh = platNames.twitch || urlChFallback
-      const kickCh = platNames.kick || urlChFallback
-      // Ensure channels are joined + history loaded
-      if (twitchCh && irc && !irc.channels.has(twitchCh.toLowerCase())) irc.join(twitchCh)
-      if (kickCh && kickChat && !kickChat.channels.has(kickCh.toLowerCase())) kickChat.join(kickCh)
-      // getTail (not getMessages/getAll): the render only ever shows the
-      // newest SCROLLBACK_MAX rows (the hard DOM ceiling below), so there's
-      // no reason to copy the full 3000-cap buffer every render.
-      const ircMsgs = twitchCh ? irc?.getTail(twitchCh, SCROLLBACK_MAX) || [] : []
-      let kickMsgs = kickCh ? kickChat?.getTail(kickCh, SCROLLBACK_MAX) || [] : []
-      if (!kickMsgs.length && curCh) {
-        // Check if any config entry links current channel to a Kick channel
-        const linked = config.channels.find((ch) => ch.twitch === curCh && ch.kick)
-        if (linked) kickMsgs = kickChat?.getTail(linked.kick, SCROLLBACK_MAX) || []
-      }
-      // On Kick, also pull messages from the URL channel (may differ from live override)
-      if (!kickMsgs.length && hostPlatform === 'kick') {
-        const urlCh = getCurrentChannel()
-        if (urlCh && urlCh !== curCh) kickMsgs = kickChat?.getTail(urlCh, SCROLLBACK_MAX) || []
-      }
-      // YouTube messages for live tab: auto-discovered or linked via config
-      let ytMsgs = channelYtMessages.get('__live_yt_auto__') || []
-      if (!ytMsgs.length && curCh) {
-        const linkedYt = config.channels.find((ch) => (ch.twitch === curCh || ch.kick === curCh) && ch.youtube)
-        if (linkedYt) ytMsgs = channelYtMessages.get(linkedYt.id) || []
-      }
-      msgs = fairMerge([ircMsgs, kickMsgs, ytMsgs])
     } else {
-      // Channel tab — merge IRC + Kick + per-channel YouTube messages
-      const ch = getChannelById(id)
-      const twitchName = ch?.twitch
-      const kickName = ch?.kick
-      const ircMsgs = twitchName ? irc?.getTail(twitchName, SCROLLBACK_MAX) || [] : []
-      const kickMsgs = kickName ? kickChat?.getTail(kickName, SCROLLBACK_MAX) || [] : []
-      // YouTube ONLY from this channel's own explicit link. The global
-      // __live_yt_auto__ bucket (the host page's auto-discovered YT, bound to
-      // whatever stream is focused) must NOT merge into a per-channel tab — that
-      // bleeds an unrelated stream's YT chat into this channel (e.g. a focused
-      // jynxzi tab leaking into nl_kripp). __live_yt_auto__ is the live tab's
-      // alone. Explicitly-linked channels already get their YT via
-      // channelYtMessages[id]. See [[heatsync_yt_handle_guess_bleed]].
-      const ytMsgs = channelYtMessages.get(id) || []
-      msgs = fairMerge([ircMsgs, kickMsgs, ytMsgs])
+      // live tab or channel tab: twitch + kick + youtube, merged fairly (see
+      // merged-tab.js for where each source comes from)
+      mtSrcs = mergedTabSources(id, SCROLLBACK_MAX, true)
+      msgs = fairMerge(mtSrcs)
     }
 
     // Merge follow stream events into channel + live tabs (went live,
@@ -11102,6 +11067,7 @@
       ) {
         scrollMsgsToBottom(msgsEl)
       }
+      if (mtSrcs) mtNoteRender(id, mtSrcs)
       return
     }
 
@@ -11306,6 +11272,7 @@
     }
 
     applyMcMutes()
+    if (mtSrcs) mtNoteRender(id, mtSrcs)
 
     // Scroll behavior: re-pin if user hasn't paused. Static tabs (feed/
     // discover/pinned/settings) skip — they pin the newest at TOP, not

@@ -328,4 +328,14 @@ try {
   if (typeof window !== 'undefined') installDiagHandle(window)
 } catch (_) {}
 
-export { CSP_MAX_REPORTS, diagSnapshot, installDiagHandle, hsQuery, hsQueryAll, isOurCspViolation, MISS_MS, MISS_STREAK, swallow }
+export {
+  CSP_MAX_REPORTS,
+  diagSnapshot,
+  hsQuery,
+  hsQueryAll,
+  installDiagHandle,
+  isOurCspViolation,
+  MISS_MS,
+  MISS_STREAK,
+  swallow,
+}

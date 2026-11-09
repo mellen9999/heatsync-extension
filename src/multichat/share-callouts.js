@@ -21,7 +21,6 @@ let _resubShareCtx = null
 let _watchstreakShareModeTimer = null
 let _watchstreakShareCtx = null
 let _lastSurfacedShareBtn = null
-let _lastSurfacedCallout = null
 const CALLOUT_QUEUE_SEL = '[data-test-selector="chat-private-callout-queue__callout-container"]'
 
 // Twitch's callout tokens are base64 of "<userId>:<channelId>:<count>:<kind>"
@@ -523,8 +522,9 @@ window.__hsResubShare = {
     // body (or gets rescued above on failure).
     return true
   },
-  // kind: 'resub' (sub anniversary) or 'modanniv' — same token, same
-  // mutation; only the prompt, the local celebration and the dismissal differ.
+  // kind: 'resub' (sub anniversary) or 'modanniv'. A resub carries twitch's
+  // token; modanniv carries none (the send is SendUserModiversaryNotice), so
+  // the prompt, the mutation, the local celebration and dismissal all differ.
   enter: (months, user, channel, resubToken, kind = 'resub') => {
     try {
       if (_pendingShareClaim) {
@@ -848,6 +848,23 @@ function setupHsCalloutCloseButton() {
     if (!ch || !user) return
     const shareBtn = calloutEl.querySelector('[data-a-target="chat-private-callout__primary-button"]')
 
+    const kind = readCalloutKind(txt)
+    if (kind.type === 'modanniv') {
+      calloutEl.dataset.hsSurfaced = '1'
+      if (!kind.count) return
+      try {
+        HsNotifs.emit('twitch-mod-anniversary-share', {
+          months: kind.count,
+          channel: ch,
+          user,
+        })
+      } catch (_) {}
+      try {
+        _updateMcLayout?.()
+      } catch (_) {}
+      return
+    }
+
     // Capture twitch's callout token from the callout subtree. It is what
     // Chat_ShareResub_UseResubToken takes as input.tokenID, and it decodes to
     // "<userId>:<channelId>:<count>:<kind>". Scan the container, never the
@@ -859,24 +876,6 @@ function setupHsCalloutCloseButton() {
       console.warn('[heatsync-ext] resub token scan found nothing — fibers:', (scan.trace || []).join(' '))
     }
 
-    const kind = readCalloutKind(txt)
-    if (kind.type === 'modanniv') {
-      calloutEl.dataset.hsSurfaced = '1'
-      if (!kind.count) return
-      try {
-        HsNotifs.emit('twitch-mod-anniversary-share', {
-          months: kind.count,
-          channel: ch,
-          user,
-          _nativeShareBtn: shareBtn,
-          _nativeCallout: calloutEl,
-        })
-      } catch (_) {}
-      try {
-        _updateMcLayout?.()
-      } catch (_) {}
-      return
-    }
     const isWatchstreak = kind.type === 'watchstreak'
     const streakCount = isWatchstreak ? kind.count : 0
     const months = kind.type === 'resub' ? kind.count : 0
@@ -923,7 +922,6 @@ function setupHsCalloutCloseButton() {
         )
       }
       _lastSurfacedShareBtn = shareBtn || null
-      _lastSurfacedCallout = calloutEl
       try {
         HsNotifs.emit('twitch-watchstreak-share', {
           streakCount,
@@ -982,7 +980,6 @@ function setupHsCalloutCloseButton() {
       )
     }
     _lastSurfacedShareBtn = shareBtn || null
-    _lastSurfacedCallout = calloutEl
     try {
       HsNotifs.emit('twitch-resub-share', {
         months,

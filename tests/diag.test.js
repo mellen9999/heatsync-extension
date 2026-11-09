@@ -4,9 +4,9 @@ import { join } from 'node:path'
 import {
   CSP_MAX_REPORTS,
   diagSnapshot,
-  installDiagHandle,
   hsQuery,
   hsQueryAll,
+  installDiagHandle,
   isOurCspViolation,
   MISS_MS,
   MISS_STREAK,
@@ -336,7 +336,9 @@ describe('__hsDiag handle survives either load order', () => {
 
   test('bootstrap after diag.js: the exact bootstrap lines keep snapshot/verbose', () => {
     const src = readFileSync(join(import.meta.dir, '../src/multichat/bootstrap.js'), 'utf8')
-    const m = src.match(/(if \(window\.__hsDiag && typeof window\.__hsDiag === 'object'\)[^\n]*\nwindow\.__hsDiag = hsDiag)/)
+    const m = src.match(
+      /(if \(window\.__hsDiag && typeof window\.__hsDiag === 'object'\)[^\n]*\nwindow\.__hsDiag = hsDiag)/,
+    )
     expect(m).not.toBeNull()
     const w = {}
     installDiagHandle(w)

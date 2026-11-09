@@ -2,7 +2,7 @@
 // rule-colour map are the site's shared/brand/tokens.json (mirrored as lib/brand-tokens.js);
 // the CSS that paints them is styles/21-brand-rows.css, also a byte copy. This file only
 // classifies THIS renderer's rows into the shared vocabulary:
-//   hs-filled hs-fill-<olive|purple|navy|teal|red|rule> hs-row-label hs-name-cut
+//   hs-filled hs-fill-<olive|purple|navy|teal|green|red|rule> hs-row-label hs-name-cut
 // Mirrors the site's client/chat/fill-family.js.
 
 const EVENT_FILL = [
@@ -20,7 +20,7 @@ function eventFill(eventClass) {
 }
 
 const NAVY_NOTICES =
-  /\bhs-mc-notice-(?:sub|gift|bits|milestone|watchstreak|charity|mod-anniversary)\b|\bhs-mc-kicks\b|\bhs-mc-superchat\b/
+  /\bhs-mc-notice-(?:sub|gift|bits|milestone|watchstreak|charity)\b|\bhs-mc-kicks\b|\bhs-mc-superchat\b/
 
 /** the fill a chat / system row wears ('' = a plain row) */
 function rowFill(el) {
@@ -37,6 +37,7 @@ function rowFill(el) {
   )
     return 'teal'
   if (k.contains('hs-mc-automod') || k.contains('hs-mc-notice-error')) return 'red'
+  if (k.contains('hs-mc-notice-mod-anniversary')) return 'green' // the mods' own celebration
   return NAVY_NOTICES.test(el.className) ? 'navy' : ''
 }
 

@@ -498,11 +498,11 @@ function buildMessageDiv(m, tabId) {
     if (id === 'bitsbadgetier') return 'hs-mc-notice-bits'
     if (id === 'watchstreak') return 'hs-mc-notice-watchstreak'
     if (id === 'viewermilestone') return 'hs-mc-notice-milestone'
-    // mod-anniversary — Twitch ships USERNOTICE every 6 months a user
-    // moderates a channel (announced TwitchCon Rotterdam 2026). Same payload
-    // shape as sub anniversary; render with mod-add's blue family so the
-    // moderator-celebration thread reads consistently.
-    if (id === 'mod-anniversary' || id === 'mod_anniversary') return 'hs-mc-notice-mod-anniversary'
+    // mod anniversary — twitch's msg-id is `modiversary` (read off its own
+    // IRC handler, 2026-11-09); the dashed spellings stay as aliases. Its own
+    // family: the green fill, mod green, not a sub's navy.
+    if (id === 'modiversary' || id === 'mod-anniversary' || id === 'mod_anniversary')
+      return 'hs-mc-notice-mod-anniversary'
     if (id === 'charitydonation' || id === 'charity_donation') return 'hs-mc-notice-charity'
     // ritual = twitch's legacy new-chatter usernotice; render with the
     // user-intro treatment (same "new here" semantics)

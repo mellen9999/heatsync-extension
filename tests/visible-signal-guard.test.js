@@ -66,7 +66,7 @@ describe('a signal must differ from the surface it sits on', () => {
 
   test('event rows are solid fills from the brand set — no ring, no rail', () => {
     const brand = strip(css('21-brand-rows.css'))
-    for (const f of ['olive', 'purple', 'navy', 'teal', 'red']) {
+    for (const f of ['olive', 'purple', 'navy', 'teal', 'green', 'red']) {
       const body = block(brand, `.hs-fill-${f}`)
       expect(body, `.hs-fill-${f} is gone`).toMatch(new RegExp(`background:\\s*var\\(--brand-fill-${f}\\)`))
     }

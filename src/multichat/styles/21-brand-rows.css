@@ -3,7 +3,7 @@
    renderers emit:
      hs-filled            a row that wears a fill; never takes part in striping
      hs-fill-<name>       olive stream events · purple new people · navy support ·
-                          teal channel points + the broadcaster's voice · red needs you ·
+                          teal channel points + the broadcaster's voice · green mods · red needs you ·
                           rule: the dim twin of the colour a rule chose (--hs-rule-bg)
      hs-row-label         the label text of a filled row (colour = the fill's label colour)
      hs-name-cut          the sender's name on a plain black cutout, so it reads as in chat
@@ -23,6 +23,7 @@
 .hs-fill-purple { background: var(--brand-fill-purple); --hs-label: var(--brand-label-purple); }
 .hs-fill-navy   { background: var(--brand-fill-navy);   --hs-label: var(--brand-label-navy); }
 .hs-fill-teal   { background: var(--brand-fill-teal);   --hs-label: var(--brand-label-teal); }
+.hs-fill-green  { background: var(--brand-fill-green);  --hs-label: var(--brand-label-green); }
 .hs-fill-red    { background: var(--brand-fill-red);    --hs-label: var(--brand-label-red); }
 .hs-fill-rule   { background: var(--hs-rule-bg, var(--brand-zebra)); --hs-label: #ffffff; }
 .hs-row-label   { color: var(--hs-label); }

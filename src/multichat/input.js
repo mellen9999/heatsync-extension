@@ -7611,7 +7611,7 @@ async function handleSlashCommand(text, input) {
       un('bitsbadgetier', 'bits badge tier notification', { bitsTier: 1000 }),
       un('watchstreak', 'testuser watched 5 consecutive streams and sparked a watch streak!', { streakCount: 5 }),
       un('viewermilestone', 'testuser reached a viewer milestone!'),
-      un('mod-anniversary', 'testuser is celebrating 6 months as a mod!'),
+      un('modiversary', 'testuser is celebrating 6 months as a mod!'),
       un('charitydonation', 'testuser donated $5 to Save the Kripps!'),
       un('ritual', 'testuser is new here — say hello!'),
       un('resub', 'shared-chat resub from the partner channel', {

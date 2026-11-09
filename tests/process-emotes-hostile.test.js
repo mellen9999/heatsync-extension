@@ -10,6 +10,7 @@
 import { afterAll, describe, expect, test } from 'bun:test'
 import { Window } from 'happy-dom'
 import * as mods from '../src/lib/modifiers.js'
+import './emote-rungs-globals.js'
 import { escapeHtml, unescapeHtml } from '../src/lib/utils.js'
 
 // bun runs every test file in one global scope: put back what these stubs replaced when the file is done

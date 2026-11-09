@@ -1136,6 +1136,9 @@ function readMultichatModules() {
 // Inject lib at top of content script
 // Lib goes at IIFE scope, original content gets a nested block scope
 // so const/let declarations (DEBUG, cleanup, etc.) don't conflict
+// First line of a staged bundle that minifyDistFile must wrap + tree-shake.
+const FLAT_MARK = '/*HS_FLAT*/'
+
 function bundleContentScript(srcPath, lib, mcModules) {
   let content = readFileSync(srcPath, 'utf8')
 
@@ -1196,6 +1199,16 @@ function bundleContentScript(srcPath, lib, mcModules) {
   // covering anything. Cheermote echoes still arrive in the MAIN tab's
   // multichat through the IRC stream, so renderer still fires there.
   const cheerPopupGuard = `if (typeof window !== 'undefined' && typeof window.name === 'string' && window.name.indexOf('hs-cheer-') === 0) return;`
+  if (shouldMinify) {
+    // Tree-shake the lib: esbuild only drops unused declarations at the TOP
+    // level of what it parses, and the lib sits inside the wrapper IIFE. So a
+    // minified build stages the same code unwrapped (the cheer guard becomes
+    // the wrapping condition instead of an early `return`) behind FLAT_MARK;
+    // minifyDistFile then minifies + shakes + wraps it in ONE esbuild pass
+    // (a separate shake pass costs more in renames than the shake saves).
+    const flat = `${FLAT_MARK}\n${lib}\nif (!(typeof window !== 'undefined' && typeof window.name === 'string' && window.name.indexOf('hs-cheer-') === 0)) {\n${modules}${body}\n}`
+    return flat.replaceAll('__HS_BUILD_STAMP__', BUILD_STAMP)
+  }
   return `(function() {\n'use strict';\n${cheerPopupGuard}\n\n${lib}\n{\n${modules}${body}\n}\n})();`.replaceAll(
     '__HS_BUILD_STAMP__',
     BUILD_STAMP,
@@ -1463,17 +1476,23 @@ function minifyDistFile(outDir, file, extraDefines) {
   const path = join(outDir, file)
   if (!existsSync(path)) return
   const src = readFileSync(path, 'utf8')
+  const flat = src.startsWith(FLAT_MARK)
   try {
-    const result = transformSync(src, {
+    const result = transformSync(flat ? `"use strict";\n${src}` : src, {
       loader: 'js',
       minify: true,
       target: 'es2020',
       legalComments: 'none',
       keepNames: true, // helps stack traces in prod
+      // a flat bundle has no wrapper of its own: esbuild's iife output is it,
+      // and tree-shaking then sees the lib as top-level declarations.
+      ...(flat ? { format: 'iife', treeShaking: true } : {}),
       ...(extraDefines ? { define: extraDefines } : {}),
     })
     writeFileSync(path, result.code)
   } catch (e) {
+    // an unwrapped bundle left on disk would leak its lib into the page's world
+    if (flat) throw new Error(`build: minify+shake of ${file} failed: ${e.message?.split('\n')[0]}`)
     console.warn(`  ⚠ minify ${file} skipped: ${e.message?.split('\n')[0]}`)
   }
 }
@@ -1535,6 +1554,14 @@ function minifyDist(outDir) {
   // chat send via hs-dbg-test-send + private-state dumps) MUST be dead-code-
   // eliminated from every packaged multichat bundle. If the __HS_DEV_BUILD__ fold
   // failed, the sentinel string survives — refuse to ship rather than expose it.
+  for (const f of targets) {
+    const p = join(outDir, f)
+    if (existsSync(p) && readFileSync(p, 'utf8').startsWith(FLAT_MARK)) {
+      throw new Error(
+        `build: ${f} is still an unwrapped staging bundle — not minified, would leak globals into the page`,
+      )
+    }
+  }
   for (const f of ['multichat-core.js']) {
     const p = join(outDir, f)
     if (existsSync(p) && readFileSync(p, 'utf8').includes('hs-dbg-test-send')) {

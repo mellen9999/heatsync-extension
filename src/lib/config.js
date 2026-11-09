@@ -3,7 +3,7 @@
  * Centralized configuration for heatsync extension.
  * All URLs, timing constants, limits, selectors, CSS classes, and z-index values.
  *
- * Bundled at IIFE scope into content scripts — use window.heatsyncConfig to access.
+ * Bundled at IIFE scope into content scripts — import { CONFIG }.
  */
 
 const CONFIG = {

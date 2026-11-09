@@ -1,7 +1,8 @@
 // Feed media + embed rendering for the extension home tab.
 // Mirrors heatsync client/embed/embed-parser.js + renderers/media-renderer.js
 // All embeds always-enabled (extension has no per-platform toggles yet).
-// Uses plain iframes (no facade) — feed virtual-scrolls so visible iframe count stays low.
+// Feed iframes are click-to-load (hsFacadeIframes): nothing reaches a third
+// party until the viewer presses the button naming its host.
 
 // Defence-in-depth sandbox for third-party iframes. allow-scripts/same-origin
 // are required by every embed provider (player JS + auth cookies); the rest
@@ -10,6 +11,19 @@
 // ship malicious payload.
 const EMBED_SANDBOX =
   'allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox allow-forms'
+
+// Click-to-load. Each iframe keeps its address in data-hs-src behind a button
+// that names the host; attachFeedFallbacks wires the click that sets .src.
+function hsFacadeIframes(html) {
+  return html.replace(/<iframe\b([^>]*?)\ssrc="([^"]+)"/g, (_m, pre, src) => {
+    let host = ''
+    try {
+      host = new URL(src.replace(/&amp;/g, '&')).hostname.replace(/^www\./, '')
+    } catch {}
+    const label = escapeHtml(t('mc_feed_embed_load', [host]))
+    return `<button type="button" class="hs-embed-facade" data-hs-embed-load>▶ ${label}</button><iframe${pre} data-hs-src="${src}"`
+  })
+}
 
 function sanitizeEmbedId(id) {
   if (!id || typeof id !== 'string') return ''
@@ -599,7 +613,7 @@ function _feedMediaHtml(m) {
 
     if (isEmbedType) {
       const embedHtml = parseFeedEmbed(safe)
-      if (embedHtml) return `<div class="hs-feed-media">${embedHtml}</div>`
+      if (embedHtml) return `<div class="hs-feed-media">${hsFacadeIframes(embedHtml)}</div>`
     }
 
     if (isVideo) {
@@ -616,7 +630,7 @@ function _feedMediaHtml(m) {
   // No direct media — for OPs, scan content for embeddable URL
   if (!isReply && m.content) {
     const embedHtml = extractFeedEmbed(m.content)
-    if (embedHtml) return `<div class="hs-feed-media">${embedHtml}</div>`
+    if (embedHtml) return `<div class="hs-feed-media">${hsFacadeIframes(embedHtml)}</div>`
   }
 
   return ''
@@ -915,6 +929,21 @@ function resolvePendingFeedEmbeds(root) {
 //   data-fallback-anon      → swap src to /anon.webp (avatars)
 function attachFeedFallbacks(root) {
   if (!root?.querySelectorAll) return
+  root.querySelectorAll('[data-hs-embed-load]').forEach((btn) => {
+    btn.addEventListener(
+      'click',
+      (e) => {
+        e.stopPropagation()
+        const frame = btn.nextElementSibling
+        if (frame?.tagName === 'IFRAME' && frame.dataset.hsSrc) {
+          frame.src = frame.dataset.hsSrc
+          frame.removeAttribute('data-hs-src')
+        }
+        btn.remove()
+      },
+      { once: true },
+    )
+  })
   root.querySelectorAll('img[data-fallback-anon]').forEach((img) => {
     img.addEventListener(
       'error',

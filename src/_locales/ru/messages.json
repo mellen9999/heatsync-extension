@@ -7543,5 +7543,13 @@
         "content": "$3"
       }
     }
+  },
+  "mc_feed_embed_load": {
+    "message": "загрузить с $HOST$",
+    "placeholders": {
+      "host": {
+        "content": "$1"
+      }
+    }
   }
 }

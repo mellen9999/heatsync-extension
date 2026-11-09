@@ -7560,5 +7560,13 @@
         "content": "$3"
       }
     }
+  },
+  "mc_feed_embed_load": {
+    "message": "load from $HOST$",
+    "placeholders": {
+      "host": {
+        "content": "$1"
+      }
+    }
   }
 }

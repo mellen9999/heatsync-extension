@@ -7543,5 +7543,13 @@
         "content": "$3"
       }
     }
+  },
+  "mc_feed_embed_load": {
+    "message": "$HOST$ から読み込む",
+    "placeholders": {
+      "host": {
+        "content": "$1"
+      }
+    }
   }
 }

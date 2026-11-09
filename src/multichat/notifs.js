@@ -807,16 +807,16 @@ const HsNotifs = (() => {
         label: t('mc_notif_share'),
         onClick: (data) => {
           const api = window.__hsResubShare
+          // a sub anniversary can queue beside it with its own token
+          const expect = { count: data.months, notKind: 'cumulative' }
           const go = (tok) => {
             if (tok) api?.enter?.(data.months, data.user, data.channel, tok, 'modanniv')
             else emit('toast', { text: t('mc_notifs_share_token_missing'), level: 'error' })
           }
           try {
-            // a sub anniversary can queue beside it with its own token
-            const expect = { count: data.months, notKind: 'cumulative' }
             const token = data._token || api?.rescanToken?.(data._nativeCallout, expect) || null
             if (token) go(token)
-            else (api?.pickModAnnivToken?.(data.months) ?? Promise.resolve(null)).then(go)
+            else (api?.findToken?.(expect) ?? Promise.resolve(null)).then(go)
           } catch (_) {}
           return false // share mode controls dismissal
         },

@@ -332,11 +332,7 @@ function readCalloutTokens(timeoutMs = 1500) {
     const onRes = (e) => {
       try {
         const d = JSON.parse(e.detail)
-        if (d?.id === id) {
-          const tokens = Array.isArray(d.tokens) ? d.tokens : []
-          tokens.misses = Array.isArray(d.misses) ? d.misses : []
-          finish(tokens)
-        }
+        if (d?.id === id) finish(Array.isArray(d.tokens) ? d.tokens : [])
       } catch (_) {}
     }
     window.addEventListener('hs-callout-token-res', onRes)
@@ -408,43 +404,10 @@ if (_calloutShared) {
   mcSignal.addEventListener('abort', () => _calloutShared.close(), { once: true })
 }
 
-// The mod anniversary's token, from the page world's read of the queue. Its
-// kind string was never read off a live callout, so: the count matching and
-// not a sub anniversary; else a kind naming a mod; else the only token in the
-// queue that is not a sub anniversary. The mutation is the judge of the rest.
-// What the queue held is kept (kind:count, no ids) in hs-callout-diag, so the
-// next miss says why.
-async function pickModAnnivToken(months) {
-  const tokens = await readCalloutTokens()
-  try {
-    localStorage.setItem(
-      'hs-callout-diag',
-      JSON.stringify({
-        at: Date.now(),
-        want: `modanniv:${months}`,
-        had: tokens.map((t) => `${t.kind}:${t.count}`),
-        misses: tokens.misses || [],
-      }),
-    )
-  } catch (_) {}
-  const others = tokens.filter((t) => t.kind !== 'cumulative')
-  const hit =
-    others.find((t) => t.count === months) ||
-    others.find((t) => /mod/.test(t.kind)) ||
-    (others.length === 1 ? others[0] : null)
-  if (!hit)
-    console.warn(
-      '[heatsync-ext] mod anniversary: no token in',
-      tokens.map((t) => `${t.kind}:${t.count}`),
-    )
-  return hit ? hit.raw : null
-}
-
 window.__hsResubShare = {
   active: () => !!_resubShareCtx,
   deriveToken: deriveResubToken,
   findToken: findCalloutToken,
-  pickModAnnivToken,
   // Returns false so input.js sendMessage CONTINUES into the regular IRC
   // send path — the typed text needs to actually go to Twitch chat so other
   // viewers see it and it persists across refresh. We also inject a local

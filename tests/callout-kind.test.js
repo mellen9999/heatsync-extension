@@ -71,37 +71,3 @@ describe('the mod anniversary has its own prompt', () => {
     expect(SRC).toContain("wasCtx.claim.kind !== 'modanniv'")
   })
 })
-
-describe('pickModAnnivToken', () => {
-  // carved and run against a stubbed page-world reply
-  const pick = (tokens) => {
-    const from = SRC.indexOf('async function pickModAnnivToken(')
-    const src = SRC.slice(from, SRC.indexOf('\n}', from) + 2)
-    const store = {}
-    const ls = { setItem: (k, v) => (store[k] = v) }
-    const fn = new Function('readCalloutTokens', 'localStorage', 'console', `${src}\nreturn pickModAnnivToken`)(
-      async () => tokens,
-      ls,
-      { warn() {} },
-    )
-    return { fn, store }
-  }
-  const T = (kind, count) => ({ raw: `${kind}${count}`, kind, count })
-
-  test('takes the token whose count matches, never the sub anniversary beside it', async () => {
-    const { fn } = pick([T('cumulative', 6), T('modiversary', 6)])
-    expect(await fn(6)).toBe('modiversary6')
-  })
-
-  test('a kind naming a mod wins when the count is not the months', async () => {
-    const { fn } = pick([T('watch_streak', 3), T('mod_anniversary', 1)])
-    expect(await fn(6)).toBe('mod_anniversary1')
-  })
-
-  test('the only non-resub token is taken; with none, nothing — and the queue is recorded', async () => {
-    expect(await pick([T('cumulative', 100), T('something', 1)]).fn(6)).toBe('something1')
-    const { fn, store } = pick([T('cumulative', 100)])
-    expect(await fn(6)).toBe(null)
-    expect(JSON.parse(store['hs-callout-diag']).had).toEqual(['cumulative:100'])
-  })
-})

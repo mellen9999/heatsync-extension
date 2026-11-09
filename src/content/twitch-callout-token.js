@@ -34,18 +34,7 @@
 
   // children + siblings of the container's own fiber, never the container's
   // siblings (those are the other callouts in the queue, with their own keys)
-  // A callout whose key does not decode to the shape: what its keys look like,
-  // digits blanked (no ids leave), so the next kind twitch adds is readable
-  function shapeOf(key) {
-    if (typeof key !== 'string') return null
-    let plain = key
-    try {
-      if (/^[A-Za-z0-9+/]+={0,2}$/.test(key)) plain = atob(key)
-    } catch {}
-    return plain.replace(/\d+/g, 'N').slice(0, 60)
-  }
-
-  function scan(el, shapes) {
+  function scan(el) {
     const k = Object.keys(el).find((n) => n.startsWith('__reactFiber$') || n.startsWith('__reactInternalInstance$'))
     const root = k ? el[k] : null
     if (!root) return null
@@ -57,7 +46,6 @@
       seen.add(f)
       const tok = decode(f.key)
       if (tok) return tok
-      if (shapes && shapes.length < 8 && f.key != null) shapes.push(shapeOf(f.key))
       if (f.child) queue.push(f.child)
       if (f !== root && f.sibling) queue.push(f.sibling)
     }
@@ -72,15 +60,12 @@
       return
     }
     const tokens = []
-    const misses = []
     try {
       for (const el of document.querySelectorAll(CALLOUT_SEL)) {
-        const shapes = []
-        const t = scan(el, shapes)
+        const t = scan(el)
         if (t) tokens.push(t)
-        else misses.push(shapes)
       }
     } catch {}
-    window.dispatchEvent(new CustomEvent('hs-callout-token-res', { detail: JSON.stringify({ id, tokens, misses }) }))
+    window.dispatchEvent(new CustomEvent('hs-callout-token-res', { detail: JSON.stringify({ id, tokens }) }))
   })
 })()

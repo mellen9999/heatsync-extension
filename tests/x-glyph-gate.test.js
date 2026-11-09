@@ -9,15 +9,11 @@ import { join } from 'node:path'
  * write one as a string/markup glyph. The only exemptions are the builder itself
  * and the byte-mirrored site card renderer (the extension rewrites its × to the
  * glyph at mount — hsXify in profile-card.js).
- * content.js + heatsync-button.js render on the native page without the overlay
- * builder; their 4 hand × labels predate the move out of chrome/ (unscanned there)
- * and go with the ext doctrine pass (map P6 #33). Shrink-only: MOVED_CAP below.
+ * content.js + heatsync-button.js embed x-glyph.js too (build.js ENTRY_MODULES).
  */
 const ROOT = join(import.meta.dir, '..')
 const SRC = join(ROOT, 'src')
 const EXEMPT = new Set(['multichat/x-glyph.js', 'lib/card-render.js'])
-const MOVED = new Set(['content/content.js', 'content/heatsync-button.js'])
-const MOVED_CAP = 4
 
 function walk(dir, out = []) {
   for (const n of readdirSync(dir)) {
@@ -34,7 +30,6 @@ const BARE = /(['"`>])\s*(?:×|✕|✖)\s*(?=['"`<])|\\u00d7|\\u2715|\\u2716|&ti
 describe('one close glyph', () => {
   test('no src file hand-writes a × / ✕ close label outside the shared builder', () => {
     const offenders = []
-    const moved = []
     for (const f of walk(SRC)) {
       const rel = f.slice(SRC.length + 1)
       if (EXEMPT.has(rel)) continue
@@ -42,15 +37,10 @@ describe('one close glyph', () => {
         .split('\n')
         .forEach((line, i) => {
           if (/^\s*(\/\/|\*|\/\*)/.test(line)) return
-          if (BARE.test(line))
-            (MOVED.has(rel) ? moved : offenders).push(`${rel}:${i + 1}: ${line.trim().slice(0, 100)}`)
+          if (BARE.test(line)) offenders.push(`${rel}:${i + 1}: ${line.trim().slice(0, 100)}`)
         })
     }
     expect(offenders).toEqual([])
-    expect(
-      moved.length,
-      `src/content hand × labels may only fall; lower MOVED_CAP:\n${moved.join('\n')}`,
-    ).toBeLessThanOrEqual(MOVED_CAP)
   })
 
   test('the gate bites: a hand-written glyph is caught', () => {

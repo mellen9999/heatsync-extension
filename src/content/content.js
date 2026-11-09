@@ -946,7 +946,7 @@
 
     const close = document.createElement('span')
     close.className = 'hs-event-close'
-    close.textContent = '×'
+    hsXify(close)
     close.addEventListener('click', closeEventChip)
     el.appendChild(close)
 
@@ -1624,8 +1624,8 @@
 
   .heatsync-emote-preview-name {
     color: #fff !important;
-    font-size: 11px !important;
-    font-weight: 600 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
     text-align: center !important;
     margin-top: 4px !important;
     font-family: monospace !important;
@@ -1764,7 +1764,7 @@
     right: -6px !important;
     background: #fff !important;
     color: #000 !important;
-    font-size: 9px !important;
+    font-size: 13px !important;
     font-weight: bold !important;
     line-height: 1 !important;
     padding: 1px 3px !important;
@@ -1820,7 +1820,7 @@
     background: #000000 !important;
     color: #fff !important;
     border-radius: 0 !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
     cursor: pointer !important;
     margin-right: 4px !important;
     flex-shrink: 0 !important;
@@ -1846,7 +1846,7 @@
     background: #000000 !important;
     color: #fff !important;
     border-radius: 0 !important;
-    font-size: 10px !important;
+    font-size: 13px !important;
     cursor: pointer !important;
     margin-left: 4px !important;
     flex-shrink: 0 !important;
@@ -1941,12 +1941,12 @@
   #hs-badge-tooltip .hs-badge-tooltip-name {
     color: #fff;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     white-space: nowrap;
   }
   #hs-badge-tooltip .hs-badge-tooltip-source {
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     padding: 2px 6px;
     margin: 2px -8px -8px;
     width: calc(100% + 16px);
@@ -2027,10 +2027,10 @@
     background: #000; color: #fff;
     border: 1px solid #fff;
     padding: 8px; min-width: 220px;
-    font-family: monospace; font-size: 12px;
+    font-family: monospace; font-size: 13px;
   }
   #hs-user-color-picker .hs-ucp-header {
-    font-size: 11px; opacity: 0.8; margin-bottom: 6px;
+    font-size: 13px; opacity: 0.8; margin-bottom: 6px;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   #hs-user-color-picker .hs-ucp-swatches {
@@ -2043,7 +2043,7 @@
   #hs-user-color-picker .hs-ucp-swatch:hover { border-color: #fff; }
   #hs-user-color-picker .hs-ucp-row { display: flex; gap: 4px; }
   #hs-user-color-picker input[type=color] { width: 32px; height: 24px; padding: 0; border: 1px solid #ffffff; background: #000; }
-  #hs-user-color-picker input[type=text] { flex: 1; background: #000; color: #fff; border: 1px solid #ffffff; padding: 2px 4px; font-family: inherit; font-size: 11px; }
+  #hs-user-color-picker input[type=text] { flex: 1; background: #000; color: #fff; border: 1px solid #ffffff; padding: 2px 4px; font-family: inherit; font-size: 13px; }
   #hs-user-color-picker button {
     background: #000; color: #fff; border: 1px solid #ffffff;
     padding: 2px 8px; cursor: pointer; font: inherit;
@@ -2068,8 +2068,8 @@
   .hs-ctx-menu.hs-em-flip-y { transform-origin: bottom left; }
   .hs-ctx-menu.hs-em-flip-x.hs-em-flip-y { transform-origin: bottom right; }
   .hs-ctx-menu .hs-em-header {
-    padding: 4px 10px; font-size: 10px; color: #ffffff;
-    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 4px 10px; font-size: 13px; color: #ffffff;
+    text-transform: none; letter-spacing: 0.5px;
     background: #000000;
   }
   .hs-ctx-menu .hs-em-item {
@@ -2087,7 +2087,7 @@
   .hs-ctx-menu .hs-em-kbd {
     display: inline-block; min-width: 14px; padding: 0 4px;
     border: 1px solid #ffffff; background: #000000; color: #ffffff;
-    font-size: 10px; line-height: 14px; text-align: center;
+    font-size: 13px; line-height: 14px; text-align: center;
   }
   .hs-ctx-menu .hs-em-sep { height: 1px; background: #000000; margin: 2px 0; }
 
@@ -2101,7 +2101,7 @@
     font-family: monospace; font-size: 13px;
     max-width: 280px;
   }
-  .hs-event-chip .hs-event-title { font-weight: 600; margin-bottom: 4px; }
+  .hs-event-chip .hs-event-title { font-weight: 700; margin-bottom: 4px; }
   .hs-event-chip .hs-event-row {
     display: flex; justify-content: space-between; gap: 8px;
     padding: 1px 0; opacity: 0.85;
@@ -5958,7 +5958,7 @@
         // Add collapse button (×)
         const collapseBtn = document.createElement('span')
         collapseBtn.className = 'heatsync-stack-collapse'
-        collapseBtn.textContent = '×'
+        hsXify(collapseBtn, t('btn_collapse'))
         collapseBtn.title = t('btn_collapse')
         stackContainer.appendChild(collapseBtn)
 
@@ -6531,7 +6531,7 @@
       // Add collapse button (×)
       const collapseBtn = document.createElement('span')
       collapseBtn.className = 'heatsync-stack-collapse'
-      collapseBtn.textContent = '×'
+      hsXify(collapseBtn, t('btn_collapse'))
       collapseBtn.title = t('btn_collapse')
       stackContainer.appendChild(collapseBtn)
 
@@ -9493,7 +9493,7 @@
 
       const counter = document.createElement('div')
       counter.id = 'heatsync-tab-counter'
-      counter.style.cssText = 'color: #fff; font-size: 11px; font-weight: bold;'
+      counter.style.cssText = 'color: #fff; font-size: 13px; font-weight: bold;'
 
       const img = document.createElement('img')
       img.id = 'heatsync-tab-img'
@@ -9501,11 +9501,11 @@
 
       const name = document.createElement('div')
       name.id = 'heatsync-tab-name'
-      name.style.cssText = 'color: #ffffff; font-size: 11px;'
+      name.style.cssText = 'color: #ffffff; font-size: 13px;'
 
       const hint = document.createElement('div')
       hint.id = 'heatsync-tab-hint'
-      hint.style.cssText = `color: ${HS_PLAT_COLORS.twitch}; font-size: 10px; margin-left: 4px;`
+      hint.style.cssText = `color: ${HS_PLAT_COLORS.twitch}; font-size: 13px; margin-left: 4px;`
 
       preview.appendChild(counter)
       preview.appendChild(img)

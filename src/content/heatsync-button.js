@@ -2028,7 +2028,7 @@
           <span>heatsync</span>
         </div>
         ${overlayOff ? `<button class="heatsync-panel-close heatsync-panel-back">${t('hsbtn_back_arrow_chat')}</button>` : ''}
-        <button class="heatsync-panel-close" aria-label="${t('welcome_close')}">✕</button>
+        ${hsXButtonHtml('heatsync-panel-close', t('welcome_close'))}
       </div>
       ${
         !isLoggedIn

@@ -218,9 +218,13 @@ describe('content.js runs it', () => {
   test('build embeds the engine, the fold and this module into content.js, and content.js wires all three paths', () => {
     const root = join(import.meta.dir, '..')
     const build = readFileSync(join(root, 'build.js'), 'utf8')
-    expect(build).toContain(
-      "'content.js': ['multichat/filter-rules.js', 'multichat/filter-rules-legacy.js', 'content/native-filter-rules.js']",
-    )
+    const entry = build.match(/'content\.js': \[([^\]]*)\]/g)?.find((m) => m.includes('filter-rules')) ?? ''
+    for (const mod of [
+      'multichat/filter-rules.js',
+      'multichat/filter-rules-legacy.js',
+      'content/native-filter-rules.js',
+    ])
+      expect(entry).toContain(`'${mod}'`)
     const content = readFileSync(join(root, 'src', 'content', 'content.js'), 'utf8')
     expect(content).toContain('nativeRules.start()')
     expect(content).toContain('nativeRules.highlight(messageElement, username, textElements)')

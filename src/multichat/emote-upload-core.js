@@ -12,7 +12,8 @@
 
 // Mirrors the server's image cap (UPLOAD_CONFIG.MAX_IMAGE_SIZE).
 const HS_EU_MAX_BYTES = 10 * 1048576
-const HS_EU_TYPES = ['image/png', 'image/gif', 'image/webp', 'image/jpeg', 'image/avif']
+const HS_EU_ACCEPT = 'image/png,image/gif,image/webp,image/jpeg,image/avif'
+const HS_EU_TYPES = HS_EU_ACCEPT.split(',')
 
 // The word you will type in chat: the file's name without its extension or a
 // "-2x" size suffix, reduced to letters, digits and underscore.

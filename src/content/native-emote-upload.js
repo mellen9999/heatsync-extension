@@ -23,7 +23,7 @@ const HS_NU_CSS = `
 function hsNativeUploadHtml() {
   return `<style>${HS_NU_CSS}</style><div class="hs-nu" id="hs-nu">
       <button type="button" id="hs-nu-btn" title="${t('mc_emote_upload_tip')}">⇪ ${t('mc_emote_upload')}</button>
-      <input type="file" id="hs-nu-file" accept="${HS_EU_TYPES.join(',')}" hidden>
+      <input type="file" id="hs-nu-file" accept="${HS_EU_ACCEPT}" hidden>
       <span class="hs-nu-form" id="hs-nu-form" hidden>
         <input type="text" id="hs-nu-name" maxlength="100" autocomplete="off" spellcheck="false" placeholder="${t('mc_emote_upload_name')}" aria-label="${t('mc_emote_upload_name')}">
         <button type="button" id="hs-nu-go">${t('mc_emote_upload')}</button>

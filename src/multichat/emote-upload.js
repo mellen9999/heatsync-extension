@@ -21,7 +21,7 @@ let _mcEuUploaded = null
 function mcEmoteUploadHtml() {
   return `<div class="hs-mc-upload" id="hs-mc-upload">
       <button type="button" class="hs-mc-upload-btn" id="hs-mc-upload-btn" title="${escapeHtml(t('mc_emote_upload_tip'))}">⇪ ${escapeHtml(t('mc_emote_upload'))}</button>
-      <input type="file" id="hs-mc-upload-file" accept="${HS_EU_TYPES.join(',')}" hidden>
+      <input type="file" id="hs-mc-upload-file" accept="${HS_EU_ACCEPT}" hidden>
       <span class="hs-mc-upload-form" id="hs-mc-upload-form" hidden>
         <input type="text" id="hs-mc-upload-name" maxlength="100" autocomplete="off" spellcheck="false" placeholder="${escapeHtml(t('mc_emote_upload_name'))}" aria-label="${escapeHtml(t('mc_emote_upload_name'))}">
         <button type="button" id="hs-mc-upload-go">${escapeHtml(t('mc_emote_upload'))}</button>

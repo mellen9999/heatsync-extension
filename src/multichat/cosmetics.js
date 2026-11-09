@@ -743,6 +743,7 @@ function applyHsPlusTenureToVisible(userIds) {
           if (!el.classList.contains('hs-mc-reply-user')) continue
           if (since) _placeHsPlusTenureToken(el, since)
           else _removeHsPlusTenureToken(el)
+          placeHsBadgeToken(el, getHsBadgeId(uid))
         }
       }
       const isNamespacedUid = uid.startsWith('kick_') || uid.startsWith('yt_')

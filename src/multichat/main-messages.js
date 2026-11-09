@@ -2,6 +2,12 @@
 // one scope with the other main-*.js parts and main.js at bundle time (build.js MAIN_PARTS, in list order).
 // no wrapper here: the IIFE is the bundle's.
 
+// The marks that follow a name on every surface that draws the plus mark (chat
+// row, feed quote, reply header): the plus tenure, then the picked heatsync badge.
+function hsNameMarksHtml(since, badgeId) {
+  return (since ? renderPlusTenureToken(since) : '') + renderHsBadgeToken(badgeId)
+}
+
 function buildMessageDiv(m, tabId) {
   // Blocked user — fully hide (skip render entirely). Both the append and the
   // full-rebuild path go through buildMessageDiv, so returning null here hides
@@ -179,7 +185,7 @@ function buildMessageDiv(m, tabId) {
     if (feedUid) {
       const feedSince = getHsPlusTenureSince(feedUid)
       if (feedSince === undefined) queuePlusTenureLookup(feedUid)
-      else if (feedSince) feedPlusHtml = renderPlusTenureToken(feedSince)
+      else feedPlusHtml = hsNameMarksHtml(feedSince, getHsBadgeId(feedUid))
     }
     const content = renderFeedContent(m.text, m.emote_refs)
     // Canonical heat: formatHeat + ° suffix (≥10) + tier color/glow/breathe via heatSpanHtml. Hidden at the baseline 1 — every fresh post starts there and this row never updates, so "name 1:" read as noise.
@@ -677,7 +683,7 @@ function buildMessageDiv(m, tabId) {
   if (hsPlusUid) {
     const since = getHsPlusTenureSince(hsPlusUid)
     if (since === undefined) queuePlusTenureLookup(hsPlusUid)
-    else hsPlusHtml = (since ? renderPlusTenureToken(since) : '') + renderHsBadgeToken(getHsBadgeId(hsPlusUid))
+    else hsPlusHtml = hsNameMarksHtml(since, getHsBadgeId(hsPlusUid))
   }
   // Name colour (when no HS/7TV paint owns the fill): the user's PICKED
   // heatsync colour on youtube + kick ONLY — never twitch, whose custom name
@@ -869,7 +875,7 @@ function buildMessageDiv(m, tabId) {
   if (replyUid) {
     const replySince = getHsPlusTenureSince(replyUid)
     if (replySince === undefined) queuePlusTenureLookup(replyUid)
-    else if (replySince) replyPlusHtml = renderPlusTenureToken(replySince)
+    else replyPlusHtml = hsNameMarksHtml(replySince, getHsBadgeId(replyUid))
   }
   // A blocked user's name + message snippet must not leak through a reply
   // context bar when someone else replies to them. Show a neutral marker

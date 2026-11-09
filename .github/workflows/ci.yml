@@ -56,7 +56,11 @@ jobs:
         run: git diff --exit-code --stat -- chrome/
 
       - name: test
-        run: bun test
+        run: bun test --coverage --coverage-reporter=lcov
+
+      # Whole-suite line + function coverage only rises (scripts/coverage-floor.ts).
+      - name: coverage floor
+        run: bun scripts/coverage-floor.ts
 
       - name: lint
         run: bunx @biomejs/biome check src/ tests/ build.js

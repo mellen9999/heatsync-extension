@@ -16,3 +16,4 @@ chrome/multichat-core.js
 chrome/background.js
 chrome/emoji-data.iso.js
 chrome/emoji-data.main.js
+coverage/

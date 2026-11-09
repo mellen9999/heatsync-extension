@@ -41,11 +41,18 @@ export async function youtubeDeleteCheck(ctx: any) {
         new Promise((res) => {
           try {
             // @ts-ignore — extension page
+            // Every twitch tab, not the first: a page an earlier check closed can still be listed
+            // while it goes, and a find() that picks it sends the deletion nowhere (CI, 11-08).
             chrome.tabs.query({}, (tabs: any[]) => {
-              const t = tabs.find((x) => (x.url || '').includes('twitch.tv'))
-              if (!t) return res('no twitch tab found')
-              // @ts-ignore
-              chrome.tabs.sendMessage(t.id, { type: 'youtube_delete', data: { messageIds: ['YT_DOOMED'] } })
+              const targets = tabs.filter((x) => (x.url || '').includes('twitch.tv'))
+              if (!targets.length) return res('no twitch tab found')
+              for (const t of targets) {
+                // @ts-ignore
+                chrome.tabs.sendMessage(t.id, { type: 'youtube_delete', data: { messageIds: ['YT_DOOMED'] } }, () => {
+                  // @ts-ignore — read it so a tab with no listener does not log an unchecked error
+                  void chrome.runtime.lastError
+                })
+              }
               res('sent')
             })
           } catch (e) {

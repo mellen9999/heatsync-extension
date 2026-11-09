@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { launchWithExtension } from '../lib/chromium'
 import { startMockIrc } from '../lib/mock-irc'
-import { ONE_PX_PNG, PLATFORMS, closeContext, errors, fail, fixtureHtml, ok, until } from './lib'
+import { ONE_PX_PNG, PLATFORMS, closeContext, errors, fail, fixtureHtml, ok, retryUntil, until } from './lib'
 
 /**
  * Tab-complete, driven from a real keyboard.
@@ -104,6 +104,23 @@ export async function tabCompleteCheck() {
       opGrab: E('opGrab'),
       Kappa: E('Kappa'),
     })
+    // The background refetches a channel on every join and writes its answer over storage. With every
+    // provider refused above, that answer is an empty set, which erases zorpChannel whenever the
+    // fetch lands after the seed (6/6 on a loaded box). A real background already holds a channel it
+    // fetched a moment ago (it restores the map at start), and answers a join from that copy without
+    // refetching — so seed that copy too, rather than let the harness race the fetch.
+    await sw.evaluate(
+      ([key, emotes]: [string, unknown[]]) => {
+        // @ts-ignore — service worker globals
+        channelEmotesMap[key] = emotes
+        // @ts-ignore
+        channelEmotesFetchedAt[key] = Date.now()
+      },
+      ['twitch/probechan', [
+        { name: 'zorpChannel', url: E('zorpChannel'), source: '7tv' },
+        { name: 'opGrab', url: E('opGrab'), source: '7tv' },
+      ]] as [string, unknown[]],
+    )
     await seed.close()
 
     const p = await c.newPage()
@@ -164,22 +181,30 @@ export async function tabCompleteCheck() {
     // emote and the one you own. That is the ranking behaving correctly, and
     // it is exactly the kind of near-miss a fixture can hide.
     //
-    // The channel set arrives over the background wire after the composer
-    // mounts; on a loaded box the first Tab can beat it and (correctly) rank
-    // only own + global. So the first Tab is retried from a fresh "zorp" until
-    // the pool is complete, and the cycle it starts is the one walked below —
-    // re-typing the same prefix over a script-cleared input does not reliably
-    // restart the cycle, so a second fresh start would test the harness.
-    const poolReady = Date.now() + 20_000
-    let first = ''
-    for (;;) {
-      await resetInput()
-      await p.keyboard.type('zorp')
-      await p.keyboard.press('Tab')
-      await until(p, async () => (await readCycle()).value === 'zorpChannel', 1000)
-      first = (await readCycle()).value
-      if (first === 'zorpChannel' || Date.now() > poolReady) break
-    }
+    // The channel set reaches the overlay a beat after the composer mounts (a storage read plus the
+    // background's own refetch), and a Tab that beats it correctly ranks only own + global. So wait
+    // for the real signal that the pool is in: a line naming the channel emote draws it as an
+    // image (history rows heal when the set lands). Nothing here presses Tab before that, so the
+    // cycle walked below is the first and only one.
+    let gateN = 0
+    const rendered = await retryUntil(
+      p,
+      async () => {
+        irc.push(
+          `@display-name=Gate${gateN};color=#00FF00;user-id=${900 + gateN};id=gate${gateN} ` +
+            `:gate${gateN}!g@g.tmi.twitch.tv PRIVMSG #probechan :zorpChannel\r\n`,
+        )
+        gateN++
+      },
+      () => p.evaluate(() => !!document.querySelector('#hs-mc-messages img[alt="zorpChannel"]')),
+      { every: 1500, ms: 20_000 },
+    )
+    if (!rendered) fail('the channel emote set never reached the overlay: a line naming zorpChannel stayed plain text')
+    await resetInput()
+    await p.keyboard.type('zorp')
+    await p.keyboard.press('Tab')
+    await until(p, async () => (await readCycle()).value !== '', 4000)
+    const first = (await readCycle()).value
     if (first !== 'zorpChannel') {
       fail(`the first Tab should land on the CHANNEL emote: expected "zorpChannel", got ${JSON.stringify(first)}`)
     }

@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "modivuosipäivän viesti ($MONTHS$ kk) — enter jakaa",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "katseluputki ($COUNT$) — enter jakaa",
     "placeholders": {

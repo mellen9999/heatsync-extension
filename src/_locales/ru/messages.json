@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "сообщение к годовщине модерства ($MONTHS$ мес.) — enter, чтобы поделиться",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "серия просмотров ($COUNT$) — enter, чтобы отправить",
     "placeholders": {

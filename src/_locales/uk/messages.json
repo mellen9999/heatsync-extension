@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "повідомлення до річниці модерства ($MONTHS$ міс.) — enter, щоб поділитися",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "серія перегляду ($COUNT$) — enter, щоб поділитися",
     "placeholders": {

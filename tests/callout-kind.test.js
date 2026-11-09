@@ -52,12 +52,22 @@ describe('the mod anniversary has its own prompt', () => {
     expect(SRC.slice(i, i + 400)).toContain("HsNotifs.emit('twitch-mod-anniversary-share'")
   })
 
-  test('its share is twitch’s own button — no resub token, no resub share mode', () => {
+  test('its share spends its own token in heatsync’s share mode, never twitch’s button', () => {
+    // twitch's button only arms twitch's composer, which heatsync replaces:
+    // the prompt closed and nothing was posted (2026-11-09, nl_kripp)
     const i = NOTIFS.indexOf("registerType('twitch-mod-anniversary-share'")
     expect(i).toBeGreaterThan(-1)
     const block = NOTIFS.slice(i, NOTIFS.indexOf('registerType(', i + 10))
-    expect(block).toContain('clickNative')
-    expect(block).not.toMatch(/deriveToken|findToken|__hsResubShare\?\.enter/)
+    expect(block).not.toContain('clickNative')
+    expect(block).toContain("'modanniv')")
+    expect(block).toContain("notKind: 'cumulative'")
     expect(block).toContain("t('mc_notif_mod_anniv'")
+  })
+
+  test('a mod anniversary share never posts a "months as a subscriber" line', () => {
+    const c = SRC.indexOf('  consume: (text) => {')
+    const body = SRC.slice(c, SRC.indexOf('_injectShareSynthetic(claim', c) + 40)
+    expect(body).toContain("if (claim.kind !== 'modanniv')")
+    expect(SRC).toContain("wasCtx.claim.kind !== 'modanniv'")
   })
 })

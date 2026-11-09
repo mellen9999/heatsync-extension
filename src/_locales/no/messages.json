@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "melding til mod-jubileum ($MONTHS$ mnd) — enter for å dele",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "watch streak ($COUNT$) — enter for å dele",
     "placeholders": {

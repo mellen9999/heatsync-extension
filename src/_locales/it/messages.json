@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "messaggio anniversario da mod ($MONTHS$ mesi) — invio per condividere",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "serie di visione ($COUNT$) — invio per condividere",
     "placeholders": {

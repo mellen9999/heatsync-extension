@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "message d’anniversaire de modo ($MONTHS$ mois) — entrée pour partager",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "série de visionnage ($COUNT$) — entrée pour partager",
     "placeholders": {

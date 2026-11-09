@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "管理員週年訊息（$MONTHS$ 個月）— 按 enter 分享",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "觀看連續紀錄（$COUNT$）— 按 enter 分享",
     "placeholders": {

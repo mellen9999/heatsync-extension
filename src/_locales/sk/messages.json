@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "správa k výročiu moderátora ($MONTHS$ mes.) — enter na zdieľanie",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "séria sledovania ($COUNT$) — enter zdieľa",
     "placeholders": {

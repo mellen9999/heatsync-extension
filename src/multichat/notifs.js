@@ -782,7 +782,9 @@ const HsNotifs = (() => {
   })
 
   // Mod anniversary — twitch's own callout, not a resub (same "N month" words,
-  // different event). No heatsync share mode: Share is twitch's button.
+  // different event). Share runs heatsync's share mode with the callout's own
+  // token, never twitch's button: that only arms twitch's composer, which
+  // heatsync replaces, so the prompt closed and nothing was ever posted.
   registerType('twitch-mod-anniversary-share', {
     layer: 'chat-docked-bottom',
     channelScoped: true,
@@ -803,7 +805,21 @@ const HsNotifs = (() => {
     actions: {
       primary: {
         label: t('mc_notif_share'),
-        onClick: (data) => !!window.__hsResubShare?.clickNative?.(data._nativeShareBtn),
+        onClick: (data) => {
+          const api = window.__hsResubShare
+          // a sub anniversary can queue beside it with its own token
+          const expect = { count: data.months, notKind: 'cumulative' }
+          const go = (tok) => {
+            if (tok) api?.enter?.(data.months, data.user, data.channel, tok, 'modanniv')
+            else emit('toast', { text: t('mc_notifs_share_token_missing'), level: 'error' })
+          }
+          try {
+            const token = data._token || api?.rescanToken?.(data._nativeCallout, expect) || null
+            if (token) go(token)
+            else (api?.findToken?.(expect) ?? Promise.resolve(null)).then(go)
+          } catch (_) {}
+          return false // share mode controls dismissal
+        },
       },
       dismiss: {},
     },

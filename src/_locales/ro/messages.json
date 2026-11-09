@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "mesaj aniversare mod ($MONTHS$ luni) — enter pentru a distribui",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "serie de vizionări ($COUNT$) — enter pentru a distribui",
     "placeholders": {

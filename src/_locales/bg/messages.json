@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "съобщение за модераторска годишнина ($MONTHS$ мес.) — enter за споделяне",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "watch streak ($COUNT$) — enter за споделяне",
     "placeholders": {

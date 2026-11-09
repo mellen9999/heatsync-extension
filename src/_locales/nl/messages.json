@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "bericht mod-jubileum ($MONTHS$ mnd) — enter om te delen",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "watch streak ($COUNT$) — enter om te delen",
     "placeholders": {

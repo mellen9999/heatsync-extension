@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "モデレーター記念メッセージ ($MONTHS$か月) — enterで共有",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "視聴ストリーク ($COUNT$) — enter で共有",
     "placeholders": {

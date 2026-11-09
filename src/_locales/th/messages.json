@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "ข้อความครบรอบม็อด ($MONTHS$ เดือน) — enter เพื่อแชร์",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "watch streak ($COUNT$) — กด enter เพื่อแชร์",
     "placeholders": {

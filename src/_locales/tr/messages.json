@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "mod yıl dönümü mesajı ($MONTHS$ ay) — paylaşmak için enter",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "izleme serisi ($COUNT$) — paylaşmak için enter",
     "placeholders": {

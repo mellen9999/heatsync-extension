@@ -4686,6 +4686,14 @@
       }
     }
   },
+  "mc_misc_modanniv_placeholder": {
+    "message": "모더레이터 기념 메시지 ($MONTHS$개월) — enter로 공유",
+    "placeholders": {
+      "months": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_misc_streak_placeholder": {
     "message": "시청 스트릭 ($COUNT$) — enter로 공유",
     "placeholders": {

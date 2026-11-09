@@ -116,7 +116,10 @@ function _enterResubShareMode(claim, user, months) {
   if (input.dataset.hsOrigDataPlaceholder === undefined) {
     input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
   }
-  const placeholder = t('mc_misc_resub_placeholder', [String(months)])
+  const placeholder =
+    claim.kind === 'modanniv'
+      ? t('mc_misc_modanniv_placeholder', [String(months)])
+      : t('mc_misc_resub_placeholder', [String(months)])
   input.setAttribute('placeholder', placeholder)
   input.setAttribute('data-placeholder', placeholder)
   try {
@@ -138,7 +141,14 @@ function _exitResubShareMode(claim, fireFallback, silent) {
   // silent=true keeps the banner visible so the user can come back to it.
   if (wasCtx && !silent) {
     try {
-      window.HsNotifs?.dismissByKey?.('twitch-resub-share', `resub:${wasCtx.claim.channel}:${wasCtx.months}`)
+      if (wasCtx.claim.kind === 'modanniv') {
+        window.HsNotifs?.dismissByKey?.(
+          'twitch-mod-anniversary-share',
+          `modanniv:${wasCtx.claim.channel}:${wasCtx.months}`,
+        )
+      } else {
+        window.HsNotifs?.dismissByKey?.('twitch-resub-share', `resub:${wasCtx.claim.channel}:${wasCtx.months}`)
+      }
     } catch (_) {}
   }
   const input = document.getElementById('hs-mc-input')
@@ -161,7 +171,7 @@ function _exitResubShareMode(claim, fireFallback, silent) {
   }
   // 30s timeout with no user text → fall back to the empty-body synthetic so
   // the celebration banner still shows locally.
-  if (fireFallback && wasCtx && !wasCtx.claim.synthId) {
+  if (fireFallback && wasCtx && !wasCtx.claim.synthId && wasCtx.claim.kind !== 'modanniv') {
     _injectShareSynthetic(wasCtx.claim, wasCtx.user, wasCtx.months, '')
   }
 }
@@ -207,6 +217,7 @@ function calloutTokenMatches(scan, expect) {
   if (!scan?.token) return false
   if (!expect) return true
   if (expect.kind !== undefined && scan.kind !== expect.kind) return false
+  if (expect.notKind !== undefined && scan.kind === expect.notKind) return false
   if (expect.count !== undefined && scan.count !== expect.count) return false
   return true
 }
@@ -385,6 +396,8 @@ if (_calloutShared) {
     const d = e.data
     if (!d || typeof d.channel !== 'string') return
     if (d.kind === 'resub') window.HsNotifs?.dismissByKey?.('twitch-resub-share', `resub:${d.channel}:${d.months}`)
+    else if (d.kind === 'modanniv')
+      window.HsNotifs?.dismissByKey?.('twitch-mod-anniversary-share', `modanniv:${d.channel}:${d.months}`)
     else if (d.kind === 'streak')
       window.HsNotifs?.dismissByKey?.('twitch-watchstreak-share', `watchstreak:${d.channel}:${d.count}`)
   })
@@ -404,10 +417,14 @@ window.__hsResubShare = {
     if (!_resubShareCtx) return false
     const { claim, user, months } = _resubShareCtx
     // 1. Local synthetic — instant styled celebration in OUR view with the
-    //    user's custom text. Doesn't go anywhere else; viewer-only.
-    try {
-      _injectShareSynthetic(claim, user, months, text || '')
-    } catch (_) {}
+    //    user's custom text. Doesn't go anywhere else; viewer-only. A sub
+    //    anniversary only: its row says "months as a subscriber", which a
+    //    mod anniversary is not — that one waits for twitch's own notice.
+    if (claim.kind !== 'modanniv') {
+      try {
+        _injectShareSynthetic(claim, user, months, text || '')
+      } catch (_) {}
+    }
     // 2. GQL broadcast — call Chat_ShareResub_UseResubToken directly with the
     //    typed body. Sidesteps Twitch's hidden composer UI entirely; reaches
     //    the same backend mutation their native "Send" button fires after the
@@ -472,7 +489,7 @@ window.__hsResubShare = {
       try {
         await _consumeCalloutToken(claim.channel, claim.resubToken, text)
         log('resub-share: GQL fired ok')
-        _announceCalloutShared({ kind: 'resub', channel: claim.channel, months: claim.months })
+        _announceCalloutShared({ kind: claim.kind || 'resub', channel: claim.channel, months: claim.months })
       } catch (e) {
         console.warn('[heatsync-ext] resub-share GQL failed:', e?.message || e)
         await _resubShareTextRescue(claim.channel, text)
@@ -482,7 +499,9 @@ window.__hsResubShare = {
     // body (or gets rescued above on failure).
     return true
   },
-  enter: (months, user, channel, resubToken) => {
+  // kind: 'resub' (sub anniversary) or 'modanniv' — same token, same
+  // mutation; only the prompt, the local celebration and the dismissal differ.
+  enter: (months, user, channel, resubToken, kind = 'resub') => {
     try {
       if (_pendingShareClaim) {
         cleanup.clearTimeout(_pendingShareClaim.postTimer)
@@ -496,6 +515,7 @@ window.__hsResubShare = {
         customText: '',
         _nativeShareBtn: _lastSurfacedShareBtn,
         resubToken: resubToken || null,
+        kind,
       }
       _pendingShareClaim = claim
       _enterResubShareMode(claim, user, months)
@@ -823,7 +843,10 @@ function setupHsCalloutCloseButton() {
         HsNotifs.emit('twitch-mod-anniversary-share', {
           months: kind.count,
           channel: ch,
+          user,
           _nativeShareBtn: shareBtn,
+          _nativeCallout: calloutEl,
+          _token: calloutTokenMatches(scan, { count: kind.count, notKind: 'cumulative' }) ? scan.token : null,
         })
       } catch (_) {}
       try {

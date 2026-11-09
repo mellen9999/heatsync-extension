@@ -2847,19 +2847,19 @@ function renderThreadView(msgsEl) {
     const loading = document.createElement('div')
     loading.className = 'hs-mc-empty'
     loading.textContent = t('common_loading')
-    loading.style.fontSize = '11px'
+    loading.style.fontSize = '13px'
     container.appendChild(loading)
   } else if (at.error) {
     const err = document.createElement('div')
     err.className = 'hs-mc-empty'
     err.textContent = t('mc_social_thread_unavailable')
-    err.style.fontSize = '11px'
+    err.style.fontSize = '13px'
     container.appendChild(err)
   } else if (at.replies.length === 0) {
     const empty = document.createElement('div')
     empty.className = 'hs-mc-empty'
     empty.textContent = t('mc_social_no_replies')
-    empty.style.fontSize = '11px'
+    empty.style.fontSize = '13px'
     container.appendChild(empty)
   } else {
     for (const r of at.replies) {

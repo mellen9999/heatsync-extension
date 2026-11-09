@@ -86,3 +86,16 @@
     .hs-mc-tour-row:hover .hs-mc-tour-state,
     .hs-mc-tour-row:focus-visible .hs-mc-tour-state,
     .hs-mc-tour-row:active .hs-mc-tour-state { color: #000; }
+
+    /* the tour's arrow: one big yellow glyph at the thing the card names. A body-level fixed node
+       (never in the scroller), no motion, no shadow, never takes a click. */
+    #hs-mc-tour-arrow {
+      position: fixed;
+      z-index: 2147483646;
+      width: 32px;
+      height: 32px;
+      font: 700 32px/32px var(--hs-mc-font, monospace);
+      text-align: center;
+      color: var(--hs-warn);
+      pointer-events: none;
+    }

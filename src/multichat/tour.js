@@ -26,6 +26,10 @@
 // explicit "show the tour again" moves focus to it. ← → (when focus is in the card)
 // go back / next; no bare printable key is used, the composer owns those.
 // The flag is per device (chrome.storage.local), not a synced setting.
+//
+// Each card but the last also points a big yellow arrow (▲▼◀▶, a body-level fixed node, never in
+// the scroller) at the thing it talks about. tourArrow() is the pure placement; the rest keeps it
+// on the target through step / tab / resize / scroll and drops it with the card.
 
 const TOUR_SEEN_KEY = 'hs_tour_seen'
 const TOUR_STEP_KEY = 'hs_tour_step'
@@ -54,6 +58,114 @@ let tourNode = null
 let tourModOk = false
 let tourModSig = ''
 let tourModAt = 0
+let tourArrowNode = null
+let tourObs = null
+const TOUR_ARROW = 32
+const TOUR_ARROW_GAP = 2
+// the side of the target the arrow sits on -> the glyph that points back at the target
+const TOUR_GLYPH = { top: '\u25bc', bottom: '\u25b2', left: '\u25b6', right: '\u25c0' }
+const TOUR_OPP = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' }
+
+const tourBox = (x, y, s) => ({ left: x, top: y, right: x + s, bottom: y + s })
+const tourHits = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top
+
+// Where the arrow goes: just outside the edge of `t` that faces the card `c`, centred on that edge,
+// then the opposite edge, then the sides - the first that is on screen and off the card. Rects are
+// {left, top, right, bottom, width, height}; b is the screen. null = no arrow (no target, zero
+// size, or off screen).
+function tourArrow(t, c, b, s = TOUR_ARROW) {
+  if (!t || !b || !(t.width > 0 && t.height > 0)) return null
+  if (t.right <= b.left || t.left >= b.right || t.bottom <= b.top || t.top >= b.bottom) return null
+  const dx = c ? (c.left + c.right - t.left - t.right) / 2 : 0
+  const dy = c ? (c.top + c.bottom - t.top - t.bottom) / 2 : 1
+  const first = Math.abs(dy) >= Math.abs(dx) ? (dy >= 0 ? 'bottom' : 'top') : dx >= 0 ? 'right' : 'left'
+  const sides = [
+    first,
+    TOUR_OPP[first],
+    ...['top', 'bottom', 'left', 'right'].filter((k) => k !== first && k !== TOUR_OPP[first]),
+  ]
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(v, Math.max(lo, hi)))
+  let pick = null
+  for (const side of sides) {
+    const g = TOUR_ARROW_GAP
+    const x = side === 'left' ? t.left - g - s : side === 'right' ? t.right + g : (t.left + t.right - s) / 2
+    const y = side === 'top' ? t.top - g - s : side === 'bottom' ? t.bottom + g : (t.top + t.bottom - s) / 2
+    const onAxis =
+      side === 'left' || side === 'right' ? x >= b.left && x + s <= b.right : y >= b.top && y + s <= b.bottom
+    const at = { glyph: TOUR_GLYPH[side], x: clamp(x, b.left, b.right - s), y: clamp(y, b.top, b.bottom - s) }
+    if (!pick) pick = at
+    if (onAxis && !(c && tourHits(tourBox(at.x, at.y, s), c))) return at
+  }
+  return pick
+}
+
+// the real thing a card is about; null when it is not on screen (hidden composer, no search bar on
+// this tab, no rows yet), and the last card has none: it holds the switches itself
+function tourTargetRect(id) {
+  const q = (sel) => document.querySelector(sel)
+  if (id === 'menu') {
+    const m = q('#hs-mc-messages')
+    if (!m) return null
+    const mr = m.getBoundingClientRect()
+    let r = m.lastElementChild
+    for (let i = 0; r && i < 60; i++, r = r.previousElementSibling) {
+      if (!r.classList.contains('hs-mc-msg')) continue
+      const b = r.getBoundingClientRect()
+      if (b.height > 0 && b.bottom > mr.top && b.top < mr.bottom) {
+        const top = Math.max(b.top, mr.top)
+        const bottom = Math.min(b.bottom, mr.bottom)
+        return { left: b.left, right: b.right, top, bottom, width: b.width, height: bottom - top }
+      }
+    }
+    return null
+  }
+  const sel = {
+    cmd: '#hs-mc-input',
+    find: '#hs-mc-search-bar',
+    tabs: '.hs-mc-tabs-scroll .hs-mc-tab.active',
+    settings: '#hs-mc-tabbar [data-tab="settings"]',
+  }[id]
+  const el = sel && (q(sel) ?? (id === 'tabs' ? q('.hs-mc-tabs-scroll') : null))
+  return el?.getBoundingClientRect() ?? null
+}
+
+// draw, move or drop the arrow for the card on screen
+function tourArrowPaint() {
+  const n = tourNode
+  const v = document.defaultView
+  const rect = n && !n.hidden ? tourTargetRect(TOUR_STEPS[tourStep]) : null
+  const a =
+    rect && tourArrow(rect, n.getBoundingClientRect(), { left: 0, top: 0, right: v.innerWidth, bottom: v.innerHeight })
+  if (!a) {
+    tourArrowNode?.remove()
+    tourArrowNode = null
+    return
+  }
+  if (!tourArrowNode?.isConnected) {
+    document.getElementById('hs-mc-tour-arrow')?.remove()
+    const el = tourEl('div')
+    el.id = 'hs-mc-tour-arrow'
+    el.setAttribute('aria-hidden', 'true')
+    document.body.append(el)
+    tourArrowNode = el
+  }
+  if (tourArrowNode.textContent !== a.glyph) tourArrowNode.textContent = a.glyph
+  tourArrowNode.style.left = `${Math.round(a.x)}px`
+  tourArrowNode.style.top = `${Math.round(a.y)}px`
+}
+
+// keep it on the target as the pane, the window or the rows move; one set per card node
+function tourArrowWire(n, msgsEl) {
+  tourObs?.disconnect()
+  tourObs = null
+  if (typeof ResizeObserver === 'function') {
+    tourObs = new ResizeObserver(tourArrowPaint)
+    tourObs.observe(document.documentElement)
+    tourObs.observe(n)
+    tourObs.observe(msgsEl)
+  }
+  msgsEl.addEventListener('scroll', () => TOUR_STEPS[tourStep] === 'menu' && tourArrowPaint(), { passive: true })
+}
 
 function tourEl(tag, cls, text) {
   const n = document.createElement(tag)
@@ -129,6 +241,7 @@ function tourNodeEnsure() {
   n.addEventListener('keyup', tourOnKeyUp)
   msgsEl.before(n)
   tourNode = n
+  tourArrowWire(n, msgsEl)
   return n
 }
 
@@ -160,6 +273,7 @@ function tourPaint() {
     b.classList.toggle('on', on)
     b.firstChild.textContent = stateOf(on)
   }
+  tourArrowPaint()
 }
 
 function tourModIn(rooms) {
@@ -212,6 +326,7 @@ function tourHide() {
   const n = tourNode
   if (!n || n.hidden) return
   n.hidden = true
+  tourArrowPaint()
   tourRepin()
 }
 

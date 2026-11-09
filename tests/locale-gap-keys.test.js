@@ -4,7 +4,7 @@
  * non-twitch tab, and the prediction view's close button.
  */
 import { describe, expect, test } from 'bun:test'
-import { readFileSync, readdirSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 
 const DIR = new URL('../src/_locales/', import.meta.url).pathname
 const KEYS = ['mc_mod_no_twitch_tab', 'mc_mod_stale_twitch_tab', 'mc_input_announce_twitch_only', 'common_close']

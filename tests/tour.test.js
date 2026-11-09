@@ -138,6 +138,7 @@ describe('tour: behavior', () => {
   let tab
   let modTwitch
   let modKick
+  let modYt
   let rooms
   let modAsks
   let api
@@ -165,6 +166,7 @@ describe('tour: behavior', () => {
       'pinRoomsFor',
       'isModForSync',
       'isKickModForSync',
+      'isYtModForSync',
       'isModFor',
       'isKickModFor',
       'switchTab',
@@ -227,6 +229,7 @@ describe('tour: behavior', () => {
       () => rooms,
       (c) => modTwitch.has(c),
       (c) => modKick.has(c),
+      () => modYt,
       async (c) => {
         modAsks.push(c)
         return modTwitch.has(c)
@@ -275,6 +278,7 @@ describe('tour: behavior', () => {
     tab = 'live'
     modTwitch = new Set()
     modKick = new Set()
+    modYt = false
     rooms = ['twitch/somechan']
     modAsks = []
     api = null
@@ -591,6 +595,13 @@ describe('tour: behavior', () => {
     test('a kick mod sees it too (kick rooms ask the kick cache)', async () => {
       rooms = ['kick/some-slug']
       modKick.add('some-slug')
+      api = await bootSwitches()
+      expect(rowEl('hs_mod_toolbar_buttons').hidden).toBe(false)
+    })
+
+    test('a youtube-only mod sees it (no pin rooms, the youtube mod flag decides)', async () => {
+      rooms = []
+      modYt = true
       api = await bootSwitches()
       expect(rowEl('hs_mod_toolbar_buttons').hidden).toBe(false)
     })

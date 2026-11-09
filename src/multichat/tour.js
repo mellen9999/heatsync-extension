@@ -163,6 +163,8 @@ function tourPaint() {
 }
 
 function tourModIn(rooms) {
+  // youtube mod status is one flag for the viewer (no per-room cache), and a youtube-only mod has no pin rooms at all
+  if (typeof isYtModForSync === 'function' && isYtModForSync()) return true
   return rooms.some((room) => {
     const [platform, channel] = room.split('/')
     return platform === 'kick' ? isKickModForSync(channel) : isModForSync(channel)

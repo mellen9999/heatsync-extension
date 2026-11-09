@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "skús znova"
   },
-  "common_user_not_found": {
-    "message": "používateľ nenájdený"
-  },
   "btn_recent": {
     "message": "nedávne"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "nepodarilo sa nasledovať — skús znova"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "nepodarilo sa zrušiť sledovanie — skús znova"
-  },
-  "content_toast_no_chat_input": {
-    "message": "otvor chat twitchu, aby si mohol použiť akcie modov"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ zablokovaný",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "sleduje ťa"
-  },
-  "content_card_subs_to_you": {
-    "message": "subscribuje ťa"
-  },
-  "content_card_you_follow": {
-    "message": "sleduješ"
-  },
-  "content_card_you_sub": {
-    "message": "subscribuješ"
-  },
-  "content_card_you_sub_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "sub $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "sleduje $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "sleduje ho $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "sleduje $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ sledujúcich",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "partner"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "vzájomný sub"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "ban"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "nástroje modov"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "nástroje modov (bez oprávnenia)"
-  },
   "content_card_note_title": {
     "message": "poznámka"
   },
-  "content_card_note_placeholder": {
-    "message": "súkromná poznámka — vidíš ju len ty"
-  },
-  "content_card_history_title": {
-    "message": "história správ"
-  },
   "content_card_loading": {
     "message": "načítavam…"
-  },
-  "content_card_history_empty": {
-    "message": "žiadna história správ"
-  },
-  "content_card_history_empty_channel": {
-    "message": "žiadne správy od tohto používateľa v $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "zobraziť profil"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "zrušiť sledovanie"
   },
-  "content_card_twitch_profile": {
-    "message": "profil twitch"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "vytváram clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url skopírovaná"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip vytvorený"
   },
   "content_card_copy_name": {
     "message": "kopírovať meno"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "affiliate"
-  },
-  "content_card_live": {
-    "message": "ŽIVO $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch overený"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick overený"
-  },
-  "content_view_on_heatsync": {
-    "message": "zobraziť na heatsync"
   },
   "mc_tab_feed": {
     "message": "kanál"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "nepodarilo sa odblokovať — skús znova"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "blok sa neuložil do účtu — na iných zariadeniach bude iný"
-  },
   "mc_emote_blocked_count": {
     "message": "zablokované emotes: $COUNT$",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "odblokovanie sa neuložilo do účtu — na iných zariadeniach bude iné"
   },
   "mc_emote_unblocked": {
     "message": "odblokované: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "emoji skopírované"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers zlyhalo: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "len pre followerov: vypnuté"
-  },
-  "mc_input_followers_on": {
-    "message": "len pre followerov: zapnuté"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "len pre followerov: zapnuté ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers je len pre twitch — otvor kanál twitch"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: žiadna nedávna správa od $TARGET$ — použi menu správy",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ ešte nie je zapojený — zatiaľ funguje len /followers",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "použitie: /followers [mins] | off"
   },
   "mc_input_usage_mute": {
     "message": "použitie: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "$USER$ už nie je mod",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch nemá api pre $LABEL$ — len kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "ankety, predikcie, bity"
-  },
-  "slash_help_full_list": {
-    "message": "celý zoznam -> /commands"
-  },
-  "slash_help_label": {
-    "message": "slash príkazy"
   },
   "mc_lock_banned": {
     "message": "máš ban na tomto kanáli"

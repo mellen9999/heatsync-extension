@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "опитай пак"
   },
-  "common_user_not_found": {
-    "message": "потребителят не е намерен"
-  },
   "btn_recent": {
     "message": "скорошни"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "не можах да последвам — опитай пак"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "не можах да спра следването — опитай пак"
-  },
-  "content_toast_no_chat_input": {
-    "message": "отвори twitch чата, за да ползваш mod действия"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ е блокиран",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "следва те"
-  },
-  "content_card_subs_to_you": {
-    "message": "субва те"
-  },
-  "content_card_you_follow": {
-    "message": "следваш"
-  },
-  "content_card_you_sub": {
-    "message": "субваш"
-  },
-  "content_card_you_sub_tier": {
-    "message": "суб T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "суб на $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "следва $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "следван от $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "следва $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ последователи",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "партньор"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "взаимен sub"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "бан"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod инструменти"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod инструменти (няма права)"
-  },
   "content_card_note_title": {
     "message": "бележка"
   },
-  "content_card_note_placeholder": {
-    "message": "лична бележка — само ти я виждаш"
-  },
-  "content_card_history_title": {
-    "message": "история на съобщенията"
-  },
   "content_card_loading": {
     "message": "зареждане…"
-  },
-  "content_card_history_empty": {
-    "message": "няма история на съобщенията"
-  },
-  "content_card_history_empty_channel": {
-    "message": "няма съобщения от този потребител в $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "виж профила"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "спри следването"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch профил"
-  },
   "content_card_clip": {
     "message": "клип"
   },
   "content_card_clipping": {
     "message": "правя clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url копиран"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip създаден"
   },
   "content_card_copy_name": {
     "message": "копирай името"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "афилиейт"
-  },
-  "content_card_live": {
-    "message": "ЖИВО $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch потвърден"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick потвърден"
-  },
-  "content_view_on_heatsync": {
-    "message": "виж в heatsync"
   },
   "mc_tab_feed": {
     "message": "емисия"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "не можах да отблокирам — опитай пак"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "блокирането не е запазено в акаунта ти — ще се различава на други устройства"
-  },
   "mc_emote_blocked_count": {
     "message": "блокирани $COUNT$ emotes",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "отблокирането не е запазено в акаунта ти — ще се различава на други устройства"
   },
   "mc_emote_unblocked": {
     "message": "отблокиран: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "emoji копирано"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers не успя: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "followers-only изкл."
-  },
-  "mc_input_followers_on": {
-    "message": "followers-only вкл."
-  },
-  "mc_input_followers_on_mins": {
-    "message": "followers-only вкл. ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers е само за twitch — отвори twitch канал"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: няма скорошно съобщение от $TARGET$ — ползвай менюто на съобщението",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ още не е свързано — засега работи само /followers",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "употреба: /followers [мин] | off"
   },
   "mc_input_usage_mute": {
     "message": "употреба: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "$USER$ вече не е mod",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch няма api за $LABEL$ — само kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "анкети, прогнози, bits"
-  },
-  "slash_help_full_list": {
-    "message": "пълен списък -> /commands"
-  },
-  "slash_help_label": {
-    "message": "slash команди"
   },
   "mc_lock_banned": {
     "message": "баннат си от този канал"

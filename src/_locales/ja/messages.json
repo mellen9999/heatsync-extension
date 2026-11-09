@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "再試行"
   },
-  "common_user_not_found": {
-    "message": "ユーザーが見つかりません"
-  },
   "btn_recent": {
     "message": "最近"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "フォローできなかった — もう一度試して"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "フォロー解除できなかった — もう一度試して"
-  },
-  "content_toast_no_chat_input": {
-    "message": "mod 操作は twitch のチャットを開いて"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ をブロック",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "あなたをフォロー"
-  },
-  "content_card_subs_to_you": {
-    "message": "あなたをサブ"
-  },
-  "content_card_you_follow": {
-    "message": "フォロー中"
-  },
-  "content_card_you_sub": {
-    "message": "サブ中"
-  },
-  "content_card_you_sub_tier": {
-    "message": "T$TIER$サブ中",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "$CHANNEL$を$TENURE$サブ中",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "$CHANNEL$を$AGE$フォロー中",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "$CHANNEL$にフォローされている",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "$COUNT$フォロー中",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "フォロワー$COUNT$人",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "パートナー"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "相互 sub"
-  },
-  "content_card_sub_badge": {
-    "message": "sub 済み"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub 済み T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "ban"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod ツール"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod ツール (権限なし)"
-  },
   "content_card_note_title": {
     "message": "メモ"
   },
-  "content_card_note_placeholder": {
-    "message": "非公開メモ — 自分だけに見える"
-  },
-  "content_card_history_title": {
-    "message": "メッセージ履歴"
-  },
   "content_card_loading": {
     "message": "読み込み中…"
-  },
-  "content_card_history_empty": {
-    "message": "メッセージ履歴なし"
-  },
-  "content_card_history_empty_channel": {
-    "message": "$CHANNEL$ にこのユーザーのメッセージはなし",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "プロフィールを見る"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "フォロー解除"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch プロフィール"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "clip 作成中…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url をコピーした"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip を作成した"
   },
   "content_card_copy_name": {
     "message": "名前をコピー"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "アフィリエイト"
-  },
-  "content_card_live": {
-    "message": "ライブ $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch認証済み"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick認証済み"
-  },
-  "content_view_on_heatsync": {
-    "message": "heatsyncで見る"
   },
   "mc_tab_feed": {
     "message": "フィード"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "ブロック解除失敗 — もう一度試して"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "ブロックがアカウントに保存されなかった — 他のデバイスでは異なる"
-  },
   "mc_emote_blocked_count": {
     "message": "emote を $COUNT$ 件ブロックした",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "ブロック解除がアカウントに保存されなかった — 他のデバイスでは異なる"
   },
   "mc_emote_unblocked": {
     "message": "ブロック解除: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "絵文字をコピーした"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers 失敗: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "フォロワー限定 オフ"
-  },
-  "mc_input_followers_on": {
-    "message": "フォロワー限定 オン"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "フォロワー限定 オン ($MINS$分)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers は twitch 専用 — twitch のチャンネルを開いて"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: $TARGET$ の最近のメッセージなし — メッセージメニューを使って",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ はまだ未対応 — 今のところ /followers だけ",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "使い方: /followers [分] | off"
   },
   "mc_input_usage_mute": {
     "message": "使い方: /mute <ユーザー>"
@@ -2146,14 +1972,6 @@
     "message": "$USER$ の mod を外した",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch には $LABEL$ の api がない — kick のみ",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "投票、予測、bits"
-  },
-  "slash_help_full_list": {
-    "message": "全リスト -> /commands"
-  },
-  "slash_help_label": {
-    "message": "スラッシュコマンド"
   },
   "mc_lock_banned": {
     "message": "このチャンネルからBANされています"

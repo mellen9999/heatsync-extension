@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "재시도"
   },
-  "common_user_not_found": {
-    "message": "사용자를 찾을 수 없음"
-  },
   "btn_recent": {
     "message": "최근"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "팔로우 실패 — 다시 시도해"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "팔로우 취소 실패 — 다시 시도해"
-  },
-  "content_toast_no_chat_input": {
-    "message": "mod 기능은 twitch 채팅을 열어야 써"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ 차단됨",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "나를 팔로우"
-  },
-  "content_card_subs_to_you": {
-    "message": "나를 구독"
-  },
-  "content_card_you_follow": {
-    "message": "내가 팔로우"
-  },
-  "content_card_you_sub": {
-    "message": "내가 구독"
-  },
-  "content_card_you_sub_tier": {
-    "message": "T$TIER$ 구독 중",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "$CHANNEL$ $TENURE$ 구독 중",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "$CHANNEL$ $AGE$ 팔로우 중",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "$CHANNEL$이 팔로우",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "$COUNT$ 팔로우 중",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "팔로워 $COUNT$명",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "파트너"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "서로 sub"
-  },
-  "content_card_sub_badge": {
-    "message": "sub 중"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub 중 T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "ban"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod 도구"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod 도구 (권한 없음)"
-  },
   "content_card_note_title": {
     "message": "메모"
   },
-  "content_card_note_placeholder": {
-    "message": "비공개 메모 — 나만 볼 수 있어"
-  },
-  "content_card_history_title": {
-    "message": "메시지 기록"
-  },
   "content_card_loading": {
     "message": "불러오는 중…"
-  },
-  "content_card_history_empty": {
-    "message": "메시지 기록 없음"
-  },
-  "content_card_history_empty_channel": {
-    "message": "$CHANNEL$에 이 사용자의 메시지 없음",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "프로필 보기"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "팔로우 취소"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch 프로필"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "clip 만드는 중…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url 복사됨"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip 생성됨"
   },
   "content_card_copy_name": {
     "message": "이름 복사"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "어필리에이트"
-  },
-  "content_card_live": {
-    "message": "라이브 $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch 인증"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick 인증"
-  },
-  "content_view_on_heatsync": {
-    "message": "heatsync에서 보기"
   },
   "mc_tab_feed": {
     "message": "피드"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "차단 해제 실패 — 다시 시도해"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "차단이 계정에 저장되지 않음 — 다른 기기에서는 다를 수 있어"
-  },
   "mc_emote_blocked_count": {
     "message": "emote $COUNT$개 차단됨",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "차단 해제가 계정에 저장되지 않음 — 다른 기기에서는 다를 수 있어"
   },
   "mc_emote_unblocked": {
     "message": "차단 해제됨: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "이모지 복사됨"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers 실패: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "팔로워 전용 꺼짐"
-  },
-  "mc_input_followers_on": {
-    "message": "팔로워 전용 켜짐"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "팔로워 전용 켜짐 ($MINS$분)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers는 twitch 전용 — twitch 채널을 열어"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: $TARGET$의 최근 메시지 없음 — 메시지 메뉴를 써",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$는 아직 연결 안 됨 — 지금은 /followers만 돼",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "사용법: /followers [분] | off"
   },
   "mc_input_usage_mute": {
     "message": "사용법: /mute <사용자>"
@@ -2146,14 +1972,6 @@
     "message": "$USER$ mod 해제함",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch엔 $LABEL$ api가 없어 — kick만 가능",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "투표, 예측, 비트"
-  },
-  "slash_help_full_list": {
-    "message": "전체 목록 -> /commands"
-  },
-  "slash_help_label": {
-    "message": "슬래시 명령어"
   },
   "mc_lock_banned": {
     "message": "이 채널에서 차단되었습니다"

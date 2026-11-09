@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "coba lagi"
   },
-  "common_user_not_found": {
-    "message": "user tidak ditemukan"
-  },
   "btn_recent": {
     "message": "terbaru"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "gagal mengikuti — coba lagi"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "gagal berhenti mengikuti — coba lagi"
-  },
-  "content_toast_no_chat_input": {
-    "message": "buka chat twitch untuk memakai aksi mod"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ diblokir",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "follow kamu"
-  },
-  "content_card_subs_to_you": {
-    "message": "sub kamu"
-  },
-  "content_card_you_follow": {
-    "message": "kamu follow"
-  },
-  "content_card_you_sub": {
-    "message": "kamu sub"
-  },
-  "content_card_you_sub_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "sub $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "follow $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "di-follow $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "follow $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ follower",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "mitra"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "saling sub"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "ban"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "alat mod"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "alat mod (tanpa izin)"
-  },
   "content_card_note_title": {
     "message": "catatan"
   },
-  "content_card_note_placeholder": {
-    "message": "catatan pribadi — hanya kamu yang lihat"
-  },
-  "content_card_history_title": {
-    "message": "riwayat pesan"
-  },
   "content_card_loading": {
     "message": "memuat…"
-  },
-  "content_card_history_empty": {
-    "message": "belum ada riwayat pesan"
-  },
-  "content_card_history_empty_channel": {
-    "message": "belum ada pesan dari pengguna ini di $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "lihat profil"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "berhenti ikuti"
   },
-  "content_card_twitch_profile": {
-    "message": "profil twitch"
-  },
   "content_card_clip": {
     "message": "klip"
   },
   "content_card_clipping": {
     "message": "membuat clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url tersalin"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip dibuat"
   },
   "content_card_copy_name": {
     "message": "salin nama"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "afiliasi"
-  },
-  "content_card_live": {
-    "message": "LANGSUNG $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch terverifikasi"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick terverifikasi"
-  },
-  "content_view_on_heatsync": {
-    "message": "lihat di heatsync"
   },
   "mc_tab_feed": {
     "message": "umpan"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "gagal membuka blokir — coba lagi"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "blokir tidak tersimpan ke akunmu — bisa berbeda di perangkat lain"
-  },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emote diblokir",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "buka blokir tidak tersimpan ke akunmu — bisa berbeda di perangkat lain"
   },
   "mc_emote_unblocked": {
     "message": "blokir dibuka: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "emoji tersalin"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers gagal: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "followers-only mati"
-  },
-  "mc_input_followers_on": {
-    "message": "followers-only aktif"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "followers-only aktif ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers hanya untuk twitch — buka channel twitch"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: tidak ada pesan terbaru dari $TARGET$ — pakai menu pesan",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ belum tersambung — baru /followers yang jalan",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "cara pakai: /followers [menit] | off"
   },
   "mc_input_usage_mute": {
     "message": "cara pakai: /mute <pengguna>"
@@ -2146,14 +1972,6 @@
     "message": "mod $USER$ dicabut",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch tidak punya api untuk $LABEL$ — hanya kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "poll, prediksi, bits"
-  },
-  "slash_help_full_list": {
-    "message": "daftar lengkap -> /commands"
-  },
-  "slash_help_label": {
-    "message": "perintah slash"
   },
   "mc_lock_banned": {
     "message": "kamu dibanned dari channel ini"

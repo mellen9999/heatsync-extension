@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "yritä uudelleen"
   },
-  "common_user_not_found": {
-    "message": "käyttäjää ei löydy"
-  },
   "btn_recent": {
     "message": "viimeaikaiset"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "seuraaminen ei onnistunut — yritä uudelleen"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "seurannan lopetus ei onnistunut — yritä uudelleen"
-  },
-  "content_toast_no_chat_input": {
-    "message": "avaa twitch-chat käyttääksesi mod-toimintoja"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ estetty",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "seuraa sinua"
-  },
-  "content_card_subs_to_you": {
-    "message": "subbaa sinua"
-  },
-  "content_card_you_follow": {
-    "message": "seuraat"
-  },
-  "content_card_you_sub": {
-    "message": "subbaat"
-  },
-  "content_card_you_sub_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "sub kanavalla $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "seuraa $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "seuraajana $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "seuraa $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ seuraajaa",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "kumppani"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "molemminpuolinen sub"
-  },
-  "content_card_sub_badge": {
-    "message": "subaa"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "subaa T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "bannaa"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod-työkalut"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod-työkalut (ei oikeutta)"
-  },
   "content_card_note_title": {
     "message": "muistiinpano"
   },
-  "content_card_note_placeholder": {
-    "message": "yksityinen muistiinpano — vain sinä näet sen"
-  },
-  "content_card_history_title": {
-    "message": "viestihistoria"
-  },
   "content_card_loading": {
     "message": "ladataan…"
-  },
-  "content_card_history_empty": {
-    "message": "ei viestihistoriaa"
-  },
-  "content_card_history_empty_channel": {
-    "message": "ei viestejä tältä käyttäjältä kanavalla $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "näytä profiili"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "lopeta seuraaminen"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch-profiili"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "luodaan clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url kopioitu"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip luotu"
   },
   "content_card_copy_name": {
     "message": "kopioi nimi"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "affiliate"
-  },
-  "content_card_live": {
-    "message": "LIVENÄ $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch vahvistettu"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick vahvistettu"
-  },
-  "content_view_on_heatsync": {
-    "message": "näytä heatsyncissä"
   },
   "mc_tab_feed": {
     "message": "syöte"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "eston poisto ei onnistunut — yritä uudelleen"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "estoa ei tallennettu tilillesi — eroaa muilla laitteilla"
-  },
   "mc_emote_blocked_count": {
     "message": "estetty $COUNT$ emotea",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "eston poistoa ei tallennettu tilillesi — eroaa muilla laitteilla"
   },
   "mc_emote_unblocked": {
     "message": "esto poistettu: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "emoji kopioitu"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers epäonnistui: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "followers-only pois"
-  },
-  "mc_input_followers_on": {
-    "message": "followers-only päällä"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "followers-only päällä ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers on vain twitchille — avaa twitch-kanava"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: ei tuoretta viestiä käyttäjältä $TARGET$ — käytä viestivalikkoa",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ ei ole vielä kytketty — toistaiseksi toimii vain /followers",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "käyttö: /followers [min] | off"
   },
   "mc_input_usage_mute": {
     "message": "käyttö: /mute <käyttäjä>"
@@ -2146,14 +1972,6 @@
     "message": "mod poistettu: $USER$",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitchillä ei ole apia tilalle $LABEL$ — vain kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "äänestykset, ennusteet, bitsit"
-  },
-  "slash_help_full_list": {
-    "message": "koko lista -> /commands"
-  },
-  "slash_help_label": {
-    "message": "slash-komennot"
   },
   "mc_lock_banned": {
     "message": "sinulla on porttikielto tälle kanavalle"

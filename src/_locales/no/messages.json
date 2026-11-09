@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "prøv igjen"
   },
-  "common_user_not_found": {
-    "message": "bruker ikke funnet"
-  },
   "btn_recent": {
     "message": "nylig"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "kunne ikke følge — prøv igjen"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "kunne ikke slutte å følge — prøv igjen"
-  },
-  "content_toast_no_chat_input": {
-    "message": "åpne twitch-chatten for å bruke mod-handlinger"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ blokkert",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "følger deg"
-  },
-  "content_card_subs_to_you": {
-    "message": "subber deg"
-  },
-  "content_card_you_follow": {
-    "message": "du følger"
-  },
-  "content_card_you_sub": {
-    "message": "du subber"
-  },
-  "content_card_you_sub_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "sub hos $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "følger $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "følges av $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "følger $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ følgere",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "partner"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "gjensidig sub"
-  },
-  "content_card_sub_badge": {
-    "message": "subbet"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "subbet T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "ban"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod-verktøy"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod-verktøy (ingen tilgang)"
-  },
   "content_card_note_title": {
     "message": "notat"
   },
-  "content_card_note_placeholder": {
-    "message": "privat notat — bare du ser dette"
-  },
-  "content_card_history_title": {
-    "message": "meldingshistorikk"
-  },
   "content_card_loading": {
     "message": "laster…"
-  },
-  "content_card_history_empty": {
-    "message": "ingen meldingshistorikk"
-  },
-  "content_card_history_empty_channel": {
-    "message": "ingen meldinger fra denne brukeren i $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "se profil"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "slutt å følge"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch-profil"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "lager clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url kopiert"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip laget"
   },
   "content_card_copy_name": {
     "message": "kopier navn"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "affiliate"
-  },
-  "content_card_live": {
-    "message": "LIVE $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch verifisert"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick verifisert"
-  },
-  "content_view_on_heatsync": {
-    "message": "se på heatsync"
   },
   "mc_tab_feed": {
     "message": "feed"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "kunne ikke fjerne blokkeringen — prøv igjen"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "blokkeringen ble ikke lagret på kontoen din — vil avvike på andre enheter"
-  },
   "mc_emote_blocked_count": {
     "message": "blokkerte $COUNT$ emotes",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "opphevingen ble ikke lagret på kontoen din — vil avvike på andre enheter"
   },
   "mc_emote_unblocked": {
     "message": "blokkering fjernet: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "emoji kopiert"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers feilet: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "bare følgere av"
-  },
-  "mc_input_followers_on": {
-    "message": "bare følgere på"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "bare følgere på ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers finnes bare på twitch — åpne en twitch-kanal"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: ingen fersk melding fra $TARGET$ — bruk meldingsmenyen",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ er ikke koblet opp ennå — bare /followers fungerer foreløpig",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "bruk: /followers [mins] | off"
   },
   "mc_input_usage_mute": {
     "message": "bruk: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "fjernet mod fra $USER$",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch har ikke api for $LABEL$ — bare kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "avstemninger, prediksjoner, bits"
-  },
-  "slash_help_full_list": {
-    "message": "full liste -> /commands"
-  },
-  "slash_help_label": {
-    "message": "slash-kommandoer"
   },
   "mc_lock_banned": {
     "message": "du er utestengt fra denne kanalen"

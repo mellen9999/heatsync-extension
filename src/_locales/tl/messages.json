@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "subukan ulit"
   },
-  "common_user_not_found": {
-    "message": "user hindi nahanap"
-  },
   "btn_recent": {
     "message": "kamakailan"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "hindi na-follow — subukan ulit"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "hindi na-unfollow — subukan ulit"
-  },
-  "content_toast_no_chat_input": {
-    "message": "buksan ang twitch chat para magamit ang mga mod action"
-  },
   "content_toast_blocked": {
     "message": "na-block ang $NAME$",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "follower mo"
-  },
-  "content_card_subs_to_you": {
-    "message": "subscriber mo"
-  },
-  "content_card_you_follow": {
-    "message": "follower mo"
-  },
-  "content_card_you_sub": {
-    "message": "subscriber ka"
-  },
-  "content_card_you_sub_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "sub sa $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "fina-follow ang $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "fina-follow ng $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "fina-follow ang $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ followers",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "partner"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "sub sa isa't isa"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "ban"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mga mod tool"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mga mod tool (walang pahintulot)"
-  },
   "content_card_note_title": {
     "message": "tala"
   },
-  "content_card_note_placeholder": {
-    "message": "pribadong tala — ikaw lang ang nakakakita"
-  },
-  "content_card_history_title": {
-    "message": "history ng mga mensahe"
-  },
   "content_card_loading": {
     "message": "naglo-load…"
-  },
-  "content_card_history_empty": {
-    "message": "walang history ng mensahe"
-  },
-  "content_card_history_empty_channel": {
-    "message": "walang mensahe mula sa user na ito sa $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "tingnan ang profile"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "i-unfollow"
   },
-  "content_card_twitch_profile": {
-    "message": "profile sa twitch"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "gumagawa ng clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ nakopya ang url"
-  },
-  "content_card_clip_created": {
-    "message": "✓ nagawa na ang clip"
   },
   "content_card_copy_name": {
     "message": "kopyahin ang pangalan"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "affiliate"
-  },
-  "content_card_live": {
-    "message": "LIVE $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch verified"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick verified"
-  },
-  "content_view_on_heatsync": {
-    "message": "tingnan sa heatsync"
   },
   "mc_tab_feed": {
     "message": "feed"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "hindi na-unblock — subukan ulit"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "hindi nai-save sa account mo ang block — iba ito sa ibang device"
-  },
   "mc_emote_blocked_count": {
     "message": "na-block ang $COUNT$ emotes",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "hindi nai-save sa account mo ang unblock — iba ito sa ibang device"
   },
   "mc_emote_unblocked": {
     "message": "na-unblock: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "nakopya ang emoji"
   },
-  "mc_input_followers_failed": {
-    "message": "bigo ang /followers: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "followers-only: off"
-  },
-  "mc_input_followers_on": {
-    "message": "followers-only: on"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "followers-only: on ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "twitch lang ang /followers — buksan ang isang twitch channel"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: walang kamakailang mensahe mula kay $TARGET$ — gamitin ang message menu",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "hindi pa nakakabit ang /$CMD$ — /followers lang ang gumagana sa ngayon",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "paggamit: /followers [mins] | off"
   },
   "mc_input_usage_mute": {
     "message": "paggamit: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "inalis ang mod kay $USER$",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "walang api ang twitch para sa $LABEL$ — kick lang",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "polls, predictions, bits"
-  },
-  "slash_help_full_list": {
-    "message": "buong listahan -> /commands"
-  },
-  "slash_help_label": {
-    "message": "mga slash command"
   },
   "mc_lock_banned": {
     "message": "naka-ban ka sa channel na ito"

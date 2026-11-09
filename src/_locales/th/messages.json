@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "ลองใหม่"
   },
-  "common_user_not_found": {
-    "message": "ไม่พบผู้ใช้"
-  },
   "btn_recent": {
     "message": "ล่าสุด"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "ติดตามไม่สำเร็จ — ลองอีกครั้ง"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "เลิกติดตามไม่สำเร็จ — ลองอีกครั้ง"
-  },
-  "content_toast_no_chat_input": {
-    "message": "เปิดแชท twitch เพื่อใช้คำสั่ง mod"
-  },
   "content_toast_blocked": {
     "message": "บล็อก $NAME$ แล้ว",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "ติดตามคุณ"
-  },
-  "content_card_subs_to_you": {
-    "message": "ซับคุณ"
-  },
-  "content_card_you_follow": {
-    "message": "คุณติดตาม"
-  },
-  "content_card_you_sub": {
-    "message": "คุณซับ"
-  },
-  "content_card_you_sub_tier": {
-    "message": "ซับ T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "ซับ $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "ติดตาม $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "ติดตามโดย $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "ติดตาม $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ ผู้ติดตาม",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "พาร์ตเนอร์"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "sub ซึ่งกันและกัน"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "แบน"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "เครื่องมือ mod"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "เครื่องมือ mod (ไม่มีสิทธิ์)"
-  },
   "content_card_note_title": {
     "message": "โน้ต"
   },
-  "content_card_note_placeholder": {
-    "message": "โน้ตส่วนตัว — เห็นคนเดียว"
-  },
-  "content_card_history_title": {
-    "message": "ประวัติข้อความ"
-  },
   "content_card_loading": {
     "message": "กำลังโหลด…"
-  },
-  "content_card_history_empty": {
-    "message": "ไม่มีประวัติข้อความ"
-  },
-  "content_card_history_empty_channel": {
-    "message": "ไม่มีข้อความจากผู้ใช้นี้ใน $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "ดูโปรไฟล์"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "เลิกติดตาม"
   },
-  "content_card_twitch_profile": {
-    "message": "โปรไฟล์ twitch"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "กำลังสร้าง clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ คัดลอก url แล้ว"
-  },
-  "content_card_clip_created": {
-    "message": "✓ สร้าง clip แล้ว"
   },
   "content_card_copy_name": {
     "message": "คัดลอกชื่อ"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "แอฟฟิลิเอต"
-  },
-  "content_card_live": {
-    "message": "ไลฟ์ $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "ยืนยัน Twitch"
-  },
-  "content_card_kick_verified": {
-    "message": "ยืนยัน Kick"
-  },
-  "content_view_on_heatsync": {
-    "message": "ดูบน heatsync"
   },
   "mc_tab_feed": {
     "message": "ฟีด"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "เลิกบล็อกไม่สำเร็จ — ลองอีกครั้ง"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "การบล็อกไม่ได้บันทึกในบัญชี — อุปกรณ์อื่นจะต่างออกไป"
-  },
   "mc_emote_blocked_count": {
     "message": "บล็อก emotes แล้ว $COUNT$",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "การเลิกบล็อกไม่ได้บันทึกในบัญชี — อุปกรณ์อื่นจะต่างออกไป"
   },
   "mc_emote_unblocked": {
     "message": "เลิกบล็อกแล้ว: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "คัดลอก emoji แล้ว"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers ไม่สำเร็จ: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "เฉพาะผู้ติดตาม: ปิด"
-  },
-  "mc_input_followers_on": {
-    "message": "เฉพาะผู้ติดตาม: เปิด"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "เฉพาะผู้ติดตาม: เปิด ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers ใช้ได้เฉพาะ twitch — เปิดช่อง twitch"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: ไม่มีข้อความล่าสุดจาก $TARGET$ — ใช้เมนูข้อความ",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ ยังไม่ต่อสาย — ตอนนี้ใช้ได้แค่ /followers",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "วิธีใช้: /followers [mins] | off"
   },
   "mc_input_usage_mute": {
     "message": "วิธีใช้: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "ถอด mod ของ $USER$ แล้ว",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch ไม่มี api สำหรับ $LABEL$ — ใช้ได้เฉพาะ kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "โพล, การทำนาย, bits"
-  },
-  "slash_help_full_list": {
-    "message": "รายการทั้งหมด -> /commands"
-  },
-  "slash_help_label": {
-    "message": "คำสั่ง slash"
   },
   "mc_lock_banned": {
     "message": "คุณถูกแบนจากช่องนี้"

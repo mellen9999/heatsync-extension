@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "újra"
   },
-  "common_user_not_found": {
-    "message": "felhasználó nem található"
-  },
   "btn_recent": {
     "message": "legutóbbi"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "nem sikerült követni — próbáld újra"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "a követés megszüntetése nem sikerült — próbáld újra"
-  },
-  "content_toast_no_chat_input": {
-    "message": "nyisd meg a twitch chatet a mod műveletekhez"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ letiltva",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "követ téged"
-  },
-  "content_card_subs_to_you": {
-    "message": "subol téged"
-  },
-  "content_card_you_follow": {
-    "message": "követed"
-  },
-  "content_card_you_sub": {
-    "message": "subolod"
-  },
-  "content_card_you_sub_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "sub $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "követi $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "követi $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "követ $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ követő",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "partner"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "kölcsönös sub"
-  },
-  "content_card_sub_badge": {
-    "message": "subolt"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "subolt T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "ban"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod eszközök"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod eszközök (nincs jogosultság)"
-  },
   "content_card_note_title": {
     "message": "jegyzet"
   },
-  "content_card_note_placeholder": {
-    "message": "privát jegyzet — csak te látod"
-  },
-  "content_card_history_title": {
-    "message": "üzenetelőzmény"
-  },
   "content_card_loading": {
     "message": "betöltés…"
-  },
-  "content_card_history_empty": {
-    "message": "nincs üzenetelőzmény"
-  },
-  "content_card_history_empty_channel": {
-    "message": "nincs üzenete ettől a felhasználótól itt: $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "profil megnyitása"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "követés megszüntetése"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch profil"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "clip készül…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url másolva"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip kész"
   },
   "content_card_copy_name": {
     "message": "név másolása"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "affiliate"
-  },
-  "content_card_live": {
-    "message": "ÉLŐ $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch hitelesített"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick hitelesített"
-  },
-  "content_view_on_heatsync": {
-    "message": "megnézem a heatsync-en"
   },
   "mc_tab_feed": {
     "message": "hírfolyam"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "nem sikerült feloldani — próbáld újra"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "a blokk nem mentődött a fiókodba — más eszközökön eltérhet"
-  },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emote blokkolva",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "a feloldás nem mentődött a fiókodba — más eszközökön eltérhet"
   },
   "mc_emote_unblocked": {
     "message": "feloldva: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "emoji másolva"
   },
-  "mc_input_followers_failed": {
-    "message": "a /followers nem sikerült: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "csak követőknek: ki"
-  },
-  "mc_input_followers_on": {
-    "message": "csak követőknek: be"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "csak követőknek: be ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "a /followers csak twitchen működik — nyiss egy twitch csatornát"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: nincs friss üzenet tőle: $TARGET$ — használd az üzenetmenüt",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "a /$CMD$ még nincs bekötve — egyelőre csak a /followers megy",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "használat: /followers [perc] | off"
   },
   "mc_input_usage_mute": {
     "message": "használat: /mute <felhasználó>"
@@ -2146,14 +1972,6 @@
     "message": "$USER$ mod-ja elvéve",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "a twitchnek nincs api-ja ehhez: $LABEL$ — csak kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "szavazások, előrejelzések, bitek"
-  },
-  "slash_help_full_list": {
-    "message": "teljes lista -> /commands"
-  },
-  "slash_help_label": {
-    "message": "slash parancsok"
   },
   "mc_lock_banned": {
     "message": "ki vagy tiltva erről a csatornáról"

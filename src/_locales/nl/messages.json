@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "opnieuw proberen"
   },
-  "common_user_not_found": {
-    "message": "gebruiker niet gevonden"
-  },
   "btn_recent": {
     "message": "recent"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "volgen mislukt — probeer opnieuw"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "ontvolgen mislukt — probeer opnieuw"
-  },
-  "content_toast_no_chat_input": {
-    "message": "open twitch-chat om mod-acties te gebruiken"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ geblokkeerd",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "volgt jou"
-  },
-  "content_card_subs_to_you": {
-    "message": "subt bij jou"
-  },
-  "content_card_you_follow": {
-    "message": "jij volgt"
-  },
-  "content_card_you_sub": {
-    "message": "je bent subscriber"
-  },
-  "content_card_you_sub_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "sub bij $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "volgt $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "gevolgd door $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "volgt $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ volgers",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "partner"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "wederzijdse sub"
-  },
-  "content_card_sub_badge": {
-    "message": "gesubd"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "gesubd T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "bannen"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod-tools"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod-tools (geen rechten)"
-  },
   "content_card_note_title": {
     "message": "notitie"
   },
-  "content_card_note_placeholder": {
-    "message": "privénotitie — alleen jij ziet dit"
-  },
-  "content_card_history_title": {
-    "message": "berichtgeschiedenis"
-  },
   "content_card_loading": {
     "message": "laden…"
-  },
-  "content_card_history_empty": {
-    "message": "geen berichtgeschiedenis"
-  },
-  "content_card_history_empty_channel": {
-    "message": "geen berichten van deze gebruiker in $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "profiel bekijken"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "ontvolgen"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch-profiel"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "clippen…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url gekopieerd"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip gemaakt"
   },
   "content_card_copy_name": {
     "message": "naam kopiëren"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "affiliate"
-  },
-  "content_card_live": {
-    "message": "LIVE $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch geverifieerd"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick geverifieerd"
-  },
-  "content_view_on_heatsync": {
-    "message": "bekijk op heatsync"
   },
   "mc_tab_feed": {
     "message": "feed"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "deblokkeren mislukt — probeer opnieuw"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "blokkade niet opgeslagen in je account — verschilt op andere apparaten"
-  },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emotes geblokkeerd",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "deblokkade niet opgeslagen in je account — verschilt op andere apparaten"
   },
   "mc_emote_unblocked": {
     "message": "gedeblokkeerd: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "emoji gekopieerd"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers mislukt: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "alleen-volgers uit"
-  },
-  "mc_input_followers_on": {
-    "message": "alleen-volgers aan"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "alleen-volgers aan ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers bestaat alleen op twitch — open een twitch-kanaal"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: geen recent bericht van $TARGET$ — gebruik het berichtmenu",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ is nog niet aangesloten — voorlopig werkt alleen /followers",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "gebruik: /followers [mins] | off"
   },
   "mc_input_usage_mute": {
     "message": "gebruik: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "$USER$ unmod gemaakt",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch heeft geen api voor $LABEL$ — alleen kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "polls, voorspellingen, bits"
-  },
-  "slash_help_full_list": {
-    "message": "volledige lijst -> /commands"
-  },
-  "slash_help_label": {
-    "message": "slash-commando's"
   },
   "mc_lock_banned": {
     "message": "je bent verbannen van dit kanaal"

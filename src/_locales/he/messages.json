@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "נסה שוב"
   },
-  "common_user_not_found": {
-    "message": "משתמש לא נמצא"
-  },
   "btn_recent": {
     "message": "אחרונים"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "לא הצלחתי לעקוב — נסה שוב"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "לא הצלחתי להפסיק לעקוב — נסה שוב"
-  },
-  "content_toast_no_chat_input": {
-    "message": "פתח את הצ'אט של twitch כדי להשתמש בפעולות mod"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ חסום",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "עוקב אחריך"
-  },
-  "content_card_subs_to_you": {
-    "message": "מנוי אצלך"
-  },
-  "content_card_you_follow": {
-    "message": "אתה עוקב"
-  },
-  "content_card_you_sub": {
-    "message": "אתה מנוי"
-  },
-  "content_card_you_sub_tier": {
-    "message": "מנוי T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "מנוי ב-$CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "עוקב אחר $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "נעקב על ידי $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "עוקב אחר $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ עוקבים",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "שותף"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "sub הדדי"
-  },
-  "content_card_sub_badge": {
-    "message": "מנוי"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "מנוי T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "באן"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "כלי mod"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "כלי mod (אין הרשאה)"
-  },
   "content_card_note_title": {
     "message": "הערה"
   },
-  "content_card_note_placeholder": {
-    "message": "הערה פרטית — רק אתה רואה אותה"
-  },
-  "content_card_history_title": {
-    "message": "היסטוריית הודעות"
-  },
   "content_card_loading": {
     "message": "טוען…"
-  },
-  "content_card_history_empty": {
-    "message": "אין היסטוריית הודעות"
-  },
-  "content_card_history_empty_channel": {
-    "message": "אין הודעות מהמשתמש הזה ב-$CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "צפה בפרופיל"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "הפסק לעקוב"
   },
-  "content_card_twitch_profile": {
-    "message": "פרופיל twitch"
-  },
   "content_card_clip": {
     "message": "קליפ"
   },
   "content_card_clipping": {
     "message": "יוצר clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ הכתובת הועתקה"
-  },
-  "content_card_clip_created": {
-    "message": "✓ ה-clip נוצר"
   },
   "content_card_copy_name": {
     "message": "העתק שם"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "אפיליאייט"
-  },
-  "content_card_live": {
-    "message": "בשידור $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch מאומת"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick מאומת"
-  },
-  "content_view_on_heatsync": {
-    "message": "צפה ב-heatsync"
   },
   "mc_tab_feed": {
     "message": "פיד"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "ביטול החסימה נכשל — נסה שוב"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "החסימה לא נשמרה בחשבון שלך — תהיה שונה במכשירים אחרים"
-  },
   "mc_emote_blocked_count": {
     "message": "נחסמו $COUNT$ אימוטים",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "ביטול החסימה לא נשמר בחשבון שלך — יהיה שונה במכשירים אחרים"
   },
   "mc_emote_unblocked": {
     "message": "החסימה בוטלה: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "האמוג'י הועתק"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers נכשל: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "followers-only כבוי"
-  },
-  "mc_input_followers_on": {
-    "message": "followers-only פעיל"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "followers-only פעיל ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers קיים רק ב-twitch — פתח ערוץ twitch"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: אין הודעה אחרונה מ-$TARGET$ — השתמש בתפריט ההודעה",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ עדיין לא מחובר — כרגע רק /followers עובד",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "שימוש: /followers [דקות] | off"
   },
   "mc_input_usage_mute": {
     "message": "שימוש: /mute <משתמש>"
@@ -2146,14 +1972,6 @@
     "message": "ה-mod של $USER$ הוסר",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "ל-twitch אין api עבור $LABEL$ — kick בלבד",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "סקרים, ניבויים, bits"
-  },
-  "slash_help_full_list": {
-    "message": "רשימה מלאה -> /commands"
-  },
-  "slash_help_label": {
-    "message": "פקודות slash"
   },
   "mc_lock_banned": {
     "message": "חסמו אותך בערוץ הזה"

@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "重試"
   },
-  "common_user_not_found": {
-    "message": "找不到使用者"
-  },
   "btn_recent": {
     "message": "最近"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "追蹤失敗 — 請重試"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "取消追蹤失敗 — 請重試"
-  },
-  "content_toast_no_chat_input": {
-    "message": "開啟 twitch 聊天以使用 mod 操作"
-  },
   "content_toast_blocked": {
     "message": "已封鎖 $NAME$",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "追蹤你"
-  },
-  "content_card_subs_to_you": {
-    "message": "訂閱你"
-  },
-  "content_card_you_follow": {
-    "message": "你追蹤"
-  },
-  "content_card_you_sub": {
-    "message": "你訂閱"
-  },
-  "content_card_you_sub_tier": {
-    "message": "你訂閱 T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "訂閱 $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "追蹤 $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "被 $CHANNEL$ 追蹤",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "追蹤 $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ 位追蹤者",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "合作夥伴"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "互相 sub"
-  },
-  "content_card_sub_badge": {
-    "message": "已 sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "已 sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "封鎖"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod 工具"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod 工具（無權限）"
-  },
   "content_card_note_title": {
     "message": "備註"
   },
-  "content_card_note_placeholder": {
-    "message": "私人備註 — 僅你可見"
-  },
-  "content_card_history_title": {
-    "message": "訊息紀錄"
-  },
   "content_card_loading": {
     "message": "載入中…"
-  },
-  "content_card_history_empty": {
-    "message": "暫無訊息紀錄"
-  },
-  "content_card_history_empty_channel": {
-    "message": "$CHANNEL$ 中沒有此使用者的訊息",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "檢視資料"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "取消追蹤"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch 資料"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "正在建立 clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ 已複製 url"
-  },
-  "content_card_clip_created": {
-    "message": "✓ 已建立 clip"
   },
   "content_card_copy_name": {
     "message": "複製名稱"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "聯盟"
-  },
-  "content_card_live": {
-    "message": "直播 $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch 已驗證"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick 已驗證"
-  },
-  "content_view_on_heatsync": {
-    "message": "在 heatsync 檢視"
   },
   "mc_tab_feed": {
     "message": "動態"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "無法解除封鎖 — 請重試"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "封鎖未儲存到你的帳號 — 在其他裝置上會不同"
-  },
   "mc_emote_blocked_count": {
     "message": "已封鎖 $COUNT$ 個 emote",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "解除封鎖未儲存到你的帳號 — 在其他裝置上會不同"
   },
   "mc_emote_unblocked": {
     "message": "已解除封鎖：$NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "已複製 emoji"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers 失敗：$ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "僅追蹤者模式已關閉"
-  },
-  "mc_input_followers_on": {
-    "message": "僅追蹤者模式已開啟"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "僅追蹤者模式已開啟（$MINS$ 分鐘）",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers 僅限 twitch — 請開啟 twitch 頻道"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube：$TARGET$ 沒有最近的訊息 — 請用訊息選單",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ 尚未接入 — 目前只有 /followers 可用",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "用法：/followers [mins] | off"
   },
   "mc_input_usage_mute": {
     "message": "用法：/mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "已移除 $USER$ 的 mod",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch 沒有 $LABEL$ 的 api — 僅限 kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "投票、預測、bits"
-  },
-  "slash_help_full_list": {
-    "message": "完整清單 -> /commands"
-  },
-  "slash_help_label": {
-    "message": "斜線指令"
   },
   "mc_lock_banned": {
     "message": "你已被此頻道封鎖"

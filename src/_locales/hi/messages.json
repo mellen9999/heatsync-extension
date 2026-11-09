@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "पुनः प्रयास"
   },
-  "common_user_not_found": {
-    "message": "उपयोगकर्ता नहीं मिला"
-  },
   "btn_recent": {
     "message": "हाल के"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "फ़ॉलो नहीं हो पाया — फिर कोशिश करो"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "अनफ़ॉलो नहीं हो पाया — फिर कोशिश करो"
-  },
-  "content_toast_no_chat_input": {
-    "message": "mod एक्शन के लिए twitch चैट खोलो"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ ब्लॉक किया",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "आपको फ़ॉलो करता है"
-  },
-  "content_card_subs_to_you": {
-    "message": "आपको सब करता है"
-  },
-  "content_card_you_follow": {
-    "message": "आप फ़ॉलो करते हैं"
-  },
-  "content_card_you_sub": {
-    "message": "आप सब हैं"
-  },
-  "content_card_you_sub_tier": {
-    "message": "सब T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "$CHANNEL$ पर सब $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "$CHANNEL$ को $AGE$ से फ़ॉलो",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "$CHANNEL$ द्वारा फ़ॉलो",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "$COUNT$ को फ़ॉलो",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ फ़ॉलोअर",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "पार्टनर"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "म्यूचुअल sub"
-  },
-  "content_card_sub_badge": {
-    "message": "sub है"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub है T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "बैन"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod टूल"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod टूल (अनुमति नहीं)"
-  },
   "content_card_note_title": {
     "message": "नोट"
   },
-  "content_card_note_placeholder": {
-    "message": "निजी नोट — सिर्फ़ तुम देख सकते हो"
-  },
-  "content_card_history_title": {
-    "message": "मैसेज हिस्ट्री"
-  },
   "content_card_loading": {
     "message": "लोड हो रहा है…"
-  },
-  "content_card_history_empty": {
-    "message": "कोई मैसेज हिस्ट्री नहीं"
-  },
-  "content_card_history_empty_channel": {
-    "message": "$CHANNEL$ में इस यूज़र का कोई मैसेज नहीं",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "प्रोफ़ाइल देखो"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "अनफ़ॉलो"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch प्रोफ़ाइल"
-  },
   "content_card_clip": {
     "message": "क्लिप"
   },
   "content_card_clipping": {
     "message": "clip बन रहा है…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url कॉपी हुआ"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip बन गया"
   },
   "content_card_copy_name": {
     "message": "नाम कॉपी करो"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "एफ़िलिएट"
-  },
-  "content_card_live": {
-    "message": "लाइव $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch सत्यापित"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick सत्यापित"
-  },
-  "content_view_on_heatsync": {
-    "message": "heatsync पर देखें"
   },
   "mc_tab_feed": {
     "message": "फ़ीड"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "अनब्लॉक नहीं हो पाया — फिर कोशिश करो"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "ब्लॉक तुम्हारे अकाउंट में सेव नहीं हुआ — दूसरे डिवाइस पर अलग दिखेगा"
-  },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emotes ब्लॉक किए",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "अनब्लॉक तुम्हारे अकाउंट में सेव नहीं हुआ — दूसरे डिवाइस पर अलग दिखेगा"
   },
   "mc_emote_unblocked": {
     "message": "अनब्लॉक किया: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "इमोजी कॉपी हुआ"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers नहीं हुआ: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "followers-only बंद"
-  },
-  "mc_input_followers_on": {
-    "message": "followers-only चालू"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "followers-only चालू ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers सिर्फ़ twitch पर है — twitch चैनल खोलो"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: $TARGET$ का कोई हाल का मैसेज नहीं — मैसेज मेन्यू इस्तेमाल करो",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ अभी जुड़ा नहीं है — फ़िलहाल सिर्फ़ /followers चलता है",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "उपयोग: /followers [मिनट] | off"
   },
   "mc_input_usage_mute": {
     "message": "उपयोग: /mute <यूज़र>"
@@ -2146,14 +1972,6 @@
     "message": "$USER$ से mod हटाया",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch के पास $LABEL$ के लिए api नहीं है — सिर्फ़ kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "पोल, प्रेडिक्शन, bits"
-  },
-  "slash_help_full_list": {
-    "message": "पूरी लिस्ट -> /commands"
-  },
-  "slash_help_label": {
-    "message": "slash कमांड"
   },
   "mc_lock_banned": {
     "message": "आप इस चैनल से बैन हैं"

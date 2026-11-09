@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "重试"
   },
-  "common_user_not_found": {
-    "message": "找不到用户"
-  },
   "btn_recent": {
     "message": "最近"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "关注失败 — 请重试"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "取消关注失败 — 请重试"
-  },
-  "content_toast_no_chat_input": {
-    "message": "打开 twitch 聊天以使用 mod 操作"
-  },
   "content_toast_blocked": {
     "message": "已屏蔽 $NAME$",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "关注了你"
-  },
-  "content_card_subs_to_you": {
-    "message": "订阅了你"
-  },
-  "content_card_you_follow": {
-    "message": "你关注了"
-  },
-  "content_card_you_sub": {
-    "message": "你订阅了"
-  },
-  "content_card_you_sub_tier": {
-    "message": "T$TIER$ 订阅中",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "订阅 $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "关注 $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "被 $CHANNEL$ 关注",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "关注 $COUNT$ 人",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ 个粉丝",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "合作伙伴"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "互相 sub"
-  },
-  "content_card_sub_badge": {
-    "message": "已 sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "已 sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "封禁"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod 工具"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod 工具（无权限）"
-  },
   "content_card_note_title": {
     "message": "备注"
   },
-  "content_card_note_placeholder": {
-    "message": "私人备注 — 仅你可见"
-  },
-  "content_card_history_title": {
-    "message": "消息记录"
-  },
   "content_card_loading": {
     "message": "加载中…"
-  },
-  "content_card_history_empty": {
-    "message": "暂无消息记录"
-  },
-  "content_card_history_empty_channel": {
-    "message": "$CHANNEL$ 中没有该用户的消息",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "查看资料"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "取消关注"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch 资料"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "正在创建 clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ 已复制 url"
-  },
-  "content_card_clip_created": {
-    "message": "✓ 已创建 clip"
   },
   "content_card_copy_name": {
     "message": "复制名称"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "联盟主播"
-  },
-  "content_card_live": {
-    "message": "直播中 $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch 认证"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick 认证"
-  },
-  "content_view_on_heatsync": {
-    "message": "在 heatsync 查看"
   },
   "mc_tab_feed": {
     "message": "动态"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "无法取消屏蔽 — 请重试"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "屏蔽未保存到你的账号 — 在其他设备上会不同"
-  },
   "mc_emote_blocked_count": {
     "message": "已屏蔽 $COUNT$ 个 emote",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "取消屏蔽未保存到你的账号 — 在其他设备上会不同"
   },
   "mc_emote_unblocked": {
     "message": "已取消屏蔽：$NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "已复制 emoji"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers 失败：$ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "仅粉丝模式已关闭"
-  },
-  "mc_input_followers_on": {
-    "message": "仅粉丝模式已开启"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "仅粉丝模式已开启（$MINS$ 分钟）",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers 仅限 twitch — 请打开 twitch 频道"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube：$TARGET$ 没有最近的消息 — 请用消息菜单",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ 尚未接入 — 目前只有 /followers 可用",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "用法：/followers [mins] | off"
   },
   "mc_input_usage_mute": {
     "message": "用法：/mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "已移除 $USER$ 的 mod",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch 没有 $LABEL$ 的 api — 仅限 kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "投票、预测、bits"
-  },
-  "slash_help_full_list": {
-    "message": "完整列表 -> /commands"
-  },
-  "slash_help_label": {
-    "message": "斜杠命令"
   },
   "mc_lock_banned": {
     "message": "你已被此频道封禁"

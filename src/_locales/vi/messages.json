@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "thử lại"
   },
-  "common_user_not_found": {
-    "message": "không tìm thấy người dùng"
-  },
   "btn_recent": {
     "message": "gần đây"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "không theo dõi được — thử lại nhé"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "không bỏ theo dõi được — thử lại nhé"
-  },
-  "content_toast_no_chat_input": {
-    "message": "mở chat twitch để dùng thao tác mod"
-  },
   "content_toast_blocked": {
     "message": "đã chặn $NAME$",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "đang theo dõi bạn"
-  },
-  "content_card_subs_to_you": {
-    "message": "sub bạn"
-  },
-  "content_card_you_follow": {
-    "message": "bạn đang theo dõi"
-  },
-  "content_card_you_sub": {
-    "message": "bạn đã sub"
-  },
-  "content_card_you_sub_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "sub $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "theo dõi $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "được theo dõi bởi $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "đang theo dõi $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ người theo dõi",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "đối tác"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "sub chéo"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "cấm"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "công cụ mod"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "công cụ mod (không có quyền)"
-  },
   "content_card_note_title": {
     "message": "ghi chú"
   },
-  "content_card_note_placeholder": {
-    "message": "ghi chú riêng — chỉ mình bạn thấy"
-  },
-  "content_card_history_title": {
-    "message": "lịch sử tin nhắn"
-  },
   "content_card_loading": {
     "message": "đang tải…"
-  },
-  "content_card_history_empty": {
-    "message": "chưa có lịch sử tin nhắn"
-  },
-  "content_card_history_empty_channel": {
-    "message": "không có tin nhắn nào của người này trong $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "xem hồ sơ"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "bỏ theo dõi"
   },
-  "content_card_twitch_profile": {
-    "message": "hồ sơ twitch"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "đang tạo clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ đã sao chép url"
-  },
-  "content_card_clip_created": {
-    "message": "✓ đã tạo clip"
   },
   "content_card_copy_name": {
     "message": "sao chép tên"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "affiliate"
-  },
-  "content_card_live": {
-    "message": "TRỰC TIẾP $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch xác minh"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick xác minh"
-  },
-  "content_view_on_heatsync": {
-    "message": "xem trên heatsync"
   },
   "mc_tab_feed": {
     "message": "bảng tin"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "không bỏ chặn được — thử lại nhé"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "chặn chưa được lưu vào tài khoản — sẽ khác trên thiết bị khác"
-  },
   "mc_emote_blocked_count": {
     "message": "đã chặn $COUNT$ emote",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "bỏ chặn chưa được lưu vào tài khoản — sẽ khác trên thiết bị khác"
   },
   "mc_emote_unblocked": {
     "message": "đã bỏ chặn: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "đã sao chép emoji"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers thất bại: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "chế độ chỉ người theo dõi: tắt"
-  },
-  "mc_input_followers_on": {
-    "message": "chế độ chỉ người theo dõi: bật"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "chế độ chỉ người theo dõi: bật ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers chỉ dùng cho twitch — mở một kênh twitch"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: không có tin nhắn gần đây của $TARGET$ — dùng menu tin nhắn",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ chưa được nối — hiện chỉ /followers dùng được",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "cách dùng: /followers [mins] | off"
   },
   "mc_input_usage_mute": {
     "message": "cách dùng: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "đã gỡ mod của $USER$",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch không có api cho $LABEL$ — chỉ kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "bình chọn, dự đoán, bits"
-  },
-  "slash_help_full_list": {
-    "message": "danh sách đầy đủ -> /commands"
-  },
-  "slash_help_label": {
-    "message": "lệnh slash"
   },
   "mc_lock_banned": {
     "message": "bạn bị cấm khỏi kênh này"

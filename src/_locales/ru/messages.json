@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "повторить"
   },
-  "common_user_not_found": {
-    "message": "пользователь не найден"
-  },
   "btn_recent": {
     "message": "недавние"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "не удалось подписаться — попробуй ещё раз"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "не удалось отписаться — попробуй ещё раз"
-  },
-  "content_toast_no_chat_input": {
-    "message": "открой чат twitch, чтобы использовать действия модера"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ заблокирован",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "подписан на вас"
-  },
-  "content_card_subs_to_you": {
-    "message": "саб у вас"
-  },
-  "content_card_you_follow": {
-    "message": "вы подписаны"
-  },
-  "content_card_you_sub": {
-    "message": "вы саб"
-  },
-  "content_card_you_sub_tier": {
-    "message": "вы саб T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "саб $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "подписан на $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "подписан $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "подписок $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ подписчиков",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "партнёр"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "взаимный sub"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "бан"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "инструменты mod"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "инструменты mod (нет прав)"
-  },
   "content_card_note_title": {
     "message": "заметка"
   },
-  "content_card_note_placeholder": {
-    "message": "личная заметка — видишь только ты"
-  },
-  "content_card_history_title": {
-    "message": "история сообщений"
-  },
   "content_card_loading": {
     "message": "загрузка…"
-  },
-  "content_card_history_empty": {
-    "message": "нет истории сообщений"
-  },
-  "content_card_history_empty_channel": {
-    "message": "у этого юзера нет сообщений в $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "открыть профиль"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "отписаться"
   },
-  "content_card_twitch_profile": {
-    "message": "профиль twitch"
-  },
   "content_card_clip": {
     "message": "клип"
   },
   "content_card_clipping": {
     "message": "создаю clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ ссылка скопирована"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip создан"
   },
   "content_card_copy_name": {
     "message": "копировать ник"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "партнёрка"
-  },
-  "content_card_live": {
-    "message": "В ЭФИРЕ $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch верифицирован"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick верифицирован"
-  },
-  "content_view_on_heatsync": {
-    "message": "посмотреть на heatsync"
   },
   "mc_tab_feed": {
     "message": "лента"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "не удалось разблокировать — попробуй ещё раз"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "блок не сохранён в аккаунте — на других устройствах будет иначе"
-  },
   "mc_emote_blocked_count": {
     "message": "заблокировано emotes: $COUNT$",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "разблок не сохранён в аккаунте — на других устройствах будет иначе"
   },
   "mc_emote_unblocked": {
     "message": "разблокировано: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "эмодзи скопирован"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers не удалось: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "только для подписчиков: выкл"
-  },
-  "mc_input_followers_on": {
-    "message": "только для подписчиков: вкл"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "только для подписчиков: вкл ($MINS$ мин)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers только для twitch — открой канал twitch"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: нет недавних сообщений от $TARGET$ — используй меню сообщения",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ пока не подключена — сейчас работает только /followers",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "как пользоваться: /followers [мин] | off"
   },
   "mc_input_usage_mute": {
     "message": "как пользоваться: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "у $USER$ снят mod",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "у twitch нет api для $LABEL$ — только kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "опросы, прогнозы, битсы"
-  },
-  "slash_help_full_list": {
-    "message": "полный список -> /commands"
-  },
-  "slash_help_label": {
-    "message": "слэш-команды"
   },
   "mc_lock_banned": {
     "message": "ты забанен на этом канале"

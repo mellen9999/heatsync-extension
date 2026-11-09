@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "ξανά"
   },
-  "common_user_not_found": {
-    "message": "ο χρήστης δεν βρέθηκε"
-  },
   "btn_recent": {
     "message": "πρόσφατα"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "δεν έγινε follow — δοκίμασε ξανά"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "δεν έγινε unfollow — δοκίμασε ξανά"
-  },
-  "content_toast_no_chat_input": {
-    "message": "άνοιξε το chat του twitch για ενέργειες mod"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ μπλοκαρίστηκε",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "σε ακολουθεί"
-  },
-  "content_card_subs_to_you": {
-    "message": "subbar εσένα"
-  },
-  "content_card_you_follow": {
-    "message": "ακολουθείς"
-  },
-  "content_card_you_sub": {
-    "message": "είσαι sub"
-  },
-  "content_card_you_sub_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "sub στο $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "ακολουθεί $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "τον ακολουθεί $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "ακολουθεί $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ ακόλουθοι",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "συνεργάτης"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "αμοιβαίο sub"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "ban"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "εργαλεία mod"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "εργαλεία mod (χωρίς άδεια)"
-  },
   "content_card_note_title": {
     "message": "σημείωση"
   },
-  "content_card_note_placeholder": {
-    "message": "ιδιωτική σημείωση — τη βλέπεις μόνο εσύ"
-  },
-  "content_card_history_title": {
-    "message": "ιστορικό μηνυμάτων"
-  },
   "content_card_loading": {
     "message": "φόρτωση…"
-  },
-  "content_card_history_empty": {
-    "message": "κανένα ιστορικό μηνυμάτων"
-  },
-  "content_card_history_empty_channel": {
-    "message": "κανένα μήνυμα από αυτόν τον χρήστη στο $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "προβολή προφίλ"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "άρση follow"
   },
-  "content_card_twitch_profile": {
-    "message": "προφίλ twitch"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "δημιουργία clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ το url αντιγράφηκε"
-  },
-  "content_card_clip_created": {
-    "message": "✓ το clip δημιουργήθηκε"
   },
   "content_card_copy_name": {
     "message": "αντιγραφή ονόματος"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "affiliate"
-  },
-  "content_card_live": {
-    "message": "ΖΩΝΤΑΝΑ $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch επιβεβαιωμένος"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick επιβεβαιωμένος"
-  },
-  "content_view_on_heatsync": {
-    "message": "δες στο heatsync"
   },
   "mc_tab_feed": {
     "message": "ροή"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "δεν έγινε άρση αποκλεισμού — δοκίμασε ξανά"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "ο αποκλεισμός δεν αποθηκεύτηκε στον λογαριασμό σου — θα διαφέρει σε άλλες συσκευές"
-  },
   "mc_emote_blocked_count": {
     "message": "αποκλείστηκαν $COUNT$ emotes",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "η άρση αποκλεισμού δεν αποθηκεύτηκε στον λογαριασμό σου — θα διαφέρει σε άλλες συσκευές"
   },
   "mc_emote_unblocked": {
     "message": "άρση ο αποκλεισμός: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "το emoji αντιγράφηκε"
   },
-  "mc_input_followers_failed": {
-    "message": "το /followers απέτυχε: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "μόνο ακόλουθοι ανενεργό"
-  },
-  "mc_input_followers_on": {
-    "message": "μόνο ακόλουθοι ενεργό"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "μόνο ακόλουθοι ενεργό ($MINS$λ)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "το /followers υπάρχει μόνο στο twitch — άνοιξε κανάλι twitch"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: κανένα πρόσφατο μήνυμα από $TARGET$ — χρησιμοποίησε το μενού του μηνύματος",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "το /$CMD$ δεν έχει συνδεθεί ακόμα — προς το παρόν δουλεύει μόνο το /followers",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "χρήση: /followers [λεπτά] | off"
   },
   "mc_input_usage_mute": {
     "message": "χρήση: /mute <χρήστης>"
@@ -2146,14 +1972,6 @@
     "message": "αφαιρέθηκε το mod από τον/την $USER$",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "το twitch δεν έχει api για $LABEL$ — μόνο kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "δημοσκοπήσεις, προβλέψεις, bits"
-  },
-  "slash_help_full_list": {
-    "message": "πλήρης λίστα -> /commands"
-  },
-  "slash_help_label": {
-    "message": "εντολές slash"
   },
   "mc_lock_banned": {
     "message": "έχεις αποκλειστεί από αυτό το κανάλι"

@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "tekrar dene"
   },
-  "common_user_not_found": {
-    "message": "kullanıcı bulunamadı"
-  },
   "btn_recent": {
     "message": "son"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "takip edilemedi — tekrar dene"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "takip bırakılamadı — tekrar dene"
-  },
-  "content_toast_no_chat_input": {
-    "message": "mod işlemleri için twitch sohbetini aç"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ engellendi",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "seni takip ediyor"
-  },
-  "content_card_subs_to_you": {
-    "message": "sana sub"
-  },
-  "content_card_you_follow": {
-    "message": "takip ediyorsun"
-  },
-  "content_card_you_sub": {
-    "message": "sub'sun"
-  },
-  "content_card_you_sub_tier": {
-    "message": "T$TIER$ sub'sun",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "$CHANNEL$ kanalına sub $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "$CHANNEL$ takip ediliyor $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "$CHANNEL$ tarafından takip ediliyor",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "$COUNT$ takip edilen",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ takipçi",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "partner"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "karşılıklı sub"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "banla"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod araçları"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod araçları (yetki yok)"
-  },
   "content_card_note_title": {
     "message": "not"
   },
-  "content_card_note_placeholder": {
-    "message": "özel not — sadece sen görürsün"
-  },
-  "content_card_history_title": {
-    "message": "mesaj geçmişi"
-  },
   "content_card_loading": {
     "message": "yükleniyor…"
-  },
-  "content_card_history_empty": {
-    "message": "mesaj geçmişi yok"
-  },
-  "content_card_history_empty_channel": {
-    "message": "bu kullanıcıdan $CHANNEL$ içinde mesaj yok",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "profili gör"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "takibi bırak"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch profili"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "clip oluşturuluyor…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url kopyalandı"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip oluşturuldu"
   },
   "content_card_copy_name": {
     "message": "adı kopyala"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "bağlı yayıncı"
-  },
-  "content_card_live": {
-    "message": "CANLI $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch doğrulandı"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick doğrulandı"
-  },
-  "content_view_on_heatsync": {
-    "message": "heatsync'te görüntüle"
   },
   "mc_tab_feed": {
     "message": "akış"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "engel kaldırılamadı — tekrar dene"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "engel hesabına kaydedilmedi — diğer cihazlarda farklı olur"
-  },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emotes engellendi",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "engel kaldırma hesabına kaydedilmedi — diğer cihazlarda farklı olur"
   },
   "mc_emote_unblocked": {
     "message": "engeli kaldırıldı: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "emoji kopyalandı"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers başarısız: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "sadece takipçiler: kapalı"
-  },
-  "mc_input_followers_on": {
-    "message": "sadece takipçiler: açık"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "sadece takipçiler: açık ($MINS$dk)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers sadece twitch'te var — bir twitch kanalı aç"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: $TARGET$ kullanıcısından yakın zamanda mesaj yok — mesaj menüsünü kullan",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ henüz bağlı değil — şimdilik sadece /followers çalışıyor",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "kullanım: /followers [mins] | off"
   },
   "mc_input_usage_mute": {
     "message": "kullanım: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "$USER$ mod'luğu alındı",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch'te $LABEL$ için api yok — sadece kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "anketler, tahminler, bits"
-  },
-  "slash_help_full_list": {
-    "message": "tam liste -> /commands"
-  },
-  "slash_help_label": {
-    "message": "slash komutları"
   },
   "mc_lock_banned": {
     "message": "bu kanaldan yasaklandın"

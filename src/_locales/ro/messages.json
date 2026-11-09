@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "reîncearcă"
   },
-  "common_user_not_found": {
-    "message": "utilizator negăsit"
-  },
   "btn_recent": {
     "message": "recente"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "nu s-a putut urmări — încearcă din nou"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "nu s-a putut anula urmărirea — încearcă din nou"
-  },
-  "content_toast_no_chat_input": {
-    "message": "deschide chatul twitch ca să folosești acțiunile de mod"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ blocat",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "te urmărește"
-  },
-  "content_card_subs_to_you": {
-    "message": "subed la tine"
-  },
-  "content_card_you_follow": {
-    "message": "îl urmărești"
-  },
-  "content_card_you_sub": {
-    "message": "ești subed"
-  },
-  "content_card_you_sub_tier": {
-    "message": "subed T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "subed la $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "urmărește $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "urmărit de $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "urmărește $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ urmăritori",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "partener"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "sub reciproc"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "ban"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "unelte de mod"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "unelte de mod (fără permisiune)"
-  },
   "content_card_note_title": {
     "message": "notă"
   },
-  "content_card_note_placeholder": {
-    "message": "notă privată — doar tu o vezi"
-  },
-  "content_card_history_title": {
-    "message": "istoric mesaje"
-  },
   "content_card_loading": {
     "message": "se încarcă…"
-  },
-  "content_card_history_empty": {
-    "message": "fără istoric de mesaje"
-  },
-  "content_card_history_empty_channel": {
-    "message": "niciun mesaj de la acest utilizator în $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "vezi profilul"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "nu mai urmări"
   },
-  "content_card_twitch_profile": {
-    "message": "profil twitch"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "se face clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url copiat"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip creat"
   },
   "content_card_copy_name": {
     "message": "copiază numele"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "afiliat"
-  },
-  "content_card_live": {
-    "message": "LIVE $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch verificat"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick verificat"
-  },
-  "content_view_on_heatsync": {
-    "message": "vezi pe heatsync"
   },
   "mc_tab_feed": {
     "message": "flux"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "nu s-a putut debloca — încearcă din nou"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "blocarea nu s-a salvat în contul tău — va diferi pe alte dispozitive"
-  },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emote-uri blocate",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "deblocarea nu s-a salvat în contul tău — va diferi pe alte dispozitive"
   },
   "mc_emote_unblocked": {
     "message": "deblocat: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "emoji copiat"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers a eșuat: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "doar urmăritori oprit"
-  },
-  "mc_input_followers_on": {
-    "message": "doar urmăritori pornit"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "doar urmăritori pornit ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers există doar pe twitch — deschide un canal twitch"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: niciun mesaj recent de la $TARGET$ — folosește meniul mesajului",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ nu e conectat încă — deocamdată merge doar /followers",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "folosire: /followers [mins] | off"
   },
   "mc_input_usage_mute": {
     "message": "folosire: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "mod scos de la $USER$",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch nu are api pentru $LABEL$ — doar kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "sondaje, predicții, bits"
-  },
-  "slash_help_full_list": {
-    "message": "lista completă -> /commands"
-  },
-  "slash_help_label": {
-    "message": "comenzi slash"
   },
   "mc_lock_banned": {
     "message": "ești banat de pe acest canal"

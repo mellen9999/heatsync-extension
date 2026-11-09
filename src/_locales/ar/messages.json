@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "إعادة المحاولة"
   },
-  "common_user_not_found": {
-    "message": "المستخدم غير موجود"
-  },
   "btn_recent": {
     "message": "الأخيرة"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "تعذّرت المتابعة — حاول مرة أخرى"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "تعذّر إلغاء المتابعة — حاول مرة أخرى"
-  },
-  "content_toast_no_chat_input": {
-    "message": "افتح دردشة twitch لاستخدام إجراءات mod"
-  },
   "content_toast_blocked": {
     "message": "تم حظر $NAME$",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "يتابعك"
-  },
-  "content_card_subs_to_you": {
-    "message": "مشترك معك"
-  },
-  "content_card_you_follow": {
-    "message": "تتابع"
-  },
-  "content_card_you_sub": {
-    "message": "أنت مشترك"
-  },
-  "content_card_you_sub_tier": {
-    "message": "مشترك T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "اشتراك بـ $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "يتابع $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "يتابعه $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "يتابع $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ متابع",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "شريك"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "sub متبادل"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "حظر"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "أدوات mod"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "أدوات mod (بلا صلاحية)"
-  },
   "content_card_note_title": {
     "message": "ملاحظة"
   },
-  "content_card_note_placeholder": {
-    "message": "ملاحظة خاصة — أنت فقط تراها"
-  },
-  "content_card_history_title": {
-    "message": "سجل الرسائل"
-  },
   "content_card_loading": {
     "message": "جارٍ التحميل…"
-  },
-  "content_card_history_empty": {
-    "message": "لا سجل رسائل"
-  },
-  "content_card_history_empty_channel": {
-    "message": "لا رسائل من هذا المستخدم في $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "عرض الملف"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "إلغاء المتابعة"
   },
-  "content_card_twitch_profile": {
-    "message": "ملف twitch"
-  },
   "content_card_clip": {
     "message": "مقطع"
   },
   "content_card_clipping": {
     "message": "جارٍ إنشاء clip…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ تم نسخ url"
-  },
-  "content_card_clip_created": {
-    "message": "✓ تم إنشاء clip"
   },
   "content_card_copy_name": {
     "message": "نسخ الاسم"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "أفلييت"
-  },
-  "content_card_live": {
-    "message": "مباشر $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "موثّق على Twitch"
-  },
-  "content_card_kick_verified": {
-    "message": "موثّق على Kick"
-  },
-  "content_view_on_heatsync": {
-    "message": "عرض على heatsync"
   },
   "mc_tab_feed": {
     "message": "موجز"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "تعذّر رفع الحظر — حاول مرة أخرى"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "لم يُحفظ الحظر في حسابك — سيختلف على الأجهزة الأخرى"
-  },
   "mc_emote_blocked_count": {
     "message": "تم حظر $COUNT$ emotes",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "لم يُحفظ رفع الحظر في حسابك — سيختلف على الأجهزة الأخرى"
   },
   "mc_emote_unblocked": {
     "message": "رُفع الحظر: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "تم نسخ emoji"
   },
-  "mc_input_followers_failed": {
-    "message": "فشل /followers: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "followers-only متوقف"
-  },
-  "mc_input_followers_on": {
-    "message": "followers-only مفعّل"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "followers-only مفعّل ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers لـ twitch فقط — افتح قناة twitch"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: لا رسالة حديثة من $TARGET$ — استخدم قائمة الرسالة",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ غير موصول بعد — /followers فقط يعمل حاليًا",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "الاستخدام: /followers [دقائق] | off"
   },
   "mc_input_usage_mute": {
     "message": "الاستخدام: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "أُزيلت mod من $USER$",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch لا يوفّر api لـ $LABEL$ — kick فقط",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "استطلاعات، توقعات، بتس"
-  },
-  "slash_help_full_list": {
-    "message": "القائمة الكاملة -> /commands"
-  },
-  "slash_help_label": {
-    "message": "أوامر slash"
   },
   "mc_lock_banned": {
     "message": "أنت محظور من هذه القناة"

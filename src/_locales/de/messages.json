@@ -17,9 +17,6 @@
   "common_retry": {
     "message": "erneut versuchen"
   },
-  "common_user_not_found": {
-    "message": "nutzer nicht gefunden"
-  },
   "btn_recent": {
     "message": "kürzlich"
   },
@@ -237,15 +234,6 @@
       }
     }
   },
-  "content_toast_follow_failed": {
-    "message": "folgen fehlgeschlagen — versuch's nochmal"
-  },
-  "content_toast_unfollow_failed": {
-    "message": "entfolgen fehlgeschlagen — versuch's nochmal"
-  },
-  "content_toast_no_chat_input": {
-    "message": "öffne den twitch-Chat, um mod-Aktionen zu nutzen"
-  },
   "content_toast_blocked": {
     "message": "$NAME$ blockiert",
     "placeholders": {
@@ -270,72 +258,6 @@
       }
     }
   },
-  "content_card_follows_you": {
-    "message": "folgt dir"
-  },
-  "content_card_subs_to_you": {
-    "message": "ist bei dir sub"
-  },
-  "content_card_you_follow": {
-    "message": "du folgst"
-  },
-  "content_card_you_sub": {
-    "message": "du bist sub"
-  },
-  "content_card_you_sub_tier": {
-    "message": "du bist sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_subbed": {
-    "message": "sub bei $CHANNEL$ $TENURE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "tenure": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_following": {
-    "message": "folgt $CHANNEL$ $AGE$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      },
-      "age": {
-        "content": "$2"
-      }
-    }
-  },
-  "content_card_followed_by": {
-    "message": "gefolgt von $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_following_count": {
-    "message": "folgt $COUNT$",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_followers": {
-    "message": "$COUNT$ Follower",
-    "placeholders": {
-      "count": {
-        "content": "$1"
-      }
-    }
-  },
   "content_card_partner": {
     "message": "Partner"
   },
@@ -344,17 +266,6 @@
   },
   "content_card_mutual_sub": {
     "message": "gegenseitiger sub"
-  },
-  "content_card_sub_badge": {
-    "message": "sub"
-  },
-  "content_card_sub_badge_tier": {
-    "message": "sub T$TIER$",
-    "placeholders": {
-      "tier": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_ban": {
     "message": "bannen"
@@ -380,31 +291,11 @@
   "content_card_mod_tools": {
     "message": "mod-Tools"
   },
-  "content_card_mod_tools_no_perm": {
-    "message": "mod-Tools (keine Berechtigung)"
-  },
   "content_card_note_title": {
     "message": "notiz"
   },
-  "content_card_note_placeholder": {
-    "message": "private Notiz — nur du siehst sie"
-  },
-  "content_card_history_title": {
-    "message": "nachrichtenverlauf"
-  },
   "content_card_loading": {
     "message": "lädt…"
-  },
-  "content_card_history_empty": {
-    "message": "kein Nachrichtenverlauf"
-  },
-  "content_card_history_empty_channel": {
-    "message": "keine Nachrichten dieses Users in $CHANNEL$",
-    "placeholders": {
-      "channel": {
-        "content": "$1"
-      }
-    }
   },
   "content_card_view_profile": {
     "message": "profil ansehen"
@@ -415,20 +306,11 @@
   "content_card_unfollow": {
     "message": "entfolgen"
   },
-  "content_card_twitch_profile": {
-    "message": "twitch-Profil"
-  },
   "content_card_clip": {
     "message": "clip"
   },
   "content_card_clipping": {
     "message": "clippe…"
-  },
-  "content_card_clip_url_copied": {
-    "message": "✓ url kopiert"
-  },
-  "content_card_clip_created": {
-    "message": "✓ clip erstellt"
   },
   "content_card_copy_name": {
     "message": "namen kopieren"
@@ -446,23 +328,6 @@
   },
   "content_card_affiliate": {
     "message": "Affiliate"
-  },
-  "content_card_live": {
-    "message": "LIVE $VIEWERS$",
-    "placeholders": {
-      "viewers": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_card_twitch_verified": {
-    "message": "Twitch verifiziert"
-  },
-  "content_card_kick_verified": {
-    "message": "Kick verifiziert"
-  },
-  "content_view_on_heatsync": {
-    "message": "auf heatsync ansehen"
   },
   "mc_tab_feed": {
     "message": "feed"
@@ -1585,9 +1450,6 @@
   "mc_emote_unblock_failed": {
     "message": "entsperren fehlgeschlagen — versuch's nochmal"
   },
-  "mc_emote_block_sync_failed": {
-    "message": "block nicht in deinem Account gespeichert — auf anderen Geräten anders"
-  },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ Emotes blockiert",
     "placeholders": {
@@ -1635,9 +1497,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_emote_unblock_sync_failed": {
-    "message": "entsperren nicht in deinem Account gespeichert — auf anderen Geräten anders"
   },
   "mc_emote_unblocked": {
     "message": "entsperrt: $NAME$",
@@ -1694,28 +1553,6 @@
   "mc_input_emoji_copied": {
     "message": "emoji kopiert"
   },
-  "mc_input_followers_failed": {
-    "message": "/followers fehlgeschlagen: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_followers_off": {
-    "message": "followers-only aus"
-  },
-  "mc_input_followers_on": {
-    "message": "followers-only an"
-  },
-  "mc_input_followers_on_mins": {
-    "message": "followers-only an ($MINS$m)",
-    "placeholders": {
-      "mins": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_input_followers_twitch_only": {
     "message": "/followers gibt's nur auf twitch — öffne einen twitch-Kanal"
   },
@@ -1745,14 +1582,6 @@
     "message": "youtube: keine aktuelle Nachricht von $TARGET$ — nutz das Nachrichtenmenü",
     "placeholders": {
       "target": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_not_wired": {
-    "message": "/$CMD$ ist noch nicht verdrahtet — vorerst geht nur /followers",
-    "placeholders": {
-      "cmd": {
         "content": "$1"
       }
     }
@@ -1918,9 +1747,6 @@
         "content": "$1"
       }
     }
-  },
-  "mc_input_usage_followers": {
-    "message": "nutzung: /followers [min] | off"
   },
   "mc_input_usage_mute": {
     "message": "nutzung: /mute <user>"
@@ -2146,14 +1972,6 @@
     "message": "mod von $USER$ entfernt",
     "placeholders": {
       "user": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_input_mode_twitch_unsupported": {
-    "message": "twitch hat keine API für $LABEL$ — nur kick",
-    "placeholders": {
-      "label": {
         "content": "$1"
       }
     }
@@ -6560,12 +6378,6 @@
   },
   "slash_sec_events": {
     "message": "umfragen, predictions, bits"
-  },
-  "slash_help_full_list": {
-    "message": "vollständige liste -> /commands"
-  },
-  "slash_help_label": {
-    "message": "slash-befehle"
   },
   "mc_lock_banned": {
     "message": "du bist in diesem kanal gebannt"

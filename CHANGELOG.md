@@ -125,6 +125,35 @@
 - **youtube mod actions** — delete, timeout and ban work from the overlay the same way.
 - **signed in** — unlinking an account no longer shows you as logged out.
 
+## [1.7.114] — 2026-11-01
+
+### added
+- **kick events** — kick raids, hosts and polls show as stream rows in chat; a kick host reads as the raider raiding in.
+- **import follows** — fill my cockpit also imports your kick follows.
+- **unlinked account notice** — sending an emote while your chat account isn't linked to your heatsync account says so, once per emote per session.
+- **reddit links** — a reddit post link with no host still links to the post and embeds.
+- **paint hover** — hovering a painted name chips every copy of it.
+
+### changed
+- **event rows** — celebration rows ring the whole row instead of a left rail; mod notices keep the rail.
+- **sign-in** — sign-in links open the twitch, kick and youtube chooser, not twitch oauth.
+- **names** — names clear 3:1 contrast on the zebra stripe.
+- **chat logs** — follow the tab's platform; youtube gets the right-click entry and @handle rooms.
+
+### fixed
+- **accounts without twitch** — your own identity, mentions, send paths, login prompts and slash commands work per platform for kick-only and youtube-only accounts.
+- **replies** — a twitch reply keeps its reply bar when the parent's display name is missing; history replay keeps reply context; reply ids and kick numeric ids no longer cross platforms.
+- **live dots** — went-live rows keep their platform (link, card, tab); dots are kept per platform; a not-live answer clears a youtube-only tab's dot.
+- **kick** — a delete dims its row, and the purge action is hidden on kick.
+- **composer** — the over-limit counter uses the tightest cap among your send targets (youtube 200).
+- **filters and notes** — filter rules match youtube @handles and list badges; notes, card lines and mod targets are kept per platform and name.
+- **paints** — 7tv paints for youtube-only and kick-only chatters show and survive a re-render; painted names anchor when their animation starts; hovering one no longer stalls the page with scene paints.
+- **tabs** — unread counts only show on channel tabs; a twitch-only tab picks up its new youtube or kick leg at once.
+- **emotes** — a stale sender set no longer wipes an emote you just added; native youtube chat merges only its own channel's emotes.
+- **commands** — `/status` reads kick channels from kick; typed mod commands on the live tab target the page's channel.
+- **hover** — hovering the name on a notice row inverts only the name.
+- **game change** — a game change with no known previous game says switched to, not now playing.
+
 ## [1.7.113] — 2026-10-29
 
 ### fixed
@@ -140,6 +169,36 @@
 - **steady rows** — emotes loading in, a late emote list, badge and paint updates and a restored tab no longer push the chat up a line or make it wobble.
 - **broken emote images** — a failed emote retries without collapsing its row to text and jumping back.
 - **hover** — hovering an emote lights only the copies on screen, and leaving it repaints far less, so hovers answer faster.
+
+## [1.7.111] — 2026-10-29
+
+### fixed
+- **emote stacks** — hovering a stack previews it at full size, and the first hover is no longer mis-anchored while its images load.
+- **new pill** — holding a hover no longer raises the "N new" button.
+
+## [1.7.110] — 2026-10-28
+
+### added
+- **tab menu** — right-click a channel tab to show or hide a platform and to pick where you send, as green and red buttons like heatsync.org; every channel tab has them, not only multi-platform ones.
+- **player volume** — each twitch, kick and youtube channel remembers the volume you last set, in embeds too; an optional starting volume for new channels, with a switch per platform.
+- **replies** — `/re` replies to the last `[OP]` in chat (`/opr` still works); `/r` is whispers only.
+- **settings** — basic shows every everyday toggle: 45 instead of 16.
+- **held media** — giphy, tenor and imgur embeds are checked by heatsync first; flagged media, and flagged feed and thread posts, sit behind your own toggles as a dashed-cyan line with a show button; a revealed post gets a hide button.
+- **feed pictures** — the full-size picture closes on click or escape.
+
+### changed
+- **op and re rows** — in chat only the `>>id`, links, tags and names are clickable; the `[img]` tag shows its peek on hover only.
+- **mature emotes** — weapons, drugs and hate emotes start hidden, like sexual and gore and like the site; the page default button turns the mature switches back off.
+- **settings look** — buttons rest as a dim fill, scrollbars and slider tracks are visible on the black panel, and the volume switches say what they do.
+- **cards** — hovering a clickable card whitens its banner too.
+
+### fixed
+- **your own emotes** — your lines keep an inventory emote that was yours when you sent them, through remove, block and re-add; a line sent just before you add an emote stays text.
+- **emotes** — a channel's 7tv, bttv and ffz emotes carry heatsync's category flags, so the weapons, drugs, gore and hate toggles hide them; a censored emote previews its category box; a typed emote name plus space leaves the caret after the space; the source chip keeps its colours after a removal.
+- **went live** — a followed channel going live gets its inline line, kick and youtube included.
+- **tabs** — `[OP]` and `[RE]` rows copied into every channel no longer make a tab unread on reload; the mentions and whispers tabs are never plain-unread white.
+- **speed** — a tab restored from cache shows its newest 100 rows first; boot reads mentions and youtube history alongside settings; hovering a name or emote only touches the copies on screen.
+- **picker** — the sticky section header sits above the emotes scrolling under it.
 
 ## [1.7.108] — 2026-10-26
 
@@ -205,6 +264,35 @@
 ### added
 - **self-checks** — the pane logs and repairs a stalled repaint, a desynced row index or a silent channel, and records long frames, so a freeze shows up in diagnostics.
 
+## [1.7.102] — 2026-10-24
+
+### added
+- **video player** — a ↗ in the video controls opens it on the real site, where a bot wall can clear; the video reloads itself after a sign-in detour, and ↻ reloads it by hand.
+
+### fixed
+- **youtube embeds** — youtube cards play from the full youtube host, so signing in changes something.
+- **video player** — the filled player survives chat redraws (in a popout it opened and vanished); a parked small player follows its card and keeps its controls inside it.
+- **logs** — the extension's logs panel draws 7tv, bttv and ffz emotes as emotes; log-line emotes stay hoverable and sit above the next row.
+- **page lag** — emote-stack highlights and card banners no longer make the page restyle on every new row (about 170ms down to 4ms).
+
+## [1.7.101] — 2026-10-23
+
+### added
+- **feed pictures** — click a picture in the feed or a thread to open it full size in the chat area; ← back returns.
+- **live logs** — new messages from the person whose logs are open appear at the top live.
+- **ffz first** — ffz is the default emote provider and leads tab-complete and the picker; the picker shows every upload of an exactly typed name.
+
+### changed
+- **cards** — no × on the profile card or logs view, the ← back tab is the way out; the banner backs the card's top section; channel tags in logs go dim.
+- **7tv picker** — loads 24 at a time and reads the next page ahead, so load more is instant; a failed tile retries once through heatsync; search uses webp.
+
+### fixed
+- **paints** — unhovering resyncs every copy of a name in one pass; a backstop sweep re-anchors drifted names so author, mention and history agree.
+- **twitch rows without an id** — they borrow the id from the same chatter's earlier rows, so paint, cosmetics and personal emotes apply.
+- **cards and panels** — closing one while scrolled up repaints chat; ← back closes on press; switching tabs with a card open no longer strands its rows; ← back closes a card or logs opened over a filled video first.
+- **emote hover** — emotes in logs lines get the hover preview; in card logs the hover highlights the emote, not the whole card.
+- **card lookup** — a failed lookup is no longer remembered for 60s and reads as a retryable hiccup.
+
 ## [1.7.100] — 2026-10-23
 
 ### fixed
@@ -224,6 +312,20 @@
 - **profile logs** — emotes render in logged lines, sit on the text line at 24px, and rows no longer crowd.
 - **profile tabs** — the × sits on top and the tab row spans the full width, like chat tabs.
 
+## [1.7.97] — 2026-10-22
+
+### added
+- **video in the chat pane** — click a video in chat to play it filling the chat pane; ← back (or esc) returns to chat and pauses it.
+- **back tab** — any pane takeover (profile, panels, logs, predictions, video) turns the active tab into ← back.
+
+### changed
+- **welcome** — just sign in and close, with one line on why; the import step is gone and the open-twitch button makes no network call.
+- **links** — blue, not white.
+- **hover** — rows, labels and toasts no longer light up white on hover, only buttons do.
+
+### fixed
+- **chat width** — a cache-bypassing reload no longer leaves chat 0 wide and off screen.
+
 ## [1.7.96] — 2026-10-21
 
 ### added
@@ -233,6 +335,15 @@
 ### fixed
 - **removed emotes** — a removed emote leaves the hover label and stays gone, even if a slow inventory refresh lands after.
 - **feed** — an upvote shows in both the thread and feed copy, and heat refreshes once after the server recalculates.
+
+## [1.7.95] — 2026-10-19
+
+### added
+- **inline rows** — `[OP]` and `[RE]` rows in chat survive an extension reload and come back at their timestamp.
+
+### fixed
+- **feed** — an upvote shows in both the thread and feed copy, and heat refreshes once after the server recalculates; the reply count is a readout, `>>id` is the only way into a thread.
+- **tab complete** — cycling off a wide emote drops its pinned width, so narrower emotes don't sit in blank space.
 
 ## [1.7.94] — 2026-10-18
 
@@ -250,6 +361,38 @@
 ### changed
 - **inventory emotes** — right-clicking an emote in your inventory removes it; blocking moved to the shift menu.
 - **import** — "fill my cockpit" reads "import twitch follows" in every language.
+
+## [1.7.93] — 2026-10-17
+
+### fixed
+- **picker** — a section's emotes flow as one wrap, so chunk boundaries stop leaving short rows; the ffz chip gets a blue ring; the popout locks out dark-mode extensions that recolor pages.
+
+## [1.7.92] — 2026-10-17
+
+### added
+- **youtube home** — the home feed hides non-video shelves by default; "youtube: show feed shelves" brings them back.
+
+### changed
+- **tabs** — the T K Y view-filter buttons at the top are gone and every platform always shows; send-target buttons leave the input bar and live in the edit-channel form.
+- **twitch colour** — twitch's lavender is a touch lighter so its T outline matches K and Y.
+
+### fixed
+- **name colours** — one username, one colour: a real twitch colour is never overwritten by a kick colour, a heatsync pick or a hash.
+- **mentions** — a linked twitch account keeps its twitch colour with the heatsync pick as fallback; a tagged chatter keeps the colour they speak in.
+- **youtube** — the home feed's first row stops sliding under the top bar; shelves and promos span the grid row.
+
+## [1.7.91] — 2026-10-16
+
+### changed
+- **tabs** — feed is the top-left tab and discover its own tab, hidden by default and brought back by the empty feed card; the watching tab is one word with the channel in its tooltip; mod log is off by default and stays off after first login.
+
+### fixed
+- **resub share** — the twitch resub and streak share builds its token from the page, works in a popout, and clears the prompt in your other open windows.
+- **theatre** — the player fills the viewport height again and covers the left nav; bouncing off an empty watching tab never sticks or strands the panel.
+- **offline channel pages** — twitch keeps the hero player in its area with its controls; collapsed chat no longer leaves the player in a corner of its slot.
+- **empty watching tab** — a page with no channel lands on following, never a blank column.
+- **badges** — the mod badge sits on twitch green again.
+- **feed** — a twitch author's name wears the same paint on posts as in chat.
 
 ## [1.7.90] — 2026-10-13
 
@@ -364,6 +507,24 @@
 - **store name says what it does** — `heatsync — twitch, kick + youtube in one chat`, in all 34 languages. the toolbar still says heatsync.
 - **dev and unpacked builds are no longer counted as installs** — the daily check-in still runs (it carries the kill-switch), it just sends no id. firefox also sends no id without the data grant.
 
+## [1.7.76] — 2026-09-28
+
+### added
+- **profile card** — the hover peek, the overlay panel and the full card come from one shared card that matches the site, in one request instead of up to four; the panel shows live twitch followage; a clip action (hotkey c) on live twitch subjects; every name in overlay chat opens the same card.
+- **notes sync** — your user notes sync to your account when logged in, with a local fallback and a one-time upload.
+- **paste media** — paste or drop images and video into twitch, kick and youtube's own chat inputs; the composer takes several files and link-only drags, and shows feedback while uploading.
+- **welcome import** — a one-click import of your 7tv, bttv and ffz emotes on the welcome page.
+- **log links** — shared chat-log links point to the new /search/logs address; old ones still open; tag and profile links point to their new homes.
+
+### fixed
+- **emote size** — chat asks for the emote size your screen can actually show instead of upscaling a small file.
+- **emotes on a row** — a message with several heatsync emotes shows all of them, not only the first one resolved.
+- **7tv** — a static file is only requested for emotes that are animated.
+- **youtube** — the chat panel shows only on a page's own live stream unless you opt into chat on every youtube page; the empty panel on home, vods and non-live pages is gone; a video id is no longer mistaken for a channel handle.
+- **twitch** — the panel hides on pages with no channel (directory, settings, search) when you have no saved chat tabs.
+- **kick** — cosmetics lookups use the numeric kick id when known and back off when kick rate-limits.
+- **paints** — heatsync paints draw their composited fill in the overlay.
+
 ## [1.7.75] — 2026-09-18
 
 ### added
@@ -373,6 +534,21 @@
 ### changed
 - **the live tab is called watching**, matching the site.
 - **name paints** — pan/base controls mirrored from the site, the eight themed presets removed, and the crowd dial (which the overlay compiled and never turned on) now runs.
+
+## [1.7.73 – 1.7.74] — 2026-09-15 → 2026-09-16
+
+two builds a day apart; grouped here because 1.7.74 fixes what 1.7.73 broke.
+
+### added
+- **fill my cockpit** — import the twitch channels you follow, live ones first, in one go; paste a list instead when logged out.
+
+### changed
+- **lighter paints** — letter motions run one animation per effect instead of one per letter, every paint is capped at 3 animated layers, and scene planes move without repainting the name.
+- **paint motion** — a pan sweeps along its own angle (0° and 180° pans used to stand still).
+
+### fixed
+- **paints out of step** — a painted name that scrolled away comes back on the shared clock with every other copy, not offset by how long it was gone.
+- **plain painted names** — in 1.7.73 heatsync name paints in the overlay drew as plain text; 1.7.74 restores them.
 
 ## [1.7.72] — 2026-09-07
 
@@ -401,6 +577,15 @@
 
 ### fixed
 - **public thread links** — the extension pointed at `/m/<id>`, which is the multichat layout permalink. threads live at `/share/<id>`.
+
+## [1.7.69] — 2026-09-06
+
+### changed
+- **paints** — a scene paint's tint can be any colour.
+- **lighter chat** — twitch and kick messages go only to the tabs that want them; youtube chat arrives batched per channel; offscreen animated emotes sit still until they scroll into view; kick stops polling an offline channel every second after ten quick checks; paints skip their scan until one has drawn.
+
+### fixed
+- **hidden tabs** — a hidden tab keeps twitch's own chat suppressed instead of letting it render again.
 
 ## [1.7.68] — 2026-08-26
 
@@ -605,6 +790,29 @@ a run of same-day builds; grouped here because they shipped as one body of work.
 ### fixed
 - **`\` hides chat in this tab only** — hiding chat on one stream no longer hides it on every other open tab. the hidden state sticks to the tab (survives reload) and clears when you close it; an old globally-stuck hidden chat heals itself on first load.
 
+## [1.7.41] — 2026-08-02
+
+### added
+- **sub button** — a $ on each channel tab and links in the right-click menu take you to subscribe to the active channel; simulcast tabs get a picker.
+- **multistream banner** — notices youtube live as well as kick, offers newly live platforms and merges into the existing tab.
+- **censored emotes** — the censored box keeps the emote's exact width so a filter toggle moves nothing; picker cells and input chips show a category colour (magenta sexual, red gore, green drugs, grey hate, cyan unknown).
+- **scene paints** — paints can carry a scene.
+- **emote fallback** — an emote image that fails from its provider retries once through heatsync.
+
+### changed
+- **stripes** — zebra stripes are visible and the muddy near-black fills are gone; dim greys are readable.
+
+### fixed
+- **chat order** — merged twitch, kick and youtube chat keeps every buffer in order by real send time and stops re-sorting every frame.
+- **your own message** — no longer shows twice, once as [T] and once as [K].
+- **tab complete** — the 7tv catalog search starts on the first tab; the empty bar hides after a send; cycling no longer dies on the first non-overlay match; a word in your message that merely showed up in a catalog search is no longer added to your inventory.
+- **composer** — one rule decides which tabs get a composer, and a hidden tab is never restored (typing with no tab selected showed an input that didn't send); the bar hides at once after a send in auto-hide mode; typing no longer scans every emote and username per keystroke.
+- **feed** — `[OP]` and `[RE]` rows appear without opening the feed tab; your own `/op` shows up in chat.
+- **live dot** — a channel that went offline loses its dot; a 1-second timeout no longer reads as a permanent ban.
+- **paints** — a 7tv paint no longer erases a heatsync paint you saved.
+- **7tv** — dropped emote sets are unsubscribed and the subscription limit is honoured; a failed channel-emote fetch no longer blacks out live updates.
+- **layout** — clicking a stream from browse holds the chat column instead of snapping later.
+
 ## [1.7.39] — 2026-07-27
 
 ### fixed
@@ -642,6 +850,31 @@ a run of same-day builds; grouped here because they shipped as one body of work.
 ### fixed
 - **not logged in? we tell you now** — using an emote while signed out of heatsync used to silently fail and look broken. you get a clear one-tap "log in" prompt instead.
 - clicking someone else's emote to reuse it always renders in your own message now, even if it hadn't saved to your set yet.
+
+## [1.7.35 – 1.7.36] — 2026-07-23
+
+two same-day builds; grouped here because they shipped as one body of work.
+
+### fixed
+- **mention tab** — a mention lights the tab red, not the yellow of a game switch.
+- **platform borders** — the T K Y coloured borders stay complete in the top and bottom layouts.
+- **live dot** — a tab with both a twitch and a kick handle checks kick too, so a streamer live only on kick shows the dot.
+
+## [1.7.34] — 2026-07-23
+
+### added
+- **slash commands** — `/mod` `/unmod` `/vip` `/unvip` (twitch broadcaster), `/tab` switches tab from the composer, `/set` changes any setting, plus commands for polls and predictions (`/poll` `/vote` `/prediction` `/bet` and the rest) and for notes and blocks.
+
+### fixed
+- **banners** — poll, prediction and hype banners overlay chat instead of shoving every row down.
+- **kick sends** — a slow-but-accepted kick send is no longer posted twice.
+- **toasts** — the picker's block and remove toasts say what actually happened; bulk-insert lists only the emotes that saved.
+- **youtube** — a send isn't re-driven through a second tab after the first may already have posted; chat ingest reattaches when youtube swaps its chat container.
+- **emote and paint lookups** — a 7tv or betterttv hiccup or a kick rate limit no longer hides a chatter's real emotes, paints or badges for minutes.
+- **profile banner** — a failed banner fetch is no longer remembered as "no banner".
+- **twitch actions** — an action twitch rejects reports the real error instead of timing out after 8 seconds.
+- **security** — profile-card avatar urls are checked and line breaks are stripped from sent messages; feed posts neutralize a bare `<`; the insert-emote bridge validates its input.
+- **memory** — emote and pending-send caches are bounded, and observers are released on a channel switch.
 
 ## [1.7.33] — 2026-07-22
 
@@ -730,11 +963,175 @@ a run of same-day builds; grouped here because they shipped as one body of work.
 - kick chat-mode banners (slow / sub-only / emote-only / followers).
 - tab / enter reliably keep composer focus for rapid-fire sending.
 
+## [1.7.25] — 2026-07-15
+
+### added
+- **youtube panel** — the chat panel shows on every youtube page by default.
+- **big bttv emotes** — oversized bttv emotes draw at their native height instead of clamped to the baseline.
+
+### fixed
+- **scroll smears** — rows no longer draw over each other while scrolling, and rows already on screen never move.
+- **composer** — keeps focus after you send; a draft survives twitch swapping its chat container.
+- **youtube** — the miniplayer sits clear of a docked panel; the panel stays off chat-replay pages and no longer squeezes the page at boot; a failed send gives youtube's restricted-chat reason; your own message is no longer swallowed.
+- **removed channels** — removing a kick or youtube channel clears its saved chat.
+- **languages** — 340+ settings labels and toasts go through translations.
+
+## [1.7.24] — 2026-07-14
+
+### added
+- **click-to-play embeds** — spotify, youtube, vimeo, soundcloud and clip links in chat turn into a live player on click; audio links get a rich card; cards are compact.
+- **plus tenure** — the plus-tenure token shows beside member names, like the site.
+- **paint timing** — animated paints lock to the wall clock, so every copy of a name moves together, like the site.
+
+### changed
+- **thread links** — `>>id` links are yellow, not orange.
+
+### fixed
+- **kick sends** — messages to kick landed nowhere after kick changed its auth and routing; sends, mod actions, follow and status work again.
+- **ghost channels** — login and oauth redirect pages no longer join as channels called "login" or "oauth2" and shuffle your tabs.
+- **your own paint** — your name gets its paint at once in a busy channel instead of waiting behind strangers.
+- **emote inventory** — one sign-in hiccup no longer wipes your warm emote list.
+- **youtube layout** — pages with no live chat no longer keep a dead gap on the right.
+- **cards** — closing the profile card or chat logs mid-redraw works.
+- **twitch tweaks** — the recommended and bell tweaks work again and the stream-title tweak no longer hides more than the title; the dead discover tweak is gone.
+- **reliability** — a sweep of about 90 fixes: kick chat rejoins after a restart or a silent socket, notification clicks work after the background sleeps, replies containing a % keep their reply bar, settings export and import include your highlights and filter rules.
+
+## [1.7.22] — 2026-07-11
+
+### changed
+- **platform buttons** — the two T K Y groups are labelled show: and send:, and use capital letters everywhere.
+
+### fixed
+- **composer** — leaving the page with a draft in the box, a stray ctrl+w included, asks first.
+
+## [1.7.21] — 2026-07-10
+
+### added
+- **youtube send** — sending to youtube from the overlay opens a hidden tab that inherits your youtube login, so it works with no youtube tab open; a sign-in tab shows when you're logged out.
+- **youtube popout** — the overlay fills youtube's pop-out chat window: chat only, one chat instead of two, composer always visible and focused.
+- **emote effects** — full bttv and ffz modifier and effect support, matching the site.
+- **picker** — heatsync's own emotes are searchable in the multichat picker.
+- **mentions** — a bare @ opens the chatter list at once, recent chatters first; a whisper or dm arriving on another tab gives a toast.
+- **whispers** — each whisper row has a reply button that arms `/r`; unseen whispers turn the tab cyan.
+- **feed** — posts that name you go mention-red, like chat.
+- **tab complete** — in native twitch chat, a remote 7tv emote you tab-complete is added to your set when you send; tab cycling wraps for @user and :emoji.
+- **settings** — a default button per page resets just that page; the system page keeps all defaults.
+- **name colour** — your picked name colour shows on youtube and kick; youtube names get a stable colour instead of flat red.
+
+### changed
+- **vi mode** — auto-hide input works with vi mode; the overlay's f, F and v keys are gone, composer vi is untouched.
+- **first messages** — the first-message glow is orange, not a flat yellow bar.
+- **right-click** — "quote → input" reads "copy → input".
+- **mention red** — a brighter mention-red background.
+
+### fixed
+- **youtube theatre** — theatre and fullscreen are youtube's own: the player takes the full row and the chat column is released.
+- **youtube chat** — live chat reconnects after moving between videos without a refresh; the panel shows at once on a live stream; a video id is never joined as a twitch or kick channel; youtube mutes and blocks work.
+- **kick** — your own mod action prints once; a slow send is no longer posted twice; mixed-emote lines upgrade when the sender's emotes arrive late.
+- **emotes** — `<3`-style emotes render; emotes after an emoji sit in the right place; merged-identity and youtube tabs see their channel's emotes in the picker, preview, tab-complete and hover.
+- **native chat mentions** — colouring a mention no longer destroys emotes already drawn.
+- **composer** — the trailing auto-space stays visible; the first letter typed under vi mode lands in an empty composer; the @mention chip no longer opens your profile; whisper compose reopens without a refresh; a relink prompt shows when whispers need a new scope.
+- **echoes** — a reply no longer shows twice; your own youtube popout post is no longer tagged [T]; the badge shows the real send target.
+- **paints** — restored history rows of painted users no longer stay on the fallback colour.
+- **mod commands** — logged out, they say not logged in instead of channel not found.
+- **chat** — a hidden tab's chat isn't trimmed while you are scrolled up.
+- **settings** — toggling a setting no longer jumps back to the top; a stale channel list can't open a wall of tabs (capped at 8).
+- **security** — page scripts can no longer send chat as you or read your channel, mute and block lists through leftover diagnostics; the login callback must carry the login's own state; graphql mutations are rate-limited.
+
 ## [1.7.20] — 2026-07-08
 
 ### fixed
 - **reply context in popout chat** — replies now show the "replying to" bar in popout and on throttled connections (the native-chat tap was dropping the reply parent).
 - **whisper vs dm label** — inline twitch whispers read `[whisper]`; heatsync dms stay `[DM]` (both used to say `[DM]`).
+
+## [1.7.19] — 2026-07-06
+
+### added
+- **youtube moderation** — delete, timeout, ban and unban from the overlay on youtube chat, through youtube's own moderation flow.
+- **youtube paints** — heatsync and 7tv paints show on youtube chatters in the overlay and in youtube's own chat.
+- **kick** — replies thread on send; real avatars instead of initials; bans, timeouts, deletes and unbans by the streamer or any mod dim the row and print a line; native kick chat shows senders' 7tv and heatsync personal emotes.
+- **polls** — a new poll alerts you, like predictions.
+- **cross-follow** — opt-out switches for twitch follows and their notifications; the notifications switch now works.
+
+### changed
+- **fewer permissions** — the extension no longer asks for tabs or web-request access, and redundant host permissions are gone.
+- **privacy** — chat history is fetched through heatsync's relay.
+- **removed** — the chat tools tab (colour picker, chat modes) and the create-clip action, which stopped working when twitch retired the api behind them; 14 native-chat column toggles and the old native-chat behaviour settings (the hiding stays).
+- **notes** — one user-notes system; notes from the old profile-card store move over on first load.
+- **chat logs** — the two chat-logs menu entries are one.
+
+### fixed
+- **wide and tall emotes** — w!, h! and ffzW emotes draw at the right size, reserve their space, no longer overlap, squish or run off screen; the hover preview shows the modified emote.
+- **emote stacks** — overlays centre on the widest emote.
+- **emotes** — a failed auto-add rolls back instead of leaving a phantom emote; blocks sync to the picker; a fast double-click can't add twice; late channel emotes upgrade from text to image after a refresh; blocked emotes no longer leak into twitch tab-complete.
+- **sending** — two identical messages in a row both send; unwired slash commands no longer post as literal text on kick and youtube; a failed youtube send says so; the send-failure toast gives kick and youtube reasons.
+- **tab complete** — tabbing past local matches into 7tv no longer loops back to 1; an exact-name emote wins.
+- **picker** — opens filled on an occluded or popout tab instead of blank.
+- **mentions** — carry the user's paint and a colour fallback; cosmetics aren't injected when another 7tv, bttv or ffz extension is installed.
+- **follow** — unregistered kick and youtube chatters can be followed; a skipped cross-platform sync is shown; report and gift-sub work through the native viewer card.
+- **data loss** — a note saved in one tab no longer erases another tab's; a corrupted filter rule list is no longer overwritten with an empty one.
+- **security** — the page-to-background graphql relay accepts only a fixed set of operations; a non-hex colour from the backend can't inject css.
+- **lighter** — native chat's message pipeline and the extra H button sit idle while the overlay is up; the mute rescan skips when nobody is muted.
+
+## [1.7.18] — 2026-07-05
+
+### added
+- **youtube channel emotes** — youtube's own chat loads the streamer's 7tv and bttv emotes without opening the overlay.
+- **kick follow** — following a kick channel sends its kick name so heatsync can set the channel up on the spot.
+
+### fixed
+- **youtube native chat** — the emote overlay, autocomplete, deleted-message handling and paints work on youtube's own chat again; they had silently stopped. the heatsync button's timers work again too.
+
+## [1.7.17] — 2026-07-05
+
+### fixed
+- **emote picker** — clicking a search result (7tv, bttv, ffz) did nothing and multichat clicks were being swallowed; both work again, and a click pastes and keeps the picker open.
+
+## [1.7.16] — 2026-07-04
+
+### added
+- **heatsync paints** — your heatsync name paint shows in multichat and wins over a 7tv paint; kick chatters get their 7tv paints too.
+- **youtube channel emotes** — a youtube-only channel gets its 7tv and bttv emote sets.
+- **cross-device sync** — keyword highlights and chat filter rules follow you across devices.
+- **moment links** — shift-click ¶ on a moment pastes its link into chat as a draft.
+- **thread refs** — `>>id` becomes a link in twitch, kick and youtube chat.
+- **tab complete** — ranked by what you use; a full exact name always wins; use counts where you stop, not at every step of the cycle.
+- **emote animation** — always, on hover or never; on hover the emotes sit still and only the row under the pointer animates.
+- **painted names** — hovering one freezes every visible copy of it.
+
+### changed
+- **lighter pages** — the overlay stops twitch rendering its own hidden chat (a busy channel held about 118mb extra, now about 44mb); background tabs trim to 100 rows; the background closes both sockets when no platform tab is open; static emotes come from the cdn.
+- **overlay colour** — links, thread refs, the new-messages pill and the unblock flash use the brand orange instead of yellow; yellow stays for attention rows.
+
+### fixed
+- **mod actions** — timeout, ban and delete were silently dead; they go through again.
+- **emoji** — `:name` completion works on twitch again.
+- **youtube** — each message shows once, not three times; native autocomplete follows its toggle.
+- **resize bar** — it is visible again, shows on pages with no channel, and stays under twitch modals and live notifications.
+- **navigation** — chat and the bar no longer vanish when you go to the directory.
+- **twitch player** — the floating mini-player stops snapping to the top, and the player no longer dies from the overlay's image hook.
+- **badges** — mod, vip and sub badges no longer vanish until a reflow; the mod badge is green on history; backfilled rows get fresh badges in every tab.
+- **paints** — painted names no longer blank after a mention wrap; paints show on whispers, dms, tooltips, profile cards, chat logs and feed quotes; letter-split paints draw correctly.
+- **mentions** — @mentions and reply chips pick up a person's colour and paint even when it arrives after the row drew.
+- **picker** — clicks no longer go dead after an extension reload; a blocked emote's dashed box matches the emote.
+- **moments** — clicking a moment spike row opens the channel's chat tab instead of the stream page.
+- **mute** — a failed mute save shows a message instead of failing silently.
+
+## [1.7.14 – 1.7.15] — 2026-07-02
+
+same-day builds; grouped here because they shipped as one body of work.
+
+### added
+- **youtube banners** — super chats, stickers, memberships and gift purchases show as inline banner rows in youtube chat, like twitch's raids and subs.
+- **emote picker** — an empty inventory offers a one-click import of the current channel's emotes instead of "no emotes loaded".
+
+### changed
+- **privacy** — id lookups, recent chat history and chatterino badges come from heatsync.org instead of decapi, robotty and chatterino; the extension no longer talks to those three.
+
+### fixed
+- **7tv paints** — a kick chatter and a twitch chatter with the same name no longer trade paints in mentions, replies, whispers and cards.
+- **kick sends** — a failed kick-only send turns the input red with a retry instead of failing quietly.
+- **chat history** — recent messages load again when cloudflare answered the page's own request with a 503; the background fetches them now.
 
 ## [1.7.13] — 2026-07-02
 
@@ -743,6 +1140,40 @@ a run of same-day builds; grouped here because they shipped as one body of work.
 
 ### changed
 - **welcome page** — the try-it button now opens the busiest live channel instead of the twitch front page, and the copy leads with what's true: emotes render instantly, no sign-in; the 5,000-slot inventory is the optional upgrade.
+
+## [1.7.12] — 2026-07-01
+
+### added
+- **filter expressions** — filter rules can be boolean expressions, in the style of chatterino's filters.
+- **user notes** — private per-user notes work across platforms, in the overlay and on the native chat card.
+
+## [1.7.11] — 2026-07-01
+
+### fixed
+- **heatsync badge** — the [H] mark is orange again; the monochrome pass in 1.7.10 had taken it out.
+
+## [1.7.10] — 2026-07-01
+
+### added
+- **/nuke** — bulk-deletes recent messages containing a word within a time window; asks to confirm with the count first.
+- **viewer context** — chat rows mark returning chatters and raiders (twitch).
+- **user notes** — a private note per user on the profile card; hover a name to see it. it stays on your device.
+- **session stats** — the profile card shows how many messages you have from that person, when you first saw them and how many channels.
+- **filters** — a sound per highlight rule, case-sensitive matching, and reordering; the order is the priority.
+- **op to feed** — right-click a chat message to post it to the feed.
+- **site blocks** — blocks you set on heatsync.org carry into the extension.
+- **profile card** — shows the same names and live status as the site.
+
+### changed
+- **look** — the orange accent is gone from the extension's own screens and heat tiers read as a grey ramp.
+- **picker** — section labels (set, 7tv, bttv, ffz) are visible and stick as you scroll.
+
+### fixed
+- **cross-platform blocks and mutes** — muting or blocking a name on one platform no longer hits the same name on another.
+- **privacy** — chat history is no longer copied into the host page's storage where other scripts could read it; avatar and whisper lookups ask twitch directly and use a third-party lookup only as a last resort.
+- **kick** — a reload no longer drops about 1.5 seconds of kick chat.
+- **feed** — the merged multichat feed stays smooth with many busy channels.
+- **security** — more page messages need the extension's secret before they are accepted; the automod pattern guard catches more runaway patterns.
 
 ## [1.7.9] — 2026-06-29
 
@@ -815,6 +1246,10 @@ a run of same-day builds; grouped here because they shipped as one body of work.
 - status, loading, and error banners moved below the search/filter bar so they don't shove the input around on reload.
 - performance: trimmed per-message render work (badges, paint, mute/block checks).
 
+## [1.7.2 – 1.7.3] — 2026-06-14
+
+no user-facing change.
+
 ## [1.7.1] — 2026-06-15
 
 ### fixed
@@ -844,6 +1279,31 @@ a run of same-day builds; grouped here because they shipped as one body of work.
 
 ### fixed
 - **firefox install** — the github `.xpi` is now amo-signed, so it installs in normal release firefox. previous builds shipped an unsigned zip renamed to `.xpi`, which firefox refuses to install.
+
+## [1.6.8] — 2026-06-08
+
+### added
+- **7tv paints** — a chatter's paint shows on their name in replies, whispers, dms and profile cards, not only on their chat messages.
+- **tab complete** — recent chatters lead bare-word completion on every chat surface; your own and channel emotes rank above globals; a bare name inserts the plain name, not an @mention.
+- **welcome page** — a short "what you get" overview above the setup steps.
+
+### changed
+- **timestamps** — chat timestamps show the clock (hh:mm), not a relative age.
+- **toasts** — native-chat toasts land in the status bar like the overlay's; the per-emote "not logged in" errors collapse into one "log in to heatsync.org to add emotes" line.
+
+### fixed
+- **twitch whispers** — sending a whisper no longer fails with a twitch integrity error.
+- **7tv outages** — emotes fall back to heatsync's relay when 7tv blocks your ip or errors out.
+- **badge flicker** — a cold load rebuilds chat once instead of strobing as badges, paints and emotes arrive.
+- **feed** — a live post that lands mid-refresh is kept, and feed animations pause while the tab is hidden.
+- **mentions** — @mentions and reply links get the right colour for chatters you haven't seen yet.
+- **replies** — a reply with no parent name no longer breaks the row.
+- **ffz emotes** — animated ffz emotes animate instead of showing a still.
+- **poll and prediction text** — 15 labels that showed as raw keys read as words again.
+- **profile card** — switching cards while one is loading no longer breaks the live poll.
+- **security** — a paint can't smuggle css into the page, and other frames on a page can't trigger clear-history or an extension reload.
+- **privacy** — message text is no longer written to the console log.
+- **long sessions** — memory caps and cleanup keep a long session light, and messages stay in order.
 
 ## [1.6.7] — 2026-06-03
 

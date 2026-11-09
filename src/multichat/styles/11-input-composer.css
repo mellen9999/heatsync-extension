@@ -501,29 +501,6 @@
       font-variant-numeric: tabular-nums;
        flex-shrink: 0;
     }
-    .hs-mc-cheer-panel .hs-mc-cheer-preview {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      min-height: 28px;
-      padding: 4px 8px;
-      background: #000000;
-      border: 1px solid #ffffff;
-    }
-    .hs-mc-cheer-panel .hs-mc-cheer-preview-img {
-      width: 28px;
-      height: 28px;
-      object-fit: contain;
-    }
-    .hs-mc-cheer-panel .hs-mc-cheer-preview-label {
-      font-variant-numeric: tabular-nums;
-      flex: 1;
-    }
-    .hs-mc-cheer-panel .hs-mc-cheer-amounts {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
     .hs-mc-cheer-panel .hs-mc-cheer-amt {
       flex: 1 0 auto;
       min-width: 48px;
@@ -546,40 +523,8 @@
       background: #fff;
       color: #000;
     }
-    .hs-mc-cheer-panel .hs-mc-cheer-custom {
-      flex: 1 0 80px;
-      min-width: 80px;
-      padding: 6px 10px;
-      background: #000;
-      color: #fff;
-      border: 1px solid #fff;
-      font: inherit;
-      font-variant-numeric: tabular-nums;
-      -moz-appearance: textfield;
-    }
     .hs-mc-cheer-panel .hs-mc-cheer-custom::-webkit-outer-spin-button,
-    .hs-mc-cheer-panel .hs-mc-cheer-custom::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    .hs-mc-cheer-panel .hs-mc-cheer-msg {
-      padding: 6px 10px;
-      background: #000;
-      color: #fff;
-      border: 1px solid #fff;
-      font: inherit;
-      width: 100%;
-      box-sizing: border-box;
-    }
     .hs-mc-cheer-panel .hs-mc-cheer-msg::placeholder,
-    .hs-mc-cheer-panel .hs-mc-cheer-custom::placeholder {
-      color: #ffffff;
-    }
-    .hs-mc-cheer-panel .hs-mc-cheer-actions {
-      display: flex;
-      gap: 6px;
-      justify-content: flex-end;
-    }
     .hs-mc-cheer-panel .hs-mc-cheer-cancel,
     .hs-mc-cheer-panel .hs-mc-cheer-send {
       padding: 6px 14px;

@@ -1,5 +1,23 @@
 # changelog
 
+## [1.7.126] — 2026-11-09
+
+### added
+- **emotes** — upload your own emote from twitch's own picker too; native chat rows load the size that fits your screen.
+- **feed** — embeds load on click; a button names the host, and no third party sees you before you ask.
+
+### changed
+- **icons** — every icon is a unicode glyph, including the twitch menu, settings tabs and search.
+- **text** — 13px and up everywhere, regular or bold only, no all-caps.
+- **badges** — feed quotes and reply headers show your picked badge.
+- **languages** — the new-messages pill, the card's unmute label and off-twitch mod errors speak your language.
+
+### fixed
+- **mod anniversary** — twitch's mod-anniversary callout is no longer shown as a resub with the wrong month count.
+- **highlights** — highlight words and old filters work on native chat again with the overlay off.
+- **youtube** — replayed chat no longer fires alerts; mod actions show a notice and land in the mod log; space no longer pauses the video after a heatsync key.
+- **tour** — a youtube-only mod sees the mod switch.
+
 ## [1.7.125] — 2026-11-08
 
 ### added

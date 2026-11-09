@@ -309,17 +309,23 @@ function diagSnapshot() {
 }
 
 // Console handle: __hsDiag.snapshot() to read counters, __hsDiag.verbose(true)
-// to start writing swallowed-error tags into the error buffer.
-try {
-  if (typeof window !== 'undefined') {
-    window.__hsDiag = {
-      snapshot: diagSnapshot,
-      verbose: (/** @type {boolean} */ on) => {
-        window.__hsDiagVerbose = on !== false
-        return window.__hsDiagVerbose
-      },
-    }
+// to start writing swallowed-error tags into the error buffer. __hsDiag is
+// ALSO the multichat ring-writer function (bootstrap.js), and the two scripts
+// load in either order — so attach onto whatever is there, never replace it.
+function installDiagHandle(w) {
+  const handle = {
+    snapshot: diagSnapshot,
+    verbose: (/** @type {boolean} */ on) => {
+      w.__hsDiagVerbose = on !== false
+      return w.__hsDiagVerbose
+    },
   }
+  const cur = w.__hsDiag
+  if (typeof cur === 'function') Object.assign(cur, handle)
+  else w.__hsDiag = handle
+}
+try {
+  if (typeof window !== 'undefined') installDiagHandle(window)
 } catch (_) {}
 
-export { CSP_MAX_REPORTS, diagSnapshot, hsQuery, hsQueryAll, isOurCspViolation, MISS_MS, MISS_STREAK, swallow }
+export { CSP_MAX_REPORTS, diagSnapshot, installDiagHandle, hsQuery, hsQueryAll, isOurCspViolation, MISS_MS, MISS_STREAK, swallow }

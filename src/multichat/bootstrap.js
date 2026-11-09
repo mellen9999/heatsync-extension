@@ -742,6 +742,9 @@ function hsDiag(event, extra) {
     localStorage.setItem('hs_diag_ring', JSON.stringify(arr))
   } catch (_) {}
 }
+// diag.js (heatsync-button, document_idle) may have run first and left its
+// snapshot/verbose handle here — carry it onto the function, don't drop it.
+if (window.__hsDiag && typeof window.__hsDiag === 'object') Object.assign(hsDiag, window.__hsDiag)
 window.__hsDiag = hsDiag
 // build.js replaces the placeholder with `<sha><+dirty>-<yyyymmddhhmm>` at
 // bundle time — the ring must name WHICH build a tab ran, or a postmortem

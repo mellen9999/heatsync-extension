@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import {
   CSP_MAX_REPORTS,
   diagSnapshot,
+  installDiagHandle,
   hsQuery,
   hsQueryAll,
   isOurCspViolation,
@@ -312,5 +313,37 @@ describe('diag is actually wired, not just shipped', () => {
     // bug shape is one copy of a duplicated thing drifting.
     expect(SRC('src/content/content.js')).toContain("swallow(e, 'busy-listener-content')")
     expect(SRC('src/multichat/bootstrap.js')).toContain("swallow(e, 'busy-listener-multichat')")
+  })
+})
+
+describe('__hsDiag handle survives either load order', () => {
+  const ringFn = () => function hsDiag() {}
+
+  test('diag.js after bootstrap: ring function stays, gains snapshot/verbose', () => {
+    const w = { __hsDiag: ringFn() }
+    const fn = w.__hsDiag
+    installDiagHandle(w)
+    expect(w.__hsDiag).toBe(fn)
+    expect(w.__hsDiag.snapshot).toBe(diagSnapshot)
+    expect(w.__hsDiag.verbose(true)).toBe(true)
+  })
+
+  test('diag.js alone: plain handle', () => {
+    const w = {}
+    installDiagHandle(w)
+    expect(typeof w.__hsDiag.snapshot).toBe('function')
+  })
+
+  test('bootstrap after diag.js: the exact bootstrap lines keep snapshot/verbose', () => {
+    const src = readFileSync(join(import.meta.dir, '../src/multichat/bootstrap.js'), 'utf8')
+    const m = src.match(/(if \(window\.__hsDiag && typeof window\.__hsDiag === 'object'\)[^\n]*\nwindow\.__hsDiag = hsDiag)/)
+    expect(m).not.toBeNull()
+    const w = {}
+    installDiagHandle(w)
+    const hsDiag = () => {}
+    new Function('window', 'hsDiag', m[1])(w, hsDiag)
+    expect(w.__hsDiag).toBe(hsDiag)
+    expect(w.__hsDiag.snapshot).toBe(diagSnapshot)
+    expect(typeof w.__hsDiag.verbose).toBe('function')
   })
 })

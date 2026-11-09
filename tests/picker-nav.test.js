@@ -48,6 +48,7 @@ function node(extra = {}) {
   const attrs = new Map()
   return {
     id: '',
+    isConnected: true,
     dataset: {},
     setAttribute: (k, v) => attrs.set(k, String(v)),
     getAttribute: (k) => (attrs.has(k) ? attrs.get(k) : null),
@@ -62,7 +63,15 @@ function node(extra = {}) {
  * `perChunk` tiles per chunk, `names` for the data-name of each tile in order.
  */
 function buildGrid(names, perChunk, rects, filled = [0]) {
-  const grid = node({ scrollTop: 0, rectTop: 0, rectBottom: 200 })
+  const grid = node({
+    scrollTop: 0,
+    rectTop: 0,
+    rectBottom: 200,
+    on: {},
+    addEventListener: (type, fn) => {
+      grid.on[type] = fn
+    },
+  })
   const section = { querySelector: () => ({ offsetHeight: 20 }) }
   const chunks = []
   const tiles = names.map((name, i) => {
@@ -167,6 +176,13 @@ beforeEach(() => {
     },
     trackObserver: (o) => o,
     untrackObserver: () => {},
+  }
+  globalThis.ResizeObserver = class {
+    constructor(cb) {
+      globalThis.resizeFired = cb
+    }
+    observe() {}
+    disconnect() {}
   }
   globalThis.MutationObserver = class {
     constructor(cb) {
@@ -471,6 +487,46 @@ describe('letting go of the cursor', () => {
     input.on.blur()
     expect(grid.tiles[0].getAttribute('aria-selected')).toBe('false')
     expect(input.hasAttribute('aria-activedescendant')).toBe(false)
+  })
+})
+
+describe('the cursor staying in view while the grid reflows', () => {
+  beforeEach(() => {
+    standardGrid([0, 1, 2])
+    grid.rectBottom = 100 // short viewport: the last row is below the fold
+  })
+  const wire = () => hsWirePickerNav({ querySelector: (s) => (s === '#hs-mc-emote-search' ? input : grid) })
+
+  test('a reflow that carries the cursor out of view scrolls it back', () => {
+    wire()
+    hsPickerKey(key(input, 'ArrowDown'))
+    hsPickerKey(key(input, 'End'))
+    const at = grid.scrollTop
+    grid.rectBottom -= 30 // images landed and the rows grew: the tile now sits past the bottom edge
+    globalThis.resizeFired()
+    expect(grid.scrollTop).toBeGreaterThan(at)
+  })
+
+  test('once the reader scrolls by hand it stops following', () => {
+    wire()
+    hsPickerKey(key(input, 'ArrowDown'))
+    hsPickerKey(key(input, 'End'))
+    const at = grid.scrollTop
+    grid.on.wheel()
+    grid.rectBottom -= 30
+    globalThis.resizeFired()
+    expect(grid.scrollTop).toBe(at)
+  })
+
+  test('no cursor, no following', () => {
+    wire()
+    hsPickerKey(key(input, 'ArrowDown'))
+    hsPickerKey(key(input, 'End'))
+    input.on.input()
+    const at = grid.scrollTop
+    grid.rectBottom -= 30
+    globalThis.resizeFired()
+    expect(grid.scrollTop).toBe(at)
   })
 })
 

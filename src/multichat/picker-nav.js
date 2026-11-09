@@ -27,6 +27,12 @@ let _pickerCloseHandler = null
 let hsPickerSel = null
 let hsPickerOptSeq = 0
 let hsPickerGridObs = null
+// The cursor owns the scroll position until the reader scrolls by hand. A tile's box is its image's
+// (an emote that has not loaded is a 28px stand-in), so a late image or a chunk filling in reflows
+// the grid and can carry the tile out of view after the scroll that put it there. While this is
+// set, any such reflow puts the tile back.
+let hsPickerFollow = false
+let hsPickerSizeObs = null
 
 /**
  * The next row up (dir -1) or down (+1) from tile `cur`, as the tile whose
@@ -119,6 +125,7 @@ function hsPickerSelect(tile) {
   if (hsPickerSel && hsPickerSel !== tile) hsPickerSel.setAttribute('aria-selected', 'false')
   hsPickerSel = tile
   if (!tile) {
+    hsPickerFollow = false
     input?.removeAttribute('aria-activedescendant')
     return
   }
@@ -128,6 +135,7 @@ function hsPickerSelect(tile) {
   if (!tile.id) tile.id = `hs-mc-emote-opt-${++hsPickerOptSeq}`
   input?.setAttribute('aria-activedescendant', tile.id)
   if (grid) hsPickerScrollTo(grid, tile)
+  hsPickerFollow = true
 }
 
 function hsPickerKey(e) {
@@ -169,6 +177,10 @@ function hsPickerGridChanged() {
   const input = document.getElementById('hs-mc-emote-search')
   if (!grid || !input) return
   input.setAttribute('aria-expanded', grid.querySelector('[role="listbox"]') ? 'true' : 'false')
+  // the list is a new element after every render; watch whichever one is on screen
+  hsPickerSizeObs?.disconnect()
+  const list = grid.firstElementChild
+  if (list) hsPickerSizeObs?.observe(list)
   const was = hsPickerSel
   if (!was || grid.contains(was)) return
   hsPickerSel = null
@@ -187,6 +199,15 @@ function hsWirePickerNav(picker) {
   if (hsPickerGridObs) cleanup.untrackObserver(hsPickerGridObs)
   hsPickerGridObs = cleanup.trackObserver(new MutationObserver(hsPickerGridChanged))
   hsPickerGridObs.observe(grid, { childList: true })
+  if (hsPickerSizeObs) cleanup.untrackObserver(hsPickerSizeObs)
+  hsPickerSizeObs = cleanup.trackObserver(
+    new ResizeObserver(() => {
+      if (hsPickerFollow && hsPickerSel?.isConnected) hsPickerScrollTo(grid, hsPickerSel)
+    }),
+  )
+  for (const ev of ['wheel', 'pointerdown', 'touchmove']) {
+    cleanup.addEventListener(grid, ev, () => (hsPickerFollow = false), `mc-picker-nav-${ev}`)
+  }
   hsPickerGridChanged()
 }
 

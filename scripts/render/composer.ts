@@ -246,6 +246,15 @@ export async function composerAndPickerCheck() {
         }
       })
     if (!(await until(p, async () => (await combo()).shown, 8000))) fail('typing ":nav00" never opened the emote list')
+    // The list redraws, and puts the highlight back on its first row, once per debounced keystroke
+    // (80ms). It can open on ":nav" and still be waiting to redraw for ":nav00", and an ArrowDown
+    // landing in that gap is undone by the redraw. Wait for the list that answers the whole word.
+    const settled = () =>
+      p.evaluate(() => {
+        const names = [...document.querySelectorAll('#hs-mc-emoji-dropdown .hs-mc-emoji-name')].map((x) => x.textContent || '')
+        return names.length > 1 && names[0] === 'nav000'
+      })
+    if (!(await until(p, settled, 8000))) fail('the emote list never settled on the whole query ":nav00"')
     const open = await combo()
     if (open.role !== 'combobox' || open.auto !== 'list') fail(`the composer is not a list combobox: ${JSON.stringify(open)}`)
     if (open.expanded !== 'true' || open.controls !== 'hs-mc-emoji-dropdown') {

@@ -1249,24 +1249,31 @@ function handleYoutubeChatMsg(msg) {
     _frYt = evaluateFilterRules(ytMsg, targetChannelId !== '__live_yt_auto__' ? targetChannelId : null)
     if (_frYt.hide) return
   }
-  // Highlight-rule audio cue — once, on live youtube arrival.
-  if (_frYt?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frYt)
-  // a highlight rule's "also notify me" lands in the mentions tab too, no login needed
-  const _mentReal = isMention(ytMsg)
-  const _mentRule = !_mentReal && ruleAlertsMention(ytMsg, _frYt)
-  const isMent = _mentReal || _mentRule
-  bumpStreamStats(ytChannelHint || ytEmoteKey, ytMsg, _mentReal)
-  if (isMent) {
-    mentionsBuffer.push(ytMsg)
-    if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER)
-    persistMentions()
-    notifyMention(ytMsg, _mentRule)
-    noteSeenEvent('mentions', ytMsg.time || Date.now())
-    if (currentTab === 'mentions') {
-      bumpSeen('mentions')
-      if (!appendMessage(ytMsg, 'mentions')) renderMessages('mentions')
-    } else {
-      updateTabIndicator('mentions')
+  // A replay is history: the backfill a surface gets on subscribe (up to 200
+  // buffered lines, bgYtReplayToTab) renders, and alerts nothing — no sound, no
+  // mention, no desktop notice or screen-reader line, no stats, no unread. The
+  // same rule twitch and kick keep by never routing history through their
+  // handlers (tests/handler-parity.test.js).
+  if (!msg.replay) {
+    // Highlight-rule audio cue — once, on live youtube arrival.
+    if (_frYt?.sound && typeof playFilterRuleSound === 'function') playFilterRuleSound(_frYt)
+    // a highlight rule's "also notify me" lands in the mentions tab too, no login needed
+    const _mentReal = isMention(ytMsg)
+    const _mentRule = !_mentReal && ruleAlertsMention(ytMsg, _frYt)
+    const isMent = _mentReal || _mentRule
+    bumpStreamStats(ytChannelHint || ytEmoteKey, ytMsg, _mentReal)
+    if (isMent) {
+      mentionsBuffer.push(ytMsg)
+      if (mentionsBuffer.length > MAX_BUFFER + 50) mentionsBuffer.splice(0, mentionsBuffer.length - MAX_BUFFER)
+      persistMentions()
+      notifyMention(ytMsg, _mentRule)
+      noteSeenEvent('mentions', ytMsg.time || Date.now())
+      if (currentTab === 'mentions') {
+        bumpSeen('mentions')
+        if (!appendMessage(ytMsg, 'mentions')) renderMessages('mentions')
+      } else {
+        updateTabIndicator('mentions')
+      }
     }
   }
 

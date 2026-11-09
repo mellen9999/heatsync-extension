@@ -81,6 +81,16 @@ const PIPELINE = [
   'noteSeenEvent', // unread bookkeeping
 ]
 
+// The steps that alert the user about a line — a replay must never run them.
+const ALERT_STEPS = [
+  'playFilterRuleSound',
+  'mentionsBuffer.push',
+  'persistMentions',
+  'notifyMention',
+  'noteSeenEvent',
+  'bumpStreamStats',
+]
+
 describe('chat handler parity', () => {
   test('all three handlers are found and are real spans', () => {
     for (const [name, src] of Object.entries(handlers())) {
@@ -96,6 +106,37 @@ describe('chat handler parity', () => {
       expect(missing).toEqual([])
     })
   }
+
+  test('a replayed youtube line renders but alerts nothing', () => {
+    // youtube is the one platform whose history (the subscribe backfill, up to
+    // 200 lines) runs through the live handler, flagged replay:true. Every
+    // alerting step must sit inside its !msg.replay gate — or 200 old lines
+    // ring, notify, announce and fill the mentions tab.
+    const yt = handlers().youtube
+    const gate = spanFrom(yt, 'if (!msg.replay) {')
+    for (const step of ALERT_STEPS) {
+      expect(gate.includes(step), `${step} runs outside the replay gate`).toBe(true)
+      expect(yt.split(step).length - 1, `${step} also runs outside the replay gate`).toBe(gate.split(step).length - 1)
+    }
+  })
+
+  test('twitch and kick history never reaches their live handlers', () => {
+    // their rule is structural: history lands in the buffer directly. Every
+    // method that stamps a row isHistory must not emit it as a live message.
+    const irc = SRC('irc.js')
+    const methodRe = /\n {2}(?:async )?[_a-zA-Z]+\([^)]*\) \{\n/g
+    let at = irc.indexOf('m.isHistory = true')
+    let seen = 0
+    while (at !== -1) {
+      let start = -1
+      for (const m of irc.slice(0, at).matchAll(methodRe)) start = m.index + 1
+      const method = spanFrom(irc.slice(start), irc.slice(start, irc.indexOf('{', start) + 1))
+      expect(method.includes(".emit('message'"), `${method.split('\n')[0]} emits history as live`).toBe(false)
+      seen++
+      at = irc.indexOf('m.isHistory = true', at + 1)
+    }
+    expect(seen).toBeGreaterThanOrEqual(4)
+  })
 
   test('the filter-rule verdict is kept, not collapsed to .hide', () => {
     // Folding the call into an if-condition is how youtube lost the sound: the

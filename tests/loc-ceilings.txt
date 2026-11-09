@@ -4,4 +4,4 @@
 5310 src/multichat/emotes.js  # baseline
 5123 src/content/heatsync-button.js  # 2026-11-08: moved from chrome/ (was unscanned there); ceiling = size at the move
 4757 src/multichat/twitch-api.js  # baseline
-4210 src/multichat/social.js  # baseline
+4215 src/multichat/social.js  # baseline; +5 youtube replay alert gate

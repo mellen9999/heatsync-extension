@@ -165,6 +165,7 @@ function showHsCtxMenu(x, y, header, items, opts = {}) {
     if (!step) return
     ev.preventDefault()
     ev.stopPropagation()
+    ownKeyup(ev) // and its keyup — youtube toggles play on Space's keyup (overlay-keys.js)
     step()
   }
   setTimeout(() => {

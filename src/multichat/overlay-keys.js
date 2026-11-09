@@ -59,3 +59,28 @@ function initOverlayKeys(signal) {
     )
   } catch (_) {}
 }
+
+// A key heatsync consumed on keydown owns its keyup too. Eating the keydown is
+// not enough on youtube: its player acts on some keys at KEYUP — Space toggles
+// play there (hold-space-for-2x moved the toggle off keydown), and its global
+// hotkey listener (document, bubble) skips only an event that is
+// defaultPrevented. So Space in row mode, tab mode or a row's menu paused the
+// video. Every modal key consumer calls ownKeyup(e) beside its preventDefault.
+const _ownedKeyups = new Set()
+function ownKeyup(e) {
+  const k = e.code || e.key
+  if (k) _ownedKeyups.add(k)
+}
+function initOwnedKeyups(signal) {
+  document.addEventListener(
+    'keyup',
+    (e) => {
+      if (!_ownedKeyups.delete(e.code || e.key)) return
+      e.preventDefault()
+      e.stopImmediatePropagation()
+    },
+    { capture: true, signal },
+  )
+  // a keyup that never arrives (focus left the window mid-press) must not eat a later one
+  window.addEventListener('blur', () => _ownedKeyups.clear(), { signal })
+}

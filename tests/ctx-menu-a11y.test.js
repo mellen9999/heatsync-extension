@@ -11,12 +11,16 @@ import { join } from 'node:path'
 import { Window } from 'happy-dom'
 import { t } from './en-t.js'
 
-const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'ctx-menu.js'), 'utf8')
+// overlay-keys.js rides along: the menu hands every key it consumes to ownKeyup
+const SRC = ['overlay-keys.js', 'ctx-menu.js']
+  .map((f) => readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8'))
+  .join('\n')
 
 let win
 let doc
 let api
 let fired
+let ctl
 
 const tick = () => new Promise((r) => setTimeout(r, 5))
 
@@ -25,14 +29,18 @@ beforeEach(() => {
   doc = win.document
   doc.body.innerHTML = '<button id="opener">row</button><input id="other">'
   fired = []
-  api = new Function('document', 'window', 't', 'HS_DIR', `${SRC}; return { showHsCtxMenu, open: () => hsCtxOpen }`)(
-    doc,
-    win,
-    t,
-    () => 'ltr',
-  )
+  api = new Function(
+    'document',
+    'window',
+    't',
+    'HS_DIR',
+    `${SRC}; return { showHsCtxMenu, initOwnedKeyups, open: () => hsCtxOpen }`,
+  )(doc, win, t, () => 'ltr')
+  ctl = new AbortController()
+  api.initOwnedKeyups(ctl.signal)
 })
 afterEach(async () => {
+  ctl.abort()
   // closes whatever a test left open, so its document listeners never leak into the next
   doc.dispatchEvent(new win.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
   await win.happyDOM.close()
@@ -249,5 +257,27 @@ describe('mouse still works', () => {
 
   test('the id stays #hs-mc-msg-ctx: the esc-owner check looks for it', () => {
     expect(SRC).toContain("id: 'hs-mc-msg-ctx'")
+  })
+})
+
+describe('keys the menu takes never reach the page', () => {
+  test('Space picks the item, and its keyup is eaten too (youtube toggles play on keyup)', async () => {
+    await open({ keyboard: true })
+    const page = []
+    // stand-in for youtube's global hotkey listener: document, bubble phase
+    const pageKeys = (e) => page.push(`${e.type}:${e.key}`)
+    doc.addEventListener('keydown', pageKeys)
+    doc.addEventListener('keyup', pageKeys)
+    const down = new win.KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+    doc.activeElement.dispatchEvent(down)
+    // the menu closed on keydown: the keyup lands wherever focus went back to
+    const up = new win.KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true, cancelable: true })
+    doc.activeElement.dispatchEvent(up)
+    expect(fired).toEqual(['reply'])
+    expect([down.defaultPrevented, up.defaultPrevented]).toEqual([true, true])
+    expect(page).toEqual([])
+    // a key the menu did not take keeps its keyup
+    doc.body.dispatchEvent(new win.KeyboardEvent('keyup', { key: 'k', code: 'KeyK', bubbles: true }))
+    expect(page).toEqual(['keyup:k'])
   })
 })

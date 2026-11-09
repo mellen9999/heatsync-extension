@@ -1669,6 +1669,7 @@ function initInput() {
           if (handleTabModeKey(e)) {
             e.preventDefault()
             e.stopImmediatePropagation()
+            ownKeyup(e)
           }
         } catch (err) {
           log('tab-mode keydown:', err)

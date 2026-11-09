@@ -64,7 +64,7 @@ beforeEach(() => {
     `
     let currentTab = 'chan' // the bundle's live tab name; tests move it through setTab
     ${SRC}
-    return { setTab: (v) => { currentTab = v }, enterRowMode, exitRowMode, rowModeActive, toggleRowMode, handleRowModeKey, initRowMode, initOverlayKeys, rowModeRows }
+    return { setTab: (v) => { currentTab = v }, enterRowMode, exitRowMode, rowModeActive, toggleRowMode, handleRowModeKey, initRowMode, initOverlayKeys, initOwnedKeyups, rowModeRows }
     `,
   )(
     doc,
@@ -83,6 +83,7 @@ beforeEach(() => {
     },
   )
   api.initOverlayKeys(ctl.signal)
+  api.initOwnedKeyups(ctl.signal)
   api.initRowMode(ctl.signal)
 })
 afterEach(async () => {
@@ -405,5 +406,67 @@ describe('inactive means invisible', () => {
     const composer = doc.getElementById('hs-mc-input')
     composer.focus()
     expect(press('j').defaultPrevented).toBe(false)
+  })
+})
+
+describe('keys the mode takes never reach the page', () => {
+  // youtube's hotkeys: a bubbling listener on document that skips a defaultPrevented
+  // event — and its player toggles play on Space's KEYUP, not its keydown
+  const pageHears = () => {
+    const heard = []
+    const fn = (e) => heard.push(`${e.type}:${e.key}`)
+    doc.addEventListener('keydown', fn)
+    doc.addEventListener('keyup', fn)
+    return heard
+  }
+  const up = (key, code) => {
+    const ev = new win.KeyboardEvent('keyup', { key, code, bubbles: true, cancelable: true })
+    ;(doc.activeElement || doc.body).dispatchEvent(ev)
+    return ev
+  }
+
+  test('j / k / Space / a digit: neither the keydown nor its keyup gets past', () => {
+    addRow('a')
+    addRow('b')
+    api.enterRowMode()
+    const heard = pageHears()
+    for (const [key, code] of [
+      ['k', 'KeyK'],
+      ['j', 'KeyJ'],
+      [' ', 'Space'],
+      ['5', 'Digit5'],
+    ]) {
+      expect(press(key, { code }).defaultPrevented).toBe(true)
+      expect(up(key, code).defaultPrevented).toBe(true)
+    }
+    expect(heard).toEqual([])
+  })
+
+  test('a key the mode leaves alone keeps its keyup, and the mode off eats nothing', () => {
+    addRow('a')
+    api.enterRowMode()
+    const heard = pageHears()
+    press('F5', { code: 'F5' })
+    up('F5', 'F5')
+    api.exitRowMode()
+    press(' ', { code: 'Space' })
+    up(' ', 'Space')
+    expect(heard).toEqual(['keydown:F5', 'keyup:F5', 'keydown: ', 'keyup: '])
+  })
+
+  test('every modal key consumer hands its keyup over', () => {
+    const read = (f) => readFileSync(join(dir, f), 'utf8')
+    const row = read('row-mode.js')
+    expect(row.slice(row.indexOf('if (handleRowModeKey(e)) {')).split('}')[0]).toContain('ownKeyup(e)')
+    const input = read('input.js')
+    expect(input.slice(input.indexOf('if (handleTabModeKey(e)) {')).split('}')[0]).toContain('ownKeyup(e)')
+    const menu = read('ctx-menu.js')
+    expect(
+      menu.slice(
+        menu.indexOf('function keyHandler(ev)'),
+        menu.indexOf('step()', menu.indexOf('function keyHandler(ev)')),
+      ),
+    ).toContain('ownKeyup(ev)')
+    expect(read('main-overlay.js')).toContain('initOwnedKeyups(mcSignal)')
   })
 })

@@ -308,6 +308,7 @@ function initRowMode(signal) {
         if (handleRowModeKey(e)) {
           e.preventDefault()
           e.stopImmediatePropagation()
+          ownKeyup(e)
         }
       } catch (_) {}
     },

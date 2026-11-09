@@ -2257,6 +2257,7 @@ function cycleTab(fwd) {
 }
 
 initOverlayKeys(mcSignal)
+initOwnedKeyups(mcSignal)
 initRowMode(mcSignal)
 registerOverlayKey('f', () => openFollowsView())
 document.addEventListener('keydown', followsKeyHandler, { capture: true, signal: mcSignal })

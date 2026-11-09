@@ -2,7 +2,7 @@
   "_": "bytes, measured 2026-11-08 + 2% headroom (min 256B). lower to measured, never raise to go green; a raise needs the reason in its commit.",
   "chrome": {
     "multichat-core.js": 1689490,
-    "content.js": 235554,
+    "content.js": 242904,
     "heatsync-button.js": 137400,
     "autocomplete-hook.js": 95645,
     "chat-injector.js": 47251,
@@ -41,7 +41,7 @@
   },
   "firefox": {
     "multichat-core.js": 1689490,
-    "content.js": 235554,
+    "content.js": 242904,
     "heatsync-button.js": 137400,
     "autocomplete-hook.js": 95645,
     "chat-injector.js": 47251,

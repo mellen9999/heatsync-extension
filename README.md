@@ -13,7 +13,7 @@ twitch, kick and youtube live chat in one panel — read every stream you follow
 - **moderation + profiles** — a hover mod toolbar (`/ban` `/timeout` `/unban` `/delete`), client-side automod, and mute-or-block that carries a user across twitch and kick. profile cards with socials, badges, and a paginated chat-log archive a click away. one-click twitch clips.
 - **stream events + whispers** — inline banners for going live, offline, game switches, raids, hype trains, gift subs, redeems, predictions and polls, each one toggleable. twitch whispers, a desktop notification on a mention, and a seen-state that follows you across tabs and devices. a refresh brings back the last 15 minutes of game switches and go-offlines, worded the same as heatsync.org.
 - **native chat cleanup** — toggles that hide channel points, hype trains, bits, drops and upsells, and auto-claim for channel points.
-- **localized** — every ui string translated, right-to-left included.
+- **localized** — 34 languages, right-to-left included.
 - **light on your machine** — vanilla js, zero runtime dependencies. a capped message buffer and dom render cap hold memory steady through long sessions; the render cap is adjustable for weak hardware.
 
 ## install
@@ -43,7 +43,7 @@ every build runs the test suite first, then `node --check` on the output. add `-
 
 ## contributing
 
-`bun test` runs the unit tests, `bun run lint` and `bun run typecheck` are the other two gates, and `git config core.hooksPath .githooks` turns on the pre-push check that runs all of them. [CONTRIBUTING.md](CONTRIBUTING.md) has the setup, [docs/](docs/) has the architecture and feature notes, and [CHANGELOG.md](CHANGELOG.md) has what changed in each version.
+`bun test` runs the unit tests, `bun run lint` and `bun run typecheck` are the other two gates, and `git config core.hooksPath .githooks` turns on the pre-push check that runs all of them. [CONTRIBUTING.md](CONTRIBUTING.md) has the setup, [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has what runs where and how the build fits together, and [CHANGELOG.md](CHANGELOG.md) has what changed in each version.
 
 a few files are byte-for-byte copies of heatsync.org's own modules — the user card, the stream event wording, the gif search layer, the emote-refs builder, the name-paint compiler. edit them on the site, then run `scripts/sync-site-copies.sh` (paint compiler: `scripts/sync-paint-compiler.sh`). the build and a parity test on each side fail if a copy drifts.
 

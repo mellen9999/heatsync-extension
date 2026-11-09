@@ -457,7 +457,7 @@
       color: #000;
       border-color: #fff;
     }
-    .hs-mc-tw-subtab svg { display: block; }
+    .hs-mc-tw-subtab .hs-glyph { display: block; }
     .hs-mc-tw-content {
       flex: 1;
       overflow-y: auto;

@@ -35,38 +35,31 @@ function renderQuickLinks() {
   const isBroadcaster = !!(ch && own && own === ch)
   const isMod = isBroadcaster || _twitchIsMod
 
-  // Static SVG strings parsed once per item — no user input ever reaches
-  // here (icons + labels are all from the SECTIONS list below). We use
-  // DOMParser instead of innerHTML to satisfy the security-reminder hook.
-  function svgNode(svgStr) {
-    const doc = new DOMParser().parseFromString(svgStr, 'image/svg+xml')
-    return doc.documentElement
+  function glyphNode(ch) {
+    const el = document.createElement('span')
+    el.className = 'hs-glyph'
+    el.setAttribute('aria-hidden', 'true')
+    el.textContent = ch
+    return el
   }
 
+  // unicode glyphs, drawn as text (icons are never svg)
   const ICONS = {
-    sub: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2l2.39 4.84 5.34.78-3.86 3.77.91 5.31L10 14.27l-4.78 2.51.91-5.31L2.27 7.62l5.34-.78L10 2z"/></svg>',
-    clip: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M18 7h-2V5a2 2 0 00-2-2H6a2 2 0 00-2 2v2H2v4l8 6 8-6V7zM6 5h8v2H6V5z"/></svg>',
-    popout:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M4 4h6v2H6v8h8v-4h2v6H4V4zm8 0h4v4h-2V6.41l-4.3 4.3-1.4-1.42L12.58 6H11V4z"/></svg>',
-    shield:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M10 2l6 2.7V9c0 4.4-2.5 8.3-6 10-3.5-1.7-6-5.6-6-10V4.7L10 2z"/></svg>',
-    dashboard:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M3 3h6v6H3V3zm8 0h6v6h-6V3zM3 11h6v6H3v-6zm8 4h6v2h-6v-2zm0-4h6v2h-6v-2z"/></svg>',
-    settings:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M10 6.5A3.5 3.5 0 1010 13.5 3.5 3.5 0 0010 6.5zm6.5 3.5a6.5 6.5 0 00-.1-1.1l2-1.5-1.5-2.6-2.3.8c-.6-.5-1.3-.9-2-1.2L12.2 2h-3l-.4 2.4c-.7.3-1.4.7-2 1.2l-2.3-.8L3 7.4l2 1.5a6.6 6.6 0 000 2.2L3 12.6l1.5 2.6 2.3-.8c.6.5 1.3.9 2 1.2l.4 2.4h3l.4-2.4c.7-.3 1.4-.7 2-1.2l2.3.8 1.5-2.6-2-1.5c.1-.4.1-.7.1-1.1z"/></svg>',
-    people:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M7 8a3 3 0 100-6 3 3 0 000 6zm6 1a2 2 0 100-4 2 2 0 000 4zM1 17v-1c0-2.5 4-4 6-4s6 1.5 6 4v1H1zm12-1c0-1.2-.8-2.2-2-2.9.6-.1 1.3-.1 2-.1 2 0 5 1 5 3v1h-5v-1z"/></svg>',
-    cash: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M10 2a8 8 0 100 16 8 8 0 000-16zm.5 12.5v1h-1v-1c-1.4-.2-2.5-1-2.7-2.5H8c.1.6.5 1 1.5 1 .8 0 1.5-.3 1.5-1 0-.5-.3-.8-1.5-1.1-1.5-.4-2.8-.9-2.8-2.4 0-1.1 1-1.9 2.3-2.1V5h1v1.4c1.2.2 2.2.8 2.5 2.1H11c-.1-.5-.5-1-1.5-1-.7 0-1.5.3-1.5.9 0 .6.4.9 1.5 1.2 1.7.5 2.8 1 2.8 2.4 0 1.2-1 2-2.3 2.4z"/></svg>',
-    video:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M2 5h12v10H2V5zm14 2l4-2v10l-4-2V7z"/></svg>',
-    calendar:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M4 4h2V2h2v2h4V2h2v2h2v14H4V4zm0 4v8h12V8H4z"/></svg>',
-    info: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 4a1 1 0 110 2 1 1 0 010-2zm-1 4h2v6H9v-6z"/></svg>',
-    user: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M10 10a4 4 0 100-8 4 4 0 000 8zm0 2c-3 0-7 1.5-7 4.5V18h14v-1.5c0-3-4-4.5-7-4.5z"/></svg>',
-    gift: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M3 8v10h14V8H3zm0-3h14v2H3V5zm5-3a2 2 0 012 2 2 2 0 012-2 2 2 0 010 4h-4a2 2 0 010-4z"/></svg>',
-    lock: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"><path fill="currentColor" d="M5 9V7a5 5 0 0110 0v2h1v9H4V9h1zm2 0h6V7a3 3 0 00-6 0v2z"/></svg>',
-    arrow:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    sub: '★',
+    clip: '✂',
+    popout: '⧉',
+    shield: '⛨',
+    dashboard: '▦',
+    settings: '⚙',
+    people: '☰',
+    cash: '$',
+    video: '▶',
+    calendar: '▤',
+    info: 'ℹ',
+    user: '☺',
+    gift: '✦',
+    lock: '⚿',
+    arrow: '›',
   }
 
   const SECTIONS = [
@@ -229,7 +222,7 @@ function renderQuickLinks() {
 
       const iconWrap = document.createElement('div')
       iconWrap.className = 'hs-mc-menu-icon'
-      iconWrap.appendChild(svgNode(item.icon))
+      iconWrap.appendChild(glyphNode(item.icon))
       el.appendChild(iconWrap)
 
       const text = document.createElement('div')
@@ -240,7 +233,7 @@ function renderQuickLinks() {
       text.appendChild(title)
       el.appendChild(text)
 
-      const arrow = svgNode(ICONS.arrow)
+      const arrow = glyphNode(ICONS.arrow)
       arrow.setAttribute('class', 'hs-mc-menu-arrow')
       el.appendChild(arrow)
 

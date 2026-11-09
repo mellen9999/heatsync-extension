@@ -9,19 +9,15 @@ let _settingsSubtab = 'display'
 
 // ─── settings sub-tab helpers ────────────────────────────────────────────
 
-// SVG icons for the settings sub-tabs (16x16 stroke, no fill)
+// unicode glyphs for the settings sub-tabs (icons are text, never svg)
 const _SET_SUBTAB_ICONS = {
-  display:
-    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="10" rx="1"/><line x1="5" y1="14" x2="11" y2="14"/><line x1="8" y1="12" x2="8" y2="14"/></svg>',
-  chat: '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H6l-3 2v-2H3a1 1 0 0 1-1-1V3z"/></svg>',
-  notifs:
-    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2a5 5 0 0 1 5 5v3l1 1H2l1-1V7a5 5 0 0 1 5-5z"/><line x1="6.5" y1="13" x2="9.5" y2="13"/></svg>',
-  mod: '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5l5 2.5v4c0 3-2.5 5.5-5 6.5C5.5 13.5 3 11 3 8V4l5-2.5z"/></svg>',
-  help: '<span style="font-size:16px;line-height:1">?</span>',
-  filters:
-    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M4 8h8M6 12h4"/></svg>',
-  system:
-    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.42 1.42M11.53 11.53l1.42 1.42M3.05 12.95l1.42-1.42M11.53 4.47l1.42-1.42"/></svg>',
+  display: '<span class="hs-glyph" aria-hidden="true">▭</span>',
+  chat: '<span class="hs-glyph" aria-hidden="true">☰</span>',
+  notifs: '<span class="hs-glyph" aria-hidden="true">!</span>',
+  mod: '<span class="hs-glyph" aria-hidden="true">⛨</span>',
+  help: '<span class="hs-glyph" aria-hidden="true">?</span>',
+  filters: '<span class="hs-glyph" aria-hidden="true">▿</span>',
+  system: '<span class="hs-glyph" aria-hidden="true">⚙</span>',
 }
 // One list: the registry's settings cells (tab-registry.js), `help` last.
 const _SET_SUBTAB_ORDER = mcSubCells('settings').map((c) => c.id)

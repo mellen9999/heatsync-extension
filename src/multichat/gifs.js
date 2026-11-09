@@ -75,7 +75,7 @@ function hsGifTabHtml() {
   return `<div class="hs-mc-tab-content hs-mc-gif-tab" id="hs-mc-tab-gifs" style="display: none; flex-direction: column;">
         <div class="hs-mc-picker-header">
           <div class="hs-mc-search-wrap">
-            <svg class="hs-mc-search-icon" width="14" height="14" viewBox="0 0 20 20"><path fill="#000" d="M13.74 12.33l4.04 4.04a1 1 0 01-1.42 1.42l-4.04-4.04a7 7 0 111.42-1.42zM9 14A5 5 0 109 4a5 5 0 000 10z"/></svg>
+            <span class="hs-mc-search-icon hs-glyph" aria-hidden="true">⌕</span>
             <input type="text" id="hs-mc-gif-search" placeholder="${escapeHtml(t('mc_gif_search_placeholder'))}" autocomplete="off" spellcheck="false">
           </div>
         </div>

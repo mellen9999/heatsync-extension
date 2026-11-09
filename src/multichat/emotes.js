@@ -1384,7 +1384,7 @@ function showEmotePicker(tab = null) {
       <div class="hs-mc-tab-content" id="hs-mc-tab-emotes" style="display: ${pickerTab === 'emotes' ? 'flex' : 'none'}; flex-direction: column;">
         <div class="hs-mc-picker-header">
           <div class="hs-mc-search-wrap">
-            <svg class="hs-mc-search-icon" width="14" height="14" viewBox="0 0 20 20"><path fill="#000" d="M13.74 12.33l4.04 4.04a1 1 0 01-1.42 1.42l-4.04-4.04a7 7 0 111.42-1.42zM9 14A5 5 0 109 4a5 5 0 000 10z"/></svg>
+            <span class="hs-mc-search-icon hs-glyph" aria-hidden="true">⌕</span>
             <input type="text" id="hs-mc-emote-search" placeholder="${t('mc_emote_search_placeholder')}" autocomplete="off" role="combobox" aria-label="${t('mc_emote_search_placeholder')}" aria-controls="hs-mc-emote-list" aria-autocomplete="list">
           </div>
           ${mcEmoteUploadHtml()}

@@ -1380,7 +1380,7 @@
       color: #000;
       border-color: #fff;
     }
-    .hs-mc-set-subtab svg { display: block; }
+    .hs-mc-set-subtab .hs-glyph { display: block; }
     .hs-mc-set-subtab-body {
       flex: 1;
       min-height: 0; /* let the flex item shrink so overflow-y actually scrolls */

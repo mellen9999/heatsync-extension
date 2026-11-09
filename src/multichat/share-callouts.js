@@ -217,7 +217,6 @@ function calloutTokenMatches(scan, expect) {
   if (!scan?.token) return false
   if (!expect) return true
   if (expect.kind !== undefined && scan.kind !== expect.kind) return false
-  if (expect.notKind !== undefined && scan.kind === expect.notKind) return false
   if (expect.count !== undefined && scan.count !== expect.count) return false
   return true
 }
@@ -304,6 +303,17 @@ function fiberTokenScan(rootEl) {
  * into plain chat; a rejected token comes back HTTP 200 with an errors[]
  * entry and a null field, so "no exception" is not "it worked".
  */
+// A mod anniversary has no token: twitch's own share sends this with the
+// channel's id. A rejection (ALREADY_SENT and the like) is a non-null `error`.
+async function _sendModiversaryNotice(channel, text) {
+  const channelID = await resolveTwitchChannelId(channel)
+  if (!channelID) throw new Error('channel id unknown')
+  const data = await gqlProxy('SendUserModiversaryNotice', { input: { channelID, noticeMessage: text || '' } })
+  const res = data?.data?.sendUserModiversaryNotice
+  const err = (Array.isArray(data?.errors) && data.errors.length && data.errors) || (res ? res.error : 'no result')
+  if (err) throw new Error(JSON.stringify(err).slice(0, 200))
+}
+
 async function _consumeCalloutToken(channel, token, text) {
   const data = await gqlProxy('Chat_ShareResub_UseResubToken', {
     input: { message: text || '', channelLogin: channel, includeStreak: false, tokenID: token },
@@ -462,6 +472,20 @@ window.__hsResubShare = {
       } catch (_) {}
       return false
     }
+    if (claim.kind === 'modanniv') {
+      _exitResubShareMode(claim, false)
+      ;(async () => {
+        try {
+          await _sendModiversaryNotice(claim.channel, text)
+          log('modanniv-share: GQL fired ok')
+          _announceCalloutShared({ kind: 'modanniv', channel: claim.channel, months: claim.months })
+        } catch (e) {
+          console.warn('[heatsync-ext] modanniv-share GQL failed:', e?.message || e)
+          await _resubShareTextRescue(claim.channel, text)
+        }
+      })()
+      return true
+    }
     // No token → the native click can only post Twitch's DEFAULT
     // celebration (no body). Return false so sendMessage continues and
     // the typed text still lands as a normal chat message — celebration
@@ -489,7 +513,7 @@ window.__hsResubShare = {
       try {
         await _consumeCalloutToken(claim.channel, claim.resubToken, text)
         log('resub-share: GQL fired ok')
-        _announceCalloutShared({ kind: claim.kind || 'resub', channel: claim.channel, months: claim.months })
+        _announceCalloutShared({ kind: 'resub', channel: claim.channel, months: claim.months })
       } catch (e) {
         console.warn('[heatsync-ext] resub-share GQL failed:', e?.message || e)
         await _resubShareTextRescue(claim.channel, text)
@@ -846,7 +870,6 @@ function setupHsCalloutCloseButton() {
           user,
           _nativeShareBtn: shareBtn,
           _nativeCallout: calloutEl,
-          _token: calloutTokenMatches(scan, { count: kind.count, notKind: 'cumulative' }) ? scan.token : null,
         })
       } catch (_) {}
       try {

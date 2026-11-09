@@ -312,9 +312,10 @@ describe('a share clears the prompt in the other open windows', () => {
   const SHARE_SRC = readFileSync(new URL('../src/multichat/share-callouts.js', import.meta.url), 'utf8')
 
   test('announced only after the mutation landed, for every callout kind', () => {
-    // the resub share mode also carries mod anniversaries; the claim names which
     const resub = SHARE_SRC.indexOf("log('resub-share: GQL fired ok')")
-    expect(SHARE_SRC.slice(resub, resub + 160)).toContain("_announceCalloutShared({ kind: claim.kind || 'resub'")
+    expect(SHARE_SRC.slice(resub, resub + 160)).toContain("_announceCalloutShared({ kind: 'resub'")
+    const mod = SHARE_SRC.indexOf("log('modanniv-share: GQL fired ok')")
+    expect(SHARE_SRC.slice(mod, mod + 160)).toContain("_announceCalloutShared({ kind: 'modanniv'")
     const streak = SHARE_SRC.indexOf("log('watchstreak-share: GQL fired ok')")
     expect(SHARE_SRC.slice(streak, streak + 160)).toContain("_announceCalloutShared({ kind: 'streak'")
   })

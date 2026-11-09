@@ -52,7 +52,7 @@ describe('the mod anniversary has its own prompt', () => {
     expect(SRC.slice(i, i + 400)).toContain("HsNotifs.emit('twitch-mod-anniversary-share'")
   })
 
-  test('its share spends its own token in heatsync’s share mode, never twitch’s button', () => {
+  test('its share runs heatsync’s share mode, never twitch’s button', () => {
     // twitch's button only arms twitch's composer, which heatsync replaces:
     // the prompt closed and nothing was posted (2026-11-09, nl_kripp)
     const i = NOTIFS.indexOf("registerType('twitch-mod-anniversary-share'")
@@ -60,7 +60,6 @@ describe('the mod anniversary has its own prompt', () => {
     const block = NOTIFS.slice(i, NOTIFS.indexOf('registerType(', i + 10))
     expect(block).not.toContain('clickNative')
     expect(block).toContain("'modanniv')")
-    expect(block).toContain("notKind: 'cumulative'")
     expect(block).toContain("t('mc_notif_mod_anniv'")
   })
 
@@ -69,5 +68,60 @@ describe('the mod anniversary has its own prompt', () => {
     const body = SRC.slice(c, SRC.indexOf('_injectShareSynthetic(claim', c) + 40)
     expect(body).toContain("if (claim.kind !== 'modanniv')")
     expect(SRC).toContain("wasCtx.claim.kind !== 'modanniv'")
+  })
+})
+
+describe('the mod anniversary send', () => {
+  // twitch's own share (read from its bundle 2026-11-09): no token, its own
+  // mutation, { channelID, noticeMessage }, a rejection in `error`
+  const send = (reply) => {
+    const from = SRC.indexOf('async function _sendModiversaryNotice(')
+    const src = SRC.slice(from, SRC.indexOf('\n}', from) + 2)
+    const calls = []
+    const fn = new Function('resolveTwitchChannelId', 'gqlProxy', `${src}\nreturn _sendModiversaryNotice`)(
+      async (login) => (login === 'nl_kripp' ? '29795919' : null),
+      async (op, vars) => {
+        calls.push([op, vars])
+        return reply
+      },
+    )
+    return { fn, calls }
+  }
+
+  test('sends the typed text with the channel id', async () => {
+    const { fn, calls } = send({ data: { sendUserModiversaryNotice: { error: null, modiversary: { months: 6 } } } })
+    await fn('nl_kripp', 'six months')
+    expect(calls).toEqual([
+      ['SendUserModiversaryNotice', { input: { channelID: '29795919', noticeMessage: 'six months' } }],
+    ])
+  })
+
+  test('a rejection, an error list, no result or no channel id all throw — the caller rescues the text', async () => {
+    await expect(
+      send({ data: { sendUserModiversaryNotice: { error: 'ALREADY_SENT' } } }).fn('nl_kripp', 'x'),
+    ).rejects.toThrow('ALREADY_SENT')
+    await expect(send({ errors: [{ message: 'nope' }] }).fn('nl_kripp', 'x')).rejects.toThrow('nope')
+    await expect(send({ data: {} }).fn('nl_kripp', 'x')).rejects.toThrow()
+    await expect(send({}).fn('someone_else', 'x')).rejects.toThrow('channel id unknown')
+  })
+
+  test('the page-world proxy knows the operation and lets it through', () => {
+    const MAIN = readFileSync(new URL('../src/content/early-inject-main.js', import.meta.url), 'utf8')
+    expect(MAIN).toContain(
+      "SendUserModiversaryNotice: '8ca37b26d3c9adc2e20c307adc689a74685acf57c1408d5736664c8ac536526c'",
+    )
+    const allow = MAIN.slice(
+      MAIN.indexOf('const ALLOWED_GQL_OPS = ['),
+      MAIN.indexOf(']', MAIN.indexOf('const ALLOWED_GQL_OPS = [')),
+    )
+    expect(allow).toContain("'SendUserModiversaryNotice'")
+  })
+
+  test('consume sends it before the no-token path, so twitch’s button is never pressed', () => {
+    const c = SRC.indexOf('  consume: (text) => {')
+    const mod = SRC.indexOf("if (claim.kind === 'modanniv') {", c)
+    expect(mod).toBeGreaterThan(c)
+    expect(mod).toBeLessThan(SRC.indexOf('if (!claim.resubToken) {', c))
+    expect(SRC.slice(mod, mod + 300)).toContain('_sendModiversaryNotice(claim.channel, text)')
   })
 })

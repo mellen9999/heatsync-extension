@@ -256,6 +256,11 @@
       // with the user's typed body. Tokens are formatted base64(userId:channelId:months:cumulative).
       // Captured live from Twitch; replaced automatically if Twitch ships a new hash.
       Chat_ShareResub_UseResubToken: '61045d4a4bb10d25080bc0a01a74232f1fa67a6a530e0f2ebf05df2f1ba3fa59',
+      // Mod anniversary "Share" — its own mutation, no token: input
+      // { channelID, noticeMessage }. Hash = sha256 of twitch's printed
+      // document with __typename added and a trailing newline (the same
+      // recipe reproduces the resub hash above).
+      SendUserModiversaryNotice: '8ca37b26d3c9adc2e20c307adc689a74685acf57c1408d5736664c8ac536526c',
       // Cheer bits — the canonical bits-send mutation twitch's own client fires
       // when the bits modal confirms. Captures auto-update if rotated.
       ChatInput_SendCheer: '57b0d6bd979e516ae3767f6586e7f23666d612d3a65af1d5436dba130c9426fd',
@@ -1035,6 +1040,7 @@
         'ClaimCommunityPoints',
         'VotePoll',
         'Chat_ShareResub_UseResubToken',
+        'SendUserModiversaryNotice',
         'MakePrediction',
         'SetFollowersOnlyModeSetting',
         'FollowButton_FollowUser',

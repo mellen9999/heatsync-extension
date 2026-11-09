@@ -273,7 +273,9 @@ describe('the page-world token reader (src/content/twitch-callout-token.js)', ()
     const t = tok('1', '2', 109, 'cumulative')
     const { ask, replies } = boot([el(t)])
     ask('abc')
-    expect(replies).toEqual([{ id: 'abc', tokens: [{ raw: t, channelId: '2', count: 109, kind: 'cumulative' }] }])
+    expect(replies).toEqual([
+      { id: 'abc', tokens: [{ raw: t, channelId: '2', count: 109, kind: 'cumulative' }], misses: [] },
+    ])
   })
 
   test('lists every callout in the queue, so the overlay can pick its own', () => {
@@ -287,7 +289,8 @@ describe('the page-world token reader (src/content/twitch-callout-token.js)', ()
   test('answers with nothing for a callout without a readable key, and ignores malformed requests', () => {
     const { ask, replies, win } = boot([el('chat-line-1'), {}])
     ask('z')
-    expect(replies).toEqual([{ id: 'z', tokens: [] }])
+    // a miss says what its keys look like, every digit blanked: no id leaves
+    expect(replies).toEqual([{ id: 'z', tokens: [], misses: [['chat-line-N'], []] }])
     win.dispatchEvent({ type: 'hs-callout-token-req', detail: 'not json' })
     expect(replies.length).toBe(1)
   })

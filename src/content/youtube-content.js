@@ -349,7 +349,8 @@
         const emote = renderMap.get(word) || renderBlockedByName.get(word)
         if (emote) {
           const img = document.createElement('img')
-          img.src = emote.url
+          img.src = hsNativeRowUrl(emote)
+          img.addEventListener('error', () => hsOwnCopyFallback(img))
           img.alt = emote.name
           if (!renderMap.has(word)) img.dataset.hsBlocked = '1'
           if (emote.hash) img.dataset.emoteHash = emote.hash

@@ -6587,7 +6587,7 @@
   function hsArmEmoteRetry(img) {
     let tries = 0
     img.addEventListener('error', () => {
-      if (tries >= 3 || !img.src || !img.isConnected) return
+      if (hsOwnCopyFallback(img) || tries >= 3 || !img.src || !img.isConnected) return
       tries++
       const delay = tries === 1 ? 1000 : tries === 2 ? 3000 : 8000
       const target = img.src
@@ -6706,7 +6706,7 @@
     }
 
     // Overlay emotes render at 1x native size (their designed display size)
-    const imgSrc = emote.url
+    const imgSrc = isOverlay ? emote.url : hsNativeRowUrl(emote)
 
     // Create image - native size, no constraints
     const img = document.createElement('img')

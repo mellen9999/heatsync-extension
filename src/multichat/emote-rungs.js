@@ -42,6 +42,17 @@ function hsOwnRungUrl(url, want, variants) {
 }
 
 /**
+ * The file a NATIVE chat row draws for an emote (content.js, youtube-content.js):
+ * the row's emote box is 28px, so the rung is the screen's — 2x on a dense
+ * screen (devicePixelRatio >= 1.5, the overlay's own cut in hsWantedRung), else
+ * 1x. Emotes without advertised `variants` keep their url.
+ */
+function hsNativeRowUrl(emote) {
+  const dpr = typeof devicePixelRatio === 'number' && devicePixelRatio >= 1.5 ? 2 : 1
+  return hsOwnRungUrl(emote?.url, dpr, emote?.variants)
+}
+
+/**
  * ` width="W" height="H"` for an <img> whose emote has a measured natural size,
  * else ''. The img is `width:auto; height:var(--hs-emote-size)` (10-emotes.css),
  * and with both attributes the browser derives the aspect ratio before the file

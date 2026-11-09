@@ -2047,6 +2047,7 @@
           <button class="hs-src-chip ${pickerSources.has('ffz') ? 'active' : ''}" data-src="ffz" title="${t('hsbtn_chip_ffz_title')}">ffz</button>
         </div>
       </div>
+      ${hsNativeUploadHtml()}
       <div class="heatsync-panel-content">
         <div class="heatsync-tabs">
           <button class="heatsync-tab active" data-tab="channel">
@@ -2121,6 +2122,11 @@
           }
         })
       }
+
+      hsNativeUploadWire(panel, {
+        toast: showPickerToast,
+        added: () => loadInventoryEmotes().then(() => panelOpen && renderEmoteGrid()),
+      })
 
       // Close button handler
       panel.querySelector('.heatsync-panel-close:not(.heatsync-panel-back)')?.addEventListener('click', closePanel)

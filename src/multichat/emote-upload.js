@@ -13,10 +13,6 @@
 // be uploaded closes the form; a name that is taken keeps it (and the file
 // already uploaded) open so you only pick another name.
 
-// Mirrors the server's image cap (UPLOAD_CONFIG.MAX_IMAGE_SIZE).
-const MC_EU_MAX_BYTES = 10 * 1048576
-const MC_EU_TYPES = ['image/png', 'image/gif', 'image/webp', 'image/jpeg', 'image/avif']
-
 let _mcEuBusy = false
 // What a retry reuses: the picked file, or — once it is on the server — its answer.
 let _mcEuFile = null
@@ -25,7 +21,7 @@ let _mcEuUploaded = null
 function mcEmoteUploadHtml() {
   return `<div class="hs-mc-upload" id="hs-mc-upload">
       <button type="button" class="hs-mc-upload-btn" id="hs-mc-upload-btn" title="${escapeHtml(t('mc_emote_upload_tip'))}">⇪ ${escapeHtml(t('mc_emote_upload'))}</button>
-      <input type="file" id="hs-mc-upload-file" accept="${MC_EU_TYPES.join(',')}" hidden>
+      <input type="file" id="hs-mc-upload-file" accept="${HS_EU_TYPES.join(',')}" hidden>
       <span class="hs-mc-upload-form" id="hs-mc-upload-form" hidden>
         <input type="text" id="hs-mc-upload-name" maxlength="100" autocomplete="off" spellcheck="false" placeholder="${escapeHtml(t('mc_emote_upload_name'))}" aria-label="${escapeHtml(t('mc_emote_upload_name'))}">
         <button type="button" id="hs-mc-upload-go">${escapeHtml(t('mc_emote_upload'))}</button>
@@ -61,25 +57,11 @@ function mcEuBusy(on) {
   }
 }
 
-// The word you will type in chat: the file's name without its extension or a
-// "-2x" size suffix, reduced to letters, digits and underscore.
-function mcEuDefaultName(file) {
-  const stem = String(file?.name || '')
-    .replace(/\.[^.]+$/, '')
-    .replace(/-[1-4]x$/i, '')
-    .replace(/[^A-Za-z0-9_]/g, '')
-  return stem.slice(0, 30) || 'emote'
-}
-
 function mcEuPick(file) {
   if (!file) return
-  if (!MC_EU_TYPES.includes(file.type)) {
-    mcEuStatus(t('mc_emote_upload_bad_type'), true)
-    mcEuReset()
-    return
-  }
-  if (file.size > MC_EU_MAX_BYTES) {
-    mcEuStatus(t('mc_input_upload_too_large', [String(MC_EU_MAX_BYTES / 1048576)]), true)
+  const problem = hsEuFileProblem(file)
+  if (problem) {
+    mcEuStatus(problem, true)
     mcEuReset()
     return
   }
@@ -89,28 +71,13 @@ function mcEuPick(file) {
   document.getElementById('hs-mc-upload-btn').hidden = true
   document.getElementById('hs-mc-upload-form').hidden = false
   const name = document.getElementById('hs-mc-upload-name')
-  name.value = mcEuDefaultName(file)
+  name.value = hsEuDefaultName(file)
   name.focus()
   name.select()
 }
 
-// What the server said, in words anyone can act on. `null` = not signed in (the
-// login nudge says that, with a button).
-function mcEuReason(r) {
-  const status = Number(r?.status) || 0
-  const err = String(r?.error || '')
-  if (status === 401 || /not logged in|log in/i.test(err)) return null
-  if (status === 429) return t('mc_emote_upload_slow')
-  if (status === 413 || /^file too large/i.test(err))
-    return t('mc_input_upload_too_large', [String(MC_EU_MAX_BYTES / 1048576)])
-  if (/community guidelines|violates/i.test(err)) return t('mc_emote_upload_blocked')
-  if (/mismatch|unsupported file type|not allowed/i.test(err)) return t('mc_emote_upload_bad_type')
-  if (/daily upload limit/i.test(err)) return t('mc_emote_upload_limit')
-  return t('mc_input_upload_failed_why', [err.toLowerCase() || t('mc_input_upload_failed')])
-}
-
 function mcEuFail(r) {
-  const why = mcEuReason(r)
+  const why = hsEuReason(r)
   if (why === null) {
     showEmoteLoginNudge()
     mcEuStatus(t('mc_emote_add_login'), true)
@@ -119,20 +86,11 @@ function mcEuFail(r) {
   }
 }
 
-function mcEuReadDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const fr = new FileReader()
-    fr.addEventListener('load', () => resolve(String(fr.result || '')))
-    fr.addEventListener('error', () => reject(new Error('could not read file')))
-    fr.readAsDataURL(file)
-  })
-}
-
 async function mcEmoteUploadSubmit() {
   if (_mcEuBusy || !_mcEuFile) return
   const nameEl = document.getElementById('hs-mc-upload-name')
   const name = (nameEl?.value || '').trim()
-  if (!name || /\s/.test(name)) {
+  if (!hsEuNameOk(name)) {
     mcEuStatus(t('mc_emote_upload_name_bad'), true)
     nameEl?.focus()
     return
@@ -140,43 +98,20 @@ async function mcEmoteUploadSubmit() {
   mcEuBusy(true)
   mcEuStatus(t('mc_input_uploading'))
   try {
-    if (!_mcEuUploaded) {
-      const resp = await safeSendMessage({
-        type: 'api_upload',
-        emote: true,
-        name: _mcEuFile.name || 'emote',
-        mime: _mcEuFile.type,
-        dataUrl: await mcEuReadDataUrl(_mcEuFile),
-      })
-      if (!resp?.ok || !resp.url) {
-        mcEuFail(resp)
-        mcEuReset() // nothing was kept on the server: start over with another file
-        return
-      }
-      _mcEuUploaded = resp
+    const res = await hsEuSubmit(safeSendMessage, _mcEuFile, name, _mcEuUploaded)
+    if (res.up) _mcEuUploaded = res.up
+    if (res.kind === 'upload_failed') {
+      mcEuFail(res.r)
+      mcEuReset() // nothing was kept on the server: start over with another file
+    } else if (res.kind === 'taken') {
+      mcEuStatus(t('mc_emote_upload_taken', [name]), true)
+      nameEl?.focus()
+      nameEl?.select()
+    } else if (res.kind === 'failed') {
+      mcEuFail(res.r)
+    } else {
+      mcEuAdded(name, res.added, res.up)
     }
-    const up = _mcEuUploaded
-    const added = await safeSendMessage({
-      type: 'add_to_inventory',
-      emoteName: name,
-      emoteUrl: up.url,
-      zeroWidth: false,
-      upload: { phash: up.phash, width: up.width, height: up.height },
-    })
-    if (!added?.success) {
-      if (
-        Number(added?.status) === 409 ||
-        /already in inventory|held by your upload/i.test(String(added?.error || ''))
-      ) {
-        mcEuStatus(t('mc_emote_upload_taken', [name]), true)
-        nameEl?.focus()
-        nameEl?.select()
-      } else {
-        mcEuFail(added)
-      }
-      return
-    }
-    mcEuAdded(name, added, up)
   } catch (e) {
     mcEuFail({ error: e?.message })
   } finally {

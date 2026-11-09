@@ -804,17 +804,26 @@ const LIB_EXTRAS = {
 //   content.js runs the chat filter rules on native twitch/kick rows (highlight
 //     words with the overlay off) and folds the old text filters into them
 //     (content/native-filter-rules.js is the content-side half).
+//   content.js + youtube-content.js pick your own emote's size rung (multichat/emote-rungs.js);
+//   heatsync-button.js's upload form runs the overlay's upload rules (multichat/emote-upload-core.js).
 //   content.js + heatsync-button.js draw their close × with the overlay's one
 //     glyph (multichat/x-glyph.js), not a hand-typed character.
 const ENTRY_MODULES = {
-  'youtube-content.js': ['lib/paint-core.js', 'lib/scene-spec.js', 'lib/stv-paint-css.js', 'lib/paint-spec.js'],
+  'youtube-content.js': [
+    'lib/paint-core.js',
+    'lib/scene-spec.js',
+    'lib/stv-paint-css.js',
+    'lib/paint-spec.js',
+    'multichat/emote-rungs.js',
+  ],
   'content.js': [
     'multichat/filter-rules.js',
     'multichat/filter-rules-legacy.js',
     'content/native-filter-rules.js',
     'multichat/x-glyph.js',
+    'multichat/emote-rungs.js',
   ],
-  'heatsync-button.js': ['multichat/x-glyph.js'],
+  'heatsync-button.js': ['multichat/x-glyph.js', 'multichat/emote-upload-core.js', 'content/native-emote-upload.js'],
 }
 
 // Read lib files — full set by default, or core + the named extras.
@@ -892,6 +901,7 @@ const MULTICHAT_MODULES = [
   'kick-send.js',
   'emote-rungs.js',
   'emotes.js',
+  'emote-upload-core.js',
   'emote-upload.js',
   'gifs.js',
   'picker-nav.js',

@@ -1,5 +1,11 @@
 # changelog
 
+## [1.7.127] — 2026-11-09
+
+### fixed
+- **mod anniversary** — share works: type a message and press enter to post it. before, the prompt closed and nothing was sent.
+- **mod anniversary rows** — twitch's mod-anniversary notice is recognised and gets its own green row.
+
 ## [1.7.126] — 2026-11-09
 
 ### added

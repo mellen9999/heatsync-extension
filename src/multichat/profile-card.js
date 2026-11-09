@@ -998,7 +998,7 @@ function renderProfileCardView() {
   if (isMuted) {
     const muteBtn = card.querySelector('.hs-card-action[data-hs-card-action="mute"]')
     if (muteBtn) {
-      muteBtn.textContent = 'unmute'
+      muteBtn.textContent = t('mc_settings_unmute')
       muteBtn.classList.add('hs-card-active')
     }
   }

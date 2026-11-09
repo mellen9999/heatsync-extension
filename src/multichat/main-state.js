@@ -1025,7 +1025,7 @@ function restoreTabState(tabId) {
         const arrow = document.createElement('span')
         arrow.className = 'hs-arrow-down'
         arrow.textContent = '▼'
-        newBtn.append(arrow, ` ${String(newMessageCount)} new`)
+        newBtn.append(arrow, ` ${t('mc_new_messages', [String(newMessageCount)])}`)
         newBtn.style.display = 'flex'
       } else {
         newBtn.style.display = 'none'

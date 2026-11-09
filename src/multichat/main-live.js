@@ -124,7 +124,10 @@ function _renderMessagesImpl(id, opts) {
     }
     newMessageCount++
     if (newBtn) {
-      newBtn.innerHTML = `<span class="hs-arrow-down">▼</span> ${Number(newMessageCount) || 0} new`
+      const arrow = document.createElement('span')
+      arrow.className = 'hs-arrow-down'
+      arrow.textContent = '▼'
+      newBtn.replaceChildren(arrow, ` ${t('mc_new_messages', [String(Number(newMessageCount) || 0)])}`)
       newBtn.style.display = 'flex'
     }
     return

@@ -353,7 +353,8 @@ function _modActor() {
   return (currentUsername || (typeof authState !== 'undefined' && authState?.nick) || '').toLowerCase()
 }
 function _modNoticeFields(action, actor, tgt, durationSec) {
-  const a = actor || tgt
+  // no known actor = the anonymous line; never the target standing in for one ("alice banned alice")
+  const a = actor
   if (action === 'ban')
     return {
       noticeType: 'ban_success',
@@ -458,6 +459,42 @@ function _injectKickModNotice({ channel, action, target, durationSec, msgId }) {
     } catch (_) {}
   } catch (_) {}
 }
+// YouTube — no echo to collapse against: the notice joins the acted-on row's tab
+// (social.js ingestYtModNotice, which also records it). The actor is the youtube
+// account signed in to the chat frame; a twitch name there would name the wrong person.
+// A youtube timeout is youtube's fixed five minutes.
+const YT_TIMEOUT_SEC = 300
+function _injectYoutubeModNotice({ action, target, msgId }) {
+  try {
+    if (!msgId) return
+    const tgt = String(target || '').replace(/^@/, '')
+    const tgtLc = tgt.toLowerCase()
+    const actor = (typeof ytSelfName === 'function' ? ytSelfName() : '').toLowerCase()
+    const sec = action === 'timeout' ? YT_TIMEOUT_SEC : 0
+    const f = _modNoticeFields(action, actor, tgt, sec)
+    if (!f) return
+    ingestYtModNotice(
+      {
+        type: 'notice',
+        noticeType: f.noticeType,
+        user: 'system',
+        text: f.systemMsg,
+        systemMsg: f.systemMsg,
+        color: '#ffffff',
+        badges: '',
+        time: Date.now(),
+        platform: 'youtube',
+        id: `hs-synth-yt-mod-${f.noticeType}-${tgtLc || msgId}-${Date.now()}`,
+        targetUser: tgtLc,
+        targetMsgId: action === 'delete' ? msgId : undefined,
+        banDuration: sec,
+        actor,
+        isSynthetic: true,
+      },
+      msgId,
+    )
+  } catch (_) {}
+}
 try {
   globalThis.__hsInjectModNotice = _injectTwitchModNotice
 } catch (_) {}
@@ -553,6 +590,7 @@ async function dispatchModAction({
       yVid = typeof currentYoutubeVideoId === 'function' ? currentYoutubeVideoId(lkEntry?.youtube || '') || '' : ''
     } catch (_) {}
     const yResp = await safeSendMessage({ type: 'youtube_mod_action', action, msgId, target: yTgt, videoId: yVid })
+    if (yResp?.ok) _injectYoutubeModNotice({ action, target: yTgt, msgId })
     return {
       tResp: null,
       kResp: null,

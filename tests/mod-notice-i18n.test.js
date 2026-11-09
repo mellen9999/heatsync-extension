@@ -35,6 +35,13 @@ test('mod notices read the same in english as before, from the catalog', () => {
   expect(f('delete', '', '').systemMsg).toBe('message deleted')
 })
 
+test('an unknown actor reads as the anonymous line, never the target banning itself', () => {
+  const f = noticeFields()
+  expect(f('ban', '', 'bob').systemMsg).toBe('bob was permanently banned')
+  expect(f('timeout', '', 'bob', 300).systemMsg).not.toContain('bob timed out bob')
+  expect(f('delete', '', 'bob').systemMsg).not.toContain('bob deleted')
+})
+
 test('no english sentence left in the notice builder or the tab-mode hint', () => {
   const mod = read('multichat/mod-toolbar.js')
   const body = mod.slice(

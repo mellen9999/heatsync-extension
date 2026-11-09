@@ -138,6 +138,24 @@ describe('chat handler parity', () => {
     expect(seen).toBeGreaterThanOrEqual(4)
   })
 
+  test('every platform records its mod actions in the mod log', () => {
+    const { twitch, kick } = handlers()
+    expect(twitch.includes('modLogStore.record(msg)')).toBe(true)
+    expect(kick.includes('modLogStore.record(msg)')).toBe(true)
+    // youtube mod actions never echo through a chat handler: heatsync's own
+    // action notice is the only line, and it goes through ingestYtModNotice
+    expect(spanFrom(SRC('social.js'), 'function ingestYtModNotice(').includes('modLogStore.record(')).toBe(true)
+    // ...and the youtube leg of the one mod dispatcher hands every confirmed action to it
+    const mod = SRC('mod-toolbar.js')
+    const ytLeg = mod.slice(
+      mod.indexOf("type: 'youtube_mod_action'"),
+      mod.indexOf('const { twitchName, kickSlug } = _resolveModTargets('),
+    )
+    expect(ytLeg).toContain('if (yResp?.ok) _injectYoutubeModNotice(')
+    const inject = mod.slice(mod.indexOf('function _injectYoutubeModNotice('))
+    expect(inject.slice(0, inject.indexOf('\n}\n'))).toContain('ingestYtModNotice(')
+  })
+
   test('the filter-rule verdict is kept, not collapsed to .hide', () => {
     // Folding the call into an if-condition is how youtube lost the sound: the
     // verdict object carries more than .hide, and an inline call discards it.

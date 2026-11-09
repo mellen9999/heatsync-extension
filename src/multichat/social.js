@@ -1003,6 +1003,28 @@ function applyYtDeletion(d) {
   }
 }
 
+// A youtube mod action heatsync took: its gray notice in the acted-on row's own
+// tab, and the mod log. YouTube's moderation never echoes through a chat
+// handler (youtube_delete only greys rows), so this is the only line it gets —
+// twitch and kick record theirs in their handlers (modLogStore.record(msg)).
+// The tab is found from the row's own message id: yt actions are message-scoped.
+// Returns false when the row is no longer buffered (nothing to attach it to).
+function ingestYtModNotice(notice, msgId) {
+  for (const [tabId, buf] of channelYtMessages) {
+    const row = buf.find((m) => m.id === msgId)
+    if (!row) continue
+    notice.channel = row.channel
+    modLogStore.record(notice)
+    commitPacedYtMsg(tabId, notice)
+    // grey what youtube just removed: the message, or everything by a banned/timed-out author
+    const author = row.hsPaintUid ? String(row.hsPaintUid).replace(/^yt_/, '') : ''
+    if (notice.noticeType === 'delete_message_success') applyYtDeletion({ messageIds: [msgId] })
+    else if (notice.noticeType !== 'unban_success' && author) applyYtDeletion({ authorChannelIds: [author] })
+    return true
+  }
+  return false
+}
+
 // Drain ONE message from the pace queue, schedule next based on the real
 // timestamp delta to the message after that.
 function drainYtPaceQueue(targetChannelId) {

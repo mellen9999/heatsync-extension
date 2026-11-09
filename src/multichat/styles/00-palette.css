@@ -32,14 +32,12 @@
       --hs-danger-dim: #ff0000;
       --hs-ok-dim: #00ff00;
       --hs-warn-dim: #ffff00;
-      --hs-info-dim: #8888ff;
       --hs-thread-dim: #ff00ff;
       --hs-reply-dim: #00ffff;
       /* tints — rows are not tinted; the border strip carries the hue */
       --hs-danger-tint: #000000;
       --hs-ok-tint: #000000;
       --hs-warn-tint: #000000;
-      --hs-info-tint: #000000;
       --hs-thread-tint: #000000;
       --hs-reply-tint: #000000;
       --hs-gold-tint: #000000;

@@ -711,7 +711,7 @@ const HsNotifs = (() => {
             // rejected loudly and the typed words are rescued into chat).
             // Twitch's own button is the last resort, and stays one.
             const api = window.__hsResubShare
-            if (!api?.findToken) return nativeFallback(data)
+            if (!api) return nativeFallback(data)
             api
               .findToken({ kind: 'cumulative', count: data.months })
               .then((tok) => tok || api.deriveToken?.(data.channel, data.months))

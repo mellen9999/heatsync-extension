@@ -29,6 +29,25 @@ const MS_CATS = [
 ]
 const MS_LEVELS = [0, 1, 2, 3, 4]
 
+// The cell loader both mod suites share: mark the cell loading, run its
+// loader, store data or route the failure, and re-render (focusing the filter
+// when the chatters list landed, else the page) if that cell is still shown.
+function msCellLoader({ s, LOADERS, render, route, cur, page, getFilter }) {
+  return async function load(c = s.cell) {
+    s.v[c] = { status: 'loading' }
+    render()
+    const out = await LOADERS[c]()
+    if (out.data) s.v[c] = { status: 'ok', ...out.data }
+    else if (!route(out.res, c)) s.v[c] = { status: 'error' }
+    if (c === s.cell) {
+      s.sel = 0
+      render()
+      if (c === 'chatters' && cur()?.status === 'ok') getFilter().focus()
+      else page.focus()
+    }
+  }
+}
+
 function msEl(tag, cls, text) {
   const n = document.createElement(tag)
   if (cls) n.className = cls
@@ -138,19 +157,7 @@ async function openModSuite(login, cell = 'shield') {
     },
   }
 
-  async function load(c = s.cell) {
-    s.v[c] = { status: 'loading' }
-    render()
-    const out = await LOADERS[c]()
-    if (out.data) s.v[c] = { status: 'ok', ...out.data }
-    else if (!route(out.res, c)) s.v[c] = { status: 'error' }
-    if (c === s.cell) {
-      s.sel = 0
-      render()
-      if (c === 'chatters' && cur()?.status === 'ok') filter.focus()
-      else page.focus()
-    }
-  }
+  const load = msCellLoader({ s, LOADERS, render, route, cur, page, getFilter: () => filter })
 
   function go(c) {
     if (!MS_CELLS.includes(c)) return

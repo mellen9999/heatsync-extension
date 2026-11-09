@@ -100,19 +100,7 @@ async function openKickModSuite(slug, cell = 'words') {
     },
   }
 
-  async function load(c = s.cell) {
-    s.v[c] = { status: 'loading' }
-    render()
-    const out = await LOADERS[c]()
-    if (out.data) s.v[c] = { status: 'ok', ...out.data }
-    else if (!route(out.res, c)) s.v[c] = { status: 'error' }
-    if (c === s.cell) {
-      s.sel = 0
-      render()
-      if (c === 'chatters' && cur()?.status === 'ok') filter.focus()
-      else page.focus()
-    }
-  }
+  const load = msCellLoader({ s, LOADERS, render, route, cur, page, getFilter: () => filter })
 
   function go(c) {
     if (!KMS_CELLS.includes(c)) return

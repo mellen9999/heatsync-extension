@@ -773,6 +773,7 @@ const LIB_ORDER = [
   'modifiers.js',
   'undo-manager.js',
   'badge-index.js',
+  'badge-hires.js',
 ]
 
 // Every content script gets the core: error-reporter/diag stay universal on
@@ -786,7 +787,15 @@ const LIB_CORE = new Set(['error-reporter.js', 'cleanup.js', 'utils.js', 'diag.j
 // Opt-in lib files per non-multichat content script (multichat bundles embed
 // the full lib). Derived from actual symbol use — keep in sync via the guard.
 const LIB_EXTRAS = {
-  'content.js': ['config.js', 'user-key.js', 'modifiers.js', 'reserved-paths.js', 'palette.js', 'badge-index.js'],
+  'content.js': [
+    'config.js',
+    'user-key.js',
+    'modifiers.js',
+    'reserved-paths.js',
+    'palette.js',
+    'badge-index.js',
+    'badge-hires.js',
+  ],
   'youtube-content.js': ['config.js', 'modifiers.js'],
   'autocomplete-hook.js': ['modifiers.js'],
   'heatsync-button.js': ['reserved-paths.js', 'palette.js'],

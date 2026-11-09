@@ -430,6 +430,30 @@ function parseKickSlugValue(raw) {
   return v.toLowerCase()
 }
 
+// One "<platform> [username]" row of the add / edit channel forms.
+function cmgPlatformRow(label, placeholder, value) {
+  const row = document.createElement('div')
+  row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
+  const lbl = document.createElement('span')
+  lbl.textContent = label
+  lbl.style.cssText = 'font-size:13px;font-weight:700;min-width:56px;color:#ffffff;text-transform:lowercase;'
+  const input = document.createElement('input')
+  input.type = 'text'
+  input.className = 'hs-mc-ch-input'
+  input.placeholder = placeholder
+  input.value = value || ''
+  // The visible label is a separate <span>, so the input itself is unlabeled
+  // to assistive tech — name it explicitly (label is 'twitch'/'kick'/'youtube').
+  input.setAttribute('aria-label', label)
+  input.style.cssText =
+    'flex:1;background:#000;color:#fff;border:1px solid #ffffff;padding:6px 10px;border-radius:0;font-size:14px;outline:none;font-family:inherit;'
+  // Stop YouTube/Kick keyboard shortcuts from stealing keystrokes
+  input.addEventListener('keydown', (e) => e.stopPropagation())
+  row.appendChild(lbl)
+  row.appendChild(input)
+  return { row, input }
+}
+
 function renderAddChannelForm(msgsEl) {
   _clearMessageIndices()
   msgsEl.textContent = ''
@@ -447,31 +471,9 @@ function renderAddChannelForm(msgsEl) {
   desc.style.cssText = 'font-size:13px;color:#ffffff;margin-bottom:2px;'
   wrapper.appendChild(desc)
 
-  const makeRow = (label, placeholder) => {
-    const row = document.createElement('div')
-    row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
-    const lbl = document.createElement('span')
-    lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:700;min-width:56px;color:#ffffff;text-transform:lowercase;'
-    const input = document.createElement('input')
-    input.type = 'text'
-    input.className = 'hs-mc-ch-input'
-    input.placeholder = placeholder
-    // The visible label is a separate <span>, so the input itself is unlabeled
-    // to assistive tech — name it explicitly (label is 'twitch'/'kick'/'youtube').
-    input.setAttribute('aria-label', label)
-    input.style.cssText =
-      'flex:1;background:#000;color:#fff;border:1px solid #ffffff;padding:6px 10px;border-radius:0;font-size:14px;outline:none;font-family:inherit;'
-    // Stop YouTube/Kick keyboard shortcuts from stealing keystrokes
-    input.addEventListener('keydown', (e) => e.stopPropagation())
-    row.appendChild(lbl)
-    row.appendChild(input)
-    return { row, input }
-  }
-
-  const twitch = makeRow('twitch', t('mc_username_placeholder'))
-  const kick = makeRow('kick', t('mc_username_placeholder'))
-  const yt = makeRow('youtube', t('mc_username_url_placeholder'))
+  const twitch = cmgPlatformRow('twitch', t('mc_username_placeholder'))
+  const kick = cmgPlatformRow('kick', t('mc_username_placeholder'))
+  const yt = cmgPlatformRow('youtube', t('mc_username_url_placeholder'))
 
   wrapper.appendChild(twitch.row)
   wrapper.appendChild(kick.row)
@@ -807,28 +809,9 @@ function renderLivePlatformsPane(pane) {
   title.style.cssText = 'font-size:17px;font-weight:700;color:#ffffff;letter-spacing:.5px;'
   wrapper.appendChild(title)
 
-  const makeRow = (label, placeholder, value) => {
-    const row = document.createElement('div')
-    row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
-    const lbl = document.createElement('span')
-    lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:700;min-width:56px;color:#ffffff;text-transform:lowercase;'
-    const input = document.createElement('input')
-    input.type = 'text'
-    input.className = 'hs-mc-ch-input'
-    input.placeholder = placeholder
-    input.value = value || ''
-    input.style.cssText =
-      'flex:1;background:#000;color:#fff;border:1px solid #ffffff;padding:6px 10px;border-radius:0;font-size:14px;outline:none;font-family:inherit;'
-    input.addEventListener('keydown', (e) => e.stopPropagation())
-    row.appendChild(lbl)
-    row.appendChild(input)
-    return { row, input }
-  }
-
-  const twitch = makeRow('twitch', t('mc_username_placeholder'), names.twitch)
-  const kick = makeRow('kick', t('mc_username_placeholder'), names.kick)
-  const yt = makeRow('youtube', t('mc_username_url_placeholder'), names.youtube)
+  const twitch = cmgPlatformRow('twitch', t('mc_username_placeholder'), names.twitch)
+  const kick = cmgPlatformRow('kick', t('mc_username_placeholder'), names.kick)
+  const yt = cmgPlatformRow('youtube', t('mc_username_url_placeholder'), names.youtube)
   wrapper.appendChild(twitch.row)
   wrapper.appendChild(kick.row)
   wrapper.appendChild(yt.row)
@@ -1006,29 +989,9 @@ function showEditChannelForm(tabId) {
   title.style.cssText = 'font-size:17px;font-weight:700;color:#ffffff;letter-spacing:.5px;'
   wrapper.appendChild(title)
 
-  const makeRow = (label, placeholder, value) => {
-    const row = document.createElement('div')
-    row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
-    const lbl = document.createElement('span')
-    lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:700;min-width:56px;color:#ffffff;text-transform:lowercase;'
-    const input = document.createElement('input')
-    input.type = 'text'
-    input.className = 'hs-mc-ch-input'
-    input.placeholder = placeholder
-    input.value = value || ''
-    input.style.cssText =
-      'flex:1;background:#000;color:#fff;border:1px solid #ffffff;padding:6px 10px;border-radius:0;font-size:14px;outline:none;font-family:inherit;'
-    // Stop YouTube/Kick keyboard shortcuts from stealing keystrokes
-    input.addEventListener('keydown', (e) => e.stopPropagation())
-    row.appendChild(lbl)
-    row.appendChild(input)
-    return { row, input }
-  }
-
-  const twitch = makeRow('twitch', t('mc_username_placeholder'), ch.twitch)
-  const kick = makeRow('kick', t('mc_username_placeholder'), ch.kick)
-  const yt = makeRow('youtube', t('mc_username_url_placeholder'), ch.youtube)
+  const twitch = cmgPlatformRow('twitch', t('mc_username_placeholder'), ch.twitch)
+  const kick = cmgPlatformRow('kick', t('mc_username_placeholder'), ch.kick)
+  const yt = cmgPlatformRow('youtube', t('mc_username_url_placeholder'), ch.youtube)
   wrapper.appendChild(twitch.row)
   wrapper.appendChild(kick.row)
   wrapper.appendChild(yt.row)

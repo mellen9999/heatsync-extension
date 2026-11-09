@@ -44,7 +44,6 @@
   let renderMap = new Map()
   let renderBlockedByName = new Map()
   let blockedEmotes = new Set()
-  let blockedByName = new Map() // name → emote, for the placeholder a blocked emote leaves in chat
   let inventoryLoaded = false
 
   let channelEmotesByOwner = {} // { ownerName: emote[] } — populated from background broadcasts
@@ -58,7 +57,6 @@
       .toLowerCase()
   const ownedByMe = (owner) => !!myOwnerKey && normOwner(owner) === normOwner(myOwnerKey)
 
-  let variantsByName = new Map() // name → every version of it, best first
   let lastInventory = []
   let lastGlobals = []
 
@@ -94,11 +92,9 @@
     take(inventory, 1)
     take(rankEmotePool(globals, 'global'), 2)
     const map = new Map()
-    const hidden = new Map()
     for (const [name, all] of versions) {
       const shown = all.find((e) => !blockedEmotes.has(e.hash || e.name))
       if (shown) map.set(name, shown)
-      else hidden.set(name, all[0])
     }
     const rMap = new Map()
     const rHidden = new Map()
@@ -111,8 +107,6 @@
     }
     renderMap = rMap
     renderBlockedByName = rHidden
-    variantsByName = versions
-    blockedByName = hidden
     emoteMap = map
     log('emote map rebuilt:', map.size, 'emotes')
     syncRows()

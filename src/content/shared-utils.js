@@ -90,30 +90,6 @@ const _hsT = (key, subs) => {
   }
 
   /**
-   * Walk up the React fiber tree from a DOM element to find a component matching a predicate.
-   *
-   * @param {Element} startEl - DOM element to start from
-   * @param {Function} predicate - (instance, fiber) => boolean
-   * @param {number} maxDepth - max fiber hops (default 50)
-   * @returns {{ instance, fiber } | null}
-   */
-  function findComponent(startEl, predicate, maxDepth = 50) {
-    let fiber = getFiber(startEl)
-    let depth = 0
-    while (fiber && depth < maxDepth) {
-      try {
-        const inst = fiber.stateNode
-        if (inst && predicate(inst, fiber)) {
-          return { instance: inst, fiber }
-        }
-      } catch (e) {}
-      fiber = fiber.return
-      depth++
-    }
-    return null
-  }
-
-  /**
    * Safe wrapper for chrome.runtime.sendMessage.
    * Handles "Extension context invalidated" errors gracefully,
    * and retries up to 5 times with exponential backoff on connection errors.
@@ -413,7 +389,6 @@ const _hsT = (key, subs) => {
     createLifecycle,
     setSiteOverlay,
     getFiber,
-    findComponent,
     safeSend,
     apiFetch,
     showToast,

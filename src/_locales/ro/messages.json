@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "deschide o filă twitch.tv pentru a folosi acțiunile de moderator"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "reîncarcă fila twitch.tv (extensia a fost actualizată)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce funcționează doar pe twitch"
+  },
+  "common_close": {
+    "message": "închide"
   }
 }

@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "öppna en twitch.tv-flik för att använda mod-åtgärder"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "ladda om din twitch.tv-flik (tillägget uppdaterades)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce fungerar bara på twitch"
+  },
+  "common_close": {
+    "message": "stäng"
   }
 }

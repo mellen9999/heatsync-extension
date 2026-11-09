@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "откройте вкладку twitch.tv, чтобы использовать действия модератора"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "обновите вкладку twitch.tv (расширение обновлено)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce работает только на twitch"
+  },
+  "common_close": {
+    "message": "закрыть"
   }
 }

@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "모드 기능을 쓰려면 twitch.tv 탭을 여세요"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "twitch.tv 탭을 새로고침하세요 (확장 프로그램이 업데이트됨)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce 는 트위치 전용입니다"
+  },
+  "common_close": {
+    "message": "닫기"
   }
 }

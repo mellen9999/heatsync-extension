@@ -7577,5 +7577,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "open a twitch.tv tab to use mod actions"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "refresh your twitch.tv tab (extension was updated)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce is twitch-only"
+  },
+  "common_close": {
+    "message": "close"
   }
 }

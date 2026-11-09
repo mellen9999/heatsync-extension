@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "افتح تبويب twitch.tv لاستخدام إجراءات المشرف"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "حدّث تبويب twitch.tv (تم تحديث الإضافة)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce متاح على تويتش فقط"
+  },
+  "common_close": {
+    "message": "إغلاق"
   }
 }

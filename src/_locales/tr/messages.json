@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "mod işlemlerini kullanmak için bir twitch.tv sekmesi aç"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "twitch.tv sekmeni yenile (eklenti güncellendi)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce yalnızca twitch'te çalışır"
+  },
+  "common_close": {
+    "message": "kapat"
   }
 }

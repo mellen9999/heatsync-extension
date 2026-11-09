@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "פתח לשונית twitch.tv כדי להשתמש בפעולות מנחה"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "רענן את לשונית twitch.tv (התוסף עודכן)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce זמין רק בטוויץ'"
+  },
+  "common_close": {
+    "message": "סגור"
   }
 }

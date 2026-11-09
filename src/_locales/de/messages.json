@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "öffne einen twitch.tv-tab, um mod-aktionen zu nutzen"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "lade deinen twitch.tv-tab neu (erweiterung wurde aktualisiert)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce gibt es nur auf twitch"
+  },
+  "common_close": {
+    "message": "schließen"
   }
 }

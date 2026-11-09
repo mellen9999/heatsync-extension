@@ -4490,8 +4490,8 @@ async function _modActionMutationInner(searchTerm, resultField, rawQuery, variab
       args: { searchTerm, resultField, rawQuery, variables },
     })
     if (resp?.ok && resp.result) return resp.result
-    if (resp?.error === 'no_twitch_tab') return { error: 'open a twitch.tv tab to use mod actions' }
-    if (resp?.error === 'stale_twitch_tab') return { error: 'refresh your twitch.tv tab (extension was updated)' }
+    if (resp?.error === 'no_twitch_tab') return { error: t('mc_mod_no_twitch_tab') }
+    if (resp?.error === 'stale_twitch_tab') return { error: t('mc_mod_stale_twitch_tab') }
     return { error: resp?.error || 'relay failed' }
   }
   const apolloResult = await apolloMutate({ searchTerm, variables, resultField, rawQuery })

@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "मॉड कार्रवाइयों के लिए twitch.tv टैब खोलें"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "अपना twitch.tv टैब रीफ़्रेश करें (एक्सटेंशन अपडेट हुआ है)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce केवल ट्विच पर काम करता है"
+  },
+  "common_close": {
+    "message": "बंद करें"
   }
 }

@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "otwórz kartę twitch.tv, aby używać akcji moderatora"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "odśwież kartę twitch.tv (rozszerzenie zostało zaktualizowane)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce działa tylko na twitchu"
+  },
+  "common_close": {
+    "message": "zamknij"
   }
 }

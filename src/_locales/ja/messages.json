@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "モデレーター操作を使うには twitch.tv のタブを開いてください"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "twitch.tv のタブを再読み込みしてください（拡張機能が更新されました）"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce は twitch 専用です"
+  },
+  "common_close": {
+    "message": "閉じる"
   }
 }

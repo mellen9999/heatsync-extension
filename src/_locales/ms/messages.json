@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "buka tab twitch.tv untuk guna tindakan mod"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "muat semula tab twitch.tv (sambungan telah dikemas kini)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce hanya untuk twitch"
+  },
+  "common_close": {
+    "message": "tutup"
   }
 }

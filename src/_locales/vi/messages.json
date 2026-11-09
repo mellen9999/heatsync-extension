@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "mở một tab twitch.tv để dùng thao tác mod"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "tải lại tab twitch.tv (tiện ích vừa được cập nhật)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce chỉ dùng được trên twitch"
+  },
+  "common_close": {
+    "message": "đóng"
   }
 }

@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "åpne en twitch.tv-fane for å bruke mod-handlinger"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "last inn twitch.tv-fanen på nytt (utvidelsen ble oppdatert)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce fungerer bare på twitch"
+  },
+  "common_close": {
+    "message": "lukk"
   }
 }

@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "avaa twitch.tv-välilehti käyttääksesi moderaattoritoimintoja"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "päivitä twitch.tv-välilehti (laajennus päivitettiin)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce toimii vain twitchissä"
+  },
+  "common_close": {
+    "message": "sulje"
   }
 }

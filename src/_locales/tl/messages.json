@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "magbukas ng twitch.tv tab para magamit ang mod actions"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "i-refresh ang twitch.tv tab mo (na-update ang extension)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce ay para lang sa twitch"
+  },
+  "common_close": {
+    "message": "isara"
   }
 }

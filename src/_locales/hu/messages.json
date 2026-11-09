@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "nyiss meg egy twitch.tv lapot a moderátori műveletekhez"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "frissítsd a twitch.tv lapot (a bővítmény frissült)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "az /announce csak twitchen működik"
+  },
+  "common_close": {
+    "message": "bezár"
   }
 }

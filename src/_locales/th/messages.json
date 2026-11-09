@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "เปิดแท็บ twitch.tv เพื่อใช้การดำเนินการของม็อด"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "รีเฟรชแท็บ twitch.tv (ส่วนขยายอัปเดตแล้ว)"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce ใช้ได้เฉพาะบน twitch"
+  },
+  "common_close": {
+    "message": "ปิด"
   }
 }

@@ -7560,5 +7560,17 @@
         "content": "$1"
       }
     }
+  },
+  "mc_mod_no_twitch_tab": {
+    "message": "请打开一个 twitch.tv 标签页以使用管理操作"
+  },
+  "mc_mod_stale_twitch_tab": {
+    "message": "请刷新 twitch.tv 标签页（扩展已更新）"
+  },
+  "mc_input_announce_twitch_only": {
+    "message": "/announce 仅限 twitch 使用"
+  },
+  "common_close": {
+    "message": "关闭"
   }
 }

@@ -1,12 +1,12 @@
 {
   "_": "bytes, measured 2026-11-09 + 2% headroom (min 256B). lower to measured, never raise to go green; a raise needs the reason in its commit.",
   "chrome": {
-    "multichat-core.js": 1686145,
+    "multichat-core.js": 1684725,
     "content.js": 240884,
     "heatsync-button.js": 139283,
     "autocomplete-hook.js": 87710,
     "chat-injector.js": 43039,
-    "youtube-content.js": 169744,
+    "youtube-content.js": 169677,
     "background.js": 332616,
     "popup.js": 10833,
     "popup.html": 6841,
@@ -18,11 +18,11 @@
     "youtube-keyboard-guard.js": 1636,
     "yt-data-bridge.js": 1559,
     "platform-detector.js": 2412,
-    "shared-utils.js": 7454,
+    "shared-utils.js": 7269,
     "welcome.html": 5049,
     "welcome.js": 1253,
     "injected-message.css": 4326,
-    "vi-mode.js": 16737,
+    "vi-mode.js": 16396,
     "kick-autocomplete-hook.js": 13374,
     "pcard-early.js": 1503,
     "early-layout.js": 5866,
@@ -36,16 +36,16 @@
     "icon-128.png": 5276,
     "icon-48-black.png": 4329,
     "manifest.json": 8580,
-    "total raw": 7932517,
-    "total zip": 2038748
+    "total raw": 7930502,
+    "total zip": 2038448
   },
   "firefox": {
-    "multichat-core.js": 1686145,
+    "multichat-core.js": 1684725,
     "content.js": 240884,
     "heatsync-button.js": 139283,
     "autocomplete-hook.js": 87710,
     "chat-injector.js": 43039,
-    "youtube-content.js": 169744,
+    "youtube-content.js": 169677,
     "background.js": 332616,
     "popup.js": 10833,
     "popup.html": 6841,
@@ -57,11 +57,11 @@
     "youtube-keyboard-guard.js": 1636,
     "yt-data-bridge.js": 1559,
     "platform-detector.js": 2412,
-    "shared-utils.js": 7454,
+    "shared-utils.js": 7269,
     "welcome.html": 5049,
     "welcome.js": 1253,
     "injected-message.css": 4326,
-    "vi-mode.js": 16737,
+    "vi-mode.js": 16396,
     "kick-autocomplete-hook.js": 13374,
     "pcard-early.js": 1503,
     "early-layout.js": 5866,
@@ -75,7 +75,7 @@
     "icon-128.png": 5276,
     "icon-48-black.png": 4329,
     "manifest.json": 8363,
-    "total raw": 7932296,
-    "total zip": 2038793
+    "total raw": 7930280,
+    "total zip": 2038493
   }
 }

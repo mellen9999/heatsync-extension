@@ -146,6 +146,9 @@ jobs:
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # the action's default (8.24.3) predates [[allowlists]] and silently ignores
+          # every allowlist in .gitleaks.toml; 8.30.1 is checksum-verified clean on full history
+          GITLEAKS_VERSION: 8.30.1
 
   notify-failure:
     runs-on: ubuntu-latest

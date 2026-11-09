@@ -529,7 +529,7 @@
 
       .heatsync-panel-title {
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
         color: #fff;
         display: flex;
         align-items: center;
@@ -744,7 +744,7 @@
         border: 1px solid #ffffff;
         color: #ffffff;
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
         padding: 3px 6px;
         cursor: pointer;
         font-family: inherit;
@@ -799,7 +799,7 @@
 
       .heatsync-tab-count {
         display: block;
-        font-size: 10px;
+        font-size: 13px;
         color: #ffffff;
         margin-left: 0;
       }
@@ -914,8 +914,8 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        font-size: 11px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 700;
         text-transform: lowercase;
         letter-spacing: 0.3px;
       }
@@ -925,7 +925,7 @@
       .heatsync-provider-label.ffz { color: #ffffff; }
 
       .heatsync-provider-count {
-        font-size: 10px;
+        font-size: 13px;
         color: #ffffff;
         font-weight: normal;
       }
@@ -988,7 +988,7 @@
         border: 1px solid #ffffff;
         border-radius: 0;
         color: #ffffff;
-        font-size: 11px;
+        font-size: 13px;
         padding: 2px 6px;
         cursor: pointer;
         margin-right: 8px;
@@ -1016,7 +1016,7 @@
         padding: 28px 20px;
         text-align: center;
       }
-      .hs-coldstart-title { color: #fff; font-size: 13px; font-weight: 600; }
+      .hs-coldstart-title { color: #fff; font-size: 13px; font-weight: 700; }
       .hs-coldstart-sub { color: #ffffff; font-size: 13px; max-width: 260px; line-height: 1.4; }
       .hs-coldstart .hs-import-channel-btn { flex: none; padding: 6px 14px; }
 
@@ -1051,7 +1051,7 @@
       }
       .heatsync-set-name {
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
         color: #fff;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1059,7 +1059,7 @@
         flex-shrink: 1;
       }
       .heatsync-set-meta {
-        font-size: 10px;
+        font-size: 13px;
         color: #ffffff;
         flex-shrink: 0;
         white-space: nowrap;
@@ -1071,7 +1071,7 @@
         padding: 0 6px;
         font: inherit;
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
         text-transform: lowercase;
         flex-shrink: 0;
@@ -1139,7 +1139,7 @@
       }
       .heatsync-history-name {
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
         color: #fff;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1147,7 +1147,7 @@
         flex-shrink: 1;
       }
       .heatsync-history-meta {
-        font-size: 10px;
+        font-size: 13px;
         color: #ffffff;
         flex-shrink: 0;
         white-space: nowrap;
@@ -1159,7 +1159,7 @@
         padding: 0 6px;
         font: inherit;
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
         text-transform: lowercase;
         flex-shrink: 0;
@@ -1195,7 +1195,7 @@
         background: #000;
         border-radius: 0;
         color: #fff;
-        font-size: 11px;
+        font-size: 13px;
         margin-bottom: 4px;
       }
 
@@ -1212,7 +1212,7 @@
         border-radius: 0;
         color: #000;
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
         transition: none;
         display: flex;
@@ -1330,8 +1330,8 @@
         display: inline-block;
         padding: 2px 6px;
         border-radius: 0;
-        font-size: 10px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 700;
         margin-right: 4px;
       }
 
@@ -1341,10 +1341,10 @@
 
       /* Section titles */
       .heatsync-section-title {
-        font-size: 11px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 700;
         color: #ffffff;
-        text-transform: uppercase;
+        text-transform: none;
         letter-spacing: 0.5px;
         margin-bottom: 8px;
       }
@@ -1377,10 +1377,10 @@
 
       .heatsync-emote-hover-preview-name {
         text-align: center;
-        font-size: 11px;
+        font-size: 13px;
         color: #fff;
         margin-top: 4px;
-        font-weight: 600;
+        font-weight: 700;
       }
 
       /* Auth banner - shown when not logged in */
@@ -1397,7 +1397,7 @@
 
       .heatsync-auth-banner a {
         color: ${HS_PLAT_COLORS.twitch};
-        font-weight: 600;
+        font-weight: 700;
         text-decoration: none;
       }
 
@@ -1454,7 +1454,7 @@
         background: #000000;
         border-radius: 0;
         color: #ffff00;
-        font-size: 10px;
+        font-size: 13px;
         margin-left: 8px;
       }
 
@@ -1463,7 +1463,7 @@
         display: flex;
         align-items: center;
         gap: 4px;
-        font-size: 10px;
+        font-size: 13px;
         color: #ffffff;
       }
 
@@ -1515,13 +1515,13 @@
         overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
       }
       .hs-emote-ctx-sub {
-        font-size: 11px; color: #ffffff; margin-top: 2px;
+        font-size: 13px; color: #ffffff; margin-top: 2px;
         display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
       }
       .hs-emote-ctx-provider {
         display: inline-block; padding: 0 4px;
         border: 1px solid #ffffff; color: #fff;
-        font-size: 10px; line-height: 14px;
+        font-size: 13px; line-height: 14px;
       }
       .hs-emote-ctx-item {
         display: block;
@@ -1569,7 +1569,7 @@
         border-radius: 0;
         color: #000;
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
         text-align: center;
       }
@@ -1591,7 +1591,7 @@
         border: 1px solid #fff;
         color: #fff;
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
         text-align: center;
         border-radius: 0;
@@ -1625,9 +1625,9 @@
       .hs-discover-item.blocked::after {
         content: 'blocked';
         margin-left: auto;
-        font-size: 10px;
+        font-size: 13px;
         color: #ffffff;
-        text-transform: uppercase;
+        text-transform: none;
         letter-spacing: 0.5px;
       }
       .hs-discover-item.blocked:hover { background: #ffffff; color: #000000; opacity: 1; }
@@ -1652,7 +1652,7 @@
         border: 1px solid #fff;
         color: #fff;
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 700;
         padding: 0 6px;
         cursor: pointer;
         flex-shrink: 0;
@@ -1663,7 +1663,7 @@
       .hs-discover-add-btn.added { border-color: #00ff00; color: #00ff00; background: none; cursor: default; }
       .hs-discover-add-btn:disabled { opacity: 0.4; cursor: wait; }
       .hs-discover-hint {
-        font-size: 10px;
+        font-size: 13px;
         color: #ffffff;
         padding: 4px 8px 6px;
         border-bottom: none;
@@ -1676,8 +1676,8 @@
         background: none;
         border: 1px solid #fff;
         color: #fff;
-        font-size: 11px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 700;
         padding: 6px 8px;
         cursor: pointer;
         border-radius: 0;
@@ -1686,9 +1686,9 @@
       }
       .hs-search-all-cta:hover { background: #fff; color: #000; border-color: #fff; }
       .hs-discover-prov {
-        font-size: 11px;
+        font-size: 13px;
         font-weight: 700;
-        text-transform: uppercase;
+        text-transform: none;
         padding: 0 4px;
         line-height: 1.5;
         border: 1px solid currentColor;
@@ -1700,7 +1700,7 @@
       .hs-discover-prov.prov-hs { color: #fff; }
       .hs-discover-item:hover .hs-discover-prov { color: #000 !important; border-color: #000 !important; }
       .hs-discover-uses {
-        font-size: 10px;
+        font-size: 13px;
         color: #ffffff;
         flex-shrink: 0;
         min-width: 28px;
@@ -1754,7 +1754,7 @@
 
         // Make bits button compact and inline
         rules.push(
-          '[data-a-target="bits-button"] { margin: 0 2px !important; padding: 2px 6px !important; font-size: 12px !important; }',
+          '[data-a-target="bits-button"] { margin: 0 2px !important; padding: 2px 6px !important; font-size: 13px !important; }',
         )
 
         // Make settings button compact
@@ -2902,7 +2902,7 @@
         const header = document.createElement('div')
         header.className = 'heatsync-section-header'
         header.textContent = t('btn_recent') || 'recent'
-        header.style.cssText = 'width: 100%; font-size: 11px; color: #ffffff; padding: 2px 4px; margin-bottom: 2px;'
+        header.style.cssText = 'width: 100%; font-size: 13px; color: #ffffff; padding: 2px 4px; margin-bottom: 2px;'
         recentContainer.appendChild(header)
 
         for (const r of recentEmotes) {

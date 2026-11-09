@@ -1030,7 +1030,7 @@
         transform: translateX(-50%);
         background: #000000;
         color: #ffffff;
-        font-size: 12px;
+        font-size: 13px;
         padding: 5px 10px;
         border-radius: 0;
         pointer-events: none;

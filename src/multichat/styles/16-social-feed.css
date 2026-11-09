@@ -14,7 +14,7 @@
       margin-right: 3px;
     }
     .hs-feed-user {
-      font-weight: 600;
+      font-weight: 700;
       font-size: 13px;
       color: #fff;
       text-decoration: none;
@@ -137,7 +137,7 @@
     }
     .hs-heat-num {
       font-variant-numeric: tabular-nums;
-      font-weight: 900;
+      font-weight: 700;
       line-height: 1;
     }
     .hs-heat-n {
@@ -435,13 +435,13 @@
     }
     .hs-feed-embed-rich-platform {
       font-size: 13px;
-      text-transform: uppercase;
+      text-transform: none;
       color: #ffffff;
       letter-spacing: 0.5px;
     }
     .hs-feed-embed-rich-title {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: #ffffff;
       white-space: nowrap;
       overflow: hidden;
@@ -845,7 +845,7 @@
       font-size: 13px;
       color: #fff;
       font-weight: 700;
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 0.6px;
       margin: 0;
       padding: 4px 8px;
@@ -871,7 +871,7 @@
     .hs-discover-meta {
       color: var(--hs-muted);
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: none;
       letter-spacing: 0;
       font-variant-numeric: tabular-nums;
@@ -939,7 +939,7 @@
     .hs-discover-avatar-empty { display: inline-block; }
     .hs-discover-profile-name {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -960,7 +960,7 @@
       text-decoration: none;
     }
     .hs-discover-platforms .hs-plat:hover { background: #fff !important; color: #000 !important; }
-    .hs-discover-platforms .hs-plat-live { font-weight: 900; }
+    .hs-discover-platforms .hs-plat-live { font-weight: 700; }
     .hs-discover-platforms .hs-plat-t { color: var(--hs-plat-twitch); }
     .hs-discover-platforms .hs-plat-k { color: var(--hs-plat-kick); }
     .hs-discover-platforms .hs-plat-yt { color: var(--hs-plat-youtube); }
@@ -1029,7 +1029,7 @@
       cursor: pointer;
       font-size: 13px;
       font-family: monospace;
-      font-weight: 600;
+      font-weight: 700;
       border-radius: 0;
       line-height: 18px;
     }
@@ -1152,7 +1152,7 @@
     }
     .hs-discover-post-user {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       white-space: nowrap;
       flex-shrink: 1;
       max-width: 140px;
@@ -1207,7 +1207,7 @@
       gap: 5px;
       margin: 0;
     }
-    .hs-pinned-channel { font-size: 13px; color: #fff; font-weight: 600; }
+    .hs-pinned-channel { font-size: 13px; color: #fff; font-weight: 700; }
     .hs-pinned-user { font-size: 13px; color: #ffffff; }
     .hs-pinned-time { font-size: 13px; color: var(--hs-muted); margin-inline-start: auto; }
     .hs-pinned-body {
@@ -1230,7 +1230,7 @@
       font-size: 13px;
     }
     .hs-modlog-time { color: var(--hs-border); font-variant-numeric: tabular-nums; }
-    .hs-modlog-channel { color: #fff; font-weight: 600; }
+    .hs-modlog-channel { color: #fff; font-weight: 700; }
     .hs-modlog-body { color: #ffffff; word-break: break-word; }
     .hs-modlog-actor { color: #fff; white-space: nowrap; }
     .hs-modlog-ban .hs-modlog-body { color: var(--hs-danger); }

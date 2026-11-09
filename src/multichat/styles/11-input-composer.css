@@ -57,7 +57,7 @@
     #hs-mc-input.hs-mc-resub-share[contenteditable]:empty::before,
     #hs-mc-input.hs-mc-resub-share[contenteditable]:has(br:only-child)::before {
       color: var(--hs-plat-twitch) !important;
-      font-weight: 600 !important;
+      font-weight: 700 !important;
     }
     /* Watch-streak share mode — orange glow signals heat/streak, distinct
        from resub purple. Same input mechanism, different brand color. */
@@ -74,7 +74,7 @@
     #hs-mc-input.hs-mc-watchstreak-share[contenteditable]:empty::before,
     #hs-mc-input.hs-mc-watchstreak-share[contenteditable]:has(br:only-child)::before {
       color: var(--hs-brand) !important;
-      font-weight: 600 !important;
+      font-weight: 700 !important;
     }
     /* Quote mode — one-click "»" quotes a live chat row into a new heatsync
        thread. Flat 1px inset border, no glow: watch-streak share already owns
@@ -491,7 +491,7 @@
       border-bottom: 1px solid #ffffff;
     }
     .hs-mc-cheer-panel .hs-mc-cheer-title {
-      font-weight: 600;
+      font-weight: 700;
       flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;

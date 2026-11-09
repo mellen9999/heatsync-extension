@@ -160,7 +160,7 @@
       padding-block: 5px;
       padding-inline: 8px 10px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       transition: none;
       cursor: pointer;
       border-inline-start: 3px solid var(--hs-brand);
@@ -237,7 +237,7 @@
       font-size: 13px;
       font-weight: 700;
       color: var(--hs-danger);
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 0.5px;
       flex-shrink: 0;
     }
@@ -262,7 +262,7 @@
       border-radius: 0;
       padding: 4px 12px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       z-index: 1005;
       transition: none;

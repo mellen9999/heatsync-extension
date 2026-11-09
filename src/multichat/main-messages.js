@@ -2886,7 +2886,7 @@ let _lastRenderAt = 0
 // has no channel to watch (the temp tab is hidden there).
 function appendCockpitCta(el) {
   const title = document.createElement('div')
-  title.style.cssText = 'font-weight:600;margin-bottom:4px'
+  title.style.cssText = 'font-weight:700;margin-bottom:4px'
   title.textContent = t('mc_main_add_streams_title')
   const sub = document.createElement('div')
   sub.style.cssText = 'opacity:.7;margin-bottom:10px'

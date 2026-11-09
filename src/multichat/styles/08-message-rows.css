@@ -30,7 +30,7 @@
       color: #fff;
       font-size: 13px;
       font-weight: 700;
-      text-transform: uppercase;
+      text-transform: none;
       line-height: 1;
       user-select: none;
     }
@@ -408,20 +408,20 @@
        cyan(14)=stream-hype/milestone (action-needed).
        #fff reserved for brand chrome only (buttons, frames, drag bars). */
     .hs-mc-msg.hs-mc-notice-ban       { border-left-color: var(--hs-danger) !important; background: var(--hs-danger-tint) !important; }
-    .hs-mc-msg.hs-mc-notice-ban       .hs-mc-system-text { color: var(--hs-danger); font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-ban       .hs-mc-system-text { color: var(--hs-danger); font-weight: 700; }
     .hs-mc-msg.hs-mc-notice-timeout   { border-left-color: var(--hs-ok-dim) !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-timeout   .hs-mc-system-text { color: #00ff00; }
     .hs-mc-msg.hs-mc-notice-unban     { border-left-color: var(--hs-ok) !important; background: var(--hs-ok-tint) !important; }
-    .hs-mc-msg.hs-mc-notice-unban     .hs-mc-system-text { color: var(--hs-ok); font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-unban     .hs-mc-system-text { color: var(--hs-ok); font-weight: 700; }
     .hs-mc-msg.hs-mc-notice-untimeout { border-left-color: var(--hs-ok-dim) !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-untimeout .hs-mc-system-text { color: #00ff00; }
     /* Role grants (blue mod / pink VIP) */
     .hs-mc-msg.hs-mc-notice-mod-add     { border-left-color: var(--hs-info) !important; background: #000000 !important; }
-    .hs-mc-msg.hs-mc-notice-mod-add     .hs-mc-system-text { color: var(--hs-info); font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-mod-add     .hs-mc-system-text { color: var(--hs-info); font-weight: 700; }
     .hs-mc-msg.hs-mc-notice-mod-remove  { border-left-color: #ffffff !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-mod-remove  .hs-mc-system-text { color: #ffffff; }
     .hs-mc-msg.hs-mc-notice-vip-add     { border-left-color: var(--hs-thread) !important; background: var(--hs-thread-tint) !important; }
-    .hs-mc-msg.hs-mc-notice-vip-add     .hs-mc-system-text { color: var(--hs-thread); font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-vip-add     .hs-mc-system-text { color: var(--hs-thread); font-weight: 700; }
     .hs-mc-msg.hs-mc-notice-vip-remove  { border-left-color: #ffffff !important; background: #000000 !important; }
     .hs-mc-msg.hs-mc-notice-vip-remove  .hs-mc-system-text { color: #ffffff; }
     /* Single message delete = dark red (less severe than ban) */
@@ -429,7 +429,7 @@
     .hs-mc-msg.hs-mc-notice-delete    .hs-mc-system-text { color: #ff0000; }
     /* Room mode change = aqua */
     .hs-mc-msg.hs-mc-notice-mode      { border-left-color: var(--hs-reply) !important; background: var(--hs-reply-tint) !important; }
-    .hs-mc-msg.hs-mc-notice-mode      .hs-mc-system-text { color: var(--hs-reply); font-weight: 600; }
+    .hs-mc-msg.hs-mc-notice-mode      .hs-mc-system-text { color: var(--hs-reply); font-weight: 700; }
     /* Sub + gift events = magenta, ring and text alike */
     /* Raid = magenta (ANSI 13) — special event family */
     /* Announce = broadcaster speaking: yellow ring (see the row-ring block),
@@ -582,7 +582,7 @@
       color: var(--hs-plat-twitch);
       font-size: 13px;
       font-style: normal;
-      font-weight: 600;
+      font-weight: 700;
     }
     /* First-message labels — same primitive as the redeem/highlight labels
        above. Each one is the SAME colour as its row ring (the first-message one is white: magenta would vanish on the fill), so the ring and the
@@ -592,13 +592,13 @@
       color: #fff;
       font-size: 13px;
       font-style: normal;
-      font-weight: 600;
+      font-weight: 700;
     }
     .hs-mc-highlight-label {
       color: var(--hs-gold);
       font-size: 13px;
       font-style: normal;
-      font-weight: 600;
+      font-weight: 700;
     }
     .hs-mc-reply-ctx {
       display: block;
@@ -693,7 +693,7 @@
       background: #000000;
     }
     .hs-mc-user {
-      font-weight: 600;
+      font-weight: 700;
       text-decoration: none;
       cursor: pointer;
     }
@@ -875,7 +875,7 @@
     }
     .hs-mc-media.hs-mc-playable.hs-playing:not(.hs-feed-embed-yt-thumb):not(.hs-feed-embed-pending)::before {
       content: '❚❚';
-      font-size: 11px;
+      font-size: 13px;
       letter-spacing: -1px;
     }
     /* The yt card needs no play/pause flip: when it plays, the video mounts
@@ -1171,7 +1171,7 @@
       border-radius: 0;
     }
     #hs-mc-idwarn a { color: var(--hs-danger); text-decoration: underline; }
-    #hs-mc-idwarn b { color: var(--hs-danger); font-weight: 600; }
+    #hs-mc-idwarn b { color: var(--hs-danger); font-weight: 700; }
 
     /* Reply pill is a control — the leading arrow already says it's a reply,
        and clicking it opens the thread stack. No caret, no transition. */

@@ -40,7 +40,7 @@
     }
     .hs-note-editor-head {
       padding: 4px 10px; font-size: 13px; color: var(--hs-muted);
-      text-transform: uppercase; letter-spacing: 0.5px;
+      text-transform: none; letter-spacing: 0.5px;
       background: #000000; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .hs-note-editor-ta {
@@ -55,7 +55,7 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 4px 10px; background: #000000; border-top: none;
     }
-    .hs-note-editor-status { font-size: 13px; color: var(--hs-border); text-transform: uppercase; letter-spacing: 0.5px; }
+    .hs-note-editor-status { font-size: 13px; color: var(--hs-border); text-transform: none; letter-spacing: 0.5px; }
     .hs-note-editor-del {
       background: transparent; color: var(--hs-border); border: 1px solid #ffffff;
       padding: 2px 8px; cursor: pointer; font-family: inherit; font-size: 13px;

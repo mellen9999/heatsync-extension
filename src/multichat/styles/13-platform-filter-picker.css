@@ -96,7 +96,7 @@
       border: none !important;
       cursor: pointer;
       font-size: 13px !important;
-      font-weight: 600 !important;
+      font-weight: 700 !important;
       line-height: 1 !important;
       text-align: center;
       visibility: visible !important;
@@ -262,7 +262,7 @@
       font-family: inherit;
       border-radius: 0;
       line-height: 15px;
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 1px;
       transition: none;
     }
@@ -288,7 +288,7 @@
       font-family: inherit;
       border-radius: 0;
       line-height: 15px;
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 1px;
       transition: none;
     }
@@ -308,7 +308,7 @@
       font-family: inherit;
       font-size: 13px;
       font-weight: 700;
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 1px;
       cursor: pointer;
       transition: none;

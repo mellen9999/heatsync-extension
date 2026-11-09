@@ -159,7 +159,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       color: var(--hs-brand);
-      font-weight: 600;
+      font-weight: 700;
     }
     @container (max-width: 140px) {
       .hs-notif-watchstreak-icon { display: none; }

@@ -528,7 +528,7 @@
     #hs-badge-tooltip .tooltip-name {
       color: #fff;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
     }
     #hs-badge-tooltip .tooltip-source {
       font-size: 13px;
@@ -574,7 +574,7 @@
     #hs-emote-tooltip .tooltip-name {
       color: #fff;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       /* Cap + wrap so a deep-nest name list never forces the tooltip wider than
          the viewport (the preview image carries the full composite anyway). */
       max-width: 480px;
@@ -641,7 +641,7 @@
     #hs-link-tooltip .link-title {
       color: #fff;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;

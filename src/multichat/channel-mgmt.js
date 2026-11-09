@@ -14,7 +14,7 @@ function makeMcBtn(text, primary) {
     : 'background:transparent;color:#ffffff;border:1px solid #ffffff;'
   btn.style.cssText =
     base +
-    'padding:6px 22px;border-radius:0;cursor:pointer;font-weight:600;font-size:14px;font-family:inherit;min-width:80px;'
+    'padding:6px 22px;border-radius:0;cursor:pointer;font-weight:700;font-size:14px;font-family:inherit;min-width:80px;'
   btn.addEventListener('mouseenter', () => {
     btn.style.background = '#ffffff'
     btn.style.color = '#000000'
@@ -329,7 +329,7 @@ function renderPasteListForm(msgsEl) {
     row.style.cssText = 'display:flex;flex-direction:column;gap:3px;width:100%;max-width:300px;'
     const lbl = document.createElement('span')
     lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:600;color:#ffffff;text-transform:lowercase;'
+    lbl.style.cssText = 'font-size:13px;font-weight:700;color:#ffffff;text-transform:lowercase;'
     const ta = document.createElement('textarea')
     ta.rows = 3
     ta.placeholder = ph
@@ -452,7 +452,7 @@ function renderAddChannelForm(msgsEl) {
     row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
     const lbl = document.createElement('span')
     lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
+    lbl.style.cssText = 'font-size:13px;font-weight:700;min-width:56px;color:#ffffff;text-transform:lowercase;'
     const input = document.createElement('input')
     input.type = 'text'
     input.className = 'hs-mc-ch-input'
@@ -812,7 +812,7 @@ function renderLivePlatformsPane(pane) {
     row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
     const lbl = document.createElement('span')
     lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
+    lbl.style.cssText = 'font-size:13px;font-weight:700;min-width:56px;color:#ffffff;text-transform:lowercase;'
     const input = document.createElement('input')
     input.type = 'text'
     input.className = 'hs-mc-ch-input'
@@ -888,7 +888,7 @@ function makeSendTargetsRow(ch) {
   row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
   const lbl = document.createElement('span')
   lbl.textContent = t('mc_cfg_send_to')
-  lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
+  lbl.style.cssText = 'font-size:13px;font-weight:700;min-width:56px;color:#ffffff;text-transform:lowercase;'
   row.appendChild(lbl)
   const group = document.createElement('span')
   group.style.cssText = 'display:flex;gap:2px;'
@@ -934,7 +934,7 @@ function makePlatformFilterRow(ch) {
   row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
   const lbl = document.createElement('span')
   lbl.textContent = t('mc_cfg_show')
-  lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
+  lbl.style.cssText = 'font-size:13px;font-weight:700;min-width:56px;color:#ffffff;text-transform:lowercase;'
   row.appendChild(lbl)
   const group = document.createElement('span')
   group.style.cssText = 'display:flex;gap:2px;'
@@ -1011,7 +1011,7 @@ function showEditChannelForm(tabId) {
     row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
     const lbl = document.createElement('span')
     lbl.textContent = label
-    lbl.style.cssText = 'font-size:13px;font-weight:600;min-width:56px;color:#ffffff;text-transform:lowercase;'
+    lbl.style.cssText = 'font-size:13px;font-weight:700;min-width:56px;color:#ffffff;text-transform:lowercase;'
     const input = document.createElement('input')
     input.type = 'text'
     input.className = 'hs-mc-ch-input'

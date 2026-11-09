@@ -40,7 +40,7 @@
     }
     .hs-mc-menu-title {
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 400;
       color: #fff;
       line-height: 17px;
     }
@@ -88,7 +88,7 @@
     }
     .hs-mc-pred-title {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: #fff;
       line-height: 17px;
       flex: 1;
@@ -111,7 +111,7 @@
     .hs-mc-pred-timer {
       font-size: 13px;
       color: #fff;
-      font-weight: 600;
+      font-weight: 700;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
       flex-shrink: 0;
@@ -144,7 +144,7 @@
     .hs-mc-pred-outcome-title {
       font-size: 13px;
       color: #fff;
-      font-weight: 500;
+      font-weight: 400;
     }
     .hs-mc-pred-outcome-pct {
       font-size: 13px;
@@ -223,7 +223,7 @@
       border: 1px solid #ffffff;
       color: #fff;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 3px 10px;
       cursor: pointer;
       font-family: inherit;
@@ -240,7 +240,7 @@
       color: #fff;
     }
     .hs-mc-pred-bet-max {
-      font-weight: 600;
+      font-weight: 700;
       color: #fff;
     }
     .hs-mc-pred-bet-max:hover {
@@ -254,8 +254,8 @@
       padding: 2px 6px;
       white-space: nowrap;
       flex-shrink: 0;
-      font-weight: 600;
-      text-transform: uppercase;
+      font-weight: 700;
+      text-transform: none;
       letter-spacing: 0.5px;
     }
     .hs-mc-pred-status-resolved {
@@ -280,14 +280,14 @@
     }
     .hs-mc-pred-result-amount {
       font-size: 18px;
-      font-weight: 900;
+      font-weight: 700;
       font-family: monospace;
       letter-spacing: -0.5px;
     }
     .hs-mc-pred-result-label {
       font-size: 13px;
-      font-weight: 600;
-       text-transform: uppercase;
+      font-weight: 700;
+       text-transform: none;
       letter-spacing: 0.5px;
       margin-inline-start: 4px;
     }
@@ -308,7 +308,7 @@
     }
     .hs-mc-pred-result-neutral {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: #ffffff;
       background: #000000;
       border: 1px solid #ffffff;
@@ -330,7 +330,7 @@
       background: #000000; border: 1px solid var(--hs-ok);
       color: var(--hs-ok);
       font-weight: 700;
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 0.5px;
       vertical-align: middle;
       margin-inline-start: 4px;
@@ -458,7 +458,7 @@
       background: #000000;
       color: #fff;
       border-color: #fff;
-      font-weight: 600;
+      font-weight: 700;
     }
     .hs-mc-pred-create-submit:hover {
       background: #fff;
@@ -480,7 +480,7 @@
     }
     .hs-mc-poll-title {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: #fff;
       line-height: 17px;
       flex: 1;
@@ -490,8 +490,8 @@
       padding: 2px 6px;
       white-space: nowrap;
       flex-shrink: 0;
-      font-weight: 600;
-      text-transform: uppercase;
+      font-weight: 700;
+      text-transform: none;
       letter-spacing: 0.5px;
     }
     .hs-mc-poll-status-ended {
@@ -501,7 +501,7 @@
     .hs-mc-poll-timer {
       font-size: 13px;
       color: #fff;
-      font-weight: 600;
+      font-weight: 700;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
       flex-shrink: 0;
@@ -577,7 +577,7 @@
       border: none;
       color: var(--hs-plat-twitch);
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 4px 10px;
       cursor: pointer;
       white-space: nowrap;
@@ -682,7 +682,7 @@
       background: #000000;
       color: #fff;
       border-color: #fff;
-      font-weight: 600;
+      font-weight: 700;
     }
     .hs-mc-poll-create-submit:hover {
       background: #fff;
@@ -706,7 +706,7 @@
       padding: 10px 14px 4px;
       font-size: 13px;
       color: var(--hs-muted);
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 0.5px;
     }
     .hs-mc-pred-links .hs-mc-quicklink-section:first-child {
@@ -722,7 +722,7 @@
     }
     .hs-mc-summary-title {
       display: flex; justify-content: space-between; align-items: center;
-      color: var(--hs-brand); font-weight: 600;
+      color: var(--hs-brand); font-weight: 700;
     }
     .hs-mc-summary-stats, .hs-mc-summary-row { color: #ffffff; }
     .hs-mc-summary-dim { color: var(--hs-muted); }
@@ -735,7 +735,7 @@
     }
     .hs-mc-subpane-pad { padding: 6px 10px; }
     .hs-mc-status-loading { font-size: 13px; color: #ffffff; }
-    .hs-mc-status-title { font-size: 13px; font-weight: 600; color: #fff; }
+    .hs-mc-status-title { font-size: 13px; font-weight: 700; color: #fff; }
     .hs-mc-status-sub { font-size: 13px; margin-top: 2px; }
     .hs-mc-status-sub.live { color: var(--hs-live); }
     .hs-mc-status-sub.off  { color: #ffffff; }
@@ -744,7 +744,7 @@
     .hs-mc-status-section {
       margin-top: 10px; padding-bottom: 4px;
       font-size: 13px; color: var(--hs-muted);
-      text-transform: uppercase;
+      text-transform: none;
       border-bottom: none;
     }
     .hs-mc-status-modes { margin-top: 4px; }
@@ -777,9 +777,9 @@
     }
     .hs-mc-rewards-label {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--hs-muted);
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 0.5px;
     }
     .hs-mc-rewards-balance {
@@ -866,7 +866,7 @@
       border: 1px solid var(--hs-plat-twitch);
       color: var(--hs-plat-twitch);
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 4px 10px;
       border-radius: 0;
       cursor: pointer;
@@ -935,7 +935,7 @@
       border: 1px solid var(--hs-plat-twitch);
       color: var(--hs-plat-twitch);
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 3px 10px;
       cursor: pointer;
     }
@@ -963,8 +963,8 @@
       color: var(--hs-muted);
       cursor: pointer;
       border: 1px solid #ffffff;
-      font-weight: 600;
-      text-transform: uppercase;
+      font-weight: 700;
+      text-transform: none;
       letter-spacing: 0.3px;
     }
     .hs-mc-mode-btn:hover {
@@ -987,9 +987,9 @@
     }
     .hs-mc-settings-group-title {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--hs-muted);
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 0.5px;
       padding: 10px 14px 4px;
     }
@@ -1251,7 +1251,7 @@
     .hs-mc-set-search-hdr {
       color: var(--hs-muted);
       font-size: 13px;
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 0.5px;
       padding: 8px 14px 2px;
       cursor: pointer;
@@ -1297,7 +1297,7 @@
     .hs-mc-set-help-title {
       color: var(--hs-muted);
       font-size: 13px;
-      text-transform: uppercase;
+      text-transform: none;
       letter-spacing: 0.5px;
       padding: 6px 0 2px;
     }
@@ -1477,7 +1477,7 @@
       min-width: 0;
       color: #fff;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

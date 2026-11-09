@@ -107,6 +107,18 @@ describe('chat handler parity', () => {
     })
   }
 
+  test('every platform feeds the open chat-logs view live (youtube from where it commits a paced live line)', () => {
+    // twitch + kick call chatLogsLive in their handler; youtube's live line only
+    // exists once commitPacedYtMsg paces it, so the call sits there — and never in
+    // the replay path, whose lines are history (chatLogsLive drops isHistory anyway).
+    const h = handlers()
+    expect(h.twitch.includes('chatLogsLive(msg)')).toBe(true)
+    expect(h.kick.includes('chatLogsLive(msg)')).toBe(true)
+    const social = SRC('social.js')
+    expect(spanFrom(social, 'function commitPacedYtMsg(').includes('chatLogsLive(ytMsg)')).toBe(true)
+    expect(spanFrom(social, 'function ingestReplayYtMsg(').includes('chatLogsLive')).toBe(false)
+  })
+
   test('a replayed youtube line renders but alerts nothing', () => {
     // youtube is the one platform whose history (the subscribe backfill, up to
     // 200 lines) runs through the live handler, flagged replay:true. Every

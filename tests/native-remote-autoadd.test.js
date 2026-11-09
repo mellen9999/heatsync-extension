@@ -20,7 +20,7 @@ import { join } from 'node:path'
 
 const HOOK_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'content', 'autocomplete-hook.js'), 'utf8')
 const start = HOOK_SRC.indexOf('const _remoteCompletions')
-const end = HOOK_SRC.indexOf('// Track preloaded emote names')
+const end = HOOK_SRC.indexOf('// Cycle indicator tooltip')
 if (start === -1 || end === -1 || end <= start) throw new Error('remote-completion carve markers not found')
 
 let posted = []

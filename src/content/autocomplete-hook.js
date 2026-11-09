@@ -1432,28 +1432,6 @@
     window.postMessage({ type: 'heatsync-remote-completion-used', emotes: used.slice(0, 20) }, location.origin)
   }
 
-  // Track preloaded emote names (Image() preloading disabled — ORB blocks in content scripts)
-  const preloadedImages = new Map()
-  const MAX_PRELOADED = 500
-  function _preloadEmoteImages(emotes) {
-    for (const emote of emotes) {
-      if (!emote.url || preloadedImages.has(emote.name)) continue
-      let url = emote.url
-      if (url.startsWith('/uploads/') || url.startsWith('/emotes/')) {
-        url = `https://heatsync.org${url}`
-      }
-      preloadedImages.set(emote.name, { src: url })
-    }
-    // Evict oldest if over cap
-    if (preloadedImages.size > MAX_PRELOADED) {
-      const excess = preloadedImages.size - MAX_PRELOADED
-      const keys = [...preloadedImages.keys()].slice(0, excess)
-      for (const k of keys) preloadedImages.delete(k)
-    }
-  }
-
-  acSignal.addEventListener('abort', () => preloadedImages.clear())
-
   // Cycle indicator tooltip (shows "1/5 emotename" above input)
   let cycleTooltip = null
   let cycleTooltipTimeout = null

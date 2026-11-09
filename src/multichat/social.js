@@ -2284,7 +2284,7 @@ function buildFeedMessageDiv(m, opUsername) {
   const avatarUrl = safeUrl(rawAvatar)
   // Number() coercion is the guard: a non-numeric server value (e.g. a string)
   // would slip past getHeatDisplay's NaN comparisons and reach innerHTML
-  // verbatim via formatHeat. Mirrors heatSpanHtml/heatSpanEl.
+  // verbatim via formatHeat. Mirrors heatSpanHtml.
   const heat = Number(m.heat) || 0
   const replies = Number(m.reply_count) || 0
   // renderFeedContent sanitizes via escapeHtml + emote ref escaping
@@ -3203,26 +3203,6 @@ function heatSpanHtml(heat) {
   const style = discoverHeatStyle(h)
   const suffix = h >= 10 ? '<span class="hs-heat-deg">°</span>' : ''
   return `<span class="hs-heat-num" style="${style}"><span class="hs-heat-n">${formatHeat(h)}</span>${suffix}</span>`
-}
-
-// Same, returned as a DOM node for createElement callers.
-function heatSpanEl(heat) {
-  const h = Number(heat) || 0
-  if (h <= 0) return null
-  const span = document.createElement('span')
-  span.className = 'hs-heat-num'
-  span.setAttribute('style', discoverHeatStyle(h))
-  const numSpan = document.createElement('span')
-  numSpan.className = 'hs-heat-n'
-  numSpan.textContent = formatHeat(h)
-  span.appendChild(numSpan)
-  if (h >= 10) {
-    const deg = document.createElement('span')
-    deg.className = 'hs-heat-deg'
-    deg.textContent = '°'
-    span.appendChild(deg)
-  }
-  return span
 }
 
 function renderDiscoverProfileRow(profile, username, rank, maxHeat, showRank = true) {

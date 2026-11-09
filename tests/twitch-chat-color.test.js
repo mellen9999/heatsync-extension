@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs'
 // user.chatColor back and seeing the color we asked for.
 const SRC = readFileSync(new URL('../src/multichat/twitch-api.js', import.meta.url), 'utf8')
 const a = SRC.indexOf('const TWITCH_NAMED_COLORS')
-const b = SRC.indexOf('// Back-compat wrapper')
+const b = SRC.indexOf('function makeCoinSvg')
 const BODY = SRC.slice(a, b)
 
 // twitch: what the account's chatColor reads as after each mutation attempt

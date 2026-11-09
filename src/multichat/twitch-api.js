@@ -443,11 +443,6 @@ async function setTwitchChatColor(arg, login) {
   }
 }
 
-// Back-compat wrapper — followers-only was the one mode already wired.
-async function setTwitchFollowersMode(channelLogin, minutes) {
-  return setTwitchChatMode(channelLogin, 'followers', minutes)
-}
-
 function makeCoinSvg(size) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   svg.setAttribute('width', String(size))

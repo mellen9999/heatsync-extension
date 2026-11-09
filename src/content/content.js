@@ -490,15 +490,6 @@
     }
   })()
 
-  // React fiber walking — use shared-utils if available, inline fallback
-  const _getFiber =
-    window.HS?.getFiber ||
-    ((el) => {
-      if (!el) return null
-      const key = Object.keys(el).find((k) => k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$'))
-      return key ? el[key] : null
-    })
-
   // Track if extension context is still valid
   let extensionContextValid = true
 
@@ -660,66 +651,8 @@
       nativeRules.repaint()
     }
     if (changes.hs_dim_timeouts) dimTimeoutsEnabled = changes.hs_dim_timeouts.newValue !== false
-    // User notes — refresh the native cache when the overlay (or another tab) writes.
-    if (changes[HS_NOTE_STORE_KEY]) _noteSetBlob(changes[HS_NOTE_STORE_KEY].newValue)
   }
   chrome.storage.onChanged.addListener(_onStorageChanged)
-
-  // ── Cross-platform user notes (native surface) ──────────────────────────────
-  // A private note on a chatter, editable from the native user card. The storage
-  // shape here is the CONTRACT shared with src/multichat/user-notes.js (the
-  // overlay): both read/write { notes:{canonical:{text,updatedAt}}, index:{alias:
-  // canonical} } under hs_user_notes_v1, so notes made on either surface merge.
-  // Native chat is single-platform, so we key by the bare handle; the overlay's
-  // alias graph links identities across platforms later via the index.
-  const HS_NOTE_STORE_KEY = 'hs_user_notes_v1'
-  const HS_NOTE_MAX = 2000
-  let _noteBlob = { notes: {}, index: {} }
-  function _noteSetBlob(raw) {
-    _noteBlob =
-      raw && typeof raw === 'object'
-        ? {
-            notes: raw.notes && typeof raw.notes === 'object' ? raw.notes : {},
-            index: raw.index && typeof raw.index === 'object' ? raw.index : {},
-          }
-        : { notes: {}, index: {} }
-  }
-  function _noteCanonical(handle) {
-    const h = String(handle).toLowerCase()
-    const c = _noteBlob.index[h]
-    if (c && _noteBlob.notes[c]) return c
-    return h
-  }
-  function noteGet(handle) {
-    if (!handle) return null
-    return _noteBlob.notes[_noteCanonical(handle)] || null
-  }
-  function noteSave(handle, text) {
-    const h = String(handle || '').toLowerCase()
-    if (!h) return
-    const clean = String(text == null ? '' : text)
-      .slice(0, HS_NOTE_MAX)
-      .trim()
-    if (!clean) return noteDelete(h)
-    const c = _noteCanonical(h)
-    _noteBlob.notes[c] = { text: clean, updatedAt: Date.now() }
-    _noteBlob.index[h] = c
-    try {
-      chrome.storage.local.set({ [HS_NOTE_STORE_KEY]: _noteBlob }, () => void chrome.runtime?.lastError)
-    } catch {}
-  }
-  function noteDelete(handle) {
-    const h = String(handle || '').toLowerCase()
-    const c = _noteCanonical(h)
-    delete _noteBlob.notes[c]
-    for (const k of Object.keys(_noteBlob.index)) if (_noteBlob.index[k] === c) delete _noteBlob.index[k]
-    try {
-      chrome.storage.local.set({ [HS_NOTE_STORE_KEY]: _noteBlob }, () => void chrome.runtime?.lastError)
-    } catch {}
-  }
-  try {
-    chrome.storage.local.get(HS_NOTE_STORE_KEY, (d) => _noteSetBlob(d?.[HS_NOTE_STORE_KEY]))
-  } catch {}
 
   // Per-user color overrides (right-click username → set color)
   const _userColors = new Map() // username (lower) → '#rrggbb'
@@ -4551,12 +4484,6 @@
   // Sub tenure tracking — extracted from Twitch badge alt text (subscriber badge)
   const subTenureMap = new Map() // usernameLC -> months
 
-  function formatSubTenure(months) {
-    // Concise: drop months when year-resolution is sufficient.
-    if (months >= 12) return `${Math.floor(months / 12)}y`
-    return `${months}mo`
-  }
-
   // ============================================
   // HEAT CACHE + BATCH FETCHER
   // ============================================
@@ -4643,10 +4570,6 @@
     if (heat >= 5) return 2
     if (heat >= 1) return 1
     return 0
-  }
-
-  function getHeatColor(heat) {
-    return HEAT_GRADIENT[getHeatTier(heat)]
   }
 
   function queueHeatLookup(username) {

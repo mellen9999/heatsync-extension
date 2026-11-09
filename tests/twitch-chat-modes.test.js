@@ -107,9 +107,6 @@ describe('mutation shape', () => {
   test('confirmation reads the read-type field, not a write field', () => {
     expect(extractFn(API, 'setTwitchChatMode')).toContain('after[spec.read]')
   })
-  test('the followers wrapper still exists for its old callers', () => {
-    expect(API).toContain('async function setTwitchFollowersMode(channelLogin, minutes)')
-  })
 })
 
 describe('composer wiring', () => {

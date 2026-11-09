@@ -1058,19 +1058,6 @@ function formatCompact(n) {
   return String(n)
 }
 
-function getAccountAge(dateStr) {
-  if (!dateStr) return null
-  const d = new Date(dateStr)
-  if (Number.isNaN(d.getTime())) return null
-  const now = new Date()
-  const y = now.getFullYear() - d.getFullYear()
-  const m = now.getMonth() - d.getMonth()
-  const days = now.getDate() - d.getDate()
-  if (y > 0) return `${y}y`
-  if (m > 0) return `${m}m`
-  return `${Math.max(0, days)}d`
-}
-
 // Bio autolinker — @mention/#tag as trusted HTML for hsCardHtml's renderBio
 // dependency. hs-card-bio-mention reuses the existing .hs-mc-user click
 // handler (profile-card.js); hs-card-bio-tag is a plain external link.

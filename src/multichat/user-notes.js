@@ -235,20 +235,6 @@ function hsNoteServerEligible(profileId) {
   return !!profileId && !/^(kick|yt)_/.test(String(profileId))
 }
 
-// Kept for callers with no /api/card round trip already in hand (none left
-// in this codebase as of the /api/card migration — every card surface's
-// note now comes prefetched, see hsNoteSyncOnOpen below — but this is still
-// the one place that knows the GET's shape, so a future non-card caller has
-// somewhere to reach for it instead of re-deriving the endpoint).
-async function hsNoteFetchServer(profileId) {
-  if (!hsNoteServerEligible(profileId) || typeof apiFetch !== 'function') return null
-  try {
-    const resp = await apiFetch(`/api/user-notes/${encodeURIComponent(profileId)}`, { auth: true })
-    if (resp?.ok && resp.data) return resp.data.note || ''
-  } catch {}
-  return null // network/auth failure — distinct from "" (a real, empty server note)
-}
-
 async function hsNotePutServer(profileId, text) {
   if (!hsNoteServerEligible(profileId) || typeof apiFetch !== 'function') return false
   try {
@@ -533,7 +519,6 @@ export {
   _hsNoteResetForTest,
   HS_NOTE_MAX,
   hsNoteDelete,
-  hsNoteFetchServer,
   hsNoteGet,
   hsNoteHas,
   hsNoteOpenEditor,

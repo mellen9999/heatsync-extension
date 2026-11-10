@@ -1,5 +1,18 @@
 # changelog
 
+## [1.7.128] — 2026-11-10
+
+### added
+- **dms** — threaded dms arrive live in the whispers tab, with typing.
+- **subs** — a single twitch sub shows as an event line.
+- **mod warnings** — a warning from a mod shows its reason as a notice that stays, not a toast.
+- **logs** — lines removed from the archive leave an open logs view without a reload.
+- **profile card** — an open card updates when that person edits their profile, changes color or is followed.
+
+### fixed
+- **kick** — messages deleted by a mod disappear again; kick moved its live socket and the old one went quiet. an unpin no longer removes a chat line.
+- **feed** — a hidden post is removed from your feed; media that fails its scan is held behind your media toggles.
+
 ## [1.7.127] — 2026-11-09
 
 ### fixed

@@ -1499,9 +1499,12 @@ function handleWSMessage(msg) {
         break
 
       // a moderator pulled a post: the same ending as its author deleting it
-      case 'message:hidden':
-        if (msg.data?.id) broadcastToTabs({ type: 'message-deleted', data: { message_id: msg.data.id } })
+      // (the server sends it flat — {id, reason} — not wrapped in `data`)
+      case 'message:hidden': {
+        const id = msg.id ?? msg.data?.id
+        if (id) broadcastToTabs({ type: 'message-deleted', data: { message_id: id } })
         break
+      }
 
       // live heat on a post (flat frame: messageId, newHeat, newMaxHeat)
       case 'heat:updated':

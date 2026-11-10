@@ -18,7 +18,8 @@ describe('feed + dm frames', () => {
   test('a hidden post ends like a deleted one', () => {
     const body = cut(BG, "case 'message:hidden'", "case 'heat:updated'")
     expect(body).toContain("type: 'message-deleted'")
-    expect(body).toContain('message_id: msg.data.id')
+    expect(body).toContain('message_id: id')
+    expect(body).toContain('msg.id ?? msg.data?.id') // flat, as the server sends it
   })
 
   test('heat lands on every cached copy; junk is ignored', () => {

@@ -51,3 +51,23 @@ describe('overlay', () => {
     )
   })
 })
+
+describe('flat frames (the server does not wrap these in `data`)', () => {
+  test('message:hidden {id, reason} deletes the post; the old wrapped shape still does', async () => {
+    const [a] = await got({ type: 'message:hidden', id: '4a', reason: 'x' }, 'message-deleted')
+    expect(a.data).toEqual({ message_id: '4a' })
+    const [b] = await got({ type: 'message:hidden', data: { id: '4b' } }, 'message-deleted')
+    expect(b.data).toEqual({ message_id: '4b' })
+    expect(await got({ type: 'message:hidden', reason: 'x' }, 'message-deleted')).toEqual([])
+  })
+  test('message:approved {id} and message:flagged {id, categories} read flat', async () => {
+    const [a] = await got({ type: 'message:approved', id: '4a' }, 'message_moderated')
+    expect(a.data).toEqual({ id: '4a', categories: [], flagged: false })
+    const [f] = await got({ type: 'message:flagged', id: '4a', categories: ['nsfw'] }, 'message_moderated')
+    expect(f.data).toEqual({ id: '4a', categories: ['nsfw'], flagged: true })
+  })
+  test('message-deleted {message_id} reaches the tabs flat', async () => {
+    const [d] = await got({ type: 'message-deleted', message_id: '4a' }, 'message-deleted')
+    expect(d.data.message_id).toBe('4a')
+  })
+})

@@ -100,6 +100,15 @@ jobs:
       - name: smoke (built extension boots in chrome)
         run: bun scripts/smoke-extension.ts
 
+      # The firefox build is its own artifact (MV2 manifest, background page,
+      # firefox's CSP, world: MAIN content scripts) and the chromium smoke above
+      # never loads it. Headless firefox + geckodriver, both preinstalled on
+      # ubuntu-latest, so no install step. dist/firefox comes from the budget
+      # step's build; the script says so if it is missing.
+      - name: smoke (built extension boots in firefox)
+        timeout-minutes: 3
+        run: bun scripts/smoke-firefox.ts
+
       # The real-browser render suite (mock irc, all three platforms, picker,
       # composer, per-site off switch). Off CI it sat red for six days while
       # three fixtures drifted from deliberate product changes — nobody ran it.

@@ -321,7 +321,7 @@ const kickNameToTwitchUsername = new Map() // kickHandle → twitchUsername | nu
 const kickNamePaintUid = new Map()
 const kickNameLookupPending = new Set()
 // kickHandle → numeric kick user id, when the caller already knows it (the
-// Pusher tap / server relay carry it on every message) — threaded into the
+// kick tap / server relay carry it on every message) — threaded into the
 // BG request so it can skip the kick.com username→id lookup entirely.
 const kickNamePendingIds = new Map()
 // kickHandle → timestamp before which a fresh queue is refused. Set only when

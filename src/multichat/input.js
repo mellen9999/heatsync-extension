@@ -219,7 +219,7 @@ function isSentEcho(msgText, msgPlatform) {
 // Retro-fold: fold own-send platform echoes that RENDERED BEFORE the
 // cross-device origin_broadcast arrived. isSentEcho only folds echoes that
 // arrive AFTER the entry exists — but a kick send from another device relays
-// through THIS extension, so the local pusher echo often beats the phone's
+// through THIS extension, so the local tap echo often beats the phone's
 // origin_tag round-trip and paints as a bare [K] row that isSentEcho never
 // saw. Called right after trackSentMessage stores a broadcast entry: the
 // earliest already-painted leg is retagged [H] and claims its platform; any

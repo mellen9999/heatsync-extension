@@ -704,7 +704,7 @@ browser.alarms?.onAlarm?.addListener(async (alarm) => {
   } else if (alarm.name === 'refresh-followed-users') {
     fetchFollowedUsers().catch((err) => console.warn('[heatsync-ext] fetchFollowedUsers refresh failed:', err?.message))
   } else if (alarm.name === 'hs-ws-watchdog') {
-    // Kick Pusher tap liveness rides the same alarm (see _kpWatchdogCheck).
+    // Kick kick tap liveness rides the same alarm (see _kpWatchdogCheck).
     try {
       if (typeof _kpWatchdogCheck === 'function') _kpWatchdogCheck()
     } catch {}
@@ -1268,7 +1268,7 @@ function feedThreadSet(tabId, room) {
 // literal copy — this is the MV3 service worker, a separate JS context from
 // the content-script lib bundle, so it can't `import` src/lib/reserved-paths.js.
 // Ghost keys persisted in joined_extra_channels replay straight into WS joins
-// + the kick Pusher tap on every SW boot, bypassing the overlay-side purges
+// + the kick kick tap on every SW boot, bypassing the overlay-side purges
 // ('login' is a REAL kick channel — the tap happily subscribed chatroom 31705
 // to it). build.js's checkReservedPathsParity fails the build if this copy
 // drifts from src/lib/reserved-paths.js.

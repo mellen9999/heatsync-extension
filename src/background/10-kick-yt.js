@@ -1,4 +1,4 @@
-// background part 10 of 11 — kick and yt mirrors, the yt tap, the kick pusher.
+// background part 10 of 11 — kick and yt mirrors, the yt tap, the kick tap.
 // build.js concatenates src/background/* in BG_PARTS order into background.js (the service worker cannot import);
 // one scope, so a later part may read an earlier part's constants, never the reverse.
 
@@ -146,7 +146,7 @@ function bgYtPersistChannel(channelId) {
 }
 
 // Cross-source live dedupe — the same Kick msg can arrive from the server
-// relay AND the Pusher tap (both call bgKickIngest). FIFO, mirrors _bgLiveIds.
+// relay AND the kick tap (both call bgKickIngest). FIFO, mirrors _bgLiveIds.
 const _bgKickLiveIds = new Set()
 const _bgKickLiveIdOrder = []
 function bgKickSeenLiveId(id) {
@@ -163,7 +163,7 @@ function bgKickSeenLiveId(id) {
 
 function bgKickIngest(data) {
   // data shape from heatsync server kick-chat-message webhook → broadcast;
-  // called from the relay case AND the Pusher tap's _kpHandleChatEvent
+  // called from the relay case AND the kick tap's _kpHandleChatEvent
   if (!data?.channel) return
   const ch = data.channel.toLowerCase()
   if (data.id && bgKickSeenLiveId(`${ch}:${data.id}`)) return
@@ -428,7 +428,7 @@ async function fetchRecentArchiveRows(platform, channel, limit = 800) {
 }
 
 // One-shot fire-and-forget kick join backfill. Gated by _kpChannels.has()
-// being freshly-set (see kickPusherJoin) so this runs once per join, not on
+// being freshly-set (see kickTapJoin) so this runs once per join, not on
 // every reconnect within the SW's lifetime.
 async function bgKickFetchRecentArchive(slug) {
   slug = (slug || '').toLowerCase()
@@ -1094,34 +1094,59 @@ function ytTapCheck() {
   }
 }
 
-// ─── Kick chat Pusher tap (client-side, anonymous) ──────────────────────────
-// Reads Kick chat straight from Kick's own Pusher stream instead of waiting on
+// ─── Kick chat tap (client-side, anonymous, centrifugo) ─────────────────────
+// Reads Kick chat straight from Kick's own realtime stream instead of waiting on
 // the server webhook relay — lower latency, no per-app subscription cap, and it
 // survives server hiccups. Each message carries the Kick message_id, so the
 // overlay's KickChat id-dedup silently drops the duplicate from the (still
 // running) server relay. If this tap can't connect/resolve a channel, that
 // channel simply keeps flowing through the server relay — automatic fallback.
-// Verified live 2026-06-02 (kick.com/westcol): tap fills + renders, dedup by
-// Kick message id drops relay duplicates (KickChat._recentLiveIds). On = kick
-// chat works on channels the server relay doesn't already track.
-const KICK_PUSHER_TAP = true
-const KICK_PUSHER_APP_KEY = '32cbd69e4b950bf97679' // rotates rarely — re-check the live Pusher URL if chat ever stops
+//
+// Kick moved from pusher to centrifugo (2026-11). Where to connect and the
+// guest token are asked fresh on EVERY connect — the answer changes. The event
+// names and payloads inside a publication are unchanged from the pusher era, so
+// everything below the transport (the _kpHandle* family) is untouched.
+const KICK_TAP = true
+const KICK_REALTIME_API = 'https://web.kick.com/api'
+// Kick's channel-scoped scope (KICKs gifts, pins, polls, hosts ride it) — a
+// chatroom id and a channel id are different numbers, see _kpResolveChatroomId.
+const KICK_CHANNEL_SCOPE = 'channel_'
+const KP_MAX_REFUSALS = 5 // consecutive refusals before the tap stands down
+const KP_REARM_MS = 30 * 60 * 1000 // …and re-arms on the next join or after this
 let _kpWs = null
 let _kpConnected = false
+let _kpConnecting = false // discovery in flight
 let _kpReconnectMs = 1000
 let _kpReconnectTimer = null
+let _kpTtlTimer = null
 let _kpLastData = 0
 let _kpConnectingAt = 0
+let _kpNextId = 1
+const _kpPending = new Map() // command id -> centrifugo channel it subscribed
 const _kpChannels = new Map() // slug -> chatroomId (currently subscribed)
 const _kpChatroomCache = new Map() // slug -> chatroomId (resolved)
 // slug -> kick CHANNEL id (a different number from the chatroom id). Kept
-// separately because only some events ride the channel-scoped Pusher channel.
+// separately because only some events ride the channel-scoped channel.
 const _kpChannelIdCache = new Map()
 const _kpSubbedChannelIds = new Map() // slug -> channelId (currently subscribed)
+// The tap's backoff has an end. `streak` counts refusals in a row (discovery
+// declined, socket error, close before the connect ack); a refused subscribe is
+// counted per CHANNEL in subFails, never against the transport.
+const _kpNet = {
+  streak: 0,
+  stopped: false,
+  stoppedAt: 0,
+  lastReason: '',
+  refusals: 0,
+  connects: 0,
+  rearms: 0,
+  recycles: 0,
+  subFails: new Map(), // centrifugo channel -> consecutive refused subscribes
+}
 // Per-source delivery counters — the tap and the server relay fail silently
 // (resolve miss, unmatched chatroom, dead socket); counters make "which source
 // delivered the last message for this slug" answerable from a live probe.
-const _kickSrcStats = { tap: new Map(), relay: new Map(), tapUnmatched: 0 } // slug -> {n, lastAt, lastId}
+const _kickSrcStats = { tap: new Map(), relay: new Map(), tapUnmatched: 0, net: _kpNet } // slug -> {n, lastAt, lastId}
 function _kickSrcBump(map, slug, id) {
   const e = map.get(slug) || { n: 0, lastAt: 0, lastId: '' }
   e.n++
@@ -1154,130 +1179,264 @@ async function _kpResolveChatroomId(slug) {
   return null
 }
 
-function _kpSubscribe(chatroomId) {
-  if (_kpConnected && _kpWs) {
+// Where to connect and with what, for one connection. Never throws — every
+// failure on this path is a refusal and reaches the caller as a reason.
+async function _kpDiscover(channelId) {
+  const post = async (path, body) => {
     try {
-      _kpWs.send(
-        JSON.stringify({ event: 'pusher:subscribe', data: { auth: '', channel: `chatrooms.${chatroomId}.v2` } }),
-      )
-    } catch {}
+      const r = await fetch(`${KICK_REALTIME_API}${path}`, {
+        method: 'POST',
+        credentials: 'omit',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(10000),
+      })
+      if (!r.ok) return null
+      const j = await r.json()
+      return j && typeof j === 'object' ? j : null
+    } catch {
+      return null
+    }
+  }
+  if (channelId == null) return { reason: 'no channel id' }
+  const clientId = crypto.randomUUID()
+  const conn = await post(`/v1/realtime/channels/${encodeURIComponent(channelId)}/chat/connection`, {
+    client: { id: clientId, type: 'web' },
+    // Both, in kick's own order: naming only centrifugo would make this the
+    // reason a future move back to pusher reads as an outage.
+    capabilities: { accepted_providers: [{ provider: 'pusher' }, { provider: 'centrifugo' }] },
+  })
+  if (!conn) return { reason: 'realtime endpoint declined' }
+  if (conn.data?.mode !== 'websocket') return { reason: `realtime mode ${String(conn.data?.mode).slice(0, 16)}` }
+  const list = Array.isArray(conn.data?.connections) ? conn.data.connections : []
+  const url = list.find((c) => c && c.provider === 'centrifugo')?.credentials?.url
+  if (typeof url !== 'string' || !url.startsWith('wss://')) return { reason: 'no centrifugo url offered' }
+  const auth = await post('/v1/realtime/auth/connection', { client_id: clientId })
+  if (!auth) return { reason: 'realtime auth declined' }
+  const token = auth.data?.token
+  if (typeof token !== 'string' || !token) return { reason: 'no connection token' }
+  return { url, token }
+}
+
+// Centrifugo json frames -> a short list of what we act on. Pure. Replies may
+// be packed several to a message, newline-delimited; a frame we can't read is
+// skipped, never thrown on (nothing is left to catch it in a socket callback).
+//   {}                                  -> ping (answer with {})
+//   {id, error:{code}}                  -> error
+//   {id, connect:{ttl}}                 -> connect
+//   {id, subscribe:{}}                  -> subscribed (matched by id, names nothing)
+//   {push:{channel, pub:{data:{event,data}}}} -> pub, the pusher-era {event, channel, data}
+//   {push:{channel, unsubscribe}}       -> unsub
+function _kpFrames(raw) {
+  const out = []
+  for (const line of String(raw).split('\n')) {
+    if (!line.trim()) continue
+    let f
+    try {
+      f = JSON.parse(line)
+    } catch {
+      continue
+    }
+    if (!f || typeof f !== 'object' || Array.isArray(f)) continue
+    if (!Object.keys(f).length) {
+      out.push({ kind: 'ping' })
+      continue
+    }
+    const id = typeof f.id === 'number' ? f.id : null
+    if (f.error && typeof f.error === 'object') {
+      out.push({ kind: 'error', id, code: Number(f.error.code) || 0 })
+    } else if (f.connect && typeof f.connect === 'object') {
+      out.push({ kind: 'connect', ttl: Number(f.connect.ttl) || 0 })
+    } else if (f.subscribe && typeof f.subscribe === 'object' && id !== null) {
+      out.push({ kind: 'subscribed', id })
+    } else if (f.push && typeof f.push === 'object') {
+      const channel = typeof f.push.channel === 'string' ? f.push.channel : ''
+      const inner = f.push.pub?.data
+      if (inner && typeof inner === 'object' && typeof inner.event === 'string') {
+        out.push({ kind: 'pub', event: inner.event, channel, data: inner.data })
+      } else if (f.push.unsubscribe) {
+        out.push({ kind: 'unsub', channel })
+      }
+    }
+  }
+  return out
+}
+
+function _kpSend(obj) {
+  if (!_kpConnected || !_kpWs) return false
+  try {
+    _kpWs.send(JSON.stringify(obj))
+    return true
+  } catch {
+    return false
   }
 }
+function _kpSub(channel) {
+  if ((_kpNet.subFails.get(channel) || 0) >= KP_MAX_REFUSALS) return // given up on this one
+  const id = _kpNextId + 1
+  if (!_kpSend({ subscribe: { channel }, id })) return
+  _kpNextId = id
+  _kpPending.set(id, channel)
+}
+function _kpUnsub(channel) {
+  _kpNet.subFails.delete(channel)
+  if (_kpSend({ unsubscribe: { channel }, id: _kpNextId + 1 })) _kpNextId++
+}
+const _kpRoom = (chatroomId) => `chatrooms.${chatroomId}.v2`
+const _kpScope = (channelId) => `${KICK_CHANNEL_SCOPE}${channelId}`
+function _kpSubscribe(chatroomId) {
+  _kpSub(_kpRoom(chatroomId))
+}
 // Second subscription per joined channel, for the events kick does NOT put on
-// the chatroom channel — KICKs gifts land on `channel_<channelId>` (underscore;
-// `channel.<id>` with a dot is a real but different channel carrying a
-// duplicate of the sub event we already read). One extra frame on the socket we
-// already hold, no extra connection.
+// the chatroom channel. One extra command on the socket we already hold.
 function _kpSubscribeChannelScoped(channelId) {
-  if (channelId == null || !_kpConnected || !_kpWs) return
-  try {
-    _kpWs.send(JSON.stringify({ event: 'pusher:subscribe', data: { auth: '', channel: `channel_${channelId}` } }))
-  } catch {}
+  if (channelId != null) _kpSub(_kpScope(channelId))
 }
 function _kpUnsubscribeChannelScoped(channelId) {
-  if (channelId == null || !_kpConnected || !_kpWs) return
-  try {
-    _kpWs.send(JSON.stringify({ event: 'pusher:unsubscribe', data: { channel: `channel_${channelId}` } }))
-  } catch {}
+  if (channelId != null) _kpUnsub(_kpScope(channelId))
+}
+function _kpUnsubscribe(chatroomId) {
+  _kpUnsub(_kpRoom(chatroomId))
 }
 function _kpSlugForChannelId(channelId) {
   for (const [slug, id] of _kpSubbedChannelIds) if (String(id) === String(channelId)) return slug
   return null
 }
-function _kpUnsubscribe(chatroomId) {
-  if (_kpConnected && _kpWs) {
-    try {
-      _kpWs.send(JSON.stringify({ event: 'pusher:unsubscribe', data: { channel: `chatrooms.${chatroomId}.v2` } }))
-    } catch {}
-  }
+
+function _kpClearTimers() {
+  if (_kpReconnectTimer) clearTimeout(_kpReconnectTimer)
+  if (_kpTtlTimer) clearTimeout(_kpTtlTimer)
+  _kpReconnectTimer = null
+  _kpTtlTimer = null
 }
 function _kpScheduleReconnect() {
-  if (_kpReconnectTimer || !KICK_PUSHER_TAP || !_kpChannels.size) return
+  if (_kpReconnectTimer || !KICK_TAP || _kpNet.stopped || !_kpChannels.size) return
   _kpReconnectTimer = setTimeout(() => {
     _kpReconnectTimer = null
     _kpConnect()
   }, _kpReconnectMs)
   _kpReconnectMs = Math.min(_kpReconnectMs * 2, 30000)
 }
-function _kpConnect() {
-  if (_kpWs || !KICK_PUSHER_TAP) return
+// One refusal: discovery declined, the socket errored, or it closed before the
+// connect ack. KP_MAX_REFUSALS in a row and the tap stands down — the server
+// relay carries on — until the next join or KP_REARM_MS (the watchdog alarm
+// checks the clock; no timer is left running for it).
+function _kpRefuse(reason) {
+  _kpNet.refusals++
+  _kpNet.lastReason = reason
+  if (++_kpNet.streak >= KP_MAX_REFUSALS) {
+    _kpNet.stopped = true
+    _kpNet.stoppedAt = Date.now()
+    _kpClearTimers()
+    log(`KP: ${reason} x${_kpNet.streak} — standing down`)
+    return
+  }
+  _kpScheduleReconnect()
+}
+function _kpRearm() {
+  if (!_kpNet.stopped) return
+  _kpNet.stopped = false
+  _kpNet.streak = 0
+  _kpNet.rearms++
+  _kpNet.subFails.clear()
+  _kpReconnectMs = 1000
+}
+function _kpDetach() {
+  const ws = _kpWs
+  _kpWs = null
+  _kpConnected = false
+  _kpPending.clear()
+  if (ws) {
+    try {
+      ws.close()
+    } catch {}
+  }
+}
+
+async function _kpConnect() {
+  if (_kpWs || _kpConnecting || !KICK_TAP || _kpNet.stopped || !_kpChannels.size) return
+  _kpConnecting = true
+  let ep
+  try {
+    ep = await _kpDiscover(_kpSubbedChannelIds.values().next().value ?? _kpChannelIdCache.values().next().value)
+  } finally {
+    _kpConnecting = false
+  }
+  // the world moved during the await — a join/leave/another connect won
+  if (_kpWs || _kpNet.stopped || !_kpChannels.size) return
+  if (ep.reason) return _kpRefuse(ep.reason)
   // Capture the socket locally — a stale socket's late close/error/message
   // events must never clobber a newer _kpWs (leave→join races spawn orphaned
   // duplicate-subscribed sockets otherwise).
   let ws
   try {
-    ws = new WebSocket(
-      `wss://ws-us2.pusher.com/app/${KICK_PUSHER_APP_KEY}?protocol=7&client=js&version=8.4.0&flash=false`,
-    )
+    ws = new WebSocket(ep.url)
   } catch {
-    _kpScheduleReconnect()
-    return
+    return _kpRefuse('socket unopenable')
   }
   _kpWs = ws
   _kpConnectingAt = Date.now()
+  let why = '' // what the server said, for the close that follows it
   ws.onopen = () => {
     if (_kpWs !== ws) return
     _kpLastData = Date.now()
+    // centrifugo says nothing until spoken to: connect FIRST
+    try {
+      ws.send(JSON.stringify({ connect: { token: ep.token, name: 'js' }, id: 1 }))
+    } catch {}
   }
   ws.onmessage = (e) => {
     if (_kpWs !== ws) return
     _kpLastData = Date.now()
-    let d
-    try {
-      d = JSON.parse(e.data)
-    } catch {
-      return
-    }
-    if (d.event === 'pusher:connection_established') {
-      _kpConnected = true
-      // Reset backoff only on a fully-established session — resetting in
-      // onopen lets connect-then-drop failures (rotated app key, quota)
-      // retry at 1s forever.
-      _kpReconnectMs = 1000
-      for (const id of _kpChannels.values()) _kpSubscribe(id) // (re)assert all subs
-      for (const id of _kpSubbedChannelIds.values()) _kpSubscribeChannelScoped(id)
-    } else if (d.event === 'pusher:ping') {
-      try {
-        ws.send(JSON.stringify({ event: 'pusher:pong', data: {} }))
-      } catch {}
-    } else if (typeof d.event === 'string' && d.event.includes('ChatMessageEvent')) {
-      _kpHandleChatEvent(d)
-    } else if (typeof d.event === 'string' && d.event.includes('MessageDeletedEvent')) {
-      _kpHandleModEvent(d, 'delete')
-    } else if (typeof d.event === 'string' && d.event.includes('UserBannedEvent')) {
-      _kpHandleModEvent(d, 'ban')
-    } else if (typeof d.event === 'string' && d.event.includes('UserUnbannedEvent')) {
-      _kpHandleModEvent(d, 'unban')
-    } else if (d.event === 'KicksGifted') {
-      _kpHandleKicksEvent(d)
-    } else if (typeof d.event === 'string' && d.event.includes('StreamHostEvent')) {
-      _kpHandleHostEvent(d)
-    } else if (typeof d.event === 'string' && d.event.includes('PollUpdateEvent')) {
-      _kpHandlePollEvent(d)
-    } else if (typeof d.event === 'string' && d.event.includes('PinnedMessageCreatedEvent')) {
-      _kpHandlePinEvent(d, true)
-    } else if (typeof d.event === 'string' && d.event.includes('PinnedMessageDeletedEvent')) {
-      _kpHandlePinEvent(d, false)
-    } else if (typeof d.event === 'string' && d.event.includes('GiftedSubscriptionsEvent')) {
-      // Checked before SubscriptionEvent: kick's gift event name does not
-      // contain "SubscriptionEvent", but ordering it first keeps the pair
-      // obvious if kick ever renames one into a superstring of the other.
-      _kpHandleGiftSubEvent(d)
-    } else if (typeof d.event === 'string' && d.event.includes('SubscriptionEvent')) {
-      _kpHandleSubEvent(d)
-    } else if (typeof d.event === 'string' && d.event.includes('ChatroomUpdatedEvent')) {
-      // Async (storage.session baseline load) — a rejection here is otherwise
-      // an invisible unhandled promise in the SW; pin it for dbg_kick_tap.
-      _kpHandleChatroomUpdated(d).catch((e) => {
-        _kpModeStats.lastError = e?.message || 'unknown'
-      })
+    for (const fr of _kpFrames(e.data)) {
+      if (fr.kind === 'ping') {
+        try {
+          ws.send('{}')
+        } catch {}
+      } else if (fr.kind === 'connect') {
+        _kpConnected = true
+        _kpNet.connects++
+        // Reset the streak/backoff only on a fully-established session —
+        // resetting in onopen lets connect-then-drop failures retry at 1s forever.
+        _kpNet.streak = 0
+        _kpReconnectMs = 1000
+        // the token expires: come back (with a fresh discovery) before it does
+        if (fr.ttl > 0) _kpTtlTimer = setTimeout(_kpRecycle, Math.max(60, fr.ttl * 0.9) * 1000)
+        for (const id of _kpChannels.values()) _kpSubscribe(id) // (re)assert all subs
+        for (const id of _kpSubbedChannelIds.values()) _kpSubscribeChannelScoped(id)
+      } else if (fr.kind === 'subscribed') {
+        const ch = _kpPending.get(fr.id)
+        _kpPending.delete(fr.id)
+        if (ch) _kpNet.subFails.delete(ch)
+      } else if (fr.kind === 'error') {
+        const ch = fr.id == null ? undefined : _kpPending.get(fr.id)
+        if (ch === undefined) {
+          // a refused connect (or a command we never tracked): the transport
+          why = `connect refused (${fr.code})`
+          try {
+            ws.close()
+          } catch {}
+          return
+        }
+        _kpPending.delete(fr.id)
+        _kpNet.subFails.set(ch, (_kpNet.subFails.get(ch) || 0) + 1)
+        _kpNet.lastReason = `subscribe refused (${fr.code})`
+      } else if (fr.kind === 'unsub') {
+        _kpNet.subFails.set(fr.channel, (_kpNet.subFails.get(fr.channel) || 0) + 1)
+      } else if (fr.kind === 'pub') {
+        _kpDispatch(fr)
+      }
     }
   }
   ws.onclose = () => {
     if (_kpWs !== ws) return
-    _kpWs = null
-    _kpConnected = false
-    if (_kpChannels.size) _kpScheduleReconnect()
+    const acked = _kpConnected
+    _kpDetach()
+    if (_kpTtlTimer) clearTimeout(_kpTtlTimer)
+    _kpTtlTimer = null
+    if (!_kpChannels.size) return
+    if (acked) _kpScheduleReconnect()
+    else _kpRefuse(why || 'closed before connect ack')
   }
   ws.onerror = () => {
     try {
@@ -1285,38 +1444,93 @@ function _kpConnect() {
     } catch {}
   }
 }
-// Zombie/half-open detection — Pusher's protocol-level WS pings are answered
-// by the browser's network stack and never reach JS, so data silence is the
-// only liveness signal we can observe. Fired from the hs-ws-watchdog alarm.
+// The connection token is about to expire: swap sockets, fresh discovery. Not a
+// refusal. Detaching first makes the old socket's late close a no-op.
+function _kpRecycle() {
+  _kpTtlTimer = null
+  if (!_kpWs) return
+  _kpNet.recycles++
+  _kpDetach()
+  _kpConnect()
+}
+
+// Zombie/half-open detection — a socket's protocol-level pings are answered by
+// the browser's network stack and never reach JS, but centrifugo also sends an
+// app-level `{}` every ~25s, so data silence is a real liveness signal. Fired
+// from the hs-ws-watchdog alarm, which is also what re-arms a stood-down tap.
 function _kpWatchdogCheck() {
-  if (!KICK_PUSHER_TAP || !_kpChannels.size) return
+  if (!KICK_TAP || !_kpChannels.size) return
+  if (_kpNet.stopped) {
+    if (Date.now() - _kpNet.stoppedAt < KP_REARM_MS) return
+    _kpRearm()
+  }
   if (!_kpWs) {
     if (!_kpReconnectTimer) _kpConnect()
     return
   }
-  if (_kpWs.readyState === WebSocket.CONNECTING) {
-    if (Date.now() - _kpConnectingAt > 30000) {
-      log('KP: connect stuck — closing')
-      try {
-        _kpWs.close()
-      } catch {}
-    }
+  if (!_kpConnected && Date.now() - _kpConnectingAt > 30000) {
+    log('KP: connect stuck — closing')
+    try {
+      _kpWs.close()
+    } catch {}
     return
   }
-  if (_kpWs.readyState === WebSocket.OPEN && _kpLastData && Date.now() - _kpLastData > 240000) {
+  if (_kpConnected && _kpLastData && Date.now() - _kpLastData > 120000) {
     log('KP: zombie detected — reconnecting')
     try {
       _kpWs.close()
     } catch {}
   }
 }
+
+// Pusher-era event names carry an `App\Events\` prefix; centrifugo keeps it.
+// Matching is EXACT on the bare name — a substring match once let
+// PinnedMessageDeletedEvent hit the MessageDeletedEvent branch, so an unpin
+// deleted the pinned chat line and the pin bar never cleared.
+function _kpEventName(event) {
+  const s = typeof event === 'string' ? event : ''
+  return s.startsWith('App\\Events\\') ? s.slice(11) : s
+}
+function _kpDispatch(d) {
+  switch (_kpEventName(d.event)) {
+    case 'ChatMessageEvent':
+      return _kpHandleChatEvent(d)
+    case 'MessageDeletedEvent':
+      return _kpHandleModEvent(d, 'delete')
+    case 'UserBannedEvent':
+      return _kpHandleModEvent(d, 'ban')
+    case 'UserUnbannedEvent':
+      return _kpHandleModEvent(d, 'unban')
+    case 'KicksGifted':
+      return _kpHandleKicksEvent(d)
+    case 'StreamHostEvent':
+      return _kpHandleHostEvent(d)
+    case 'PollUpdateEvent':
+      return _kpHandlePollEvent(d)
+    case 'PinnedMessageCreatedEvent':
+      return _kpHandlePinEvent(d, true)
+    case 'PinnedMessageDeletedEvent':
+      return _kpHandlePinEvent(d, false)
+    case 'GiftedSubscriptionsEvent':
+      return _kpHandleGiftSubEvent(d)
+    case 'SubscriptionEvent':
+      return _kpHandleSubEvent(d)
+    case 'ChatroomUpdatedEvent':
+      // Async (storage.session baseline load) — a rejection here is otherwise
+      // an invisible unhandled promise in the SW; pin it for dbg_kick_tap.
+      return _kpHandleChatroomUpdated(d).catch((e) => {
+        _kpModeStats.lastError = e?.message || 'unknown'
+      })
+  }
+}
+
 function _kpSlugForChatroom(chatroomId) {
   for (const [slug, id] of _kpChannels) if (id === chatroomId) return slug
   return null
 }
 
 // Kick chat-mode banners — Twitch parity (see bgIrcHandleLine's roomstate
-// branch, ~line 10571). Kick's Pusher chatroom channel emits ChatroomUpdatedEvent
+// branch, ~line 10571). Kick's chatroom channel emits ChatroomUpdatedEvent
 // whenever a mod changes slow/sub-only/emote-only/followers mode. Some
 // deployments nest the payload under `chatroom` — handle both. Parsed
 // defensively: any missing/malformed field is left unset (undefined) rather
@@ -1475,7 +1689,7 @@ function _kpHandleChatEvent(d) {
     timestamp: ev.created_at ? Date.parse(ev.created_at) || Date.now() : Date.now(),
     id: ev.id || '',
     // Kick threads a reply via metadata.original_sender/original_message — the
-    // server relay already forwards this; the Pusher tap used to drop it (every
+    // server relay already forwards this; the kick tap used to drop it (every
     // tapped reply rendered flat). Match the relay's replyTo shape.
     replyTo: ev.metadata?.original_message
       ? {
@@ -1495,7 +1709,7 @@ function _kpHandleChatEvent(d) {
   broadcastToTabs({ type: 'kick_chat_message', data: payload })
 }
 
-// Kick broadcasts moderation on the same chatroom Pusher channel as chat. Mirror
+// Kick broadcasts moderation on the same chatroom channel as chat. Mirror
 // Twitch's CLEARCHAT/CLEARMSG so bans/timeouts/deletes by the streamer or ANY
 // mod reflect in the ext (dim the offender's messages + a system line), not just
 // self-actions. Emits a notice-shaped payload the overlay's platform-agnostic
@@ -1543,7 +1757,7 @@ function _kpHandleModEvent(d, kind) {
     broadcastToTabs({ type: 'kick_moderation', action: 'unban', channel: slug, targetUser })
   }
 }
-// Kick's chatroom Pusher channel carries the celebration events too — subs and
+// Kick's chatroom channel carries the celebration events too — subs and
 // gift subs. The server webhook relay already renders both, but a webhook only
 // fires for channels whose broadcaster authorised the heatsync kick app, which
 // is a handful; the tap sees them for EVERY joined channel. Broadcast shapes
@@ -1736,8 +1950,8 @@ function _kpHandlePollEvent(d) {
   broadcastToTabs({ type: 'stream_event', eventType: 'stream:poll-start', platform: 'kick', channel: slug, title })
 }
 
-async function kickPusherJoin(slug) {
-  if (!KICK_PUSHER_TAP) return
+async function kickTapJoin(slug) {
+  if (!KICK_TAP) return
   slug = (slug || '').toLowerCase()
   if (!slug || _kpChannels.has(slug)) return
   // 'login' etc. are REAL kick channels — a ghost join here streams a
@@ -1747,20 +1961,25 @@ async function kickPusherJoin(slug) {
   const chatroomId = await _kpResolveChatroomId(slug)
   if (!chatroomId) return // couldn't resolve -> leave this channel to the server relay
   _kpChannels.set(slug, chatroomId)
-  _kpConnect()
-  _kpSubscribe(chatroomId)
+  // A fresh join is a new reason to try again: re-arm a stood-down tap, and
+  // forgive this channel's refused subscribes.
+  _kpRearm()
+  _kpNet.subFails.delete(_kpRoom(chatroomId))
   // _kpResolveChatroomId stashed the channel id from the same response.
   const channelId = _kpChannelIdCache.get(slug)
   if (channelId != null) {
     _kpSubbedChannelIds.set(slug, channelId)
-    _kpSubscribeChannelScoped(channelId)
+    _kpNet.subFails.delete(_kpScope(channelId))
   }
+  _kpConnect()
+  _kpSubscribe(chatroomId)
+  _kpSubscribeChannelScoped(channelId)
   // Fire-and-forget real-history backfill — the _kpChannels.has() guard above
   // means this line only runs on a genuinely fresh join, not every reconnect.
   bgKickFetchRecentArchive(slug).catch(() => {})
 }
-function kickPusherLeave(slug) {
-  if (!KICK_PUSHER_TAP) return
+function kickTapLeave(slug) {
+  if (!KICK_TAP) return
   slug = (slug || '').toLowerCase()
   const chatroomId = _kpChannels.get(slug)
   if (chatroomId == null) return
@@ -1773,19 +1992,10 @@ function kickPusherLeave(slug) {
     _kpSubbedChannelIds.delete(slug)
   }
   if (!_kpChannels.size) {
-    // Kill any pending reconnect too — otherwise it opens a
+    // Kill any pending reconnect/recycle too — otherwise it opens a
     // zero-subscription socket after the last channel leaves.
-    if (_kpReconnectTimer) {
-      clearTimeout(_kpReconnectTimer)
-      _kpReconnectTimer = null
-    }
-    if (_kpWs) {
-      try {
-        _kpWs.close()
-      } catch {}
-      _kpWs = null
-      _kpConnected = false
-    }
+    _kpClearTimers()
+    _kpDetach()
   }
 }
 

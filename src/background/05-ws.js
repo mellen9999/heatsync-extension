@@ -986,10 +986,10 @@ async function connectWebSocket() {
             const [platform, channel] = entry.channel.split('/')
             burst.push({ type: 'channel:join', platform, channel })
             rejoinedChannels.add(entry.channel)
-            // Rejoin the Pusher tap too — tap-only kick channels have NO
+            // Rejoin the kick tap too — tap-only kick channels have NO
             // server relay, so the server join alone leaves them silent.
             // Idempotent (_kpChannels.has guard).
-            if (platform === 'kick') kickPusherJoin(channel)
+            if (platform === 'kick') kickTapJoin(channel)
           }
         }
         for (const key of joinedExtraChannels) {
@@ -998,7 +998,7 @@ async function connectWebSocket() {
           if (!platform || !channel) continue
           burst.push({ type: 'channel:join', platform, channel })
           rejoinedChannels.add(key)
-          if (platform === 'kick') kickPusherJoin(channel)
+          if (platform === 'kick') kickTapJoin(channel)
         }
         try {
           for (const ch of BG_IRC.channels.keys()) {

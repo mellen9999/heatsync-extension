@@ -1,0 +1,137 @@
+{
+ "meta": {
+  "probed": "2026-11-10",
+  "discovery": "POST https://web.kick.com/api/v1/realtime/channels/<channelId>/chat/connection + /auth/connection",
+  "ws": "wss://realtime.<region>.platform.kick.com/connection/websocket",
+  "verified": "chatrooms.<chatroomId>.v2 carries chat/delete/ban; channel_<channelId> carries KicksGifted + KicksLeaderboardUpdated; channel.<id> and channels.<id> are acked but silent (5 min, 3 live channels, ~800 chat frames)"
+ },
+ "frames": [
+  {
+   "note": "connect reply (real): ttl 2700s, ping 25s",
+   "raw": "{\"id\":1,\"connect\":{\"client\":\"00000000-0000-0000-0000-000000000000\",\"version\":\"6.9.7 PRO\",\"expires\":true,\"ttl\":2700,\"ping\":25,\"pong\":true}}",
+   "kinds": [
+    "connect"
+   ]
+  },
+  {
+   "note": "subscribe ack (real) — names nothing, matched by id",
+   "raw": "{\"id\":2,\"subscribe\":{}}",
+   "kinds": [
+    "subscribed"
+   ]
+  },
+  {
+   "note": "server keepalive (real)",
+   "raw": "{}",
+   "kinds": [
+    "ping"
+   ]
+  },
+  {
+   "note": "packed reply (real shape)",
+   "raw": "{\"id\":3,\"subscribe\":{}}\n{}",
+   "kinds": [
+    "subscribed",
+    "ping"
+   ]
+  },
+  {
+   "note": "subscribe refused (shape per centrifugo protocol, synthetic)",
+   "raw": "{\"id\":4,\"error\":{\"code\":103,\"message\":\"permission denied\"}}",
+   "kinds": [
+    "error"
+   ]
+  },
+  {
+   "note": "live chatrooms.N.v2 App\\Events\\ChatMessageEvent (real, usernames/content redacted)",
+   "raw": "{\"push\":{\"channel\":\"chatrooms.875062.v2\",\"pub\":{\"data\":{\"event\":\"App\\\\Events\\\\ChatMessageEvent\",\"data\":\"{\\\"id\\\":\\\"6069b08c-d535-48f1-8b73-3a41ea7b9223\\\",\\\"chatroom_id\\\":875062,\\\"content\\\":\\\"placeholder\\\",\\\"type\\\":\\\"message\\\",\\\"created_at\\\":\\\"2026-11-10T16:54:41+00:00\\\",\\\"sender\\\":{\\\"id\\\":928252,\\\"username\\\":\\\"redacted\\\",\\\"slug\\\":\\\"redacted\\\",\\\"identity\\\":{\\\"color\\\":\\\"#00F1FF\\\",\\\"badges\\\":[],\\\"badges_v2\\\":[{\\\"name\\\":\\\"GoldenK\\\",\\\"badge_type\\\":\\\"global\\\",\\\"image_url\\\":\\\"https:\\\\/\\\\/ext.cdn.kick.com\\\\/chat\\\\/badges\\\\/GoldenK_019f591b-0a69-712f-836d-8cc8962acd0c.png\\\",\\\"selected\\\":true,\\\"sort_order\\\":4},{\\\"name\\\":\\\"level\\\",\\\"badge_type\\\":\\\"global\\\",\\\"image_url\\\":\\\"https:\\\\/\\\\/ext.cdn.kick.com\\\\/chat\\\\/badges\\\\/48_1bb061b0-08bb-41fd-94f0-d88c151f164f.png\\\",\\\"metadata\\\":{\\\"level\\\":48},\\\"selected\\\":true,\\\"sort_order\\\":1}]}},\\\"metadata\\\":{\\\"message_ref\\\":\\\"1794329681106\\\"}}\"},\"tags\":{\"event\":\"App\\\\Events\\\\ChatMessageEvent\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "live chatrooms.N.v2 App\\Events\\ChatMessageEvent (real, usernames/content redacted)",
+   "raw": "{\"push\":{\"channel\":\"chatrooms.875062.v2\",\"pub\":{\"data\":{\"event\":\"App\\\\Events\\\\ChatMessageEvent\",\"data\":\"{\\\"id\\\":\\\"7a0cc2af-7941-4566-b879-9af4440f2f69\\\",\\\"chatroom_id\\\":875062,\\\"content\\\":\\\"placeholder\\\",\\\"type\\\":\\\"message\\\",\\\"created_at\\\":\\\"2026-11-10T16:54:41+00:00\\\",\\\"sender\\\":{\\\"id\\\":26709634,\\\"username\\\":\\\"redacted\\\",\\\"slug\\\":\\\"redacted\\\",\\\"identity\\\":{\\\"color\\\":\\\"#1475E1\\\",\\\"badges\\\":[],\\\"badges_v2\\\":[{\\\"name\\\":\\\"level\\\",\\\"badge_type\\\":\\\"global\\\",\\\"image_url\\\":\\\"https:\\\\/\\\\/ext.cdn.kick.com\\\\/chat\\\\/badges\\\\/37_019f35ce-472c-749c-8e50-5f53afb1de7b.png\\\",\\\"metadata\\\":{\\\"level\\\":37},\\\"selected\\\":false,\\\"sort_order\\\":1}]}},\\\"metadata\\\":{\\\"message_ref\\\":\\\"1794329681323\\\"}}\"},\"tags\":{\"event\":\"App\\\\Events\\\\ChatMessageEvent\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "live chatrooms.N.v2 App\\Events\\ChatMessageEvent (real, usernames/content redacted)",
+   "raw": "{\"push\":{\"channel\":\"chatrooms.875062.v2\",\"pub\":{\"data\":{\"event\":\"App\\\\Events\\\\ChatMessageEvent\",\"data\":\"{\\\"id\\\":\\\"791166f8-ce2c-48b7-b06f-d63971c0abf6\\\",\\\"chatroom_id\\\":875062,\\\"content\\\":\\\"placeholder\\\",\\\"type\\\":\\\"message\\\",\\\"created_at\\\":\\\"2026-11-10T16:54:42+00:00\\\",\\\"sender\\\":{\\\"id\\\":104333282,\\\"username\\\":\\\"redacted\\\",\\\"slug\\\":\\\"redacted\\\",\\\"identity\\\":{\\\"color\\\":\\\"#E26EFF\\\",\\\"badges\\\":[],\\\"badges_v2\\\":[{\\\"name\\\":\\\"level\\\",\\\"badge_type\\\":\\\"global\\\",\\\"image_url\\\":\\\"https:\\\\/\\\\/ext.cdn.kick.com\\\\/chat\\\\/badges\\\\/29_36298231-50cc-41fa-b3e6-5401d216386d.png\\\",\\\"metadata\\\":{\\\"level\\\":29},\\\"selected\\\":false,\\\"sort_order\\\":1}]}},\\\"metadata\\\":{\\\"message_ref\\\":\\\"1794329681740\\\"}}\"},\"tags\":{\"event\":\"App\\\\Events\\\\ChatMessageEvent\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "live chatrooms.N.v2 App\\Events\\MessageDeletedEvent (real, usernames/content redacted)",
+   "raw": "{\"push\":{\"channel\":\"chatrooms.875062.v2\",\"pub\":{\"data\":{\"event\":\"App\\\\Events\\\\MessageDeletedEvent\",\"data\":\"{\\\"id\\\":\\\"239cf2ce-5694-437b-8f83-44ee2bb4461c\\\",\\\"message\\\":{\\\"id\\\":\\\"05517121-ef65-4d40-83b9-01de644a33a4\\\"},\\\"aiModerated\\\":false,\\\"violatedRules\\\":[]}\"},\"tags\":{\"event\":\"App\\\\Events\\\\MessageDeletedEvent\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "live chatrooms.N.v2 App\\Events\\MessageDeletedEvent (real, usernames/content redacted)",
+   "raw": "{\"push\":{\"channel\":\"chatrooms.875062.v2\",\"pub\":{\"data\":{\"event\":\"App\\\\Events\\\\MessageDeletedEvent\",\"data\":\"{\\\"id\\\":\\\"d2a37db7-3bfc-4574-8dda-12af193ebcc4\\\",\\\"message\\\":{\\\"id\\\":\\\"cf06b4ea-3aa7-401a-be1d-d132a7505023\\\"},\\\"aiModerated\\\":false,\\\"violatedRules\\\":[]}\"},\"tags\":{\"event\":\"App\\\\Events\\\\MessageDeletedEvent\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "live channel_N KicksGifted (real, usernames/content redacted)",
+   "raw": "{\"push\":{\"channel\":\"channel_875396\",\"pub\":{\"data\":{\"event\":\"KicksGifted\",\"data\":\"{\\\"gift_transaction_id\\\":\\\"33272ade-8aac-4662-9384-f27e0295e331\\\",\\\"message\\\":\\\"\\\",\\\"sender\\\":{\\\"id\\\":8534342,\\\"username\\\":\\\"redacted\\\",\\\"username_color\\\":\\\"redacted\\\",\\\"profile_picture\\\":\\\"redacted\\\"},\\\"gift\\\":{\\\"gift_id\\\":\\\"hell_yeah\\\",\\\"name\\\":\\\"Hell Yeah\\\",\\\"amount\\\":1,\\\"type\\\":\\\"BASIC\\\",\\\"tier\\\":\\\"BASIC\\\",\\\"character_limit\\\":0,\\\"pinned_time\\\":0},\\\"created_at\\\":\\\"2026-11-10T17:01:45.495430735Z\\\"}\"},\"tags\":{\"event\":\"KicksGifted\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "live channel_N KicksGifted (real, usernames/content redacted)",
+   "raw": "{\"push\":{\"channel\":\"channel_875396\",\"pub\":{\"data\":{\"event\":\"KicksGifted\",\"data\":\"{\\\"gift_transaction_id\\\":\\\"88f7b919-5c5d-4307-a4c5-a0c591e2a216\\\",\\\"message\\\":\\\"\\\",\\\"sender\\\":{\\\"id\\\":8534342,\\\"username\\\":\\\"redacted\\\",\\\"username_color\\\":\\\"redacted\\\",\\\"profile_picture\\\":\\\"redacted\\\"},\\\"gift\\\":{\\\"gift_id\\\":\\\"hell_yeah\\\",\\\"name\\\":\\\"Hell Yeah\\\",\\\"amount\\\":1,\\\"type\\\":\\\"BASIC\\\",\\\"tier\\\":\\\"BASIC\\\",\\\"character_limit\\\":0,\\\"pinned_time\\\":0},\\\"created_at\\\":\\\"2026-11-10T17:01:50.748023727Z\\\"}\"},\"tags\":{\"event\":\"KicksGifted\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "live channel_N KicksLeaderboardUpdated (real, usernames/content redacted)",
+   "raw": "{\"push\":{\"channel\":\"channel_875396\",\"pub\":{\"data\":{\"event\":\"KicksLeaderboardUpdated\",\"data\":\"{\\\"gifts_lifetime\\\":[{\\\"user_id\\\":12430033,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":50001},{\\\"user_id\\\":70578778,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":25000},{\\\"user_id\\\":22,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":21502},{\\\"user_id\\\":8693372,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":15000},{\\\"user_id\\\":1517869,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":15000},{\\\"user_id\\\":121320436,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":11000},{\\\"user_id\\\":21591466,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":10200},{\\\"user_id\\\":83628961,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":10000},{\\\"user_id\\\":62019,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":10000},{\\\"user_id\\\":35974,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":10000}],\\\"gifts_lifetime_enabled\\\":true,\\\"gifts_week\\\":[{\\\"user_id\\\":948580,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":938239,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":77590502,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":1000973001,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":160},{\\\"user_id\\\":26400581,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":50},{\\\"user_id\\\":98755842,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":28},{\\\"user_id\\\":38289385,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":13},{\\\"user_id\\\":949911,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":10},{\\\"user_id\\\":72007630,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":10},{\\\"user_id\\\":53334891,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":10}],\\\"gifts_week_enabled\\\":true,\\\"gifts_month\\\":[{\\\"user_id\\\":93102314,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":550},{\\\"user_id\\\":995400,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":948580,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":938239,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":7892704,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":77590502,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":73314293,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":42560429,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":4125204,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500},{\\\"user_id\\\":257271,\\\"username\\\":\\\"redacted\\\",\\\"quantity\\\":500}],\\\"gifts_month_enabled\\\":true}\"},\"tags\":{\"event\":\"KicksLeaderboardUpdated\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "synthetic (kick event names/shapes from the pusher era; not seen in the 5-min probe)",
+   "raw": "{\"push\":{\"channel\":\"chatrooms.875062.v2\",\"pub\":{\"data\":{\"event\":\"App\\\\Events\\\\UserUnbannedEvent\",\"data\":\"{\\\"user\\\":{\\\"username\\\":\\\"redacted\\\"}}\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "synthetic",
+   "raw": "{\"push\":{\"channel\":\"chatrooms.875062.v2\",\"pub\":{\"data\":{\"event\":\"App\\\\Events\\\\PinnedMessageCreatedEvent\",\"data\":\"{\\\"message\\\":{\\\"content\\\":\\\"placeholder\\\",\\\"sender\\\":{\\\"username\\\":\\\"redacted\\\"}}}\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "synthetic",
+   "raw": "{\"push\":{\"channel\":\"chatrooms.875062.v2\",\"pub\":{\"data\":{\"event\":\"App\\\\Events\\\\PinnedMessageDeletedEvent\",\"data\":\"{}\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "synthetic",
+   "raw": "{\"push\":{\"channel\":\"chatrooms.875062.v2\",\"pub\":{\"data\":{\"event\":\"App\\\\Events\\\\PollUpdateEvent\",\"data\":\"{\\\"poll\\\":{\\\"title\\\":\\\"placeholder\\\",\\\"duration\\\":60}}\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  },
+  {
+   "note": "synthetic",
+   "raw": "{\"push\":{\"channel\":\"chatrooms.875062.v2\",\"pub\":{\"data\":{\"event\":\"App\\\\Events\\\\StreamHostEvent\",\"data\":\"{\\\"host_username\\\":\\\"redacted\\\",\\\"number_viewers\\\":10}\"}}}}",
+   "kinds": [
+    "pub"
+   ]
+  }
+ ]
+}

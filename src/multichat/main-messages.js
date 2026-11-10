@@ -596,7 +596,7 @@ function buildMessageDiv(m, tabId) {
   // Kick: resolve via 7TV/v3/users/kick/{name} which also returns the linked
   // twitch_id when present. Hoist into m.userId + m._uidTwitch so the
   // existing cosmetics pipeline applies. Gated on !m._uidTwitch (NOT
-  // !m.userId): pusher/relay kick messages always carry the numeric KICK id,
+  // !m.userId): tap/relay kick messages always carry the numeric KICK id,
   // which is a different id-space — only the _uidTwitch stamp marks a
   // resolved twitch identity.
   if (m.platform === 'kick' && m.user && !m._uidTwitch) {
@@ -607,7 +607,7 @@ function buildMessageDiv(m, tabId) {
       m._uidTwitch = cached
     } else if (cached === undefined) {
       // m.userId (pre-hoist) is the raw numeric kick id — skips the
-      // kick.com username→id lookup when the pusher tap already gave it.
+      // kick.com username→id lookup when the kick tap already gave it.
       queueKickNameToCosmetics(m.user, m.userId || null)
     }
   }

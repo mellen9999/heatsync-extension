@@ -417,7 +417,7 @@ function _injectTwitchModNotice({ channel, action, target, durationSec, msgId })
   } catch (_) {}
 }
 // Kick — KickChat has no _handleMsg; push to its buffer + emit directly. The
-// Pusher tap reflects mod actions back (kick_moderation), so self-actions are
+// kick tap reflects mod actions back (kick_moderation), so self-actions are
 // registered via noteSelfMod and the reflected line is collapsed there.
 function _injectKickModNotice({ channel, action, target, durationSec, msgId }) {
   try {
@@ -430,7 +430,7 @@ function _injectKickModNotice({ channel, action, target, durationSec, msgId }) {
     const tgtLc = tgt.toLowerCase()
     const f = _modNoticeFields(action, _modActor(), tgt, durationSec)
     if (!f) return
-    // Arm the Pusher-tap dedup: the tap reflects this same action back within
+    // Arm the kick-tap dedup: the tap reflects this same action back within
     // seconds — kickChat drops that reflected system line, keeps the dim.
     try {
       kickChat.noteSelfMod?.(slug, f.noticeType, action === 'delete' ? msgId : tgtLc)

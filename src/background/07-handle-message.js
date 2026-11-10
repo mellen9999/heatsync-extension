@@ -765,7 +765,7 @@ async function handleMessage(message, sender, sendResponse) {
             bgKickFetchArchive(message.data.channel.toLowerCase()).catch(() => {})
           } catch {}
           try {
-            kickPusherJoin(message.data.channel.toLowerCase())
+            kickTapJoin(message.data.channel.toLowerCase())
           } catch {}
         }
       } else if (message.data.type === 'channel:leave' && message.data.platform && message.data.channel) {
@@ -774,7 +774,7 @@ async function handleMessage(message, sender, sendResponse) {
         if (message.data.platform.toLowerCase() === 'kick') {
           const kch = message.data.channel.toLowerCase()
           try {
-            kickPusherLeave(kch)
+            kickTapLeave(kch)
           } catch {}
           // Channel removed from config — drop its persisted history buffer too,
           // else hs_kick_<ch> storage entries accumulate forever across every
@@ -2049,7 +2049,7 @@ async function handleMessage(message, sender, sendResponse) {
     // and the linked Twitch connection.
     //
     // message.kickIds: optional { username → numeric kick user id }, threaded
-    // through from the Pusher tap / server relay, which already carry the
+    // through from the kick tap / server relay, which already carry the
     // sender's numeric id on every chat message. When present, Step 1 is
     // skipped entirely — this is what took a busy Kick channel from ~2
     // kick.com+7TV round-trips per chatter down to one.
@@ -2088,7 +2088,7 @@ async function handleMessage(message, sender, sendResponse) {
           }
           try {
             // Step 1 — username → kick user_id. Skip the fetch entirely when
-            // the caller already knows the numeric id (pusher/relay) or it's
+            // the caller already knows the numeric id (tap/relay) or it's
             // cached from a prior resolve; only a cold, id-less lookup pays
             // for kick.com.
             const providedId = String(kickIds[username] || '')

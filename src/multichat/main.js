@@ -570,7 +570,7 @@ async function init() {
       } catch (_) {}
     }
     // Kick page-level chat tap — third transport line for the current page
-    // channel, inert while the BG Pusher tap / server relay are delivering.
+    // channel, inert while the BG kick tap / server relay are delivering.
     //
     // gKick, matching the twitch tap two blocks up. The module gates itself on
     // its OWN toggle (kick-native-tap) but never checked whether kick chat is
@@ -1157,11 +1157,11 @@ async function init() {
     // Lazy-resolve username → 7TV cosmetics + twitchId. First sighting per
     // session triggers one /users/kick/{name} fetch; result is cached and
     // backfilled into the rendered DOM so paints/badges paint in place.
-    // NOT gated on !msg.userId: pusher/relay kick messages always carry the
+    // NOT gated on !msg.userId: tap/relay kick messages always carry the
     // numeric KICK id now, and that gate starved this pipeline entirely
     // (no kick avatars/paints/linked-twitch cosmetics). Dedup lives inside
     // queueKickNameToCosmetics (kickNameResolved/pending). msg.userId is
-    // the raw numeric kick id (pusher/relay) — threading it through skips
+    // the raw numeric kick id (tap/relay) — threading it through skips
     // the kick.com username→id lookup on the hot per-message path.
     if (msg.user) queueKickNameToCosmetics(msg.user, msg.userId || null)
     // Echo confirmation for pending-send tracker. Runs before isSentEcho

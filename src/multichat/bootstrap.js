@@ -389,7 +389,7 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
     },
     { capture: true, signal: mcSignal },
   )
-  // hs-dbg-kick-tap → round-trip to BG for pusher-tap/relay routing state
+  // hs-dbg-kick-tap → round-trip to BG for kick-tap/relay routing state
   // (subscribed chatrooms, per-slug delivery counters). Kick echo failures are
   // silent — this makes "which source delivered what" observable.
   document.addEventListener(

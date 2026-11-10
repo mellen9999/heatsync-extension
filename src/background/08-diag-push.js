@@ -224,10 +224,10 @@ async function initialize() {
         const [platform, channel] = key.split('/')
         if (platform && channel) {
           wsSend({ type: 'channel:join', platform, channel })
-          // _kpChannels is a non-persisted Map — after SW eviction the Pusher
+          // _kpChannels is a non-persisted Map — after SW eviction the kick
           // tap has forgotten every channel, and tap-only kick channels have
           // no other live source. Idempotent.
-          if (platform === 'kick') kickPusherJoin(channel)
+          if (platform === 'kick') kickTapJoin(channel)
         }
       }
       // Also refetch channel owner emotes for every restored channel — the
@@ -259,7 +259,7 @@ async function initialize() {
             joinedExtraChannels.add(key)
             wsSend({ type: 'channel:join', platform: 'kick', channel: ch.kick.toLowerCase() })
           }
-          kickPusherJoin(ch.kick.toLowerCase())
+          kickTapJoin(ch.kick.toLowerCase())
         }
       }
       saveJoinedExtraChannels()
@@ -332,7 +332,7 @@ async function initialize() {
         const [platform, channel] = entry.channel.split('/')
         if (!platform || !channel) continue
         wsSend({ type: 'channel:join', platform, channel })
-        if (platform === 'kick') kickPusherJoin(channel)
+        if (platform === 'kick') kickTapJoin(channel)
       }
     }
     if (Array.isArray(session?.joined_extra_channels)) {

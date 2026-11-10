@@ -1814,7 +1814,7 @@ function resolveSenderEmoteKey(m) {
   if (!m) return null
   if (m.platform === 'kick') {
     // ALWAYS the username slug: /api/users/emotes/batch resolves kick keys
-    // by kick_username only — pusher/relay messages carry a numeric kick
+    // by kick_username only — tap/relay messages carry a numeric kick
     // userId, and `kick:<numeric>` never matches (sender emotes silently
     // missing).
     const slug = m.user?.toLowerCase()

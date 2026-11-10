@@ -1,4 +1,4 @@
-// kick-native-tap.js pure mappers — pusher frame payloads → the EXACT shapes
+// kick-native-tap.js pure mappers — kick frame payloads → the EXACT shapes
 // the kick pipeline already consumes. Shape parity with background.js's
 // _kpHandleChatEvent/_kpHandleModEvent is the contract: same fields, same
 // defaults, same id, so the overlay renders tap-fed messages identically and

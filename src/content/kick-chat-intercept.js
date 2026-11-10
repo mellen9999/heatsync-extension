@@ -1,11 +1,11 @@
 // Runs in MAIN world at document_start on Kick BEFORE Kick's JS.
 //
-// Taps Kick's OWN Pusher WebSocket — the page's connection, not ours — and
+// Taps Kick's OWN realtime (centrifugo) WebSocket — the page's connection, not ours — and
 // forwards chat/moderation frames to the ISOLATED world (kick-native-tap.js)
 // via window.postMessage. This is the third transport line for kick chat:
-// the BG service worker's anonymous Pusher tap and the server webhook relay
+// the BG service worker's anonymous tap and the server webhook relay
 // both live OUTSIDE the page and share failure modes the page connection
-// doesn't (stale app key after a Kick rotation, wedged MV3 service worker,
+// doesn't (a transport move on Kick's side, wedged MV3 service worker,
 // relay channel-cap). If Kick's own chat renders, this tap has the data.
 //
 // Deliberately dumb: envelope-parse + event whitelist only. All payload
@@ -30,38 +30,46 @@
   }
 
   function tapSocket(ws, url) {
-    // Kick rides Pusher today; accept a first-party ws host too so a future
-    // kick.com-proxied socket keeps the tap alive without a code change.
-    if (!/pusher\.com|kick\.com/i.test(url)) return
+    // Kick's realtime is centrifugo (realtime.<region>.platform.kick.com); any
+    // first-party ws host is accepted so a region/host move keeps the tap alive.
+    if (!/kick\.com/i.test(url)) return
     ws.addEventListener('message', (e) => {
       const raw = e.data
       if (typeof raw !== 'string' || raw.length > 65536) return
       if (raw.indexOf('chatrooms.') === -1) return // cheap prefilter, no parse
-      let frame
-      try {
-        frame = JSON.parse(raw)
-      } catch {
-        return
+      // centrifugo may pack several frames into one message, newline-delimited
+      for (const line of raw.split('\n')) {
+        if (line.indexOf('chatrooms.') === -1) continue
+        let frame
+        try {
+          frame = JSON.parse(line)
+        } catch {
+          continue
+        }
+        // {push:{channel, pub:{data:{event, data}}}} — the pusher-era
+        // {event, channel, data}, one envelope deeper.
+        const push = frame && frame.push
+        const inner = push && push.pub && push.pub.data
+        if (!inner || typeof inner.event !== 'string' || typeof push.channel !== 'string') continue
+        if (!TAP_EVENTS.has(inner.event) || !/^chatrooms\.\d+\.v2$/.test(push.channel)) continue
+        post({
+          type: 'heatsync-kick-tap',
+          event: inner.event,
+          channel: push.channel,
+          // inner.data is a JSON string (or, defensively, an object). Forward
+          // a string; the ISOLATED side owns parsing (keeps this file logic-free).
+          data: typeof inner.data === 'string' ? inner.data : JSON.stringify(inner.data ?? null),
+        })
       }
-      if (!frame || typeof frame.event !== 'string' || typeof frame.channel !== 'string') return
-      if (!TAP_EVENTS.has(frame.event) || !/^chatrooms\.\d+\.v2$/.test(frame.channel)) return
-      post({
-        type: 'heatsync-kick-tap',
-        event: frame.event,
-        channel: frame.channel,
-        // pusher double-encodes: frame.data is a JSON string. Forward as-is;
-        // the ISOLATED side owns parsing (keeps this file logic-free).
-        data: typeof frame.data === 'string' ? frame.data : JSON.stringify(frame.data ?? null),
-      })
     })
-    // Outgoing pusher:subscribe tells us WHICH chatroom is the current page's —
-    // the ISOLATED side binds tap frames to the page channel through this,
-    // with zero dependence on Kick's REST API.
+    // Outgoing {subscribe:{channel:"chatrooms.<id>.v2"}} tells us WHICH chatroom
+    // is the current page's — the ISOLATED side binds tap frames to the page
+    // channel through this, with zero dependence on Kick's REST API.
     const origSend = ws.send.bind(ws)
     ws.send = (data) => {
       try {
-        if (typeof data === 'string' && data.length < 4096 && data.indexOf('pusher:subscribe') !== -1) {
-          const m = /chatrooms\.(\d+)\.v2/.exec(data)
+        if (typeof data === 'string' && data.length < 4096 && data.indexOf('"subscribe"') !== -1) {
+          const m = /"channel"\s*:\s*"chatrooms\.(\d+)\.v2"/.exec(data)
           if (m) post({ type: 'heatsync-kick-tap-sub', channel: `chatrooms.${m[1]}.v2` })
         }
       } catch {}

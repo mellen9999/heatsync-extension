@@ -819,9 +819,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // scripts (sender gate above); nothing secret, just routing liveness.
     try {
       sendResponse({
-        enabled: KICK_PUSHER_TAP,
+        enabled: KICK_TAP,
         wsState: _kpWs ? _kpWs.readyState : null,
         connected: _kpConnected,
+        // The tap's backoff has an end: streak/stopped/lastReason say whether
+        // it is retrying, stood down (and why), or healthy; subFails is per channel.
+        net: { ..._kpNet, subFails: [..._kpNet.subFails.entries()] },
         lastDataAgeMs: _kpLastData ? Date.now() - _kpLastData : null,
         channels: [..._kpChannels.entries()],
         chatroomCache: [..._kpChatroomCache.entries()],
@@ -863,9 +866,8 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true
   }
 
-  // Chatroom id for a kick slug — used by the page-side fallback pusher
-  // connection (kick-native-tap.js) so it can subscribe chatrooms.<id>.v2
-  // without its own kick API round-trip when BG already knows the answer.
+  // Chatroom id for a kick slug — used by the page-side send path
+  // (kick-send.js) without its own kick API round-trip when BG already knows.
   if (message.type === 'kick_chatroom_id') {
     const slug = (message.slug || '').toLowerCase()
     sendResponse({ id: _kpChannels.get(slug) ?? _kpChatroomCache.get(slug) ?? null })

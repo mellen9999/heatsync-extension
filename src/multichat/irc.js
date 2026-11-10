@@ -15,7 +15,7 @@ const ARCHIVE_DEMAND_INTERVAL_MS = 5 * 60 * 1000
 const archiveDemandSentAt = new Map()
 
 // Kick sub/gift/KICKs celebrations reach us on TWO independent transports —
-// the server's official webhook relay and BG's Pusher tap — and a channel can
+// the server's official webhook relay and BG's kick tap — and a channel can
 // have both. Neither payload carries a stable event id to dedup on, so the key
 // is the content itself inside a short window. Collapsing a genuine second
 // identical gift within 30s costs one line; letting every celebration render
@@ -1160,9 +1160,9 @@ class KickChat extends ChatClient {
     this._PERSIST_DEBOUNCE_MS = 1500
     this._SYNC_BACKUP_MAX = 200
     this._pendingChannels = new Set()
-    this._recentLiveIds = new Set() // Kick message-id dedup across server-relay + Pusher-tap sources
+    this._recentLiveIds = new Set() // Kick message-id dedup across server-relay + kick-tap sources
     // Self-inflicted mod actions (toolbar/slash) inject a synthetic notice
-    // immediately; the Pusher tap then reflects the same action back —
+    // immediately; the kick tap then reflects the same action back —
     // without this index every self-mod on a tapped channel prints twice.
     this._selfModIndex = new Map() // `${slug}|${noticeType}|${target}` → ts
     // Per-channel watchdog. Kick traffic flows BG → runtime.sendMessage →
@@ -1179,7 +1179,7 @@ class KickChat extends ChatClient {
     window.addEventListener('pagehide', this._pagehideHandler)
   }
 
-  // Record a self-inflicted mod action so the Pusher-tap reflection of the
+  // Record a self-inflicted mod action so the kick-tap reflection of the
   // same action is collapsed instead of printing a second system line.
   noteSelfMod(slug, noticeType, target) {
     const key = `${(slug || '').toLowerCase()}|${noticeType}|${(target || '').toLowerCase()}`
@@ -1259,7 +1259,7 @@ class KickChat extends ChatClient {
     if (!fromNativeTap) this._touchChannel(channel)
     if (!channel || !this.channels.has(channel)) return
     // Dedup by Kick message id — the same message can arrive from the server
-    // webhook relay, the BG Pusher tap, AND the page-level native tap; keep
+    // webhook relay, the BG kick tap, AND the page-level native tap; keep
     // only the first. (touchChannel above still ran so the watchdog sees
     // primary liveness.)
     if (d.id) {
@@ -1283,7 +1283,7 @@ class KickChat extends ChatClient {
       channel,
       time: d.timestamp || Date.now(),
       platform: 'kick',
-      // numeric kick USER id (pusher tap + server relay both forward it);
+      // numeric kick USER id (kick tap + server relay both forward it);
       // setKnownColor below already read msg.userId — it was undefined
       // for every kick message until this landed
       userId: d.senderId != null ? String(d.senderId) : '',
@@ -1311,13 +1311,13 @@ class KickChat extends ChatClient {
     if (fromNativeTap) msg.fromNativeTap = true
     // Display position, decided once (see liveOrd in src/lib/utils.js). Every
     // caller of this method is a LIVE transport — the webhook relay, the BG
-    // Pusher tap and the native tap; kick history takes the push() paths in
+    // kick tap and the native tap; kick history takes the push() paths in
     // loadHistory/hydrate instead and is deliberately left chronological. The
     // relay leg is the one that can run seconds-to-minutes behind when kick
     // throttles us, and without this its backlog would splice in above rows
     // already on screen instead of arriving at the bottom.
     msg.ord = liveOrd(msg.time)
-    // Ordered insert — the server webhook relay, the BG Pusher tap, and the
+    // Ordered insert — the server webhook relay, the BG kick tap, and the
     // native tap can each deliver the same window's messages with a
     // slightly different arrival order; insertOrdered keeps the buffer
     // sorted by real timestamp instead of raw arrival.
@@ -1477,7 +1477,7 @@ class KickChat extends ChatClient {
         return
       }
 
-      // Kick moderation (ban/timeout/delete/unban) observed on the Pusher tap —
+      // Kick moderation (ban/timeout/delete/unban) observed on the kick tap —
       // reflect it like Twitch's CLEARCHAT/CLEARMSG: flag the offender's buffer
       // entries `cleared` (so re-renders keep the dim) and emit a notice-shaped
       // message so main.js's irc.on('message') dims the live DOM, prints the
@@ -1488,7 +1488,7 @@ class KickChat extends ChatClient {
       }
 
       // Kick chat-mode banners (slow/sub-only/emote-only/followers) — BG
-      // already converted the Pusher ChatroomUpdatedEvent into a mode_change
+      // already converted the ChatroomUpdatedEvent into a mode_change
       // notice shaped exactly like Twitch's ROOMSTATE→mode_change (see
       // main.js's noticeKind mapping), platform-tagged kick.
       if (message.type === 'kick_mode_change' && message.channel && message.msg) {

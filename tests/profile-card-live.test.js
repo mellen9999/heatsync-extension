@@ -101,3 +101,31 @@ describe('worker', () => {
     expect(sw.broadcasts('profile_color')[0].message).toMatchObject({ userId: 'u1', color: '#00ff00' })
   })
 })
+
+describe('profile:updated', () => {
+  test('the worker forwards it as profile_updated; junk is dropped', async () => {
+    const sw = await bootSw({
+      cookies: [{ name: 'auth', value: 'tok-1', domain: 'heatsync.org' }],
+      tabs: [{ id: 7, url: 'https://www.twitch.tv/kripp' }],
+      sockets: 'open',
+    })
+    sw.socket().receive({ type: 'profile:updated', userId: 'u1' })
+    sw.socket().receive({ type: 'profile:updated' })
+    await sw.settle()
+    expect(sw.broadcasts('profile_updated').map((m) => m.message.userId)).toEqual(['u1'])
+  })
+  test('the panel re-reads the open card for that account', () => {
+    const social = readFileSync(join(ROOT, 'social.js'), 'utf8')
+    expect(social).toContain("msg.type === 'profile_updated') return void pcRefreshCardFor([msg.userId])")
+  })
+  test('and that re-read does happen for the matching open card only', async () => {
+    const open = { username: 'a', platform: 'twitch', data: { id: 'u1' } }
+    const r = rig(open)
+    r.pcRefreshCardFor(['u2'])
+    await tick()
+    expect(r.asked).toEqual([])
+    r.pcRefreshCardFor(['u1'])
+    await tick()
+    expect(r.asked).toEqual([['twitch', 'a']])
+  })
+})

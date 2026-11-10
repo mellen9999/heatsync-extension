@@ -1691,6 +1691,7 @@ function listenForSocialEvents() {
         }
       }
     }
+    if (msg.type === 'profile_updated') return void pcRefreshCardFor([msg.userId])
     if (msg.type === 'user-log:removed') return void chatLogsServerRemoved(msg.data)
     if (msg.type === 'user-log') {
       chatLogsServerLive(msg.data)

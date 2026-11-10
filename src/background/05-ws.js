@@ -1511,6 +1511,13 @@ function handleWSMessage(msg) {
         if (msg.data?.username) broadcastToTabs({ type: 'user-log:removed', data: msg.data })
         break
 
+      // a profile (bio, avatar, links…) was edited: open cards re-read it. The
+      // server sends this to the author's feed room; it reaches the ext only when
+      // the user's own socket is in it, so this is a best-effort live refresh.
+      case 'profile:updated':
+        if (msg.userId != null) broadcastToTabs({ type: 'profile_updated', userId: String(msg.userId).slice(0, 40) })
+        break
+
       // live heat on a post (flat frame: messageId, newHeat, newMaxHeat)
       case 'heat:updated':
         if (msg.messageId) broadcastToTabs({ type: 'heat-updated', data: msg })

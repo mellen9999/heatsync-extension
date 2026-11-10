@@ -729,23 +729,6 @@
 .hs-card-action:not(:first-child) {
   border-left: 1px solid var(--hs-card-border);
 }
-/* .hs-card-action also carries .hs-follow/.block-btn/.report-btn
- * (hover-previews.js _mountCard) so the app's EXISTING global delegated
- * click handlers fire for these buttons too, instead of a second follow/
- * block/report implementation. Those classes carry their own resting
- * background/height/padding from share.css/mobile.css (built for the
- * 18px icon buttons in a message row) — leaked onto the action row and
- * made report visibly darker/shorter than follow and block, which don't
- * carry a styled class of their own. Card sizing wins; tone stays
- * text-color-only (danger red below), never a different resting fill. */
-.hs-card-action.hs-follow,
-.hs-card-action.block-btn,
-.hs-card-action.report-btn {
-  background: transparent !important;
-  height: auto !important;
-  min-height: 24px !important;
-  padding: 4px 8px !important;
-}
 .hs-card-action:hover,
 .hs-card-action:active,
 .hs-card-action:focus-visible {
@@ -831,11 +814,8 @@
     bottom: 0;
     background: var(--hs-card-bg);
   }
-  /* !important: beats .hs-card-action.hs-follow/.block-btn/.report-btn's
-   * own `min-height: 24px !important` (desktop-scoped rule above, higher
-   * specificity too — a plain phone-query override would lose to it). */
   .hs-card-action {
-    min-height: 44px !important; /* real touch target, not the desktop 24px */
+    min-height: 44px; /* real touch target, not the desktop 24px */
   }
 }
 /* no ambient hover on touch — the peek never opens there (see card-time /

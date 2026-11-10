@@ -303,6 +303,34 @@ function chatLogsServerLive(row) {
   clInsertLive({ ...row, id: row.id || `srv-${row.message_id || ts}`, channel, username: st.username, srv: true })
 }
 
+// user-log:removed — archive lines were taken down. ids = those lines; after /
+// before = a timestamp window (both exclusive); neither = all of this person's
+// lines (in `channel`, when named). Pure: the rows that survive.
+function clRowsAfterRemoval(rows, d) {
+  const after = d.after ? Date.parse(d.after) : null
+  const before = d.before ? Date.parse(d.before) : null
+  const ids = Array.isArray(d.ids) ? d.ids : null
+  const channel = d.channel ? String(d.channel).toLowerCase() : ''
+  return rows.filter((r) => {
+    if (channel && String(r.channel || '').toLowerCase() !== channel) return true
+    if (ids && !ids.includes(r.message_id)) return true
+    const at = Date.parse(r.timestamp)
+    if (after !== null && !(at > after)) return true
+    if (before !== null && !(at < before)) return true
+    return false
+  })
+}
+function chatLogsServerRemoved(d) {
+  const st = activeChatLogs
+  if (!st || !d) return
+  if (String(d.platform || '').toLowerCase() !== st.platform) return
+  if (String(d.username || '').toLowerCase() !== st.username) return
+  const kept = clRowsAfterRemoval(st.rows, d)
+  if (kept.length === st.rows.length) return
+  st.rows = kept
+  renderChatLogsView()
+}
+
 function clInsertLive(r) {
   const st = activeChatLogs
   if (!st) return

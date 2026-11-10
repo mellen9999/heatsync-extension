@@ -1506,6 +1506,11 @@ function handleWSMessage(msg) {
         break
       }
 
+      // someone's archived chat lines were removed: the open chat-logs view drops them
+      case 'user-log:removed':
+        if (msg.data?.username) broadcastToTabs({ type: 'user-log:removed', data: msg.data })
+        break
+
       // live heat on a post (flat frame: messageId, newHeat, newMaxHeat)
       case 'heat:updated':
         if (msg.messageId) broadcastToTabs({ type: 'heat-updated', data: msg })

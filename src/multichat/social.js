@@ -1691,6 +1691,7 @@ function listenForSocialEvents() {
         }
       }
     }
+    if (msg.type === 'user-log:removed') return void chatLogsServerRemoved(msg.data)
     if (msg.type === 'user-log') {
       chatLogsServerLive(msg.data)
       return

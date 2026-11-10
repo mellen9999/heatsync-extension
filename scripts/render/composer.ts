@@ -247,14 +247,11 @@ export async function composerAndPickerCheck() {
       })
     if (!(await until(p, async () => (await combo()).shown, 8000))) fail('typing ":nav00" never opened the emote list')
     // The list redraws, and puts the highlight back on its first row, once per debounced keystroke
-    // (80ms). It can open on ":nav" and still be waiting to redraw for ":nav00", and an ArrowDown
-    // landing in that gap is undone by the redraw. Wait for the list that answers the whole word.
-    const settled = () =>
-      p.evaluate(() => {
-        const names = [...document.querySelectorAll('#hs-mc-emoji-dropdown .hs-mc-emoji-name')].map((x) => x.textContent || '')
-        return names.length > 1 && names[0] === 'nav000'
-      })
-    if (!(await until(p, settled, 8000))) fail('the emote list never settled on the whole query ":nav00"')
+    // (the product's 80ms timer, input.js _emojiAcDebounce). It can open on ":nav" and still owe a
+    // redraw for ":nav00", and an ArrowDown or Escape landing in that gap is undone by the redraw.
+    // This is a named window over a product timer, not a guess at load: three debounce periods with
+    // no keystroke in them, after which nothing further can be queued.
+    await p.waitForTimeout(300)
     const open = await combo()
     if (open.role !== 'combobox' || open.auto !== 'list') fail(`the composer is not a list combobox: ${JSON.stringify(open)}`)
     if (open.expanded !== 'true' || open.controls !== 'hs-mc-emoji-dropdown') {
@@ -408,6 +405,10 @@ export async function composerAndPickerCheck() {
     ok(`holding ArrowDown crosses the first lazily-drawn chunk (tile ${st.idx}) and stays in view`)
 
     await key('End')
+    // End scrolls against estimated chunk heights; the chunks it fills and the images in them then
+    // reflow the grid, and the cursor puts its tile back on the next frame. Wait for that to settle
+    // rather than read the frame in between (CI 11-09: inView false, scrollTop 995, right after).
+    await until(p, async () => (await grid()).inView, 3000)
     st = await grid()
     if (st.idx !== st.total - 1 || st.total < 200 || !st.inView || !st.adIsSel) {
       fail(`End should land on the last tile, in view: ${JSON.stringify({ ...st, names: undefined })}`)

@@ -17,18 +17,24 @@ export async function youtubeDeleteCheck(ctx: any) {
     await yp.goto(PLATFORMS[0].url, { waitUntil: 'domcontentloaded' })
     await yp.waitForSelector('#hs-mc-messages', { timeout: 25_000 })
 
-    await yp.evaluate(() => {
-      const msgs = document.getElementById('hs-mc-messages')
-      if (!msgs) return
-      for (const [id, user] of [['YT_DOOMED', 'someone'], ['YT_SAFE', 'other']]) {
-        const d = document.createElement('div')
-        d.className = 'hs-mc-msg'
-        d.dataset.msgId = id
-        d.dataset.msgUser = user
-        d.innerHTML = '<span class="hs-mc-text">a youtube message</span>'
-        msgs.appendChild(d)
-      }
-    })
+    // The overlay re-renders its message list as emote sets and history land after boot, which
+    // removes rows placed by hand; a deletion cannot clear a row that is no longer there. So the
+    // rows are (re)placed whenever they are missing, on every delivery attempt below.
+    const placeRows = () =>
+      yp.evaluate(() => {
+        const msgs = document.getElementById('hs-mc-messages')
+        if (!msgs) return
+        for (const [id, user] of [['YT_DOOMED', 'someone'], ['YT_SAFE', 'other']]) {
+          if (msgs.querySelector(`.hs-mc-msg[data-msg-id="${id}"]`)) continue
+          const d = document.createElement('div')
+          d.className = 'hs-mc-msg'
+          d.dataset.msgId = id
+          d.dataset.msgUser = user
+          d.innerHTML = '<span class="hs-mc-text">a youtube message</span>'
+          msgs.appendChild(d)
+        }
+      })
+    await placeRows()
 
     const worker2 = ctx.serviceWorkers()[0]
     const id2 = worker2?.url().match(/chrome-extension:\/\/([a-p]+)\//)?.[1]
@@ -67,6 +73,7 @@ export async function youtubeDeleteCheck(ctx: any) {
     const cleared = await retryUntil(
       yp,
       async () => {
+        await placeRows()
         delivered = (await deliver()) as string
       },
       () =>

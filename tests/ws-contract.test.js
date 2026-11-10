@@ -73,7 +73,7 @@ function serverSentTypes(root) {
     const s = readFileSync(f, 'utf8')
     for (const m of s.matchAll(/type:\s*'([^']+)'/g)) {
       const ctx = s.slice(Math.max(0, m.index - 260), m.index + 80)
-      if (/broadcast|publishTo|wsSend|\.send\(|sendTo|emitTo|WSServerMessage/.test(ctx)) {
+      if (/broadcast(?!er)|publishTo|wsSend|\.send\(|sendTo|emitTo|WSServerMessage/.test(ctx)) {
         if (!sent.has(m[1])) sent.set(m[1], f.split('/').pop())
       }
     }
@@ -109,17 +109,10 @@ const NOT_FOR_EXTENSION = new Map([
   ['batch', 'declared in the union but never emitted — no send site exists'],
   ['pong', 'keepalive, consumed by the socket layer'],
   ['session_expired', 'handled outside handleWSMessage'],
-  ['user', 'a payload field, not a message type — matched by the context heuristic'],
-  // server-internal relays that never reach a socket the extension owns
-  ['privmsg', 'twitch eventsub internal shape; reaches the ext as irc:message'],
-  ['clearchat', 'twitch eventsub internal shape'],
-  ['clearmsg', 'twitch eventsub internal shape'],
-  ['usernotice', 'twitch eventsub internal shape'],
   [
-    'emoji',
-    'a youtube emote part inside a parsed message, not a frame (the scan reads "broadcaster" nearby as a send)',
+    'kick-moderation',
+    'site chat pane ban greying and deletes; the ext reads kick bans and deletes off its own realtime tap',
   ],
-  ['kick-moderation', 'site chat pane ban greying; the ext reads kick bans off its own realtime tap'],
   ['chat:send_kick_result', 'send-ack for the kick relay; the ext does not await it'],
   ['chat:send_youtube_result', 'send-ack for the yt relay; the ext does not await it'],
 ])

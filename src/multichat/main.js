@@ -1783,9 +1783,11 @@ async function init() {
       }
       if (!text) continue
 
-      // Dedup against realtime events (same map as stream_event / follow_stream_event)
+      // Skip a row the realtime listeners just showed. Read-only: a replayed row
+      // is old news, and marking its text seen would drop the real thing — the
+      // server replays history on every connect, so yesterday's "went live —
+      // World of Warcraft" landed a second before today's identical one and ate it.
       if (streamEventDedup.has(text) && now - streamEventDedup.get(text) < 60000) continue
-      streamEventDedup.set(text, now)
 
       const evt = {
         type: 'stream-event',

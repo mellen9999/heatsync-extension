@@ -26,3 +26,16 @@ describe('follow stream events render inline', () => {
     expect(tail).toContain("m.type === 'stream-event' && m.text === evt.text")
   })
 })
+
+// The server replays the day's follow history on every connect, a moment before
+// it announces a fresh go-live. A replayed row carrying the same text (yesterday's
+// "went live — World of Warcraft") must not mark that text seen, or today's line drops.
+describe('follow history replay', () => {
+  const at = SRC.indexOf('function processFollowHistory(')
+  const body = SRC.slice(at, SRC.indexOf('function processFollowColors(', at))
+
+  test('reads the realtime dedup but never writes it', () => {
+    expect(body).toContain('streamEventDedup.has(text)')
+    expect(body).not.toContain('streamEventDedup.set(')
+  })
+})

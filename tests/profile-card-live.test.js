@@ -3,7 +3,7 @@
 import { afterEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { bootSw, disposeAll } from './harness/sw.js'
+import { bootSw, disposeAll, tabSender } from './harness/sw.js'
 
 afterEach(disposeAll)
 
@@ -127,5 +127,68 @@ describe('profile:updated', () => {
     r.pcRefreshCardFor(['u1'])
     await tick()
     expect(r.asked).toEqual([['twitch', 'a']])
+  })
+})
+
+describe('card author room', () => {
+  function authorRig(open) {
+    const sent = []
+    const timers = []
+    const env = { open }
+    const api = new Function(
+      'env',
+      'sent',
+      'timers',
+      `let activeProfileCard = env.open
+const FEED_THREAD_KEEP_MS = 30000
+const safeSendMessage = (m) => sent.push(m)
+const cleanup = { setIntervalIfVisible: (fn) => timers.push(fn), clearInterval: () => {} }
+${CARD.slice(CARD.indexOf('let pcAuthorRoom'), CARD.indexOf('function renderProfileCardView'))}
+return { pcAuthorSync, set: (o) => { activeProfileCard = o } }`,
+    )(env, sent, timers)
+    return { ...api, sent, timers }
+  }
+  test('joins on open, ignores repeats, switches, leaves on close', () => {
+    const r = authorRig({ data: { id: '42' } })
+    r.pcAuthorSync()
+    r.pcAuthorSync()
+    expect(r.sent).toEqual([{ type: 'feed_author', room: 'author:42' }])
+    r.set({ data: { id: 'kick_9' } })
+    r.pcAuthorSync()
+    r.set(null)
+    r.pcAuthorSync()
+    expect(r.sent.map((m) => m.room)).toEqual(['author:42', 'author:kick_9', null])
+  })
+  test('no id (loading / error card) holds no room; junk ids are refused', () => {
+    const r = authorRig({ data: null })
+    r.pcAuthorSync()
+    r.set({ data: { id: 'x/../y' } })
+    r.pcAuthorSync()
+    expect(r.sent).toEqual([])
+  })
+  test('the render and both close paths sync it', () => {
+    expect(fn(CARD, 'renderProfileCardView')).toContain('pcAuthorSync()')
+    expect(fn(CARD, 'closeProfileCard')).toContain('pcAuthorSync()')
+    expect(readFileSync(join(ROOT, 'main-tabs.js'), 'utf8')).toContain('activeProfileCard = null\n    pcAuthorSync()')
+  })
+  test('the worker joins/leaves the room beside the thread and re-joins on reconnect', async () => {
+    const sw = await bootSw({
+      cookies: [{ name: 'auth', value: 'tok-1', domain: 'heatsync.org' }],
+      tabs: [{ id: 7, url: 'https://www.twitch.tv/kripp' }],
+      sockets: 'open',
+    })
+    const tab = tabSender(7, 'https://www.twitch.tv/kripp')
+    const ws = sw.socket()
+    const rooms = () => ws.frames.filter((f) => f.type.startsWith('feed:') && f.feed !== 'new')
+    await sw.send({ type: 'feed_thread', room: 'thread:abc' }, tab)
+    await sw.send({ type: 'feed_author', room: 'author:42' }, tab)
+    await sw.send({ type: 'feed_author', room: 'author:../x' }, tab) // junk: ignored
+    await sw.send({ type: 'feed_author', room: 'author:42' }, tab) // repeat: no-op
+    expect(rooms()).toEqual([
+      { type: 'feed:join', feed: 'thread:abc' },
+      { type: 'feed:join', feed: 'author:42' },
+    ])
+    await sw.send({ type: 'feed_author', room: null }, tab)
+    expect(rooms().at(-1)).toEqual({ type: 'feed:leave', feed: 'author:42' })
   })
 })

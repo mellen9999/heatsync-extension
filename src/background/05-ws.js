@@ -1041,7 +1041,7 @@ async function connectWebSocket() {
           log('irc:resume replay err:', e?.message)
         }
         burst.push({ type: 'feed:join', feed: 'new' })
-        for (const room of new Set(feedThreadTabs.values())) burst.push({ type: 'feed:join', feed: room })
+        for (const room of feedRoomsHeld()) burst.push({ type: 'feed:join', feed: room })
 
         log(` 🌊 Connect burst queued: ${burst.length} msgs over ~${burst.length * 80}ms`)
         burst.forEach((msg, i) => {

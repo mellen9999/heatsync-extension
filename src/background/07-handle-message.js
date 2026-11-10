@@ -1037,6 +1037,12 @@ async function handleMessage(message, sender, sendResponse) {
     if (sender.tab?.id != null && (room === null || FEED_THREAD_ROOM_RE.test(room))) feedThreadSet(sender.tab.id, room)
     sendResponse({ ok: true })
     return true
+  } else if (message.type === 'feed_author') {
+    // The tab's open profile card changed: one author room per tab, null leaves.
+    const room = typeof message.room === 'string' ? message.room : null
+    if (sender.tab?.id != null && (room === null || FEED_AUTHOR_ROOM_RE.test(room))) feedAuthorSet(sender.tab.id, room)
+    sendResponse({ ok: true })
+    return true
   } else if (message.type === 'join_channel') {
     // Content script detected channel change — wait for init so cached channel emotes are available
     // Defence in depth: validate platform + channel before forwarding to WS server

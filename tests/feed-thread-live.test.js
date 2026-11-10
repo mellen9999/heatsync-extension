@@ -178,7 +178,9 @@ describe('review fixes', () => {
     expect(m.reactions[0].emote_url).toBe('')
   })
   test('a tab that reloads leaves its room, and a fresh content script clears one', () => {
-    expect(BG).toContain("if (changeInfo.status === 'loading') feedThreadSet(tabId, null)")
+    expect(BG).toContain(
+      "if (changeInfo.status === 'loading') {\n    feedThreadSet(tabId, null)\n    feedAuthorSet(tabId, null)",
+    )
     const social = readFileSync(join(ROOT, 'src', 'multichat', 'social.js'), 'utf8')
     expect(social).toContain("safeSendMessage({ type: 'feed_thread', room: null })")
   })
@@ -188,9 +190,7 @@ describe('background wiring', () => {
   test('one room per tab, joined direct, re-joined in the connect burst, dropped on tab close', () => {
     expect(BG).toContain('const feedThreadTabs = new Map()')
     expect(BG).toContain("if (!after.has(r)) wsSendDirect({ type: 'feed:leave', feed: r })")
-    expect(BG).toContain(
-      "for (const room of new Set(feedThreadTabs.values())) burst.push({ type: 'feed:join', feed: room })",
-    )
+    expect(BG).toContain("for (const room of feedRoomsHeld()) burst.push({ type: 'feed:join', feed: room })")
     expect(BG).toContain('feedThreadSet(tabId, null)')
     expect(BG).toContain("message.type === 'feed_thread'")
   })

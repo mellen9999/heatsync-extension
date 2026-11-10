@@ -470,6 +470,7 @@ function closeProfileCard() {
   if (!activeProfileCard) return
   const { floating, openerEl } = activeProfileCard
   activeProfileCard = null
+  pcAuthorSync()
   pcStopFollowingAnchor()
   // Return focus to whatever had it before the card opened — same as the
   // old native-page card's closeCard did (role="dialog" needs a focus-return
@@ -901,7 +902,32 @@ function pcResolveMount() {
   return { el, floating: true }
 }
 
+// While a card is open the socket sits in that account's room, so the server's
+// profile:updated reaches it (pcRefreshCardFor). One room, left on close/switch;
+// the background dedupes, so the keep-alive re-announce only matters after the
+// service worker restarted with an empty ledger.
+let pcAuthorRoom = null
+let pcAuthorKeep = null
+const PC_AUTHOR_ID_RE = /^(?:[0-9]{1,20}|kick_[0-9]{1,20}|yt_UC[A-Za-z0-9_-]{1,40})$/
+function pcAuthorSync() {
+  const id = activeProfileCard?.data?.id
+  const room = id != null && PC_AUTHOR_ID_RE.test(String(id)) ? `author:${id}` : null
+  if (room === pcAuthorRoom) return
+  pcAuthorRoom = room
+  safeSendMessage({ type: 'feed_author', room })
+  if (pcAuthorKeep) {
+    cleanup.clearInterval(pcAuthorKeep)
+    pcAuthorKeep = null
+  }
+  if (room) {
+    pcAuthorKeep = cleanup.setIntervalIfVisible(() => {
+      if (pcAuthorRoom) safeSendMessage({ type: 'feed_author', room: pcAuthorRoom })
+    }, FEED_THREAD_KEEP_MS)
+  }
+}
+
 function renderProfileCardView() {
+  pcAuthorSync()
   if (!activeProfileCard) return
   if (hsPanePanelOpen()) return // a confirm covers the pane; it repaints the card on close
   const mount = pcResolveMount()

@@ -1255,13 +1255,27 @@ const joinedExtraChannels = new Set() // "platform/channel" keys
 const feedThreadTabs = new Map() // tabId → 'thread:<id>'
 // thread:<id> (a thread view) or ulog:<platform>:<login> (a person's logs view — their new archive lines)
 const FEED_THREAD_ROOM_RE = /^(?:thread:[a-z0-9]{1,8}|ulog:(?:twitch|kick|youtube):[a-z0-9_]{1,40})$/
-function feedThreadSet(tabId, room) {
-  const before = new Set(feedThreadTabs.values())
-  if (room) feedThreadTabs.set(tabId, room)
-  else feedThreadTabs.delete(tabId)
-  const after = new Set(feedThreadTabs.values())
+// The author room of the profile card a tab has open (author:<account id>) —
+// beside the thread, so a card opened over a thread keeps both. The server pushes
+// profile:updated to it; one room per tab, same ledger rules as the thread.
+const feedAuthorTabs = new Map() // tabId → 'author:<id>'
+const FEED_AUTHOR_ROOM_RE = /^author:(?:[0-9]{1,20}|kick_[0-9]{1,20}|yt_UC[A-Za-z0-9_-]{1,40})$/
+function feedRoomsHeld() {
+  return new Set([...feedThreadTabs.values(), ...feedAuthorTabs.values()])
+}
+function feedRoomsSet(map, tabId, room) {
+  const before = feedRoomsHeld()
+  if (room) map.set(tabId, room)
+  else map.delete(tabId)
+  const after = feedRoomsHeld()
   for (const r of before) if (!after.has(r)) wsSendDirect({ type: 'feed:leave', feed: r })
   for (const r of after) if (!before.has(r)) wsSendDirect({ type: 'feed:join', feed: r })
+}
+function feedThreadSet(tabId, room) {
+  feedRoomsSet(feedThreadTabs, tabId, room)
+}
+function feedAuthorSet(tabId, room) {
+  feedRoomsSet(feedAuthorTabs, tabId, room)
 }
 
 // Reserved site paths that must never become channels. BG needs its own
@@ -1385,6 +1399,7 @@ function saveJoinedExtraChannels() {
 // Clean up tab tracking on close
 browser.tabs.onRemoved.addListener((tabId) => {
   feedThreadSet(tabId, null)
+  feedAuthorSet(tabId, null)
   tabChannels.delete(tabId)
   saveTabChannels()
   _cachedTabs = null // Invalidate tab cache
@@ -1394,7 +1409,10 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
   _cachedTabs = null // Invalidate tab cache on navigation/load
   // A reload or hard navigation restarts the content script (its thread view is
   // gone), so the room it held would otherwise be joined forever.
-  if (changeInfo.status === 'loading') feedThreadSet(tabId, null)
+  if (changeInfo.status === 'loading') {
+    feedThreadSet(tabId, null)
+    feedAuthorSet(tabId, null)
+  }
   if (tabChannels.has(tabId) && changeInfo.url && !/twitch\.tv|kick\.com|youtube\.com/.test(changeInfo.url)) {
     tabChannels.delete(tabId)
     saveTabChannels()

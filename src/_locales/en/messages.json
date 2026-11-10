@@ -4852,6 +4852,14 @@
       }
     }
   },
+  "mc_notif_mod_warned": {
+    "message": "a mod warned you: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "pinned $BY$: $TEXT$",
     "placeholders": {

@@ -4836,6 +4836,14 @@
       }
     }
   },
+  "mc_notif_mod_warned": {
+    "message": "mod 已警告你：$REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "$BY$ 置頂了：$TEXT$",
     "placeholders": {

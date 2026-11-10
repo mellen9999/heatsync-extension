@@ -4836,6 +4836,14 @@
       }
     }
   },
+  "mc_notif_mod_warned": {
+    "message": "mod הזהיר אותך: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "$BY$ הצמיד: $TEXT$",
     "placeholders": {

@@ -4836,6 +4836,14 @@
       }
     }
   },
+  "mc_notif_mod_warned": {
+    "message": "mod의 경고: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "$BY$ 고정: $TEXT$",
     "placeholders": {

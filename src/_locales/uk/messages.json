@@ -4836,6 +4836,14 @@
       }
     }
   },
+  "mc_notif_mod_warned": {
+    "message": "mod попередив тебе: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "закріпив $BY$: $TEXT$",
     "placeholders": {

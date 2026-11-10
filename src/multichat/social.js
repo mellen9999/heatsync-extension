@@ -1692,6 +1692,8 @@ function listenForSocialEvents() {
       }
     }
     if (msg.type === 'profile_updated') return void pcRefreshCardFor([msg.userId])
+    if (msg.type === 'mod_warned')
+      return void HsNotifs.emit('mod-warning', { text: t('mc_notif_mod_warned', [msg.reason]) })
     if (msg.type === 'user-log:removed') return void chatLogsServerRemoved(msg.data)
     if (msg.type === 'user-log') {
       chatLogsServerLive(msg.data)

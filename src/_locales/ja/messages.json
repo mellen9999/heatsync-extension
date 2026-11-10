@@ -4836,6 +4836,14 @@
       }
     }
   },
+  "mc_notif_mod_warned": {
+    "message": "modから警告: $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "$BY$ がピン留め: $TEXT$",
     "placeholders": {

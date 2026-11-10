@@ -1518,6 +1518,16 @@ function handleWSMessage(msg) {
         if (msg.userId != null) broadcastToTabs({ type: 'profile_updated', userId: String(msg.userId).slice(0, 40) })
         break
 
+      // a moderator warned THIS account (the frame never says who)
+      case 'user-warned': {
+        const reason = String(msg.reason ?? '')
+          .replace(/[\u0000-\u001f\u007f]/g, ' ')
+          .trim()
+          .slice(0, 300)
+        if (reason) broadcastToTabs({ type: 'mod_warned', reason })
+        break
+      }
+
       // live heat on a post (flat frame: messageId, newHeat, newMaxHeat)
       case 'heat:updated':
         if (msg.messageId) broadcastToTabs({ type: 'heat-updated', data: msg })

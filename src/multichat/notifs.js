@@ -521,6 +521,21 @@ const HsNotifs = (() => {
     },
   })
 
+  // A moderator warned this account. Outlasts a 2s toast — the reason is
+  // something to read, not glance at. Click dismisses.
+  registerType('mod-warning', {
+    layer: 'toast-stack',
+    timeout: 20000,
+    clickToDismiss: true,
+    dedupeKey: ({ text }) => `mod-warning:${String(text || '').slice(0, 200)}`,
+    render: ({ data }) => {
+      const el = document.createElement('span')
+      el.className = 'hs-notif-toast-text hs-notif-toast-warn'
+      el.textContent = String(data?.text || '')
+      return el
+    },
+  })
+
   // Whisper/DM receipt — popup toast while the user is NOT on the whispers
   // tab. The has-whispers tab badge alone was easy to miss (wollip missed
   // whispers entirely). Click jumps to the whispers tab; wrapper

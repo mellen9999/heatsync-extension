@@ -4828,6 +4828,14 @@
       }
     }
   },
+  "mc_main_ev_subscribed": {
+    "message": "$USER$ 订阅了",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "$BY$ 置顶了：$TEXT$",
     "placeholders": {

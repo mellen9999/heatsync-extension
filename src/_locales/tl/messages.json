@@ -4828,6 +4828,14 @@
       }
     }
   },
+  "mc_main_ev_subscribed": {
+    "message": "nag-subscribe si $USER$",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "na-pin ni $BY$: $TEXT$",
     "placeholders": {

@@ -2000,6 +2000,17 @@ function handleWSMessage(msg) {
         })
         break
 
+      // a single new twitch sub (gifted ones arrive as stream:sub-gift)
+      case 'stream:sub':
+        broadcastToTabs({
+          type: 'stream_event',
+          eventType: 'stream:sub',
+          platform: msg.platform,
+          channel: msg.channel,
+          user: msg.user || '',
+        })
+        break
+
       case 'stream:sub-gift':
         broadcastToTabs({
           type: 'stream_event',

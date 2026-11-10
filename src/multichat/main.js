@@ -1361,6 +1361,10 @@ async function init() {
           if (!hermesToggles?.hype) return
           text = `[${channel}] \u25C6 ${t('mc_main_ev_hype_end', [String(msg.level || 0)])}`
           eventClass = 'event-hype'
+        } else if (msg.eventType === 'stream:sub') {
+          if (!hermesToggles?.sub || !msg.user) return
+          text = `[${channel}] \u25C6 ${t('mc_main_ev_subscribed', [String(msg.user)])}`
+          eventClass = 'event-sub'
         } else if (msg.eventType === 'stream:sub-gift') {
           if (!hermesToggles?.sub) return
           text = `[${channel}] \u25C6 ${t('mc_main_ev_gifted_subs', [String(msg.user ?? ''), String(msg.count || 0)])}`

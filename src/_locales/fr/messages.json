@@ -4828,6 +4828,14 @@
       }
     }
   },
+  "mc_main_ev_subscribed": {
+    "message": "$USER$ s’est abonné",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "épinglé $BY$ : $TEXT$",
     "placeholders": {

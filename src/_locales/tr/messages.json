@@ -4828,6 +4828,14 @@
       }
     }
   },
+  "mc_main_ev_subscribed": {
+    "message": "$USER$ abone oldu",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "$BY$ sabitledi: $TEXT$",
     "placeholders": {

@@ -4828,6 +4828,14 @@
       }
     }
   },
+  "mc_main_ev_subscribed": {
+    "message": "$USER$ 구독",
+    "placeholders": {
+      "user": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_main_ev_pinned_by": {
     "message": "$BY$ 고정: $TEXT$",
     "placeholders": {

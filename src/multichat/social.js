@@ -16,6 +16,7 @@ const _FEED_EVENTS = new Set([
   'message-deleted',
   'message-updated',
   'heat-updated',
+  'message_moderated',
   'reaction:added',
   'reaction:removed',
   'vote:updated',
@@ -1437,6 +1438,9 @@ function listenForSocialEvents() {
       // a server-pushed twitch whisper joins the whisper chokepoint (whispers.js)
       if (msg.data.platform === 'twitch') handleServerWhisperPush(msg.data)
       else handleIncomingDm(msg.data)
+    }
+    if (msg.type === 'message_moderated' && msg.data) {
+      if (feedApplyModeration(msg.data) && currentTab === 'feed') feedHeatRepaintSoon()
     }
     if (msg.type === 'dm_thread_message' && msg.data) handleDmThreadMessage(msg.data)
     if (msg.type === 'dm_thread_update') handleDmThreadUpdate()

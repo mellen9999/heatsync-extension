@@ -282,6 +282,17 @@ function shapeWhisperFrame(f) {
   return out.content && out.from_twitch_login ? out : null
 }
 
+// message:approved / message:flagged -> {id, categories} or null. The id is the
+// post's base36 id; categories are only ever short strings the held-media
+// toggles match on.
+function moderationFrame(msg) {
+  const d = msg?.data && typeof msg.data === 'object' ? msg.data : msg
+  const id = d?.id
+  if (typeof id !== 'string' || !/^[0-9a-z]{1,12}$/i.test(id)) return null
+  const cats = Array.isArray(d.categories) ? d.categories.filter((c) => typeof c === 'string') : []
+  return { id, categories: cats.slice(0, 20).map((c) => c.slice(0, 40)), flagged: msg.type === 'message:flagged' }
+}
+
 // dm:message (a threaded heatsync DM, plaintext) -> the incoming-DM shape the
 // overlay's handleIncomingDm already renders and dedups, or null. threadId rides
 // along so the panel can tell threads apart; the sender's id is how it skips
@@ -1496,6 +1507,15 @@ function handleWSMessage(msg) {
       case 'heat:updated':
         if (msg.messageId) broadcastToTabs({ type: 'heat-updated', data: msg })
         break
+
+      // the media scan settled on a post: the feed copies stop saying "scanning"
+      // and a flagged one is held behind the viewer's own toggles
+      case 'message:approved':
+      case 'message:flagged': {
+        const data = moderationFrame(msg)
+        if (data) broadcastToTabs({ type: 'message_moderated', data })
+        break
+      }
 
       // a threaded heatsync DM arrived / its thread moved / someone is typing —
       // the whispers tab used to learn all three only by polling /api/dm

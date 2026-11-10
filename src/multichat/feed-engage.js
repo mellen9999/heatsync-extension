@@ -319,3 +319,24 @@ function feedOnFrame(frame) {
     else if (changed === 'vote') feedPaintVote(m)
   }
 }
+
+// message:approved / message:flagged → every cached copy that was still
+// "scanning". Mirrors the site's handleModerationComplete: only a pending post
+// changes, and a richer moderation_result already on it is never clobbered.
+// Returns how many copies changed.
+function feedApplyModeration(d) {
+  let n = 0
+  for (const m of feedCachedCopies(d?.id)) {
+    if (!m.moderation_pending) continue
+    if (!m.moderation_result) {
+      const cats = Array.isArray(d.categories) ? d.categories : []
+      m.moderation_result =
+        d.flagged && cats.length
+          ? { action: 'review', isFlagged: true, flaggedCategories: cats }
+          : { action: 'approve', isFlagged: false, flaggedCategories: [] }
+    }
+    delete m.moderation_pending
+    n++
+  }
+  return n
+}

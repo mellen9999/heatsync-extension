@@ -220,13 +220,13 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
     expect(view).not.toMatch(/hs-pcard-(id|mod|actions|sheet|hero|avatar|body)\b/)
   })
 
-  test('every hotkey (t k y h f w d @ m b +) still resolves to a real button lookup', () => {
-    const handlers = slice(CARD, 'function setupProfileCardHandlers() {', '\n\n// Dispatches a click')
-    for (const k of ['t', 'k', 'y', 'h', 'f', 'w', 'd', '@', 'm', 'b', '+', '=']) {
-      expect(handlers).toContain(`'${k}'`)
+  test('every button the card shows a key for lands on an action pcHandleCardAction handles', () => {
+    // the keys themselves are the shared model's (tests/card-hotkeys.test.js); this pins the other end:
+    // a key presses a button, and a button that does nothing would be a lie with an underline on it
+    const fn = slice(CARD, 'function pcHandleCardAction(actionKey, btn) {', '\n}\n')
+    for (const action of ['follow', 'whisper', 'dm', 'mention', 'mute', 'block', 'addchannel', 'clip', 'gift']) {
+      expect(fn).toContain(`case '${action}':`)
     }
-    expect(handlers).toContain('.hs-card-plat-link[data-tone=')
-    expect(handlers).toContain('.hs-card-action[data-hs-card-action=')
   })
 
   test('pcHandleCardAction dispatches every action key to its existing toggle/nav function', () => {

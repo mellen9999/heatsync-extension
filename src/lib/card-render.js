@@ -1,7 +1,8 @@
 /**
  * card-render.js — turns an `hsCardModel` model into an escaped HTML string.
  *
- * Pure: no DOM access, no globals, no imports outside `client/card/`. Every
+ * Pure: no DOM access, no globals, no imports outside `client/card/` (the one
+ * reader, `hsCardHotkeyTarget`, touches only the card root it is handed). Every
  * host dependency (escaping, number formatting, bio/badge rendering) is
  * passed in explicitly — that's what lets this file mirror byte-for-byte
  * into the extension's non-ESM bundle and still look native there.
@@ -15,26 +16,39 @@
  * @module card/card-render
  */
 
-import { hsCardAccountAge, hsCardRelativeTime, hsCardLogTime, hsCardTenureMonths } from './card-time.js'
+import { hsCardAccountAge, hsCardRelativeTime, hsCardLogTime, hsCardTenureMonths, hsCardHotkeySplit } from './card-time.js'
 
 const HOTKEY_LABEL = {
   follow: 'follow', unfollow: 'unfollow', whisper: 'whisper', dm: 'dm',
-  mention: 'mention', mute: 'mute', block: 'block', unblock: 'unblock', report: 'report',
+  mention: '@mention', mute: 'mute', block: 'block', unblock: 'unblock', report: 'report',
 }
 
 /**
- * Underline the hotkey letter inside its own label — NOT the letter plus the
- * whole word (that duplicated the first letter: "follow" with hotkey 'f'
- * rendered as "f" + "follow" = "ffollow"). The hotkey is always the label's
- * own first character; note-edit's label is picked so that holds too.
+ * The element a pressed key means inside a card root — the ONE place a key is
+ * mapped to a button, for every host. The model names each key (actions,
+ * platform pills, note-edit), the renderer stamps it as data-hs-hotkey beside
+ * its underline, and this reads it back: no second keymap anywhere.
  *
- * The hotkey span and the rest-of-word text both go inside ONE wrapping
- * span — every caller of this (platform links, actions, note-edit) sits in
- * a `display:flex` container with its own `gap`, and a bare trailing text
- * node next to the hotkey span is its OWN flex item there: "kick" rendered
- * as "k" + gap + "ick" = "k ick". Wrapping them together makes the whole
- * label one flex item, immune to a parent's gap no matter where it's used.
+ * Lowercase match; '=' answers to '+' (the shifted key on most layouts). A cell
+ * is skipped when it is disabled, hidden, or no longer shows its underline — a
+ * host that rewrites a label ("sure?" while confirming) must not leave a key
+ * that works without being shown. Underline and key are one fact.
+ * @param {ParentNode|null} root the card element
+ * @param {string} key a KeyboardEvent.key
+ * @returns {HTMLElement|null}
  */
+export function hsCardHotkeyTarget(root, key) {
+  if (!root || typeof key !== 'string' || !key) return null
+  const k = key === '=' ? '+' : key.toLowerCase()
+  for (const el of root.querySelectorAll('[data-hs-hotkey]')) {
+    if (el.dataset.hsHotkey !== k) continue
+    if (el.disabled || el.closest('[hidden], [disabled], [aria-disabled="true"]')) continue
+    if (!el.querySelector('.hs-card-hk')) continue
+    return el
+  }
+  return null
+}
+
 /**
  * The card's own × — 'full' only (a pinned desktop popover or the phone
  * full-screen sheet; 'peek'/'page' dismiss some other way, and the
@@ -49,10 +63,29 @@ function closeButtonHtml(variant) {
     : ''
 }
 
-function hk(label, esc) {
-  const first = label.slice(0, 1)
-  const rest = label.slice(1)
-  return `<span class="hs-card-label"><span class="hs-card-hk">${esc(first)}</span>${esc(rest)}</span>`
+/**
+ * A label with its hotkey letter underlined inside it — NOT the letter plus the
+ * whole word (that duplicated the first letter: "follow" with hotkey 'f'
+ * rendered as "f" + "follow" = "ffollow"). The letter is the first occurrence
+ * of the hotkey in the label (hsCardHotkeySplit), so "unfollow" underlines its
+ * f and "@mention" its @; a label without it prints plain.
+ *
+ * The pieces go inside ONE wrapping span — every caller of this (platform
+ * links, actions, note-edit) sits in a `display:flex` container with its own
+ * `gap`, and a bare trailing text node next to the hotkey span is its OWN flex
+ * item there: "kick" rendered as "k" + gap + "ick" = "k ick". Wrapping them
+ * together makes the whole label one flex item, immune to a parent's gap no
+ * matter where it's used.
+ */
+function hk(label, hotkey, esc) {
+  const p = hsCardHotkeySplit(label, hotkey)
+  if (!p) return `<span class="hs-card-label">${esc(label)}</span>`
+  return `<span class="hs-card-label">${esc(p[0])}<span class="hs-card-hk">${esc(p[1])}</span>${esc(p[2])}</span>`
+}
+
+/** ` data-hs-hotkey="x"` exactly when the label can show the key (see hk), else ''. */
+function hkAttr(label, hotkey, esc) {
+  return hsCardHotkeySplit(label, hotkey) ? ` data-hs-hotkey="${esc(String(hotkey).toLowerCase())}"` : ''
 }
 
 /**
@@ -92,6 +125,11 @@ function relRow(esc, fmtTime, entry) {
  *   (`el.style.setProperty('color', el.dataset.color)`), same pattern every
  *   other per-user color in this app already uses under CSP. Falls back to
  *   the raw model color, unclamped, when omitted.
+ * @param {boolean} [opts.hotkeys] the host dispatches this card's keys (it
+ *   listens and goes through `hsCardHotkeyTarget`). Only then do the cells carry
+ *   `data-hs-hotkey` and their underline — an underline is a promise that the key
+ *   works. Honoured on 'full' and 'panel' only: a peek or a profile page is
+ *   somewhere typing belongs to the composer, whatever the host passes.
  * @param {boolean} [opts.navInBar] the host draws the destination row itself
  *   (site: the bar stack, from `hsCardNavItems`) — print none in the card
  * @param {(model: object) => string} [opts.renderBadges] host-trusted HTML
@@ -107,6 +145,7 @@ export function hsCardHtml(model, opts) {
   const fmtTime = (v) => hsCardRelativeTime(v)
   const clickable = !!opts.clickable
   const hideLogsLink = !!opts.hideLogsLink
+  const keys = !!opts.hotkeys && (variant === 'full' || variant === 'panel')
 
   if (!model || model.kind === 'not-found') {
     return `<div class="hs-card hs-card-${esc(variant)} hs-card-empty">${closeButtonHtml(variant)}<div class="hs-card-name">${esc(model?.identity?.login || 'unknown')}</div></div>`
@@ -129,6 +168,7 @@ export function hsCardHtml(model, opts) {
     clickable,
     hideLogsLink,
     navInBar: !!opts.navInBar,
+    keys,
   })
 }
 
@@ -185,10 +225,11 @@ function renderChannel(channel, esc, fmtTime) {
   return `<dl class="hs-card-sheet hs-card-channel-sheet">${rows}</dl>`
 }
 
-function renderNote(note, esc) {
+function renderNote(note, esc, keys) {
   if (!note) return ''
   const text = note.text ? `<span class="hs-card-note-text">${esc(note.text)}</span>` : ''
-  const btn = note.canEdit ? `<button type="button" class="hs-card-note-edit" data-hs-card-action="note-edit">${hk('edit', esc)}</button>` : ''
+  const hotkey = keys ? note.hotkey : ''
+  const btn = note.canEdit ? `<button type="button" class="hs-card-note-edit" data-hs-card-action="note-edit"${hkAttr('edit', hotkey, esc)}>${hk('edit', hotkey, esc)}</button>` : ''
   return `<div class="hs-card-sheet-row" data-tone="note"><dt>note</dt><dd>${text}${btn}</dd></div>`
 }
 
@@ -211,13 +252,14 @@ function renderRecent(recent, esc) {
   return `<div class="hs-card-recent"><div class="hs-card-recent-head"><span>recent</span></div><div class="hs-card-recent-list">${rows}</div></div>`
 }
 
-function renderActions(actions, esc, userId) {
+function renderActions(actions, esc, userId, keys) {
   if (!actions || !actions.length) return ''
   const uid = userId != null ? ` data-user-id="${esc(String(userId))}"` : ''
   const btns = actions.map(a => {
     const label = a.key === 'follow' ? (a.following ? 'unfollow' : 'follow') : a.key === 'block' ? (a.blocked ? 'unblock' : 'block') : HOTKEY_LABEL[a.key] || a.key
     const active = (a.key === 'follow' && a.following) || (a.key === 'block' && a.blocked) ? ' hs-card-active' : ''
-    return `<button type="button" class="hs-card-action${active}" data-hs-card-action="${esc(a.key)}"${uid}>${hk(label, esc)}</button>`
+    const hotkey = keys ? a.hotkey : ''
+    return `<button type="button" class="hs-card-action${active}" data-hs-card-action="${esc(a.key)}"${hkAttr(label, hotkey, esc)}${uid}>${hk(label, hotkey, esc)}</button>`
   }).join('')
   return `<div class="hs-card-actions">${btns}</div>`
 }
@@ -280,7 +322,7 @@ function navCell(cls, attrs, href, label) {
  * what a host that draws its own row (the site's bar stack) builds cells from.
  * @param {object} model output of `hsCardModel`
  * @param {{variant?: string, hideLogsLink?: boolean}} [o]
- * @returns {{key: string, label: string, href: string, external: boolean, tone?: string, login?: string, live?: boolean, viewers?: number|null, verified?: boolean}[]}
+ * @returns {{key: string, label: string, href: string, external: boolean, tone?: string, hotkey?: string, login?: string, live?: boolean, viewers?: number|null, verified?: boolean}[]}
  */
 export function hsCardNavItems(model, o = {}) {
   const items = []
@@ -292,18 +334,19 @@ export function hsCardNavItems(model, o = {}) {
   // the heatsync platform IS the profile cell above (it carries tone "hs")
   for (const p of model?.platforms || []) {
     if (!p.url || p.key === 'hs') continue
-    items.push({ key: p.key, label: PLATFORM_CELL[p.key] || p.key, href: p.url, external: true, tone: p.key, login: p.login, live: !!p.live, viewers: p.viewers || null, verified: !!p.verified })
+    items.push({ key: p.key, label: PLATFORM_CELL[p.key] || p.key, href: p.url, external: true, tone: p.key, hotkey: p.hotkey, login: p.login, live: !!p.live, viewers: p.viewers || null, verified: !!p.verified })
   }
   return items
 }
 
-function renderNavRow(model, esc, variant, hideLogsLink) {
+function renderNavRow(model, esc, variant, hideLogsLink, keys) {
   const cells = hsCardNavItems(model, { variant, hideLogsLink }).map((it) => {
     if (it.key === 'profile') return navCell('hs-card-plat-link', ` data-hs-link="profile" data-tone="hs"`, esc(it.href), 'profile')
     if (!it.external) return navCell('', ` data-hs-link="${esc(it.key)}"`, esc(it.href), esc(it.label))
     const live = it.live ? `<span class="hs-card-live" data-tone="live">●${it.viewers ? esc(String(it.viewers)) : ''}</span>` : ''
     const verified = it.verified ? '<span class="hs-card-verified">✓</span>' : ''
-    return navCell('hs-card-plat-link', ` data-tone="${esc(it.tone)}" title="${esc(it.login || '')}"`, esc(it.href), `${hk(it.label, esc)}${verified}${live}`)
+    const hotkey = keys ? it.hotkey : ''
+    return navCell('hs-card-plat-link', ` data-tone="${esc(it.tone)}" title="${esc(it.login || '')}"${hkAttr(it.label, hotkey, esc)}`, esc(it.href), `${hk(it.label, hotkey, esc)}${verified}${live}`)
   })
   if (!cells.length) return ''
   return `<div class="hs-card-nav">${cells.join('')}</div>`
@@ -311,7 +354,7 @@ function renderNavRow(model, esc, variant, hideLogsLink) {
 
 function renderProfile(
   model,
-  { esc, variant, fmtTime, renderBio, renderPlusBadge, renderBadge, paintColor, renderBadges, clickable, hideLogsLink, navInBar },
+  { esc, variant, fmtTime, renderBio, renderPlusBadge, renderBadge, paintColor, renderBadges, clickable, hideLogsLink, navInBar, keys },
 ) {
   const peek = variant === 'peek'
   const cls = [`hs-card`, `hs-card-${esc(variant)}`, model.isOwnProfile ? 'hs-card-own' : ''].filter(Boolean).join(' ')
@@ -369,7 +412,7 @@ function renderProfile(
     ? `<div class="hs-card-bio profile-bio-line"><span class="profile-bio-text" data-userid="${esc(String(model.identity.userId ?? ''))}">${model.bio ? bioInner : '<span class="bio-edit-trigger">add bio</span>'}</span></div>`
     : model.bio ? `<div class="hs-card-bio">${bioInner}</div>` : ''
 
-  const navHtml = navInBar ? '' : renderNavRow(model, esc, variant, hideLogsLink)
+  const navHtml = navInBar ? '' : renderNavRow(model, esc, variant, hideLogsLink, keys)
 
   if (peek) {
     return `<div class="${cls}"${clickAttrs}${accentAttr}>
@@ -400,11 +443,11 @@ function renderProfile(
     ${inline ? '' : heroHtml}
     <div class="hs-card-body">
       ${inline ? `<div class="hs-card-top">${heroHtml}${topHtml}</div>` : topHtml}
-      ${renderNote(model.note, esc)}
+      ${renderNote(model.note, esc, keys)}
       ${renderRecent(model.recent, esc)}
       ${renderMod(model.mod, esc)}
     </div>
-    ${renderActions(model.actions, esc, model.identity.userId)}
+    ${renderActions(model.actions, esc, model.identity.userId, keys)}
     ${navHtml}
   </div>`
 }

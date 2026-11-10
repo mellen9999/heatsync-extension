@@ -11,6 +11,11 @@
  * diverged from the above — "1mo" vs "1m" for a 6-week-old account — and
  * utility-manager's own `getAccountAge`, a bare alias of its relative-time).
  *
+ * Also the one "where does the underline go" split for a hotkey label
+ * (`hsCardHotkeySplit`): the renderer and every host that repaints a card
+ * button's label ask it, and it lives in this leaf because the boot path
+ * already carries card-time while the renderer is a lazy chunk.
+ *
  * Dependency-free leaf: no imports, no DOM, no `app`. Plain named exports,
  * globally-unique `hsCard`-prefixed top-level names, mirrored byte-for-byte
  * into the extension's non-ESM bundle.
@@ -93,4 +98,23 @@ export function hsCardTenureMonths(months) {
   const m = months % 12
   if (y <= 0) return `${months}mo`
   return m > 0 ? `${y}y ${m}mo` : `${y}y`
+}
+
+/**
+ * Where a hotkey sits inside its label: [before, key, after], or null when the
+ * label has no such character. The first occurrence, case-insensitive, by code
+ * point. No occurrence means no underline and no key — the underline is never an
+ * extra glyph, and a key the label cannot show is not bound. Every host that
+ * repaints a label (the follow button's "unfollow", the extension's "unmute")
+ * asks this, so the underline lands in one place.
+ * @param {string} label
+ * @param {string} [hotkey]
+ * @returns {[string, string, string]|null}
+ */
+export function hsCardHotkeySplit(label, hotkey) {
+  if (!hotkey) return null
+  const cs = Array.from(String(label))
+  const k = String(hotkey).toLowerCase()
+  const at = cs.findIndex((c) => c.toLowerCase() === k)
+  return at < 0 ? null : [cs.slice(0, at).join(''), cs[at], cs.slice(at + 1).join('')]
 }

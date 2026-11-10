@@ -963,6 +963,8 @@ function renderProfileCardView() {
 
   const html = hsCardHtmlL10n(model, {
     variant: floating ? 'full' : 'panel',
+    // this card dispatches its own keys (pcOnCardKey) — the underlines are promises it keeps
+    hotkeys: true,
     // in the panel the destinations ride the 2nd row (pcMountDestRow), not the card
     navInBar: !floating,
     escapeHtml,
@@ -996,6 +998,7 @@ function renderProfileCardView() {
   if (!floating) pcMountDestRow(hsCardNavItems(model, { variant: 'panel' }))
 
   msgsEl.appendChild(card)
+  activeProfileCard.cardEl = card // the root pcOnCardKey reads its keys from
   // the card only stamps who the name is; this paints it (colour + paints)
   hsNameCardsIn(card)
 
@@ -1015,7 +1018,7 @@ function renderProfileCardView() {
   if (isMuted) {
     const muteBtn = card.querySelector('.hs-card-action[data-hs-card-action="mute"]')
     if (muteBtn) {
-      muteBtn.textContent = t('mc_settings_unmute')
+      pcSetLabel(muteBtn, t('mc_settings_unmute'))
       muteBtn.classList.add('hs-card-active')
     }
   }
@@ -1035,15 +1038,16 @@ function renderProfileCardView() {
       addBtn.type = 'button'
       addBtn.className = 'hs-card-action'
       addBtn.dataset.hsCardAction = 'addchannel'
-      addBtn.innerHTML = `${hk('+add channel', escapeHtml)}`
+      addBtn.dataset.hsHotkey = '+' // '=' answers to it too (hsCardHotkeyTarget)
+      pcSetLabel(addBtn, '+add channel')
       actionsRow.appendChild(addBtn)
     }
   }
 
   // Clip — ext-only (the site has no live-clip capability), same append
   // pattern as +add channel. Twitch-only, only while the subject is live
-  // (old content.js card's own gate). Hotkey 'c' — free in the existing
-  // t/k/y/h/f/w/d/@/m/b/+ map.
+  // (old content.js card's own gate). Hotkey 'c'; like every card key it is
+  // stamped as data-hs-hotkey and underlined in the label, nothing else.
   if (platform === 'twitch' && (data.twitch_is_live || data.live_status?.twitch)) {
     const actionsRow = card.querySelector('.hs-card-actions')
     if (actionsRow) {
@@ -1051,7 +1055,8 @@ function renderProfileCardView() {
       clipBtn.type = 'button'
       clipBtn.className = 'hs-card-action'
       clipBtn.dataset.hsCardAction = 'clip'
-      clipBtn.innerHTML = hk('clip', escapeHtml)
+      clipBtn.dataset.hsHotkey = 'c'
+      pcSetLabel(clipBtn, 'clip')
       actionsRow.appendChild(clipBtn)
     }
   }
@@ -1069,7 +1074,8 @@ function renderProfileCardView() {
       giftBtn.type = 'button'
       giftBtn.className = 'hs-card-action'
       giftBtn.dataset.hsCardAction = 'gift'
-      giftBtn.innerHTML = hk('gift sub', escapeHtml)
+      giftBtn.dataset.hsHotkey = 'g'
+      pcSetLabel(giftBtn, 'gift sub')
       actionsRow.appendChild(giftBtn)
     }
   }
@@ -1669,58 +1675,42 @@ function setupProfileCardHandlers() {
     { signal: mcSignal },
   )
 
-  // ESC closes the card; single-letter hotkeys trigger actions while open
-  cleanup.addEventListener(
-    document,
-    'keydown',
-    (e) => {
-      if (!activeProfileCard) return
-      // Ignore keys while typing in inputs/textareas
-      const t = e.target
-      const inEditable = t?.tagName === 'INPUT' || t?.tagName === 'TEXTAREA' || t?.isContentEditable
-      if (inEditable) {
-        if (e.key === 'Escape') {
-          e.preventDefault()
-          closeProfileCard()
-        }
-        return
-      }
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        closeProfileCard()
-        return
-      }
-      // Keymap: t/k/y/h jump to platform pills (twitch/kick/youtube/heatsync),
-      // f follow, w whisper, d dm, @ mention, m mute, b block, + add channel,
-      // c clip (twitch, live only — button doesn't exist otherwise, so the
-      // querySelector below is just null and nothing happens). '=' aliases
-      // '+' (shifted on US keyboards) for one-handed access.
-      const key = e.key.toLowerCase()
-      const allowed = new Set(['t', 'k', 'y', 'h', 'f', 'w', 'd', '@', 'm', 'b', '+', '=', 'c'])
-      if (!allowed.has(key)) return
-      const target = key === '=' ? '+' : key
-      let btn
-      if (target === 't' || target === 'k' || target === 'y' || target === 'h') {
-        // Platform pills — card-render.js's renderPlatformsRow (.hs-card-plat-link[data-tone]).
-        const tone = { t: 'ttv', k: 'kick', y: 'yt', h: 'hs' }[target]
-        btn = document.querySelector(`.hs-card-plat-link[data-tone="${tone}"]`)
-      } else if (target === '+') {
-        btn = document.querySelector('.hs-card-action[data-hs-card-action="addchannel"]')
-      } else if (target === 'c') {
-        btn = document.querySelector('.hs-card-action[data-hs-card-action="clip"]')
-      } else if (target === 'g') {
-        btn = document.querySelector('.hs-card-action[data-hs-card-action="gift"]')
-      } else {
-        const action = { f: 'follow', w: 'whisper', d: 'dm', '@': 'mention', m: 'mute', b: 'block' }[target]
-        btn = document.querySelector(`.hs-card-action[data-hs-card-action="${action}"]`)
-      }
-      if (btn && !btn.disabled) {
-        e.preventDefault()
-        btn.click()
-      }
-    },
-    'mc-pcard-keys',
-  )
+  // ESC closes the card; the card's own keys (underlined in its labels) press its buttons.
+  // Capture + stopImmediatePropagation: the page (twitch's f/m/k/t player keys, youtube's) must
+  // not also act on a letter the card took.
+  cleanup.addEventListener(document, 'keydown', pcOnCardKey, { capture: true }, 'mc-pcard-keys')
+}
+
+// The card names its keys (shared model -> data-hs-hotkey beside the underline) and hsCardHotkeyTarget
+// finds the cell; this is only the guard and the click. No second keymap lives here: a letter works
+// exactly when the card shows it underlined.
+function pcOnCardKey(e) {
+  if (!activeProfileCard) return
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    closeProfileCard()
+    return
+  }
+  const el = e.target
+  const inEditable =
+    el?.tagName === 'INPUT' || el?.tagName === 'TEXTAREA' || el?.tagName === 'SELECT' || el?.isContentEditable
+  // typing, a chord (ctrl+f, ctrl+c), IME composition, a key someone already took, or a confirm panel
+  // over the card: not a card key
+  if (e.defaultPrevented || inEditable || e.isComposing || e.ctrlKey || e.metaKey || e.altKey || hsPanePanelOpen())
+    return
+  const btn = hsCardHotkeyTarget(activeProfileCard.cardEl, e.key)
+  if (!btn) return
+  e.preventDefault()
+  e.stopImmediatePropagation()
+  ownKeyup(e) // youtube acts on some keys at keyup (overlay-keys.js)
+  if (!e.repeat) btn.click() // a held key is one press, not a follow/unfollow flicker
+}
+
+// Repaint a card button's label (a localized toggle word, a progress word) with ITS key underlined
+// wherever the word has the letter. A word without it prints plain, and the key rests until the
+// underline is back: hsCardHotkeyTarget only answers for a cell that shows its letter.
+function pcSetLabel(btn, text) {
+  btn.innerHTML = hk(text, btn.dataset.hsHotkey, escapeHtml)
 }
 
 // Dispatches a click on a .hs-card-action button (data-hs-card-action) to
@@ -1841,7 +1831,7 @@ async function pcDoClip(username, platform, btn) {
   const channelLogin =
     (typeof getTooltipChannelContext === 'function' ? getTooltipChannelContext(platform) : null) || username
   btn.disabled = true
-  btn.textContent = t('content_card_clipping')
+  pcSetLabel(btn, t('content_card_clipping'))
   try {
     const resp = await apiFetch('/api/twitch/clip', { method: 'POST', auth: true, body: { channel: channelLogin } })
     if (!resp?.ok) throw new Error(resp?.error || t('mc_common_unknown'))
@@ -1853,10 +1843,10 @@ async function pcDoClip(username, platform, btn) {
         await navigator.clipboard.writeText(clipUrl)
       } catch {}
     }
-    btn.textContent = clipUrl ? t('mc_pcard_url_copied') : editUrl ? t('mc_pcard_clip_created') : 'clip'
+    pcSetLabel(btn, clipUrl ? t('mc_pcard_url_copied') : editUrl ? t('mc_pcard_clip_created') : 'clip')
     btn.disabled = false
   } catch (err) {
-    btn.innerHTML = hk('clip', escapeHtml)
+    pcSetLabel(btn, 'clip')
     btn.disabled = false
     if (typeof showToast === 'function')
       showToast(t('mc_pcard_clip_failed', [err?.message || t('mc_pcard_error')]), 'error')

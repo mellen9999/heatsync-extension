@@ -2,7 +2,8 @@
 // english. This puts the extension's language on them without touching the mirror: labels and values on the model
 // before it renders, the few literals the renderer owns on the html after. Every table entry is pinned to its english
 // source by tests/card-l10n.test.js, so a reworded mirror fails loud instead of quietly going english again.
-// Deliberately left english: the action/nav buttons, whose underlined first letter teaches the keyboard hotkey.
+// Deliberately left english: the action/nav buttons, whose underlined letter teaches the keyboard hotkey (the key is
+// stamped from the model, so the word and its letter have to stay together).
 
 // sheet row id (the model's `k`) -> message key. extra rows the host adds already arrive translated and are not here
 const CARD_SHEET_LABEL = {

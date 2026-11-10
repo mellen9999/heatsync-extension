@@ -128,6 +128,9 @@ const earliest = (...dates) => {
 // extension, which has no import.)
 const loginText = (platform, login) => (platform === 'youtube' && typeof login === 'string' && login ? `@${login.replace(/^@+/, '')}` : login)
 
+// `hotkey` is the card's own key for the action: the renderer underlines it in the
+// label and stamps data-hs-hotkey, and hsCardHotkeyTarget (card-render.js) reads it
+// back. Platform pills and the note's edit carry theirs the same way.
 const ACTION_DEFS = [
   { key: 'follow', hotkey: 'f' },
   { key: 'whisper', hotkey: 'w' },
@@ -336,7 +339,7 @@ export function hsCardModel(payload = {}, ctx = {}, deps) {
   // compute `payload.note` at all). `payload.note` is the raw note text (or
   // null — unset or unauthorized are the same answer, on purpose).
   const note = (capabilities.notes && !isOwnProfile && !isAnonymous)
-    ? { text: payload.note || '', canEdit: true }
+    ? { text: payload.note || '', canEdit: true, hotkey: 'e' }
     : null
 
   // ---- recent logs -----------------------------------------------------------

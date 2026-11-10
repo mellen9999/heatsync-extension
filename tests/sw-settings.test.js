@@ -138,19 +138,11 @@ describe('settings pushed from the server (another device changed one)', () => {
     await sw.settle()
   }
 
-  test('settings:patch is merged into ui_settings', async () => {
+  test('settings:patch / settings:delete are dead: the server never sends either, so a frame changes nothing', async () => {
     const sw = await boot({ storage: { sync: { ui_settings: { zebra: true } } } })
     await server(sw, { type: 'settings:patch', patches: { fontSize: 18 } })
-    expect(ui(sw)).toEqual({ zebra: true, fontSize: 18 })
-  })
-
-  test('settings:delete removes one key, and only a key (never a path into another storage key)', async () => {
-    const sw = await boot({ storage: { sync: { ui_settings: { zebra: true, fontSize: 18 } } } })
     await server(sw, { type: 'settings:delete', key: 'zebra' })
-    expect(ui(sw)).toEqual({ fontSize: 18 })
-    await server(sw, { type: 'settings:delete', key: 'x'.repeat(65) })
-    await server(sw, { type: 'settings:delete', key: { $ne: 1 } })
-    expect(ui(sw)).toEqual({ fontSize: 18 })
+    expect(ui(sw)).toEqual({ zebra: true })
   })
 
   test('ui-state:update is sanitised on the way in', async () => {
@@ -162,7 +154,6 @@ describe('settings pushed from the server (another device changed one)', () => {
 
   test('a malformed frame changes nothing', async () => {
     const sw = await boot({ storage: { sync: { ui_settings: { zebra: true } } } })
-    await server(sw, { type: 'settings:patch', patches: 'nope' })
     await server(sw, { type: 'ui-state:update', state: null })
     expect(ui(sw)).toEqual({ zebra: true })
   })

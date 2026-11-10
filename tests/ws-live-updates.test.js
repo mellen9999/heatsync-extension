@@ -22,8 +22,8 @@ function extractFn(code, name) {
 }
 
 const bg = new Function(
-  `${['blockFrameId', 'unreadFromFrame', 'bookmarkFrame', 'settingsDeleteKey', 'shapeWhisperFrame'].map((n) => extractFn(BG, n)).join('\n')}
-return { blockFrameId, unreadFromFrame, bookmarkFrame, settingsDeleteKey, shapeWhisperFrame }`,
+  `${['blockFrameId', 'unreadFromFrame', 'bookmarkFrame', 'shapeWhisperFrame'].map((n) => extractFn(BG, n)).join('\n')}
+return { blockFrameId, unreadFromFrame, bookmarkFrame, shapeWhisperFrame }`,
 )()
 
 describe('user:blocked / user:unblocked', () => {
@@ -50,16 +50,6 @@ describe('user:blocked / user:unblocked', () => {
       /case 'user:unblocked': \{[\s\S]*blockedIdToKey\.get\(id\)[\s\S]*persistBlockedUsers\(\)[\s\S]*type: 'user_unblocked'/,
     )
   })
-})
-
-describe('settings:delete', () => {
-  test('a string key within the sanitizer bound', () => {
-    expect(bg.settingsDeleteKey({ key: 'theme' })).toBe('theme')
-    for (const bad of [{}, { key: '' }, { key: 'x'.repeat(65) }, { key: 5 }, { key: ['a'] }, null]) {
-      expect(bg.settingsDeleteKey(bad)).toBe('')
-    }
-  })
-  // what a delete frame does to storage is executed in sw-settings.test.js
 })
 
 describe('notification counts', () => {
@@ -283,5 +273,11 @@ describe('skipped on purpose (no ext surface)', () => {
     ]) {
       expect(BG.includes(`case '${t}'`)).toBe(false)
     }
+  })
+})
+
+describe('dead settings frames', () => {
+  test('the dispatch has no settings:patch / settings:delete case (the server sends only ui-state:update to the ext)', () => {
+    expect(BG).not.toMatch(/case 'settings:(patch|delete)'/)
   })
 })

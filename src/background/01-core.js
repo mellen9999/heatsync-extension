@@ -421,7 +421,7 @@ function siteOverlayMerge(ui, gate, on) {
 }
 
 // Serialized read-modify-write for ui_settings in sync storage.
-// Three message handlers (ui-state:sync/update, settings:patch, settings:delete)
+// Message handlers (ui-state:sync/update, the ui_settings_rmw message)
 // can race on concurrent WS events. Chain all writes through this so each sees
 // the previous write's result before merging.
 // Resolves to {ok} — never rejects, so a failed write can't poison the chain

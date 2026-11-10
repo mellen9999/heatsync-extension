@@ -264,7 +264,7 @@ describe('bgIrcParseLine — reply-parent-user-id threading (background.js live 
 // background.js's own duplicate of sanitizeUiSettings/UI_SYNC_BLOCKLIST/
 // DEVICE_LOCAL_KEYS/OVERFLOW_MIRROR_KEYS/LARGE_KEY_SYNC_MAX (kept in parity
 // with src/lib/utils.js by build.js's checkUiSyncBlocklistParity guard) feeds
-// this splitter, used by the ui-state:update / settings:patch handlers to
+// this splitter, used by the ui-state:update handler to
 // route large blocklist prefs (chatFilterRules) to their
 // chrome.storage.local overflow keys instead of chrome.storage.sync.
 

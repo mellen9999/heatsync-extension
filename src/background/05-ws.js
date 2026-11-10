@@ -261,13 +261,6 @@ function bookmarkFrame(msg) {
     : null
 }
 
-// settings:delete -> the ui_settings key to drop ('' = none); the sanitizer
-// that follows the delete drops proto/numeric keys like it does for a patch
-function settingsDeleteKey(msg) {
-  const k = msg?.key
-  return typeof k === 'string' && k.length <= 64 ? k : ''
-}
-
 // whisper:new -> the dm_new twitch shape the overlay already dedups, or null
 function shapeWhisperFrame(f) {
   const s = (k, n) =>
@@ -2026,45 +2019,6 @@ function handleWSMessage(msg) {
           persistMutedUsers()
           broadcastToTabs({ type: 'mutes_cleared' })
           log(' mute:cleared from server')
-        }
-        break
-      }
-
-      // Cross-device settings sync (partial patch variant).
-      // ui-state:update covers the full-state fanout; settings:patch/delete
-      // cover incremental edits from /api/settings on heatsync.org.
-      case 'settings:patch': {
-        if (msg.patches && typeof msg.patches === 'object') {
-          const { sync: cleanPatch, overflow } = splitIncomingUiState(msg.patches)
-          const patchKeys = Object.keys(cleanPatch)
-          const overflowKeys = Object.keys(overflow)
-          if (patchKeys.length > 0) {
-            log(' settings:patch received:', patchKeys)
-            uiSettingsRmw((ui) => sanitizeUiSettings({ ...ui, ...cleanPatch }))
-          }
-          if (overflowKeys.length > 0) {
-            log(' settings:patch received (overflow):', overflowKeys)
-            browser.storage.local.set(overflow).catch(() => {})
-          }
-          // No broadcast here either: same as the ui-state:update path above,
-          // the storage write is what the overlay reacts to. The `if
-          // (patchKeys.length || overflowKeys.length)` that used to wrap it
-          // guarded nothing else, so it went with it.
-        }
-        break
-      }
-
-      // A setting was reset on another device. Same serialized RMW as the patch
-      // above; only ui_settings keys the sanitizer would keep can be named, so a
-      // hostile key can never reach any other storage key.
-      case 'settings:delete': {
-        const key = settingsDeleteKey(msg)
-        if (key) {
-          uiSettingsRmw((ui) => {
-            const next = { ...ui }
-            delete next[key]
-            return sanitizeUiSettings(next)
-          })
         }
         break
       }

@@ -593,6 +593,15 @@ function isSocketOpen() {
   return socket && socket.readyState === WebSocket.OPEN
 }
 
+// The server answers every heartbeat (20s) and pushes presence on its own, so
+// an open socket that has said nothing for this long is dead even if it looks
+// open. A quiet CHAT is not this: an offline channel can be silent for hours
+// on a perfectly healthy socket.
+const WS_ZOMBIE_MS = 45000
+function isSocketZombie() {
+  return !!lastWsDataReceived && Date.now() - lastWsDataReceived > WS_ZOMBIE_MS
+}
+
 const MESSAGE_QUEUE_TTL = 60000 // 60 seconds — matches max reconnect backoff + jitter
 
 // Flush queued messages when socket becomes ready

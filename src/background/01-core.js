@@ -725,7 +725,7 @@ browser.alarms?.onAlarm?.addListener(async (alarm) => {
         if (typeof connectWebSocket === 'function') connectWebSocket().catch(() => {})
         return
       }
-      if (typeof lastWsDataReceived !== 'undefined' && lastWsDataReceived && Date.now() - lastWsDataReceived > 45000) {
+      if (isSocketZombie()) {
         log('WS zombie detected (alarm path), reconnecting')
         try {
           socket.close()

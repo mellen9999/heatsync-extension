@@ -686,10 +686,19 @@ async function handleMessage(message, sender, sendResponse) {
     return
   }
 
-  // Content-script escalation: a per-channel watchdog has decided the BG WS
-  // is in zombie state. Close the socket and let scheduleReconnect fire a
-  // fresh connection, which replays joins from joinedExtraChannels.
+  // Content-script escalation: a per-channel watchdog thinks the BG WS is a
+  // zombie because one channel went quiet. Only the socket's own traffic can
+  // say that: an offline channel is quiet on a healthy socket, and obeying it
+  // reconnected everything every ~2 min (each reconnect replays the follow
+  // history and makes the server drop and re-join every channel). A live
+  // socket refuses; a dead one reconnects, which replays joins from
+  // joinedExtraChannels.
   if (message.type === 'ws_force_reconnect') {
+    if (isSocketOpen() && !isSocketZombie()) {
+      log(' ws_force_reconnect refused, the socket is live:', message.source, message.channel || '')
+      sendResponse({ ok: false, reason: 'socket-live' })
+      return
+    }
     log(' 🚨 ws_force_reconnect requested:', message.source, message.channel || '')
     if (socket) {
       try {

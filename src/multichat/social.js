@@ -1438,6 +1438,9 @@ function listenForSocialEvents() {
       if (msg.data.platform === 'twitch') handleServerWhisperPush(msg.data)
       else handleIncomingDm(msg.data)
     }
+    if (msg.type === 'dm_thread_message' && msg.data) handleDmThreadMessage(msg.data)
+    if (msg.type === 'dm_thread_update') handleDmThreadUpdate()
+    if (msg.type === 'dm_typing' && msg.data) handleDmTyping(msg.data.userId)
     if (msg.type === 'message-edited' && msg.data) {
       const d = msg.data.message_id ? msg.data : msg.data.data
       const id = d?.message_id

@@ -282,6 +282,31 @@ function shapeWhisperFrame(f) {
   return out.content && out.from_twitch_login ? out : null
 }
 
+// dm:message (a threaded heatsync DM, plaintext) -> the incoming-DM shape the
+// overlay's handleIncomingDm already renders and dedups, or null. threadId rides
+// along so the panel can tell threads apart; the sender's id is how it skips
+// your own echo.
+function shapeDmThreadMessage(f) {
+  const m = f?.message
+  if (!m || typeof m !== 'object') return null
+  const s = (v, n) =>
+    String(v ?? '')
+      .replace(/[\u0000-\u001f\u007f]/g, ' ')
+      .slice(0, n)
+  const at = new Date(s(m.created_at, 40)).getTime()
+  const color = s(m.sender_color, 7)
+  const out = {
+    id: s(m.id, 40),
+    threadId: s(f.threadId, 40),
+    from_user_id: s(m.sender_id, 40),
+    from_display_name: s(m.sender_display_name || m.sender_username, 60),
+    from_color: /^#[0-9a-f]{6}$/i.test(color) ? color : '',
+    content: s(m.content, 2000).trim(),
+    created_at: Number.isFinite(at) ? new Date(at).toISOString() : '',
+  }
+  return out.content && out.from_user_id && out.from_display_name ? out : null
+}
+
 // Plus changed: re-read the account, then have the overlay re-resolve your own
 // cosmetics (the ids your own paint lookups use) so plus-only ones appear or go.
 let _plusRefreshTimer = null
@@ -1470,6 +1495,26 @@ function handleWSMessage(msg) {
       // live heat on a post (flat frame: messageId, newHeat, newMaxHeat)
       case 'heat:updated':
         if (msg.messageId) broadcastToTabs({ type: 'heat-updated', data: msg })
+        break
+
+      // a threaded heatsync DM arrived / its thread moved / someone is typing —
+      // the whispers tab used to learn all three only by polling /api/dm
+      case 'dm:message': {
+        const data = shapeDmThreadMessage(msg)
+        if (data) broadcastToTabs({ type: 'dm_thread_message', data })
+        break
+      }
+      case 'dm:thread-update':
+        if (msg.threadId)
+          broadcastToTabs({ type: 'dm_thread_update', data: { threadId: String(msg.threadId).slice(0, 40) } })
+        break
+      case 'dm:typing':
+        if (msg.threadId && msg.userId != null) {
+          broadcastToTabs({
+            type: 'dm_typing',
+            data: { threadId: String(msg.threadId).slice(0, 40), userId: String(msg.userId).slice(0, 40) },
+          })
+        }
         break
 
       // a heatsync DM was deleted on another client

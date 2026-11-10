@@ -262,15 +262,8 @@ ${extractFn(src('profile-card.js'), 'pcRefreshCardFor')}; return pcRefreshCardFo
 })
 
 describe('skipped on purpose (no ext surface)', () => {
-  test('thread dms, dm echo, held-message and kick-moderation frames are not handled', () => {
-    for (const t of [
-      'dm:message',
-      'dm:sent',
-      'dm:thread-update',
-      'message:approved',
-      'message:flagged',
-      'kick-moderation',
-    ]) {
+  test('dm echo, held-message and kick-moderation frames are not handled', () => {
+    for (const t of ['dm:sent', 'message:approved', 'message:flagged', 'kick-moderation']) {
       expect(BG.includes(`case '${t}'`)).toBe(false)
     }
   })

@@ -398,6 +398,49 @@ function handleIncomingDm(data) {
   whisperSaveDebounced()
 }
 
+// ── live threaded DMs (server dm:message / dm:thread-update / dm:typing) ──────
+// Background shapes the frame; these only decide what the whispers tab does.
+
+// A message in a thread. Your own sends echo back here — skip them (the local
+// echo already drew the line, and handleIncomingDm would paint it as incoming).
+function handleDmThreadMessage(data) {
+  if (!data || String(data.from_user_id) === String(hsCurrentUserId)) return
+  handleIncomingDm(data)
+}
+
+// A thread moved. The list we hold may be stale (a missed frame, a thread we
+// never fetched): forget the load latch so the next whispers render re-asks
+// /api/dm, and if the tab is open do that now — debounced, because a message
+// sends dm:message AND dm:thread-update back to back.
+let _dmThreadRefreshTimer = null
+function handleDmThreadUpdate() {
+  whisperDmsLoaded = false
+  if (currentTab !== 'whispers') return
+  clearTimeout(_dmThreadRefreshTimer)
+  _dmThreadRefreshTimer = setTimeout(() => {
+    if (currentTab === 'whispers') renderWhispersTab()
+  }, 1500)
+}
+
+// Someone you talk to is typing. A trailing "name …" row on the open whispers
+// tab; the next render (or the timeout) removes it. Strangers are ignored — the
+// row needs a name.
+const WHISPER_TYPING_MS = 6000
+function handleDmTyping(userId) {
+  if (String(userId) === String(hsCurrentUserId)) return
+  const who = whisperUsers.get(`hs:${userId}`)
+  const msgsEl = currentTab === 'whispers' ? document.getElementById('hs-mc-messages') : null
+  if (!who?.displayName || !msgsEl) return
+  const key = `hs:${userId}`
+  for (const old of msgsEl.querySelectorAll('.hs-dm-typing')) if (old.dataset.key === key) old.remove()
+  const row = document.createElement('div')
+  row.className = 'hs-mc-empty hs-dm-typing'
+  row.dataset.key = key
+  row.textContent = `${who.displayName} …`
+  msgsEl.appendChild(row)
+  setTimeout(() => row.remove(), WHISPER_TYPING_MS)
+}
+
 // Direct whisper using the page's twitch.tv session. Sends from whichever
 // Twitch acct is logged in on twitch.tv, independent of any HS JWT.
 //

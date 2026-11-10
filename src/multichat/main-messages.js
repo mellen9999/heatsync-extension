@@ -2208,6 +2208,39 @@ function zebraRepaint(msgsEl, from) {
     prev = el
   }
 }
+// Re-derive stripes UPWARD from `anchor`, the first row below a gap a removed
+// row left (null = the bottom). The anchor and everything under it keep their
+// stripes, since the newest rows are the ones being read; the older rows above
+// realign to them. zebraRepaint is the downward twin, for a row inserted mid-list.
+// A merged tab drops a fast platform's old rows from anywhere in the list on
+// every render, which used to leave two same-coloured rows touching.
+function zebraRepaintUp(msgsEl, anchor) {
+  const counted = (el) => el.id !== 'hs-mc-embed-player' && !el.dataset?.hsNotice && !el.classList.contains('hs-filled')
+  const set = (el, want) => {
+    if (el.classList.contains('hs-mc-zebra') === want) return
+    el.classList.toggle('hs-mc-zebra', want)
+    el.classList.toggle('hs-zebra', want)
+  }
+  // the row this one alternates against: the nearest counted row below it
+  let next = anchor
+  while (next && !counted(next)) next = next.nextElementSibling
+  for (let el = anchor ? anchor.previousElementSibling : msgsEl.lastElementChild; el; el = el.previousElementSibling) {
+    if (el.id === 'hs-mc-embed-player') continue
+    if (!counted(el)) {
+      set(el, false) // a notice or filled row never takes a stripe
+      continue
+    }
+    if (!zebraEnabled || el.dataset.hsNz) {
+      set(el, false)
+      // a never-striped row makes the row under it striped; if that row is
+      // plain, only a downward pass can fix it (rare: these rows are mostly filled)
+      if (zebraEnabled && next && !next.dataset.hsNz && !next.classList.contains('hs-mc-zebra'))
+        zebraRepaint(msgsEl, next)
+    } else if (next && !next.dataset.hsNz) set(el, !next.classList.contains('hs-mc-zebra'))
+    // else the lowest row, or one above a never-striped row: any stripe is in phase, keep it
+    next = el
+  }
+}
 function zebraOfInsert(m, prevDiv) {
   // the video player sits in the list but is not a row — stripe off the row before it
   // ...and neither does a notice row: stripe off the last row that was counted

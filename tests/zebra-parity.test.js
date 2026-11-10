@@ -22,6 +22,10 @@ const zebraOfInsert = new Function(
   `${sliceFn('zebraOfInsert')}; return zebraOfInsert`,
 )(true, NO_ZEBRA)
 const zebraRepaint = new Function('zebraEnabled', `${sliceFn('zebraRepaint')}; return zebraRepaint`)(true)
+const zebraRepaintUp = new Function(
+  'zebraEnabled',
+  `${sliceFn('zebraRepaint')}; ${sliceFn('zebraRepaintUp')}; return zebraRepaintUp`,
+)(true)
 
 // minimal linked-list DOM: rows with classList + sibling pointers
 function fakeList(types) {
@@ -41,7 +45,7 @@ function fakeList(types) {
     e.previousElementSibling = els[i - 1] || null
     e.nextElementSibling = els[i + 1] || null
   })
-  return { first: els[0], els, msgsEl: { firstElementChild: els[0] } }
+  return { first: els[0], els, msgsEl: { firstElementChild: els[0], lastElementChild: els[els.length - 1] } }
 }
 
 const row = (zebra) => ({ classList: { contains: (c) => c === 'hs-mc-zebra' && zebra } })
@@ -149,5 +153,53 @@ describe('zebra parity', () => {
     els[1].classList.toggle('hs-mc-zebra', true)
     zebraRepaint(msgsEl, els[0])
     expect(els.map((e) => e.classList.contains('hs-mc-zebra'))).toEqual([true, false, true, false])
+  })
+
+  // what a removal leaves: the list with row `gone` cut out, stripes untouched
+  function withRowRemoved(types, gone) {
+    const { els } = fakeList(types)
+    for (let i = 0; i < els.length; i++) els[i].classList.toggle('hs-mc-zebra', i % 2 === 1)
+    const kept = els.filter((_, i) => i !== gone)
+    kept.forEach((e, i) => {
+      e.previousElementSibling = kept[i - 1] || null
+      e.nextElementSibling = kept[i + 1] || null
+    })
+    return { kept, msgsEl: { firstElementChild: kept[0], lastElementChild: kept[kept.length - 1] }, below: kept[gone] }
+  }
+  const stripes = (els) => els.map((e) => e.classList.contains('hs-mc-zebra'))
+
+  test('a row removed mid-list: the rows above realign, the newest rows keep their stripes', () => {
+    const { kept, msgsEl, below } = withRowRemoved(['chat', 'chat', 'chat', 'chat', 'chat', 'chat'], 2)
+    const bottomBefore = stripes(kept.slice(2))
+    zebraRepaintUp(msgsEl, below)
+    expect(stripes(kept.slice(2))).toEqual(bottomBefore)
+    const s = stripes(kept)
+    for (let i = 1; i < s.length; i++) expect(s[i]).toBe(!s[i - 1])
+  })
+
+  test('the upward pass skips notices and filled rows like the downward one', () => {
+    const { kept, msgsEl, below } = withRowRemoved(
+      ['chat', 'stream-event', 'chat', 'mention', 'chat', 'chat', 'chat'],
+      4,
+    )
+    zebraRepaintUp(msgsEl, below)
+    const counted = kept.filter((e) => !e.dataset.hsNotice && !e.classList.contains('hs-filled'))
+    const s = stripes(counted)
+    for (let i = 1; i < s.length; i++) expect(s[i]).toBe(!s[i - 1])
+    expect(stripes(kept.filter((e) => !counted.includes(e)))).toEqual([false, false])
+  })
+
+  test('a removal at the very bottom anchors on the last row', () => {
+    const { kept, msgsEl } = withRowRemoved(['chat', 'chat', 'chat', 'chat'], 3)
+    const last = kept[kept.length - 1].classList.contains('hs-mc-zebra')
+    zebraRepaintUp(msgsEl, null)
+    expect(kept[kept.length - 1].classList.contains('hs-mc-zebra')).toBe(last)
+    const s = stripes(kept)
+    for (let i = 1; i < s.length; i++) expect(s[i]).toBe(!s[i - 1])
+  })
+
+  test('render restripes after a mid-list removal and after an in-place rebuild', () => {
+    expect(MAIN_SRC).toContain('if (zebraGap) zebraRepaintUp(msgsEl,')
+    expect(MAIN_SRC).toContain('if (zebraRebuilt) zebraRepaintUp(msgsEl, null)')
   })
 })

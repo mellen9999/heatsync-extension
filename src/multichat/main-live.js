@@ -440,6 +440,18 @@ function _renderMessagesImpl(id, opts) {
   const existingByKey = _rmExistingByKey
   existingByKey.clear()
   const detachedExtras = []
+  // a row removed below another leaves the rows under it a beat out of phase;
+  // the lowest such gap is where the upward restripe starts
+  let zebraGap = false
+  let zebraGapBelow = null
+  const dropRow = (c) => {
+    if (c.previousElementSibling) {
+      zebraGap = true
+      zebraGapBelow = c.nextElementSibling
+    }
+    _unindexMessageDiv(c)
+    c.remove()
+  }
   // Walk the LIVE HTMLCollection in place instead of materializing
   // [...msgsEl.children] (up to DOM_RENDER_CAP+scrollback nodes, every
   // render). Safe because we only ever advance `i` when the current child
@@ -462,18 +474,17 @@ function _renderMessagesImpl(id, opts) {
     const k = c.dataset?.msgKey
     if (k && desiredSet.has(k)) {
       if (existingByKey.has(k)) {
-        _unindexMessageDiv(c) // pre-existing dupe — drop the second copy
-        c.remove()
+        dropRow(c) // pre-existing dupe — drop the second copy
         continue
       }
       existingByKey.set(k, c)
     } else {
-      _unindexMessageDiv(c)
-      c.remove()
+      dropRow(c)
       continue
     }
     i++
   }
+  if (zebraGap) zebraRepaintUp(msgsEl, zebraGapBelow?.isConnected ? zebraGapBelow : null)
 
   // Bulletproof sticky-bottom: if the user hasn't scrolled up via input,
   // we re-pin unconditionally. Geometric "wasAtBottom" snapshot was
@@ -510,6 +521,7 @@ function _renderMessagesImpl(id, opts) {
   // case this is exactly "after the previous desired row" (the O(1) path).
   let prevNode = null
   let zebraFrom = null // first row whose stripe may now be out of phase
+  let zebraRebuilt = false // a stale row was rebuilt in place
   // The lowest row already on screen. A LIVE line (it carries an ord) is
   // never slotted above one: a kick line a beat behind the twitch line it
   // answers used to land 1-5 rows up, moving every row under it and flipping
@@ -549,20 +561,21 @@ function _renderMessagesImpl(id, opts) {
         if (nd) {
           nd.dataset.msgKey = key
           nd.dataset.hsEpoch = String(_renderEpoch)
-          // Recompute (not copy) zebra from the row above: the walk replaces
-          // in DOM order, so alternation stays consistent — and a zebra
-          // toggle-OFF bump actually strips stripes from old rows. The first
-          // row has nothing above and keeps its own stripe (the window
-          // slides, so the top row is not always a plain one).
-          const above = existing.previousElementSibling
-          if (above) stampZebra(nd, _rm, above)
-          else {
-            if (_NO_ZEBRA_TYPES.has(_rm.type)) nd.dataset.hsNz = '1'
-            if (_rm.type === 'stream-event') nd.dataset.hsNotice = '1'
-            const keepStripe = zebraEnabled && !nd.dataset.hsNz && existing.classList.contains('hs-mc-zebra')
-            nd.classList.toggle('hs-mc-zebra', keepStripe)
-            nd.classList.toggle('hs-zebra', keepStripe)
-          }
+          // Keep the old row's stripe; one upward pass after the walk settles
+          // them all, anchored on the newest row. Recomputing each from the
+          // row above mid-walk read neighbours not yet rebuilt (a row out of
+          // DOM order is visited early), so a bump could flip hundreds of rows.
+          // The pass also strips every stripe when zebra was just turned off.
+          if (_NO_ZEBRA_TYPES.has(_rm.type)) nd.dataset.hsNz = '1'
+          if (_rm.type === 'stream-event') nd.dataset.hsNotice = '1'
+          const keepStripe =
+            zebraEnabled &&
+            !nd.dataset.hsNz &&
+            !nd.classList.contains('hs-filled') &&
+            existing.classList.contains('hs-mc-zebra')
+          nd.classList.toggle('hs-mc-zebra', keepStripe)
+          nd.classList.toggle('hs-zebra', keepStripe)
+          zebraRebuilt = true
           _unindexMessageDiv(existing)
           msgsEl.replaceChild(nd, existing)
           _indexMessageDiv(nd, key)
@@ -614,6 +627,7 @@ function _renderMessagesImpl(id, opts) {
   // Re-pin yt-status notices to the very end.
   for (const ex of detachedExtras) msgsEl.appendChild(ex)
   if (zebraFrom) zebraRepaint(msgsEl, zebraFrom)
+  if (zebraRebuilt) zebraRepaintUp(msgsEl, null)
 
   // Final safety net: hard-cap DOM so no future regression can OOM the tab.
   // toRender is already sliced to 500; anything beyond that + yt-status

@@ -152,12 +152,16 @@ describe('fetchHealth — install-age bucket', () => {
     expect(await a('pre')).toBe('pre')
   })
 
-  test.each([[undefined], ['garbage'], ['2026-13-99'], [12345], [dayStamp(-1)], [dayStamp(-400)]])(
-    'stamp %p sends no a=',
-    async (stamp) => {
-      expect(await a(stamp)).toBeNull()
-    },
-  )
+  test.each([
+    [undefined],
+    ['garbage'],
+    ['2026-13-99'],
+    [12345],
+    [dayStamp(-1)],
+    [dayStamp(-400)],
+  ])('stamp %p sends no a=', async (stamp) => {
+    expect(await a(stamp)).toBeNull()
+  })
 
   test('an unpacked install sends no id and no a=', async () => {
     const h = makeHarness({ installedDay: dayStamp(0), installType: 'development' })

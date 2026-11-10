@@ -225,6 +225,7 @@ describe('cosmetic:changed refreshes flair and open cards', () => {
       'fetchCardPayload',
       'renderProfileCardView',
       `let activeProfileCard = env.activeProfileCard; const _cardCache = env._cardCache; const _profileCache = env._profileCache;
+${extractFn(src('profile-card.js'), 'pcRereadOpenCard')}
 ${extractFn(src('profile-card.js'), 'pcRefreshCardFor')}; return pcRefreshCardFor`,
     )(
       env,

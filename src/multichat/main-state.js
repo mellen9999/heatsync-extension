@@ -1675,8 +1675,11 @@ if (!_onceGuardsMain.profileColorListener) {
   _onceGuardsMain.profileColorListener = true
   try {
     cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+      if (msg?.type === 'follows_changed') return void pcRefreshAfterFollowChange()
       if (msg?.type !== 'profile_color') return
       applyLiveProfileColor(msg.usernames, msg.color)
+      // the open card shows that account's color too: re-ask it
+      if (msg.userId != null) pcRefreshCardFor([msg.userId])
     })
   } catch {}
 }

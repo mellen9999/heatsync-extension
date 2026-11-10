@@ -1660,6 +1660,8 @@ function handleWSMessage(msg) {
       // follows changed on another client / the site: re-read the list now
       case 'follows:changed':
         fetchFollowedUsers().catch(() => {})
+        // open profile cards hold a relationship that just went stale
+        broadcastToTabs({ type: 'follows_changed' })
         break
 
       // notifications read elsewhere: the server says how many are still unread

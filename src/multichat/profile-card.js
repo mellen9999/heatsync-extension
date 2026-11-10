@@ -413,6 +413,31 @@ function pcMountDestRow(items) {
   hsPaneMountRow(items)
 }
 
+// Re-ask the server about the open card and merge the answer over what it holds,
+// so the kick/yt enrichment it carries survives. A card closed or swapped while
+// the answer was in flight is left alone.
+function pcRereadOpenCard(open) {
+  fetchCardPayload(open.platform || 'twitch', open.username, open.followageChannel)
+    .then((p) => {
+      if (activeProfileCard !== open || !p?.profile) return
+      Object.assign(open.data, p.profile)
+      renderProfileCardView()
+    })
+    .catch(() => {})
+}
+
+// A follow changed somewhere (the site, another client, a follow-back): every
+// held card carries a stale relationship, so drop them all and re-read the open
+// one. Returns whether a card was re-read.
+function pcRefreshAfterFollowChange() {
+  if (typeof _cardCache !== 'undefined') _cardCache.clear()
+  if (typeof _profileCache !== 'undefined') _profileCache.clear()
+  const open = activeProfileCard
+  if (!open?.data || open.data.error) return false
+  pcRereadOpenCard(open)
+  return true
+}
+
 // A cosmetic push (flair, badges, display name, avatar) named these account ids:
 // drop the card payloads held for them, and re-read the open card if it is one of
 // them. Merged over the card's data so kick/yt enrichment it carries survives.
@@ -437,15 +462,7 @@ function pcRefreshCardFor(ids) {
     }
   }
   const open = activeProfileCard
-  if (open?.data && !open.data.error && open.data.id != null && want.has(String(open.data.id))) {
-    fetchCardPayload(open.platform || 'twitch', open.username, open.followageChannel)
-      .then((p) => {
-        if (activeProfileCard !== open || !p?.profile) return
-        Object.assign(open.data, p.profile)
-        renderProfileCardView()
-      })
-      .catch(() => {})
-  }
+  if (open?.data && !open.data.error && open.data.id != null && want.has(String(open.data.id))) pcRereadOpenCard(open)
   return dropped
 }
 

@@ -54,6 +54,7 @@ const authState = {
   joined: new Set(),
   joinWaiters: new Map(),
   lastData: 0,
+  openedAt: 0, // when twitch accepted this socket's login
   pongPending: false,
   token: null,
   nick: null,
@@ -213,6 +214,20 @@ function handleAuthIrcMessage(event) {
   }
 }
 
+// A twitch send that never echoed back: the socket may be dead while it still
+// reads as open (a sleep, a network switch, a hop that drops it silently), and
+// every send after it would go nowhere until a page refresh. Replace it, so the
+// next send goes out on a fresh one. A socket only just opened is not the cause.
+const AUTH_RECYCLE_MIN_AGE_MS = 15_000
+function recycleAuthIrc(reason) {
+  if (authState.destroyed || authState.connecting || !authState.ws || !authState.token || !authState.nick) return false
+  if (Date.now() - authState.openedAt < AUTH_RECYCLE_MIN_AGE_MS) return false
+  log('Auth IRC: replacing the socket after', reason)
+  const prev = cleanupAuthIrc()
+  scheduleReconnect(prev)
+  return true
+}
+
 function scheduleReconnect(prevChannels) {
   if (authState.destroyed || !authState.token || !authState.nick) return
   if (authState.reconnectTimer) return
@@ -262,6 +277,7 @@ async function connectAuthIrc(token, nick) {
         if (event.data.includes(' 001 ')) {
           authState.ready = true
           authState.lastData = Date.now()
+          authState.openedAt = authState.lastData
           authState.reconnectDelay = 1000
           cleanup.clearTimeout(timeout)
           resolve()

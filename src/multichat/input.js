@@ -570,6 +570,13 @@ function markPendingFailed(synthId, reason) {
   if (entry.timer) cleanup.clearTimeout(entry.timer)
   entry.state = 'failed'
   entry.reason = reason
+  // twitch never echoed it: the send socket is the suspect, so the next send
+  // gets a fresh one (recycleAuthIrc) instead of the same silent dead end
+  if (reason === 'no_echo' && entry.awaiting.has('twitch') && typeof recycleAuthIrc === 'function') {
+    try {
+      recycleAuthIrc('a send twitch never echoed')
+    } catch (_) {}
+  }
   if (reason === 'no_echo' && MC_DEBUG) {
     console.warn('[heatsync-ext] send no_echo:', {
       text: entry.text,

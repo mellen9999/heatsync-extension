@@ -91,7 +91,7 @@ ${TIMERS}
 ${DRAIN}
 ${CLEANUP}
 ${AUTH}
-return { authState, connectAuthIrc, authIrcAlive, drainChannelTimers, _timers }`,
+return { authState, connectAuthIrc, authIrcAlive, drainChannelTimers, recycleAuthIrc, _timers }`,
   )(
     (fn, ms) => add(fn, ms, 0),
     (fn, ms) => add(fn, ms, ms),
@@ -149,4 +149,22 @@ test('the page timers stay out of the drain only while they are live', async () 
   h.sockets[1].welcome()
   await h.advance(0)
   expect(h._timers.persistent.size).toBe(1) // the new socket's keepalive only
+})
+
+test('a send twitch never echoed replaces an older socket, and the next send has a fresh one', async () => {
+  const h = await connected()
+  h.authState.openedAt -= 60_000 // this socket has been up a minute
+  expect(h.recycleAuthIrc('test')).toBe(true)
+  expect(h.sockets[0].readyState).toBe(3)
+  await h.advance(2_000)
+  expect(h.sockets).toHaveLength(2)
+  h.sockets[1].welcome()
+  await h.advance(0)
+  expect(h.authIrcAlive()).toBe(true)
+})
+
+test('a socket that only just opened is not blamed for a missing echo', async () => {
+  const h = await connected()
+  expect(h.recycleAuthIrc('test')).toBe(false)
+  expect(h.sockets[0].readyState).toBe(1)
 })

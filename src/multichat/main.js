@@ -1076,7 +1076,7 @@ async function init() {
     {
       const _twNickRt = typeof authState !== 'undefined' && authState?.nick ? authState.nick.toLowerCase() : ''
       const notOwn = _twNickRt && msg.user && msg.user.toLowerCase() !== _twNickRt
-      const sentHost = notOwn ? null : peekSentHost(msg.text)
+      const sentHost = notOwn ? null : peekOwnSentHost(msg, 'twitch')
       if (sentHost) {
         // IRC origin — badges are Twitch namespace regardless of [K] retag.
         msg.badgePlatform = 'twitch'
@@ -1187,7 +1187,7 @@ async function init() {
     // which already renders as [K]. Gated on peekSentHost alone — same
     // cross-origin-null currentUsername reasoning as the IRC handler.
     {
-      const sentHost = peekSentHost(msg.text)
+      const sentHost = peekOwnSentHost(msg, 'kick')
       if (sentHost) {
         // Kick origin — badges look up in kickBadgeUrls.
         msg.badgePlatform = 'kick'

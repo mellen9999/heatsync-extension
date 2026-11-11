@@ -324,6 +324,16 @@ function peekSentHost(msgText) {
   return null
 }
 
+// peekSentHost for a row we are about to mark: the text match alone says "some
+// line said these words", so when this platform's own name is known and the
+// sender is someone else, it is not our send and keeps its own platform's mark.
+// Unknown self name (cross-origin popout) keeps the text-match proof as before.
+function peekOwnSentHost(msg, platform) {
+  const names = platform === 'twitch' || platform === 'kick' ? selfNamesFor(platform) : []
+  if (names.length && msg.user && !names.includes(String(msg.user).toLowerCase())) return null
+  return peekSentHost(msg.text)
+}
+
 // Own-reply echo bar. A reply we send is echoed back by whichever read transport
 // wins the race — the BG anon IRC socket or the native page tap — and only ONE
 // of them reliably carries reply-parent-* tags on our own message, so the bar

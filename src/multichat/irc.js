@@ -947,7 +947,7 @@ class IRC extends ChatClient {
             } catch {}
           }
           try {
-            const sentHost = peekSentHost(m.text)
+            const sentHost = peekOwnSentHost(m, 'twitch')
             if (sentHost) {
               // Cross-device simulcast replay: only ONE leg per send renders.
               if (claimHydratedEcho(m.text, 'twitch', m.time)) m.hidden = true
@@ -1081,7 +1081,7 @@ class IRC extends ChatClient {
           // Host attribution override — IRC echo arrives as platform='twitch';
           // if we tracked this exact text as a kick/yt/heatsync send, retag.
           try {
-            const sentHost = peekSentHost(m.text)
+            const sentHost = peekOwnSentHost(m, 'twitch')
             if (sentHost) {
               // Cross-device simulcast replay: only ONE leg per send renders.
               if (claimHydratedEcho(m.text, 'twitch', m.time)) m.hidden = true
@@ -1665,7 +1665,7 @@ class KickChat extends ChatClient {
             } catch {}
           }
           try {
-            const sentHost = peekSentHost(m.text)
+            const sentHost = peekOwnSentHost(m, 'kick')
             if (sentHost) {
               // Cross-device simulcast replay: only ONE leg per send renders.
               if (claimHydratedEcho(m.text, 'kick', m.time)) m.hidden = true
@@ -1849,7 +1849,7 @@ class KickChat extends ChatClient {
             } catch {}
           }
           try {
-            const sentHost = peekSentHost(m.text)
+            const sentHost = peekOwnSentHost(m, 'kick')
             if (sentHost) {
               // Cross-device simulcast replay: only ONE leg per send renders.
               if (claimHydratedEcho(m.text, 'kick', m.time)) m.hidden = true

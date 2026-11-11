@@ -3478,9 +3478,10 @@ function renderDiscoverPostRow(m) {
 
   if (m.platform) {
     const plat = document.createElement('span')
-    const code = m.platform === 'twitch' ? 't' : m.platform === 'kick' ? 'k' : m.platform === 'youtube' ? 'yt' : 'h'
+    const pm = platformMark(m.platform)
+    const code = { twitch: 't', kick: 'k', yt: 'yt', heatsync: 'h' }[pm.cls] || pm.cls
     plat.className = `hs-plat hs-plat-${code} hs-discover-post-plat`
-    plat.textContent = code === 'yt' ? 'Y' : code.toUpperCase()
+    plat.textContent = pm.letter
     meta.appendChild(plat)
   }
 

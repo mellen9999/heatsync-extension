@@ -83,6 +83,7 @@ function ytSubscribe(channelId, url, emoteChannel) {
     } catch (_) {}
   }
   emit(url)
+  hsYtOriginRoom(channelId, url)
   if (emoteChannel) {
     safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: emoteChannel, channelId: url })
   }
@@ -1221,6 +1222,7 @@ function handleYoutubeChatMsg(msg) {
     // Cache key for channel-emote lookup when channel itself isn't one
     // (yt-only config channels + auto-live). Render uses it over channel.
     emoteChannel: ytEmoteKey || undefined,
+    originKey: hsYtOriginKeyOf(targetChannelId),
     time: msg.time,
     platform: 'youtube',
     emotes: msg.emotes || [],
@@ -1373,6 +1375,10 @@ function listenForSocialEvents() {
         // through this very extension, so it usually wins the race).
         retroFoldOwnEchoes()
       } catch (_) {}
+      return
+    }
+    if (msg.type === 'ws_connected') {
+      hsOriginsReseed()
       return
     }
     if (msg.type === 'chat_origin' && msg.id) {

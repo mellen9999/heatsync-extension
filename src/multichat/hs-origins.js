@@ -35,7 +35,9 @@ function hsOriginStamp(m) {
       if (sid) m.hsSendId = sid
     }
   }
-  const ch = m.channel ? String(m.channel).toLowerCase().replace(/^@/, '') : ''
+  // a youtube row's `channel` is a twitch/kick hint or a literal: its origins key rides on originKey
+  const rawCh = plat === 'youtube' ? m.originKey : m.channel
+  const ch = rawCh ? String(rawCh).toLowerCase().replace(/^@/, '') : ''
   if (ch) {
     const seen = hsOriginSeeded[plat] || (hsOriginSeeded[plat] = new Map())
     if (Date.now() >= (seen.get(ch) ?? 0)) {
@@ -65,6 +67,43 @@ function hsOriginSeed(platform, channel) {
     .catch(() => hsOriginSeeded[platform].set(channel, Date.now() + 60_000))
 }
 
+// After the socket reconnects: every channel already seeded is asked again, so a chat:origin
+// missed during the drop is recovered (the server keeps 24h).
+function hsOriginsReseed() {
+  for (const [plat, seen] of Object.entries(hsOriginSeeded)) {
+    for (const ch of seen.keys()) {
+      seen.set(ch, Number.POSITIVE_INFINITY)
+      hsOriginSeed(plat, ch)
+    }
+  }
+}
+
+// The origins key of a youtube tab: the @handle in its URL, lowercase, else the legacy
+// /channel/UC… id; anything else (a watch?v= URL) has none. Same rule as the site's
+// youtubeOriginsChannel, and the key the server records and emits rooms under.
+function hsYtOriginsKey(url) {
+  if (!url || typeof url !== 'string') return null
+  const key = url.match(/@([\w.-]+)/)?.[1] || url.match(/\/channel\/(UC[\w-]+)/)?.[1]
+  return key && key.length <= 50 ? key.toLowerCase() : null
+}
+
+// A youtube tab joins the room `youtube/<key>` (the server only emits chat:origin to joined
+// rooms; youtube:subscribe joins none). The background replays channel:join on reconnect
+// (joinedExtraChannels). Remembers the key per tab so its rows can be seeded under it.
+const hsYtKeys = new Map() // tab/channel id -> origins key
+const hsYtJoined = new Set()
+function hsYtOriginRoom(channelId, url) {
+  const key = hsYtOriginsKey(url)
+  if (!key) return null
+  hsYtKeys.set(channelId, key)
+  if (!hsYtJoined.has(key)) {
+    hsYtJoined.add(key)
+    safeSendMessage({ type: 'ws_send', data: { type: 'channel:join', platform: 'youtube', channel: key } })
+  }
+  return key
+}
+const hsYtOriginKeyOf = (channelId) => hsYtKeys.get(channelId)
+
 // the one DOM patch for "this row is [H] now": the mark span's class, colour, text
 function hsMarkBadgeHeatsync(pb) {
   const hm = platformMark('heatsync')
@@ -92,4 +131,14 @@ function hsOriginLive(msg) {
   hsOriginRepaint()
 }
 
-export { hsMarkBadgeHeatsync, hsOriginLive, hsOriginNote, hsOriginRepaint, hsOriginStamp }
+export {
+  hsMarkBadgeHeatsync,
+  hsOriginLive,
+  hsOriginNote,
+  hsOriginRepaint,
+  hsOriginStamp,
+  hsOriginsReseed,
+  hsYtOriginKeyOf,
+  hsYtOriginRoom,
+  hsYtOriginsKey,
+}

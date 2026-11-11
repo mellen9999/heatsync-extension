@@ -1044,6 +1044,8 @@ async function connectWebSocket() {
         for (const room of feedRoomsHeld()) burst.push({ type: 'feed:join', feed: room })
 
         log(` 🌊 Connect burst queued: ${burst.length} msgs over ~${burst.length * 80}ms`)
+        // rooms are rejoined by then: tabs re-seed their origins (a chat:origin missed while down)
+        setTimeout(() => broadcastToTabs({ type: 'ws_connected' }), 5000)
         burst.forEach((msg, i) => {
           setTimeout(() => {
             if (!isSocketOpen()) return
@@ -1881,13 +1883,13 @@ function handleWSMessage(msg) {
         // A line in a room we joined was sent through heatsync (any sender).
         // Keyed by message id; the tabs flip the row if it is on screen or
         // stamp it when it arrives (the platform row often lands AFTER this).
-        if (msg.messageId && msg.origin === 'heatsync' && typeof msg.platform === 'string') {
+        if (msg.messageId && msg.origin === 'heatsync') {
           broadcastToTabs({
             type: 'chat_origin',
             platform: msg.platform,
             channel: msg.channel,
             id: msg.messageId,
-            sendId: msg.sendId || '',
+            sendId: msg.sendId,
           })
         }
         break

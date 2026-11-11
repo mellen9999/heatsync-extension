@@ -114,6 +114,8 @@ export async function launchFirefox() {
 
   return {
     version: created.capabilities.browserVersion,
+    /** A raw WebDriver call on this session (windows, tabs: what the helpers here don't cover). */
+    wd: <T = unknown>(method: string, path: string, body?: unknown) => call<T>(method, path, body),
     log: () => log,
 
     /** Install `dir` as a temporary add-on. A refusal says only "Extension is invalid"; the reason is in `consoleMessages()`. */

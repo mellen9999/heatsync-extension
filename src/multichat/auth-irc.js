@@ -112,7 +112,7 @@ function cleanupAuthIrc(destroy = false) {
   authState.pongPending = false
   authState.joined.clear()
   for (const [, w] of authState.joinWaiters) {
-    clearTimeout(w.timer)
+    cleanup.clearTimeout(w.timer)
     w.resolve(false)
   }
   authState.joinWaiters.clear()
@@ -140,7 +140,7 @@ function handleAuthIrcMessage(event) {
       authState.joined.add(ch)
       const w = authState.joinWaiters.get(ch)
       if (w) {
-        clearTimeout(w.timer)
+        cleanup.clearTimeout(w.timer)
         w.resolve(true)
         authState.joinWaiters.delete(ch)
       }
@@ -220,7 +220,7 @@ function scheduleReconnect(prevChannels) {
   authState.reconnectDelay = Math.min(delay * 2, 30000)
   const jitteredDelay = delay + Math.random() * 500
   log(`Auth IRC reconnect in ${delay}ms...`)
-  authState.reconnectTimer = cleanup.setTimeout(async () => {
+  authState.reconnectTimer = cleanup.setPageTimeout(async () => {
     authState.reconnectTimer = null
     if (authState.destroyed || authIrcAlive()) return
     const ok = await connectAuthIrc(authState.token, authState.nick)
@@ -252,7 +252,7 @@ async function connectAuthIrc(token, nick) {
     const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443')
     authState.ws = ws
     await new Promise((resolve, reject) => {
-      const timeout = cleanup.setTimeout(() => reject(new Error('timeout')), 8000)
+      const timeout = cleanup.setPageTimeout(() => reject(new Error('timeout')), 8000)
       ws.onopen = () => {
         ws.send(`PASS oauth:${token}\r\n`)
         ws.send(`NICK ${nick}\r\n`)
@@ -299,7 +299,7 @@ async function connectAuthIrc(token, nick) {
     }
     ws.onerror = () => {}
     // Keepalive PING every 30s — detect dead sockets fast
-    authState.keepaliveTimer = cleanup.setInterval(() => {
+    authState.keepaliveTimer = cleanup.setPageInterval(() => {
       if (!authState.ws || authState.ws.readyState !== WebSocket.OPEN) return
       if (authState.pongPending) {
         log('Auth IRC: PONG timeout, reconnecting')
@@ -340,7 +340,7 @@ function joinChannel(channel) {
     // sends for the WS lifetime — every later PRIVMSG to that channel hit
     // tmi.twitch.tv as a never-joined client and dropped without a NOTICE.
     // Now: longer timeout, no fake-success; caller retries via sendIrcMessage.
-    const timer = cleanup.setTimeout(() => {
+    const timer = cleanup.setPageTimeout(() => {
       authState.joinWaiters.delete(channel)
       resolve(false)
     }, 2000)

@@ -117,7 +117,7 @@ function eswScheduleReconnect() {
   eswState.reconnectDelay = Math.min(delay * 2, 30000)
   const jitteredDelay = delay + Math.random() * delay * 0.5
   log(`EventSub reconnect in ${delay}ms`)
-  eswState.reconnectTimer = cleanup.setTimeout(() => {
+  eswState.reconnectTimer = cleanup.setPageTimeout(() => {
     eswState.reconnectTimer = null
     if (eswState.destroyed) return
     if (eswState.ws?.readyState === WebSocket.OPEN) return
@@ -180,7 +180,7 @@ function eswHandleMessage() {
       // server reconnect mid-POST would otherwise create a duplicate sub).
       if (!eswState.subscribed && !eswState.subscribing) eswSubscribeWhispers()
       if (eswState.keepaliveTimer) cleanup.clearInterval(eswState.keepaliveTimer)
-      eswState.keepaliveTimer = cleanup.setInterval(() => {
+      eswState.keepaliveTimer = cleanup.setPageInterval(() => {
         if (Date.now() - eswState.lastMessageTime > eswState.keepaliveTimeoutMs) {
           log('EventSub: keepalive timeout — reconnecting')
           eswCleanup()
@@ -252,7 +252,7 @@ async function eswConnect(urlOverride) {
     ws.onerror = () => {}
     if (oldWs) {
       eswState.oldWs = oldWs
-      eswState.oldWsCloseTimer = cleanup.setTimeout(() => {
+      eswState.oldWsCloseTimer = cleanup.setPageTimeout(() => {
         eswState.oldWsCloseTimer = null
         if (eswState.oldWs === oldWs) eswState.oldWs = null
         try {

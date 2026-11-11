@@ -261,20 +261,7 @@ function fullSpaReinit() {
   // ids (module-load registrations: bootstrap's ctx-death detector, emotes'
   // DOM-scan poller) are kept — they're not re-registered by init(). The
   // spa-reinit setTimeout below is registered AFTER this drain, so it survives.
-  _timers.intervals = _timers.intervals.filter((id) => {
-    if (_timers.persistent.has(id)) return true
-    try {
-      clearInterval(id)
-    } catch {}
-    return false
-  })
-  _timers.timeouts = _timers.timeouts.filter((id) => {
-    if (_timers.persistent.has(id)) return true
-    try {
-      clearTimeout(id)
-    } catch {}
-    return false
-  })
+  drainChannelTimers()
   // Null the sentinels whose observers/timers were just disconnected/cleared
   // above. Their "already running" guards (if (columnObserver) return,
   // if (!mcCosmeticsTimer), if (_persistMentionsState.timer) return, etc.)

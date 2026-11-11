@@ -41,6 +41,24 @@ const mcSignal = lifecycle.signal
 // every other per-channel timer so they don't stack one set per navigation,
 // but skips these. lifecycle.abort() (full teardown) still clears everything.
 const _timers = { intervals: [], timeouts: [], observers: [], persistent: new Set() }
+// The channel switch's half of the teardown: every per-channel timer goes,
+// the persistent ones stay. init() re-registers its own pollers afterwards.
+function drainChannelTimers() {
+  _timers.intervals = _timers.intervals.filter((id) => {
+    if (_timers.persistent.has(id)) return true
+    try {
+      clearInterval(id)
+    } catch {}
+    return false
+  })
+  _timers.timeouts = _timers.timeouts.filter((id) => {
+    if (_timers.persistent.has(id)) return true
+    try {
+      clearTimeout(id)
+    } catch {}
+    return false
+  })
+}
 const _pendingRafs = new Set()
 // Singleton DOM nodes appended to <body> (tooltips, toasts, overlays). On
 // SPA reinit / pagehide, lifecycle.abort() removes them so they don't pile up
@@ -1010,6 +1028,7 @@ const cleanup = {
   },
   clearInterval(id) {
     clearInterval(id)
+    _timers.persistent.delete(id)
     const i = _timers.intervals.indexOf(id)
     if (i !== -1) _timers.intervals.splice(i, 1)
   },
@@ -1021,6 +1040,7 @@ const cleanup = {
   setTimeout(fn, ms) {
     const w = _hsPerfWrap(fn, ms, 'timeout')
     const id = setTimeout(() => {
+      _timers.persistent.delete(id)
       const idx = _timers.timeouts.indexOf(id)
       if (idx !== -1) _timers.timeouts.splice(idx, 1)
       w()
@@ -1030,8 +1050,24 @@ const cleanup = {
   },
   clearTimeout(id) {
     clearTimeout(id)
+    _timers.persistent.delete(id)
     const i = _timers.timeouts.indexOf(id)
     if (i !== -1) _timers.timeouts.splice(i, 1)
+  },
+  // Timers of something that outlives a channel switch: the send socket and
+  // the whispers socket stay open across twitch's in-page navigation, so their
+  // keepalive, reconnect and handshake timers must stay too. A drained
+  // keepalive left a dead socket reading as alive, and every send after it
+  // went nowhere until a page refresh. Full teardown still clears them.
+  setPageTimeout(fn, ms) {
+    const id = cleanup.setTimeout(fn, ms)
+    _timers.persistent.add(id)
+    return id
+  },
+  setPageInterval(fn, ms) {
+    const id = cleanup.setInterval(fn, ms)
+    _timers.persistent.add(id)
+    return id
   },
   // `opts` is merged, with signal always forced to mcSignal so teardown can
   // never be opted out of. It used to be absent from the signature while

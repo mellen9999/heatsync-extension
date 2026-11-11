@@ -37,6 +37,8 @@ function load({ loggedIn = true, helix } = {}) {
     clearTimeout: (t) => clearTimeout(t),
     setInterval: (fn, ms) => setInterval(fn, ms),
     clearInterval: (t) => clearInterval(t),
+    setPageTimeout: (fn, ms) => setTimeout(fn, ms),
+    setPageInterval: (fn, ms) => setInterval(fn, ms),
   }
   const make = new Function(
     'WebSocket',

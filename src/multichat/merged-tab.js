@@ -153,4 +153,107 @@ function mtNoteAppend() {
   }
 }
 
-export { MT_OVERSHOOT, MT_RECONCILE_MS, mergedTabSources, mtAppendOk, mtRegime }
+// One send to several platforms arrives once per platform: the twitch copy and
+// the kick copy of the same line. The pane shows it once, by the site's rule:
+// the same sender, the same words, on a platform that row does not stand for
+// yet, within LEG_WINDOW_MS. Folding used to hang on the send being announced
+// live (chat:origin_broadcast, then isSentEcho), so a pane opened after the
+// send, or filled from history, never heard of it and showed every leg.
+// A view-level fold: the buffers keep every leg, so a kick-only view still
+// shows its own copy.
+const LEG_WINDOW_MS = 5000
+function legPlatform(m) {
+  const p = m.badgePlatform || m.platform || 'twitch'
+  return p === 'yt' ? 'youtube' : p
+}
+// Who a row stands for so far: the platforms its legs came from, the names
+// they were sent under, and whether any of them is you.
+function legGroup(legs, row) {
+  let g = legs.get(row)
+  if (!g) {
+    g = {
+      plats: new Set([legPlatform(row)]),
+      names: new Set([String(row.user || '').toLowerCase()]),
+      self: legIsSelf(row),
+    }
+    legs.set(row, g)
+  }
+  return g
+}
+function legIsSelf(m) {
+  return typeof isSelf === 'function' && isSelf(m, legPlatform(m))
+}
+// the words as typed: kick's emote markup, twitch's duplicate-bypass mark and a
+// reply's leading @name are what one platform adds and another doesn't
+function legText(m) {
+  let t = String(m.text || '')
+  try {
+    t = _unkickEmotes(stripDupBypass(t))
+  } catch (_) {}
+  if (m.replyTo?.user) t = t.replace(/^@\S+\s+/, '')
+  return t.replace(/\s+/g, ' ').trim()
+}
+// Is `m` another platform's copy of `row`? One sender: a name one of its legs
+// was sent under, or you under whatever name each platform knows you by.
+// `legs` (row → legGroup) is the caller's, so a real repeat on a platform the
+// row already stands for stays its own line.
+function isSimulcastLeg(row, m, legs) {
+  if (!row || row.type || m.type || !row.time || !m.time) return false
+  if (Math.abs(m.time - row.time) > LEG_WINDOW_MS) return false
+  if (legText(row) !== legText(m)) return false
+  const g = legGroup(legs, row)
+  const p = legPlatform(m)
+  if (g.plats.has(p)) return false
+  const name = String(m.user || '').toLowerCase()
+  const self = legIsSelf(m)
+  if (!(name && g.names.has(name)) && !(self && g.self)) return false
+  g.plats.add(p)
+  g.names.add(name)
+  g.self ||= self
+  return true
+}
+// msgs chronological (fairMerge's order); the earliest leg stands for the rest
+function foldSimulcastLegs(msgs) {
+  const out = []
+  const legs = new Map()
+  for (const m of msgs) {
+    if (!m || m.type || typeof m.text !== 'string' || !m.time) {
+      out.push(m)
+      continue
+    }
+    let folded = false
+    for (let j = out.length - 1, n = 0; j >= 0 && n < 80; j--, n++) {
+      const row = out[j]
+      if (row?.time && m.time - row.time > LEG_WINDOW_MS) break
+      if (isSimulcastLeg(row, m, legs)) {
+        folded = true
+        break
+      }
+    }
+    if (!folded) out.push(m)
+  }
+  return out
+}
+// The append path's question: could `m` be a leg of a line already on screen?
+// Then the render decides (it knows every leg each row stands for).
+function mayBeSimulcastLeg(m, rowEls) {
+  if (m.type || typeof m.text !== 'string' || !m.time) return false
+  for (let i = rowEls.length - 1, n = 0; i >= 0 && n < 40; i--, n++) {
+    const row = rowEls[i]?._hsMsg
+    if (!row?.time) continue
+    if (m.time - row.time > LEG_WINDOW_MS) break
+    if (isSimulcastLeg(row, m, new Map())) return true
+  }
+  return false
+}
+
+export {
+  foldSimulcastLegs,
+  LEG_WINDOW_MS,
+  MT_OVERSHOOT,
+  MT_RECONCILE_MS,
+  mayBeSimulcastLeg,
+  mergedTabSources,
+  mtAppendOk,
+  mtRegime,
+}

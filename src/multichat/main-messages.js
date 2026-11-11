@@ -1846,7 +1846,11 @@ function appendMessage(msg, tabId) {
   // platform, and it runs soon (merged-tab.js). Anything the render has to see
   // first goes to it now.
   const merged = isMultiPlatformTab(tabId)
-  if (merged && !mtCanAppend(msg, tabId, _ff.dups)) {
+  if (
+    merged &&
+    (!mtCanAppend(msg, tabId, _ff.dups) ||
+      mayBeSimulcastLeg(msg, document.getElementById('hs-mc-messages')?.children || []))
+  ) {
     scheduleMergedRender()
     return true // tell caller we handled it
   }

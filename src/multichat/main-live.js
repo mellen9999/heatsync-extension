@@ -220,6 +220,7 @@ function _renderMessagesImpl(id, opts) {
 
   const _ff = _filterFlags()
   let toRender = msgs.filter((m) => !m?.hidden && !isMsgFiltered(m, _ff))
+  if (mtSrcs) toRender = foldSimulcastLegs(toRender)
   if (_ff.dups) {
     const out = []
     let prevText = null

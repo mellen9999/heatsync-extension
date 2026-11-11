@@ -369,7 +369,9 @@ describe('wiring in main.js', () => {
   const append = sliceBetween(MAIN_SRC, 'function appendMessage(msg, tabId) {', '// Render epoch')
   test('a merged tab asks the gate before appending, and the render otherwise', () => {
     expect(append).toMatch(/const merged = isMultiPlatformTab\(tabId\)/)
-    expect(append).toMatch(/if \(merged && !mtCanAppend\(msg, tabId, _ff\.dups\)\) \{\s*scheduleMergedRender\(\)/)
+    expect(append).toMatch(
+      /merged &&\s*\(!mtCanAppend\(msg, tabId, _ff\.dups\) \|\|\s*mayBeSimulcastLeg\([^)]*\)[^)]*\)\)\s*\) \{\s*scheduleMergedRender\(\)/,
+    )
   })
   test('the append never trims a merged tab (the platform-blind slice is single-platform only)', () => {
     expect(append).toMatch(

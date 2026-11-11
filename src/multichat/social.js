@@ -2327,12 +2327,9 @@ function buildFeedMessageDiv(m, opUsername) {
   // message-element renderer (`!user_id || display_name === 'Anonymous'`).
   const isAnon = !m.user_id || m.username === 'Anonymous'
 
-  // Platform badge: [T]/[K]/[Y] (hidden for anonymous)
-  const platLabel =
-    m.platform === 'kick' ? '[K]' : m.platform === 'youtube' ? '[Y]' : m.platform === 'twitch' ? '[T]' : ''
-  const platBadge = platLabel
-    ? `<span class="hs-feed-tag" style="color:${HS_PLAT_COLORS[m.platform]}">${platLabel}</span>`
-    : ''
+  // Platform badge via platformMark; native heatsync posts carry no platform, so no badge
+  const feedMark = m.platform ? platformMark(m.platform) : null
+  const platBadge = feedMark ? `<span class="hs-feed-tag" style="color:${feedMark.color}">${feedMark.label}</span>` : ''
 
   const timeHtml = window._hsTimestampsEnabled !== false ? `<span class="hs-feed-time">${escapeHtml(time)}</span>` : ''
 

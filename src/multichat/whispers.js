@@ -804,8 +804,7 @@ function renderWhispersTab() {
 
     const ts = formatTimeFromTs(m.time)
     const tsHtml = ts ? `<span class="hs-mc-ts">${ts}</span>` : ''
-    const platColor = m.platform === 'twitch' ? 'var(--hs-plat-twitch)' : 'var(--hs-plat-hs)'
-    const platTag = m.platform === 'twitch' ? 'T' : 'H'
+    const wmark = platformMark(m.platform)
 
     // Show sender -> recipient for both directions (the links below swap by
     // m.self, so the separator itself is direction-free on purpose)
@@ -883,7 +882,7 @@ function renderWhispersTab() {
     const replyBtn = `<button class="hs-mc-reply-btn hs-whisper-reply" data-wkey="${escapeHtml(m.key)}" title="${escapeHtml(t('mc_misc_reply_to', [them]))}">↩</button>`
     const dirColor = m.self ? 'var(--hs-brand)' : 'var(--hs-reply)'
     const arrow = `<span class="hs-whisper-arrow" style="color:${dirColor}">→</span>`
-    div.innerHTML = `${tsHtml}<span style="color:${platColor};font-size:13px;font-weight:700">[${platTag}]</span> ${senderLink}${arrow}${recipientLink}: ${whisperBody}${statusHtml}${replyBtn}`
+    div.innerHTML = `${tsHtml}<span style="color:${wmark.color};font-size:13px;font-weight:700">${wmark.label}</span> ${senderLink}${arrow}${recipientLink}: ${whisperBody}${statusHtml}${replyBtn}`
     frag.appendChild(div)
   }
 

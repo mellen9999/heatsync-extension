@@ -59,12 +59,8 @@ function buildMessageDiv(m, tabId) {
     const isYtEvent = m.platform === 'youtube'
     const evtPlat = streamEventPlatform(m.platform)
     // [T]/[K]/[Y] platform badge on every went-live / switch / offline row — the same
-    // span and gate as regular chat rows (PLAT_COLORS token, platformBadgesEnabled).
-    const evtBadge = { twitch: 'twitch', kick: 'kick', youtube: 'yt' }[evtPlat]
-    const platBadge =
-      platformBadgesEnabled || evtBadge !== hostPlatform
-        ? `<span class="hs-mc-platform-badge hs-mc-pb-${evtBadge}" style="font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle;color:${PLAT_COLORS[evtBadge]}">[${evtBadge === 'yt' ? 'Y' : evtBadge === 'kick' ? 'K' : 'T'}]</span>`
-        : ''
+    // span and gate as regular chat rows (platformMarkHtml).
+    const platBadge = platformMarkHtml(m.platform || 'twitch', { enabled: platformBadgesEnabled, host: hostPlatform })
     // For redeems, the actor is the redeemer (m.actor). For other events the channel is the actor.
     const ch = m.actor || m.channel || ''
     const chLc = ch.toLowerCase()
@@ -262,10 +258,8 @@ function buildMessageDiv(m, tabId) {
     // says what it actually is (both used to render [DM], which was wrong)
     const labelText = m.platform === 'twitch' ? '[whisper]' : '[DM]'
     const label = `<span style="color:${dirColor};font-size:13px;font-weight:700;margin-right:4px">${labelText}</span>`
-    const platBadge =
-      m.platform === 'twitch'
-        ? '<span style="color:var(--hs-plat-twitch);font-size:13px;font-weight:700;margin-right:3px">[T]</span>'
-        : '<span style="color:#fff;font-size:13px;font-weight:700;margin-right:3px">[HS]</span>'
+    const wm = platformMark(m.platform)
+    const platBadge = `<span style="color:${wm.color};font-size:13px;font-weight:700;margin-right:3px">${wm.label}</span>`
     // Heatsync paint (twitch whispers AND native heatsync DMs), then 7TV on
     // twitch ids, then the flat colour the row carries.
     const dm = hsNameParts({
@@ -643,15 +637,12 @@ function buildMessageDiv(m, tabId) {
     badges += renderThirdPartyBadges(uidTwitch)
     if (mcCosmeticsNeedLookup(uidTwitch)) queueMcCosmeticsLookup(uidTwitch)
   }
-  const plat =
-    m.platform === 'youtube' ? 'yt' : m.platform === 'kick' ? 'kick' : m.platform === 'heatsync' ? 'heatsync' : 'twitch'
-  const platLabel = plat === 'yt' ? '[Y]' : plat === 'kick' ? '[K]' : plat === 'heatsync' ? '[H]' : '[T]'
+  // twitch chat rows carry no platform (convention); anything else unknown renders [?]
+  const mark = platformMark(m.platform || 'twitch')
+  const plat = mark.cls
   // after the chatterino badge, before the name: sub flair, 🔥, heat bar (twitch rows only)
   const marksHtml = plat === 'twitch' ? hsMarksRowHtml(m, String(uidTwitch || '')) : ''
-  const platformBadge =
-    platformBadgesEnabled || plat !== hostPlatform
-      ? `<span class="hs-mc-platform-badge hs-mc-pb-${plat}" style="font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle;color:${PLAT_COLORS[plat]}">${platLabel}</span>`
-      : ''
+  const platformBadge = platformMarkHtml(m.platform || 'twitch', { enabled: platformBadgesEnabled, host: hostPlatform })
   const safeScColor = sanitizeColor(m.scColor || '#ffff00')
   const scBadge =
     isSuperChat && m.amount

@@ -733,6 +733,7 @@ async function handleMessage(message, sender, sendResponse) {
       'multichat:sync',
       'ui-state:sync',
       'twitch:chat:relay',
+      'chat:origin_tag',
     ]
     if (message.data && allowedWsTypes.includes(message.data.type)) {
       // Track multichat-added channel joins so we can replay on WS reconnect

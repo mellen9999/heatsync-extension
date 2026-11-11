@@ -47,7 +47,7 @@ describe('live retro-fold', () => {
     // laggier timestamps — surviving them strands the [H] row rows-up.
     expect(FOLD).toContain("legs.find((l) => (l.m.platform || 'twitch') === 'twitch')")
     expect(FOLD).toContain("m.platform = 'heatsync'")
-    expect(FOLD).toContain("platformMark('heatsync')")
+    expect(FOLD).toContain('hsMarkBadgeHeatsync(pb)')
     expect(FOLD).toContain('leg.m.hidden = true')
     expect(FOLD).toContain('leg.div.remove()')
     expect(FOLD).toContain('_unindexMessageDiv(leg.div)')

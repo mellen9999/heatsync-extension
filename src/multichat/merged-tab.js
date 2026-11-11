@@ -193,12 +193,33 @@ function legText(m) {
   if (m.replyTo?.user) t = t.replace(/^@\S+\s+/, '')
   return t.replace(/\s+/g, ' ').trim()
 }
+// true: same send id; false: both carry one and they differ; null: no verdict
+function legSendVerdict(row, m) {
+  if (typeof hsOriginStamp === 'function') {
+    hsOriginStamp(row)
+    hsOriginStamp(m)
+  }
+  if (!row.hsSendId || !m.hsSendId) return null
+  return row.hsSendId === m.hsSendId
+}
 // Is `m` another platform's copy of `row`? One sender: a name one of its legs
 // was sent under, or you under whatever name each platform knows you by.
 // `legs` (row → legGroup) is the caller's, so a real repeat on a platform the
 // row already stands for stays its own line.
 function isSimulcastLeg(row, m, legs) {
-  if (!row || row.type || m.type || !row.time || !m.time) return false
+  if (!row || row.type || m.type) return false
+  // one send id = one send, at any distance; two different ids never fold. Only
+  // rows with no id on one side fall back to the by-name rule below.
+  const sid = legSendVerdict(row, m)
+  if (sid != null) {
+    if (!sid) return false
+    const g = legGroup(legs, row)
+    const p = legPlatform(m)
+    if (g.plats.has(p)) return false
+    g.plats.add(p)
+    return true
+  }
+  if (!row.time || !m.time) return false
   if (Math.abs(m.time - row.time) > LEG_WINDOW_MS) return false
   if (legText(row) !== legText(m)) return false
   const g = legGroup(legs, row)
@@ -216,12 +237,16 @@ function isSimulcastLeg(row, m, legs) {
 function foldSimulcastLegs(msgs) {
   const out = []
   const legs = new Map()
+  const bySend = new Map() // send id -> the row standing for it
   for (const m of msgs) {
     if (!m || m.type || typeof m.text !== 'string' || !m.time) {
       out.push(m)
       continue
     }
     let folded = false
+    if (typeof hsOriginStamp === 'function') hsOriginStamp(m)
+    const standing = m.hsSendId ? bySend.get(m.hsSendId) : null
+    if (standing && isSimulcastLeg(standing, m, legs)) continue
     for (let j = out.length - 1, n = 0; j >= 0 && n < 80; j--, n++) {
       const row = out[j]
       if (row?.time && m.time - row.time > LEG_WINDOW_MS) break
@@ -230,7 +255,10 @@ function foldSimulcastLegs(msgs) {
         break
       }
     }
-    if (!folded) out.push(m)
+    if (!folded) {
+      out.push(m)
+      if (m.hsSendId) bySend.set(m.hsSendId, m)
+    }
   }
   return out
 }
@@ -238,6 +266,14 @@ function foldSimulcastLegs(msgs) {
 // Then the render decides (it knows every leg each row stands for).
 function mayBeSimulcastLeg(m, rowEls) {
   if (m.type || typeof m.text !== 'string' || !m.time) return false
+  if (typeof hsOriginStamp === 'function') hsOriginStamp(m)
+  if (m.hsSendId) {
+    // any distance, same send id
+    for (let i = rowEls.length - 1, n = 0; i >= 0 && n < 600; i--, n++) {
+      const r = rowEls[i]?._hsMsg
+      if (r && !r.type && isSimulcastLeg(r, m, new Map())) return true
+    }
+  }
   for (let i = rowEls.length - 1, n = 0; i >= 0 && n < 40; i--, n++) {
     const row = rowEls[i]?._hsMsg
     if (!row?.time) continue

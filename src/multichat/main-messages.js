@@ -639,10 +639,12 @@ function buildMessageDiv(m, tabId) {
   }
   // twitch chat rows carry no platform (convention); anything else unknown renders [?]
   const mark = platformMark(m.platform || 'twitch')
+  // sent through heatsync (by message id, any viewer's): [H] whatever platform echoed it
+  const markPlat = hsOriginStamp(m) ? 'heatsync' : m.platform || 'twitch'
   const plat = mark.cls
   // after the chatterino badge, before the name: sub flair, 🔥, heat bar (twitch rows only)
   const marksHtml = plat === 'twitch' ? hsMarksRowHtml(m, String(uidTwitch || '')) : ''
-  const platformBadge = platformMarkHtml(m.platform || 'twitch', { enabled: platformBadgesEnabled, host: hostPlatform })
+  const platformBadge = platformMarkHtml(markPlat, { enabled: platformBadgesEnabled, host: hostPlatform })
   const safeScColor = sanitizeColor(m.scColor || '#ffff00')
   const scBadge =
     isSuperChat && m.amount

@@ -899,6 +899,7 @@ const MULTICHAT_MODULES = [
   'user-notes.js',
   'mod-log.js',
   'live-search.js',
+  'hs-origins.js',
   'merged-tab.js',
   'stream-stats.js',
   'player-guard.js',

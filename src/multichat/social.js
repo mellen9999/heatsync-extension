@@ -1375,6 +1375,11 @@ function listenForSocialEvents() {
       } catch (_) {}
       return
     }
+    if (msg.type === 'chat_origin' && msg.id) {
+      // a line in a joined room was sent through heatsync (any sender): flip its mark
+      hsOriginLive(msg)
+      return
+    }
     if (msg.type === 'seen_update') {
       // Another client (web, other browser, ext on another tab) bumped a
       // tab's seen-at. Apply locally so the red dot clears here too.

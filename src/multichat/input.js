@@ -263,10 +263,7 @@ function retroFoldOwnEchoes() {
     m.platform = 'heatsync'
     const pb = survivor.div.querySelector('.hs-mc-platform-badge')
     if (pb) {
-      const hm = platformMark('heatsync')
-      pb.className = `hs-mc-platform-badge hs-mc-pb-${hm.cls}`
-      pb.style.color = hm.color
-      pb.textContent = hm.label
+      hsMarkBadgeHeatsync(pb)
     }
   }
   for (const leg of legs) {

@@ -1877,6 +1877,21 @@ function handleWSMessage(msg) {
         } catch {}
         break
 
+      case 'chat:origin':
+        // A line in a room we joined was sent through heatsync (any sender).
+        // Keyed by message id; the tabs flip the row if it is on screen or
+        // stamp it when it arrives (the platform row often lands AFTER this).
+        if (msg.messageId && msg.origin === 'heatsync' && typeof msg.platform === 'string') {
+          broadcastToTabs({
+            type: 'chat_origin',
+            platform: msg.platform,
+            channel: msg.channel,
+            id: msg.messageId,
+            sendId: msg.sendId || '',
+          })
+        }
+        break
+
       case 'chat:origin_broadcast':
         // User sent a chat message from the heatsync.org chat-tile on a
         // different device — fan out to all tabs so multichat can tag the

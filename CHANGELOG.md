@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.131] — 2026-11-11
+
+### fixed
+- **[H] on your own sends** — a line you send from the extension now shows [H] for everyone and after a refresh, on twitch, kick and youtube. it used to show [H] only on your screen.
+
 ## [1.7.130] — 2026-11-11
 
 ### added

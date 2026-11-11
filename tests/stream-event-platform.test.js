@@ -71,9 +71,7 @@ describe('the page keeps the event platform end to end', () => {
       MAIN.indexOf("if (m.type === 'stream-event') {"),
       MAIN.indexOf("if (m.type === 'feed-post') {"),
     )
-    expect(branch).toContain("{ twitch: 'twitch', kick: 'kick', youtube: 'yt' }[evtPlat]")
-    expect(branch).toContain('hs-mc-pb-${evtBadge}')
-    expect(branch).toContain('color:${PLAT_COLORS[evtBadge]}')
+    expect(branch).toContain("platformMarkHtml(m.platform || 'twitch'")
     expect(branch).toContain('${tsSpan}${platBadge}${nameBlock}')
     expect(branch).not.toContain('isYtEvent && (platformBadgesEnabled')
   })

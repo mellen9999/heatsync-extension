@@ -14,7 +14,9 @@ const MODS = readFileSync(join(ROOT, 'src', 'lib', 'modifiers.js'), 'utf8')
 const EMOTES = readFileSync(join(ROOT, 'src', 'multichat', 'emotes.js'), 'utf8')
 // lib/palette.js is concatenated ahead of the overlay modules in the real bundle (build.js
 // LIB_ORDER), exports stripped, same scope — load it the same way here
-const PALETTE = readFileSync(join(ROOT, 'src', 'lib', 'palette.js'), 'utf8').replace(/^export /gm, '')
+const PALETTE = readFileSync(join(ROOT, 'src', 'lib', 'palette.js'), 'utf8')
+  .replace(/^export /gm, '')
+  .replace(/^import .*$/gm, '')
 const TIPS = readFileSync(join(ROOT, 'src', 'multichat', 'tooltips.js'), 'utf8')
 
 const modsApi = new Function(

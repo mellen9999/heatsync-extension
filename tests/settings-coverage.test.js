@@ -98,7 +98,7 @@ describe('platform badges: the off state is deliberate, and the copy says so', (
   test('off hides only the badge for the platform you are on', () => {
     // Not a bug: a [K] on a twitch page is information, a [T] is noise. The
     // pin exists so nobody "fixes" this into hiding all three.
-    expect(MAIN).toContain('platformBadgesEnabled || plat !== hostPlatform')
+    expect(MAIN).toContain('enabled: platformBadgesEnabled, host: hostPlatform')
   })
 
   test('the description does not promise more than that', () => {

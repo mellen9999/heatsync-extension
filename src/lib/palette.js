@@ -1,3 +1,5 @@
+import { escapeHtml } from './utils.js'
+
 // Palette — the ONE source of the brand hexes in JS (and, with 00-palette.css's
 // tokens, anywhere). Lives in lib/ so content scripts, the schema and the overlay
 // all read it instead of re-typing a hex. The one JS-side platform→accent map. CSS-side doctrine lives in
@@ -29,7 +31,7 @@ const MARKS = {
   youtube: { cls: 'yt', letter: 'Y', color: HS_PLAT_COLORS.youtube },
   heatsync: { cls: 'heatsync', letter: 'H', color: HS_PLAT_COLORS.heatsync },
 }
-const MARK_UNKNOWN = { cls: 'unknown', letter: '?', color: '#808080' }
+const MARK_UNKNOWN = { cls: 'unknown', letter: '?', color: '#ffff00' }
 const markReported = new Set()
 export function platformMark(platform) {
   const raw = String(platform ?? '')
@@ -53,5 +55,5 @@ export function platformMark(platform) {
 export function platformMarkHtml(platform, { enabled = true, host = '' } = {}) {
   const mk = platformMark(platform)
   if (!enabled && mk.key === platformMark(host).key) return ''
-  return `<span class="hs-mc-platform-badge hs-mc-pb-${mk.cls}" style="font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle;color:${mk.color}">${mk.label}</span>`
+  return `<span class="hs-mc-platform-badge hs-mc-pb-${escapeHtml(mk.cls)}" style="font-size:13px;margin-right:3px;font-weight:700;vertical-align:middle;color:${escapeHtml(mk.color)}">${escapeHtml(mk.label)}</span>`
 }

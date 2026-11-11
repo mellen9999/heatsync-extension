@@ -259,7 +259,7 @@ function buildMessageDiv(m, tabId) {
     const labelText = m.platform === 'twitch' ? '[whisper]' : '[DM]'
     const label = `<span style="color:${dirColor};font-size:13px;font-weight:700;margin-right:4px">${labelText}</span>`
     const wm = platformMark(m.platform)
-    const platBadge = `<span style="color:${wm.color};font-size:13px;font-weight:700;margin-right:3px">${wm.label}</span>`
+    const platBadge = `<span style="color:${escapeHtml(wm.color)};font-size:13px;font-weight:700;margin-right:3px">${escapeHtml(wm.label)}</span>`
     // Heatsync paint (twitch whispers AND native heatsync DMs), then 7TV on
     // twitch ids, then the flat colour the row carries.
     const dm = hsNameParts({

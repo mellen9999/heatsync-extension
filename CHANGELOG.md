@@ -1,5 +1,15 @@
 # changelog
 
+## [1.7.129] — 2026-11-11
+
+### added
+- **profile card** — the underlined letters are real keys.
+
+### fixed
+- **send** — a twitch send no longer vanishes until a refresh. the send socket keeps its keepalive across a channel switch, and a send twitch never echoes gets a fresh socket.
+- **twitch chat** — a line twitch shows reaches the panel even when the reader missed it, and a reader that keeps missing lines reconnects. timers that should outlive a channel switch now do.
+- **merged tabs** — one line sent to twitch and kick shows once, not as [T] and [K].
+
 ## [1.7.128] — 2026-11-10
 
 ### added

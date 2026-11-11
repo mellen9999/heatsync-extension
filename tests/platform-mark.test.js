@@ -67,7 +67,7 @@ describe('no call site hand-rolls a mark', () => {
     expect(/'\[[KYT]\]'/.test(body('social.js'))).toBe(false)
   })
   test('discover post chips', () => {
-    expect(/: 'h'/.test(body('social.js'))).toBe(false)
+    expect(/\? 'k' :/.test(body('social.js'))).toBe(false)
   })
   test('the simulcast fold re-marks through the helper', () => {
     expect(body('input.js').includes("textContent = '[H]'")).toBe(false)

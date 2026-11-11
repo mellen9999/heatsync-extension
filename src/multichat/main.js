@@ -1191,6 +1191,8 @@ async function init() {
       if (sentHost) {
         // Kick origin — badges look up in kickBadgeUrls.
         msg.badgePlatform = 'kick'
+        // kick is sent browser → kick, never seen by the server: record our own echo
+        if (isSelf(msg, 'kick')) hsWitnessOwnEcho('kick', msg.channel, msg.id, peekSentId(msg.text))
         msg.platform = sentHost === 'yt' ? 'youtube' : sentHost
         // Kick's echo of our own send carries no reply payload, so the bar
         // only exists if we put it back. Same ownership proof as twitch.

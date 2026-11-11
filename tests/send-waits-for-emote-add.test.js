@@ -68,6 +68,8 @@ function rig(autoAdds) {
     t: (k) => k,
     registerPendingSend: () => 'synth',
     trackSentMessage: () => {},
+    hsNewSendId: () => 'send-1',
+    hsTagTwitchSend: () => {},
     hsSentHistoryRecord: () => {},
     replyState: null,
     clearReplyState: () => {},

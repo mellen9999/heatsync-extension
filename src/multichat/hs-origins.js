@@ -104,6 +104,46 @@ function hsYtOriginRoom(channelId, url) {
 }
 const hsYtOriginKeyOf = (channelId) => hsYtKeys.get(channelId)
 
+// ── our own sends: recorded server-side so every viewer sees [H] and the send counts ──
+// One send id per user send, shared by every leg (the server folds legs by it).
+function hsNewSendId() {
+  return globalThis.crypto?.randomUUID?.() || `s-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+}
+
+// Twitch: sent through our own auth socket, so the server never saw it. Tell it what we
+// just sent (after the socket write succeeded); it matches twitch's own echo and writes
+// the durable row. Fire-and-forget.
+function hsTagTwitchSend(text, channel, sendId) {
+  if (!text || !channel) return
+  safeSendMessage({
+    type: 'ws_send',
+    data: { type: 'chat:origin_tag', text, channel: String(channel).toLowerCase(), sendId },
+  })
+}
+
+// Kick and youtube are sent browser → platform, also unseen by the server. Their own echo
+// carries the real message id: record it (the same POST the site makes). Callers pass only
+// an echo that is provably ours; once per message id.
+const hsWitnessed = new Set()
+function hsWitnessOwnEcho(platform, channel, messageId, sendId) {
+  if (!messageId || !channel || !sendId || hsWitnessed.has(messageId)) return
+  hsWitnessed.add(messageId)
+  if (hsWitnessed.size > 500) hsWitnessed.delete(hsWitnessed.values().next().value)
+  safeSendMessage({
+    type: 'api_fetch',
+    path: '/api/chat/origins',
+    method: 'POST',
+    auth: true,
+    body: {
+      platform,
+      channel: String(channel).toLowerCase(),
+      message_id: String(messageId),
+      origin: 'heatsync',
+      send_id: sendId,
+    },
+  })
+}
+
 // the one DOM patch for "this row is [H] now": the mark span's class, colour, text
 function hsMarkBadgeHeatsync(pb) {
   const hm = platformMark('heatsync')
@@ -133,11 +173,14 @@ function hsOriginLive(msg) {
 
 export {
   hsMarkBadgeHeatsync,
+  hsNewSendId,
   hsOriginLive,
   hsOriginNote,
   hsOriginRepaint,
   hsOriginStamp,
   hsOriginsReseed,
+  hsTagTwitchSend,
+  hsWitnessOwnEcho,
   hsYtOriginKeyOf,
   hsYtOriginRoom,
   hsYtOriginsKey,

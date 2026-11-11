@@ -84,9 +84,10 @@ function _echoTextMatches(entry, msgText) {
   return !!entry.reply && b.replace(/^@\S+\s+/, '') === a
 }
 
-function trackSentMessage(text, hostOverride, synthId, echoes, reply) {
+function trackSentMessage(text, hostOverride, synthId, echoes, reply, sendId) {
   _recentSentMessages.push({
     text,
+    sendId: sendId || '',
     time: Date.now(),
     host: hostOverride || hostPlatform,
     synthId,
@@ -306,6 +307,14 @@ function claimHydratedEcho(msgText, msgPlatform, msgTime) {
 // matches — letting echoes from elsewhere (e.g. heatsync.org website sends)
 // keep whatever platform tag the server attached.
 function peekSentHost(msgText) {
+  return _peekSent(msgText)?.host || null
+}
+// the send id of OUR send of these words ('' for an entry from another device, which
+// has none — only the device that sent records the origin)
+function peekSentId(msgText) {
+  return _peekSent(msgText)?.sendId || ''
+}
+function _peekSent(msgText) {
   // Use the longer SENT_HOST_WINDOW (24h) — badge attribution must survive
   // page refresh, BG buffer replay, and channel-switch hydration. The dedup
   // path (isSentEcho) uses the tighter 10s window separately.
@@ -316,7 +325,7 @@ function peekSentHost(msgText) {
     // time order, so a stale entry early in the reverse scan must not abort the
     // search before a valid newer match (mirrors isSentEcho). Array is capped.
     if (entry.time < cutoff) continue
-    if (_echoTextMatches(entry, msgText)) return entry.host || null
+    if (_echoTextMatches(entry, msgText)) return entry
   }
   return null
 }
@@ -9077,6 +9086,7 @@ async function sendMessage() {
   // so the pending tracker and peekSentHost/isSentEcho must key on the body or
   // the echo never matches — firing a false "did not confirm" warning and
   // losing badge attribution + dual-send dedup. Identical to text when not /me.
+  const _sendId = hsNewSendId()
   const _synthId = registerPendingSend({
     text: restText,
     channel: targetChannel,
@@ -9112,7 +9122,7 @@ async function sendMessage() {
               : sendToYoutube
                 ? 'yt'
                 : hostPlatform
-  trackSentMessage(restText, _echoHost, _synthId, _echoCount || 1, !!replyState?.msgId)
+  trackSentMessage(restText, _echoHost, _synthId, _echoCount || 1, !!replyState?.msgId, _sendId)
 
   hsSentHistoryRecord(text)
 
@@ -9246,6 +9256,7 @@ async function sendMessage() {
         // silently (no red border, no retry notif, just a no_echo warning
         // 20s later).
         const twitchSent = twitchResult === true
+        if (twitchSent) hsTagTwitchSend(restText, twitchName, _sendId)
         const twitchOk = twitchSent || twitchResult === null
         // 'queued' = IRC was offline, message stuffed in send-queue for next
         // reconnect (could be never). Treat as a visible yellow cue, not silent
@@ -9396,6 +9407,7 @@ async function sendMessage() {
   sendIrcMessage(targetChannel, twitchText, token, twitchReplyId, twitchNick)
     .then((result) => {
       if (result === true) {
+        hsTagTwitchSend(restText, targetChannel, _sendId)
         keepTempTabAfterSend()
         if (wsState !== 'OPEN') {
           input.style.borderColor = 'var(--hs-warn)'

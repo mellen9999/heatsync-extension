@@ -1256,6 +1256,7 @@ function handleYoutubeChatMsg(msg) {
     const sentHost = peekSentHost(ytMsg.text)
     if (sentHost) {
       ytMsg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+      if (isSelf(ytMsg, 'youtube')) hsWitnessOwnEcho('youtube', ytMsg.originKey, ytMsg.id, peekSentId(ytMsg.text))
       // YouTube has no reply threading, so the bar can ONLY come from what
       // we remembered at send time — the @mention prepend is all that ships
       // on the wire. Same ownership proof as twitch/kick.
@@ -1377,10 +1378,7 @@ function listenForSocialEvents() {
       } catch (_) {}
       return
     }
-    if (msg.type === 'ws_connected') {
-      hsOriginsReseed()
-      return
-    }
+    if (msg.type === 'ws_connected') return hsOriginsReseed()
     if (msg.type === 'chat_origin' && msg.id) {
       // a line in a joined room was sent through heatsync (any sender): flip its mark
       hsOriginLive(msg)

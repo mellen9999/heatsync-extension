@@ -13,7 +13,8 @@ run lint      "bunx @biomejs/biome check src/ tests/ build.js"
 run typecheck "bun run typecheck"
 run version   "bun tests/check-versions.js"
 run bundle    "bun run build.js chrome --minify && bun run build.js firefox --minify && bun scripts/check-bundle-budget.ts"
-run test      "bun test"
+run test      "bun test --coverage --coverage-reporter=lcov"
+run coverage  "bun scripts/coverage-floor.ts"
 
 if [ "$fail" -ne 0 ]; then
   echo "push blocked — fix above (or 'git push --no-verify' to override)."

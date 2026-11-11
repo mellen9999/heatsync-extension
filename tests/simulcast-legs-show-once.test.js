@@ -9,12 +9,11 @@
  * content: same sender, same words, a platform the row does not stand for
  * yet, within LEG_WINDOW_MS.
  */
-import { expect, test } from 'bun:test'
+import { afterAll, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const MC = join(import.meta.dir, '..', 'src', 'multichat')
-const MT = readFileSync(join(MC, 'merged-tab.js'), 'utf8').replace(/^export \{[\s\S]*?\}\s*$/m, '')
 const IRC = readFileSync(join(MC, 'irc.js'), 'utf8')
 
 function fn(src, name) {
@@ -23,16 +22,18 @@ function fn(src, name) {
   return src.slice(start, src.indexOf('\n}\n', start) + 2)
 }
 
+// merged-tab.js reads these as bundle globals; the real module is imported
+// below so the fold runs as shipped (and counts toward coverage)
 const SELF = { twitch: ['mellen'], kick: ['mellen_k'], youtube: [] }
-const lib = new Function(
-  'SELF',
-  `const DUP_BYPASS_CHAR = '\\u{E0000}'
+globalThis.stripDupBypass = new Function(`const DUP_BYPASS_CHAR = '\\u{E0000}'
 ${fn(IRC, 'stripDupBypass')}
-const _unkickEmotes = (s) => String(s ?? '').replace(/\\[emote:\\d+:([^\\]]+)\\]/g, '$1')
-const isSelf = (m, p) => (SELF[p] || []).includes(String(m.user || '').toLowerCase())
-${MT}
-return { foldSimulcastLegs, mayBeSimulcastLeg, LEG_WINDOW_MS }`,
-)(SELF)
+return stripDupBypass`)()
+globalThis._unkickEmotes = (s) => String(s ?? '').replace(/\[emote:\d+:([^\]]+)\]/g, '$1')
+globalThis.isSelf = (m, p) => (SELF[p] || []).includes(String(m.user || '').toLowerCase())
+const lib = await import('../src/multichat/merged-tab.js')
+afterAll(() => {
+  for (const k of ['stripDupBypass', '_unkickEmotes', 'isSelf']) delete globalThis[k]
+})
 
 const T0 = 1_700_000_000_000
 const line = (platform, user, text, dt = 0, extra = {}) => ({ platform, user, text, time: T0 + dt, ...extra })

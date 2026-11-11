@@ -1,5 +1,14 @@
 # changelog
 
+## [1.7.130] — 2026-11-11
+
+### added
+- **[H] for everyone** — a line sent through heatsync shows [H] live for every viewer, not just whoever sent it, and keeps it after a refresh.
+
+### fixed
+- **marks** — a line from an unknown platform shows [?] instead of [T]. heatsync dms show [H] instead of [HS]. A stranger's line with the same words as yours is no longer marked as your send.
+- **simulcast** — one send to twitch and kick folds into one row by its send id, however far apart the legs land.
+
 ## [1.7.129] — 2026-11-11
 
 ### added

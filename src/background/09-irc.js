@@ -358,6 +358,8 @@ const BG_IRC = {
   historyInFlight: new Map(), // ch -> Promise<void> (awaitable in-flight robotty fetch)
   lastRobottyAt: new Map(), // ch -> ts (last successful/attempted robotty fetch)
   persistTimers: new Map(),
+  // reconnects asked for by a tab that saw lines this reader missed (bg_irc_reader_missed)
+  missed: { at: 0, gap: 12e4 },
   releaseTimers: new Map(), // ch -> timeout (bgIrcScheduleRelease)
   joining: new Map(), // ch -> Promise (bg_irc_join reading the persisted ring)
   storageRestored: false,
@@ -1466,6 +1468,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // the reader then stays anonymous until something else reconnects it.
         bgIrcForceReconnect()
       }
+    }
+    sendResponse({ ok: true })
+    return true
+  }
+  // A twitch tab saw lines in twitch's own chat that this reader never
+  // delivered (native-tap.js fills them in meanwhile): twitch is throttling
+  // this connection, and a fresh one is what ends it. Spaced out, doubling
+  // while it keeps recurring, so a reader twitch keeps throttling is not
+  // reconnected (and every channel re-JOINed) every couple of minutes.
+  if (message.type === 'bg_irc_reader_missed') {
+    // first after 2 min, then 4, 8, 16, 30; quiet for 30 min starts over
+    const m = BG_IRC.missed
+    const now = Date.now()
+    if (now - m.at > 18e5) m.gap = 12e4
+    if (BG_IRC.ws && now - m.at >= m.gap) {
+      m.at = now
+      m.gap = Math.min(m.gap * 2, 18e5)
+      bgIrcForceReconnect()
     }
     sendResponse({ ok: true })
     return true

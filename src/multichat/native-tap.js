@@ -20,7 +20,66 @@ let _tapContainer = null
 let _tapChannel = ''
 let _tapRetryTimer = null // bind-retry while container missing
 let _tapPollTimer = null // permanent remount watcher
-const _tapStats = { mined: 0, fiberMiss: 0 }
+const _tapStats = { mined: 0, fiberMiss: 0, held: 0, filled: 0 }
+
+// Twitch's own chat is the ground truth on a twitch page: every line it shows,
+// the reader should have too. While the reader looks healthy its copy wins (it
+// carries the reply/bits/highlight tags), so a native line waits a moment for
+// it. It used to be dropped instead, and a reader twitch had throttled to a
+// trickle still counted as healthy: the lines it never got were shown nowhere,
+// and the chat sat minutes behind the stream. A line the reader hasn't
+// delivered by the end of the wait is shown from here.
+const TAP_GRACE_MS = 2500
+const TAP_HELD_MAX = 600
+const _tapHeld = []
+let _tapHeldTimer = null
+// a plain chat line with an id can be matched to the reader's copy; anything
+// else keeps the old rule (the reader's copy, or nothing)
+function _tapHold(msg) {
+  if (msg.type || !msg.id || !msg.channel) return false
+  _tapHeld.push({ msg, key: `${msg.channel}:${msg.id}`, at: Date.now() })
+  if (_tapHeld.length > TAP_HELD_MAX) _tapHeld.splice(0, _tapHeld.length - TAP_HELD_MAX)
+  _tapStats.held++
+  if (!_tapHeldTimer) _tapHeldTimer = cleanup.setPageTimeout(_tapFlushHeld, TAP_GRACE_MS)
+  return true
+}
+function _tapFlushHeld() {
+  _tapHeldTimer = null
+  const now = Date.now()
+  let i = 0
+  for (; i < _tapHeld.length && now - _tapHeld[i].at >= TAP_GRACE_MS; i++) {
+    const { msg, key } = _tapHeld[i]
+    if (irc?._seenIds?.has?.(key)) continue
+    _tapStats.filled++
+    _tapReaderMissed(msg.channel, now)
+    try {
+      irc?._handleMsg?.(msg)
+    } catch (_) {}
+  }
+  _tapHeld.splice(0, i)
+  if (_tapHeld.length) _tapHeldTimer = cleanup.setPageTimeout(_tapFlushHeld, TAP_GRACE_MS - (now - _tapHeld[0].at))
+}
+// The reader keeps missing lines twitch shows: it is being throttled. The lines
+// are covered from here; a fresh reader connection is what ends the episode.
+// The background rate-limits the reconnect itself.
+const TAP_MISS_WINDOW_MS = 30_000
+const TAP_MISS_LIMIT = 8
+const _tapMisses = new Map()
+function _tapReaderMissed(ch, now) {
+  const recent = (_tapMisses.get(ch) || []).filter((t) => now - t < TAP_MISS_WINDOW_MS)
+  recent.push(now)
+  if (recent.length < TAP_MISS_LIMIT) {
+    _tapMisses.set(ch, recent)
+    return
+  }
+  _tapMisses.set(ch, [])
+  try {
+    hsDiagLog('reader_missed', { ch: ch.slice(0, 25), n: recent.length })
+  } catch (_) {}
+  try {
+    safeSendMessage({ type: 'bg_irc_reader_missed', channel: ch }).catch(() => {})
+  } catch (_) {}
+}
 
 function _tapFindContainer() {
   return hsQuery('twitch:chat-message-container', [
@@ -192,11 +251,12 @@ function _tapHandleRow(rowEl) {
   if (!ch) return
   if (ch !== _tapChannel) _tapChannel = ch
   // richness guard: when IRC flow is HEALTHY for this channel (3+ msgs in
-  // the last 10s) its copies are richer (replies/bits/highlights) — defer.
-  // a starved trickle (1 msg/20s) must NOT suppress the tap.
+  // the last 10s) its copies are richer (replies/bits/highlights) — wait for
+  // them (_tapHold). a starved trickle (1 msg/20s) feeds the tap straight away.
+  let healthy = false
   try {
     const ts = irc?._lastLiveAt?.get?.(ch)
-    if (Array.isArray(ts) && ts.length >= 3 && Date.now() - ts[ts.length - 3] < 10_000) return
+    healthy = Array.isArray(ts) && ts.length >= 3 && Date.now() - ts[ts.length - 3] < 10_000
   } catch (_) {}
   const mined = _tapMineMessage(rowEl)
   if (!mined) {
@@ -213,6 +273,10 @@ function _tapHandleRow(rowEl) {
     msg.msgId = 'announcement'
   }
   _tapStats.mined++
+  if (healthy) {
+    _tapHold(msg)
+    return
+  }
   try {
     irc?._handleMsg?.(msg)
   } catch (_) {}
@@ -350,7 +414,17 @@ function _updateNativeSuppress() {
 
 // Stage counters, window-exposed (isolated world only — invisible to the
 // page) so field debugging can read them over CDP/devtools without a rebuild.
-const _nsStats = { rx: 0, dropOrigin: 0, dropShape: 0, dropNoCh: 0, dropRich: 0, nullMsg: 0, fed: 0, feedErr: 0 }
+const _nsStats = {
+  rx: 0,
+  dropOrigin: 0,
+  dropShape: 0,
+  dropNoCh: 0,
+  dropRich: 0,
+  held: 0,
+  nullMsg: 0,
+  fed: 0,
+  feedErr: 0,
+}
 try {
   window.__hsNsStats = _nsStats
 } catch (_) {}
@@ -376,13 +450,12 @@ function _nsStart() {
         return
       }
       // richness guard, same as the DOM tap: healthy IRC delivers richer
-      // copies (replies/bits/highlights) — let its copy win the id-dedup.
+      // copies (replies/bits/highlights) — its copy gets a head start on the
+      // id-dedup, and this one fills in if it never comes (_tapHold).
+      let healthy = false
       try {
         const ts = irc?._lastLiveAt?.get?.(ch)
-        if (Array.isArray(ts) && ts.length >= 3 && Date.now() - ts[ts.length - 3] < 10_000) {
-          _nsStats.dropRich++
-          return
-        }
+        healthy = Array.isArray(ts) && ts.length >= 3 && Date.now() - ts[ts.length - 3] < 10_000
       } catch (_) {}
       const msg = _tapToMsg(d.m, ch)
       if (!msg) {
@@ -390,6 +463,14 @@ function _nsStart() {
         return
       }
       _tapStats.mined++
+      if (healthy) {
+        if (_tapHold(msg)) {
+          _nsStats.held++
+          return
+        }
+        _nsStats.dropRich++
+        return
+      }
       try {
         irc?._handleMsg?.(msg)
         _nsStats.fed++

@@ -209,7 +209,7 @@ function _titleFlashStart(fromUser) {
     return
   }
   let on = false
-  _titleFlashTimer = cleanup.setInterval(() => {
+  _titleFlashTimer = cleanup.setPageInterval(() => {
     if (document.hasFocus()) {
       _titleFlashStop()
       return

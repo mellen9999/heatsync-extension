@@ -19,7 +19,12 @@ import './emote-rungs-globals.js'
 
 globalThis.escapeHtml = escapeHtml
 globalThis.unescapeHtml = unescapeHtml
-globalThis.cleanup = { setIntervalIfVisible: () => {}, persistInterval: () => {}, setTimeout: () => 0 }
+globalThis.cleanup = {
+  setIntervalIfVisible: () => {},
+  persistInterval: () => {},
+  setTimeout: () => 0,
+  setPageTimeout: () => 0,
+}
 globalThis.HS_MOD_TOKENS = mods.HS_MOD_TOKENS
 globalThis.hsModClassify = mods.hsModClassify
 globalThis.hsModBuildStyleAttr = mods.hsModBuildStyleAttr

@@ -353,7 +353,7 @@ let _cHandleRetryTimer = null
 let _cHandleRetryCount = 0
 function _armCHandleMountRetry() {
   if (_cHandleRetryTimer || _cHandleRetryCount >= 20) return
-  _cHandleRetryTimer = cleanup.setTimeout(
+  _cHandleRetryTimer = cleanup.setPageTimeout(
     () => {
       _cHandleRetryTimer = null
       _cHandleRetryCount++

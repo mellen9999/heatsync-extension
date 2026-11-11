@@ -59,7 +59,7 @@ describe('send-status: the checklist', () => {
       },
       () => reads.chip,
       {
-        setTimeout: (fn) => {
+        setPageTimeout: (fn) => {
           timers.push(fn)
           return timers.length
         },

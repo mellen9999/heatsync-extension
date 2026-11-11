@@ -34,7 +34,7 @@ let mcCosmeticsSaveTimer = null
 const mcCosmeticsNeedLookup = (uid) => !mcUserCosmetics.has(uid) || mcCosmeticsStale.has(uid)
 function scheduleMcCosmeticsSave() {
   if (mcCosmeticsSaveTimer) return
-  mcCosmeticsSaveTimer = cleanup.setTimeout(() => {
+  mcCosmeticsSaveTimer = cleanup.setPageTimeout(() => {
     mcCosmeticsSaveTimer = null
     const items = [...mcUserCosmetics].filter(([, c]) => c && (c.badge || c.paint)).slice(-MC_COSMETICS_PERSIST_MAX)
     try {
@@ -194,7 +194,7 @@ function queueYtNameToTwitchId(user) {
     return
   }
   if (!ytNameLookupTimer) {
-    ytNameLookupTimer = cleanup.setTimeout(() => {
+    ytNameLookupTimer = cleanup.setPageTimeout(() => {
       ytNameLookupTimer = null
       flushYtNameLookups()
     }, 800)
@@ -299,7 +299,7 @@ async function flushYtNameLookups() {
   }
   for (const key of batch) await lookupOne(key)
   if (ytNameLookupPending.size > 0 && !ytNameLookupTimer) {
-    ytNameLookupTimer = cleanup.setTimeout(() => {
+    ytNameLookupTimer = cleanup.setPageTimeout(() => {
       ytNameLookupTimer = null
       flushYtNameLookups()
     }, 1500)
@@ -373,7 +373,7 @@ function queueKickNameToCosmetics(user, kickId) {
     return
   }
   if (!kickNameLookupTimer) {
-    kickNameLookupTimer = cleanup.setTimeout(() => {
+    kickNameLookupTimer = cleanup.setPageTimeout(() => {
       kickNameLookupTimer = null
       flushKickNameLookups()
     }, 800)
@@ -494,7 +494,7 @@ async function flushKickNameLookups() {
   }
   if (changedIds.length) updateCosmeticsInPlace(changedIds)
   if (kickNameLookupPending.size > 0 && !kickNameLookupTimer) {
-    kickNameLookupTimer = cleanup.setTimeout(() => {
+    kickNameLookupTimer = cleanup.setPageTimeout(() => {
       kickNameLookupTimer = null
       flushKickNameLookups()
     }, 1500)

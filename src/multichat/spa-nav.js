@@ -240,6 +240,10 @@ function fullSpaReinit() {
 
   // Clean up — remove entire container (our elements are inside it)
   document.getElementById('hs-mc-container')?.remove()
+  // The node ref softTwitchNav re-adopts from points at the panel removed on
+  // the line above: its tab bar, observers and feed state are all torn down
+  // here, so a later nav must not hand that husk back as the live panel.
+  _hsMcContainerNode = null
   tabBarElement = null
   overlayElement = null
   inputBarElement = null
@@ -275,6 +279,21 @@ function fullSpaReinit() {
   _persistMentionsState.timer = null
   _persistYtTimers.clear()
   _persistTabSeenTimer = null
+  // Same for the timers whose work is the panel itself (the tab bar's live
+  // dots, the heat ticker on its tabs, the discover and pinned views' refresh):
+  // the drain cleared them, init() builds a new panel, and its "already
+  // running" guard has to read false for that panel to start them again.
+  liveStatusInterval = null
+  _tabCounterTimer = null
+  discoverPollTimer = null
+  pinnedPollTimer = null
+  // The native-chat tap's observer was disconnected with the rest above, but
+  // twitch can hand back the very same chat node, and _tapBind skips "this
+  // container and an observer" — a dead observer read as a live one, and the
+  // tap stayed dark. Nulled, init()'s startNativeTap binds a fresh one. The
+  // tap's own timers are page timers and keep running through all of this.
+  _tapObserver = null
+  _tapContainer = null
   mcInitialized = false // Allow init() to run again
 
   // Reset social tab state (stale on nav)

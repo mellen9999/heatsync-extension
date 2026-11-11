@@ -222,7 +222,7 @@ function _tapBind() {
   const container = _tapFindContainer()
   if (!container) {
     if (!_tapRetryTimer)
-      _tapRetryTimer = cleanup.setInterval(() => {
+      _tapRetryTimer = cleanup.setPageInterval(() => {
         const c = _tapFindContainer()
         if (c) {
           cleanup.clearInterval(_tapRetryTimer)
@@ -264,7 +264,7 @@ function startNativeTap(channel) {
   // the bind-retry can't shadow it (shared slot = poll never installed when
   // the container is missing at startup → tap dies on first remount)
   if (!_tapPollTimer)
-    _tapPollTimer = cleanup.setInterval(() => {
+    _tapPollTimer = cleanup.setPageInterval(() => {
       const c = _tapFindContainer()
       if (c && c !== _tapContainer) _tapBind()
     }, 5000)
@@ -280,10 +280,12 @@ function startNativeTap(channel) {
 // irc._handleMsg path as the DOM tap, and (b) owns the takeover signal: a
 // body-dataset flag plus a heartbeat the MAIN world treats as a dead-man
 // switch — beat goes stale for 45s → Twitch resumes rendering natively.
-// The beat interval deliberately uses cleanup.setInterval, NOT the
+// The beat interval deliberately uses cleanup.setPageInterval, NOT the
 // visibility-gated variant: a hidden tab must KEEP suppressing (that's the
-// biggest RAM case), and overlay teardown clears the interval anyway, which
-// stales the beat and fails open.
+// biggest RAM case). Page timer because a channel switch drains plain ones and
+// a dead beat reads stale at 45s; full teardown still clears it, which stales
+// the beat and fails open, and each tick fails open itself once the overlay is
+// gone.
 let _nsBeatTimer = null
 let _nsRxBound = false
 
@@ -404,7 +406,7 @@ function _nsStart() {
     // untrimmed, and the watchdog force-reveals native chat — the exact
     // +118MB case the takeover exists to prevent. Gating this was tried
     // (29aaa83) and is a regression, not a perf win.
-    _nsBeatTimer = cleanup.setInterval(_updateNativeSuppress, 15000)
+    _nsBeatTimer = cleanup.setPageInterval(_updateNativeSuppress, 15000)
     cleanup.addEventListener(document, 'visibilitychange', () => {
       if (!document.hidden) _updateNativeSuppress()
     })

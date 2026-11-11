@@ -40,7 +40,7 @@ function feedApplyHeat(d) {
 let _feedHeatTimer = null
 function feedHeatRepaintSoon() {
   if (_feedHeatTimer) return
-  _feedHeatTimer = cleanup.setTimeout(() => {
+  _feedHeatTimer = cleanup.setPageTimeout(() => {
     _feedHeatTimer = null
     if (currentTab === 'feed') renderFeed()
   }, 500)

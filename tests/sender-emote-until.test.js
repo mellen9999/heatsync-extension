@@ -40,7 +40,12 @@ const runHsLoop = new Function(
 globalThis.escapeHtml = escapeHtml
 globalThis.unescapeHtml = unescapeHtml
 // setTimeout never fires: the merge's 4s persist debounce stays out of this file
-globalThis.cleanup = { setIntervalIfVisible: () => {}, persistInterval: () => {}, setTimeout: () => 0 }
+globalThis.cleanup = {
+  setIntervalIfVisible: () => {},
+  persistInterval: () => {},
+  setTimeout: () => 0,
+  setPageTimeout: () => 0,
+}
 globalThis.HS_MOD_TOKENS = mods.HS_MOD_TOKENS
 globalThis.hsModClassify = mods.hsModClassify
 globalThis.hsModBuildStyleAttr = mods.hsModBuildStyleAttr

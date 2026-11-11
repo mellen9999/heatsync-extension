@@ -568,7 +568,7 @@ const modActionLog = []
 const modLogStore = createModLogStore({
   log: modActionLog,
   storage: () => (chrome?.runtime?.id ? chrome.storage.local : null),
-  setTimer: (fn, ms) => cleanup.setTimeout(fn, ms),
+  setTimer: (fn, ms) => cleanup.setPageTimeout(fn, ms),
   clearTimer: (t) => cleanup.clearTimeout(t),
 })
 
@@ -1889,7 +1889,7 @@ function queueSenderEmoteFetch(senderKey, _m) {
     // don't change mid-message; a 2s delay before an unseen chatter's
     // custom emotes resolve is invisible next to the 2min refetch TTL
     // (SENDER_EMOTE_REFETCH_MS) that governs freshness overall.
-    senderEmoteTimer = cleanup.setTimeout(
+    senderEmoteTimer = cleanup.setPageTimeout(
       () => {
         senderEmoteTimer = null
         senderEmoteTimerUrgent = false
@@ -1970,7 +1970,7 @@ function flushSenderEmoteBatch() {
     })
   if (senderEmotePending.size > 0) {
     senderEmoteTimerUrgent = false
-    senderEmoteTimer = cleanup.setTimeout(() => {
+    senderEmoteTimer = cleanup.setPageTimeout(() => {
       senderEmoteTimer = null
       flushSenderEmoteBatch()
     }, 500)

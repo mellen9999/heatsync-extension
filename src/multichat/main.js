@@ -2277,4 +2277,4 @@ if (hostPlatform === 'yt') {
 }
 
 // Fallback: polling in case MAIN world script didn't load
-cleanup.setIntervalIfVisible(() => handleMcNav(), 5000)
+cleanup.setPageIntervalIfVisible(() => handleMcNav(), 5000)

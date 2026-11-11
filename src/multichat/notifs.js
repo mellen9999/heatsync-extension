@@ -92,7 +92,7 @@ const HsNotifs = (() => {
           if (existing.el) _renderInto(existing)
           if (t.timeout) {
             if (existing._timer) cleanup.clearTimeout(existing._timer)
-            existing._timer = cleanup.setTimeout(() => dismiss(existing.id), t.timeout)
+            existing._timer = cleanup.setPageTimeout(() => dismiss(existing.id), t.timeout)
           }
           return existing.id
         }
@@ -218,7 +218,7 @@ const HsNotifs = (() => {
       // Pause-on-hover. Errors are easy to miss if they vanish mid-read.
       let remaining = notif.type.timeout
       let startedAt = Date.now()
-      notif._timer = cleanup.setTimeout(() => dismiss(notif.id), remaining)
+      notif._timer = cleanup.setPageTimeout(() => dismiss(notif.id), remaining)
       wrapper.addEventListener('mouseenter', () => {
         if (notif._timer) {
           cleanup.clearTimeout(notif._timer)
@@ -229,7 +229,7 @@ const HsNotifs = (() => {
       wrapper.addEventListener('mouseleave', () => {
         if (!notif._timer && remaining > 0) {
           startedAt = Date.now()
-          notif._timer = cleanup.setTimeout(() => dismiss(notif.id), remaining)
+          notif._timer = cleanup.setPageTimeout(() => dismiss(notif.id), remaining)
         }
       })
     }

@@ -157,7 +157,9 @@ test('alt+shift+d dumps the pane state to the diag ring', () => {
 
 test('a popout never waits on rAF or the 1s starved timer', () => {
   const main = mainSource()
-  expect(main).toMatch(/function rafOrTimeout\(fn\) \{[\s\S]{0,700}hs-popout'\)\) \{\s*cleanup\.setTimeout\(fn, 16\)/)
+  expect(main).toMatch(
+    /function rafOrTimeout\(fn\) \{[\s\S]{0,700}hs-popout'\)\) \{\s*cleanup\.setPageTimeout\(fn, 16\)/,
+  )
 })
 
 test('a new row anchors on the lowest placed row, never on a shared cursor', () => {

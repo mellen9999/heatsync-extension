@@ -354,11 +354,18 @@ function pinOnKeydown(e) {
   pinToggleRow(row)
 }
 
+// init() runs again on every full SPA reinit and both of these outlive it (only a
+// full teardown removes them), so they are added once. Stacked, the p key pinned
+// and unpinned the row once per channel hop and landed wherever the count did.
+const _onceGuardsPinBar = {}
 function initPinBar() {
-  cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
-    if (!msg || (msg.type !== 'pin_set' && msg.type !== 'pin_clear')) return
-    pinApply(`${msg.platform}/${String(msg.channel || '').toLowerCase()}`, msg.type === 'pin_set' ? msg.pin : null)
-  })
-  cleanup.addEventListener(document, 'keydown', pinOnKeydown)
+  if (!_onceGuardsPinBar.wired) {
+    _onceGuardsPinBar.wired = true
+    cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+      if (!msg || (msg.type !== 'pin_set' && msg.type !== 'pin_clear')) return
+      pinApply(`${msg.platform}/${String(msg.channel || '').toLowerCase()}`, msg.type === 'pin_set' ? msg.pin : null)
+    })
+    cleanup.addEventListener(document, 'keydown', pinOnKeydown)
+  }
   pinSync(currentTab)
 }

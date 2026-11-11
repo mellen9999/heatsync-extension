@@ -38,7 +38,7 @@ function _hsmGet(kind, key) {
   const now = Date.now()
   if (now - e.at > s.ttl && now - e.asked > _HSM_ASK_AGAIN && s.q.size < _HSM_QUEUE_MAX) {
     s.q.add(key)
-    if (!_hsmTimer) _hsmTimer = cleanup.setTimeout(_hsmFlush, Math.max(500, _hsmWaitUntil - now))
+    if (!_hsmTimer) _hsmTimer = cleanup.setPageTimeout(_hsmFlush, Math.max(500, _hsmWaitUntil - now))
   }
   return e.v
 }
@@ -79,7 +79,7 @@ function _hsmFlush() {
     _hsmFails = failed ? _hsmFails + 1 : 0
     _hsmWaitUntil = failed ? Date.now() + Math.min(60000, 5000 * 2 ** (_hsmFails - 1)) : 0
     if (!_hsmTimer && (_hsmSets.flair.q.size || _hsmSets.heat.q.size)) {
-      _hsmTimer = cleanup.setTimeout(_hsmFlush, Math.max(500, _hsmWaitUntil - Date.now()))
+      _hsmTimer = cleanup.setPageTimeout(_hsmFlush, Math.max(500, _hsmWaitUntil - Date.now()))
     }
     if (changed.size) hsMarksRepaint(changed)
   })

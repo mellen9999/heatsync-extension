@@ -1481,6 +1481,9 @@ function scrollMsgsToBottom(msgsEl) {
 // visibility API claims; render on a timer cadence — fast when focused,
 // 1Hz when not — and keep a probe rAF out so the first real frame ends
 // the episode.
+// Its timers are page timers: a channel switch draining one leaves the caller's
+// pending handle (_scrollPinRaf, _multiPlatformRenderTimer) set with nothing to
+// ever clear it, and every later pin or render is skipped.
 function rafOrTimeout(fn) {
   // A popout is a window made to be read, often sitting unfocused beside a
   // game or a stream. Chrome slows (or never runs) rAF there, and the
@@ -1488,18 +1491,18 @@ function rafOrTimeout(fn) {
   // second and any stall stretches into a visible freeze. Layout work never
   // needed a frame, so a popout just uses a short timer.
   if (document.body?.classList.contains('hs-popout')) {
-    cleanup.setTimeout(fn, 16)
+    cleanup.setPageTimeout(fn, 16)
     return true
   }
   if (document.hidden) {
     if (document.hasFocus() || _visWedged) {
-      cleanup.setTimeout(fn, 16)
+      cleanup.setPageTimeout(fn, 16)
       return true
     }
     return cleanup.raf(fn) // genuinely hidden — keep the free rAF pause
   }
   if (_rafStarved) {
-    cleanup.setTimeout(fn, document.hasFocus() ? 150 : 1000)
+    cleanup.setPageTimeout(fn, document.hasFocus() ? 150 : 1000)
     _probeRafRecovery()
     return true
   }
@@ -1510,7 +1513,7 @@ function rafOrTimeout(fn) {
     cleanup.clearTimeout(watchdog)
     fn()
   })
-  const watchdog = cleanup.setTimeout(() => {
+  const watchdog = cleanup.setPageTimeout(() => {
     if (settled) return
     settled = true
     cleanup.cancelRaf(rafId)
@@ -1557,7 +1560,7 @@ function scheduleScrollPin(msgsEl) {
       return
     }
     _scrollPinRaf = true
-    cleanup.setTimeout(() => {
+    cleanup.setPageTimeout(() => {
       _scrollPinRaf = null
       _lastSyncPin = Date.now()
       scrollMsgsToBottom(msgsEl)

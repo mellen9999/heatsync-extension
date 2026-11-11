@@ -111,7 +111,10 @@ function build({ autoHide = true, visibleFlag = true, hidden = false, keepUntil 
     document,
     {},
     { now: () => now },
-    { setTimeout: (fn, ms) => timers.push({ fn, at: now + ms }) },
+    {
+      setTimeout: (fn, ms) => timers.push({ fn, at: now + ms }),
+      setPageTimeout: (fn, ms) => timers.push({ fn, at: now + ms }),
+    },
     () => opts.autoHide,
     () => opts.canInput,
     'somechannel',

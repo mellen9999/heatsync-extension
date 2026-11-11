@@ -221,7 +221,7 @@ function scheduleAutomodExpiry(row) {
   // about it. A backfilled hold arrives already part-aged; timing it from now
   // would leave a dead row looking actionable for another full hour.
   const age = Math.max(0, Date.now() - (Number(row.heldAt) || Date.now()))
-  const id = cleanup.setTimeout(
+  const id = cleanup.setPageTimeout(
     () => {
       _automodExpireTimers.delete(row.msgId)
       if (row.status !== 'pending' && row.status !== 'error' && row.status !== 'resolving') return
@@ -477,33 +477,38 @@ function _stampSweepTrace(text) {
 }
 
 function initAutomodQueue() {
-  cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
-    if (!msg || typeof msg !== 'object') return
-    if (msg.type === 'automod_hold') {
-      if (!isEnabled('automod-queue')) return
-      const row = automodHoldToRowModel(msg)
-      if (!row) return
-      if (!shouldProcessAutomodHold(_automodSeenHolds, row.msgId, Date.now())) return
-      insertAutomodHoldRow(row)
-      return
-    }
-    if (msg.type === 'automod_update') {
-      if (!isEnabled('automod-queue')) return
-      const broadcasterLogin = String(msg.broadcasterLogin || '').toLowerCase()
-      const msgId = String(msg.msgId || '')
-      if (!broadcasterLogin || !msgId) return
-      resolveAutomodRow(broadcasterLogin, msgId, msg.status, msg.modLogin)
-      return
-    }
-    if (msg.type === 'automod_relink') {
-      if (!isEnabled('automod-queue')) return
-      if (_automodRelinkShown) return
-      _automodRelinkShown = true
-      try {
-        HsNotifs.emit('automod-relink', {})
-      } catch (_) {}
-    }
-  })
+  // init() runs again on every full SPA reinit and this listener is only removed
+  // on full teardown, so an unguarded add stacked one more per channel hop.
+  if (!_onceGuardsAutomod.messageListener) {
+    _onceGuardsAutomod.messageListener = true
+    cleanup.addListener(chrome.runtime?.onMessage, (msg) => {
+      if (!msg || typeof msg !== 'object') return
+      if (msg.type === 'automod_hold') {
+        if (!isEnabled('automod-queue')) return
+        const row = automodHoldToRowModel(msg)
+        if (!row) return
+        if (!shouldProcessAutomodHold(_automodSeenHolds, row.msgId, Date.now())) return
+        insertAutomodHoldRow(row)
+        return
+      }
+      if (msg.type === 'automod_update') {
+        if (!isEnabled('automod-queue')) return
+        const broadcasterLogin = String(msg.broadcasterLogin || '').toLowerCase()
+        const msgId = String(msg.msgId || '')
+        if (!broadcasterLogin || !msgId) return
+        resolveAutomodRow(broadcasterLogin, msgId, msg.status, msg.modLogin)
+        return
+      }
+      if (msg.type === 'automod_relink') {
+        if (!isEnabled('automod-queue')) return
+        if (_automodRelinkShown) return
+        _automodRelinkShown = true
+        try {
+          HsNotifs.emit('automod-relink', {})
+        } catch (_) {}
+      }
+    })
+  }
   installAutomodClickHandler()
   // Give config/mod-state a moment to settle after boot rather than racing them.
   cleanup.setTimeout(() => automodSweep(), 3000)

@@ -35,7 +35,7 @@ function sendStatusProbe() {
   const guard = (fn) =>
     Promise.race([
       fn().catch(() => unknown),
-      new Promise((res) => cleanup.setTimeout(() => res(unknown), SEND_STATUS_TIMEOUT_MS)),
+      new Promise((res) => cleanup.setPageTimeout(() => res(unknown), SEND_STATUS_TIMEOUT_MS)),
     ])
   const bool = (r) => (typeof r?.loggedIn === 'boolean' ? r.loggedIn : null)
   return Promise.all([

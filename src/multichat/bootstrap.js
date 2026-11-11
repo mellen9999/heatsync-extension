@@ -1059,6 +1059,12 @@ const cleanup = {
   // keepalive, reconnect and handshake timers must stay too. A drained
   // keepalive left a dead socket reading as alive, and every send after it
   // went nowhere until a page refresh. Full teardown still clears them.
+  // The rule: a timer that works on module state, storage or the network (a
+  // debounced save, a poll, a promise's give-up clock) is a page timer. One
+  // that works on the panel's DOM is not: its sentinel is nulled in
+  // fullSpaReinit so the rebuilt panel starts it again. A sentinel guard
+  // (`if (x) return`) on a plain cleanup timer is the bug that tests/
+  // drained-timers-ratchet.test.js fails on.
   setPageTimeout(fn, ms) {
     const id = cleanup.setTimeout(fn, ms)
     _timers.persistent.add(id)
@@ -1066,6 +1072,12 @@ const cleanup = {
   },
   setPageInterval(fn, ms) {
     const id = cleanup.setInterval(fn, ms)
+    _timers.persistent.add(id)
+    return id
+  },
+  // The visibility-gated twin, for page-lifetime pollers that sleep in a hidden tab.
+  setPageIntervalIfVisible(fn, ms) {
+    const id = cleanup.setIntervalIfVisible(fn, ms)
     _timers.persistent.add(id)
     return id
   },

@@ -34,6 +34,7 @@ function rig(tr = t, extra = {}) {
         onMessage = fn
       },
       setTimeout: () => 1,
+      setPageTimeout: () => 1,
     },
     getSetting: () => undefined,
     // the server's answer after the clear: you have no flair, the other chatter keeps theirs

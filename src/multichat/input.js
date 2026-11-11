@@ -443,7 +443,7 @@ function registerPendingSend({ text, channel, platforms, replyParentId, replyUse
     state: 'pending',
     timer: null,
   }
-  entry.timer = cleanup.setTimeout(() => {
+  entry.timer = cleanup.setPageTimeout(() => {
     const e = pendingSends.get(synthId)
     if (e?.state !== 'pending') return
     markPendingFailed(synthId, 'no_echo')

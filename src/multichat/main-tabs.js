@@ -231,8 +231,8 @@ async function _autoClaimSweep() {
 }
 function startAutoClaimPoller() {
   if (_autoClaimPoller || !autoClaimPoints) return
-  cleanup.setTimeout(_autoClaimSweep, 20000)
-  _autoClaimPoller = cleanup.setInterval(_autoClaimSweep, 5 * 60 * 1000)
+  cleanup.setPageTimeout(_autoClaimSweep, 20000)
+  _autoClaimPoller = cleanup.setPageInterval(_autoClaimSweep, 5 * 60 * 1000)
 }
 function stopAutoClaimPoller() {
   if (!_autoClaimPoller) return
@@ -1371,7 +1371,7 @@ let _nativeHiddenWatchdogStarted = false
 function startNativeHiddenWatchdog() {
   if (_nativeHiddenWatchdogStarted || hostPlatform !== 'twitch') return
   _nativeHiddenWatchdogStarted = true
-  cleanup.setInterval(() => {
+  cleanup.setPageInterval(() => {
     // Never fire hidden: nothing is visually wrong in a hidden tab, and a
     // hidden force-reveal hands twitch back its untrimmed native chat AND
     // disarms the next-load pre-arm — the failure it guards against can be

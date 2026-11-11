@@ -972,7 +972,7 @@ function hideInputBar() {
   const wait = _keepComposerOpenUntil - performance.now()
   if (wait > 0) {
     if (!_autoHideRetryTimer) {
-      _autoHideRetryTimer = cleanup.setTimeout(() => {
+      _autoHideRetryTimer = cleanup.setPageTimeout(() => {
         _autoHideRetryTimer = null
         hideInputBar()
       }, wait + 50)

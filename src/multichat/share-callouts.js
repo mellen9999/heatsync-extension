@@ -92,7 +92,7 @@ function _injectShareSynthetic(claim, user, months, customText) {
   try {
     irc?._handleMsg?.(synth)
   } catch (_) {}
-  claim.postTimer = cleanup.setTimeout(() => {
+  claim.postTimer = cleanup.setPageTimeout(() => {
     if (_pendingShareClaim === claim) _pendingShareClaim = null
   }, 30000)
 }
@@ -346,7 +346,7 @@ function readCalloutTokens(timeoutMs = 1500) {
     }
     window.addEventListener('hs-callout-token-res', onRes)
     window.dispatchEvent(new CustomEvent('hs-callout-token-req', { detail: JSON.stringify({ id }) }))
-    cleanup.setTimeout(() => finish([]), timeoutMs)
+    cleanup.setPageTimeout(() => finish([]), timeoutMs)
   })
 }
 // The queue's token that is THIS callout's: kind/count must match what the
@@ -641,7 +641,7 @@ function _injectWatchstreakSynthetic(claim, user, streakCount, customText) {
   try {
     irc?._handleMsg?.(synth)
   } catch (_) {}
-  claim.postTimer = cleanup.setTimeout(() => {
+  claim.postTimer = cleanup.setPageTimeout(() => {
     if (_pendingShareClaim === claim) _pendingShareClaim = null
   }, 30000)
 }

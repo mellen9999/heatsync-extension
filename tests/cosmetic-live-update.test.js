@@ -58,7 +58,7 @@ function fakeEl({ classes = [], text = 'melon', split = false } = {}) {
 
 beforeEach(() => {
   // paints.js resolves these from the bundle scope; stub for standalone import.
-  globalThis.cleanup = { setTimeout: () => 0 }
+  globalThis.cleanup = { setTimeout: () => 0, setPageTimeout: () => 0 }
   // The real compiler/hash, not fakes — a stubbed hash would let a spec-change
   // bug through. Same pattern as tests/paints.test.js's escapeHtml stand-in.
   globalThis.hashPaintSpec = hashPaintSpec

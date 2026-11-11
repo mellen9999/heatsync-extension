@@ -920,7 +920,7 @@ function pcAuthorSync() {
     pcAuthorKeep = null
   }
   if (room) {
-    pcAuthorKeep = cleanup.setIntervalIfVisible(() => {
+    pcAuthorKeep = cleanup.setPageIntervalIfVisible(() => {
       if (pcAuthorRoom) safeSendMessage({ type: 'feed_author', room: pcAuthorRoom })
     }, FEED_THREAD_KEEP_MS)
   }

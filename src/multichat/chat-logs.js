@@ -178,7 +178,7 @@ function clLiveRoomSync() {
     _clRoomKeep = null
   }
   if (room) {
-    _clRoomKeep = cleanup.setIntervalIfVisible(() => {
+    _clRoomKeep = cleanup.setPageIntervalIfVisible(() => {
       if (_clRoom) safeSendMessage({ type: 'feed_thread', room: _clRoom })
     }, 30000)
   }

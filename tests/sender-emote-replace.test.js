@@ -14,6 +14,7 @@ globalThis.cleanup = {
   setIntervalIfVisible: () => {},
   persistInterval: () => {},
   setTimeout: (fn, ms) => setTimeout(fn, ms),
+  setPageTimeout: (fn, ms) => setTimeout(fn, ms),
   clearTimeout: (t) => clearTimeout(t),
 }
 globalThis.HS_MOD_TOKENS = mods.HS_MOD_TOKENS

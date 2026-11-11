@@ -2880,7 +2880,7 @@ const PAST_INTERVALS_PER_NAME = 8
 let _pastOwnershipPersistTimer = null
 function persistPastOwnership() {
   if (_pastOwnershipPersistTimer) return
-  _pastOwnershipPersistTimer = cleanup.setTimeout(() => {
+  _pastOwnershipPersistTimer = cleanup.setPageTimeout(() => {
     _pastOwnershipPersistTimer = null
     const obj = {}
     for (const [name, list] of pastOwnership) obj[name] = list
@@ -2920,7 +2920,7 @@ function pastOwnershipAt(name, msgTime) {
 let _removedFallbackPersistTimer = null
 function persistRemovedFallback() {
   if (_removedFallbackPersistTimer) return
-  _removedFallbackPersistTimer = cleanup.setTimeout(() => {
+  _removedFallbackPersistTimer = cleanup.setPageTimeout(() => {
     _removedFallbackPersistTimer = null
     const obj = {}
     for (const [name, e] of removedEmoteFallback) obj[name] = e
@@ -2964,7 +2964,7 @@ const BLOCKED_FALLBACK_CAP = 1000
 let _blockedFallbackPersistTimer = null
 function persistBlockedFallback() {
   if (_blockedFallbackPersistTimer) return
-  _blockedFallbackPersistTimer = cleanup.setTimeout(() => {
+  _blockedFallbackPersistTimer = cleanup.setPageTimeout(() => {
     _blockedFallbackPersistTimer = null
     const obj = {}
     for (const [key, e] of blockedEmoteFallback) obj[key] = e
@@ -3080,7 +3080,7 @@ function _scheduleSenderEmotePersist() {
   // of additions on tab close, doesn't spam during heavy chat. Persist also
   // runs on visibilitychange below so unsynced state is flushed when the
   // user navigates away.
-  _senderEmotePersistTimer = cleanup.setTimeout(() => {
+  _senderEmotePersistTimer = cleanup.setPageTimeout(() => {
     _senderEmotePersistTimer = null
     if (!_senderEmoteDirty) return
     _senderEmoteDirty = false
@@ -4102,7 +4102,7 @@ const HS_BOXW_TTL = 30 * 24 * 60 * 60 * 1000
 let _hsBoxWSaveTimer = null
 function scheduleEmoteBoxWSave() {
   if (_hsBoxWSaveTimer) return
-  _hsBoxWSaveTimer = cleanup.setTimeout(() => {
+  _hsBoxWSaveTimer = cleanup.setPageTimeout(() => {
     _hsBoxWSaveTimer = null
     try {
       browser.storage.local

@@ -53,7 +53,7 @@ test('picker button: owned means the same emote, and name dedupe is case-exact',
 
 test('two blocked emotes with one name keep two records; unblocking one leaves the other', async () => {
   const em = await import('../src/multichat/emotes.js')
-  globalThis.cleanup = { ...globalThis.cleanup, setTimeout: () => 0 } // the persist debounce is not under test
+  globalThis.cleanup = { ...globalThis.cleanup, setTimeout: () => 0, setPageTimeout: () => 0 } // the persist debounce is not under test
   em.blockedEmoteFallback.clear()
   const A2 = 'https://cdn.7tv.app/emote/01AAAAAAAAAAAAAAAAAAAAAAAA/2x.webp'
   const B2 = 'https://cdn.betterttv.net/emote/bbbb/2x.webp'
@@ -78,7 +78,7 @@ test('tab-complete and the composer judge a blocked name per emote', async () =>
     'blockedEmoteNames',
     `const hsEmoteHiddenForViewer = () => false, hsChannelNsfwHidden = () => false, unescapeHtml = (x) => x\n${fn}; return _hsAcEmoteBlocked`,
   )(em.emoteIsBlocked, em.blockedEmoteNames)
-  globalThis.cleanup = { ...globalThis.cleanup, setTimeout: () => 0 }
+  globalThis.cleanup = { ...globalThis.cleanup, setTimeout: () => 0, setPageTimeout: () => 0 }
   em.blockedEmoteFallback.clear()
   em.blockedEmoteNames.add('W')
   em.rememberBlockedEmote('W', 'https://cdn.7tv.app/emote/AAAA/2x.webp', '7tv', false, 'hashA')

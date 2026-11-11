@@ -405,7 +405,7 @@ describe('primeSelfHsCosmetics — own identity seeds instantly', () => {
   beforeEach(() => {
     // paints.js resolves `cleanup` from the bundle scope; stub it for the
     // standalone-module import used by these tests.
-    globalThis.cleanup = { setTimeout: () => 0 }
+    globalThis.cleanup = { setTimeout: () => 0, setPageTimeout: () => 0 }
   })
 
   test('seeds the picked name colour with no network round trip', () => {

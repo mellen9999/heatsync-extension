@@ -593,7 +593,7 @@ let hsPersistTimer = null
 
 function scheduleHsCosmeticSave() {
   if (hsPersistTimer) return
-  hsPersistTimer = cleanup.setTimeout(() => {
+  hsPersistTimer = cleanup.setPageTimeout(() => {
     hsPersistTimer = null
     const newest = (m, keep) => [...m].filter(keep).slice(-HS_PERSIST_MAX)
     const blob = {
@@ -636,7 +636,7 @@ function queuePaintLookup(userId) {
   if (!hsPaintsEnabled()) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(userId)
-  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
+  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setPageTimeout(flushHsPaintBatch, hsPaintFlushDelay())
 }
 
 /**
@@ -650,7 +650,7 @@ function queueNameColorLookup(uid) {
   if (hsColorCache.has(uid) && isHsCosmeticFresh(uid)) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(uid)
-  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
+  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setPageTimeout(flushHsPaintBatch, hsPaintFlushDelay())
 }
 
 /**
@@ -664,7 +664,7 @@ function queuePlusTenureLookup(uid) {
   if (hsPlusCache.has(uid) && isHsCosmeticFresh(uid)) return
   if (hsPaintPending.size >= HS_PAINT_PENDING_MAX) return
   hsPaintPending.add(uid)
-  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
+  if (!hsPaintBatchTimer) hsPaintBatchTimer = cleanup.setPageTimeout(flushHsPaintBatch, hsPaintFlushDelay())
 }
 
 /**
@@ -689,7 +689,7 @@ function primeSelfHsCosmetics(ui) {
     hsPaintPriority.add(id)
   }
   if (hsPaintPriority.size && !hsPaintBatchTimer) {
-    hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, hsPaintFlushDelay())
+    hsPaintBatchTimer = cleanup.setPageTimeout(flushHsPaintBatch, hsPaintFlushDelay())
   }
 }
 
@@ -798,7 +798,7 @@ async function flushHsPaintBatch() {
 
   if (paints || colors || plus || badges) scheduleHsCosmeticSave()
   if ((hsPaintPending.size > 0 || hsPaintPriority.size > 0) && !hsPaintBatchTimer) {
-    hsPaintBatchTimer = cleanup.setTimeout(flushHsPaintBatch, HS_PAINT_BACKLOG_DELAY)
+    hsPaintBatchTimer = cleanup.setPageTimeout(flushHsPaintBatch, HS_PAINT_BACKLOG_DELAY)
   }
 }
 

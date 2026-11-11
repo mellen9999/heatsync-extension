@@ -142,7 +142,7 @@ describe('card author room', () => {
       `let activeProfileCard = env.open
 const FEED_THREAD_KEEP_MS = 30000
 const safeSendMessage = (m) => sent.push(m)
-const cleanup = { setIntervalIfVisible: (fn) => timers.push(fn), clearInterval: () => {} }
+const cleanup = { setPageIntervalIfVisible: (fn) => timers.push(fn), clearInterval: () => {} }
 ${CARD.slice(CARD.indexOf('let pcAuthorRoom'), CARD.indexOf('function renderProfileCardView'))}
 return { pcAuthorSync, set: (o) => { activeProfileCard = o } }`,
     )(env, sent, timers)

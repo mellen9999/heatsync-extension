@@ -769,9 +769,19 @@ function pruneRelayMap(m, now, ttlMs, max) {
 }
 
 // A send that was let through but did not land may be tried again at once.
-function releaseRelay({ platform, target, text }) {
+// `declined` (never tried: cannot post here, or another browser took it) also
+// gives back the cap slot and the per-place gap, so it cannot cost the next real send.
+function releaseRelay({ platform, target, text }, declined = false) {
   const to = `${platform}:${String(target).toLowerCase()}`
   _relay.dupAt.delete(`${to}|${relayTextKey(String(text))}`)
+  if (!declined) return
+  for (let i = _relay.admitted.length - 1; i >= 0; i--) {
+    if (_relay.admitted[i].to === to) {
+      _relay.admitted.splice(i, 1)
+      break
+    }
+  }
+  _relay.lastByTarget.delete(to)
 }
 
 // The local record the user can read: last 50 relayed sends, newest last.
@@ -834,7 +844,7 @@ async function runGuardedRelay(relay, run) {
   } catch (e) {
     // fail closed and loud: a guard that cannot decide does not send
     log(' relay guard error:', e?.message)
-    return { ok: false, error: 'relay_guard_error' }
+    return { ok: false, error: 'relay_guard_error', declined: true }
   }
 }
 
@@ -842,7 +852,7 @@ async function guardedRelayInner({ platform, target, text, reqId }, run) {
   const refusal = admitRelay({ platform, target, text, reqId })
   if (refusal) {
     await noteRelay({ platform, target, text, outcome: `refused:${refusal}` })
-    return { ok: false, error: refusal }
+    return { ok: false, error: refusal, declined: true }
   }
   let result
   try {
@@ -850,14 +860,96 @@ async function guardedRelayInner({ platform, target, text, reqId }, run) {
   } catch (e) {
     result = { ok: false, error: e?.message || 'unknown' }
   }
-  if (!result.ok) releaseRelay({ platform, target, text })
+  if (!result.ok) releaseRelay({ platform, target, text }, result.declined)
   await noteRelay({
     platform,
     target,
     text,
-    outcome: result.ok ? 'sent' : `failed:${String(result.error || 'unknown').slice(0, 40)}`,
+    outcome: result.ok
+      ? 'sent'
+      : `${result.declined ? 'declined' : 'failed'}:${String(result.error || 'unknown').slice(0, 40)}`,
   })
   return result
+}
+
+// ONE EXTENSION POSTS. The server fans a relay out to every extension the user
+// has connected (laptop, desktop, a second profile). Each one that passes the
+// guards above asks the server `relay:claim`; only the one answered go:true
+// posts and acks. One that cannot post, or lost the claim, sends
+// `relay:decline` with its reason and never posts, so the user is told the
+// truth (the server keeps the most specific decline for when nobody posts) and
+// a browser that could not post can never beat the one that did.
+// Silence from the server within RELAY_CLAIM_WAIT_MS means no post: an older
+// server has no claim step, and posting without one risks a double post.
+const RELAY_CLAIM_WAIT_MS = 3000
+// A browser with no tab on the stream would open a hidden one to post. Give any
+// browser that already has a tab a head start so it wins the claim.
+const RELAY_NO_TAB_DELAY_MS = 400
+const _relayClaims = new Map() // reqId → (go) => void
+
+function settleRelayClaim(reqId, go) {
+  const settle = _relayClaims.get(reqId)
+  if (settle) settle(go === true)
+}
+
+function claimRelay(reqId) {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      _relayClaims.delete(reqId)
+      resolve(false)
+    }, RELAY_CLAIM_WAIT_MS)
+    _relayClaims.set(reqId, (go) => {
+      clearTimeout(timer)
+      _relayClaims.delete(reqId)
+      resolve(go)
+    })
+    if (!wsSendDirect({ type: 'relay:claim', reqId })) {
+      clearTimeout(timer)
+      _relayClaims.delete(reqId)
+      resolve(false)
+    }
+  })
+}
+
+// Can this browser post this relay at all? { reason } names why not (the same
+// codes the send paths already return); { hasTab } says whether a tab is already
+// there. No tab is still postable: the send paths open a hidden bridge tab.
+async function relayPostability(platform, target) {
+  if (platform === 'youtube') {
+    const tabs = await browser.tabs.query({ url: '*://www.youtube.com/*' }).catch(() => [])
+    const hasTab = tabs.some((t) => (t.url || '').includes(target))
+    if (!hasTab && (await readYoutubeSignedIn()) === false) return { reason: 'no_youtube_tab', hasTab }
+    return { reason: null, hasTab }
+  }
+  const { cookie } = await readKickSession().catch(() => ({}))
+  if (!cookie?.value) return { reason: 'kick_not_logged_in', hasTab: false }
+  const tabs = await browser.tabs.query({ url: '*://*.kick.com/*' }).catch(() => [])
+  return { reason: null, hasTab: tabs.length > 0 }
+}
+
+// The claim gate around one platform post. Returns the post's result, or
+// { ok:false, error, declined:true } when this browser must not post.
+async function claimThenPost(platform, target, reqId, post) {
+  const can = await relayPostability(platform, target)
+  if (can.reason) return { ok: false, error: can.reason, declined: true }
+  if (!can.hasTab) await new Promise((r) => setTimeout(r, RELAY_NO_TAB_DELAY_MS))
+  if (!(await claimRelay(reqId))) return { ok: false, error: 'claim_lost', declined: true }
+  return post()
+}
+
+// One relay frame, end to end: guards, claim, post, then the ack (the one that
+// posted, or failed trying) or the decline (the ones that never tried).
+async function relayOnce({ platform, target, text, reqId }, post, ackType) {
+  const result = await runGuardedRelay({ platform, target, text, reqId }, () =>
+    claimThenPost(platform, target, reqId, post),
+  )
+  if (result.declined) {
+    wsSendDirect({ type: 'relay:decline', reqId, error: result.error })
+    return
+  }
+  const ack = { type: ackType, reqId, ok: !!result.ok, error: result.error }
+  if (platform === 'youtube') ack.ytUsername = result.ytUsername
+  wsSendDirect(ack)
 }
 
 async function connectWebSocket() {
@@ -1916,22 +2008,14 @@ function handleWSMessage(msg) {
         // Find a tab on this videoId, hand off to youtube-content's existing
         // youtube_send_relay path, ack back over the WS so the originating
         // website socket knows whether it landed. Guarded: see RELAYED SENDS.
-        ;(async () => {
-          const reqId = msg.reqId
-          const videoId = msg.videoId
-          const text = msg.text
-          const result = await runGuardedRelay({ platform: 'youtube', target: videoId, text, reqId }, async () => {
-            const r = await sendYoutubeChat({ videoId, text })
+        relayOnce(
+          { platform: 'youtube', target: msg.videoId, text: msg.text, reqId: msg.reqId },
+          async () => {
+            const r = await sendYoutubeChat({ videoId: msg.videoId, text: msg.text })
             return { ok: !!r.ok, error: r.error, ytUsername: r.ytUsername }
-          })
-          wsSendDirect({
-            type: 'yt:relay_ack',
-            reqId,
-            ok: !!result.ok,
-            ytUsername: result.ytUsername,
-            error: result.error,
-          })
-        })()
+          },
+          'yt:relay_ack',
+        )
         break
 
       case 'kick:relay_send':
@@ -1942,18 +2026,21 @@ function handleWSMessage(msg) {
         // origin. Reuses the same resolve/send helpers as the local
         // kick_resolve_channel / kick_send_message runtime-message flow.
         // Guarded: see RELAYED SENDS.
-        ;(async () => {
-          const reqId = msg.reqId
-          const channel = msg.channel
-          const text = msg.text
-          const result = await runGuardedRelay({ platform: 'kick', target: channel, text, reqId }, async () => {
-            const resolved = await resolveKickChannelIdBg(channel.toLowerCase())
+        relayOnce(
+          { platform: 'kick', target: msg.channel, text: msg.text, reqId: msg.reqId },
+          async () => {
+            const resolved = await resolveKickChannelIdBg(msg.channel.toLowerCase())
             if (!resolved.channelId) return { ok: false, error: 'no_channel' }
-            const r = await sendKickMessageViaTab(resolved.channelId, text)
+            const r = await sendKickMessageViaTab(resolved.channelId, msg.text)
             return { ok: !!r?.ok, error: r?.error }
-          })
-          wsSendDirect({ type: 'kick:relay_ack', reqId, ok: !!result.ok, error: result.error })
-        })()
+          },
+          'kick:relay_ack',
+        )
+        break
+
+      case 'relay:claim_result':
+        // The server's answer to our relay:claim: go:true posts, anything else does not.
+        settleRelayClaim(msg.reqId, msg.go)
         break
 
       case 'kick-sub-event':

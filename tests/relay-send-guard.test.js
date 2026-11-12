@@ -43,12 +43,27 @@ function fakeArea(seed = {}) {
   }
 }
 
-function load({ local = fakeArea(), session = fakeArea(), platform = {} } = {}) {
+// env: what this browser has. tabs = open tab urls, ytSignedIn / kickCookie = logins,
+// claim = the server's answer to relay:claim (true | false | 'silent' for no answer).
+function load({ local = fakeArea(), session = fakeArea(), platform = {}, env = {} } = {}) {
   const sent = { kick: [], yt: [] }
   const acks = []
+  const claims = []
   const logs = []
   const timers = []
-  const browser = { runtime: { id: EXT_ID }, storage: { local, session } }
+  const tabUrls = env.tabs || [`https://www.youtube.com/live_chat?v=abcdefghijk`, 'https://kick.com/x']
+  const browser = {
+    runtime: { id: EXT_ID },
+    storage: { local, session },
+    tabs: {
+      query: async ({ url }) => {
+        const host = url.includes('youtube') ? 'youtube.com' : 'kick.com'
+        return tabUrls.filter((u) => u.includes(host)).map((u) => ({ url: u }))
+      },
+    },
+  }
+  const readYoutubeSignedIn = async () => env.ytSignedIn ?? true
+  const readKickSession = async () => ({ cookie: env.kickCookie === false ? null : { value: 'x' } })
   const stubs = {
     sendYoutubeChat:
       platform.yt ||
@@ -72,6 +87,8 @@ function load({ local = fakeArea(), session = fakeArea(), platform = {} } = {}) 
     'resolveKickChannelIdBg',
     'sendKickMessageViaTab',
     'wsSendDirect',
+    'readYoutubeSignedIn',
+    'readKickSession',
     `${YT_VIDEO_ID_LINE}
 ${GUARD}
 async function handle(msg) {
@@ -81,14 +98,30 @@ ${CASES}
 }
 return { admitRelay, runGuardedRelay, relayDiagSummary, relayLog, handle, _relay }`,
   )
-  const api = make(
+  let api
+  const claimAnswer = () => (env.claim === undefined ? true : env.claim)
+  api = make(
     browser,
     (...a) => logs.push(a.join(' ')),
-    (fn, ms) => timers.push({ fn, ms }),
+    // short waits (the no-tab head start) run now; the claim timeout and the log flush are held
+    (fn, ms) => (ms <= 500 ? setTimeout(fn, 0) : timers.push({ fn, ms })),
     stubs.sendYoutubeChat,
     stubs.resolveKickChannelIdBg,
     stubs.sendKickMessageViaTab,
-    (m) => acks.push(m),
+    (m) => {
+      if (m.type === 'relay:claim') {
+        claims.push(m)
+        const go = claimAnswer()
+        if (go !== 'silent')
+          Promise.resolve().then(() => api.handle({ type: 'relay:claim_result', reqId: m.reqId, go }))
+        return true
+      }
+      // a decline is the answer of an extension that never posted: same shape as a failed ack
+      acks.push(m.type === 'relay:decline' ? { ...m, ok: false } : m)
+      return true
+    },
+    readYoutubeSignedIn,
+    readKickSession,
   )
   const flushLog = () => {
     for (const t of timers.splice(0)) t.fn()
@@ -103,7 +136,7 @@ return { admitRelay, runGuardedRelay, relayDiagSummary, relayLog, handle, _relay
     }
     return ackFor()
   }
-  return { ...api, sent, acks, logs, local, session, flushLog, relay }
+  return { ...api, sent, acks, claims, logs, local, session, flushLog, relay }
 }
 
 const VID = 'abcdefghijk'
@@ -390,5 +423,100 @@ describe('the record the user can read', () => {
     expect(d.outcomes).toEqual({ sent: 2 })
     expect(d.recent[0]).toMatchObject({ p: 'kick', to: 'chan', r: 'sent' })
     expect(JSON.stringify(d)).not.toContain('sentence')
+  })
+})
+
+describe('one extension posts: the claim', () => {
+  const settle = () => new Promise((r) => setTimeout(r, 20))
+
+  test('it asks the server first and posts only after go:true', async () => {
+    setSystemTime(T0)
+    const h = load()
+    const frame = kick('chan', 'claimed line')
+    const ack = await h.relay(frame)
+    expect(h.claims).toEqual([{ type: 'relay:claim', reqId: frame.reqId }])
+    expect(ack).toMatchObject({ type: 'kick:relay_ack', ok: true })
+    expect(h.sent.kick).toHaveLength(1)
+  })
+
+  test('a lost claim never posts and sends a decline, not an ack', async () => {
+    setSystemTime(T0)
+    const h = load({ env: { claim: false } })
+    const y = await h.relay(yt(VID, 'someone else has it'))
+    const k = await h.relay(kick('chan', 'someone else has it'))
+    expect(y).toMatchObject({ type: 'relay:decline', error: 'claim_lost' })
+    expect(k).toMatchObject({ type: 'relay:decline', error: 'claim_lost' })
+    expect(h.sent.yt).toEqual([])
+    expect(h.sent.kick).toEqual([])
+    expect(h.acks.some((a) => a.type.endsWith('relay_ack'))).toBe(false)
+  })
+
+  test('no answer from the server within the wait: no post, and a decline', async () => {
+    setSystemTime(T0)
+    const h = load({ env: { claim: 'silent' } })
+    const frame = kick('chan', 'old server')
+    const done = h.relay(frame)
+    await settle()
+    h.flushLog() // fires the claim timeout
+    expect(await done).toMatchObject({ type: 'relay:decline', error: 'claim_lost' })
+    expect(h.sent.kick).toEqual([])
+  })
+
+  test('no youtube tab and not signed in: declines with the reason, never claims', async () => {
+    setSystemTime(T0)
+    const h = load({ env: { tabs: [], ytSignedIn: false } })
+    expect(await h.relay(yt(VID, 'nowhere to type'))).toMatchObject({ type: 'relay:decline', error: 'no_youtube_tab' })
+    expect(h.claims).toEqual([])
+    expect(h.sent.yt).toEqual([])
+  })
+
+  test('kick signed out: declines with the reason, never claims', async () => {
+    setSystemTime(T0)
+    const h = load({ env: { kickCookie: false } })
+    expect(await h.relay(kick('chan', 'logged out'))).toMatchObject({
+      type: 'relay:decline',
+      error: 'kick_not_logged_in',
+    })
+    expect(h.claims).toEqual([])
+  })
+
+  test('no tab but signed in still claims and posts (the hidden bridge tab carries it)', async () => {
+    setSystemTime(T0)
+    const h = load({ env: { tabs: [] } })
+    expect((await h.relay(yt(VID, 'bridge it'))).ok).toBe(true)
+    expect((await h.relay(kick('chan', 'bridge it'))).ok).toBe(true)
+    expect(h.claims).toHaveLength(2)
+  })
+
+  test('a guard refusal is a decline, never an ack that could beat the winner', async () => {
+    setSystemTime(T0)
+    const h = load()
+    const bad = await h.relay(kick('chan', '   '))
+    expect(bad).toMatchObject({ type: 'relay:decline', error: 'invalid_text' })
+    expect(h.claims).toEqual([])
+  })
+
+  test('a decline hands back the slot: the next real send is not rate limited by it', async () => {
+    setSystemTime(T0)
+    const h = load({ env: { claim: false } })
+    await h.relay(kick('chan', 'lost one'))
+    setSystemTime(T0 + 100)
+    expect(await h.relay(kick('chan', 'lost two'))).toMatchObject({ error: 'claim_lost' })
+  })
+
+  test('a send that won the claim and then failed still acks the failure', async () => {
+    setSystemTime(T0)
+    const h = load({ platform: { kick: async () => ({ ok: false, error: 'no_kick_tab' }) } })
+    expect(await h.relay(kick('chan', 'won then failed'))).toMatchObject({
+      type: 'kick:relay_ack',
+      ok: false,
+      error: 'no_kick_tab',
+    })
+  })
+
+  test('a claim answer for a request nobody asked about is ignored', async () => {
+    const h = load()
+    await h.handle({ type: 'relay:claim_result', reqId: 'never-asked', go: true })
+    expect(h.sent.kick).toEqual([])
   })
 })

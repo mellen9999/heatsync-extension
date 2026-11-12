@@ -45,7 +45,7 @@ describe('live retro-fold', () => {
   test('twitch leg preferred as survivor, others hidden + removed', () => {
     // Kick echoes paint first (they relay through this ext) but bare and with
     // laggier timestamps — surviving them strands the [H] row rows-up.
-    expect(FOLD).toContain("legs.find((l) => (l.m.platform || 'twitch') === 'twitch')")
+    expect(FOLD).toContain("legs.find((l) => l.plat === 'twitch')")
     expect(FOLD).toContain("m.platform = 'heatsync'")
     expect(FOLD).toContain('hsMarkBadgeHeatsync(pb)')
     expect(FOLD).toContain('leg.m.hidden = true')

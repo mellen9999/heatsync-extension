@@ -22,6 +22,7 @@ const make = (names) =>
     `const SENT_HOST_WINDOW = 1e12
 const _recentSentMessages = sent
 const _echoTextMatches = (e, t) => e.text === t
+${fn('_notOurLine')}
 ${fn('_peekSent')}
 ${fn('peekSentHost')}
 ${fn('peekOwnSentHost')}

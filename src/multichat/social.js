@@ -1248,15 +1248,20 @@ function handleYoutubeChatMsg(msg) {
   // copies of the user's own message — the dedup'd twitch/kick echo
   // PLUS the unfiltered YT echo. peekSentHost ensures the badge
   // reflects where the user actually typed FROM.
-  if (isSentEcho(ytMsg.text, 'youtube')) return
+  // Recorded before the dual-send drop (which only keeps one copy on screen): the server
+  // still needs THIS leg's message id, or every other viewer sees it as a second line.
+  if (isSelf(ytMsg, 'youtube')) hsWitnessOwnEcho('youtube', ytMsg.originKey, ytMsg.id, peekSentId(ytMsg.text))
+  if (isSentEcho(ytMsg.text, 'youtube', ytMsg)) return
   claimYtSendingRow(ytMsg.text) // the real line is about to render: its optimistic twin leaves
   // Gated on peekSentHost alone — currentUsername is null on cross-origin
   // tabs (youtube.com/kick.com popout), matching the IRC/kick handlers.
   {
     const sentHost = peekSentHost(ytMsg.text)
     if (sentHost) {
+      // retagged to the host platform, the row still came from youtube: its origin is keyed by
+      // that, and the fold counts it as the youtube leg (not a second twitch/kick one)
+      ytMsg.badgePlatform = 'youtube'
       ytMsg.platform = sentHost === 'yt' ? 'youtube' : sentHost
-      if (isSelf(ytMsg, 'youtube')) hsWitnessOwnEcho('youtube', ytMsg.originKey, ytMsg.id, peekSentId(ytMsg.text))
       // YouTube has no reply threading, so the bar can ONLY come from what
       // we remembered at send time — the @mention prepend is all that ships
       // on the wire. Same ownership proof as twitch/kick.

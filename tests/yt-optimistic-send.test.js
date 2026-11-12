@@ -21,7 +21,7 @@ describe('optimistic youtube send', () => {
 
   test('every exit removes it: echo, failure, rejection, timeout', () => {
     expect(main).toContain('cleanup.setTimeout(() => clearYtSendingRow(id), 10000)')
-    expect(social).toMatch(/isSentEcho\(ytMsg\.text, 'youtube'\)\) return\n\s*claimYtSendingRow\(ytMsg\.text\)/)
+    expect(social).toMatch(/isSentEcho\(ytMsg\.text, 'youtube', ytMsg\)\) return\n\s*claimYtSendingRow\(ytMsg\.text\)/)
     expect(input).toContain('if (result !== true) clearYtSendingRow(_synthId)')
     expect(input).toMatch(/yt-only send rejected[^\n]*\n\s*clearYtSendingRow\(_synthId\)/)
   })

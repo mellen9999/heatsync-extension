@@ -176,9 +176,20 @@ function _echoPlatformKey(p) {
   return s || 'unknown'
 }
 
-function isSentEcho(msgText, msgPlatform) {
+// Is this row provably someone else's? When this platform's own name is known and the sender is
+// another name, the words matching one of our sends is a coincidence ("gm", "LUL"), not our echo.
+// Unknown self name (cross-origin popout) proves nothing: the text match stands, as it always did.
+function _notOurLine(msg, platform) {
+  const names = platform === 'twitch' || platform === 'kick' ? selfNamesFor(platform) : []
+  return !!(names.length && msg?.user && !names.includes(String(msg.user).toLowerCase()))
+}
+
+// msg (the echo itself, when the caller has it) lets a stranger's identical line pass through without
+// taking the echo credit that belongs to the send, which would drop their line and double yours.
+function isSentEcho(msgText, msgPlatform, msg) {
   const cutoff = Date.now() - SENT_DEDUP_WINDOW
   const platform = _echoPlatformKey(msgPlatform)
+  if (msg && _notOurLine(msg, platform)) return false
   // FIFO oldest-first: each echo is claimed by the OLDEST send that hasn't
   // already taken an echo from THIS platform. The old newest-first scan locked
   // two same-text sends onto one entry, so the 2nd send's only echo was counted
@@ -244,11 +255,13 @@ function retroFoldOwnEchoes() {
     // never re-claim them, and never fold system rows.
     if (m.platform === 'heatsync' || m.type) continue
     if (!_echoTextMatches(entry, m.text)) continue
-    const plat = _echoPlatformKey(m.platform || 'twitch')
+    // the chat it came from: a host-retagged echo (a kick line wearing the twitch mark) still counts as kick
+    const plat = _echoPlatformKey(m.badgePlatform || m.platform || 'twitch')
+    if (_notOurLine(m, plat)) continue // somebody else saying the same words is not a leg of this send
     const seen = entry.seenPlatforms || (entry.seenPlatforms = [])
     if (seen.includes(plat)) continue
     seen.push(plat)
-    legs.push({ div, m })
+    legs.push({ div, m, plat })
   }
   if (!legs.length) return
   // Survivor: prefer the TWITCH leg — its tmi-sent-ts orders consistently
@@ -256,11 +269,13 @@ function retroFoldOwnEchoes() {
   // set. A kick echo often paints FIRST (it relays through this very ext)
   // but bare and with a laggier timestamp, which strands the row rows-up in
   // a busy chat since rows never move once placed.
-  const survivor = legs.find((l) => (l.m.platform || 'twitch') === 'twitch') || legs[0]
+  const survivor = legs.find((l) => l.plat === 'twitch') || legs[0]
   if (!entry.rendered) {
     entry.rendered = true
     const m = survivor.m
-    m.badgePlatform = m.badgePlatform || m.platform
+    // twitch rows carry no platform: without the explicit name the row forgets which chat it came
+    // from, so its origin (keyed by platform + message id) is never found and it can't join the fold
+    m.badgePlatform = m.badgePlatform || m.platform || 'twitch'
     m.platform = 'heatsync'
     const pb = survivor.div.querySelector('.hs-mc-platform-badge')
     if (pb) {
@@ -309,10 +324,17 @@ function claimHydratedEcho(msgText, msgPlatform, msgTime) {
 function peekSentHost(msgText) {
   return _peekSent(msgText)?.host || null
 }
-// the send id of OUR send of these words ('' for an entry from another device, which
-// has none — only the device that sent records the origin)
+// the send id of OUR send of these words, '' when there is none: an entry from another
+// device has no id (only the device that sent records the origin), and an echo older than
+// the dedup window is not the echo of a send but a line typed since, natively, with the
+// same words — it must not inherit the old send's id (it would fold into that old row)
 function peekSentId(msgText) {
-  return _peekSent(msgText)?.sendId || ''
+  const cutoff = Date.now() - SENT_DEDUP_WINDOW
+  for (let i = _recentSentMessages.length - 1; i >= 0; i--) {
+    const e = _recentSentMessages[i]
+    if (e.sendId && e.time >= cutoff && _echoTextMatches(e, msgText)) return e.sendId
+  }
+  return ''
 }
 function _peekSent(msgText) {
   // Use the longer SENT_HOST_WINDOW (24h) — badge attribution must survive
@@ -335,8 +357,7 @@ function _peekSent(msgText) {
 // sender is someone else, it is not our send and keeps its own platform's mark.
 // Unknown self name (cross-origin popout) keeps the text-match proof as before.
 function peekOwnSentHost(msg, platform) {
-  const names = platform === 'twitch' || platform === 'kick' ? selfNamesFor(platform) : []
-  if (names.length && msg.user && !names.includes(String(msg.user).toLowerCase())) return null
+  if (_notOurLine(msg, platform)) return null
   return peekSentHost(msg.text)
 }
 

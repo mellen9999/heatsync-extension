@@ -4,4 +4,4 @@
 5310 src/multichat/emotes.js  # baseline
 5124 src/content/heatsync-button.js  # 2026-11-08: moved from chrome/ (was unscanned there); ceiling = size at the move; +1 native upload form mount (logic in native-emote-upload.js)
 4757 src/multichat/twitch-api.js  # baseline
-4237 src/multichat/social.js  # baseline; +5 youtube replay alert gate, +22 youtube mod notice ingest
+4240 src/multichat/social.js  # baseline; +5 youtube replay alert gate, +22 youtube mod notice ingest, +3 youtube own echo recorded before the dual-send drop, kept as the youtube leg when retagged

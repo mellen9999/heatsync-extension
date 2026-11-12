@@ -18,17 +18,21 @@ function hsOriginPlat(p) {
 function hsOriginNote(platform, id, sendId) {
   if (!id) return
   const key = `${hsOriginPlat(platform)}:${id}`
-  if (!hsOriginIds.has(key) && hsOriginIds.size >= HS_ORIGIN_CAP) hsOriginIds.delete(hsOriginIds.keys().next().value)
-  hsOriginIds.set(key, sendId ? String(sendId) : '')
+  const had = hsOriginIds.get(key)
+  if (had === undefined && hsOriginIds.size >= HS_ORIGIN_CAP) hsOriginIds.delete(hsOriginIds.keys().next().value)
+  // a send id once known is never lost to a later word of the same origin that carries none
+  hsOriginIds.set(key, sendId ? String(sendId) : had || '')
 }
 
 // Stamp a row: m.hsOrigin (+ m.hsSendId) when its id is a known heatsync send.
-// Never un-stamps (M5). The first row of a channel also asks for that channel's
-// seed. Returns true when the row is [H].
+// Never un-stamps (M5). A row that is already [H] but has no send id yet (its origin
+// came without one) still takes the id when it arrives, or it would never join the
+// fold and its other leg would stay a second row. The first row of a channel also
+// asks for that channel's seed. Returns true when the row is [H].
 function hsOriginStamp(m) {
   if (!m || m.type || !m.id) return !!m?.hsOrigin
   const plat = hsOriginPlat(m.badgePlatform || m.platform)
-  if (!m.hsOrigin) {
+  if (!m.hsOrigin || !m.hsSendId) {
     const sid = hsOriginIds.get(`${plat}:${m.id}`)
     if (sid !== undefined) {
       m.hsOrigin = true
@@ -152,17 +156,30 @@ function hsMarkBadgeHeatsync(pb) {
   pb.textContent = hm.label
 }
 
-// flip every on-screen row whose id just became known
+// flip every on-screen row whose id just became known. Two rows on screen that now
+// carry one send id are one send: the badge flip alone leaves both, so ask for the render
+// that folds them (the pane only folds legs when it renders).
 function hsOriginRepaint() {
   if (typeof document === 'undefined') return
   const rows = document.getElementById('hs-mc-messages')?.children
   if (!rows) return
+  const sends = new Set()
+  let twice = false
   for (const div of rows) {
     const m = div._hsMsg
-    if (!m || m.hsOrigin || !hsOriginStamp(m)) continue
-    const pb = div.querySelector('.hs-mc-platform-badge')
-    if (pb) hsMarkBadgeHeatsync(pb)
+    if (!m) continue
+    const was = m.hsOrigin
+    hsOriginStamp(m)
+    if (m.hsOrigin && !was) {
+      const pb = div.querySelector('.hs-mc-platform-badge')
+      if (pb) hsMarkBadgeHeatsync(pb)
+    }
+    if (m.hsSendId) {
+      if (sends.has(m.hsSendId)) twice = true
+      sends.add(m.hsSendId)
+    }
   }
+  if (twice && typeof scheduleMergedRender === 'function') scheduleMergedRender()
 }
 
 // a live `chat:origin` (relayed by the background)

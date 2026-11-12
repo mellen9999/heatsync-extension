@@ -1059,8 +1059,9 @@ async function init() {
     }
     // Suppress echo of own sent messages (dedup dual-send). Pass 'twitch'
     // explicitly — IRC msgs leave m.platform unset so the host-platform
-    // preference in isSentEcho can compare against it.
-    if (isSentEcho(msg.text, 'twitch')) return
+    // preference in isSentEcho can compare against it. msg lets a stranger's
+    // identical line through instead of eating the credit of our own echo.
+    if (isSentEcho(msg.text, 'twitch', msg)) return
     // Own-message badge: only override when the echo matches a message we
     // tracked as sent FROM the extension input bar. That way echoes
     // originating from elsewhere (e.g. heatsync.org website) keep
@@ -1179,9 +1180,13 @@ async function init() {
       }
       if (_pendId) confirmPending(_pendId, 'kick')
     }
+    // kick is sent browser → kick, never seen by the server: record our own echo. Before the
+    // dual-send drop below, which only keeps one copy on screen: the server still needs THIS
+    // leg's message id, or every other viewer sees it as a second line.
+    if (isSelf(msg, 'kick')) hsWitnessOwnEcho('kick', msg.channel, msg.id, peekSentId(msg.text))
     // Suppress echo of own sent messages (dedup dual-send) — pass 'kick'
     // so host-platform preference can favor this echo when on kick.com.
-    if (isSentEcho(msg.text, 'kick')) return
+    if (isSentEcho(msg.text, 'kick', msg)) return
     // Own-message badge: only override for ext-tracked sends (matches
     // IRC handler comment above). Untracked echoes keep msg.platform='kick'
     // which already renders as [K]. Gated on peekSentHost alone — same
@@ -1191,8 +1196,6 @@ async function init() {
       if (sentHost) {
         // Kick origin — badges look up in kickBadgeUrls.
         msg.badgePlatform = 'kick'
-        // kick is sent browser → kick, never seen by the server: record our own echo
-        if (isSelf(msg, 'kick')) hsWitnessOwnEcho('kick', msg.channel, msg.id, peekSentId(msg.text))
         msg.platform = sentHost === 'yt' ? 'youtube' : sentHost
         // Kick's echo of our own send carries no reply payload, so the bar
         // only exists if we put it back. Same ownership proof as twitch.

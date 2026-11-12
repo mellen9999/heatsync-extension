@@ -1,5 +1,12 @@
 # changelog
 
+## [1.7.132] — 2026-11-12
+
+### fixed
+- **send** — one send posts once per platform. a retry resends only what never landed, a kick send that may have gone out is never posted again, and enter while composing in another language is not a send.
+- **relayed sends** — a line the site asks your browser to post is posted by one browser, not by every browser you have heatsync in. when none can post, the site is told why.
+- **marks** — one send is one [H] row whatever order its legs arrive in, and a stranger's same words are not taken for your line.
+
 ## [1.7.131] — 2026-11-11
 
 ### fixed

@@ -225,11 +225,11 @@ import { join as _join } from 'node:path'
 
 describe('send path settles the composer', () => {
   const SRC = _readFileSync(_join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
-  const sendStart = SRC.indexOf('async function sendMessage()')
+  const sendStart = SRC.indexOf('async function sendMessage(retry)')
   const sendTail = SRC.slice(sendStart, SRC.indexOf('--- Kick send path', sendStart))
   const settle = SRC.slice(
     SRC.indexOf('function settleComposerAfterSend('),
-    SRC.indexOf('async function sendMessage()'),
+    SRC.indexOf('async function sendMessage(retry)'),
   )
 
   test('sendMessage settles the composer after clearing it', () => {

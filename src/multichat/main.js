@@ -1035,7 +1035,7 @@ async function init() {
     // channel proves SOMETHING posted — catches the wysiwyg-chip/NBSP/
     // serializer-divergence false-positive class.
     {
-      let _pendId = findPendingByEchoText(msg.text)
+      let _pendId = findPendingByEchoText(msg.text, msg, 'twitch')
       if (!_pendId && msg.user) {
         const u = msg.user.toLowerCase()
         // currentUsername works on-host (twitch.tv) but is null on cross-
@@ -1170,7 +1170,7 @@ async function init() {
     // Pass 'kick' platform so per-platform awaiting set drains correctly.
     // FIFO-by-channel fallback applies for same reason as twitch handler.
     {
-      let _pendId = findPendingByEchoText(msg.text)
+      let _pendId = findPendingByEchoText(msg.text, msg, 'kick')
       if (!_pendId && msg.user) {
         const u = msg.user.toLowerCase()
         const isOwnUser =

@@ -32,6 +32,8 @@ const KICK_FATAL_SEND_ERRORS = new Set([
 // normal path — it only fires if the service worker itself went away.
 const KICK_SEND_TIMEOUT_MS = 30000
 const KICK_SEND_RETRY_BACKOFF_MS = [750, 1500]
+// what a fetch that never reached kick says (chrome, firefox, safari); see sendKickMessage
+const KICK_NEVER_LANDED = /failed to fetch|networkerror|load failed/i
 
 async function resolveKickChannelId(slug) {
   if (kickChannelIdCache.has(slug)) return kickChannelIdCache.get(slug)
@@ -108,6 +110,12 @@ async function sendKickMessage(kickSlug, text, reply = null) {
       // Unresolved, not failed — see KICK_SEND_TIMEOUT_MS. Never auto-retried.
       if (err === 'timeout') return 'kick_unconfirmed'
       if (KICK_FATAL_SEND_ERRORS.has(err)) return err
+      // Tried again only when the POST provably never landed: kick answered 4xx (refused it) or the
+      // connection never opened. Anything else — a 5xx from a gateway that already did the work, a
+      // worker that died between the POST and its answer — may well be in chat, and with no
+      // idempotency key a retry would post it twice.
+      const neverLanded = (resp?.status >= 400 && resp?.status < 500) || (!resp?.status && KICK_NEVER_LANDED.test(err))
+      if (!neverLanded) return 'kick_unconfirmed'
       if (attempt < KICK_SEND_RETRY_BACKOFF_MS.length) {
         await new Promise((r) => setTimeout(r, KICK_SEND_RETRY_BACKOFF_MS[attempt]))
         continue

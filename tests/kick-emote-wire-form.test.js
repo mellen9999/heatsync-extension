@@ -146,11 +146,13 @@ describe('INVALID_EMOTE degrades to plain words', () => {
     const fatalAt = SEND.indexOf('const KICK_FATAL_SEND_ERRORS')
     const fatal = SEND.slice(fatalAt, SEND.indexOf('])', fatalAt) + 2)
     const backoff = SEND.split('\n').find((l) => l.startsWith('const KICK_SEND_RETRY_BACKOFF_MS'))
+    const neverLanded = SEND.split('\n').find((l) => l.startsWith('const KICK_NEVER_LANDED'))
     const fn = new Function(
       'seen',
       'responses',
       `${fatal}
        ${backoff}
+       ${neverLanded}
        const _unkickEmotes = (s) => String(s).replace(/\\[emote:\\d+:([^\\]]+)\\]/g, '$1')
        const resolveKickChannelId = async () => 84407
        const _kickSendOnce = async (id, body, reply) => { seen.push({ body, reply }); return responses.shift() }
@@ -179,8 +181,8 @@ describe('INVALID_EMOTE degrades to plain words', () => {
   test('the de-tokenized resend does not consume a retry slot', async () => {
     const { fn, seen } = makeSender([
       { ok: false, error: 'kick rejected the message (400)', status: 400, code: 'invalid_emote' },
-      { ok: false, error: 'kick server error (500)', status: 500 },
-      { ok: false, error: 'kick server error (500)', status: 500 },
+      { ok: false, error: 'kick rate limited — wait a moment', status: 429 },
+      { ok: false, error: 'kick rate limited — wait a moment', status: 429 },
       { ok: true },
     ])
     expect(await fn('mellen', 'x [emote:1:A]')).toBe(true)

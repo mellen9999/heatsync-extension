@@ -364,7 +364,20 @@ function joinChannel(channel) {
   })
 }
 
-async function drainSendQueue() {
+// One drain at a time. The reconnect timer and the tab-focus handler both drain when the socket is back,
+// and a join await sits between peeking the queue head and shifting it: two walks over one queue would
+// each send that head (a duplicate) and each shift one entry (the next message gone, never sent).
+let drainingQueue = null
+function drainSendQueue() {
+  if (!drainingQueue) {
+    drainingQueue = drainSendQueueOnce().finally(() => {
+      drainingQueue = null
+    })
+  }
+  return drainingQueue
+}
+
+async function drainSendQueueOnce() {
   // Join-gate every drain. A PRIVMSG to a channel we never JOINed is silently
   // dropped by tmi.twitch.tv (no NOTICE). scheduleReconnect() can lose a queued
   // channel from its rejoin list — it early-returns when a reconnect is already

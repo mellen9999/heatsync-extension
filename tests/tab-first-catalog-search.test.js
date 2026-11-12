@@ -157,7 +157,7 @@ describe('plain-text (wysiwyg off) still commits the emote at send', () => {
   })
 
   test('sendMessage commits the registry against the outgoing text unconditionally', () => {
-    const s = INPUT_SRC.indexOf('async function sendMessage()')
+    const s = INPUT_SRC.indexOf('async function sendMessage(retry)')
     expect(s).toBeGreaterThan(-1)
     const body = INPUT_SRC.slice(s, s + 900)
     expect(body).toContain('autoAddInputEmotes(text)')

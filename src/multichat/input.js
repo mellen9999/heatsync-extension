@@ -462,10 +462,11 @@ function makeSynthId() {
 // instead of being refused.
 const DEAD_TWITCH_CHAT_COMMANDS = new Set(['clear', 'raid', 'unraid', 'commercial', 'marker'])
 
-function registerPendingSend({ text, channel, platforms, replyParentId, replyUser }) {
+function registerPendingSend({ sendId, text, channel, platforms, replyParentId, replyUser }) {
   const synthId = makeSynthId()
   const entry = {
     synthId,
+    sendId,
     text,
     channel,
     platforms,
@@ -522,10 +523,17 @@ function confirmPending(synthId, platform) {
 // normalized match (collapses NBSP/tabs/runs of spaces) which catches cases
 // where the input serializer added/stripped a space the echo didn't, e.g.
 // wysiwyg-chip + trailing text-node combinations.
-function findPendingByEchoText(text) {
+function findPendingByEchoText(text, msg, platform) {
+  // somebody else's identical words confirm nothing of ours (a false confirm is a dropped send never retried)
+  if (msg && _notOurLine(msg, platform)) return null
+  // a send that was written off may still land (a queued line drains on reconnect, a slow platform):
+  // its echo retires the retry notice instead of leaving a button that sends it a second time
+  return _pendingByEcho(text, 'pending') || _pendingByEcho(text, 'failed')
+}
+function _pendingByEcho(text, state) {
   if (!text || !pendingSends.size) return null
   for (const [id, entry] of pendingSends) {
-    if (entry.state !== 'pending') continue
+    if (entry.state !== state) continue
     if (_echoTextMatches({ text: entry.text, reply: !!entry.replyParentId }, text)) return id
   }
   const norm = (s) =>
@@ -535,7 +543,7 @@ function findPendingByEchoText(text) {
   const wantN = norm(text)
   if (!wantN) return null
   for (const [id, entry] of pendingSends) {
-    if (entry.state !== 'pending') continue
+    if (entry.state !== state) continue
     if (norm(entry.text) === wantN) return id
     // Reply echoes carry twitch's server-side "@login " prefix — match the
     // normalized remainder too (mirrors _echoTextMatches, reply entries only).
@@ -545,7 +553,7 @@ function findPendingByEchoText(text) {
     try {
       const dump = []
       for (const [, entry] of pendingSends) {
-        if (entry.state !== 'pending') continue
+        if (entry.state !== state) continue
         dump.push({
           pendingText: entry.text,
           pendingLen: entry.text.length,
@@ -696,7 +704,17 @@ function retryPendingSend(synthId) {
       replyState = { msgId: entry.replyParentId, user: entry.replyUser || undefined }
     } catch (_) {}
   }
-  sendMessage()
+  // A twitch line the socket queued for its reconnect is still in line: the retry replaces it, never joins
+  // it (both would post when the socket is back).
+  if (entry.awaiting.has('twitch')) {
+    const chan = String(entry.channel).toLowerCase()
+    const i = authState.sendQueue.findIndex(
+      (q) => q.channel === chan && (q.text === entry.text || q.text === `\x01ACTION ${entry.text}\x01`),
+    )
+    if (i >= 0) authState.sendQueue.splice(i, 1)
+  }
+  // only the platforms that never confirmed: a leg that did is on the platform already
+  sendMessage({ only: new Set(entry.awaiting), sendId: entry.sendId })
 }
 
 // Expose for the notif action handler
@@ -3467,6 +3485,10 @@ function handleInputKeydown(e) {
   // this symptom hit live, root cause never conclusively pinned down). Never
   // let a completion-popup edge case swallow a real send.
   try {
+    // An IME composing, or committing a candidate with Enter, is not a send: the keydown is flagged
+    // isComposing, or keyCode 229 where the flag is late (the commit's Enter arrives after compositionend).
+    // Sending there posts the half-typed text and leaves the committed one to be sent again.
+    if (e.isComposing || e.keyCode === 229) return
     return handleInputKeydownInner(e, input)
   } catch (err) {
     log('handleInputKeydown error, falling back to plain send:', err?.message || err)
@@ -8876,7 +8898,11 @@ async function sendQuoteThread(words) {
   showToast(copied ? t('mc_msg_quote_posted_copied') : t('mc_msg_quote_posted'), 'success')
 }
 
-async function sendMessage() {
+// retry: { only, sendId } from a retry — the legs to send again ('twitch' | 'kick' | 'yt') under the
+// send they belong to, so a late leg folds into the row of the one that landed. Anything else (the
+// send button hands in its click event) is a plain send to every leg.
+async function sendMessage(retry) {
+  const only = retry?.only instanceof Set && retry.only.size ? retry.only : null
   const input = document.getElementById('hs-mc-input')
   if (!input) return
 
@@ -9044,9 +9070,15 @@ async function sendMessage() {
     ? resolveSendTargets(ch.sendTargets, { twitch: !!twitchName, kick: !!kickSlug, youtube: !!ytUrl })
     : null
 
-  const sendToKick = (!!kickSlug || (anonLive && hostPlatform === 'kick')) && (!sendTargets || sendTargets.kick)
-  const sendToTwitch = (!!twitchName || (anonLive && hostPlatform === 'twitch')) && (!sendTargets || sendTargets.twitch)
-  const ytWanted = (!!ytUrl || isLiveYt) && (!sendTargets || sendTargets.youtube)
+  const sendToKick =
+    (!!kickSlug || (anonLive && hostPlatform === 'kick')) &&
+    (!sendTargets || sendTargets.kick) &&
+    (!only || only.has('kick'))
+  const sendToTwitch =
+    (!!twitchName || (anonLive && hostPlatform === 'twitch')) &&
+    (!sendTargets || sendTargets.twitch) &&
+    (!only || only.has('twitch'))
+  const ytWanted = (!!ytUrl || isLiveYt) && (!sendTargets || sendTargets.youtube) && (!only || only.has('yt'))
   // Exact stream video id (or '' if not concretely known) — lets background
   // auto-open a login-inheriting live_chat bridge tab when no YT tab is open.
   const ytVideoId = ytWanted ? currentYoutubeVideoId(ytUrl) : ''
@@ -9066,6 +9098,12 @@ async function sendMessage() {
   if (ytWanted && !sendToYoutube && !sendToKick && !sendToTwitch) {
     flashInputError(input)
     showToast(t('mc_yt_send_open_stream'), 'error')
+    return
+  }
+  // a retry whose legs are no longer linked has nothing to send; never the twitch path by default
+  if (only && !sendToKick && !sendToTwitch && !sendToYoutube) {
+    flashInputError(input)
+    showToast(t('mc_input_no_channel'), 'error')
     return
   }
   // twitch is the only leg and the room has you locked out: hold the send, keep the words
@@ -9107,8 +9145,9 @@ async function sendMessage() {
   // so the pending tracker and peekSentHost/isSentEcho must key on the body or
   // the echo never matches — firing a false "did not confirm" warning and
   // losing badge attribution + dual-send dedup. Identical to text when not /me.
-  const _sendId = hsNewSendId()
+  const _sendId = (only && retry.sendId) || hsNewSendId()
   const _synthId = registerPendingSend({
+    sendId: _sendId,
     text: restText,
     channel: targetChannel,
     platforms: _pendingPlatforms,

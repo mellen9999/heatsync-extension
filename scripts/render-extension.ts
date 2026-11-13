@@ -38,6 +38,7 @@ import { closeContext, errors, fail, checks } from './render/lib'
 import { pickerClickCheck } from './render/picker'
 import { platformsGeometry } from './render/platforms-geometry'
 import { rowKeysCheck } from './render/row-keys'
+import { simulcastModCheck } from './render/simulcast-mod'
 import { soundCheck } from './render/sounds'
 import { tabCompleteCheck } from './render/tab-complete'
 import { tourCheck } from './render/tour'
@@ -111,6 +112,12 @@ try {
   await kickSendCheck()
   await kickModCheck()
   await youtubeSendCheck()
+
+  // ── one send on three platforms is one row; a mod removes ONE copy ───────
+  // Often a copy folded into another platform's row, with no row of its own.
+  // Both treatments, since "hide" drops the line before the fold ever sees it.
+  await simulcastModCheck({ dim: true })
+  await simulcastModCheck({ dim: false })
 
   // ── the most-pressed key in the composer ─────────────────────────────────
   // Tab-complete carries four recorded incidents in its ranking alone and had

@@ -839,7 +839,9 @@ class IRC extends ChatClient {
       }
       if (msg.type === 'notice') {
         // An unban retires any prior ban/timeout notice for this target so the
-        // dedup above won't suppress a subsequent re-ban within the window.
+        // dedup above won't suppress a subsequent re-ban within the window, and
+        // lifts the ban dim from their lines (not a delete), as kick's does: the
+        // render re-greys any line its buffer still holds removed.
         if (msg.noticeType === 'unban_success' && msg.targetUser) {
           const tlc = msg.targetUser.toLowerCase()
           for (const m of buf.getAll()) {
@@ -849,6 +851,9 @@ class IRC extends ChatClient {
               (m.targetUser || '').toLowerCase() === tlc
             ) {
               m._supersededByUnban = true
+            } else if (m.cleared && m.clearedReason !== 'deleted' && (m.user || '').toLowerCase() === tlc) {
+              m.cleared = false
+              delete m.clearedReason
             }
           }
         }

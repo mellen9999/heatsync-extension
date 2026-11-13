@@ -35,7 +35,7 @@ function lift(name) {
 
 function build({ buffers, queues, rows, dim = true }) {
   const made = rows.map((r) => ({
-    dataset: { msgId: r.id || '', msgUser: r.user || '', msgPlatform: r.platform || 'youtube' },
+    dataset: { msgId: r.id || '', msgUser: r.user || '', msgPlatform: r.platform ?? 'youtube' },
     classList: {
       _s: new Set(),
       add(c) {
@@ -71,9 +71,11 @@ function build({ buffers, queues, rows, dim = true }) {
     '_ytPaceQueue',
     'document',
     'markClearedRow',
+    'refoldSimulcastRows',
     `${lift('applyYtDeletion')}; return applyYtDeletion`,
-  )(channelYtMessages, _ytPaceQueue, doc, markClearedRow)
-  return { fn, made, channelYtMessages, _ytPaceQueue }
+  )(channelYtMessages, _ytPaceQueue, doc, markClearedRow, () => refolds++)
+  let refolds = 0
+  return { fn, made, channelYtMessages, _ytPaceQueue, refolds: () => refolds }
 }
 
 const msg = (o) => ({ user: 'someone', ...o })
@@ -128,6 +130,41 @@ describe('youtube deletion', () => {
     const t = build({ buffers: {}, queues: {}, rows: [{ id: 'A', user: 'bob', platform: 'twitch' }] })
     t.fn({ messageIds: ['A'] })
     expect(t.made[0].classList.contains('hs-mc-msg-cleared')).toBe(false)
+  })
+
+  test('a banned author greys their youtube rows, not a twitch row of the same name (it carries no platform)', () => {
+    const t = build({
+      buffers: { c1: [msg({ id: 'A', user: 'Bob', hsPaintUid: 'yt_UC1' })] },
+      queues: {},
+      rows: [
+        { id: 'A', user: 'Bob' },
+        { id: 'T', user: 'bob', platform: '' },
+      ],
+    })
+    t.fn({ authorChannelIds: ['UC1'] })
+    expect(t.made[0].classList.contains('hs-mc-msg-cleared')).toBe(true)
+    expect(t.made[1].classList.contains('hs-mc-msg-cleared')).toBe(false)
+  })
+
+  test('a deleted message is only itself: the author keeps their other lines', () => {
+    const t = build({
+      buffers: { c1: [msg({ id: 'A', user: 'Bob' }), msg({ id: 'B', user: 'Bob' })] },
+      queues: {},
+      rows: [
+        { id: 'A', user: 'Bob' },
+        { id: 'B', user: 'Bob' },
+      ],
+    })
+    t.fn({ messageIds: ['A'] })
+    expect(t.channelYtMessages.get('c1')[1].cleared).toBeUndefined()
+    expect(t.made[0].classList.contains('hs-mc-msg-cleared')).toBe(true)
+    expect(t.made[1].classList.contains('hs-mc-msg-cleared')).toBe(false)
+  })
+
+  test("the merged tab folds again, so a copy folded into another platform's row greys that row", () => {
+    const t = build({ buffers: { c1: [msg({ id: 'A' })] }, queues: {}, rows: [] })
+    t.fn({ messageIds: ['A'] })
+    expect(t.refolds()).toBe(1)
   })
 
   test('an empty payload does nothing', () => {

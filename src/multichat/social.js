@@ -982,27 +982,26 @@ function applyYtDeletion(d) {
   // authorChannelId is not stored bare on a buffered message — it survives as
   // the namespaced paint uid (`yt_UC…`, social.js builds it), so read it back.
   const authorOf = (m) => (m.hsPaintUid ? String(m.hsPaintUid).replace(/^yt_/, '') : '')
-  const hit = (m) => (m.id && ids.has(m.id)) || (authors.size > 0 && authors.has(authorOf(m)))
-
+  // a row does not carry the channel id, so a banned author's rows are found by
+  // name; a deleted message is only itself
   const users = new Set()
   const clear = (m) => {
-    if (m.cleared || !hit(m)) return
+    const banned = authors.size > 0 && authors.has(authorOf(m))
+    if (banned && m.user) users.add(String(m.user).toLowerCase())
+    if (m.cleared || !(banned || (m.id && ids.has(m.id)))) return
     m.cleared = true
     m.clearedReason = 'deleted'
-    if (m.user) users.add(String(m.user).toLowerCase())
   }
   for (const buf of channelYtMessages.values()) for (const m of buf) clear(m)
   for (const q of _ytPaceQueue.values()) for (const m of q) clear(m)
-
   const msgsEl = document.getElementById('hs-mc-messages')
-  if (!msgsEl) return
-  for (const row of msgsEl.querySelectorAll('.hs-mc-msg')) {
-    if (row.dataset.msgPlatform && row.dataset.msgPlatform !== 'youtube') continue
-    const byId = row.dataset.msgId && ids.has(row.dataset.msgId)
-    const byUser = users.size > 0 && users.has((row.dataset.msgUser || '').toLowerCase())
-    if (!byId && !byUser) continue
-    markClearedRow(row, 'deleted')
+  // a twitch row carries no platform: the same name there is someone else
+  for (const row of msgsEl?.querySelectorAll('.hs-mc-msg') || []) {
+    if (row.dataset.msgPlatform !== 'youtube') continue
+    if (ids.has(row.dataset.msgId) || users.has((row.dataset.msgUser || '').toLowerCase()))
+      markClearedRow(row, 'deleted')
   }
+  refoldSimulcastRows(msgsEl)
 }
 
 // A youtube mod action heatsync took: its gray notice in the acted-on row's own
@@ -1558,6 +1557,7 @@ function listenForSocialEvents() {
         flagBuf(buf)
       })
       flagBuf(mentionsBuffer)
+      refoldSimulcastRows(msgsEl)
     }
     if (msg.type === 'youtube_status') {
       const targetChannelId = msg.channelId

@@ -273,6 +273,17 @@ function foldSimulcastLegs(msgs) {
   }
   return out
 }
+// A removal reached a buffer but may have hit a leg folded into another platform's
+// row, which has no row of its own to grey. When a send is on screen the render
+// folds the legs again, the row carries the removal, and the row is greyed in place.
+function refoldSimulcastRows(msgsEl) {
+  for (const row of msgsEl?.children || []) {
+    if (row._hsMsg?.hsSendId) {
+      if (typeof scheduleMergedRender === 'function') scheduleMergedRender()
+      return
+    }
+  }
+}
 // The append path's question: could `m` be a leg of a line already on screen?
 // Then the render decides (it knows every leg each row stands for).
 function mayBeSimulcastLeg(m, rowEls) {
@@ -303,4 +314,5 @@ export {
   mergedTabSources,
   mtAppendOk,
   mtRegime,
+  refoldSimulcastRows,
 }

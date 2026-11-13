@@ -8,9 +8,9 @@ export async function youtubeDeleteCheck(ctx: any) {
   // and applyYtDeletion patches the live DOM. That listener is gated on a
   // subsystem switch, so this also fails if the gate ever narrows again.
   //
-  // The row deliberately carries NO data-msg-platform: youtube rows are
-  // excluded from that attribute, and the unit test could only guess at the
-  // shape. This is the real one.
+  // The rows carry data-msg-platform="youtube", as buildMessageDiv draws a
+  // youtube row: a row with no platform is a twitch row, which a youtube
+  // deletion must never touch.
   {
     const yp = await ctx.newPage()
     yp.on('pageerror', (e: unknown) => errors.push(`yt-delete: ${String(e).slice(0, 300)}`))
@@ -30,6 +30,7 @@ export async function youtubeDeleteCheck(ctx: any) {
           d.className = 'hs-mc-msg'
           d.dataset.msgId = id
           d.dataset.msgUser = user
+          d.dataset.msgPlatform = 'youtube'
           d.innerHTML = '<span class="hs-mc-text">a youtube message</span>'
           msgs.appendChild(d)
         }

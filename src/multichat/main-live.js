@@ -219,8 +219,11 @@ function _renderMessagesImpl(id, opts) {
   }
 
   const _ff = _filterFlags()
-  let toRender = msgs.filter((m) => !m?.hidden && !isMsgFiltered(m, _ff))
+  // Fold before the filter: a removed leg must reach the row it folded into, and a
+  // removed leg that stood for the line must not leave another leg standing in.
+  let toRender = msgs.filter((m) => !m?.hidden)
   if (mtSrcs) toRender = foldSimulcastLegs(toRender)
+  toRender = toRender.filter((m) => !isMsgFiltered(m, _ff))
   if (_ff.dups) {
     const out = []
     let prevText = null
@@ -586,6 +589,11 @@ function _renderMessagesImpl(id, opts) {
           // (dropping it would move neighbors) and stop re-attempting.
           existing.dataset.hsEpoch = String(_renderEpoch)
         }
+      }
+      // its line was removed since it was drawn (a leg folded into it, say); as
+      // buildMessageDiv would draw it, never removed mid-walk
+      if (dimTimeouts && _rm?.cleared && !placed.classList.contains('hs-mc-msg-cleared')) {
+        markClearedRow(placed, _rm.clearedReason)
       }
       // an existing row never moves; it only advances the mark when it is
       // lower in the DOM than everything placed so far

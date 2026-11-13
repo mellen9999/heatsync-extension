@@ -876,18 +876,10 @@ async function init() {
     if (msg?.type !== 'notice') return
     const msgsEl = document.getElementById('hs-mc-messages')
     if (!msgsEl) return
-    const samePlat = (row) => !(msg.platform && row.dataset.msgPlatform && msg.platform !== row.dataset.msgPlatform)
-    // The removal may hit a leg of a heatsync send that folded into another platform's
-    // row, so it has no row of its own to dim. The buffer already holds it cleared;
-    // the render folds the legs again and the row carries it (merged-tab carryCleared).
-    const refoldIfSends = () => {
-      for (const row of msgsEl.children) {
-        if (row._hsMsg?.hsSendId) {
-          if (typeof scheduleMergedRender === 'function') scheduleMergedRender()
-          return
-        }
-      }
-    }
+    // A ban names a login on ONE platform: a twitch row carries no platform, and a
+    // kick chatter who only shares the name is someone else.
+    const platOf = (p) => (p === 'yt' ? 'youtube' : p || 'twitch')
+    const samePlat = (row) => platOf(msg.platform) === platOf(row.dataset.msgPlatform)
     if ((msg.noticeType === 'ban_success' || msg.noticeType === 'timeout_success') && msg.targetUser) {
       const targetLc = msg.targetUser.toLowerCase()
       for (const row of msgsEl.querySelectorAll('.hs-mc-msg[data-msg-user]')) {
@@ -897,14 +889,14 @@ async function init() {
           msg.banDuration ? t('mc_mod_label_timed_out', [String(msg.banDuration)]) : t('mc_mod_label_banned'),
         )
       }
-      refoldIfSends()
+      refoldSimulcastRows(msgsEl)
     } else if (msg.noticeType === 'delete_message_success' && msg.targetMsgId) {
       const safe = CSS.escape ? CSS.escape(msg.targetMsgId) : msg.targetMsgId.replace(/"/g, '\\"')
       const row = msgsEl.querySelector(`.hs-mc-msg[data-msg-id="${safe}"]`)
       if (row) {
         markClearedRow(row, t('mc_mod_label_deleted'))
       } else {
-        refoldIfSends()
+        refoldSimulcastRows(msgsEl)
       }
     } else if (msg.noticeType === 'unban_success' && msg.targetUser) {
       // Lift a prior ban/timeout dim (not a delete) when the user is unbanned.

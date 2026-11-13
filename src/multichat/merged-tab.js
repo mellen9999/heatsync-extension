@@ -233,6 +233,13 @@ function isSimulcastLeg(row, m, legs) {
   g.self ||= self
   return true
 }
+// A moderator removes ONE platform's copy, and the copy may be a leg that folded into
+// another platform's row: that row is the line too, so it carries the removal.
+function carryCleared(row, m) {
+  if (!m.cleared || row.cleared) return
+  row.cleared = true
+  row.clearedReason = m.clearedReason
+}
 // msgs chronological (fairMerge's order); the earliest leg stands for the rest
 function foldSimulcastLegs(msgs) {
   const out = []
@@ -246,11 +253,15 @@ function foldSimulcastLegs(msgs) {
     let folded = false
     if (typeof hsOriginStamp === 'function') hsOriginStamp(m)
     const standing = m.hsSendId ? bySend.get(m.hsSendId) : null
-    if (standing && isSimulcastLeg(standing, m, legs)) continue
+    if (standing && isSimulcastLeg(standing, m, legs)) {
+      carryCleared(standing, m)
+      continue
+    }
     for (let j = out.length - 1, n = 0; j >= 0 && n < 80; j--, n++) {
       const row = out[j]
       if (row?.time && m.time - row.time > LEG_WINDOW_MS) break
       if (isSimulcastLeg(row, m, legs)) {
+        carryCleared(row, m)
         folded = true
         break
       }

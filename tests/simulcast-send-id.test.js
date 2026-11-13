@@ -73,3 +73,29 @@ test('a row with an id and one without fall back to the by-name rule', () => {
     'twitch:mix',
   ])
 })
+
+// A moderator removes ONE platform's copy. When that copy is a leg folded into
+// another platform's row, the row is still the line, so it shows the removal.
+test("a removed leg folded into another platform's row clears that row", () => {
+  const tw = row('twitch', 'a', 'gfm', 0, 'send_c1')
+  const kick = { ...row('kick', 'a_k', 'gfm', 400, 'send_c1'), cleared: true, clearedReason: 'deleted' }
+  const out = lib.foldSimulcastLegs([tw, kick])
+  expect(out).toHaveLength(1)
+  expect(out[0]).toBe(tw)
+  expect(tw.cleared).toBe(true)
+  expect(tw.clearedReason).toBe('deleted')
+})
+
+test('a row its own platform removed keeps its own reason when a leg folds in', () => {
+  const tw = { ...row('twitch', 'a', 'gfm', 0, 'send_c2'), cleared: true, clearedReason: 'banned' }
+  const kick = { ...row('kick', 'a_k', 'gfm', 400, 'send_c2'), cleared: true, clearedReason: 'deleted' }
+  lib.foldSimulcastLegs([tw, kick])
+  expect(tw.clearedReason).toBe('banned')
+})
+
+test('a removed line stays apart from a different send of the same words', () => {
+  const tw = row('twitch', 'a', 'gfm', 0, 'send_c3')
+  const kick = { ...row('kick', 'a_k', 'gfm', 400, 'send_c4'), cleared: true, clearedReason: 'deleted' }
+  expect(lib.foldSimulcastLegs([tw, kick])).toHaveLength(2)
+  expect(tw.cleared).toBeUndefined()
+})

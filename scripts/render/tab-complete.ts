@@ -96,6 +96,10 @@ export async function tabCompleteCheck() {
             { name: 'opGrab', url: urls.opGrab, source: '7tv' },
           ],
         },
+        // The background never writes the map without its fetch times. Without them a service worker
+        // that restarts mid-run restores the set as never-fetched and refetches it on the next join,
+        // against providers that are all refused here — the zorpChannel gate's recurring red in ci.
+        channel_emotes_fetched_at: { 'twitch/probechan': Date.now() },
       })
     }, {
       zorpGlobal: E('zorpGlobal'),
@@ -199,7 +203,30 @@ export async function tabCompleteCheck() {
       () => p.evaluate(() => !!document.querySelector('#hs-mc-messages img[alt="zorpChannel"]')),
       { every: 1500, ms: 20_000 },
     )
-    if (!rendered) fail('the channel emote set never reached the overlay: a line naming zorpChannel stayed plain text')
+    if (!rendered) {
+      // Say where the set went missing, so the next red names its own cause instead of a guess.
+      const live = c.serviceWorkers()[0]
+      const state = live
+        ? await live
+            .evaluate(async () => {
+              const key = 'twitch/probechan'
+              // @ts-ignore — service worker globals
+              const mem = channelEmotesMap[key]
+              // @ts-ignore
+              const at = channelEmotesFetchedAt[key]
+              // @ts-ignore
+              const st = await chrome.storage.local.get(['channel_emotes_map', 'channel_emotes_fetched_at'])
+              const kept = st.channel_emotes_map?.[key]
+              const names = (v: unknown) => (Array.isArray(v) ? v.map((e: any) => e?.name).join(',') || 'empty' : String(v))
+              return `sw map=${names(mem)} age=${at ? Date.now() - at : 'none'}ms · stored map=${names(kept)} at=${st.channel_emotes_fetched_at?.[key] ? 'set' : 'none'}`
+            })
+            .catch((e: unknown) => `sw unreadable: ${String(e).slice(0, 120)}`)
+        : 'no service worker'
+      fail(
+        `the channel emote set never reached the overlay: a line naming zorpChannel stayed plain text (${state}; ` +
+          `${live === sw ? 'same' : 'restarted'} service worker)`,
+      )
+    }
     await resetInput()
     await p.keyboard.type('zorp')
     await p.keyboard.press('Tab')

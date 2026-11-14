@@ -46,7 +46,7 @@ describe('live retro-fold', () => {
     // Kick echoes paint first (they relay through this ext) but bare and with
     // laggier timestamps — surviving them strands the [H] row rows-up.
     expect(FOLD).toContain("legs.find((l) => l.plat === 'twitch')")
-    expect(FOLD).toContain("m.platform = 'heatsync'")
+    expect(FOLD).toContain("m.sentHost = 'heatsync'")
     expect(FOLD).toContain('hsMarkBadgeHeatsync(pb)')
     expect(FOLD).toContain('leg.m.hidden = true')
     expect(FOLD).toContain('leg.div.remove()')
@@ -54,7 +54,7 @@ describe('live retro-fold', () => {
   })
 
   test('claims are per-platform and never re-claim [H]/system rows', () => {
-    expect(FOLD).toContain("if (m.platform === 'heatsync' || m.type) continue")
+    expect(FOLD).toContain("if (m.sentHost === 'heatsync' || m.type) continue")
     expect(FOLD).toContain('seen.includes(plat)')
   })
 })

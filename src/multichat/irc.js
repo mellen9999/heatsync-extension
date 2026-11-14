@@ -958,8 +958,7 @@ class IRC extends ChatClient {
             if (sentHost) {
               // Cross-device simulcast replay: only ONE leg per send renders.
               if (claimHydratedEcho(m.text, 'twitch', m.time)) m.hidden = true
-              m.badgePlatform = 'twitch'
-              m.platform = sentHost === 'yt' ? 'youtube' : sentHost
+              stampSentHost(m, sentHost)
             }
           } catch {}
           if (m.id) this._seenId(`${ch}:${m.id}`)
@@ -1099,8 +1098,7 @@ class IRC extends ChatClient {
             if (sentHost) {
               // Cross-device simulcast replay: only ONE leg per send renders.
               if (claimHydratedEcho(m.text, 'twitch', m.time)) m.hidden = true
-              m.badgePlatform = 'twitch'
-              m.platform = sentHost === 'yt' ? 'youtube' : sentHost
+              stampSentHost(m, sentHost)
             }
           } catch {}
           hydrate.push(m)
@@ -1228,6 +1226,7 @@ class KickChat extends ChatClient {
       channel: m.channel,
       time: m.time,
       platform: 'kick',
+      sentHost: m.sentHost || undefined,
       type: m.type || undefined,
       systemMsg: m.systemMsg || undefined,
       replyTo: m.replyTo || undefined,
@@ -1683,8 +1682,7 @@ class KickChat extends ChatClient {
             if (sentHost) {
               // Cross-device simulcast replay: only ONE leg per send renders.
               if (claimHydratedEcho(m.text, 'kick', m.time)) m.hidden = true
-              m.badgePlatform = 'kick'
-              m.platform = sentHost === 'yt' ? 'youtube' : sentHost
+              stampSentHost(m, sentHost)
             }
           } catch {}
           staged.push(m)
@@ -1784,6 +1782,7 @@ class KickChat extends ChatClient {
     )
     for (const msg of filtered) {
       msg.isHistory = true
+      normalizeLegacyRetag(msg)
       if (msg.user) {
         addUsername(msg.user)
         setKnownColor(msg.user.toLowerCase(), msg.color, msg.userId, 'kick')
@@ -1867,8 +1866,7 @@ class KickChat extends ChatClient {
             if (sentHost) {
               // Cross-device simulcast replay: only ONE leg per send renders.
               if (claimHydratedEcho(m.text, 'kick', m.time)) m.hidden = true
-              m.badgePlatform = 'kick'
-              m.platform = sentHost === 'yt' ? 'youtube' : sentHost
+              stampSentHost(m, sentHost)
             }
           } catch {}
           hydrate.push(m)

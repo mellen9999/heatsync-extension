@@ -34,9 +34,9 @@ describe('isSelf is keyed by platform', () => {
     expect(s.isSelf({ user: 'kickguy', platform: 'kick' })).toBe(true)
     expect(s.isSelf({ user: 'kickguy' })).toBe(false)
   })
-  test('a retagged own echo keeps its transport via badgePlatform', () => {
+  test('an own echo typed on another host keeps its transport in platform', () => {
     const s = loadSelf({ currentUsername: 'me', authState: undefined })
-    expect(s.isSelf({ user: 'me', platform: 'kick', badgePlatform: 'twitch' })).toBe(true)
+    expect(s.isSelf({ user: 'me', platform: 'twitch', sentHost: 'kick' })).toBe(true)
   })
   test('heatsync account names count per platform; nothing known means nobody is me', () => {
     const s = loadSelf({ currentUsername: null, authState: undefined })

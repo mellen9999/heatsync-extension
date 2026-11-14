@@ -955,7 +955,7 @@ function _patchBadgesInRoot(root, channelLogin) {
     // Channel-specific update: only touch rows for the fetched channel
     if (channelLogin && m.channel !== channelLogin) continue
     const ch = m.channel || null
-    const isKick = (m.badgePlatform || m.platform) === 'kick'
+    const isKick = m.platform === 'kick'
     const anchor = div.querySelector('.hs-mc-avatar') || div.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
     if (!anchor) continue
     for (const badge of m.badges.split(',')) {

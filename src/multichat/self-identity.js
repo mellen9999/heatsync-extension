@@ -51,11 +51,11 @@ function selfNamesFor(platform) {
 }
 
 // platform: explicit when the caller knows the transport (an IRC handler); else
-// the row's own badgePlatform/platform (irc rows leave both unset = twitch)
+// the row's own platform (irc rows leave both unset = twitch)
 function isSelf(msg, platform) {
   const u = msg?.user ? String(msg.user).toLowerCase() : ''
   if (!u) return false
-  let p = platform || msg.badgePlatform || msg.platform || 'twitch'
+  let p = platform || msg.platform || 'twitch'
   if (p === 'yt') p = 'youtube'
   return selfNamesFor(p).includes(u)
 }

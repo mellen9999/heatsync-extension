@@ -48,9 +48,9 @@ test('never by text, never across platforms', () => {
   expect(lib.hsOriginStamp({ platform: 'twitch', id: 'other', text: 'same words', channel: 'room4' })).toBe(false)
 })
 
-test('an own echo retagged to a host platform still matches by its transport id', () => {
+test('an own echo typed on another host still matches by its transport id', () => {
   lib.hsOriginNote('twitch', 't-3', '')
-  expect(lib.hsOriginStamp({ platform: 'kick', badgePlatform: 'twitch', id: 't-3', channel: 'room5' })).toBe(true)
+  expect(lib.hsOriginStamp({ platform: 'twitch', sentHost: 'kick', id: 't-3', channel: 'room5' })).toBe(true)
 })
 
 test('the first row of a channel asks for its seed once; the answer stamps later rows and repaints', async () => {

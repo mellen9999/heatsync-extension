@@ -1088,6 +1088,7 @@ function _serializePersistMsg(m) {
     time: m.time,
     id: m.id,
     platform: m.platform || undefined,
+    sentHost: m.sentHost || undefined,
     isAction: m.isAction || undefined,
     replyTo: m.replyTo || undefined,
     type: m.type || undefined,
@@ -1299,6 +1300,7 @@ async function restorePersistedBuffers() {
       const merged = [...byId.values(), ...noId].sort((a, b) => (a.time || 0) - (b.time || 0))
       for (const m of merged) {
         m.isHistory = true
+        normalizeLegacyRetag(m)
         mentionsBuffer.push(m)
       }
       if (mentionsBuffer.length > PERSIST_MAX_MENTIONS) {

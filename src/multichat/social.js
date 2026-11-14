@@ -1257,10 +1257,8 @@ function handleYoutubeChatMsg(msg) {
   {
     const sentHost = peekSentHost(ytMsg.text)
     if (sentHost) {
-      // retagged to the host platform, the row still came from youtube: its origin is keyed by
-      // that, and the fold counts it as the youtube leg (not a second twitch/kick one)
-      ytMsg.badgePlatform = 'youtube'
-      ytMsg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+      // the row stays a youtube row; sentHost only picks its visible tag
+      stampSentHost(ytMsg, sentHost)
       // YouTube has no reply threading, so the bar can ONLY come from what
       // we remembered at send time — the @mention prepend is all that ships
       // on the wire. Same ownership proof as twitch/kick.

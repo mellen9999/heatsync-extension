@@ -253,10 +253,10 @@ function retroFoldOwnEchoes() {
     if ((m.time || 0) < cutoff) continue
     // Already-[H] rows were claimed at ingest (or by an earlier send's fold) —
     // never re-claim them, and never fold system rows.
-    if (m.platform === 'heatsync' || m.type) continue
+    if (m.sentHost === 'heatsync' || m.type) continue
     if (!_echoTextMatches(entry, m.text)) continue
-    // the chat it came from: a host-retagged echo (a kick line wearing the twitch mark) still counts as kick
-    const plat = _echoPlatformKey(m.badgePlatform || m.platform || 'twitch')
+    // the chat it came from (m.platform is always the origin; the host a send was typed on is m.sentHost)
+    const plat = _echoPlatformKey(m.platform || 'twitch')
     if (_notOurLine(m, plat)) continue // somebody else saying the same words is not a leg of this send
     const seen = entry.seenPlatforms || (entry.seenPlatforms = [])
     if (seen.includes(plat)) continue
@@ -273,17 +273,18 @@ function retroFoldOwnEchoes() {
   if (!entry.rendered) {
     entry.rendered = true
     const m = survivor.m
-    // twitch rows carry no platform: without the explicit name the row forgets which chat it came
-    // from, so its origin (keyed by platform + message id) is never found and it can't join the fold
-    m.badgePlatform = m.badgePlatform || m.platform || 'twitch'
-    m.platform = 'heatsync'
+    // the survivor keeps the chat it came from (cosmetics, profile link, mod target all key on it);
+    // only its visible tag becomes [H]. Twitch rows carry no platform, so name it: its origin
+    // (keyed by platform + message id) must be found to join the fold
+    m.platform = m.platform || 'twitch'
+    m.sentHost = 'heatsync'
     const pb = survivor.div.querySelector('.hs-mc-platform-badge')
     if (pb) {
       hsMarkBadgeHeatsync(pb)
     }
   }
   for (const leg of legs) {
-    if (leg === survivor && leg.m.platform === 'heatsync') continue
+    if (leg === survivor && leg.m.sentHost === 'heatsync') continue
     // Every non-survivor leg is the dual-send duplicate.
     leg.m.hidden = true
     try {

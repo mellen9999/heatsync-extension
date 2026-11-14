@@ -142,7 +142,7 @@ function device({ kind, host }) {
     witnessed: [], // [platform, messageId, sendId] posted to the server
     legs: {},
     isSelf: (m, p) => {
-      const plat = p || m.badgePlatform || m.platform || 'twitch'
+      const plat = p || m.platform || 'twitch'
       return self && (SELF[plat === 'yt' ? 'youtube' : plat] || []).includes(String(m.user || '').toLowerCase())
     },
     api: (m) => {
@@ -173,7 +173,7 @@ function device({ kind, host }) {
 
 function buildRow(d, m) {
   const badge = { className: '', style: {}, textContent: '' }
-  const mk = platformMark(origins.hsOriginStamp(m) ? 'heatsync' : m.platform || 'twitch')
+  const mk = platformMark(origins.hsOriginStamp(m) ? 'heatsync' : m.sentHost || m.platform || 'twitch')
   badge.textContent = mk.label
   const row = {
     _hsMsg: m,
@@ -219,6 +219,7 @@ function wire(d) {
   const scope = {
     isSentEcho: i.isSentEcho,
     peekOwnSentHost: i.peekOwnSentHost,
+    stampSentHost: origins.stampSentHost,
     peekSentHost: i.peekSentHost,
     peekSentId: i.peekSentId,
     isSelf: d.isSelf,

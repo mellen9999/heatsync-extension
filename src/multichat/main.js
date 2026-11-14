@@ -1098,9 +1098,7 @@ async function init() {
       const notOwn = _twNickRt && msg.user && msg.user.toLowerCase() !== _twNickRt
       const sentHost = notOwn ? null : peekOwnSentHost(msg, 'twitch')
       if (sentHost) {
-        // IRC origin — badges are Twitch namespace regardless of [K] retag.
-        msg.badgePlatform = 'twitch'
-        msg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+        stampSentHost(msg, sentHost)
         // Restore the reply bar on our own echo when the winning transport
         // dropped the reply-parent tags (see rememberOwnReply). sentHost hit
         // already proves this is our ext send, so no stranger can be stamped.
@@ -1213,9 +1211,7 @@ async function init() {
     {
       const sentHost = peekOwnSentHost(msg, 'kick')
       if (sentHost) {
-        // Kick origin — badges look up in kickBadgeUrls.
-        msg.badgePlatform = 'kick'
-        msg.platform = sentHost === 'yt' ? 'youtube' : sentHost
+        stampSentHost(msg, sentHost)
         // Kick's echo of our own send carries no reply payload, so the bar
         // only exists if we put it back. Same ownership proof as twitch.
         if (typeof restoreOwnReplyBar === 'function') restoreOwnReplyBar(msg)

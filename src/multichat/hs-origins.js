@@ -24,6 +24,26 @@ function hsOriginNote(platform, id, sendId) {
   hsOriginIds.set(key, sendId ? String(sendId) : had || '')
 }
 
+// A send's echo keeps the chat it came from in m.platform; the host the user typed on is
+// m.sentHost and picks ONLY the visible [T]/[K]/[Y]/[H] tag.
+function stampSentHost(m, host) {
+  m.sentHost = host === 'yt' ? 'youtube' : host
+}
+
+// Rows saved by older builds retagged m.platform to the send host and kept the real chat in
+// m.badgePlatform. One meaning per field: put them back (idempotent, mutates + returns m).
+function normalizeLegacyRetag(m) {
+  if (m && m.badgePlatform !== undefined) {
+    const was = m.platform || 'twitch'
+    if (m.badgePlatform && m.badgePlatform !== was) {
+      m.sentHost = m.sentHost || was
+      m.platform = m.badgePlatform
+    }
+    delete m.badgePlatform
+  }
+  return m
+}
+
 // Stamp a row: m.hsOrigin (+ m.hsSendId) when its id is a known heatsync send.
 // Never un-stamps (M5). A row that is already [H] but has no send id yet (its origin
 // came without one) still takes the id when it arrives, or it would never join the
@@ -31,7 +51,7 @@ function hsOriginNote(platform, id, sendId) {
 // asks for that channel's seed. Returns true when the row is [H].
 function hsOriginStamp(m) {
   if (!m || m.type || !m.id) return !!m?.hsOrigin
-  const plat = hsOriginPlat(m.badgePlatform || m.platform)
+  const plat = hsOriginPlat(m.platform)
   if (!m.hsOrigin || !m.hsSendId) {
     const sid = hsOriginIds.get(`${plat}:${m.id}`)
     if (sid !== undefined) {
@@ -201,4 +221,6 @@ export {
   hsYtOriginKeyOf,
   hsYtOriginRoom,
   hsYtOriginsKey,
+  normalizeLegacyRetag,
+  stampSentHost,
 }

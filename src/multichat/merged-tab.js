@@ -163,7 +163,7 @@ function mtNoteAppend() {
 // shows its own copy.
 const LEG_WINDOW_MS = 5000
 function legPlatform(m) {
-  const p = m.badgePlatform || m.platform || 'twitch'
+  const p = m.platform || 'twitch'
   return p === 'yt' ? 'youtube' : p
 }
 // Who a row stands for so far: the platforms its legs came from, the names

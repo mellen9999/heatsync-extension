@@ -40,7 +40,7 @@ const FNS = [
 function harness() {
   const timers = new Map()
   let nextId = 1
-  const sent = { irc: [], ws: [], stored: {} }
+  const sent = { irc: [], ws: [], stored: {}, rings: {} }
   const BG_IRC = {
     ws: { readyState: 1, send: (l) => sent.irc.push(l) },
     channels: new Map(),
@@ -62,6 +62,7 @@ function harness() {
     'clearTimeout',
     'WebSocket',
     'log',
+    'bgIrcRingPut',
     `const BG_IRC_RELEASE_GRACE_MS = 60000\n${FNS.map((f) => extractFn(f)).join('\n')}\nreturn { ${FNS.join(', ')} }`,
   )(
     BG_IRC,
@@ -75,6 +76,9 @@ function harness() {
     (id) => timers.delete(id),
     { OPEN: 1 },
     () => {},
+    (ch, v) => {
+      sent.rings[ch] = v
+    },
   )
   const fireTimers = () => {
     for (const [id, fn] of [...timers]) {
@@ -96,7 +100,7 @@ describe('a channel no tab wants is released after the grace', () => {
     expect(BG_IRC.channels.has('foo')).toBe(false)
     expect(sent.irc).toContain('PART #foo\r\n')
     expect(sent.ws).toContainEqual({ type: 'irc:part', channel: 'foo' })
-    expect(sent.stored.hs_irc_foo.msgs).toHaveLength(5)
+    expect(sent.rings.foo.msgs).toHaveLength(5)
   })
 
   test('a re-join inside the grace (reload, channel hop) keeps the channel', () => {
@@ -131,10 +135,61 @@ describe('a channel no tab wants is released after the grace', () => {
   })
 
   test('tab close arms the release too', () => {
+    expect(extractFn('bgIrcDropTabInterest')).toContain('bgIrcScheduleRelease(ch)')
     const start = BG_SRC.indexOf('// Tab cleanup — drop interest when a tab closes')
     expect(start).toBeGreaterThan(-1)
     const body = BG_SRC.slice(start, BG_SRC.indexOf('\n})', start))
-    expect(body).toContain('bgIrcScheduleRelease(ch)')
+    expect(body).toContain('bgIrcDropTabInterest(tabId)')
+  })
+
+  test('a tab that reloads or hard-navigates lets go of its old channels', () => {
+    const at = BG_SRC.indexOf('chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {')
+    expect(at).toBeGreaterThan(-1)
+    const body = BG_SRC.slice(at, BG_SRC.indexOf('\n})', at))
+    expect(body).toContain("changeInfo.status === 'loading'")
+    expect(body).toContain('bgIrcDropTabInterest(tabId)')
+
+    const { api, BG_IRC, sent, ring, fireTimers } = harness()
+    const drop = new Function('BG_IRC', 'bgIrcScheduleRelease', `${extractFn('bgIrcDropTabInterest')}\nreturn bgIrcDropTabInterest`)(
+      BG_IRC,
+      api.bgIrcScheduleRelease,
+    )
+    BG_IRC.channels.set('a', ring(5))
+    BG_IRC.channels.set('b', ring(5))
+    api.bgIrcRegisterTabInterest(1, 'a')
+    drop(1) // tab 1 navigates a → b
+    api.bgIrcRegisterTabInterest(1, 'b')
+    fireTimers()
+    expect(BG_IRC.channels.has('a')).toBe(false)
+    expect(BG_IRC.channels.has('b')).toBe(true)
+    expect(sent.irc).toEqual(['PART #a\r\n'])
+
+    drop(1) // reload of b: the new page re-joins inside the grace
+    api.bgIrcRegisterTabInterest(1, 'b')
+    fireTimers()
+    expect(BG_IRC.channels.has('b')).toBe(true)
+  })
+})
+
+describe('rings never go through storage.local', () => {
+  // storage.local.set fans a clone of old+new to every content script with a
+  // storage.onChanged listener: an 8MB ring every 1.5s per channel piled up
+  // to 16GB+ in Firefox tab processes. Rings live in IndexedDB instead.
+  const irc = readFileSync(join(ROOT, 'src', 'background', '09-irc.js'), 'utf8')
+  test('no ring write or read hits storage.local', () => {
+    expect(irc).not.toMatch(/storage\.local\.(set|get)\(\{?\s*\[?`hs_irc_\$\{/)
+    expect(irc).not.toMatch(/storage\.local\.get\(key\)/)
+    for (const fn of ['bgIrcPersistChannel', 'bgIrcReleaseChannel', 'bgIrcReadPersisted']) {
+      const body = extractFn(fn)
+      expect(body).not.toContain('storage.local')
+    }
+    expect(extractFn('bgIrcPersistChannel')).toContain('bgIrcRingPut(')
+    expect(extractFn('bgIrcReleaseChannel')).toContain('bgIrcRingPut(')
+    expect(extractFn('bgIrcReadPersisted')).toContain('bgIrcRingGet(')
+  })
+  test('legacy storage.local rings are removed on restore', () => {
+    const body = extractFn('bgIrcRestoreFromStorage')
+    expect(body).toContain('browser.storage.local.remove(legacy)')
   })
 })
 

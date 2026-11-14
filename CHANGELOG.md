@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.134] — 2026-11-14
+
+### fixed
+- **a frozen chat tab comes back on its own** — a saved tab whose channel the page had dropped stayed stuck on its last line until a refresh; it now rejoins within 15 seconds. removing or changing one tab no longer cuts off another tab, or the page, showing the same channel.
+
 ## [1.7.133] — 2026-11-13
 
 ### fixed

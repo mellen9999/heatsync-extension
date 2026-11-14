@@ -167,7 +167,8 @@ describe('(d) rows saved by older builds normalize on load', () => {
     expect(m.sentHost).toBe('youtube')
   })
   test('persisted loads normalize; no site writes badgePlatform or overwrites platform with the host', () => {
-    expect(read('irc.js')).toContain('normalizeLegacyRetag(msg)')
+    // kick history now comes from the background's ring, which never held a retagged row (the
+    // retag was content-side, and the old content serializer always wrote platform 'kick')
     expect(read('main-state.js')).toContain('normalizeLegacyRetag(m)')
     for (const f of ['irc.js', 'social.js', 'input.js']) expect(read(f)).not.toMatch(/\.badgePlatform\s*=\s*['m]/)
     expect(MAIN).not.toMatch(/\.platform = sentHost/)

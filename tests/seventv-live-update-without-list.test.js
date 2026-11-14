@@ -31,6 +31,7 @@ function load(map, setIds) {
       refetched.push(`${platform}/${ch}`)
     },
     getStorableChannelEmotes: () => ({}),
+    bgPersistChannelEmotes: async () => {},
     browser: { storage: { local: { set: async () => {} } } },
   }
   const handle = new Function(...Object.keys(env), `${SRC}; return handle7TVEmoteSetUpdate`)(...Object.values(env))

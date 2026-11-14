@@ -77,7 +77,7 @@ test('a re-pull replaces old history and keeps live rows', () => {
 test('no history push straight onto a ring remains', () => {
   expect(SRC).not.toMatch(/for \(const m of staged\) buf\.push\(m\)/)
   expect(SRC).not.toMatch(/\n\s+buf\.push\(m\)\n\s+\}\n\s+log\('(Kick )?BG history hydrated/)
-  expect((SRC.match(/mergeIntoRing\(/g) || []).length).toBeGreaterThanOrEqual(6)
+  expect((SRC.match(/mergeIntoRing\(/g) || []).length).toBeGreaterThanOrEqual(5)
 })
 
 test('the render merge re-sorts any run that arrives out of order', () => {

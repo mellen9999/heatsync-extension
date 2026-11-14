@@ -3707,6 +3707,7 @@ function _buildChannelEmoteCache(ch, emotes, platform) {
   }
 }
 
+let _channelMapSeeded = false // loadEmotes pulled the background's channel sets once
 let _loadEmotesInFlight = false
 let _loadEmotesRerun = false
 async function loadEmotes() {
@@ -3724,7 +3725,6 @@ async function loadEmotes() {
       const stored = await browser.storage.local.get([
         'global_emotes',
         'emote_inventory',
-        'channel_emotes_map',
         'native_twitch_emotes',
         'hs_removed_emote_fallback',
         'hs_blocked_emote_fallback',
@@ -3868,7 +3868,19 @@ async function loadEmotes() {
       })
 
       // Load per-channel emotes into separate caches (prevents cross-channel leaking)
-      const map = stored.channel_emotes_map || {}
+      // The sets live in the background's IndexedDB. Pull them once per page
+      // (cold start); after that the channel_emotes_update broadcast keeps
+      // channelEmoteCaches current, so reruns of this function skip the fetch.
+      let map = {}
+      if (!_channelMapSeeded) {
+        try {
+          const resp = await browser.runtime.sendMessage({ type: 'get_channel_emotes_map' })
+          if (resp?.map && typeof resp.map === 'object') {
+            map = resp.map
+            _channelMapSeeded = true
+          }
+        } catch {}
+      }
       for (const [k, emotes] of Object.entries(map)) {
         if (!Array.isArray(emotes)) continue // skip 'loading' sentinels
         // Keys are "platform/channel" — split so the cache merges both platforms'

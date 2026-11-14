@@ -51,7 +51,7 @@ describe('bttv/ffz poll', () => {
     expect(diffBody).toContain("type: 'channel_emote_removed'")
     expect(diffBody).toContain("type: 'channel_emotes_update'")
     expect(diffBody).toContain('thirdPartyPolledChannels.has(')
-    expect(diffBody).toContain('getStorableChannelEmotes()')
+    expect(diffBody).toContain('bgPersistChannelEmotes(key)')
   })
 
   test('poll starts from both entry points', () => {

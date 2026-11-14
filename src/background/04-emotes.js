@@ -48,6 +48,16 @@ function mapChannelOwnerEmote(e) {
   return out
 }
 
+// Channel emote sets are persisted per channel in IndexedDB, not storage.local:
+// the whole map is tens of MB, and every storage.local.set cloned it (old + new)
+// into every extension context's onChanged. Content never reads it; it gets sets
+// from the channel_emotes_update broadcast or get_channel_emotes_map (07-handle-message.js).
+function bgPersistChannelEmotes(key) {
+  const emotes = channelEmotesMap[key]
+  if (!Array.isArray(emotes)) return Promise.resolve()
+  return bgIdbPut(BG_IDB_EMOTES, key, { emotes, at: channelEmotesFetchedAt[key] || 0 })
+}
+
 // Fetch channel owner's emotes (public API) + third-party channel emotes
 async function fetchChannelOwnerEmotes(channelName, channelId = null, platform = 'twitch') {
   const key = chKey(platform, channelName)
@@ -295,6 +305,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
         if (old !== key) {
           delete channelEmotesMap[old]
           delete channelEmotesFetchedAt[old]
+          bgIdbDelete(BG_IDB_EMOTES, old)
           const evictedSetId = seventvEmoteSetIds.get(old)
           seventvEmoteSetIds.delete(old)
           release7TVEmoteSet(evictedSetId)
@@ -332,10 +343,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     broadcastToTabs({ type: 'channel_emotes_update', emotes, channelOwner: channelName, platform })
 
     // Save per-channel map to storage for persistence (filter out 'loading' sentinels)
-    await browser.storage.local.set({
-      channel_emotes_map: getStorableChannelEmotes(),
-      channel_emotes_fetched_at: channelEmotesFetchedAt,
-    })
+    await bgPersistChannelEmotes(key)
 
     // Store 7TV set ID per channel and subscribe on shared EventAPI connection
     if (sevenTVSetId) {
@@ -1295,9 +1303,7 @@ function apply7TVEmoteSetUpdate(key, updateData) {
       platform,
     })
 
-    browser.storage.local
-      .set({ channel_emotes_map: getStorableChannelEmotes(), channel_emotes_fetched_at: channelEmotesFetchedAt })
-      .catch(() => {})
+    bgPersistChannelEmotes(key)
     log(' 7TV: Channel emotes updated for', channelName, '(now', chEmotes.length, 'total)')
   }
 }
@@ -1519,9 +1525,7 @@ function handleBTTVSocketEvent(name, data) {
   if (updated) {
     channelEmotesMap[key] = chEmotes
     broadcastToTabs({ type: 'channel_emotes_update', emotes: chEmotes, channelOwner: channelName, platform })
-    browser.storage.local
-      .set({ channel_emotes_map: getStorableChannelEmotes(), channel_emotes_fetched_at: channelEmotesFetchedAt })
-      .catch(() => {})
+    bgPersistChannelEmotes(key)
     log(' BTTV Live:', name, 'applied for', channelName, '(now', chEmotes.length, 'total)')
   }
 }
@@ -1622,9 +1626,7 @@ function applyThirdPartyDiff(key, source, fetched) {
   }
 
   broadcastToTabs({ type: 'channel_emotes_update', emotes: updatedEmotes, channelOwner: channelName, platform })
-  browser.storage.local
-    .set({ channel_emotes_map: getStorableChannelEmotes(), channel_emotes_fetched_at: channelEmotesFetchedAt })
-    .catch(() => {})
+  bgPersistChannelEmotes(key)
 }
 
 async function pollThirdPartyEmotes() {
@@ -1885,9 +1887,7 @@ async function poll7TVEmoteSet() {
         platform,
       })
 
-      browser.storage.local
-        .set({ channel_emotes_map: getStorableChannelEmotes(), channel_emotes_fetched_at: channelEmotesFetchedAt })
-        .catch(() => {})
+      bgPersistChannelEmotes(key)
       log(' 7TV Poll: Channel emotes updated for', channelName, '(now', updatedEmotes.length, 'total)')
     } catch (_err) {
       // Silent fail — poll will retry next interval

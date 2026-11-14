@@ -358,6 +358,7 @@ const BG_IRC = {
   historyInFlight: new Map(), // ch -> Promise<void> (awaitable in-flight robotty fetch)
   lastRobottyAt: new Map(), // ch -> ts (last successful/attempted robotty fetch)
   persistTimers: new Map(),
+  lastPutAt: new Map(), // ch -> ts of the last ring put (bgIrcPersistChannel throttle)
   // reconnects asked for by a tab that saw lines this reader missed (bg_irc_reader_missed)
   missed: { at: 0, gap: 12e4 },
   releaseTimers: new Map(), // ch -> timeout (bgIrcScheduleRelease)
@@ -369,64 +370,25 @@ const BG_IRC = {
   liveTabs: new Set(),
 }
 
-// Channel rings live in IndexedDB, not storage.local. Every storage.local.set
-// fires storage.onChanged in EVERY extension context with a listener — each
-// twitch/kick/youtube tab's content scripts — carrying a structured clone of
-// the old AND new value. A busy channel's 3000-msg ring is ~8MB and was
-// written every 1.5s: ~11MB/s cloned into every tab per channel. Firefox
-// queues those clones in the parent for each listener and the content
-// process keeps them in malloc the GC never feels pressure from — measured
-// 2×806MB for one channel in one twitch process, 3GB queued in the parent,
-// growing ~280MB/min, 16GB+ over a session. Only this file ever reads the
-// rings, so they need no broadcast: IndexedDB fires nothing anywhere.
-const BG_IRC_RING_DB = 'hs-irc-rings'
-const BG_IRC_RING_STORE = 'rings'
-let _bgIrcRingDbP = null
-function bgIrcRingDb() {
-  if (!_bgIrcRingDbP) {
-    _bgIrcRingDbP = new Promise((resolve, reject) => {
-      const req = indexedDB.open(BG_IRC_RING_DB, 1)
-      req.onupgradeneeded = () => req.result.createObjectStore(BG_IRC_RING_STORE)
-      req.onsuccess = () => {
-        const db = req.result
-        db.onclose = () => {
-          _bgIrcRingDbP = null
-        }
-        db.onversionchange = () => {
-          db.close()
-          _bgIrcRingDbP = null
-        }
-        resolve(db)
-      }
-      req.onerror = () => {
-        _bgIrcRingDbP = null
-        reject(req.error)
-      }
-    })
-  }
-  return _bgIrcRingDbP
-}
-// One transaction; fn gets the store and may return a request whose result
-// is resolved once the transaction commits.
-async function bgIrcRingTx(mode, fn) {
-  const db = await bgIrcRingDb()
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(BG_IRC_RING_STORE, mode)
-    let out
-    const req = fn(tx.objectStore(BG_IRC_RING_STORE))
-    if (req) req.onsuccess = () => (out = req.result)
-    tx.oncomplete = () => resolve(out)
-    tx.onerror = tx.onabort = () => reject(tx.error)
-  })
-}
+// Channel rings live in IndexedDB (bgIdb* in 01-core.js), not storage.local.
+// Every storage.local.set fires storage.onChanged in EVERY extension context
+// with a listener — each twitch/kick/youtube tab's content scripts — carrying
+// a structured clone of the old AND new value. A busy channel's 3000-msg ring
+// is ~8MB and was written every 1.5s: ~11MB/s cloned into every tab per
+// channel. Firefox queues those clones in the parent for each listener and
+// the content process keeps them in malloc the GC never feels pressure from —
+// measured 2×806MB for one channel in one twitch process, 3GB queued in the
+// parent, growing ~280MB/min, 16GB+ over a session. Only the background ever
+// reads the rings, so they need no broadcast: IndexedDB fires nothing anywhere.
+const bgIrcRingTx = (mode, fn) => bgIdbTx(BG_IDB_RINGS, mode, fn)
 function bgIrcRingPut(ch, value) {
-  return bgIrcRingTx('readwrite', (st) => st.put(value, ch)).catch(() => {})
+  return bgIdbPut(BG_IDB_RINGS, ch, value)
 }
 function bgIrcRingGet(ch) {
-  return bgIrcRingTx('readonly', (st) => st.get(ch)).catch(() => null)
+  return bgIdbGet(BG_IDB_RINGS, ch)
 }
 function bgIrcRingDelete(ch) {
-  return bgIrcRingTx('readwrite', (st) => st.delete(ch)).catch(() => {})
+  return bgIdbDelete(BG_IDB_RINGS, ch)
 }
 
 async function bgIrcRestoreFromStorage() {
@@ -528,19 +490,30 @@ function bgIrcPersistRobottyTs() {
   }, ROBOTTY_PERSIST_DEBOUNCE_MS)
 }
 
+// A ring put is a structured clone of up to ~8MB plus a disk write. A busy
+// channel used to pay it every 1.5s; now at most one per channel per 30s, with
+// a trailing write so the latest state always lands, and a write on release.
+// A SW death loses ≤30s of history, which the robotty backfill covers.
+const BG_RING_PERSIST_MIN_MS = 30_000
+function bgRingPersistDelay(lastAt) {
+  return Math.max(BG_IRC_PERSIST_DEBOUNCE_MS, lastAt + BG_RING_PERSIST_MIN_MS - Date.now())
+}
 function bgIrcPersistChannel(ch) {
   if (BG_IRC.persistTimers.has(ch)) return
   BG_IRC.persistTimers.set(
     ch,
-    setTimeout(() => {
-      BG_IRC.persistTimers.delete(ch)
-      try {
-        const buf = BG_IRC.channels.get(ch)
-        if (!buf) return
-        const msgs = buf.getAll()
-        bgIrcRingPut(ch, { msgs, ts: Date.now() })
-      } catch {}
-    }, BG_IRC_PERSIST_DEBOUNCE_MS),
+    setTimeout(
+      () => {
+        BG_IRC.persistTimers.delete(ch)
+        try {
+          const buf = BG_IRC.channels.get(ch)
+          if (!buf) return
+          BG_IRC.lastPutAt.set(ch, Date.now())
+          bgIrcRingPut(ch, { msgs: buf.getAll(), ts: Date.now() })
+        } catch {}
+      },
+      bgRingPersistDelay(BG_IRC.lastPutAt.get(ch) || 0),
+    ),
   )
 }
 
@@ -594,6 +567,7 @@ function bgIrcReleaseChannel(ch) {
   }
   const msgs = buf.getAll()
   if (msgs.length) bgIrcRingPut(ch, { msgs, ts: Date.now() })
+  BG_IRC.lastPutAt.delete(ch)
   BG_IRC.channels.delete(ch)
   BG_IRC.chanLastSeen.delete(ch)
   BG_IRC.chanRejoinAttempts.delete(ch)

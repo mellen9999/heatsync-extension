@@ -771,7 +771,6 @@ function ingestReplayYtMsg(targetChannelId, ytMsg) {
       if (m.id) ids.add(String(m.id))
     }
   }
-  persistYt(targetChannelId)
   const tabId = targetChannelId === '__live_yt_auto__' ? 'live' : targetChannelId
   // Count before the branch — heat is about the channel, so the tab you're
   // looking at counts too, and updateTabIndicator never fires for it.
@@ -796,7 +795,7 @@ function ingestReplayYtMsg(targetChannelId, ytMsg) {
 // Rides the existing YT buffer/pacing pipeline (channelYtMessages +
 // enqueueYtForPacing/ingestReplayYtMsg) rather than Twitch's irc.channels-based
 // dispatch — that's what already merges correctly with paired twitch/kick chat
-// on a shared tab, and already persists via persistYt. giftredemption (fires
+// on a shared tab, and is mirrored by the background. giftredemption (fires
 // once PER recipient — a 20-gift purchase would be 20 banners) and giftheader
 // (no event data) are intentionally excluded; they stay on the plain
 // system-row path in the youtube_chat_message handler below.
@@ -937,7 +936,6 @@ function commitPacedYtMsg(targetChannelId, ytMsg) {
       for (const m of buf) if (m.id) liveIds.add(String(m.id))
     }
   }
-  persistYt(targetChannelId)
   if (typeof chatLogsLive === 'function') chatLogsLive(ytMsg)
   const tabId = targetChannelId === '__live_yt_auto__' ? 'live' : targetChannelId
   // Count before the branch — see ingestReplayYtMsg above.

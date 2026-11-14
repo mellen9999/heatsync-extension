@@ -277,7 +277,6 @@ function fullSpaReinit() {
   _hsCalloutCloseObs = null
   mcCosmeticsTimer = null
   _persistMentionsState.timer = null
-  _persistYtTimers.clear()
   _persistTabSeenTimer = null
   // Same for the timers whose work is the panel itself (the tab bar's live
   // dots, the heat ticker on its tabs, the discover and pinned views' refresh):

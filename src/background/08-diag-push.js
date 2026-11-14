@@ -47,6 +47,8 @@ async function initialize() {
       log(' Storage restore failed:', err.message)
       return {}
     })
+  // Channel emote sets live in IndexedDB (bgPersistChannelEmotes), read in parallel with the batch.
+  const emotesP = bgIdbAll(BG_IDB_EMOTES)
   const sessionP = (
     browser.storage.session?.get(['tab_channels', 'joined_extra_channels']) ?? Promise.resolve(null)
   ).catch((e) => {
@@ -72,13 +74,33 @@ async function initialize() {
       currentUsername = stored.user_info.username
       log(' ✓ Restored username:', currentUsername)
     }
-    if (stored.channel_emotes_fetched_at && typeof stored.channel_emotes_fetched_at === 'object') {
-      channelEmotesFetchedAt = stored.channel_emotes_fetched_at
-      log(' ✓ Restored channelEmotesFetchedAt for', Object.keys(channelEmotesFetchedAt).length, 'channels')
-    }
-    if (stored.channel_emotes_map && typeof stored.channel_emotes_map === 'object') {
-      Object.assign(channelEmotesMap, stored.channel_emotes_map)
-      log(' ✓ Restored channelEmotesMap for', Object.keys(stored.channel_emotes_map).length, 'channels')
+    {
+      const rows = await emotesP
+      let restored = 0
+      for (const [key, row] of Object.entries(rows)) {
+        if (!Array.isArray(row?.emotes) || channelEmotesMap[key] !== undefined) continue
+        channelEmotesMap[key] = row.emotes
+        channelEmotesFetchedAt[key] = Number(row.at) || 0
+        restored++
+      }
+      // One-time: a build before the IndexedDB move kept the whole map in
+      // storage.local. Import what IndexedDB doesn't have, then drop the keys
+      // (one last onChanged, then never again).
+      const legacy = stored.channel_emotes_map
+      if (legacy && typeof legacy === 'object') {
+        const at = stored.channel_emotes_fetched_at || {}
+        for (const [key, emotes] of Object.entries(legacy)) {
+          if (!Array.isArray(emotes) || Array.isArray(channelEmotesMap[key])) continue
+          channelEmotesMap[key] = emotes
+          channelEmotesFetchedAt[key] = Number(at[key]) || 0
+          bgPersistChannelEmotes(key)
+          restored++
+        }
+      }
+      if (legacy || stored.channel_emotes_fetched_at) {
+        browser.storage.local.remove(['channel_emotes_map', 'channel_emotes_fetched_at']).catch(() => {})
+      }
+      if (restored) log(' ✓ Restored channelEmotesMap for', restored, 'channels')
     }
     if (stored.seventv_emote_set_ids && typeof stored.seventv_emote_set_ids === 'object') {
       for (const [ch, id] of Object.entries(stored.seventv_emote_set_ids)) {

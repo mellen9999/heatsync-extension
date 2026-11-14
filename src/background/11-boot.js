@@ -29,6 +29,46 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })()
     return true
   }
+  if (message.type === 'bg_kick_append') {
+    ;(async () => {
+      if (!BG_KICK.storageRestored) await bgKickRestoreFromStorage()
+      sendResponse({ ok: true, added: bgKickAppend(message.channel, message.msgs) })
+    })()
+    return true
+  }
+  if (message.type === 'bg_kick_mark') {
+    ;(async () => {
+      if (!BG_KICK.storageRestored) await bgKickRestoreFromStorage()
+      sendResponse({ ok: true, changed: bgKickMarkFromTab(message) })
+    })()
+    return true
+  }
+  // The saved mentions list (multichat's Mentions tab, ~500 rows). One record in
+  // the background's IndexedDB: tabs hand it over and read it back by message,
+  // never through storage.local (every write there clones the value into every
+  // tab's onChanged). Last writer wins, as before.
+  if (message.type === 'bg_mentions_put') {
+    const msgs = Array.isArray(message.msgs) ? message.msgs.slice(-500) : []
+    const owner = typeof message.owner === 'string' ? message.owner.slice(0, 64) : ''
+    bgIdbPut(BG_IDB_MENTIONS, 'v2', { msgs, ts: Date.now(), owner }).then(() => sendResponse({ ok: true }))
+    return true
+  }
+  if (message.type === 'bg_mentions_get') {
+    ;(async () => {
+      let row = await bgIdbGet(BG_IDB_MENTIONS, 'v2')
+      if (!row) {
+        // one-time: the list a build before the IndexedDB move kept in storage.local
+        const legacy = (await browser.storage.local.get('hs_mentions_v2').catch(() => ({}))).hs_mentions_v2
+        if (legacy?.msgs) {
+          row = legacy
+          await bgIdbPut(BG_IDB_MENTIONS, 'v2', legacy)
+        }
+        browser.storage.local.remove('hs_mentions_v2').catch(() => {})
+      }
+      sendResponse({ ok: true, msgs: row?.msgs || [], ts: row?.ts || 0, owner: row?.owner || '' })
+    })()
+    return true
+  }
   return false
 })
 

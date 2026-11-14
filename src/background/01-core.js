@@ -20,6 +20,91 @@ const bgT = (key, subs) => {
     return key
   }
 }
+// --- IndexedDB (service worker) ---
+// Big or hot blobs live here, never in storage.local: every storage.local.set
+// fires storage.onChanged in EVERY extension context with a listener (each
+// twitch/kick/youtube tab's content scripts) carrying a structured clone of the
+// old AND new value, and Firefox keeps those clones outside the GC (16GB+
+// measured). IndexedDB fires nothing anywhere. One database, one store per
+// kind; only the background reads or writes it, so content gets data by message.
+// The name stays 'hs-irc-rings' so existing twitch rings survive the upgrade.
+const BG_IDB_NAME = 'hs-irc-rings'
+const BG_IDB_RINGS = 'rings' // twitch channel rings, key = channel
+const BG_IDB_KICK = 'kick' // kick channel rings, key = channel
+const BG_IDB_YT = 'yt' // youtube channel rings, key = channel id
+const BG_IDB_EMOTES = 'emotes' // channel emote sets, key = "platform/channel"
+const BG_IDB_MENTIONS = 'mentions' // the saved mentions list, one record
+const BG_IDB_STORES = [BG_IDB_RINGS, BG_IDB_KICK, BG_IDB_YT, BG_IDB_EMOTES, BG_IDB_MENTIONS]
+let _bgIdbP = null
+function bgIdb() {
+  if (!_bgIdbP) {
+    _bgIdbP = new Promise((resolve, reject) => {
+      const req = indexedDB.open(BG_IDB_NAME, 2)
+      req.onupgradeneeded = () => {
+        for (const n of BG_IDB_STORES) if (!req.result.objectStoreNames.contains(n)) req.result.createObjectStore(n)
+      }
+      req.onsuccess = () => {
+        const db = req.result
+        db.onclose = () => {
+          _bgIdbP = null
+        }
+        db.onversionchange = () => {
+          db.close()
+          _bgIdbP = null
+        }
+        resolve(db)
+      }
+      req.onerror = () => {
+        _bgIdbP = null
+        reject(req.error)
+      }
+    })
+    // a failed open (open() itself throwing, a blocked upgrade) must not stay cached: the next call retries
+    _bgIdbP.catch(() => {
+      _bgIdbP = null
+    })
+  }
+  return _bgIdbP
+}
+// One transaction; fn gets the store and may return a request whose result
+// is resolved once the transaction commits.
+async function bgIdbTx(store, mode, fn) {
+  const db = await bgIdb()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, mode)
+    let out
+    const req = fn(tx.objectStore(store))
+    if (req) req.onsuccess = () => (out = req.result)
+    tx.oncomplete = () => resolve(out)
+    tx.onerror = tx.onabort = () => reject(tx.error)
+  })
+}
+function bgIdbPut(store, key, value) {
+  return bgIdbTx(store, 'readwrite', (st) => st.put(value, key)).catch(() => {})
+}
+function bgIdbGet(store, key) {
+  return bgIdbTx(store, 'readonly', (st) => st.get(key)).catch(() => null)
+}
+function bgIdbDelete(store, key) {
+  return bgIdbTx(store, 'readwrite', (st) => st.delete(key)).catch(() => {})
+}
+// Every record as { key: value } (the stores are small: ≤100 channels).
+async function bgIdbAll(store) {
+  const out = {}
+  try {
+    await bgIdbTx(store, 'readonly', (st) => {
+      const cur = st.openCursor()
+      cur.onsuccess = () => {
+        const c = cur.result
+        if (!c) return
+        out[String(c.key)] = c.value
+        c.continue()
+      }
+      return null
+    })
+  } catch {}
+  return out
+}
 // --- error reporter (service worker) ---
 // Inlined here because lib/ is bundled into content scripts only. Same shape
 // as src/lib/error-reporter.js: ring-buffer 50 in chrome.storage.local key
@@ -1062,8 +1147,7 @@ browser.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     channelEmotesMap = {}
     channelEmotesFetchedAt = {}
-    browser.storage.local.remove('channel_emotes_map').catch(() => {})
-    browser.storage.local.remove('channel_emotes_fetched_at').catch(() => {})
+    bgIdbTx(BG_IDB_EMOTES, 'readwrite', (st) => st.clear()).catch(() => {})
     // Tells multichat's first init to hide feed/whispers/mentions/modlog —
     // empty/login-walled for a signed-out first-run user — until first login.
     // Only stamped here (reason:'install'), never on update, so existing
@@ -1115,24 +1199,12 @@ browser.storage.local
       channelEmotesMap = {}
       channelEmotesFetchedAt = {}
       await browser.storage.local.remove(['channel_emotes_map', 'channel_emotes_fetched_at'])
+      await bgIdbTx(BG_IDB_EMOTES, 'readwrite', (st) => st.clear()).catch(() => {})
       await browser.storage.local.set({ migrated_emote_cache_v154: true })
       log(' v1.5.4 channel_emotes_map migration: cleared stale cache')
     }
   })
   .catch((err) => log(' v1.5.4 migration check failed:', err?.message))
-
-// Migrate old single channel_emotes to per-channel map
-browser.storage.local
-  .get(['channel_emotes', 'channel_emotes_owner'])
-  .then(async (data) => {
-    if (data.channel_emotes && data.channel_emotes_owner) {
-      const map = { [data.channel_emotes_owner]: data.channel_emotes }
-      await browser.storage.local.set({ channel_emotes_map: map })
-      await browser.storage.local.remove(['channel_emotes', 'channel_emotes_owner'])
-      log(' Migrated channel_emotes to per-channel map')
-    }
-  })
-  .catch((err) => log(' Channel emotes migration failed:', err?.message))
 
 let emoteInventory = []
 let globalEmotes = [] // BTTV, FFZ, 7TV global emotes

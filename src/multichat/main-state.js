@@ -1070,10 +1070,8 @@ function touchYtChannel(channelId) {
 // ============================================
 const PERSIST_DEBOUNCE_MS = 1500
 const PERSIST_MAX_MENTIONS = 500 // matches MAX_BUFFER so restore fills the live buffer
-const PERSIST_MAX_YT = 500
+const PERSIST_MAX_YT = 500 // cap on the in-memory YT buffer (the background owns the persisted ring)
 const _persistMentionsState = { timer: null, dirty: false }
-const _persistYtTimers = new Map() // channelId -> timer
-const _persistYtDirty = new Set() // channelIds with unflushed messages
 let _persistTabSeenTimer = null
 const tabSeenAt = {} // tabId -> ms
 
@@ -1118,7 +1116,9 @@ function _writeMentionsNow() {
   try {
     if (!chrome?.runtime?.id) return
     const msgs = mentionsBuffer.slice(-PERSIST_MAX_MENTIONS).map(_serializePersistMsg)
-    const p = chrome.storage.local.set({ hs_mentions_v2: { msgs, ts: Date.now(), owner: mentionsOwner } })
+    // The background keeps the list (IndexedDB): a storage.local write would clone
+    // it into every extension context's onChanged, in every tab.
+    const p = chrome.runtime.sendMessage({ type: 'bg_mentions_put', msgs, owner: mentionsOwner })
     if (p && typeof p.catch === 'function') p.catch(() => {})
   } catch {}
 }
@@ -1131,31 +1131,6 @@ function persistMentions() {
     _persistMentionsState.dirty = false
     _writeMentionsNow()
   }, PERSIST_DEBOUNCE_MS)
-}
-
-function _writeYtNow(channelId) {
-  try {
-    if (!chrome?.runtime?.id) return
-    const buf = channelYtMessages.get(channelId)
-    if (!buf) return
-    const msgs = buf.slice(-PERSIST_MAX_YT).map(_serializePersistMsg)
-    const p = chrome.storage.local.set({ [`hs_yt_${channelId}`]: { msgs, ts: Date.now() } })
-    if (p && typeof p.catch === 'function') p.catch(() => {})
-  } catch {}
-}
-
-function persistYt(channelId) {
-  if (!channelId) return
-  _persistYtDirty.add(channelId)
-  if (_persistYtTimers.has(channelId)) return
-  _persistYtTimers.set(
-    channelId,
-    cleanup.setTimeout(() => {
-      _persistYtTimers.delete(channelId)
-      _persistYtDirty.delete(channelId)
-      _writeYtNow(channelId)
-    }, PERSIST_DEBOUNCE_MS),
-  )
 }
 
 function _persistTabSeenSoon() {
@@ -1206,14 +1181,14 @@ setTabSeenSink(applyRemoteTabSeenMarks)
 function _flushPersistenceSync() {
   try {
     // chat history and cross-platform mentions are backed exclusively by
-    // chrome.storage.local (persistMentions/persistYt) — writing them to the
+    // chrome.storage.local (persistMentions) — writing them to the
     // host page's localStorage (twitch.tv/kick.com/youtube.com) would expose
     // HeatSync user data to host-page scripts and co-resident extensions.
     if (_persistTabSeenTimer) {
       localStorage.setItem('hs_tab_seen_sync', JSON.stringify({ data: { ...tabSeenAt }, ts: Date.now() }))
     }
   } catch {}
-  // Drain pending mention/YT debounces the way KickChat._flushPendingSync
+  // Drain the pending mention debounce the way KickChat._flushPendingSync
   // drains kick buffers: a storage.local.set DISPATCHED during pagehide
   // survives the unload, so this closes the 1.5s debounce gap without
   // writing HeatSync data to the host page's localStorage.
@@ -1226,12 +1201,6 @@ function _flushPersistenceSync() {
       _persistMentionsState.timer = null
       _persistMentionsState.dirty = false
       _writeMentionsNow()
-    }
-    for (const [channelId, t] of [..._persistYtTimers]) {
-      cleanup.clearTimeout(t)
-      _persistYtTimers.delete(channelId)
-      _persistYtDirty.delete(channelId)
-      _writeYtNow(channelId)
     }
   } catch {}
 }
@@ -1268,19 +1237,16 @@ async function restorePersistedBuffers() {
 
     let mChrome = null
     try {
-      const r = await browser.storage.local.get(['hs_mentions_v2', 'user_info'])
+      const r = await browser.storage.local.get(['user_info'])
       mentionsOwner = String(r.user_info?.username || '').toLowerCase()
-      if (
-        r.hs_mentions_v2?.msgs?.length > 0 &&
-        Date.now() - r.hs_mentions_v2.ts < 86400000 &&
-        (r.hs_mentions_v2.owner || '') === mentionsOwner
-      ) {
-        mChrome = r.hs_mentions_v2.msgs
+      const saved = await browser.runtime.sendMessage({ type: 'bg_mentions_get' })
+      if (saved?.msgs?.length > 0 && Date.now() - saved.ts < 86400000 && (saved.owner || '') === mentionsOwner) {
+        mChrome = saved.msgs
       }
     } catch {}
     // Legacy residue: older builds mirrored cross-platform mentions to
     // host-page localStorage (readable by the host site + co-resident
-    // extensions). chrome.storage.local (hs_mentions_v2) is authoritative, so
+    // extensions). chrome.storage.local (the background's saved list) is authoritative, so
     // purge the old copy for good. It carries no owner, so it is never
     // restored — it could belong to another account.
     try {
@@ -1309,82 +1275,9 @@ async function restorePersistedBuffers() {
       log('Restored mentions:', mentionsBuffer.length)
     }
 
-    try {
-      // Key enumeration only — getKeys (Chrome 130+/FF 134+) avoids
-      // materializing every stored value (cosmetics caches, error rings,
-      // seen-state — MBs) on the mount-blocking path just to find hs_yt_*
-      // buffers. get(null) survives solely as the legacy-browser fallback.
-      const allKeys =
-        typeof chrome.storage.local.getKeys === 'function'
-          ? await browser.storage.local.getKeys()
-          : Object.keys(await browser.storage.local.get(null))
-      const ytKeys = allKeys.filter((k) => k.startsWith('hs_yt_') && !k.startsWith('hs_yt_sync_'))
-      const all = ytKeys.length ? await browser.storage.local.get(ytKeys) : {}
-      // Self-heal: only YT-linked channels keep persisted YT history. Buffers
-      // left behind by the old @<name>/live bleed (see
-      // [[heatsync_yt_handle_guess_bleed]]) live under channels that carry NO
-      // youtube link — restoring them resurfaces a stranger's chat on every
-      // reload. Collect those and purge their storage so they stop coming back.
-      // Gate the purge on config having loaded channels, so a transient
-      // loadConfig failure can't mass-delete legit YT history.
-      const configLoaded = Array.isArray(config?.channels) && config.channels.length > 0
-      const staleYtIds = []
-      for (const [k, v] of Object.entries(all)) {
-        if (!k.startsWith('hs_yt_') || k.startsWith('hs_yt_sync_')) continue
-        const channelId = k.slice('hs_yt_'.length)
-        if (!channelId) continue
-        const hasYtLink = configLoaded && config.channels.some((c) => c && c.id === channelId && c.youtube)
-        if (!hasYtLink) {
-          if (configLoaded) staleYtIds.push(channelId)
-          continue
-        }
-        if (!v?.msgs?.length || Date.now() - v.ts >= 86400000) continue
-        if (!channelYtMessages.has(channelId)) channelYtMessages.set(channelId, [])
-        const buf = channelYtMessages.get(channelId)
-        let syncMsgs = null
-        try {
-          const raw = localStorage.getItem(`hs_yt_sync_${channelId}`)
-          if (raw) {
-            const data = JSON.parse(raw)
-            if (data?.msgs?.length > 0 && Date.now() - data.ts < 86400000) syncMsgs = data.msgs
-          }
-        } catch {}
-        const seen = new Set()
-        const ingest = (arr) => {
-          if (!arr) return
-          for (const m of arr) {
-            const key = `${m.user || ''}|${m.time || 0}|${(m.text || '').slice(0, 80)}`
-            if (seen.has(key)) continue
-            seen.add(key)
-            m.isHistory = true
-            buf.push(m)
-          }
-        }
-        ingest(v.msgs)
-        ingest(syncMsgs)
-        // ordOf, not raw time — a persisted live-paced row carries its own
-        // `ord` (the paced-commit clock), which is what fairMerge/
-        // mergeSortedRuns actually sort on. Sorting by raw time here would
-        // restore the buffer in a different order than it was ever
-        // rendered in, breaking the sortedness invariant those rely on.
-        buf.sort((a, b) => ordOf(a) - ordOf(b))
-        if (buf.length > PERSIST_MAX_YT) buf.splice(0, buf.length - PERSIST_MAX_YT)
-      }
-      if (staleYtIds.length) {
-        try {
-          await browser.storage.local.remove(staleYtIds.map((id) => `hs_yt_${id}`))
-        } catch {}
-        for (const id of staleYtIds) {
-          try {
-            localStorage.removeItem(`hs_yt_sync_${id}`)
-          } catch {}
-          try {
-            channelYtMessages.delete(id)
-          } catch {}
-        }
-        log('Purged stale YT buffers (channel has no YT link):', staleYtIds.join(','))
-      }
-    } catch {}
+    // YouTube history is not restored from here: the background owns the
+    // hs_yt rings (IndexedDB) and replays them to this tab on subscribe
+    // (bgYtReplayToTab), and drops the old storage.local copies itself.
   } catch (e) {
     log('restorePersistedBuffers failed:', e?.message)
   }

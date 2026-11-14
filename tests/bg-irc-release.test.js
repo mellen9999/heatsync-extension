@@ -51,6 +51,7 @@ function harness() {
     deadChannels: new Set(),
     roomstates: new Map(),
     persistTimers: new Map(),
+    lastPutAt: new Map(),
     releaseTimers: new Map(),
   }
   const ring = (n) => ({ getAll: () => Array.from({ length: n }, (_, i) => ({ id: String(i) })) })
@@ -150,10 +151,11 @@ describe('a channel no tab wants is released after the grace', () => {
     expect(body).toContain('bgIrcDropTabInterest(tabId)')
 
     const { api, BG_IRC, sent, ring, fireTimers } = harness()
-    const drop = new Function('BG_IRC', 'bgIrcScheduleRelease', `${extractFn('bgIrcDropTabInterest')}\nreturn bgIrcDropTabInterest`)(
-      BG_IRC,
-      api.bgIrcScheduleRelease,
-    )
+    const drop = new Function(
+      'BG_IRC',
+      'bgIrcScheduleRelease',
+      `${extractFn('bgIrcDropTabInterest')}\nreturn bgIrcDropTabInterest`,
+    )(BG_IRC, api.bgIrcScheduleRelease)
     BG_IRC.channels.set('a', ring(5))
     BG_IRC.channels.set('b', ring(5))
     api.bgIrcRegisterTabInterest(1, 'a')

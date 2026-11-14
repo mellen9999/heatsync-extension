@@ -19,7 +19,7 @@
 // JSON-cloned, chrome's onMessage response-channel rules, alarms/timers on one clock, Date.now().
 // what is fake and yours to drive: fetch (sw.net), WebSocket (sw.sockets), tabs, cookies, time.
 //
-//   boot options   { storage: {local,session,sync}, cookies: [...], tabs: [{id,url,reply?}],
+//   boot options   { storage: {local,session,sync}, idb: {store: {key: value}}, cookies: [...], tabs: [{id,url,reply?}],
 //                    routes: [[matcher, handler]...], healthy (default true: empty-but-valid boot
 //                    endpoints, see routes.js), sockets ('manual' default | 'open': every socket
 //                    finishes its handshake by itself), fresh (a first install: boot migrations run),
@@ -30,6 +30,7 @@
 //   sw.net.on / calls / callsTo / unrouted     fetch routes + what the worker asked for
 //   sw.sockets / sw.socket(part)               every WebSocket the worker opened; .open() .receive() .drop() .frames
 //   sw.storage.local.snapshot() / .seed()      what chrome.storage holds (JSON), .fail('set', err) injects a fault
+//   sw.idb.snapshot(store) / .seed(store, {k: v})   the worker's IndexedDB (rings, kick, emotes, ...)
 //   sw.tabMessages / sw.broadcasts(type)       what the worker told tabs
 //   sw.restart()               -> a NEW worker on the same browser state (MV3 eviction): memory gone,
 //                                 storage / cookies / tabs / alarms / routes survive
@@ -53,6 +54,7 @@ import vm from 'node:vm'
 import { BG_HEAD, BG_PART_PATHS } from '../bg-src.js'
 import { createClock } from './clock.js'
 import { createFakeChrome } from './fake-chrome.js'
+import { createFakeIdb } from './fake-idb.js'
 import { createNet, createWebSocketClass } from './fake-net.js'
 import { healthyRoutes } from './routes.js'
 
@@ -111,12 +113,18 @@ function build(opts) {
   const { sockets: sockOpt, healthy: healthyOpt, random: randomOpt } = opts
   const startAt = opts.now ?? prev?.now ?? T0
   let net
-  const clock = createClock(startAt, { busy: () => net.busy() })
+  // webcrypto (the token encrypt/decrypt) answers on real threads, not on the virtual clock: settle() must wait
+  // for it like it waits for a fetch, or a boot that is still encrypting looks finished (and a later advance races it)
+  let cryptoPending = 0
+  const clock = createClock(startAt, { busy: () => net.busy() || cryptoPending > 0 })
   const sandbox = {}
   const ctx = vm.createContext(sandbox, { name: 'heatsync-sw' })
   const ctxJson = vm.runInContext('JSON', ctx)
   const fake = createFakeChrome({ clock, ctxJson, extensionId: EXTENSION_ID })
   net = createNet(clock)
+  // the worker's IndexedDB survives an eviction like storage does (restart hands the same data on)
+  const idb = createFakeIdb(prev?.idb)
+  if (!prev) for (const [store, records] of Object.entries(opts.idb ?? {})) idb.seed('hs-irc-rings', store, records)
   const { FakeWebSocket, sockets } = createWebSocketClass(clock, { autoOpen: opts.sockets === 'open' })
 
   // ---- worker globals ----
@@ -138,6 +146,7 @@ function build(opts) {
     chrome: fake.chrome,
     fetch: (...a) => net.fetch(...a),
     WebSocket: FakeWebSocket,
+    indexedDB: idb.indexedDB,
     setTimeout: (fn, ms, ...args) => clock.schedule(() => fn(...args), ms),
     setInterval: (fn, ms, ...args) => clock.schedule(() => fn(...args), ms, ms),
     clearTimeout: (id) => clock.clear(id),
@@ -173,7 +182,23 @@ function build(opts) {
     EventTarget,
     atob,
     btoa,
-    crypto,
+    crypto: new Proxy(crypto, {
+      get(target, prop) {
+        if (prop !== 'subtle') return Reflect.get(target, prop)
+        return new Proxy(target.subtle, {
+          get(sub, op) {
+            const f = Reflect.get(sub, op)
+            if (typeof f !== 'function') return f
+            return (...a) => {
+              cryptoPending++
+              return Promise.resolve(f.apply(sub, a)).finally(() => {
+                cryptoPending--
+              })
+            }
+          },
+        })
+      },
+    }),
     addEventListener: (type, fn) => {
       if (!selfListeners.has(type)) selfListeners.set(type, [])
       selfListeners.get(type).push(fn)
@@ -235,6 +260,11 @@ function build(opts) {
         },
       ]),
     ),
+    /** the worker's IndexedDB: a store as { key: value }, or records put there as a past session left them */
+    idb: {
+      snapshot: (store) => idb.snapshot('hs-irc-rings', store),
+      seed: (store, records) => idb.seed('hs-irc-rings', store, records),
+    },
     now: () => clock.now(),
     settle: () => clock.settle(),
     advance: (ms) => clock.advance(ms),
@@ -299,6 +329,7 @@ function build(opts) {
       tabs: fake.tabList(),
       routes: net.routes.map((r) => [r.match, r.handler]).reverse(),
       alarms: fake.alarmList(),
+      idb: idb.store,
     }),
     /** the browser killed this worker (idle eviction) and woke a fresh one: memory is gone, the rest stays */
     restart: (more = {}) => bootSw({ sockets: sockOpt, healthy: healthyOpt, random: randomOpt, ...more, from: sw }),

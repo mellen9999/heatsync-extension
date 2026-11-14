@@ -91,13 +91,6 @@ try {
       user_info: { username: 'probeuser' },
       global_emotes: [{ name: 'W', url: u.W_global, source: '7tv', hash: 'globalhash' }],
       emote_inventory: [{ name: 'W', url: u.W_inv, source: 'heatsync', hash: 'invhash' }],
-      channel_emotes_map: {
-        'kick/probechan': [
-          { name: 'W', url: u.W_bttv, source: 'bttv', hash: 'bttvhash' },
-          { name: 'W', url: u.W_7tv, source: '7tv', hash: 'stvhash' },
-          { name: 'W', url: u.W_ffz, source: 'ffz', hash: 'ffzhash' },
-        ],
-      },
     })
   }, Object.fromEntries(['W_global', 'W_inv', 'W_bttv', 'W_7tv', 'W_ffz'].map((n) => [n, E(n)])))
   // the per-site "hs off" lives in storage.sync (ui_settings.subsystems), read once at boot
@@ -105,6 +98,22 @@ try {
     // @ts-ignore — extension page
     await chrome.storage.sync.set({ ui_settings: { subsystems: { 'overlay-kick': false } } })
   })
+  // Seed the channel's sets the way the background holds them after a real fetch: in its memory
+  // and in its IndexedDB (never storage.local, which every tab would hear). It answers a tab's
+  // cold-start pull (get_channel_emotes_map) from there.
+  await sw.evaluate(async ([key, emotes]: [string, unknown[]]) => {
+    // @ts-ignore — service worker globals
+    channelEmotesMap[key] = emotes
+    // @ts-ignore
+    channelEmotesFetchedAt[key] = Date.now()
+    // @ts-ignore
+    await bgPersistChannelEmotes(key)
+  }, ['kick/probechan', [
+    { name: 'W', url: E('W_bttv'), source: 'bttv', hash: 'bttvhash' },
+    { name: 'W', url: E('W_7tv'), source: '7tv', hash: 'stvhash' },
+    { name: 'W', url: E('W_ffz'), source: 'ffz', hash: 'ffzhash' },
+  ]] as [string, unknown[]])
+
   await seed.close()
 
   const p = await c.newPage()
@@ -118,8 +127,12 @@ try {
     { name: 'W', url: E('W_ffz'), source: 'ffz', hash: 'ffzhash' },
   ]
   await sw.evaluate(async (emotes: any[]) => {
+    // @ts-ignore — service worker globals
+    channelEmotesMap['kick/probechan'] = emotes
     // @ts-ignore
-    await chrome.storage.local.set({ channel_emotes_map: { 'kick/probechan': emotes } })
+    channelEmotesFetchedAt['kick/probechan'] = Date.now()
+    // @ts-ignore
+    await bgPersistChannelEmotes('kick/probechan')
     // @ts-ignore
     broadcastToTabs({ type: 'channel_emotes_update', channelOwner: 'probechan', platform: 'kick', emotes })
   }, chans)

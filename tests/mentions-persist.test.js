@@ -6,16 +6,15 @@ import { mainSource } from './main-src.js'
 const MAIN = mainSource()
 
 describe('mentions persist across restart', () => {
-  test('bounded and written to chrome.storage.local under an owner', () => {
+  test('bounded and handed to the background (never storage.local) under an owner', () => {
     expect(MAIN).toMatch(/const PERSIST_MAX_MENTIONS = \d+/)
     expect(MAIN).toContain('mentionsBuffer.slice(-PERSIST_MAX_MENTIONS)')
-    expect(MAIN).toContain(
-      'chrome.storage.local.set({ hs_mentions_v2: { msgs, ts: Date.now(), owner: mentionsOwner } })',
-    )
+    expect(MAIN).toContain("chrome.runtime.sendMessage({ type: 'bg_mentions_put', msgs, owner: mentionsOwner })")
+    expect(MAIN).not.toContain('hs_mentions_v2: {')
   })
   test('restore only for the same account, within a day, as history', () => {
-    expect(MAIN).toContain('Date.now() - r.hs_mentions_v2.ts < 86400000')
-    expect(MAIN).toContain("(r.hs_mentions_v2.owner || '') === mentionsOwner")
+    expect(MAIN).toContain('Date.now() - saved.ts < 86400000')
+    expect(MAIN).toContain("(saved.owner || '') === mentionsOwner")
     expect(MAIN).toContain('m.isHistory = true')
   })
   test('an identity change or logout empties and rewrites the saved list', () => {

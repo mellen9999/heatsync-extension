@@ -2826,7 +2826,6 @@
         'emote_inventory',
         'blocked_emotes',
         'local_blocked_emotes',
-        'channel_emotes_map',
         'blocked_users',
         'local_blocked_emote_names',
       ])
@@ -2848,10 +2847,18 @@
         // Load only THIS channel's emotes from the per-channel map
         const myChannel = getPageChannel()
         const myPlatform = window.location.hostname.includes('kick.com') ? 'kick' : 'twitch'
-        const myEmotes =
-          myChannel && stored.channel_emotes_map
-            ? stored.channel_emotes_map[`${myPlatform}/${myChannel}`] || stored.channel_emotes_map[myChannel] || []
-            : []
+        // The background keeps channel sets in IndexedDB; ask it for this page's one set.
+        let myEmotes = []
+        if (myChannel) {
+          try {
+            const resp = await safeSendMessage({
+              type: 'get_channel_emotes_map',
+              channel: myChannel,
+              platform: myPlatform,
+            })
+            myEmotes = resp?.map?.[`${myPlatform}/${myChannel}`] || []
+          } catch {}
+        }
         channelEmotes = myEmotes.map((e) => ({
           ...e,
           url: normalizeEmoteUrl(e.url),

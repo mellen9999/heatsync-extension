@@ -679,7 +679,7 @@ async function handleMessage(message, sender, sendResponse) {
       // channel the user has ever added and removed (BG_YT only caps total
       // channel COUNT, it never ages one out on removal).
       BG_YT.channels.delete(channelId)
-      browser.storage.local.remove(`hs_yt_${channelId}`).catch(() => {})
+      bgIdbDelete(BG_IDB_YT, channelId)
     }
     log(' YouTube unsubscribe:', videoId || '(no videoId)', 'channel:', channelId)
     sendResponse({ ok: true })
@@ -778,11 +778,11 @@ async function handleMessage(message, sender, sendResponse) {
             kickTapLeave(kch)
           } catch {}
           // Channel removed from config — drop its persisted history buffer too,
-          // else hs_kick_<ch> storage entries accumulate forever across every
+          // else kick ring records accumulate forever across every
           // channel the user has ever added and removed (BG_KICK only caps total
           // channel COUNT, it never ages one out on removal).
           BG_KICK.channels.delete(kch)
-          browser.storage.local.remove(`hs_kick_${kch}`).catch(() => {})
+          bgIdbDelete(BG_IDB_KICK, kch)
         }
       }
       wsSend(message.data)
@@ -1130,6 +1130,19 @@ async function handleMessage(message, sender, sendResponse) {
     log(' 📤 Broadcast result:', result)
     sendResponse(result || { success: false, reason: 'unknown' })
     return true // Keep channel open for response
+  } else if (message.type === 'get_channel_emotes_map') {
+    // Content's cold start. The sets are persisted in the background's
+    // IndexedDB (never storage.local), so a tab asks for them here instead of
+    // reading storage. `channel` (+`platform`) narrows the answer to one set.
+    ;(async () => {
+      if (initPromise) await initPromise
+      const all = getStorableChannelEmotes()
+      if (message.channel) {
+        const k = chKey(message.platform || 'twitch', message.channel)
+        sendResponse({ map: Array.isArray(all[k]) ? { [k]: all[k] } : {} })
+      } else sendResponse({ map: all })
+    })()
+    return true
   } else if (message.type === 'get_channel_emotes') {
     // Multichat/content requesting channel emotes (may have missed the broadcast).
     // Await init like get_picker_emotes/get_inventory beside it — a cold SW
@@ -1158,10 +1171,6 @@ async function handleMessage(message, sender, sendResponse) {
       } catch {}
       const totalEmotes = Object.values(channelEmotesMap).reduce((sum, e) => sum + (Array.isArray(e) ? e.length : 0), 0)
       if (totalEmotes > 0) {
-        browser.storage.local.set({
-          channel_emotes_map: getStorableChannelEmotes(),
-          channel_emotes_fetched_at: channelEmotesFetchedAt,
-        })
         for (const [k, emotes] of Object.entries(channelEmotesMap)) {
           if (Array.isArray(emotes)) {
             const { platform, channel } = splitChKey(k)

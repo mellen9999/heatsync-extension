@@ -1912,7 +1912,7 @@ function handleWSMessage(msg) {
               if (BG_KICK.channels.size > MAX_BG_KICK_CHANNELS) {
                 const oldest = BG_KICK.channels.keys().next().value
                 BG_KICK.channels.delete(oldest)
-                browser.storage.local.remove(`hs_kick_${oldest}`).catch(() => {})
+                bgIdbDelete(BG_IDB_KICK, oldest)
               }
               bgKickFetchArchive(ch).catch(() => {})
             }

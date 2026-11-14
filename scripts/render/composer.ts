@@ -99,10 +99,21 @@ export async function composerAndPickerCheck() {
           heatsync_multichat: { channels: [{ id: 'probechan', twitch: 'probechan', kick: '', youtube: '' }] },
           user_info: { username: 'probeuser' },
           global_emotes: seed.globals,
-          channel_emotes_map: { 'twitch/probechan': seed.channel },
         })
       },
       { globals, channel },
+    )
+    // the channel's set lives in the background (memory + IndexedDB), the way a real fetch leaves it
+    await sw.evaluate(
+      ([key, emotes]: [string, unknown[]]) => {
+        // @ts-ignore — service worker globals
+        channelEmotesMap[key] = emotes
+        // @ts-ignore
+        channelEmotesFetchedAt[key] = Date.now()
+        // @ts-ignore
+        return bgPersistChannelEmotes(key)
+      },
+      ['twitch/probechan', channel] as [string, unknown[]],
     )
 
     p = await c.newPage()

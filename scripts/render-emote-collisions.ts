@@ -87,15 +87,24 @@ try {
       user_info: { username: 'probeuser' },
       global_emotes: [{ name: 'W', url: u.W_global, source: '7tv', hash: 'globalhash' }],
       emote_inventory: [{ name: 'W', url: u.W_inv, source: 'heatsync', hash: 'invhash' }],
-      channel_emotes_map: {
-        'twitch/probechan': [
-          { name: 'W', url: u.W_bttv, source: 'bttv', hash: 'bttvhash' },
-          { name: 'W', url: u.W_7tv, source: '7tv', hash: 'stvhash' },
-          { name: 'W', url: u.W_ffz, source: 'ffz', hash: 'ffzhash' },
-        ],
-      },
     })
   }, Object.fromEntries(['W_global', 'W_inv', 'W_bttv', 'W_7tv', 'W_ffz'].map((n) => [n, E(n)])))
+  // Seed the channel's sets the way the background holds them after a real fetch: in its memory
+  // and in its IndexedDB (never storage.local, which every tab would hear). It answers a tab's
+  // cold-start pull (get_channel_emotes_map) from there.
+  await sw.evaluate(async ([key, emotes]: [string, unknown[]]) => {
+    // @ts-ignore — service worker globals
+    channelEmotesMap[key] = emotes
+    // @ts-ignore
+    channelEmotesFetchedAt[key] = Date.now()
+    // @ts-ignore
+    await bgPersistChannelEmotes(key)
+  }, ['twitch/probechan', [
+    { name: 'W', url: E('W_bttv'), source: 'bttv', hash: 'bttvhash' },
+    { name: 'W', url: E('W_7tv'), source: '7tv', hash: 'stvhash' },
+    { name: 'W', url: E('W_ffz'), source: 'ffz', hash: 'ffzhash' },
+  ]] as [string, unknown[]])
+
   await seed.close()
 
   const p = await c.newPage()
@@ -115,9 +124,13 @@ try {
       { name: 'W', url: u.W_7tv, source: '7tv', hash: 'stvhash' },
       { name: 'W', url: u.W_ffz, source: 'ffz', hash: 'ffzhash' },
     ]
-    // the panel's loadEmotes() re-reads storage on every update, so the storage has to agree
+    // the panel's cold start asks the background for its sets, so the background has to agree
     // @ts-ignore — service worker globals
-    await chrome.storage.local.set({ channel_emotes_map: { 'twitch/probechan': emotes } })
+    channelEmotesMap['twitch/probechan'] = emotes
+    // @ts-ignore
+    channelEmotesFetchedAt['twitch/probechan'] = Date.now()
+    // @ts-ignore
+    await bgPersistChannelEmotes('twitch/probechan')
     // @ts-ignore — service worker globals
     broadcastToTabs({
       type: 'channel_emotes_update',

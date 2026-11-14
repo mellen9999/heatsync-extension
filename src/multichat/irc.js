@@ -1167,11 +1167,6 @@ class KickChat extends ChatClient {
   constructor() {
     super('heatsync-kick')
     this._listener = null
-    this._persistTimers = {}
-    this._PERSIST_MAX = 1500
-    this._PERSIST_DEBOUNCE_MS = 1500
-    this._SYNC_BACKUP_MAX = 200
-    this._pendingChannels = new Set()
     this._recentLiveIds = new Set() // Kick message-id dedup across server-relay + kick-tap sources
     // Self-inflicted mod actions (toolbar/slash) inject a synthetic notice
     // immediately; the kick tap then reflects the same action back —
@@ -1185,10 +1180,9 @@ class KickChat extends ChatClient {
     this._chanLastSeen = new Map()
     this._chanRejoinAttempts = new Map() // ch -> escalation count
     this._watchdogTimer = null
-    // Synchronous flush of pending channel buffers on tear-down — closes the
-    // chrome.storage.local debounce gap that was eating ~5s of pre-reload chat.
-    this._pagehideHandler = () => this._flushPendingSync()
-    window.addEventListener('pagehide', this._pagehideHandler)
+    // No history persistence here: the background is the one owner of the kick
+    // rings (IndexedDB) and hands them over by bg_kick_history. A tab writing
+    // them to storage.local fanned a full-ring clone into every tab's onChanged.
   }
 
   // Record a self-inflicted mod action so the kick-tap reflection of the
@@ -1211,47 +1205,15 @@ class KickChat extends ChatClient {
     return Date.now() - ts <= 10000
   }
 
-  _serializeMsg(m) {
-    if (m?.type === 'moment') return null // ephemeral alert — broken after restore (loses click target)
-    // id/userId/cleared must survive persistence — the BG SW writes the same
-    // hs_kick_ key with full msgs, and restored rows without ids break id-dedup
-    // (backfill duplicates), moderation dimming, and reply-parent lookup.
-    return {
-      id: m.id || undefined,
-      userId: m.userId || undefined,
-      user: m.user,
-      text: m.text,
-      color: m.color,
-      badges: m.badges,
-      channel: m.channel,
-      time: m.time,
-      platform: 'kick',
-      sentHost: m.sentHost || undefined,
-      type: m.type || undefined,
-      systemMsg: m.systemMsg || undefined,
-      replyTo: m.replyTo || undefined,
-      kicksEvent: m.kicksEvent || undefined,
-      cleared: m.cleared || undefined,
-      clearedReason: m.clearedReason || undefined,
-    }
-  }
-
-  _flushPendingSync() {
-    // Kick chat history is backed exclusively by chrome.storage.local (NOT
-    // host-page localStorage, which would expose it to kick.com scripts and
-    // co-resident extensions). On pagehide we drain every debounced write
-    // synchronously — the storage.local.set is dispatched to the extension
-    // backend and survives the page unload, closing the ~1.5s debounce gap that
-    // was silently dropping the tail of Kick chat on reload/close.
-    for (const ch of [...this._pendingChannels]) {
-      const t = this._persistTimers[ch]
-      if (t) {
-        cleanup.clearTimeout(t)
-        delete this._persistTimers[ch]
-      }
-      this._pendingChannels.delete(ch)
-      this._persistChannelNow(ch)
-    }
+  // Rows only this tab sees (sub/raid/pin/mode notices, the page-level native tap) go to the
+  // background, the one owner of the kick rings, so a reload still paints them. Nothing is
+  // written to storage.local from here.
+  _appendToBg(msg) {
+    try {
+      if (!msg?.channel || msg.type === 'moment') return
+      const p = chrome.runtime.sendMessage({ type: 'bg_kick_append', channel: msg.channel, msgs: [msg] })
+      if (p && typeof p.catch === 'function') p.catch(() => {})
+    } catch {}
   }
 
   _touchChannel(ch) {
@@ -1339,19 +1301,34 @@ class KickChat extends ChatClient {
       addUsername(msg.user)
       setKnownColor(msg.user.toLowerCase(), msg.color, msg.userId, 'kick')
     }
-    this.persistBuffer(channel)
+    if (fromNativeTap) this._appendToBg(msg)
     this.emit('message', msg)
   }
 
   // One kick moderation event (ban/timeout/delete/unban) → buffer dims +
   // notice emit. Extracted from the kick_moderation listener so the page-
   // level native tap can feed the SAME path.
-  ingestModeration(message) {
+  ingestModeration(message, opts) {
     const channel = message.channel.toLowerCase()
     if (!this.channels.has(channel)) return
     const buf = this.channels.get(channel)
     const action = message.action
     const targetLc = (message.targetUser || '').toLowerCase()
+    // the page-level native tap sees mod events the background never does: hand them over so
+    // the ring (the one persisted copy) carries the mark across a reload
+    if (opts?.fromNativeTap) {
+      try {
+        const p = chrome.runtime.sendMessage({
+          type: 'bg_kick_mark',
+          channel,
+          action,
+          targetMsgId: message.targetMsgId,
+          targetUser: message.targetUser,
+          banDuration: message.banDuration,
+        })
+        if (p && typeof p.catch === 'function') p.catch(() => {})
+      } catch {}
+    }
     if ((action === 'ban' || action === 'timeout') && targetLc) {
       const reason = message.banDuration
         ? t('mc_mod_label_timed_out', [String(message.banDuration)])
@@ -1379,7 +1356,6 @@ class KickChat extends ChatClient {
         }
       }
     }
-    this.persistBuffer(channel)
     const target = message.targetUser || ''
     const noticeType =
       action === 'delete'
@@ -1509,7 +1485,7 @@ class KickChat extends ChatClient {
         if (!this.channels.has(channel)) return
         const msg = message.msg
         this.channels.get(channel).push(msg)
-        this.persistBuffer(channel)
+        this._appendToBg(msg)
         this.emit('message', msg)
         return
       }
@@ -1540,7 +1516,7 @@ class KickChat extends ChatClient {
           id: `hs-kick-pin-${channel}-${message.pinned ? 1 : 0}-${Date.now()}`,
         }
         this.channels.get(channel).push(msg)
-        this.persistBuffer(channel)
+        this._appendToBg(msg)
         this.emit('message', msg)
         return
       }
@@ -1573,7 +1549,7 @@ class KickChat extends ChatClient {
           id: '',
         }
         this.channels.get(channel).push(msg)
-        this.persistBuffer(channel)
+        this._appendToBg(msg)
         this.emit('message', msg)
       }
 
@@ -1607,40 +1583,13 @@ class KickChat extends ChatClient {
           id: '',
         }
         this.channels.get(channel).push(msg)
-        this.persistBuffer(channel)
+        this._appendToBg(msg)
         this.emit('message', msg)
       }
     }
     chrome.runtime?.onMessage?.addListener(this._listener)
     this._startWatchdog()
     log('Kick chat listener registered (webhook mode)')
-  }
-
-  // Serialize + write one channel's buffer to chrome.storage.local NOW. Shared
-  // by the debounced timer and the synchronous pagehide flush.
-  _persistChannelNow(ch) {
-    try {
-      if (!chrome?.runtime?.id) return
-      const buffer = this.channels.get(ch)
-      if (!buffer) return
-      const msgs = buffer
-        .getAll()
-        .slice(-this._PERSIST_MAX)
-        .map((m) => this._serializeMsg(m))
-        .filter(Boolean)
-      const p = chrome.storage.local.set({ [`hs_kick_${ch}`]: { msgs, ts: Date.now() } })
-      if (p && typeof p.catch === 'function') p.catch((e) => log('Kick history persist failed:', ch, e?.message || e))
-    } catch {}
-  }
-
-  persistBuffer(ch) {
-    this._pendingChannels.add(ch)
-    if (this._persistTimers[ch]) return
-    this._persistTimers[ch] = cleanup.setTimeout(() => {
-      delete this._persistTimers[ch]
-      this._pendingChannels.delete(ch)
-      this._persistChannelNow(ch)
-    }, this._PERSIST_DEBOUNCE_MS)
   }
 
   // BG merged a server-side backfill — re-pull merged buffer into local
@@ -1709,95 +1658,6 @@ class KickChat extends ChatClient {
     }
   }
 
-  async loadHistory(ch) {
-    const buffer = this.channels.get(ch)
-    if (!buffer) return
-    const storageKey = `hs_kick_${ch}`
-    const syncKey = `hs_kick_sync_${ch}`
-
-    let chromeMsgs = null,
-      syncMsgs = null
-    try {
-      const stored = await browser.storage.local.get(storageKey)
-      const data = stored[storageKey]
-      if (data?.msgs?.length > 0 && Date.now() - data.ts < 86400000) chromeMsgs = data.msgs
-    } catch {}
-    try {
-      const raw = localStorage.getItem(syncKey)
-      if (raw) {
-        const data = JSON.parse(raw)
-        if (data?.msgs?.length > 0 && Date.now() - data.ts < 86400000) syncMsgs = data.msgs
-      }
-    } catch {}
-
-    if (!chromeMsgs && !syncMsgs) return
-
-    // Merge by user+time+text fingerprint — works for id-less legacy rows too.
-    const seen = new Set()
-    const all = []
-    const fp = (m) => `${m.user || ''}|${m.time || 0}|${(m.text || '').slice(0, 80)}`
-    const ingest = (arr) => {
-      if (!arr) return
-      for (const m of arr) {
-        const k = fp(m)
-        if (seen.has(k)) continue
-        seen.add(k)
-        all.push(m)
-      }
-    }
-    ingest(chromeMsgs)
-    ingest(syncMsgs)
-    all.sort((a, b) => (a.time || 0) - (b.time || 0))
-
-    // Filter out 7TV emote change system messages and dedup stream events
-    const seenEventTexts = new Set()
-    const filtered = all.filter((m) => {
-      const t = m.text || m.systemMsg || ''
-      if (
-        t.includes('removed from channel') ||
-        t.includes('added to channel') ||
-        t.includes('removed 7TV emote') ||
-        t.includes('added 7TV emote')
-      )
-        return false
-      const isStreamEvent = m.type === 'stream-event' || (m.text?.includes('◆') && !m.user)
-      if (isStreamEvent && m.text) {
-        if (!m.type) m.type = 'stream-event'
-        if (!m.text.startsWith('[')) {
-          const em = m.text.match(/^([a-zA-Z0-9_]+) \u25c6/)
-          if (em) m.text = `[${em[1]}]${m.text.slice(em[1].length)}`
-        }
-        if (seenEventTexts.has(m.text)) return false
-        seenEventTexts.add(m.text)
-      }
-      return true
-    })
-    log(
-      'Kick storage hit:',
-      filtered.length,
-      'msgs for',
-      ch,
-      `chrome:${chromeMsgs?.length || 0}`,
-      `sync:${syncMsgs?.length || 0}`,
-    )
-    for (const msg of filtered) {
-      msg.isHistory = true
-      normalizeLegacyRetag(msg)
-      if (msg.user) {
-        addUsername(msg.user)
-        setKnownColor(msg.user.toLowerCase(), msg.color, msg.userId, 'kick')
-      }
-    }
-    mergeIntoRing(buffer, filtered)
-    // Always render when history hydrates and panel is current — even if a
-    // couple live msgs already painted, the buffer just grew and the DOM
-    // must reflect it.
-    const isCurrent = currentTab === ch || (currentTab === 'live' && getLiveChannel() === ch)
-    if (isCurrent && filtered.length > 0) {
-      scheduleRenderMessages()
-    }
-  }
-
   destroy() {
     this._destroyed = true
     this._stopWatchdog()
@@ -1805,12 +1665,6 @@ class KickChat extends ChatClient {
       chrome.runtime?.onMessage?.removeListener(this._listener)
       this._listener = null
     }
-    if (this._pagehideHandler) {
-      window.removeEventListener('pagehide', this._pagehideHandler)
-      this._pagehideHandler = null
-    }
-    for (const id of Object.values(this._persistTimers)) cleanup.clearTimeout(id)
-    this._persistTimers = {}
     // Leave all channels
     for (const username of this.channels.keys()) {
       safeSendMessage({ type: 'ws_send', data: { type: 'channel:leave', platform: 'kick', channel: username } })
@@ -1839,10 +1693,7 @@ class KickChat extends ChatClient {
         fetchKickChannelBadges(kickUsername)
       } catch {}
     }, 1500)
-    // ask BG for in-memory buffer first (always fresher than the
-    // chrome.storage.local debounced write). Fall back to local persisted
-    // history if BG is cold.
-    let hydrated = false
+    // ask BG for its buffer (in memory, else its IndexedDB ring after a SW wake)
     try {
       const resp = await browser.runtime.sendMessage({ type: 'bg_kick_history', channel: kickUsername })
       if (resp?.ok && Array.isArray(resp.msgs) && resp.msgs.length > 0) {
@@ -1872,7 +1723,6 @@ class KickChat extends ChatClient {
           hydrate.push(m)
         }
         mergeIntoRing(buf, hydrate)
-        hydrated = true
         log('Kick BG history hydrated:', resp.msgs.length, 'msgs for', kickUsername)
         try {
           _dropAllTabCaches()
@@ -1885,7 +1735,6 @@ class KickChat extends ChatClient {
     } catch (e) {
       log('Kick BG history fetch failed:', e?.message)
     }
-    if (!hydrated) await this.loadHistory(kickUsername)
     safeSendMessage({ type: 'ws_send', data: { type: 'channel:join', platform: 'kick', channel: kickUsername } })
     log('Kick joined', kickUsername, '(webhook mode)')
     for (const delay of [3000, 8000, 20000]) {

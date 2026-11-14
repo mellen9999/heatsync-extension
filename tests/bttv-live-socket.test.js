@@ -66,7 +66,7 @@ describe('bttv live socket', () => {
     expect(body).toContain("type: 'channel_emote_added'")
     expect(body).toContain("type: 'channel_emote_removed'")
     expect(body).toContain("type: 'channel_emotes_update'")
-    expect(body).toContain('getStorableChannelEmotes()')
+    expect(body).toContain('bgPersistChannelEmotes(key)')
   })
 
   test('CSP connect-src allows the socket in BOTH manifests', () => {

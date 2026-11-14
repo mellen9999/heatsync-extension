@@ -141,7 +141,7 @@ function initKickNativeTap() {
       const mod = kickTapModToMessage(e.data.event, ev, slug)
       if (!mod) return
       stats.ingested++
-      kickChat.ingestModeration(mod)
+      kickChat.ingestModeration(mod, { fromNativeTap: true })
     }
   })
 }

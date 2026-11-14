@@ -80,7 +80,8 @@ export async function tabCompleteCheck() {
     await seed.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
     await seed.evaluate(async (urls: Record<string, string>) => {
       // Written the way the background writes it after a real fetch — three
-      // separate keys feeding three separate tiers, which is the whole point.
+      // separate tiers (global, own, channel), which is the whole point. The channel tier is
+      // seeded below, in the background's own memory + IndexedDB (storage.local never holds it).
       // @ts-ignore — extension page
       await chrome.storage.local.set({
         heatsync_multichat: { channels: [{ id: 'probechan', twitch: 'probechan', kick: '', youtube: '' }] },
@@ -90,16 +91,6 @@ export async function tabCompleteCheck() {
           { name: 'Kappa', url: urls.Kappa, source: 'twitch' },
         ],
         emote_inventory: [{ name: 'zorpOwn', url: urls.zorpOwn, source: 'heatsync' }],
-        channel_emotes_map: {
-          'twitch/probechan': [
-            { name: 'zorpChannel', url: urls.zorpChannel, source: '7tv' },
-            { name: 'opGrab', url: urls.opGrab, source: '7tv' },
-          ],
-        },
-        // The background never writes the map without its fetch times. Without them a service worker
-        // that restarts mid-run restores the set as never-fetched and refetches it on the next join,
-        // against providers that are all refused here — the zorpChannel gate's recurring red in ci.
-        channel_emotes_fetched_at: { 'twitch/probechan': Date.now() },
       })
     }, {
       zorpGlobal: E('zorpGlobal'),
@@ -108,10 +99,10 @@ export async function tabCompleteCheck() {
       opGrab: E('opGrab'),
       Kappa: E('Kappa'),
     })
-    // The background refetches a channel on every join and writes its answer over storage. With every
+    // The background refetches a channel on every join and writes its answer over its saved copy. With every
     // provider refused above, that answer is an empty set, which erases zorpChannel whenever the
     // fetch lands after the seed (6/6 on a loaded box). A real background already holds a channel it
-    // fetched a moment ago (it restores the map at start), and answers a join from that copy without
+    // fetched a moment ago (it restores the sets at start), and answers a join from that copy without
     // refetching — so seed that copy too, rather than let the harness race the fetch.
     await sw.evaluate(
       ([key, emotes]: [string, unknown[]]) => {
@@ -119,6 +110,8 @@ export async function tabCompleteCheck() {
         channelEmotesMap[key] = emotes
         // @ts-ignore
         channelEmotesFetchedAt[key] = Date.now()
+        // @ts-ignore — and into its IndexedDB, which is where a woken worker restores them from
+        return bgPersistChannelEmotes(key)
       },
       ['twitch/probechan', [
         { name: 'zorpChannel', url: E('zorpChannel'), source: '7tv' },
@@ -214,11 +207,10 @@ export async function tabCompleteCheck() {
               const mem = channelEmotesMap[key]
               // @ts-ignore
               const at = channelEmotesFetchedAt[key]
-              // @ts-ignore
-              const st = await chrome.storage.local.get(['channel_emotes_map', 'channel_emotes_fetched_at'])
-              const kept = st.channel_emotes_map?.[key]
+              // @ts-ignore — the copy a woken worker restores from
+              const kept = await bgIdbGet(BG_IDB_EMOTES, key).catch(() => null)
               const names = (v: unknown) => (Array.isArray(v) ? v.map((e: any) => e?.name).join(',') || 'empty' : String(v))
-              return `sw map=${names(mem)} age=${at ? Date.now() - at : 'none'}ms · stored map=${names(kept)} at=${st.channel_emotes_fetched_at?.[key] ? 'set' : 'none'}`
+              return `sw map=${names(mem)} age=${at ? Date.now() - at : 'none'}ms · saved map=${names(kept?.emotes)} at=${kept?.at ? 'set' : 'none'}`
             })
             .catch((e: unknown) => `sw unreadable: ${String(e).slice(0, 120)}`)
         : 'no service worker'

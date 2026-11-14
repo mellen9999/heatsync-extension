@@ -67,9 +67,13 @@ describe('a channel join fetches every provider', () => {
     expect(update.platform).toBe('twitch')
     expect(names(update.emotes)).toEqual(ALL)
 
+    // persisted in the worker's IndexedDB, never in storage.local (every write there clones into every tab)
+    const row = sw.idb.snapshot('emotes')[KEY]
+    expect(names(row.emotes)).toEqual(ALL)
+    expect(row.at).toBeLessThanOrEqual(sw.now())
     const stored = sw.storage.local.snapshot()
-    expect(names(stored.channel_emotes_map[KEY])).toEqual(ALL)
-    expect(stored.channel_emotes_fetched_at[KEY]).toBeLessThanOrEqual(sw.now())
+    expect(stored.channel_emotes_map).toBeUndefined()
+    expect(stored.channel_emotes_fetched_at).toBeUndefined()
     expect(stored.seventv_emote_set_ids).toEqual({ [KEY]: 'set-kripp' })
 
     // nothing failed, so nothing is queued to retry
@@ -124,7 +128,7 @@ describe('a provider fails during the first fetch', () => {
     expect(alarm.scheduledTime - sw.now()).toBeGreaterThan(80_000)
     expect(sw.eval(`seventvEmoteSetIds.get('${KEY}')`)).toBe('set-kripp')
     // backdated so the next join (not just the alarm) refetches within a minute
-    const at = sw.storage.local.snapshot().channel_emotes_fetched_at[KEY]
+    const at = sw.idb.snapshot('emotes')[KEY].at
     expect(sw.now() - at).toBeGreaterThan(TTL - 61_000)
   })
 
@@ -139,7 +143,7 @@ describe('a provider fails during the first fetch', () => {
     await sw.advance(90_000) // alarm fires, handler refetches every channel open in a tab
 
     expect(names(lastUpdate(sw).emotes)).toEqual(ALL)
-    expect(names(sw.storage.local.snapshot().channel_emotes_map[KEY])).toEqual(ALL)
+    expect(names(sw.idb.snapshot('emotes')[KEY].emotes)).toEqual(ALL)
     expect(sw.alarms.get('hs-emote-refetch')).toBeNull() // recovered: nothing re-armed
   })
 
@@ -155,7 +159,7 @@ describe('a provider fails during the first fetch', () => {
     // the woken worker has no idea which tabs are open until it reads them back from session storage
     expect(woken.eval(`tabChannels.get(7)?.channel`)).toBe(KEY)
     await woken.advance(95_000)
-    expect(names(woken.storage.local.snapshot().channel_emotes_map[KEY])).toEqual(ALL)
+    expect(names(woken.idb.snapshot('emotes')[KEY].emotes)).toEqual(ALL)
   })
 
   test('still failing at the retry: it re-arms rather than giving up', async () => {
@@ -185,7 +189,7 @@ describe('a provider fails during a refresh (stale beats missing)', () => {
 
     // BTTV and 7TV are down, but the emotes already on screen do not turn into text
     expect(names(lastUpdate(sw).emotes)).toEqual(ALL)
-    expect(names(sw.storage.local.snapshot().channel_emotes_map[KEY])).toEqual(ALL)
+    expect(names(sw.idb.snapshot('emotes')[KEY].emotes)).toEqual(ALL)
     expect(sw.alarms.get('hs-emote-refetch')).not.toBeNull()
   })
 
@@ -208,61 +212,79 @@ describe('a provider fails during a refresh (stale beats missing)', () => {
   })
 })
 
-describe('the whole fetch fails (storage refuses the write)', () => {
-  const seeded = (
-    emotes = [{ name: 'oldEmote', url: 'https://cdn.7tv.app/emote/o1/1x.avif', source: '7tv', hash: 'o1' }],
-  ) => ({
-    local: {
-      channel_emotes_map: { [KEY]: emotes },
-      channel_emotes_fetched_at: { [KEY]: Date.UTC(2026, 10, 8, 12, 0, 0) - TTL - 60_000 }, // stale
-      seventv_emote_set_ids: { [KEY]: 'set-kripp' },
-    },
-  })
-  const refuseChannelWrite = (sw) =>
-    sw.storage.local.fail('set', new Error('QUOTA_BYTES quota exceeded'), (items) => 'channel_emotes_map' in items)
+describe('the persisted sets (IndexedDB)', () => {
+  const OLD = [{ name: 'oldEmote', url: 'https://cdn.7tv.app/emote/o1/1x.avif', source: '7tv', hash: 'o1' }]
+  const NOW = Date.UTC(2026, 10, 8, 12, 0, 0)
+  const bootWith = (at, over = {}) =>
+    bootSw({
+      cookies: [AUTH],
+      tabs: [{ id: 7, url: TAB_URL }],
+      sockets: 'open',
+      idb: { emotes: { [KEY]: { emotes: OLD, at } } },
+      storage: { local: { seventv_emote_set_ids: { [KEY]: 'set-kripp' } } },
+      ...over,
+    })
 
-  test('the stale copy stays, the 7TV set mapping is NOT deleted, and a retry is armed', async () => {
-    const sw = await boot(seeded())
+  test('a woken worker restores them, and a join inside the TTL is answered from them without a fetch', async () => {
+    const sw = await bootWith(NOW - 60_000)
     providers(sw)
-    refuseChannelWrite(sw)
-    await join(sw)
-    await sw.advance(2000)
-
     expect(sw.eval(`channelEmotesMap['${KEY}'].map(e => e.name)`)).toEqual(['oldEmote'])
-    expect(sw.eval(`seventvEmoteSetIds.get('${KEY}')`)).toBe('set-kripp') // the incident: this used to be deleted
-    expect(sw.eval(`seventvEmoteSetIds.has('${KEY}')`)).toBe(true)
-    expect(sw.alarms.get('hs-emote-refetch')).not.toBeNull()
-    expect(names(lastUpdate(sw).emotes)).toEqual(['oldEmote']) // tabs keep rendering what they had
-  })
-
-  // KNOWN BUG, found by running this path for the first time: fetchChannelOwnerEmotes stamps
-  // channelEmotesFetchedAt = now BEFORE the storage write that fails, and the catch block restores the
-  // stale emotes but never un-stamps it (its comment says "fetchedAt stays old, so the next join
-  // retries"). So the 90s retry alarm sees a "fresh" cache, TTL-gates itself out, and the stale set
-  // lives the full 30 minutes. `failing` keeps the suite green while the bug stands and turns red
-  // the day it is fixed — then drop the `.failing`.
-  test.failing('and the retry alarm, with storage healthy again, completes the refresh', async () => {
-    const sw = await boot(seeded())
-    providers(sw)
-    refuseChannelWrite(sw)
     await join(sw)
     await sw.advance(2000)
-    await sw.advance(95_000) // retry alarm
-    expect(names(sw.storage.local.snapshot().channel_emotes_map[KEY])).toEqual(ALL)
-    expect(sw.alarms.get('hs-emote-refetch')).toBeNull()
+    expect(names(lastUpdate(sw).emotes)).toEqual(['oldEmote'])
+    expect(sw.net.callsTo('/api/emotes/user/kripp')).toHaveLength(0)
   })
 
-  test('a channel that never loaded is cleared (not left "loading"), so the next join retries it', async () => {
+  test('a stale set is still shown at once and refreshed behind it', async () => {
+    const sw = await bootWith(NOW - TTL - 60_000)
+    providers(sw)
+    await join(sw)
+    await sw.advance(2000)
+    expect(sw.net.callsTo('/api/emotes/user/kripp').length).toBeGreaterThan(0)
+    expect(names(lastUpdate(sw).emotes)).toEqual(ALL)
+    expect(names(sw.idb.snapshot('emotes')[KEY].emotes)).toEqual(ALL)
+  })
+
+  test('the pull a tab makes at cold start answers from the same sets, and never writes storage', async () => {
+    const sw = await bootWith(NOW - 60_000)
+    const all = await sw.send({ type: 'get_channel_emotes_map' }, sender)
+    expect(Object.keys(all.map)).toEqual([KEY])
+    const one = await sw.send({ type: 'get_channel_emotes_map', channel: 'kripp', platform: 'twitch' }, sender)
+    expect(names(one.map[KEY])).toEqual(['oldEmote'])
+    const none = await sw.send({ type: 'get_channel_emotes_map', channel: 'nobody', platform: 'twitch' }, sender)
+    expect(none.map).toEqual({})
+    const re = await sw.send({ type: 'get_channel_emotes' }, sender)
+    expect(re.count).toBe(1)
+    expect(sw.storage.local.snapshot().channel_emotes_map).toBeUndefined()
+  })
+
+  test('a copy an older build left in storage.local is imported once, then dropped from storage', async () => {
+    const sw = await bootSw({
+      cookies: [AUTH],
+      sockets: 'open',
+      storage: {
+        local: {
+          channel_emotes_map: { [KEY]: OLD },
+          channel_emotes_fetched_at: { [KEY]: NOW - 60_000 },
+        },
+      },
+    })
+    expect(sw.eval(`channelEmotesMap['${KEY}'].length`)).toBe(1)
+    await sw.settle()
+    expect(sw.idb.snapshot('emotes')[KEY].emotes).toHaveLength(1)
+    const stored = sw.storage.local.snapshot()
+    expect(stored.channel_emotes_map).toBeUndefined()
+    expect(stored.channel_emotes_fetched_at).toBeUndefined()
+  })
+
+  test('an IndexedDB that refuses everything does not cost the fetch', async () => {
     const sw = await boot()
+    sw.eval(`indexedDB.open = () => { throw new Error('SecurityError') }`)
     providers(sw)
-    refuseChannelWrite(sw)
     await join(sw)
     await sw.advance(2000)
-    expect(sw.eval(`'${KEY}' in channelEmotesMap`)).toBe(false)
-    expect(sw.alarms.get('hs-emote-refetch')).not.toBeNull()
-    await join(sw) // the sentinel is gone, so this fetches again
-    await sw.advance(2000)
-    expect(names(sw.storage.local.snapshot().channel_emotes_map[KEY])).toEqual(ALL)
+    expect(names(lastUpdate(sw).emotes)).toEqual(ALL)
+    expect(sw.eval(`channelEmotesMap['${KEY}'].length`)).toBe(5)
   })
 })
 

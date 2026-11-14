@@ -20,39 +20,62 @@ const BG_YT_PERSIST_MAX = 500
 const BG_KICK = {
   channels: new Map(), // username -> BGCircularBuffer
   persistTimers: new Map(),
+  lastPutAt: new Map(), // username -> ts of the last ring put
   storageRestored: false,
 }
 const BG_YT = {
   channels: new Map(), // channelId -> BGCircularBuffer
   persistTimers: new Map(),
+  lastPutAt: new Map(), // channelId -> ts of the last ring put
   storageRestored: false,
 }
 
+// Kick rings live in IndexedDB like the twitch ones (see 01-core.js): this file
+// is the ONE writer. Tabs used to write hs_kick_<ch> too, so a message fanned a
+// full-ring clone from N+1 writers into every extension context's onChanged.
+// Tabs now get history from here by bg_kick_history, never from storage.
+const BG_KICK_LEGACY_FLAG = 'hs_kick_idb_v1'
 async function bgKickRestoreFromStorage() {
   if (BG_KICK.storageRestored) return
   BG_KICK.storageRestored = true
   try {
-    const all = await browser.storage.local.get(null)
+    const cfg = await browser.storage.local.get(['heatsync_multichat', BG_KICK_LEGACY_FLAG])
     // Channels no longer in the user's config never hit the live channel:leave
     // cleanup (removed via another device, or before that handler existed) —
-    // sweep them here so hs_kick_* doesn't grow forever.
+    // sweep them here so the kick store doesn't grow forever.
     const kickKeep = new Set(
-      (all.heatsync_multichat?.channels || [])
+      (cfg.heatsync_multichat?.channels || [])
         .filter((c) => c && typeof c === 'object' && typeof c.kick === 'string' && c.kick)
         .map((c) => c.kick.toLowerCase()),
     )
-    const toPurge = []
+    const stored = await bgIdbAll(BG_IDB_KICK)
+    // One-time: rings an older build wrote to storage.local move into the
+    // store, and the keys go (one last onChanged, then never again). The
+    // flag keeps this off every later boot (get(null) reads everything).
+    if (!cfg[BG_KICK_LEGACY_FLAG]) {
+      const all = await browser.storage.local.get(null)
+      const legacy = []
+      for (const [k, v] of Object.entries(all)) {
+        // hs_kick_followed_synced is the follow-sync ledger, not a ring
+        if (!k.startsWith('hs_kick_') || k.startsWith('hs_kick_sync_') || k === KICK_FOLLOW_SYNCED_KEY) continue
+        legacy.push(k)
+        const ch = k.slice('hs_kick_'.length)
+        if (ch && v?.msgs?.length && !stored[ch]) stored[ch] = v
+      }
+      if (legacy.length) await browser.storage.local.remove(legacy).catch(() => {})
+      await browser.storage.local.set({ [BG_KICK_LEGACY_FLAG]: true }).catch(() => {})
+    }
     let n = 0
-    for (const [k, v] of Object.entries(all)) {
-      if (!k.startsWith('hs_kick_') || k.startsWith('hs_kick_sync_')) continue
-      const ch = k.slice('hs_kick_'.length)
-      if (ch && !kickKeep.has(ch)) {
-        toPurge.push(k)
+    let purged = 0
+    for (const [ch, v] of Object.entries(stored)) {
+      if (!ch || !kickKeep.has(ch)) {
+        bgIdbDelete(BG_IDB_KICK, ch)
+        purged++
         continue
       }
-      if (!ch || !v?.msgs?.length || Date.now() - v.ts >= 86400000) continue
+      if (!v?.msgs?.length || !(Date.now() - (v.ts || 0) < 86400000)) continue
       const buf = new BGCircularBuffer(BG_KICK_PERSIST_MAX)
-      // Live ingest may have created this buffer while get(null) was pending
+      // Live ingest may have created this buffer while the read was pending
       // (boot doesn't await this restore) — merge stored history BEFORE the
       // live messages instead of clobbering them.
       const live = BG_KICK.channels.get(ch)?.getAll() || []
@@ -65,35 +88,49 @@ async function bgKickRestoreFromStorage() {
       BG_KICK.channels.set(ch, buf)
       n++
     }
-    if (toPurge.length) browser.storage.local.remove(toPurge).catch(() => {})
-    log('BG KICK restored', n, `channels${toPurge.length ? `, purged ${toPurge.length} orphaned` : ''}`)
+    log('BG KICK restored', n, `channels${purged ? `, purged ${purged} orphaned` : ''}`)
   } catch (e) {
     log('BG KICK restore failed:', e.message)
   }
 }
 
+// YouTube rings: same single-owner IndexedDB move as the kick ones above.
+// Tabs used to write hs_yt_<id> as well (each from its own copy of the chat).
+const BG_YT_LEGACY_FLAG = 'hs_yt_idb_v1'
 async function bgYtRestoreFromStorage() {
   if (BG_YT.storageRestored) return
   BG_YT.storageRestored = true
   try {
-    const all = await browser.storage.local.get(null)
+    const cfg = await browser.storage.local.get(['heatsync_multichat', BG_YT_LEGACY_FLAG])
     // Same sweep as the Kick twin above — channels removed from config while
     // this SW wasn't running never hit the live youtube_ws_unsubscribe cleanup.
     const ytKeep = new Set(
-      (all.heatsync_multichat?.channels || [])
+      (cfg.heatsync_multichat?.channels || [])
         .filter((c) => c && typeof c === 'object' && c.youtube && typeof c.id === 'string')
         .map((c) => c.id),
     )
-    const toPurge = []
+    const stored = await bgIdbAll(BG_IDB_YT)
+    // One-time: the storage.local copies (the bg's and every tab's) are dropped.
+    // Tab-written rows used a different shape and the bg mirror rebuilds from
+    // live traffic + the archive, so they are not imported.
+    if (!cfg[BG_YT_LEGACY_FLAG]) {
+      const keys = await browser.storage.local.getKeys?.().catch(() => null)
+      const all = keys || Object.keys(await browser.storage.local.get(null))
+      const legacy = all.filter(
+        (k) => k.startsWith('hs_yt_') && !k.startsWith('hs_yt_sync_') && k !== 'hs_yt_mod_status',
+      )
+      if (legacy.length) await browser.storage.local.remove(legacy).catch(() => {})
+      await browser.storage.local.set({ [BG_YT_LEGACY_FLAG]: true }).catch(() => {})
+    }
     let n = 0
-    for (const [k, v] of Object.entries(all)) {
-      if (!k.startsWith('hs_yt_') || k.startsWith('hs_yt_sync_')) continue
-      const channelId = k.slice('hs_yt_'.length)
-      if (channelId && !ytKeep.has(channelId)) {
-        toPurge.push(k)
+    let purged = 0
+    for (const [channelId, v] of Object.entries(stored)) {
+      if (!channelId || !ytKeep.has(channelId)) {
+        bgIdbDelete(BG_IDB_YT, channelId)
+        purged++
         continue
       }
-      if (!channelId || !v?.msgs?.length || Date.now() - v.ts >= 86400000) continue
+      if (!v?.msgs?.length || !(Date.now() - (v.ts || 0) < 86400000)) continue
       const buf = new BGCircularBuffer(BG_YT_PERSIST_MAX)
       // Same merge-not-clobber as the kick twin — boot doesn't await this.
       const live = BG_YT.channels.get(channelId)?.getAll() || []
@@ -106,42 +143,119 @@ async function bgYtRestoreFromStorage() {
       BG_YT.channels.set(channelId, buf)
       n++
     }
-    if (toPurge.length) browser.storage.local.remove(toPurge).catch(() => {})
-    log('BG YT restored', n, `channels${toPurge.length ? `, purged ${toPurge.length} orphaned` : ''}`)
+    log('BG YT restored', n, `channels${purged ? `, purged ${purged} orphaned` : ''}`)
   } catch (e) {
     log('BG YT restore failed:', e.message)
   }
 }
 
+// Same cadence as the twitch rings (bgIrcPersistChannel): one put per channel
+// per 30s with a trailing write; the SW's robotty/archive backfill covers a gap.
 function bgKickPersistChannel(ch) {
   if (BG_KICK.persistTimers.has(ch)) return
   BG_KICK.persistTimers.set(
     ch,
-    setTimeout(() => {
-      BG_KICK.persistTimers.delete(ch)
-      try {
-        const buf = BG_KICK.channels.get(ch)
-        if (!buf) return
-        const msgs = buf.getAll()
-        browser.storage.local.set({ [`hs_kick_${ch}`]: { msgs, ts: Date.now() } }).catch(() => {})
-      } catch {}
-    }, 1500),
+    setTimeout(
+      () => {
+        BG_KICK.persistTimers.delete(ch)
+        try {
+          const buf = BG_KICK.channels.get(ch)
+          if (!buf) return
+          BG_KICK.lastPutAt.set(ch, Date.now())
+          bgIdbPut(BG_IDB_KICK, ch, { msgs: buf.getAll(), ts: Date.now() })
+        } catch {}
+      },
+      bgRingPersistDelay(BG_KICK.lastPutAt.get(ch) || 0),
+    ),
   )
+}
+
+// Rows only a tab sees (sub/raid/pin/mode notices, the page-level native tap) reach the
+// ring through bg_kick_append, so the background stays the one owner of the kick rings and a
+// reload still paints them. Everything here is untrusted tab input: channel sanitized, row
+// count and every field capped, only known fields kept.
+const BG_KICK_APPEND_MAX_ROWS = 20
+const BG_KICK_APPEND_STR = {
+  id: 128,
+  userId: 64,
+  user: 100,
+  text: 600,
+  color: 16,
+  badges: 400,
+  type: 32,
+  systemMsg: 600,
+  msgId: 64,
+  clearedReason: 200,
+}
+function bgKickSafeRow(m, ch) {
+  if (!m || typeof m !== 'object' || m.type === 'moment') return null
+  const out = { channel: ch, platform: 'kick', time: Number.isFinite(m.time) ? m.time : Date.now() }
+  for (const [k, max] of Object.entries(BG_KICK_APPEND_STR)) {
+    if (typeof m[k] === 'string' && m[k]) out[k] = m[k].slice(0, max)
+  }
+  for (const k of ['replyTo', 'kicksEvent']) {
+    if (m[k] && typeof m[k] === 'object') {
+      try {
+        if (JSON.stringify(m[k]).length <= 2000) out[k] = m[k]
+      } catch {}
+    }
+  }
+  if (m.cleared === true) out.cleared = true
+  if (!out.text && !out.systemMsg) return null
+  return out
+}
+function bgKickAppend(channel, rows) {
+  const ch = typeof channel === 'string' ? channel.toLowerCase() : ''
+  if (!/^[a-z0-9_-]{1,40}$/.test(ch) || !Array.isArray(rows)) return 0
+  const fresh = rows
+    .slice(0, BG_KICK_APPEND_MAX_ROWS)
+    .map((r) => bgKickSafeRow(r, ch))
+    .filter(Boolean)
+  if (!fresh.length) return 0
+  const fp = (m) =>
+    m.id ? `id:${m.id}` : `${m.user || ''}|${m.time}|${m.msgId || ''}|${(m.text || m.systemMsg || '').slice(0, 80)}`
+  const had = BG_KICK.channels.get(ch)
+  const all = had ? had.getAll() : []
+  const seen = new Set(all.map(fp))
+  let added = 0
+  for (const m of fresh) {
+    if (seen.has(fp(m))) continue
+    seen.add(fp(m))
+    // keep ring order by time: after the last row that is not newer
+    let i = all.length
+    while (i > 0 && (all[i - 1].time || 0) > m.time) i--
+    all.splice(i, 0, m)
+    added++
+  }
+  if (!added) return 0
+  const buf = new BGCircularBuffer(BG_KICK_PERSIST_MAX)
+  for (const m of all.slice(-BG_KICK_PERSIST_MAX)) buf.push(m)
+  BG_KICK.channels.set(ch, buf)
+  if (BG_KICK.channels.size > MAX_BG_KICK_CHANNELS) {
+    const oldest = BG_KICK.channels.keys().next().value
+    BG_KICK.channels.delete(oldest)
+    bgIdbDelete(BG_IDB_KICK, oldest)
+  }
+  bgKickPersistChannel(ch)
+  return added
 }
 
 function bgYtPersistChannel(channelId) {
   if (BG_YT.persistTimers.has(channelId)) return
   BG_YT.persistTimers.set(
     channelId,
-    setTimeout(() => {
-      BG_YT.persistTimers.delete(channelId)
-      try {
-        const buf = BG_YT.channels.get(channelId)
-        if (!buf) return
-        const msgs = buf.getAll()
-        browser.storage.local.set({ [`hs_yt_${channelId}`]: { msgs, ts: Date.now() } }).catch(() => {})
-      } catch {}
-    }, 1500),
+    setTimeout(
+      () => {
+        BG_YT.persistTimers.delete(channelId)
+        try {
+          const buf = BG_YT.channels.get(channelId)
+          if (!buf) return
+          BG_YT.lastPutAt.set(channelId, Date.now())
+          bgIdbPut(BG_IDB_YT, channelId, { msgs: buf.getAll(), ts: Date.now() })
+        } catch {}
+      },
+      bgRingPersistDelay(BG_YT.lastPutAt.get(channelId) || 0),
+    ),
   )
 }
 
@@ -173,7 +287,7 @@ function bgKickIngest(data) {
     if (BG_KICK.channels.size > MAX_BG_KICK_CHANNELS) {
       const oldest = BG_KICK.channels.keys().next().value
       BG_KICK.channels.delete(oldest)
-      browser.storage.local.remove(`hs_kick_${oldest}`).catch(() => {})
+      bgIdbDelete(BG_IDB_KICK, oldest)
     }
     // First time we see this Kick channel — pull deep history from postgres
     // archive in addition to the 200-msg server ring (which came via
@@ -1714,6 +1828,66 @@ function _kpHandleChatEvent(d) {
 // mod reflect in the ext (dim the offender's messages + a system line), not just
 // self-actions. Emits a notice-shaped payload the overlay's platform-agnostic
 // mod handler already understands (irc.js → irc.on('message')).
+// Mod marks on the kick ring, the way the tab marks its own copy (KickChat.ingestModeration):
+// delete -> that row cleared 'deleted'; ban/timeout -> the user's not-yet-cleared rows cleared with the
+// ban/timeout label; unban -> the user's rows lifted unless they were deleted. Idempotent, so the tap's
+// event here and the same event forwarded by a tab (bg_kick_mark) can both land. The mark rides the
+// same 30s throttled persist, so a reload no longer resurrects a mod-deleted or banned message.
+function bgKickMark(ev) {
+  const ch = typeof ev?.channel === 'string' ? ev.channel.toLowerCase() : ''
+  const buf = BG_KICK.channels.get(ch)
+  if (!buf) return 0
+  const action = ev.action
+  const targetLc = typeof ev.targetUser === 'string' ? ev.targetUser.toLowerCase() : ''
+  let changed = 0
+  if ((action === 'ban' || action === 'timeout') && targetLc) {
+    const reason = ev.banDuration ? bgT('mc_mod_label_timed_out', [String(ev.banDuration)]) : bgT('mc_mod_label_banned')
+    for (const m of buf.getAll()) {
+      if (!m.cleared && (m.user || '').toLowerCase() === targetLc) {
+        m.cleared = true
+        m.clearedReason = reason
+        changed++
+      }
+    }
+  } else if (action === 'delete' && ev.targetMsgId) {
+    for (const m of buf.getAll()) {
+      if (m.id === ev.targetMsgId && !m.cleared) {
+        m.cleared = true
+        m.clearedReason = 'deleted'
+        changed++
+        break
+      }
+    }
+  } else if (action === 'unban' && targetLc) {
+    for (const m of buf.getAll()) {
+      if (m.cleared && (m.user || '').toLowerCase() === targetLc && m.clearedReason !== 'deleted') {
+        m.cleared = false
+        delete m.clearedReason
+        changed++
+      }
+    }
+  }
+  if (changed) bgKickPersistChannel(ch)
+  return changed
+}
+// the tap's mod event: mark the ring, then tell the tabs
+function bgKickBroadcastMod(ev) {
+  bgKickMark(ev)
+  broadcastToTabs({ type: 'kick_moderation', ...ev })
+}
+// A tab's forwarded mod event (the page-level native tap): untrusted, so the channel, action and
+// every field are validated and only known fields are passed on.
+const BG_KICK_MARK_ACTIONS = new Set(['delete', 'ban', 'timeout', 'unban'])
+function bgKickMarkFromTab(msg) {
+  const ch = typeof msg?.channel === 'string' ? msg.channel.toLowerCase() : ''
+  if (!/^[a-z0-9_-]{1,40}$/.test(ch) || !BG_KICK_MARK_ACTIONS.has(msg.action)) return 0
+  const ev = { channel: ch, action: msg.action }
+  if (typeof msg.targetMsgId === 'string') ev.targetMsgId = msg.targetMsgId.slice(0, 128)
+  if (typeof msg.targetUser === 'string') ev.targetUser = msg.targetUser.slice(0, 100)
+  if (Number.isFinite(msg.banDuration) && msg.banDuration > 0) ev.banDuration = Math.min(msg.banDuration, 1e9)
+  return bgKickMark(ev)
+}
+
 function _kpHandleModEvent(d, kind) {
   let ev
   try {
@@ -1728,7 +1902,7 @@ function _kpHandleModEvent(d, kind) {
   if (kind === 'delete') {
     const targetMsgId = ev.message?.id || ev.id || ''
     if (!targetMsgId) return
-    broadcastToTabs({ type: 'kick_moderation', action: 'delete', channel: slug, targetMsgId: String(targetMsgId) })
+    bgKickBroadcastMod({ action: 'delete', channel: slug, targetMsgId: String(targetMsgId) })
   } else if (kind === 'ban') {
     const targetUser = ev.user?.username || ''
     if (!targetUser) return
@@ -1743,8 +1917,7 @@ function _kpHandleModEvent(d, kind) {
     // Remaining time can be <=0 for an already-elapsed timeout; report at least
     // 1s rather than a nonsense negative duration.
     const remainingSec = Math.max(1, Math.round((expMs - Date.now()) / 1000))
-    broadcastToTabs({
-      type: 'kick_moderation',
+    bgKickBroadcastMod({
       action: isTimeout ? 'timeout' : 'ban',
       channel: slug,
       targetUser,
@@ -1754,7 +1927,7 @@ function _kpHandleModEvent(d, kind) {
   } else if (kind === 'unban') {
     const targetUser = ev.user?.username || ''
     if (!targetUser) return
-    broadcastToTabs({ type: 'kick_moderation', action: 'unban', channel: slug, targetUser })
+    bgKickBroadcastMod({ action: 'unban', channel: slug, targetUser })
   }
 }
 // Kick's chatroom channel carries the celebration events too — subs and
@@ -2008,7 +2181,7 @@ function bgYtIngest(payload) {
     if (BG_YT.channels.size > MAX_BG_YT_CHANNELS) {
       const oldest = BG_YT.channels.keys().next().value
       BG_YT.channels.delete(oldest)
-      browser.storage.local.remove(`hs_yt_${oldest}`).catch(() => {})
+      bgIdbDelete(BG_IDB_YT, oldest)
     }
   }
   // Strip transient flags before storing. `id` (innertube) is NOT transient —

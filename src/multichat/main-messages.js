@@ -2064,7 +2064,7 @@ function fairMerge(sources) {
     // returned array in place. IRC/Kick getMessages/getTail already copy,
     // but YT sources are the raw channelYtMessages arrays; returning one by
     // ref let the splice permanently insert "X went live" events into that
-    // buffer, which persistYt then serialized as fake chat history.
+    // buffer.
     return s.length <= limit ? s.slice() : s.slice(-limit)
   }
 

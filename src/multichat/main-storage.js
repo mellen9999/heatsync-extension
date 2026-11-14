@@ -1136,15 +1136,9 @@ function listenForSettingsChanges() {
     }
 
     // Emote updates - reload when storage changes (debounced to avoid spam)
-    if (
-      changes.global_emotes ||
-      changes.channel_emotes_map ||
-      changes.emote_inventory ||
-      changes.native_twitch_emotes
-    ) {
+    if (changes.global_emotes || changes.emote_inventory || changes.native_twitch_emotes) {
       log(
         'storage changed:',
-        changes.channel_emotes_map ? 'channel_emotes_map' : '',
         changes.global_emotes ? 'global_emotes' : '',
         changes.emote_inventory ? 'emote_inventory' : '',
         changes.native_twitch_emotes ? 'native_twitch_emotes' : '',
@@ -1152,13 +1146,7 @@ function listenForSettingsChanges() {
       // Cold-start vs. update split: clear cache only on the first payload
       // per scope this session. Subsequent updates (add/remove) preserve
       // _renderedHtml so removed emotes stay rendered in old messages.
-      const scope = changes.global_emotes
-        ? 'global'
-        : changes.channel_emotes_map
-          ? 'ch:_storage'
-          : changes.native_twitch_emotes
-            ? 'native'
-            : ''
+      const scope = changes.global_emotes ? 'global' : changes.native_twitch_emotes ? 'native' : ''
       if (scope) _pendingEmoteScopes.add(scope)
       cleanup.clearTimeout(emoteReloadTimer)
       emoteReloadTimer = cleanup.setTimeout(() => {

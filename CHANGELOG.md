@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.133] — 2026-11-13
+
+### fixed
+- **mod actions on simulcast rows** — a moderator deleting any copy of a line sent to several platforms at once greys its one row, and a ban greys only the platform it was made on.
+
 ## [1.7.132] — 2026-11-12
 
 ### fixed

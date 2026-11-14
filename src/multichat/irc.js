@@ -622,6 +622,8 @@ class IRC extends ChatClient {
     // Capped at 500 entries (FIFO eviction) so they can't grow unbounded.
     this._modNoticeIndex = new Map()
     this._deleteNoticeIndex = new Map()
+    // channels whose join-failed toast already showed (cleared by a join that lands)
+    this._joinFailSaid = new Set()
     // The irc-twitch subsystem switch lives HERE, not at the call site.
     // main.js gates `irc.connect()` on it — but connect() is a no-op (the BG
     // owns the socket), so that gate turned nothing off: this listener is the
@@ -1030,7 +1032,10 @@ class IRC extends ChatClient {
     // otherwise loses the join forever (channels.set above blocks re-entry).
     const sendJoin = (attempt) => {
       safeSendMessage({ type: 'bg_irc_join', channel: ch }).then((r) => {
-        if (r && r.ok !== false) return
+        if (r && r.ok !== false) {
+          this._joinFailSaid.delete(ch)
+          return
+        }
         if (!this.channels.has(ch)) {
           // Channel was removed (tab closed) during the retry backoff — not
           // our failure to report, nothing left to clean up.
@@ -1043,9 +1048,13 @@ class IRC extends ChatClient {
           // without this a failed join permanently empties the tab until the
           // user manually refreshes. Delete so a later join(ch) can retry.
           this.channels.delete(ch)
-          try {
-            showToast(t('mc_irc_join_failed', [ch]), 'error')
-          } catch (_) {}
+          // main.js rejoins a dropped channel every 15s: say it once, not every round
+          if (!this._joinFailSaid.has(ch)) {
+            this._joinFailSaid.add(ch)
+            try {
+              showToast(t('mc_irc_join_failed', [ch]), 'error')
+            } catch (_) {}
+          }
           return
         }
         setTimeout(() => sendJoin(attempt + 1), 2000 * (attempt + 1))

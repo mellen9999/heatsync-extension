@@ -806,6 +806,19 @@ async function init() {
         { budgetMs: 6, respectScroll: false },
       )
       .catch(() => {})
+    // A tab whose twitch channel this page dropped froze until a refresh —
+    // rejoin anything still shown (rejoin.js).
+    if (gTwitch) {
+      cleanup.setInterval(() => {
+        if (!irc || !isEnabled('irc-twitch')) return
+        const page = hostPlatform === 'twitch' ? [getLiveChannel()] : []
+        for (const tw of mcDroppedTwitch(config.channels, irc.channels, page)) {
+          log('[heatsync-mc] rejoining dropped channel', tw)
+          irc.join(tw)
+          safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: tw })
+        }
+      }, 15000)
+    }
   }
   // Schedule connect+joins for the next idle slice so paint goes first.
   // Falls back to setTimeout(0) where rIC is unavailable (older Chrome,

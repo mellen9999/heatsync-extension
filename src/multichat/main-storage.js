@@ -1193,8 +1193,10 @@ function listenForSettingsChanges() {
         for (const ch of oldChannels) {
           const id = ch.id
           if (!newIds.has(id)) {
+            // another tab (or the page itself) can still show the same name
             const twitchName = ch.twitch
-            if (twitchName) irc?.part(twitchName)
+            const page = hostPlatform === 'twitch' ? [getLiveChannel()] : []
+            if (twitchName && !mcTwitchStillShown(twitchName, newChannels, page)) irc?.part(twitchName)
             const kickName = ch.kick
             if (kickName) kickChat?.part(kickName)
             if (ch.youtube) {

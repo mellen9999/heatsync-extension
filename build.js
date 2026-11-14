@@ -964,6 +964,7 @@ const MULTICHAT_MODULES = [
   'mention-rules.js',
   'layout-link.js',
   'seed-legs.js',
+  'rejoin.js',
   'channel-mgmt.js',
   'spa-nav.js',
   'type-to-focus.js',

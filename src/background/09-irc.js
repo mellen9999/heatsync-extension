@@ -369,6 +369,66 @@ const BG_IRC = {
   liveTabs: new Set(),
 }
 
+// Channel rings live in IndexedDB, not storage.local. Every storage.local.set
+// fires storage.onChanged in EVERY extension context with a listener — each
+// twitch/kick/youtube tab's content scripts — carrying a structured clone of
+// the old AND new value. A busy channel's 3000-msg ring is ~8MB and was
+// written every 1.5s: ~11MB/s cloned into every tab per channel. Firefox
+// queues those clones in the parent for each listener and the content
+// process keeps them in malloc the GC never feels pressure from — measured
+// 2×806MB for one channel in one twitch process, 3GB queued in the parent,
+// growing ~280MB/min, 16GB+ over a session. Only this file ever reads the
+// rings, so they need no broadcast: IndexedDB fires nothing anywhere.
+const BG_IRC_RING_DB = 'hs-irc-rings'
+const BG_IRC_RING_STORE = 'rings'
+let _bgIrcRingDbP = null
+function bgIrcRingDb() {
+  if (!_bgIrcRingDbP) {
+    _bgIrcRingDbP = new Promise((resolve, reject) => {
+      const req = indexedDB.open(BG_IRC_RING_DB, 1)
+      req.onupgradeneeded = () => req.result.createObjectStore(BG_IRC_RING_STORE)
+      req.onsuccess = () => {
+        const db = req.result
+        db.onclose = () => {
+          _bgIrcRingDbP = null
+        }
+        db.onversionchange = () => {
+          db.close()
+          _bgIrcRingDbP = null
+        }
+        resolve(db)
+      }
+      req.onerror = () => {
+        _bgIrcRingDbP = null
+        reject(req.error)
+      }
+    })
+  }
+  return _bgIrcRingDbP
+}
+// One transaction; fn gets the store and may return a request whose result
+// is resolved once the transaction commits.
+async function bgIrcRingTx(mode, fn) {
+  const db = await bgIrcRingDb()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(BG_IRC_RING_STORE, mode)
+    let out
+    const req = fn(tx.objectStore(BG_IRC_RING_STORE))
+    if (req) req.onsuccess = () => (out = req.result)
+    tx.oncomplete = () => resolve(out)
+    tx.onerror = tx.onabort = () => reject(tx.error)
+  })
+}
+function bgIrcRingPut(ch, value) {
+  return bgIrcRingTx('readwrite', (st) => st.put(value, ch)).catch(() => {})
+}
+function bgIrcRingGet(ch) {
+  return bgIrcRingTx('readonly', (st) => st.get(ch)).catch(() => null)
+}
+function bgIrcRingDelete(ch) {
+  return bgIrcRingTx('readwrite', (st) => st.delete(ch)).catch(() => {})
+}
+
 async function bgIrcRestoreFromStorage() {
   if (BG_IRC.storageRestored) return
   BG_IRC.storageRestored = true
@@ -383,49 +443,43 @@ async function bgIrcRestoreFromStorage() {
     }
   } catch {}
   try {
+    // Rings written by builds before the IndexedDB move: drop them from
+    // storage.local (one last onChanged, then never again).
     const all = await browser.storage.local.get(null)
+    const legacy = Object.keys(all).filter(
+      (k) => k.startsWith('hs_irc_') && !k.startsWith('hs_irc_sync_') && k !== 'hs_irc_parser_version',
+    )
+    if (legacy.length) await browser.storage.local.remove(legacy).catch(() => {})
     const storedVer = all.hs_irc_parser_version | 0
     if (storedVer !== BG_IRC_PARSER_VERSION) {
-      const stale = Object.keys(all).filter(
-        (k) => k.startsWith('hs_irc_') && !k.startsWith('hs_irc_sync_') && k !== 'hs_irc_parser_version',
-      )
-      if (stale.length) await browser.storage.local.remove(stale).catch(() => {})
+      await bgIrcRingTx('readwrite', (st) => st.clear()).catch(() => {})
       await browser.storage.local.set({ hs_irc_parser_version: BG_IRC_PARSER_VERSION }).catch(() => {})
       await browser.storage.session?.remove?.('hs_irc_last_robotty').catch?.(() => {})
-      log(
-        'BG IRC parser version bump',
-        storedVer,
-        '→',
-        BG_IRC_PARSER_VERSION,
-        '— wiped',
-        stale.length,
-        'cached channel buffers',
-      )
+      log('BG IRC parser version bump', storedVer, '→', BG_IRC_PARSER_VERSION, '— wiped cached channel buffers')
       return
     }
     // Purge only. Buffers are read one channel at a time on join
     // (bgIrcReadPersisted): restoring every ring here put every channel
     // watched in the last day back in RAM and JOINed on each SW wake.
-    const expired = []
-    for (const [k, v] of Object.entries(all)) {
-      if (!k.startsWith('hs_irc_') || k.startsWith('hs_irc_sync_') || k === 'hs_irc_parser_version') continue
-      const ch = k.slice('hs_irc_'.length)
-      // A key written before channel sanitization existed could carry protocol
-      // characters straight back into the JOIN loop on restore — drop any key
-      // whose channel isn't already in canonical form instead of trusting it.
-      if (ch !== bgIrcSafeChannel(ch)) {
-        expired.push(k)
-        continue
+    let purged = 0
+    await bgIrcRingTx('readwrite', (st) => {
+      const cur = st.openCursor()
+      cur.onsuccess = () => {
+        const c = cur.result
+        if (!c) return
+        const ch = String(c.key)
+        const v = c.value
+        // A non-canonical channel could carry protocol characters into the
+        // JOIN loop; missing/invalid ts counts as stale (unknown age fails safe).
+        if (ch !== bgIrcSafeChannel(ch) || !ch || !v?.msgs?.length || !(Date.now() - (v.ts || 0) < 86400000)) {
+          c.delete()
+          purged++
+        }
+        c.continue()
       }
-      // Missing/invalid ts counts as stale — unknown-age data fails safe.
-      if (!ch || !v?.msgs?.length || !(Date.now() - (v.ts || 0) < 86400000)) {
-        // Skipped buffers were previously left in storage forever — every
-        // channel ever watched kept its full ring in storage.local unbounded.
-        expired.push(k)
-      }
-    }
-    if (expired.length) await browser.storage.local.remove(expired).catch(() => {})
-    if (expired.length) log('BG IRC purged', expired.length, 'stale channel buffers')
+      return null
+    }).catch(() => {})
+    if (purged) log('BG IRC purged', purged, 'stale channel buffers')
   } catch (e) {
     log('BG IRC restore failed:', e.message)
   }
@@ -484,7 +538,7 @@ function bgIrcPersistChannel(ch) {
         const buf = BG_IRC.channels.get(ch)
         if (!buf) return
         const msgs = buf.getAll()
-        browser.storage.local.set({ [`hs_irc_${ch}`]: { msgs, ts: Date.now() } }).catch(() => {})
+        bgIrcRingPut(ch, { msgs, ts: Date.now() })
       } catch {}
     }, BG_IRC_PERSIST_DEBOUNCE_MS),
   )
@@ -493,11 +547,7 @@ function bgIrcPersistChannel(ch) {
 // One channel's persisted ring (≤24h old), for its first join after a SW
 // wake or a release — so a reopened channel still paints history instantly.
 async function bgIrcReadPersisted(ch) {
-  const key = `hs_irc_${ch}`
-  let v = null
-  try {
-    v = (await browser.storage.local.get(key))[key]
-  } catch {}
+  const v = await bgIrcRingGet(ch)
   if (!v?.msgs?.length || !(Date.now() - (v.ts || 0) < 86400000)) return null
   const buf = new BGCircularBuffer(BG_IRC_PERSIST_MAX)
   // Purge non-renderable types from legacy persisted buffers. Earlier
@@ -543,7 +593,7 @@ function bgIrcReleaseChannel(ch) {
     BG_IRC.persistTimers.delete(ch)
   }
   const msgs = buf.getAll()
-  if (msgs.length) browser.storage.local.set({ [`hs_irc_${ch}`]: { msgs, ts: Date.now() } }).catch(() => {})
+  if (msgs.length) bgIrcRingPut(ch, { msgs, ts: Date.now() })
   BG_IRC.channels.delete(ch)
   BG_IRC.chanLastSeen.delete(ch)
   BG_IRC.chanRejoinAttempts.delete(ch)
@@ -1371,7 +1421,7 @@ function bgIrcEnsureChannel(ch, restored = null) {
       BG_IRC.chanLastSeen.delete(oldest)
       BG_IRC.lastJustlogAt?.delete?.(oldest)
       BG_IRC.chanRejoinAttempts.delete(oldest)
-      browser.storage.local.remove(`hs_irc_${oldest}`).catch(() => {})
+      bgIrcRingDelete(oldest)
     }
     if (BG_IRC.ws?.readyState === WebSocket.OPEN) {
       try {
@@ -1400,9 +1450,9 @@ function bgIrcEnsureChannel(ch, restored = null) {
   bgIrcFetchRobotty(ch)
 }
 
-// Tab cleanup — drop interest when a tab closes
-chrome.tabs.onRemoved.addListener((tabId) => {
-  BG_IRC.liveTabs.delete(tabId)
+// Drop every channel a tab registered; a channel left with no tab arms the
+// release grace (a re-join inside it cancels the release).
+function bgIrcDropTabInterest(tabId) {
   const interest = BG_IRC.tabInterest.get(tabId)
   if (!interest) return
   for (const ch of interest) {
@@ -1416,6 +1466,24 @@ chrome.tabs.onRemoved.addListener((tabId) => {
     }
   }
   BG_IRC.tabInterest.delete(tabId)
+}
+
+// Tab cleanup — drop interest when a tab closes
+chrome.tabs.onRemoved.addListener((tabId) => {
+  BG_IRC.liveTabs.delete(tabId)
+  bgIrcDropTabInterest(tabId)
+})
+
+// A reload or hard navigation tears the tab's content script down without a
+// bg_irc_part, so the old document's channels stayed in its interest until
+// the tab closed: a tab hopping A → B → C by full navigation kept A and B
+// JOINed, their 3000-msg rings in RAM and persisting, for the tab's whole
+// life (up to MAX_BG_IRC_CHANNELS). Drop the interest when a new document
+// starts loading; the new content script re-joins what it shows inside the
+// release grace (and re-asserts every 15s), so a reload of the same channel
+// never parts it.
+chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+  if (changeInfo.status === 'loading') bgIrcDropTabInterest(tabId)
 })
 
 // Ctx-death detector port (companion to content.js + multichat bootstrap).

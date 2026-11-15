@@ -341,6 +341,98 @@ export async function tabCompleteCheck() {
       )
     }
     ok(`someone who just talked leads the cycle, above all three emote tiers (${JSON.stringify(lead.value)})`)
+
+    // ── 5. the "tab opens the list" setting ─────────────────────────────────
+    // Off by default: everything above ran with it off. Switched on from
+    // another extension page, the way a second tab's settings change lands,
+    // the first Tab must open the ranked list instead of completing, without
+    // touching the typed word; the list's own keys then take over.
+    const list = (): Promise<{ shown: boolean; names: string[]; sel: number }> =>
+      p.evaluate(() => {
+        const dd = document.getElementById('hs-mc-emoji-dropdown') as HTMLElement | null
+        const rows = [...(dd?.querySelectorAll('.hs-mc-emoji-row') || [])]
+        return {
+          shown: !!dd && dd.style.display !== 'none' && rows.length > 0,
+          names: rows.map((r) => r.querySelector('.hs-mc-emoji-name')?.textContent || ''),
+          sel: rows.findIndex((r) => r.classList.contains('selected')),
+        }
+      })
+    const setTabList = async (on: boolean) => {
+      const s = await c.newPage()
+      await s.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
+      await s.evaluate(async (v: boolean) => {
+        // @ts-ignore — extension page
+        const cur = (await chrome.storage.sync.get('ui_settings')).ui_settings || {}
+        // @ts-ignore
+        await chrome.storage.sync.set({ ui_settings: { ...cur, tabOpensEmoteList: v } })
+      }, on)
+      await s.close()
+    }
+    await setTabList(true)
+    await p.bringToFront()
+    let opened = false
+    for (let i = 0; i < 10 && !opened; i++) {
+      await resetInput()
+      await p.keyboard.type('zorp')
+      await p.keyboard.press('Tab')
+      opened = await until(p, async () => (await list()).shown, 800)
+    }
+    const l1 = await list()
+    if (!opened)
+      fail(
+        `with tabOpensEmoteList on, Tab on "zorp" never opened the list (composer: ${JSON.stringify(await inputText())})`,
+      )
+    if (l1.names[0]?.toLowerCase() !== lead.value.toLowerCase() || !l1.names.includes('zorpChannel')) {
+      fail(
+        `the list must rank like the Tab cycle: expected ${JSON.stringify(lead.value)} first and zorpChannel in it, got ${JSON.stringify(l1.names)}`,
+      )
+    }
+    if ((await inputText()).trim() !== 'zorp') {
+      fail(`opening the list completed the word anyway: composer=${JSON.stringify(await inputText())}`)
+    }
+    ok(`with the setting on, Tab opens the ranked list and leaves the word alone (${l1.names.join(' → ')})`)
+
+    const pick = l1.names.indexOf('zorpChannel')
+    for (let i = 0; i < pick; i++) await p.keyboard.press('ArrowDown')
+    await until(p, async () => (await list()).sel === pick, 4000)
+    await p.keyboard.press('Tab')
+    await until(p, async () => !(await list()).shown && (await readCycle()).value === 'zorpChannel', 4000)
+    const taken = await readCycle()
+    if (taken.value !== 'zorpChannel' || (await list()).shown) {
+      fail(
+        `arrow to zorpChannel + Tab should insert it and close the list: cycle=${JSON.stringify(taken)}, list ${(await list()).shown ? 'still open' : 'closed'}`,
+      )
+    }
+    const next = l1.names[pick + 1]
+    if (next) await cycleStep(false, next, 'after a pick from the list, Tab keeps cycling the same ranked list')
+    ok(`arrows move, Tab takes the pick (zorpChannel), and the next Tab cycles on from it${next ? ` (${next})` : ''}`)
+
+    await resetInput()
+    await p.keyboard.type('zorp')
+    await p.keyboard.press('Tab')
+    await until(p, async () => (await list()).shown, 4000)
+    await p.keyboard.press('Escape')
+    await until(p, async () => !(await list()).shown, 4000)
+    const afterEsc = await inputText()
+    const barUp = await p.evaluate(() => !!document.getElementById('hs-mc-input')?.offsetParent)
+    if ((await list()).shown || afterEsc.trim() !== 'zorp' || !barUp) {
+      fail(
+        `Escape should close only the list: list ${(await list()).shown ? 'open' : 'closed'}, composer=${JSON.stringify(afterEsc)}, composer ${barUp ? 'shown' : 'hidden'}`,
+      )
+    }
+    ok('Escape closes the list and keeps the word and the composer')
+
+    await p.keyboard.press('Tab')
+    await until(p, async () => (await list()).shown, 4000)
+    await p.keyboard.type('x')
+    await until(p, async () => !(await list()).shown, 4000)
+    if ((await list()).shown || (await inputText()).trim() !== 'zorpx') {
+      fail(
+        `typing should close the list and keep the keystroke: list ${(await list()).shown ? 'open' : 'closed'}, composer=${JSON.stringify(await inputText())}`,
+      )
+    }
+    ok('typing closes the list and the keystroke lands in the word')
+    await setTabList(false)
   } finally {
     irc.stop()
     await closeContext(c, 'tab-complete', prof)

@@ -152,6 +152,10 @@ try {
     await ff.goto(`${base}${page}`)
     const title = await ff.title()
     if (!title) throw new Error(`${page} loaded with no title — it did not render`)
+    // let the page's own startup reads land before leaving it: navigating away mid-read makes
+    // firefox log "Promise resolved after context unloaded" for each one, an error this smoke
+    // caused rather than the page (red on a slow ci runner, 817c8e19)
+    await sleep(SETTLE_MS)
     console.log(`✓ ${page} loaded (${title})`)
   }
 

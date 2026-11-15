@@ -1151,6 +1151,9 @@ function handleYoutubeChatMsg(msg) {
       _autoYtVideoId
     if (!pageVid) return // not on a watch page and no confirmed sub — reject
     if (msg.videoId && msg.videoId !== pageVid) return // wrong stream
+    // history replayed into this slot without a stream id could be any stream an earlier page had
+    // open (a past livestream's chat on the vod opened next, panel shown as if this one were live)
+    if (msg.replay && !msg.videoId) return
     if (!_autoYtVideoId) _autoYtVideoId = pageVid // heal for downstream reads
   }
   // Touch the YT watchdog clock AFTER the videoId gate but before dedup —

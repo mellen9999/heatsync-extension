@@ -602,7 +602,7 @@ async function bgYtFetchRecentArchive(channelId, hintUrl) {
 function ytReplayMessageFor(channelId, m) {
   return {
     type: 'youtube_chat_message',
-    videoId: '',
+    videoId: m.videoId || '',
     channelId,
     id: m.id || undefined,
     user: m.user,
@@ -2188,8 +2188,11 @@ function bgYtIngest(payload) {
   // it's the only cross-source-stable identity a yt message has. Without it a
   // replayed buffer row can't be id-deduped by the surface, and the content
   // fallback misses because the surface pacer rewrites live msg times.
+  // videoId rides along: the live tab's slot (__live_yt_auto__) is whatever stream a page has
+  // open, so a row replayed into a later page must say which stream it came from.
   const msg = {
     id: payload.id || undefined,
+    videoId: payload.videoId || undefined,
     user: payload.user,
     text: payload.text,
     color: payload.color,

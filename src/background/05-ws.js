@@ -2439,7 +2439,7 @@ function handleYoutubeChatBatch(msg, { fromTap = false } = {}) {
     for (const channelId of channelIds) {
       for (const item of items) {
         try {
-          bgYtIngest({ channelId, ...item })
+          bgYtIngest({ channelId, videoId: msg.videoId, ...item })
         } catch {}
       }
       broadcastToTabs({

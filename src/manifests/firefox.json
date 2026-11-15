@@ -33,10 +33,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://*.twitch.tv/*"
-      ],
-      "exclude_matches": [
-        "https://m.twitch.tv/*"
+        "https://www.twitch.tv/*",
+        "https://dashboard.twitch.tv/*"
       ],
       "js": [
         "early-inject-main.js"
@@ -46,11 +44,9 @@
     },
     {
       "matches": [
-        "https://kick.com/*",
-        "https://*.kick.com/*"
+        "https://kick.com/*"
       ],
       "exclude_matches": [
-        "https://id.kick.com/*",
         "https://kick.com/oauth/*",
         "https://kick.com/oauth2/*"
       ],
@@ -73,11 +69,9 @@
     },
     {
       "matches": [
-        "https://kick.com/*",
-        "https://*.kick.com/*"
+        "https://kick.com/*"
       ],
       "exclude_matches": [
-        "https://id.kick.com/*",
         "https://kick.com/oauth/*",
         "https://kick.com/oauth2/*"
       ],
@@ -88,14 +82,12 @@
     },
     {
       "matches": [
-        "https://*.twitch.tv/*",
+        "https://www.twitch.tv/*",
+        "https://dashboard.twitch.tv/*",
         "https://kick.com/*",
-        "https://*.kick.com/*",
         "https://www.youtube.com/*"
       ],
       "exclude_matches": [
-        "https://m.twitch.tv/*",
-        "https://id.kick.com/*",
         "https://kick.com/oauth/*",
         "https://kick.com/oauth2/*"
       ],
@@ -127,14 +119,12 @@
     },
     {
       "matches": [
-        "https://*.twitch.tv/*",
+        "https://www.twitch.tv/*",
+        "https://dashboard.twitch.tv/*",
         "https://kick.com/*",
-        "https://*.kick.com/*",
         "https://www.youtube.com/*"
       ],
       "exclude_matches": [
-        "https://m.twitch.tv/*",
-        "https://id.kick.com/*",
         "https://kick.com/oauth/*",
         "https://kick.com/oauth2/*"
       ],
@@ -155,10 +145,8 @@
     },
     {
       "matches": [
-        "https://*.twitch.tv/*"
-      ],
-      "exclude_matches": [
-        "https://m.twitch.tv/*"
+        "https://www.twitch.tv/*",
+        "https://dashboard.twitch.tv/*"
       ],
       "js": [
         "emoji-data.main.js",
@@ -171,14 +159,12 @@
     },
     {
       "matches": [
-        "https://*.twitch.tv/*",
+        "https://www.twitch.tv/*",
+        "https://dashboard.twitch.tv/*",
         "https://kick.com/*",
-        "https://*.kick.com/*",
         "https://heatsync.org/*"
       ],
       "exclude_matches": [
-        "https://m.twitch.tv/*",
-        "https://id.kick.com/*",
         "https://kick.com/oauth/*",
         "https://kick.com/oauth2/*"
       ],
@@ -196,11 +182,9 @@
     },
     {
       "matches": [
-        "https://kick.com/*",
-        "https://*.kick.com/*"
+        "https://kick.com/*"
       ],
       "exclude_matches": [
-        "https://id.kick.com/*",
         "https://kick.com/oauth/*",
         "https://kick.com/oauth2/*"
       ],
@@ -212,13 +196,11 @@
     },
     {
       "matches": [
-        "https://*.twitch.tv/*",
-        "https://kick.com/*",
-        "https://*.kick.com/*"
+        "https://www.twitch.tv/*",
+        "https://dashboard.twitch.tv/*",
+        "https://kick.com/*"
       ],
       "exclude_matches": [
-        "https://m.twitch.tv/*",
-        "https://id.kick.com/*",
         "https://kick.com/oauth/*",
         "https://kick.com/oauth2/*"
       ],
@@ -229,14 +211,12 @@
     },
     {
       "matches": [
-        "https://*.twitch.tv/*",
+        "https://www.twitch.tv/*",
+        "https://dashboard.twitch.tv/*",
         "https://kick.com/*",
-        "https://*.kick.com/*",
         "https://www.youtube.com/*"
       ],
       "exclude_matches": [
-        "https://m.twitch.tv/*",
-        "https://id.kick.com/*",
         "https://kick.com/oauth/*",
         "https://kick.com/oauth2/*"
       ],

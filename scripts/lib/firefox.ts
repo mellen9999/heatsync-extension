@@ -72,6 +72,9 @@ export async function launchFirefox() {
       headers: { 'content-type': 'application/json' },
       body: body === undefined ? undefined : JSON.stringify(body),
       signal: AbortSignal.timeout(ms),
+    }).catch((e) => {
+      if ((e as Error).name !== 'TimeoutError') throw e
+      throw new Error(`${method} ${path || '/session'} got no answer in ${ms / 1000}s`)
     })
     const { value } = (await res.json()) as { value: T & { error?: string; message?: string } }
     if (value?.error) {
@@ -80,21 +83,32 @@ export async function launchFirefox() {
     return value
   }
 
-  const created = await call<{ sessionId: string; capabilities: { browserVersion: string } }>('POST', '/session', {
-    capabilities: {
-      alwaysMatch: {
-        browserName: 'firefox',
-        'moz:firefoxOptions': {
-          args: ['-headless'],
-          ...(process.env.FIREFOX_BIN ? { binary: process.env.FIREFOX_BIN } : {}),
-          // console.* from extension pages go to stdout, so a console.error the
-          // extension logs is seen here. chrome off: firefox's own modules log
-          // console.error noise of their own (nimbus, remote settings), and with
-          // no web page loaded every remaining line is the extension's.
-          prefs: { 'devtools.console.stdout.content': true, 'devtools.console.stdout.chrome': false },
+  // A cold firefox on a busy CI runner has taken over 30s to start (11-15). If it never answers,
+  // geckodriver must not outlive the throw: a live child keeps the process up until the CI step's
+  // own timeout, and the real error scrolls past three minutes later.
+  const created = await call<{ sessionId: string; capabilities: { browserVersion: string } }>(
+    'POST',
+    '/session',
+    {
+      capabilities: {
+        alwaysMatch: {
+          browserName: 'firefox',
+          'moz:firefoxOptions': {
+            args: ['-headless'],
+            ...(process.env.FIREFOX_BIN ? { binary: process.env.FIREFOX_BIN } : {}),
+            // console.* from extension pages go to stdout, so a console.error the
+            // extension logs is seen here. chrome off: firefox's own modules log
+            // console.error noise of their own (nimbus, remote settings), and with
+            // no web page loaded every remaining line is the extension's.
+            prefs: { 'devtools.console.stdout.content': true, 'devtools.console.stdout.chrome': false },
+          },
         },
       },
     },
+    90_000,
+  ).catch((e) => {
+    driver.kill()
+    throw e
   })
   session = created.sessionId
   await call('POST', '/timeouts', { script: 10_000 })

@@ -83,7 +83,7 @@ const errorsSeen = async (f: Firefox) => [
 
 const watchdog = setTimeout(() => {
   console.error(`✗ firefox smoke FAILED: no result after ${DEADLINE_MS / 1000}s — firefox or geckodriver hung`)
-  ff?.close().finally(() => process.exit(1))
+  Promise.resolve(ff?.close()).finally(() => process.exit(1))
 }, DEADLINE_MS)
 
 try {
@@ -192,4 +192,7 @@ try {
 } finally {
   clearTimeout(watchdog)
   await ff?.close()
+  // a firefox that geckodriver started still holds our pipes after a failed launch; nothing left
+  // to wait for, so leave now rather than idle until the ci step's timeout
+  process.exit()
 }

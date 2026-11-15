@@ -1,5 +1,14 @@
 # changelog
 
+## [1.7.135] — 2026-11-15
+
+### fixed
+- **firefox no longer climbs to gigabytes of memory** — chat history, channel emotes and mentions were saved in a way that copied them into every open tab on each save; firefox kept those copies around. they now live in one place, and memory stays flat. thanks ennortix for the report and the first fix.
+- **the 🔥 next to your name stays put** — your own messages sometimes lost it depending on which site you typed from.
+
+### changed
+- **lighter background tabs** — a twitch tab left in the background for a minute lets go of its saved tab snapshots, and twitch's own chat under the overlay is no longer filled with old messages nobody can see.
+
 ## [1.7.134] — 2026-11-14
 
 ### fixed

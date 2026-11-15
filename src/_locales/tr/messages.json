@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "envanterini tab ile tamamlamada ve yazarken önerilerde sun. kapalıyken sadece kanal ve genel emotes kalır"
   },
+  "mc_settings_tab_list": {
+    "message": "tab bir liste açar"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "bir kelimede tab, eşleşen emote'ları yazma alanının üstünde bir listede gösterir. oklar seçer, tab ya da enter ekler, esc kapatır. kapalıyken doğrudan metinde tamamlar"
+  },
   "mc_settings_show_pronouns": {
     "message": "zamirler"
   },

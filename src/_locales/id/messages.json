@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "tawarkan inventarismu di tab-complete dan saran saat mengetik. kalau mati, hanya emote channel dan global"
   },
+  "mc_settings_tab_list": {
+    "message": "tab membuka daftar"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab pada sebuah kata menampilkan emote yang cocok dalam daftar di atas kolom input. panah memilih, tab atau enter menyisipkan, esc menutup. mati melengkapi langsung di teks"
+  },
   "mc_settings_show_pronouns": {
     "message": "kata ganti"
   },

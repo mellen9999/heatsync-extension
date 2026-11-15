@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "oferă inventarul tău la tab-complete și în sugestiile de tastare. oprit lasă doar emote-urile de canal și globale"
   },
+  "mc_settings_tab_list": {
+    "message": "tab deschide o listă"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab pe un cuvânt arată emote-urile potrivite într-o listă deasupra câmpului. săgețile aleg, tab sau enter inserează, esc închide. oprit completează direct în text"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronume"
   },

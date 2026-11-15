@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "tab-complete और टाइपिंग सुझावों में तुम्हारी इन्वेंटरी दिखाओ। बंद करने पर सिर्फ़ चैनल और ग्लोबल emotes बचते हैं"
   },
+  "mc_settings_tab_list": {
+    "message": "tab से सूची खुले"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "किसी शब्द पर tab दबाने से मेल खाते emotes इनपुट के ऊपर एक सूची में दिखते हैं। तीर चुनते हैं, tab या enter डालता है, esc बंद करता है। बंद होने पर सीधे टेक्स्ट में पूरा करता है"
+  },
   "mc_settings_show_pronouns": {
     "message": "प्रोनाउन"
   },

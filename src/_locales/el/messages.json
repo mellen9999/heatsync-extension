@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "προσφέρει το inventory σου στο tab-complete και στις προτάσεις πληκτρολόγησης. off αφήνει μόνο emotes καναλιού και global"
   },
+  "mc_settings_tab_list": {
+    "message": "το tab ανοίγει λίστα"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "το tab πάνω σε λέξη δείχνει τα αντίστοιχα emotes σε λίστα πάνω από το πεδίο. τα βέλη επιλέγουν, tab ή enter εισάγει, esc κλείνει. όταν είναι κλειστό συμπληρώνει μέσα στο κείμενο"
+  },
   "mc_settings_show_pronouns": {
     "message": "αντωνυμίες"
   },

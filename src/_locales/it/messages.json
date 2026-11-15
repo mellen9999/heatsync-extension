@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "offre il tuo inventario nel tab-complete e nei suggerimenti mentre scrivi. se off, restano solo le emote di canale e globali"
   },
+  "mc_settings_tab_list": {
+    "message": "tab apre un elenco"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab su una parola mostra le emote corrispondenti in un elenco sopra il campo. le frecce scelgono, tab o invio inserisce, esc chiude. disattivato completa direttamente nel testo"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronomi"
   },

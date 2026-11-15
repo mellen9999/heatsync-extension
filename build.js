@@ -930,6 +930,7 @@ const MULTICHAT_MODULES = [
   'composer-attrs.js',
   'ctx-menu.js',
   'input.js',
+  'tab-list.js',
   'profile-card.js',
   'chat-logs.js',
   'pred-view.js',

@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "propose ton inventaire dans la complétion par tab et les suggestions de saisie. désactivé, il ne reste que les emotes de chaîne et globaux"
   },
+  "mc_settings_tab_list": {
+    "message": "tab ouvre une liste"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab sur un mot affiche les emotes correspondants dans une liste au-dessus du champ. les flèches choisissent, tab ou entrée insère, échap ferme. désactivé complète directement dans le texte"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronoms"
   },

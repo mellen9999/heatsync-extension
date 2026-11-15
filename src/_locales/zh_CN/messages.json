@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "在 tab 补全和输入建议中提供你的库存。关闭则只保留频道和全局 emote"
   },
+  "mc_settings_tab_list": {
+    "message": "tab 打开候选列表"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "在单词上按 tab 会在输入框上方的列表中显示匹配的表情。方向键选择，tab 或 enter 插入，esc 关闭。关闭时直接在文本中补全"
+  },
   "mc_settings_show_pronouns": {
     "message": "代词"
   },

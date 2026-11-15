@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "اعرض مخزونك في إكمال tab واقتراحات الكتابة. الإيقاف يترك emotes القناة والعامة فقط"
   },
+  "mc_settings_tab_list": {
+    "message": "tab يفتح قائمة"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "الضغط على tab فوق كلمة يعرض الإيموتات المطابقة في قائمة فوق حقل الكتابة. الأسهم للاختيار، tab أو enter للإدراج، esc للإغلاق. عند الإيقاف يكمل الكلمة مباشرة"
+  },
   "mc_settings_show_pronouns": {
     "message": "الضمائر"
   },

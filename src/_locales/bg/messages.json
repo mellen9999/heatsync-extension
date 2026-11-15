@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "предлага инвентара ти при tab допълване и предложения докато пишеш. изключено оставя само канални и глобални emotes"
   },
+  "mc_settings_tab_list": {
+    "message": "tab отваря списък"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab върху дума показва подходящите emotes в списък над полето за писане. стрелките избират, tab или enter вмъква, esc затваря. изключено допълва направо в текста"
+  },
   "mc_settings_show_pronouns": {
     "message": "местоимения"
   },

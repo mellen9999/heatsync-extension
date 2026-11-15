@@ -41,10 +41,10 @@ describe('platform picker tabs', () => {
     // a past stream's replay frame stamped in a background tab never gets its
     // src; reading it as live hid the playlist on the next autoplayed video
     const storage = src('main-storage.js')
-    expect(storage).toContain(
-      'const liveChatFramePresent = !!frameEl && !isReplayChat && (!!chatSrc || ytPlayerLive)',
-    )
-    expect(storage).toContain("document.querySelector('#movie_player.ytp-live')")
+    expect(storage).toContain('const liveChatFramePresent = !!frameEl && !isReplayChat && (!!chatSrc || ytPlayerLive)')
+    // the class sits on the player's time display; #movie_player never has it
+    expect(storage).toContain("document.querySelector('#movie_player .ytp-time-display.ytp-live')")
+    expect(storage).not.toContain("'#movie_player.ytp-live'")
   })
 
   test('the hide rules and checkYtLive both stand down while it is up', () => {

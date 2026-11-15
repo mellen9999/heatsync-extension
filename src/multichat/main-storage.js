@@ -1427,10 +1427,12 @@ function detectOfflineState() {
       // another tab mounted a src-less frame, the first visible tick read it
       // as live, dropped hs-offline and the sidebar sweep took the playlist
       // with it. A resolved src decides on its own; an empty one counts only
-      // while the player itself says live (#movie_player.ytp-live). Flowing
+      // while the player itself says live: its time display carries ytp-live
+      // on a livestream and not on a past stream or a VOD (checked on real
+      // pages 11-15; #movie_player itself never gets that class). Flowing
       // messages below still show the panel on a live stream if that class
       // ever goes missing.
-      const ytPlayerLive = !!document.querySelector('#movie_player.ytp-live')
+      const ytPlayerLive = !!document.querySelector('#movie_player .ytp-time-display.ytp-live')
       const liveChatFramePresent = !!frameEl && !isReplayChat && (!!chatSrc || ytPlayerLive)
       const ytAutoLiveMsgs = _ytFlowing
       const ownsChat = ytOwnsChat()

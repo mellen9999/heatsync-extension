@@ -84,9 +84,16 @@ export async function platformsGeometry(ctx: any) {
     })
     ok(`${plat.name}: overlay mounts`)
 
-  const g = await geometry(p)
+  let g = await geometry(p)
   for (const [name, v] of Object.entries(g)) {
     if (v === null) fail(`#hs-mc-${name} is missing after mount`)
+  }
+  // The tab bar can wrap to a second row a frame before the overlay's inset follows it (CI 11-14:
+  // tabbar 37px, overlay still sized for one row). Give the layout 3s to agree; a stale inset, the
+  // bug this guards, never does.
+  for (let i = 0; i < 10 && Math.abs(g.overlay.h - (g.container.ch - g.tabbar.h - g.inputbar.h)) > 2; i++) {
+    await p.waitForTimeout(300)
+    g = await geometry(p)
   }
   ok(`${plat.name}: tab bar, overlay, input bar and message list all present`)
 

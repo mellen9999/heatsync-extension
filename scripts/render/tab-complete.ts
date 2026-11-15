@@ -76,6 +76,35 @@ export async function tabCompleteCheck() {
     const id = sw.url().match(/chrome-extension:\/\/([a-p]+)\//)?.[1]
     if (!id) fail('could not resolve the extension id for the tab-complete check')
 
+    // A fresh profile runs two one-time wipes of the channel sets at worker start (the install
+    // reset and the v1.5.4 cache migration). Both are async; on a loaded box they land after the seed
+    // and erase it (the CI flake: sw map=empty, then a failed refetch saved an empty set). Wait for
+    // the migration's done-flag, and for any fetch already in flight, then seed.
+    // The background refetches a channel on every join and writes its answer over its saved copy. With every
+    // provider refused above, that answer is an empty set, which erases zorpChannel whenever the
+    // fetch lands after the seed (6/6 on a loaded box). A real background already holds a channel it
+    // fetched a moment ago (it restores the sets at start), and answers a join from that copy without
+    // refetching — so seed that copy too, rather than let the harness race the fetch.
+    await sw.evaluate(
+      async ([key, emotes]: [string, unknown[]]) => {
+        // @ts-ignore — service worker globals
+        const wait = () => new Promise((r) => setTimeout(r, 50))
+        // @ts-ignore
+        for (let i = 0; i < 300 && !(await chrome.storage.local.get('migrated_emote_cache_v154')).migrated_emote_cache_v154; i++) await wait()
+        // @ts-ignore
+        for (let i = 0; i < 300 && channelEmotesMap[key] === 'loading'; i++) await wait()
+        // @ts-ignore
+        channelEmotesMap[key] = emotes
+        // @ts-ignore
+        channelEmotesFetchedAt[key] = Date.now()
+        // @ts-ignore — and into its IndexedDB, which is where a woken worker restores them from
+        return bgPersistChannelEmotes(key)
+      },
+      ['twitch/probechan', [
+        { name: 'zorpChannel', url: E('zorpChannel'), source: '7tv' },
+        { name: 'opGrab', url: E('opGrab'), source: '7tv' },
+      ]] as [string, unknown[]],
+    )
     const seed = await c.newPage()
     await seed.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
     await seed.evaluate(async (urls: Record<string, string>) => {
@@ -99,25 +128,6 @@ export async function tabCompleteCheck() {
       opGrab: E('opGrab'),
       Kappa: E('Kappa'),
     })
-    // The background refetches a channel on every join and writes its answer over its saved copy. With every
-    // provider refused above, that answer is an empty set, which erases zorpChannel whenever the
-    // fetch lands after the seed (6/6 on a loaded box). A real background already holds a channel it
-    // fetched a moment ago (it restores the sets at start), and answers a join from that copy without
-    // refetching — so seed that copy too, rather than let the harness race the fetch.
-    await sw.evaluate(
-      ([key, emotes]: [string, unknown[]]) => {
-        // @ts-ignore — service worker globals
-        channelEmotesMap[key] = emotes
-        // @ts-ignore
-        channelEmotesFetchedAt[key] = Date.now()
-        // @ts-ignore — and into its IndexedDB, which is where a woken worker restores them from
-        return bgPersistChannelEmotes(key)
-      },
-      ['twitch/probechan', [
-        { name: 'zorpChannel', url: E('zorpChannel'), source: '7tv' },
-        { name: 'opGrab', url: E('opGrab'), source: '7tv' },
-      ]] as [string, unknown[]],
-    )
     await seed.close()
 
     const p = await c.newPage()

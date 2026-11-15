@@ -70,6 +70,10 @@
       max-height: 100vh;
       overflow: hidden;
       background: #000;
+      /* The panel is dark on every host, so its text is too. Left to inherit, it took twitch's
+         light-theme ink (#0e0e10) and anything without its own colour, the tour card first,
+         was dark grey on black. */
+      color: #fff;
       /* 'Noto Color Emoji' belongs in the body stack so color-emoji codepoints
          resolve to a known font with stable metrics — matching heatsync.org's
          --font-family-mono. Without it the browser picks an unpredictable

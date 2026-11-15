@@ -151,6 +151,19 @@ export async function tourCheck() {
     if (await p.evaluate(() => !!document.activeElement?.closest('#hs-mc-tour'))) fail('the tour card took focus on its own')
     ok('first open on a fresh profile shows the tour card')
 
+    // twitch's light theme (the logged-out default) sets dark ink on the page; the panel is black
+    // on every host, so nothing in it may inherit that ink (11-15: the tour read dark grey on black)
+    const ink = await p.evaluate(() => {
+      document.documentElement.style.color = '#0e0e10'
+      document.body.style.color = '#0e0e10'
+      return ['.hs-mc-tour-n', '.hs-mc-tour-t', '.hs-mc-tour-d'].map(
+        (s) => `${s} ${getComputedStyle(document.querySelector(`#hs-mc-tour ${s}`) as Element).color}`,
+      )
+    })
+    const dark = ink.filter((x) => !x.endsWith('rgb(255, 255, 255)'))
+    if (dark.length) fail(`the tour card took the host page's dark ink: ${dark.join(', ')}`)
+    ok("the tour card stays white on a host page with dark ink (twitch's light theme)")
+
     // ── six cards, one idea each ─────────────────────────────────────────
     const first = await reading()
     if (first.n !== '1/6' || !/right-click/.test(first.title)) fail(`card 1 should be the row menu, got ${JSON.stringify(first)}`)

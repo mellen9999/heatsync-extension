@@ -354,6 +354,16 @@ cleanup.addEventListener(document, 'visibilitychange', () => {
     }
   }
 })
+// Snapshots of the tabs you are NOT looking at exist only to make the next
+// switch instant. In a browser tab that has sat hidden for a minute nobody is
+// about to switch, yet every snapshot keeps up to 1500 detached rows with
+// decoded emote bitmaps — times the 7 other twitch tabs people keep open.
+// Let them go; the next switch renders from the buffers like a cold one.
+let _hsCacheDropTimer = 0
+cleanup.addEventListener(document, 'visibilitychange', () => {
+  clearTimeout(_hsCacheDropTimer)
+  if (document.hidden && _tabCache.size) _hsCacheDropTimer = setTimeout(_dropAllTabCaches, 60_000)
+})
 // Escape hatches for the catch-up above: popout windows can miss the
 // hidden→visible visibilitychange (wayland/occlusion tracking), leaving the
 // pane frozen on stale rows even though messages keep buffering. A window

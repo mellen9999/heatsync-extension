@@ -159,7 +159,7 @@ function hsMarksL10n(html) {
 }
 
 /** the marks span a twitch row carries before its name ('' when all three switches are off) */
-function hsMarksRowHtml(m, uid) {
+function hsMarksRowHtml(m, uid, mine = isSelf(m)) {
   const flairOn = hsMarksOn('subFlair')
   const flameOn = hsMarksOn('flame')
   const barsOn = hsMarksOn('heatBars')
@@ -168,8 +168,17 @@ function hsMarksRowHtml(m, uid) {
   const flair = flairOn && /^\d{1,20}$/.test(uid) ? _hsmGet('flair', uid) : null
   const heat = (flameOn || barsOn) && hsMarksValidLogin(login) ? _hsmGet('heat', login) : 0
   // a picked heatsync badge takes the flame's place: one heatsync mark per name
-  const wear = hsMarksWear(flameOn && !hsMarksBadged(uid), barsOn, flameOn && hsMarksKnown(uid), isSelf(m), heat)
+  const wear = hsMarksWear(flameOn && !hsMarksBadged(uid), barsOn, flameOn && hsMarksKnown(uid), mine, heat)
   return `<span class="hs-mc-marks">${hsMarksL10n(hsMarksHtml(flair, wear))}</span>`
+}
+
+/** your own line on kick or youtube. a send to several chats keeps whichever echo lands first, so the row
+ * standing for your send is often not the twitch copy. it wears your twitch self's marks (your twitch login
+ * for the heat bar, the row's twitch-space uid for flair and badge, never a kick or youtube id), so every
+ * one of your lines carries the same mark */
+function hsMarksSelfRowHtml(uidTwitch) {
+  const login = typeof selfNamesFor === 'function' ? selfNamesFor('twitch')[0] || '' : ''
+  return hsMarksRowHtml({ user: login }, String(uidTwitch || ''), true)
 }
 
 /** logins or ids whose marks changed: repaint the drawn rows in place (rows built later read the caches) */
@@ -181,10 +190,13 @@ function hsMarksRepaint(keys) {
     for (const div of msgs.querySelectorAll('.hs-mc-msg[data-msg-key]')) {
       const m = div._hsMsg
       const slot = div.querySelector('.hs-mc-marks')
-      if (!m || !slot || (m.platform && m.platform !== 'twitch')) continue
-      const login = String(m.user ?? '').toLowerCase()
-      if (!keys.has(login) && !keys.has(String(m.userId ?? ''))) continue
-      const html = hsMarksRowHtml(m, String(m.userId ?? ''))
+      if (!m || !slot) continue
+      const twitchRow = !m.platform || m.platform === 'twitch'
+      if (!twitchRow && !isSelf(m)) continue
+      const login = twitchRow ? String(m.user ?? '').toLowerCase() : selfNamesFor('twitch')[0] || ''
+      const uid = String((twitchRow ? m.userId : m._uidTwitch) ?? '')
+      if (!keys.has(login) && !keys.has(uid)) continue
+      const html = twitchRow ? hsMarksRowHtml(m, uid) : hsMarksSelfRowHtml(uid)
       const inner = html.slice('<span class="hs-mc-marks">'.length, -'</span>'.length)
       if (slot.innerHTML !== inner) {
         slot.innerHTML = inner

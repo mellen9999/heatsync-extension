@@ -639,8 +639,10 @@ function buildMessageDiv(m, tabId) {
   // sent through heatsync (by message id, any viewer's): [H] whatever platform echoed it
   const markPlat = hsOriginStamp(m) ? 'heatsync' : m.sentHost || m.platform || 'twitch'
   const plat = mark.cls
-  // after the chatterino badge, before the name: sub flair, 🔥, heat bar (twitch rows only)
-  const marksHtml = plat === 'twitch' ? hsMarksRowHtml(m, String(uidTwitch || '')) : ''
+  // after the chatterino badge, before the name: sub flair, 🔥, heat bar. twitch rows, and your own
+  // line on any chat (the first echo of a multi-chat send is the one kept, often the kick or youtube copy)
+  const marksHtml =
+    plat === 'twitch' ? hsMarksRowHtml(m, String(uidTwitch || '')) : isSelf(m) ? hsMarksSelfRowHtml(uidTwitch) : ''
   const platformBadge = platformMarkHtml(markPlat, { enabled: platformBadgesEnabled, host: hostPlatform })
   const safeScColor = sanitizeColor(m.scColor || '#ffff00')
   const scBadge =

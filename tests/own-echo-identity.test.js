@@ -38,7 +38,7 @@ const ID_BLOCK = [
 ].join('\n')
 
 function identity(m) {
-  const calls = { kickLookup: [], marks: [], thirdParty: [], paint: [], cosmetics: [] }
+  const calls = { kickLookup: [], marks: [], selfMarks: [], thirdParty: [], paint: [], cosmetics: [] }
   const real = {
     kickNameResolved: new Map(),
     knownUserIds: new Map(),
@@ -57,6 +57,11 @@ function identity(m) {
       calls.marks.push(uid)
       return '🔥'
     },
+    hsMarksSelfRowHtml: (uid) => {
+      calls.selfMarks.push(uid)
+      return '🔥'
+    },
+    isSelf: (r) => r.user === 'me',
     hsPaintRender: (uid) => {
       calls.paint.push(uid)
       return null
@@ -104,14 +109,23 @@ describe('own echo identity vs visible tag', () => {
     stampSentHost(m, 'twitch')
     const r = identity(m)
     expect(r.platformBadge).toBe('[twitch]')
-    expect(r.marksHtml).toBe('') // kick row: no twitch marks
+    // your own kick row wears your marks (a multi-chat send keeps whichever echo lands first)...
+    expect(r.marksHtml).toBe('🔥')
     expect(r.uidTwitch).toBe('')
     expect(r.calls.marks).toEqual([])
+    expect(r.calls.selfMarks).toEqual(['']) // ...keyed on the twitch-space uid, never the kick id
     expect(r.calls.thirdParty).toEqual([])
     expect(r.calls.paint).toEqual([])
     expect(r.calls.cosmetics).toEqual([])
     expect(r.userHref).toBe('https://kick.com/me')
     expect(r.calls.kickLookup).toEqual([['me', KICK_ID]]) // the kick id goes to the KICK resolver
+  })
+
+  test("someone else's kick row wears no twitch marks", () => {
+    const r = identity({ user: 'stranger', userId: KICK_ID, platform: 'kick', text: 'gm' })
+    expect(r.marksHtml).toBe('')
+    expect(r.calls.marks).toEqual([])
+    expect(r.calls.selfMarks).toEqual([])
   })
 
   test('heatsync-origin rows still wear [H] (hsOrigin beats sentHost)', () => {

@@ -51,7 +51,10 @@ function rig(tr = t, extra = {}) {
     ...extra,
   }
   const names = Object.keys(env)
-  const api = new Function(...names, `${code}; return { _hsmSets, hsMarksRowHtml }`)(...names.map((k) => env[k]))
+  const api = new Function(
+    ...names,
+    `${code}; return { _hsmSets, hsMarksRowHtml, hsMarksSelfRowHtml, hsMarksRepaint }`,
+  )(...names.map((k) => env[k]))
   const badge = { url: 'https://static-cdn.jtvnw.net/badges/v1/x/1', title: 'sub' }
   const row = (user, userId) => {
     const m = { user, userId, platform: 'twitch' }
@@ -60,7 +63,7 @@ function rig(tr = t, extra = {}) {
     rows.push({ _hsMsg: m, querySelector: () => slot })
     return slot
   }
-  return { api, row, send: (msg) => onMessage(msg) }
+  return { api, row, rows, send: (msg) => onMessage(msg) }
 }
 
 describe("a picked heatsync badge takes the flame's place", () => {
@@ -113,5 +116,39 @@ describe('account_changed drops your own flair', () => {
     row('me', '42')
     send({ type: 'something_else' })
     expect(api._hsmSets.flair.map.get('42')?.v).toBeTruthy()
+  })
+})
+
+// a send to several chats keeps whichever echo lands first: your kick or youtube copy must wear the same mark
+describe('your own line on kick or youtube wears your marks', () => {
+  const selfRig = (extra = {}) =>
+    rig(t, {
+      isSelf: (m) => (m.platform === 'kick' ? m.user === 'mekick' : m.user === 'me'),
+      selfNamesFor: (p) => (p === 'twitch' ? ['me'] : ['mekick']),
+      ...extra,
+    })
+  test('the flame shows on your kick row', () => {
+    expect(selfRig().api.hsMarksSelfRowHtml('')).toContain('hs-mark-flame')
+  })
+  test('your twitch heat drives the bar there too', () => {
+    const { api } = selfRig()
+    api._hsmSets.heat.map.set('me', { v: 120, at: Date.now(), asked: 0 })
+    const html = api.hsMarksSelfRowHtml('')
+    expect(html).toContain('hs-mark-heat')
+    expect(html).not.toContain('hs-mark-flame')
+  })
+  test('a heat change repaints your kick row; a stranger on kick stays bare', () => {
+    const { api, rows } = selfRig()
+    const slot = (m) => {
+      const x = { innerHTML: 'old' }
+      rows.push({ _hsMsg: m, querySelector: () => x })
+      return x
+    }
+    const mine = slot({ user: 'mekick', platform: 'kick' })
+    const theirs = slot({ user: 'me', platform: 'kick' })
+    api._hsmSets.heat.map.set('me', { v: 120, at: Date.now(), asked: 0 })
+    api.hsMarksRepaint(new Set(['me']))
+    expect(mine.innerHTML).toContain('hs-mark-heat')
+    expect(theirs.innerHTML).toBe('old')
   })
 })

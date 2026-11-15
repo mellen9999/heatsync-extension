@@ -1,5 +1,21 @@
 # changelog
 
+## [1.7.136] — 2026-11-15
+
+### fixed
+- **channel emotes stop turning back into text after a while** — with many channels open, the stream you were watching could lose its emote set and show older lines as plain names until it reloaded. thanks ennortix.
+- **youtube** — a video opened after a livestream in the same tab no longer shows that stream's chat, and the next playlist video autoplaying in a background tab keeps its playlist (thanks ennortix).
+- **only on the sites themselves** — heatsync no longer loads on twitch's sign-in, help and developer sites, or kick's help, docs and dashboard sites.
+- **first-run tour** readable on twitch's light theme.
+- **the 🔥 next to your name** also stays when the kick or youtube copy of your message is the one kept.
+- **emote picker** — moving with the arrow keys never leaves the selected emote half cut off.
+
+### changed
+- **picker search is instant** — matches from your emotes, the channel and globals show as you type instead of after a pause. thanks ennortix.
+
+### added
+- **tab opens a list** (settings → input, off by default) — tab on a word shows the matching emotes in a list above the input; arrows pick, tab or enter inserts, esc closes. thanks ennortix.
+
 ## [1.7.135] — 2026-11-15
 
 ### fixed

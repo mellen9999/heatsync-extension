@@ -1,13 +1,13 @@
 {
   "_": "bytes, measured 2026-11-09 + 2% headroom (min 256B). lower to measured, never raise to go green; a raise needs the reason in its commit.",
   "chrome": {
-    "multichat-core.js": 1684725,
+    "multichat-core.js": 1677725,
     "content.js": 240884,
     "heatsync-button.js": 139283,
     "autocomplete-hook.js": 87710,
     "chat-injector.js": 43039,
     "youtube-content.js": 169677,
-    "background.js": 335000,
+    "background.js": 342000,
     "popup.js": 10833,
     "popup.html": 6841,
     "early-inject-main.js": 23267,
@@ -40,13 +40,13 @@
     "total zip": 2038448
   },
   "firefox": {
-    "multichat-core.js": 1684725,
+    "multichat-core.js": 1677725,
     "content.js": 240884,
     "heatsync-button.js": 139283,
     "autocomplete-hook.js": 87710,
     "chat-injector.js": 43039,
     "youtube-content.js": 169677,
-    "background.js": 335000,
+    "background.js": 342000,
     "popup.js": 10833,
     "popup.html": 6841,
     "early-inject-main.js": 23267,

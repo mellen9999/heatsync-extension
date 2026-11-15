@@ -959,9 +959,15 @@ async function fetch7TVChannelEmotes(channelName, channelId = null, platform = '
         }
       }
 
-      // Final fallback to username (rarely works but try anyway)
+      // No twitch id = transient (same as the kick and BTTV paths). The old
+      // username fallback put the NAME into /users/twitch/<id> and
+      // /users/<id>, both 404 for a name, and a double 404 reads as "this
+      // channel has no 7TV" — an authoritative [] that the refresh salvage
+      // can't tell from a real empty set, so a lookup blip wiped the
+      // channel's 7TV emotes until the next refetch.
       if (!identifier) {
-        identifier = channelName
+        log(' 7TV: Could not resolve Twitch user ID for', channelName)
+        return null
       }
 
       log(' 7TV: Fetching with identifier:', identifier, '(channelId:', channelId, ')')

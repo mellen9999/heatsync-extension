@@ -299,23 +299,39 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
       log(' ⚠️ Channel emotes fetched with failures', failed, '— will retry in ~90s')
       scheduleEmoteRefetch()
     }
+    // Evict the stalest channels NO tab is showing. Object key order is first
+    // insertion — a refetch reassigns in place — so slicing the front evicted
+    // the channel watched longest: after 20 others passed through (page
+    // channels, multichat extras, picker lookups) the open stream lost its set,
+    // its next TTL pass ran as a cold join, and the progressive partial
+    // broadcasts (BTTV before 7TV, or no 7TV at all on a blip — the refresh
+    // salvage needs a prevCached) re-rendered its older rows as text until the
+    // rest landed: "emotes turn back into text after a while, then return".
     const channelKeys = Object.keys(channelEmotesMap).filter((k) => channelEmotesMap[k] !== 'loading')
     if (channelKeys.length > 20) {
-      for (const old of channelKeys.slice(0, channelKeys.length - 20)) {
-        if (old !== key) {
-          delete channelEmotesMap[old]
-          delete channelEmotesFetchedAt[old]
-          bgIdbDelete(BG_IDB_EMOTES, old)
-          const evictedSetId = seventvEmoteSetIds.get(old)
-          seventvEmoteSetIds.delete(old)
-          release7TVEmoteSet(evictedSetId)
-          seventvPolledChannels.delete(old)
-          const evictedRoom = bttvRoomIds.get(old)
-          if (evictedRoom) {
-            bttvRoomIds.delete(old)
-            partBTTVRoom(evictedRoom)
-            browser.storage.local.set({ bttv_room_ids: Object.fromEntries(bttvRoomIds) }).catch(() => {})
-          }
+      const inUse = new Set()
+      try {
+        if (typeof joinedExtraChannels !== 'undefined' && joinedExtraChannels)
+          for (const k of joinedExtraChannels) inUse.add(String(k).toLowerCase())
+        if (typeof tabChannels !== 'undefined' && tabChannels)
+          for (const t of tabChannels.values()) if (t?.channel) inUse.add(String(t.channel).toLowerCase())
+      } catch {}
+      const evictable = channelKeys
+        .filter((k) => k !== key && !inUse.has(k))
+        .sort((a, b) => (channelEmotesFetchedAt[a] || 0) - (channelEmotesFetchedAt[b] || 0))
+      for (const old of evictable.slice(0, channelKeys.length - 20)) {
+        delete channelEmotesMap[old]
+        delete channelEmotesFetchedAt[old]
+        bgIdbDelete(BG_IDB_EMOTES, old)
+        const evictedSetId = seventvEmoteSetIds.get(old)
+        seventvEmoteSetIds.delete(old)
+        release7TVEmoteSet(evictedSetId)
+        seventvPolledChannels.delete(old)
+        const evictedRoom = bttvRoomIds.get(old)
+        if (evictedRoom) {
+          bttvRoomIds.delete(old)
+          partBTTVRoom(evictedRoom)
+          browser.storage.local.set({ bttv_room_ids: Object.fromEntries(bttvRoomIds) }).catch(() => {})
         }
       }
     }

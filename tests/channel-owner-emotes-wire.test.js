@@ -101,7 +101,7 @@ function world(payload, { status = 200 } = {}) {
     get: (t, k) => (k in t ? t[k] : globalThis[k]),
   })
   const api = new Function('__scope', `with (__scope) {\n${PROGRAM}\n}`)(proxy)
-  return { api, requests, broadcasts, channelEmotesMap }
+  return { api, requests, broadcasts, channelEmotesMap, scope }
 }
 
 const ownerCalls = (requests) => requests.filter((u) => u.includes('/api/emotes/user/'))
@@ -223,5 +223,49 @@ describe('a failing lookup still fails soft', () => {
     const w = world({}, { status: 429 })
     await w.api.fetchChannelOwnerEmotes('somechan', null, 'twitch')
     expect(w.channelEmotesMap['twitch/somechan']).toEqual([])
+  })
+})
+
+describe('the channel cache evicts the stalest channel no tab shows', () => {
+  // Object key order is first insertion and a refetch reassigns in place, so
+  // slicing the front evicted the channel watched longest. Its next TTL pass
+  // then ran as a cold join whose partial broadcasts turned older rows to text.
+  const fill = (w, keys) => {
+    let t = 1000
+    for (const k of keys) {
+      w.channelEmotesMap[k] = [{ name: 'x', url: 'https://cdn.7tv.app/emote/a/1x.avif', source: '7tv' }]
+      w.scope.channelEmotesFetchedAt[k] = t++
+    }
+  }
+  const others = Array.from({ length: 19 }, (_, i) => `twitch/c${i}`)
+
+  test('the channel a tab is showing survives, however long it has been held', async () => {
+    const w = world({ emotes: [] })
+    fill(w, ['twitch/watched', ...others])
+    w.scope.tabChannels.set(7, { channel: 'twitch/watched', channelOwner: 'watched' })
+    await w.api.fetchChannelOwnerEmotes('newcomer', null, 'twitch')
+    expect(w.channelEmotesMap['twitch/watched']).toBeDefined()
+    expect(w.channelEmotesMap['twitch/c0']).toBeUndefined()
+    expect(Object.keys(w.channelEmotesMap).length).toBe(20)
+  })
+
+  test('order is by last fetch, not by first insertion', async () => {
+    const w = world({ emotes: [] })
+    fill(w, ['twitch/early', ...others])
+    w.scope.channelEmotesFetchedAt['twitch/early'] = 999999 // refetched most recently
+    await w.api.fetchChannelOwnerEmotes('newcomer', null, 'twitch')
+    expect(w.channelEmotesMap['twitch/early']).toBeDefined()
+    expect(w.channelEmotesMap['twitch/c0']).toBeUndefined()
+  })
+})
+
+describe('7TV without a twitch id is a transient failure, not an empty set', () => {
+  test('the username fallback is gone: no id returns null', () => {
+    const body = fn('fetch7TVChannelEmotes')
+    expect(body).not.toContain('identifier = channelName')
+    const at = body.indexOf('identifier = await lookupTwitchUserId(channelName)')
+    expect(at).toBeGreaterThan(-1)
+    const after = body.slice(at, at + 900)
+    expect(after).toMatch(/if \(!identifier\) \{[\s\S]*?return null/)
   })
 })

@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "tilby inventaret ditt i tab-fullføring og skriveforslag. av levner bare kanal- og globale emotes"
   },
+  "mc_settings_tab_list": {
+    "message": "tab åpner en liste"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab på et ord viser passende emotes i en liste over inntastingsfeltet. pilene velger, tab eller enter setter inn, esc lukker. av fullfører rett i teksten"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronomen"
   },

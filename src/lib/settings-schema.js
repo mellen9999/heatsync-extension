@@ -749,6 +749,23 @@ const SETTINGS = [
     alias: 'personal inventory emotes tab complete autocomplete',
   },
   {
+    // Tab on a word opens the ranked suggestion list above the composer (the
+    // same list ":kek" pops) instead of completing in place. Arrows move, Tab
+    // or Enter takes the highlighted emote, Esc closes. Off keeps the classic
+    // in-place Tab cycle. Read per keypress in input.js, so no applier.
+    key: 'tabOpensEmoteList',
+    type: 'bool',
+    default: false,
+    scope: 'sync',
+    category: 'chat',
+    section: 'input',
+    sectionKey: 'btn_settings_input',
+    labelKey: 'mc_settings_tab_list',
+    tipKey: 'mc_settings_tab_list_desc',
+    control: 'pill',
+    alias: 'tab complete autocomplete dropdown list suggestions popup',
+  },
+  {
     key: 'wysiwygEnabled',
     type: 'bool',
     default: true,

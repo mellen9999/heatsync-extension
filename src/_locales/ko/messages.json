@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "tab 완성과 입력 중 추천에 내 인벤토리를 노출. 끄면 채널 emote와 글로벌 emote만"
   },
+  "mc_settings_tab_list": {
+    "message": "tab으로 목록 열기"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "단어에서 tab을 누르면 일치하는 이모트를 입력창 위 목록으로 보여줘요. 화살표로 고르고, tab이나 enter로 넣고, esc로 닫아요. 끄면 그 자리에서 바로 완성해요"
+  },
   "mc_settings_show_pronouns": {
     "message": "대명사"
   },

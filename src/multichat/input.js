@@ -1130,6 +1130,7 @@ const emojiAcState = {
   matches: [],
   index: 0,
   query: '',
+  plain: false, // Tab opened it on a bare word (tab-list.js): no ':' before the query
 }
 let _emojiAcDebounce = null
 // Cap the visible list — findEmoteMatches can return dozens of hits; the
@@ -3757,6 +3758,7 @@ function handleInputKeydownInner(e, input) {
       // so re-completion searches the full word (SupHomie + 3 → SupHomie3).
       if (wysiwygEnabled) mergeChipIntoWordForRecompletion(input)
       const word = getCurrentWord(input)
+      if (word.length >= 2 && getSetting('tabOpensEmoteList') === true && openTabEmoteList(word)) return // tab-list.js
       if (word.length >= 2) {
         const matches = findEmoteMatches(word)
         // Set up cycling state even with zero local matches — the cross-provider
@@ -6378,6 +6380,7 @@ function hideEmojiDropdown() {
   emojiAcState.matches = []
   emojiAcState.index = 0
   emojiAcState.query = ''
+  emojiAcState.plain = false
   const dd = document.getElementById('hs-mc-emoji-dropdown')
   if (dd) hsListboxHide(dd)
 }
@@ -6397,7 +6400,7 @@ function insertEmojiFromDropdown(match) {
   acState.index = emojiAcState.matches.indexOf(match)
   if (acState.index === -1) acState.index = 0
   acState.active = true
-  acState.search = `:${emojiAcState.query}`
+  acState.search = emojiAcState.plain ? emojiAcState.query : `:${emojiAcState.query}`
   acState.remoteDone = false
   acState.remotePending = false
 
@@ -6428,6 +6431,7 @@ function checkEmojiAutocomplete() {
   emojiAcState.active = true
   emojiAcState.matches = matches
   emojiAcState.query = ctx.query
+  emojiAcState.plain = false
   emojiAcState.index = 0
   showEmojiDropdown(matches, 0)
 }

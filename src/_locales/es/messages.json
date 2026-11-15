@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "ofrece tu inventario en el autocompletado con tab y en las sugerencias al escribir. apagado deja solo emotes de canal y globales"
   },
+  "mc_settings_tab_list": {
+    "message": "tab abre una lista"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab sobre una palabra muestra los emotes que coinciden en una lista encima del campo. las flechas eligen, tab o enter inserta, esc cierra. desactivado completa en el texto"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronombres"
   },

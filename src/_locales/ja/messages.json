@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "tab 補完と入力中の候補にインベントリを出す。オフだとチャンネル emote とグローバル emote だけ"
   },
+  "mc_settings_tab_list": {
+    "message": "tab で候補リストを開く"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "単語の上で tab を押すと、一致する emote を入力欄の上にリストで表示。矢印で選択、tab か enter で挿入、esc で閉じる。オフだとその場で補完"
+  },
   "mc_settings_show_pronouns": {
     "message": "代名詞"
   },

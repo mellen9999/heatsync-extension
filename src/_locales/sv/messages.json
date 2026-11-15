@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "erbjud ditt inventarie vid tab-komplettering och skrivförslag. av lämnar bara kanal- och globala emotes"
   },
+  "mc_settings_tab_list": {
+    "message": "tab öppnar en lista"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab på ett ord visar matchande emotes i en lista ovanför inmatningsfältet. pilarna väljer, tab eller enter infogar, esc stänger. av fyller i direkt i texten"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronomen"
   },

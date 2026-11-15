@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "oferece o teu inventário no tab-complete e nas sugestões ao escrever. desligado deixa só emotes de canal e globais"
   },
+  "mc_settings_tab_list": {
+    "message": "tab abre uma lista"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab sobre uma palavra mostra os emotes correspondentes numa lista acima do campo. as setas escolhem, tab ou enter insere, esc fecha. desligado completa diretamente no texto"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronomes"
   },

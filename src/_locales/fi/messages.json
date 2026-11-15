@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "tarjoa reppusi tab-täydennyksessä ja kirjoitusehdotuksissa. pois päältä jäävät vain kanavan ja globaalit emotet"
   },
+  "mc_settings_tab_list": {
+    "message": "tab avaa listan"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab sanan kohdalla näyttää sopivat emotet listassa kirjoituskentän yläpuolella. nuolet valitsevat, tab tai enter lisää, esc sulkee. pois päältä täydentää suoraan tekstiin"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronominit"
   },

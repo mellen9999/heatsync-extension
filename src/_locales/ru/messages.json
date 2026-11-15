@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "предлагать твой инвентарь в tab-дополнении и подсказках при вводе. выкл оставляет только emotes канала и глобальные"
   },
+  "mc_settings_tab_list": {
+    "message": "tab открывает список"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab на слове показывает подходящие эмоуты в списке над полем ввода. стрелки выбирают, tab или enter вставляет, esc закрывает. выключено — дополняет прямо в тексте"
+  },
   "mc_settings_show_pronouns": {
     "message": "местоимения"
   },

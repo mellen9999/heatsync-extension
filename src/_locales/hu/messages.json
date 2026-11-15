@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "felkínálja a készletedet a tab-kiegészítésben és a gépelés közbeni javaslatokban. kikapcsolva csak a csatorna és globális emote-ok maradnak"
   },
+  "mc_settings_tab_list": {
+    "message": "a tab listát nyit"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "a tab egy szón a beviteli mező fölötti listában mutatja az egyező emote-okat. a nyilak választanak, a tab vagy enter beszúr, az esc bezár. kikapcsolva közvetlenül a szövegben egészít ki"
+  },
   "mc_settings_show_pronouns": {
     "message": "névmások"
   },

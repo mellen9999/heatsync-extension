@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "ponúkni inventár pri dopĺňaní tabom a pri návrhoch písania. vypnuté nechá len emotes kanála a globálne"
   },
+  "mc_settings_tab_list": {
+    "message": "tab otvorí zoznam"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab na slove ukáže zodpovedajúce emoty v zozname nad poľom na písanie. šípky vyberajú, tab alebo enter vloží, esc zavrie. vypnuté dopĺňa priamo v texte"
+  },
   "mc_settings_show_pronouns": {
     "message": "zámená"
   },

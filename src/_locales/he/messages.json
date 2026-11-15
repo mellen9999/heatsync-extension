@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "הצע את המלאי שלך בהשלמת tab ובהצעות הקלדה. כבוי משאיר רק אימוטי ערוץ וגלובליים"
   },
+  "mc_settings_tab_list": {
+    "message": "tab פותח רשימה"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab על מילה מציג אימוטים מתאימים ברשימה מעל שדה הכתיבה. החצים בוחרים, tab או enter מוסיפים, esc סוגר. כבוי משלים ישירות בטקסט"
+  },
   "mc_settings_show_pronouns": {
     "message": "כינויי גוף"
   },

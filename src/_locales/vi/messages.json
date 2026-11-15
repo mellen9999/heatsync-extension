@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "đưa kho của bạn vào tab-complete và gợi ý khi gõ. tắt thì chỉ còn emote kênh và toàn cục"
   },
+  "mc_settings_tab_list": {
+    "message": "tab mở danh sách"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "nhấn tab trên một từ sẽ hiện các emote khớp trong danh sách phía trên ô nhập. phím mũi tên để chọn, tab hoặc enter để chèn, esc để đóng. tắt thì hoàn thành ngay trong văn bản"
+  },
   "mc_settings_show_pronouns": {
     "message": "đại từ nhân xưng"
   },

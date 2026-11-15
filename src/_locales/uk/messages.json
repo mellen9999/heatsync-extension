@@ -1104,6 +1104,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "пропонує твій інвентар в автодоповненні tab і підказках під час набору. вимкнено — лишаються лише канальні та глобальні emotes"
   },
+  "mc_settings_tab_list": {
+    "message": "tab відкриває список"
+  },
+  "mc_settings_tab_list_desc": {
+    "message": "tab на слові показує відповідні емоути у списку над полем вводу. стрілки вибирають, tab або enter вставляє, esc закриває. вимкнено — доповнює просто в тексті"
+  },
   "mc_settings_show_pronouns": {
     "message": "займенники"
   },

@@ -177,12 +177,20 @@ beforeEach(() => {
     trackObserver: (o) => o,
     untrackObserver: () => {},
   }
+  globalThis.resizeWatched = new Set()
   globalThis.ResizeObserver = class {
     constructor(cb) {
       globalThis.resizeFired = cb
     }
-    observe() {}
-    disconnect() {}
+    observe(el) {
+      globalThis.resizeWatched.add(el)
+    }
+    unobserve(el) {
+      globalThis.resizeWatched.delete(el)
+    }
+    disconnect() {
+      globalThis.resizeWatched.clear()
+    }
   }
   globalThis.MutationObserver = class {
     constructor(cb) {
@@ -516,6 +524,19 @@ describe('the cursor staying in view while the grid reflows', () => {
     grid.rectBottom -= 30
     globalThis.resizeFired()
     expect(grid.scrollTop).toBe(at)
+  })
+
+  test("the cursor's own tile is watched, so its image landing puts it back too", () => {
+    wire()
+    hsPickerKey(key(input, 'ArrowDown'))
+    const first = grid.tiles[0]
+    const last = grid.tiles.at(-1)
+    expect(globalThis.resizeWatched.has(first)).toBe(true)
+    hsPickerKey(key(input, 'End'))
+    expect(globalThis.resizeWatched.has(last)).toBe(true)
+    expect(globalThis.resizeWatched.has(first)).toBe(false)
+    hsPickerGridChanged() // a re-render that kept the tile still watches it
+    expect(globalThis.resizeWatched.has(last)).toBe(true)
   })
 
   test('no cursor, no following', () => {

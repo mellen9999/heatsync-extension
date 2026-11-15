@@ -30,7 +30,7 @@ let hsPickerGridObs = null
 // The cursor owns the scroll position until the reader scrolls by hand. A tile's box is its image's
 // (an emote that has not loaded is a 28px stand-in), so a late image or a chunk filling in reflows
 // the grid and can carry the tile out of view after the scroll that put it there. While this is
-// set, any such reflow puts the tile back.
+// set, any such reflow (of the list, or of the cursor's own tile) puts the tile back.
 let hsPickerFollow = false
 let hsPickerSizeObs = null
 
@@ -122,7 +122,10 @@ function hsPickerScrollTo(grid, tile) {
 /** Put the cursor on `tile` (null lets go of it). */
 function hsPickerSelect(tile) {
   const input = document.getElementById('hs-mc-emote-search')
-  if (hsPickerSel && hsPickerSel !== tile) hsPickerSel.setAttribute('aria-selected', 'false')
+  if (hsPickerSel && hsPickerSel !== tile) {
+    hsPickerSel.setAttribute('aria-selected', 'false')
+    hsPickerSizeObs?.unobserve(hsPickerSel)
+  }
   hsPickerSel = tile
   if (!tile) {
     hsPickerFollow = false
@@ -136,6 +139,8 @@ function hsPickerSelect(tile) {
   input?.setAttribute('aria-activedescendant', tile.id)
   if (grid) hsPickerScrollTo(grid, tile)
   hsPickerFollow = true
+  // its own image landing can grow the tile without moving the list's height
+  hsPickerSizeObs?.observe(tile)
 }
 
 function hsPickerKey(e) {
@@ -182,7 +187,11 @@ function hsPickerGridChanged() {
   const list = grid.firstElementChild
   if (list) hsPickerSizeObs?.observe(list)
   const was = hsPickerSel
-  if (!was || grid.contains(was)) return
+  if (!was) return
+  if (grid.contains(was)) {
+    hsPickerSizeObs?.observe(was)
+    return
+  }
   hsPickerSel = null
   const name = was.dataset.name
   hsPickerSelect([...grid.querySelectorAll(HS_PICKER_TILE)].find((t) => t.dataset.name === name) || null)

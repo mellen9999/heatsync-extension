@@ -123,7 +123,10 @@ export function createFakeIdb(store = { dbs: new Map() }) {
     /** put records straight into a store (creating it), as a past session would have left them */
     seed(dbName, storeName, records) {
       let rec = dbs.get(dbName)
-      if (!rec) dbs.set(dbName, (rec = { version: 1, data: new Map() }))
+      if (!rec) {
+        rec = { version: 1, data: new Map() }
+        dbs.set(dbName, rec)
+      }
       if (!rec.data.has(storeName)) rec.data.set(storeName, new Map())
       for (const [k, v] of Object.entries(records)) rec.data.get(storeName).set(k, structuredClone(v))
     },

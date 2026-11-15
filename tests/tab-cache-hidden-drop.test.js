@@ -31,7 +31,10 @@ function rig() {
     doc,
     cache,
     () => cache.clear(),
-    (fn, ms) => (timers.set(++id, { fn, ms }), id),
+    (fn, ms) => {
+      timers.set(++id, { fn, ms })
+      return id
+    },
     (t) => timers.delete(t),
   )
   const flip = (hidden) => {

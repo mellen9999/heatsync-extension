@@ -27,3 +27,7 @@ paths = ['''lofi_lc\.html''', '''build\.log''']
 [[allowlists]]
 description = "test fixtures: empty-string and nullish keys for userKey(), nothing secret"
 paths = ['''tests/user-key\.test\.js''']
+
+[[allowlists]]
+description = "render harness channel key ('twitch/probechan' is a platform/channel map key, not a credential)"
+regexes = ['''twitch/probechan''']

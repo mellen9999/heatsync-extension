@@ -1487,19 +1487,30 @@ function showEmotePicker(tab = null) {
   // Search functionality (debounced). When external chips are on the query
   // fires the provider APIs (7TV v4 / BTTV / FFZ) in parallel. Local-only
   // mode keeps the original instant filter behaviour.
+  // Local matches (your set, the channel, globals) need no network, so they
+  // paint on the next frame — the 200ms wait used to sit in front of them too,
+  // and every keystroke showed the previous query's grid for that long. Only
+  // the provider requests keep the debounce, so a typed word is one request
+  // per provider, not one per letter. mcCurrentQuery moves with the keystroke:
+  // a provider page for an older query is dropped on arrival (its .then
+  // compares against it), and mcRerenderSearch only folds in provider
+  // results recorded for exactly this query.
   let _searchTimer = null
+  let _searchFrame = 0
   const searchInput = document.getElementById('hs-mc-emote-search')
   searchInput?.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim()
+    mcCurrentQuery = query
+    if (!_searchFrame) {
+      _searchFrame = requestAnimationFrame(() => {
+        _searchFrame = 0
+        rerenderSearch(mcCurrentQuery)
+      })
+    }
     cleanup.clearTimeout(_searchTimer)
     _searchTimer = cleanup.setTimeout(() => {
-      const query = e.target.value.toLowerCase().trim()
-      mcCurrentQuery = query
-      if (query && mcHasExternalSource()) {
-        mcTriggerProviderSearches(query)
-      } else {
-        mcTriggerProviderSearches('')
-      }
-      rerenderSearch(query)
+      if (mcCurrentQuery !== query) return
+      mcTriggerProviderSearches(query && mcHasExternalSource() ? query : '')
     }, 200)
   })
 

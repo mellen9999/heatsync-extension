@@ -417,10 +417,21 @@ export async function composerAndPickerCheck() {
 
     await key('End')
     // End scrolls against estimated chunk heights; the chunks it fills and the images in them then
-    // reflow the grid, and the cursor puts its tile back on the next frame. Wait for that to settle
-    // rather than read the frame in between (CI 11-09: inView false, scrollTop 995, right after).
-    await until(p, async () => (await grid()).inView, 3000)
-    st = await grid()
+    // reflow the grid, and the cursor puts its tile back on the next frame. So one in-view read can
+    // come before a reflow and the next one land inside it (CI 11-15: in view, then top 689 out of
+    // view for one frame, back at 1107 by the next). Judge the read that held still across two polls.
+    let endSeen = ''
+    await until(
+      p,
+      async () => {
+        st = await grid()
+        const seen = `${st.inView}/${st.scrollTop}/${st.top}`
+        const settled = st.inView && seen === endSeen
+        endSeen = seen
+        return settled
+      },
+      4000,
+    )
     if (st.idx !== st.total - 1 || st.total < 200 || !st.inView || !st.adIsSel) {
       fail(`End should land on the last tile, in view: ${JSON.stringify({ ...st, names: undefined })}`)
     }

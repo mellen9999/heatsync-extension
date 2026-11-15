@@ -960,11 +960,11 @@ async function fetch7TVChannelEmotes(channelName, channelId = null, platform = '
       }
 
       // No twitch id = transient (same as the kick and BTTV paths). The old
-      // username fallback put the NAME into /users/twitch/<id> and
-      // /users/<id>, both 404 for a name, and a double 404 reads as "this
-      // channel has no 7TV" — an authoritative [] that the refresh salvage
-      // can't tell from a real empty set, so a lookup blip wiped the
-      // channel's 7TV emotes until the next refetch.
+      // username fallback put the NAME into /users/twitch/<id> (404) and
+      // /users/<id> (400 — it takes a 7TV id), so it could never succeed and
+      // only spent two requests. Should the second ever 404 too, the double
+      // 404 would read as "this channel has no 7TV", an authoritative [] the
+      // refresh salvage can't tell from a real empty set.
       if (!identifier) {
         log(' 7TV: Could not resolve Twitch user ID for', channelName)
         return null

@@ -27,8 +27,7 @@ describe('picker search: local first, providers debounced', () => {
 
   test('the query moves with the keystroke; provider requests stay debounced', () => {
     expect(HANDLER.indexOf('mcCurrentQuery = query')).toBeLessThan(HANDLER.indexOf('requestAnimationFrame('))
-    expect(HANDLER.slice(HANDLER.indexOf('cleanup.setTimeout(')))
-      .toContain('mcTriggerProviderSearches(')
+    expect(HANDLER.slice(HANDLER.indexOf('cleanup.setTimeout('))).toContain('mcTriggerProviderSearches(')
     expect(HANDLER).toMatch(/\}, 200\)/)
   })
 })

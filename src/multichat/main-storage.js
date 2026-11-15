@@ -1421,7 +1421,17 @@ function detectOfflineState() {
       // flips this off). Show immediately, no wait. Two more signals keep it
       // honest: chat actively flowing (server only relays for live) and the
       // non-live opt-in.
-      const liveChatFramePresent = !!frameEl && !isReplayChat
+      // An EMPTY src is not proof of live, though: youtube also stamps the
+      // frame for a past stream's chat replay and, in a background tab, never
+      // fills its iframe src — the next playlist video autoplaying behind
+      // another tab mounted a src-less frame, the first visible tick read it
+      // as live, dropped hs-offline and the sidebar sweep took the playlist
+      // with it. A resolved src decides on its own; an empty one counts only
+      // while the player itself says live (#movie_player.ytp-live). Flowing
+      // messages below still show the panel on a live stream if that class
+      // ever goes missing.
+      const ytPlayerLive = !!document.querySelector('#movie_player.ytp-live')
+      const liveChatFramePresent = !!frameEl && !isReplayChat && (!!chatSrc || ytPlayerLive)
       const ytAutoLiveMsgs = _ytFlowing
       const ownsChat = ytOwnsChat()
       document.body.classList.toggle('hs-yt-owns-chat', ownsChat)

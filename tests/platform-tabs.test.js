@@ -37,6 +37,16 @@ describe('platform picker tabs', () => {
       expect(back).toContain(undone)
   })
 
+  test('a src-less chat frame is not live unless the player says so', () => {
+    // a past stream's replay frame stamped in a background tab never gets its
+    // src; reading it as live hid the playlist on the next autoplayed video
+    const storage = src('main-storage.js')
+    expect(storage).toContain(
+      'const liveChatFramePresent = !!frameEl && !isReplayChat && (!!chatSrc || ytPlayerLive)',
+    )
+    expect(storage).toContain("document.querySelector('#movie_player.ytp-live')")
+  })
+
   test('the hide rules and checkYtLive both stand down while it is up', () => {
     expect(css).toContain('body:not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame#chat')
     expect(css).toContain('body.hs-yt-peek ytd-live-chat-frame#chat {')

@@ -161,6 +161,14 @@
       location.pathname.startsWith('/live_chat') &&
       !location.pathname.startsWith('/live_chat_replay'))
 
+  // startChatHidden: a tab opens hidden until \ shows chat in it (mirrored by
+  // the startChatHidden applier). A popout is all chat and never starts hidden.
+  try {
+    if (!isPopout && String(readLS('startChatHidden', '0')) === '1' && !sessionStorage.getItem('hs-chat-shown-local')) {
+      chatPosition = 'hidden'
+    }
+  } catch {}
+
   // Only prepaint where chat will actually mount — otherwise the black bar
   // shows for up to 4s on home/directory/browse/search/shorts/etc. while the
   // user is just browsing (no chat to smooth in). Pathname-only (document_start),

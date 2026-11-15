@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "з якого боку плеєра прикріплюється панель чату — hidden ховає її (клавіша \\ перемикає)"
   },
+  "mc_settings_start_hidden": {
+    "message": "запускати прихованим"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "кожна вкладка відкривається з прихованим чатом. \\ показує його в цій вкладці. доти сторінка лишається як є"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: смуга пропозицій"
   },

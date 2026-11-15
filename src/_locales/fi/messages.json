@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "kummalle puolelle soitinta chat-paneeli kiinnittyy — hidden piilottaa sen (\\-näppäin vaihtaa)"
   },
+  "mc_settings_start_hidden": {
+    "message": "aloita piilotettuna"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "jokainen välilehti avautuu chat piilotettuna. \\ näyttää sen siinä välilehdessä. siihen asti sivu pysyy ennallaan"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: ehdotuskaista"
   },

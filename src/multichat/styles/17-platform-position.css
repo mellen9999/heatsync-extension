@@ -12,10 +12,11 @@
        so the scrubber/volume/pause controls never appear. We body-mount our
        own panel (never inside #chat-container), so nuking native chat
        wherever YT parks it is always safe — except on a premiere or scheduled stream
-       (body.hs-yt-owns-chat), where YouTube owns the chat. */
-    body:not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame#chat,
-    body:not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame,
-    body:not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-watch-flexy #chat-container {
+       (body.hs-yt-owns-chat), where YouTube owns the chat, and while our panel is
+       hidden (hs-chat-hidden), when youtube's own chat is the only one left. */
+    body:not(.hs-yt-owns-chat):not(.hs-yt-peek):not(.hs-chat-hidden):has(#hs-mc-container) ytd-live-chat-frame#chat,
+    body:not(.hs-yt-owns-chat):not(.hs-yt-peek):not(.hs-chat-hidden):has(#hs-mc-container) ytd-live-chat-frame,
+    body:not(.hs-yt-owns-chat):not(.hs-yt-peek):not(.hs-chat-hidden):has(#hs-mc-container) ytd-watch-flexy #chat-container {
       display: none !important;
     }
 

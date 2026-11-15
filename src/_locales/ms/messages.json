@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "sebelah mana pemain panel sembang dilekatkan — hidden menyorokkannya (kekunci \\ togol)"
   },
+  "mc_settings_start_hidden": {
+    "message": "mula tersembunyi"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "setiap tab dibuka dengan chat tersembunyi. \\ menunjukkannya dalam tab itu. sehingga itu halaman kekal seperti asal"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: jalur cadangan"
   },

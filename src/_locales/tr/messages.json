@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "sohbet panelinin oynatıcının hangi tarafına yaslanacağı — hidden gizler (\\ tuşu açıp kapatır)"
   },
+  "mc_settings_start_hidden": {
+    "message": "gizli başlat"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "her sekme sohbet gizli açılır. \\ o sekmede gösterir. o zamana kadar sayfa olduğu gibi kalır"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: öneri şeridi"
   },

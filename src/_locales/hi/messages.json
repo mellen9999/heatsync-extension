@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "चैट पैनल प्लेयर की किस तरफ़ लगे — hidden उसे छिपा देता है (\\ कुंजी से टॉगल)"
   },
+  "mc_settings_start_hidden": {
+    "message": "छिपा हुआ शुरू करें"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "हर टैब चैट छिपी हुई के साथ खुलता है। \\ उसे उस टैब में दिखाता है। तब तक पेज जैसा है वैसा रहता है"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: सुझाव पट्टी"
   },

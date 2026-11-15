@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "le côté du lecteur où se fixe le panneau de chat — hidden le range (touche \\ pour basculer)"
   },
+  "mc_settings_start_hidden": {
+    "message": "démarrer masqué"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "chaque onglet s'ouvre avec le chat masqué. \\ l'affiche dans cet onglet. d'ici là la page reste telle quelle"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube : bandeau de suggestions"
   },

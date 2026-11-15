@@ -1024,6 +1024,12 @@
   "mc_settings_chat_position_desc": {
     "message": "which side of the player the chat panel docks to — hidden tucks it away (\\ key toggles)"
   },
+  "mc_settings_start_hidden": {
+    "message": "start hidden"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "every tab opens with chat hidden. \\ shows it in that tab. the page keeps its own layout until then"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: suggestions strip"
   },

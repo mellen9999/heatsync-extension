@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "panel chat gắn vào bên nào của trình phát — ẩn sẽ giấu đi (phím \\ để bật/tắt)"
   },
+  "mc_settings_start_hidden": {
+    "message": "bắt đầu ẩn"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "mỗi tab mở với chat bị ẩn. \\ hiện nó trong tab đó. cho đến lúc đó trang giữ nguyên"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: dải gợi ý"
   },

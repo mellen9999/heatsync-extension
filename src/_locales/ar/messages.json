@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "أي جانب من المشغّل تلتصق به لوحة الدردشة — hidden يخفيها (المفتاح \\ يبدّل)"
   },
+  "mc_settings_start_hidden": {
+    "message": "البدء مخفيًا"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "كل تبويب يفتح والدردشة مخفية. \\ يظهرها في ذلك التبويب. حتى ذلك الحين تبقى الصفحة كما هي"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: شريط الاقتراحات"
   },

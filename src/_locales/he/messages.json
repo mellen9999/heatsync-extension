@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "לאיזה צד של הנגן פאנל הצ'אט נצמד — hidden מסתיר אותו (מקש \\ מחליף)"
   },
+  "mc_settings_start_hidden": {
+    "message": "להתחיל מוסתר"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "כל לשונית נפתחת עם צ'אט מוסתר. \\ מציג אותו בלשונית הזו. עד אז הדף נשאר כמו שהוא"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: פס הצעות"
   },

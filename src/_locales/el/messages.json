@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "σε ποια πλευρά του player δένεται το πάνελ chat — το hidden το κρύβει (το πλήκτρο \\ εναλλάσσει)"
   },
+  "mc_settings_start_hidden": {
+    "message": "έναρξη κρυφό"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "κάθε καρτέλα ανοίγει με κρυφό chat. το \\ το εμφανίζει σε εκείνη την καρτέλα. μέχρι τότε η σελίδα μένει ως έχει"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: λωρίδα προτάσεων"
   },

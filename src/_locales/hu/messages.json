@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "a lejátszó melyik oldalára dokkoljon a chatpanel — az elrejtve eltünteti (a \\ billentyű váltja)"
   },
+  "mc_settings_start_hidden": {
+    "message": "rejtve indul"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "minden lap rejtett chattel nyílik. a \\ megjeleníti abban a lapban. addig az oldal változatlan marad"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: javaslatsáv"
   },

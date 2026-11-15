@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "saang gilid ng player dumidikit ang chat panel — itinatago ito ng hidden (ang \\ key ang nagto-toggle)"
   },
+  "mc_settings_start_hidden": {
+    "message": "simulang nakatago"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "bawat tab ay bubukas na nakatago ang chat. ipapakita ito ng \\ sa tab na iyon. hanggang doon, walang babaguhin sa page"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: strip ng suhestiyon"
   },

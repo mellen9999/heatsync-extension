@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "聊天面板停靠在播放器哪一側 — 隱藏則收起（按 \\ 鍵切換）"
   },
+  "mc_settings_start_hidden": {
+    "message": "啟動時隱藏"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "每個分頁開啟時聊天都是隱藏的。\\ 在該分頁顯示它。在此之前頁面維持原樣"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube：推薦欄"
   },

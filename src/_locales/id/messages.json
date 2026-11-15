@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "sisi player tempat panel chat menempel — hidden menyembunyikannya (tombol \\ untuk toggle)"
   },
+  "mc_settings_start_hidden": {
+    "message": "mulai tersembunyi"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "setiap tab dibuka dengan chat tersembunyi. \\ menampilkannya di tab itu. sampai saat itu halaman tetap seperti aslinya"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: strip saran"
   },

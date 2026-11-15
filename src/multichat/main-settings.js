@@ -538,6 +538,14 @@ const _APPLIERS = {
       applyPlatformPositionOverrides()
     } catch (_) {}
   },
+  startChatHidden: (v) => {
+    // early-layout.js reads this at document_start to skip the prepaint in a tab that starts hidden
+    try {
+      localStorage.setItem('hs_layout_startChatHidden', v ? '1' : '0')
+    } catch (_) {}
+    // on: the \ key is the only way back, so the edge pill goes; off: it returns
+    if (chatPosition === 'hidden') ensureChatRestorePill(true)
+  },
   ytNonLiveChat: (v) => {
     // YT-only, default ON: show the panel on every YT page (home/VOD/search),
     // not just livestreams. Opting out hides it everywhere except livestreams.

@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "с какой стороны от плеера крепится панель чата — hidden прячет её (клавиша \\ переключает)"
   },
+  "mc_settings_start_hidden": {
+    "message": "запускать скрытым"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "каждая вкладка открывается со скрытым чатом. \\ показывает его в этой вкладке. до тех пор страница остаётся как есть"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: полоса рекомендаций"
   },

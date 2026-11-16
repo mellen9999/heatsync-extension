@@ -15,6 +15,7 @@ import { s2Kick, s2Twitch, s2Youtube } from './s2-spa'
 import { s3Sw } from './s3-sw'
 import { s4Caps } from './s4-caps'
 import { s5Outage } from './s5-outage'
+import { s6Settings } from './s6-settings'
 import { s7Host } from './s7-host'
 import { s8Soak } from './s8-soak'
 
@@ -26,6 +27,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s3-sw', s3Sw],
   ['s4-caps', s4Caps],
   ['s5-outage', s5Outage],
+  ['s6-settings', s6Settings],
   ['s7-host', s7Host],
   ['s8-soak', s8Soak],
 ]

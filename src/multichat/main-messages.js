@@ -2180,10 +2180,9 @@ function stampZebra(div, m, prevDiv) {
     div.classList.toggle('hs-zebra', stripe) // the shared stripe marker (styles/21-brand-rows.css)
   }
 }
-// Re-derive every stripe from `from` onward. A row inserted mid-list (a kick
-// line landing between twitch lines by timestamp) used to leave everything
-// after it a beat out of phase — two grey rows or two black ones in a row —
-// because each stripe was only computed against the row above at insert time.
+// Re-derive every stripe from `from` onward, each against the row above. It
+// moves the newest rows' stripes, so the render pass settles with the upward
+// twin below; this is left for that pass's rare never-striped-row case.
 function zebraRepaint(msgsEl, from) {
   let prev = from ? from.previousElementSibling : null
   // the row to alternate against is the last counted one: not the player, not a notice
@@ -2210,7 +2209,7 @@ function zebraRepaint(msgsEl, from) {
 // Re-derive stripes UPWARD from `anchor`, the first row below a gap a removed
 // row left (null = the bottom). The anchor and everything under it keep their
 // stripes, since the newest rows are the ones being read; the older rows above
-// realign to them. zebraRepaint is the downward twin, for a row inserted mid-list.
+// realign to them. It also settles rows inserted mid-list (history weaving in).
 // A merged tab drops a fast platform's old rows from anywhere in the list on
 // every render, which used to leave two same-coloured rows touching.
 function zebraRepaintUp(msgsEl, anchor) {
@@ -2713,6 +2712,37 @@ let _thrashStreak = 0
 let _thrashLoggedAt = 0
 let _unpinnedStreak = 0
 let _unpinLoggedAt = 0
+// One observer batch: stripe flips the reader could see, and rows inserted above
+// another row. Not a flicker: a row striped in the same task it was inserted in
+// (never painted with the old stripe), or a row off screen (an older row realigning
+// above a row that became filled, say). `inView(row)` says whether a row is showing.
+function zebraFlickerTally(ms, msgsEl, inView) {
+  const added = new Set()
+  let mid = 0
+  for (const m of ms) {
+    if (m.type !== 'childList') continue
+    for (const n of m.addedNodes) {
+      added.add(n)
+      if (n.nextSibling) mid++
+    }
+  }
+  let flips = 0
+  for (const m of ms) {
+    if (m.type !== 'attributes' || m.target.parentElement !== msgsEl || added.has(m.target)) continue
+    const was = (m.oldValue || '').includes('hs-mc-zebra')
+    if (was !== m.target.classList.contains('hs-mc-zebra') && inView(m.target)) flips++
+  }
+  return { flips, mid }
+}
+// Whether a row shows in the list's viewport. Read only for a row that flipped.
+function rowInView(msgsEl) {
+  let view = null
+  return (row) => {
+    view ||= msgsEl.getBoundingClientRect()
+    const r = row.getBoundingClientRect()
+    return r.bottom > view.top && r.top < view.bottom
+  }
+}
 function domThrashCheck() {
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl || (document.hidden && !document.body.classList.contains('hs-popout'))) return
@@ -2729,15 +2759,9 @@ function domThrashCheck() {
     // inserts so a flicker report says which one is driving it.
     _zebraObs?.disconnect()
     _zebraObs = new MutationObserver((ms) => {
-      for (const m of ms) {
-        if (m.type === 'attributes') {
-          if (m.target.parentElement !== msgsEl) continue
-          const was = (m.oldValue || '').includes('hs-mc-zebra')
-          if (was !== m.target.classList.contains('hs-mc-zebra')) _zebraFlips++
-        } else {
-          for (const n of m.addedNodes) if (n.nextSibling) _midInserts++
-        }
-      }
+      const t = zebraFlickerTally(ms, msgsEl, rowInView(msgsEl))
+      _zebraFlips += t.flips
+      _midInserts += t.mid
     })
     _zebraObs.observe(msgsEl, {
       attributes: true,

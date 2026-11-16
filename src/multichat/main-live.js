@@ -524,7 +524,7 @@ function _renderMessagesImpl(id, opts) {
   // placed, however many older rows sit out of order below it. In the sorted
   // case this is exactly "after the previous desired row" (the O(1) path).
   let prevNode = null
-  let zebraFrom = null // first row whose stripe may now be out of phase
+  let zebraMid = false // a row landed mid-list: the rows around it may be out of phase
   let zebraRebuilt = false // a stale row was rebuilt in place
   // The lowest row already on screen. A LIVE line (it carries an ord) is
   // never slotted above one: a kick line a beat behind the twitch line it
@@ -627,7 +627,7 @@ function _renderMessagesImpl(id, opts) {
       after = settledEnd.nextSibling
     }
     stampZebra(div, m, prevNode)
-    if (after) zebraFrom = zebraFrom || div
+    if (after) zebraMid = true
     msgsEl.insertBefore(div, after)
     _indexMessageDiv(div, key)
     prevNode = div
@@ -635,8 +635,12 @@ function _renderMessagesImpl(id, opts) {
 
   // Re-pin yt-status notices to the very end.
   for (const ex of detachedExtras) msgsEl.appendChild(ex)
-  if (zebraFrom) zebraRepaint(msgsEl, zebraFrom)
-  if (zebraRebuilt) zebraRepaintUp(msgsEl, null)
+  // One upward pass, anchored on the newest row: the rows being read keep their
+  // stripes and the older ones above realign. A downward pass from a mid insert
+  // flipped every row under it, the visible tail included, whenever an odd
+  // number of history rows wove in above (each backfill batch after a channel
+  // switch flickered the whole screen).
+  if (zebraMid || zebraRebuilt) zebraRepaintUp(msgsEl, null)
 
   // Final safety net: hard-cap DOM so no future regression can OOM the tab.
   // toRender is already sliced to 500; anything beyond that + yt-status

@@ -97,13 +97,6 @@ test('live tabs reserve room for the live dot so the unread count never sits und
   expect(css).toMatch(/\.hs-mc-tab\[data-live="true"\] \{\s*padding-inline-end: 16px !important/)
 })
 
-test('a row inserted mid-list restripes everything after it', () => {
-  const src = mainSource()
-  expect(src).toMatch(/function zebraRepaint\(msgsEl, from\)/)
-  expect(src).toMatch(/if \(after\) zebraFrom = zebraFrom || div/)
-  expect(src).toMatch(/if \(zebraFrom\) zebraRepaint\(msgsEl, zebraFrom\)/)
-})
-
 test('tabs re-assert channel interest so a restarted service worker cannot strand an older tab', () => {
   const irc = readFileSync(new URL('../src/multichat/irc.js', import.meta.url), 'utf8')
   const bg = bgSource()

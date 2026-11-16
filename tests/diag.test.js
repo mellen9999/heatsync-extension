@@ -268,6 +268,13 @@ describe('host-page CSP violations', () => {
     expect(isOurCspViolation({ blockedURI: 'data' })).toBe(false)
   })
 
+  test('does not claim a report-only policy: it blocked nothing', () => {
+    // youtube ships img-src as report-only; the emote still drew
+    const uri = 'https://static-cdn.jtvnw.net/emoticons/v2/1/default/dark/1.0'
+    expect(isOurCspViolation({ blockedURI: uri, disposition: 'report' })).toBe(false)
+    expect(isOurCspViolation({ blockedURI: uri, disposition: 'enforce' })).toBe(true)
+  })
+
   test('survives junk input', () => {
     expect(isOurCspViolation(null)).toBe(false)
     expect(isOurCspViolation({})).toBe(false)

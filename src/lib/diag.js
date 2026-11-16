@@ -228,13 +228,16 @@ const CSP_MAX_REPORTS = 8
 const _cspSeen = new Set()
 
 /**
- * Is this violation caused by something we injected, rather than the host
- * page's own business? Pure, so the classification is testable.
- * @param {{blockedURI?: string, sourceFile?: string}} ev
+ * Did the host page block something we injected, rather than its own business?
+ * Pure, so the classification is testable.
+ * @param {{blockedURI?: string, sourceFile?: string, disposition?: string}} ev
  * @returns {boolean}
  */
 function isOurCspViolation(ev) {
   if (!ev) return false
+  // A report-only policy (youtube's img-src, 11-16) blocks nothing: the image
+  // still loads. Claiming it filed "blocked" errors for emotes on screen.
+  if (ev.disposition === 'report') return false
   const src = typeof ev.sourceFile === 'string' ? ev.sourceFile : ''
   if (src.includes('chrome-extension://') || src.includes('moz-extension://')) return true
   const blocked = typeof ev.blockedURI === 'string' ? ev.blockedURI : ''

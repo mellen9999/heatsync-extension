@@ -1338,7 +1338,7 @@ function detectOfflineState() {
   if (isKick) {
     let kickLiveFound = false
     function checkKickLive() {
-      const isLive = !!document.querySelector('video')
+      const isLive = !!shownVideo()
       const liveTab = tabBarElement?.querySelector('[data-tab="live"]')
       if (liveTab) liveTab.dataset.live = String(isLive)
       const curCh = getCurrentChannel()?.toLowerCase()

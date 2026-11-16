@@ -44,8 +44,19 @@ function playerEl() {
     // falling through to the generic <video> lookup flagged every healthy
     // watch page as collapsed and handed it back to native layout.
     document.querySelector('#movie_player') ||
-    document.querySelector('video')?.closest('div')
+    shownVideo()?.closest('div')
   )
+}
+
+/**
+ * The first <video> the page draws. Not the first in the DOM: kick keeps hidden ones (its ad
+ * player even on an offline channel, and the pages it hid on in-page nav), and the panel's own
+ * media embeds are videos too.
+ */
+function shownVideo() {
+  for (const v of document.querySelectorAll('video'))
+    if (v.getClientRects().length && !v.closest('#hs-mc-container')) return v
+  return null
 }
 
 /**

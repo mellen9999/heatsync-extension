@@ -191,13 +191,15 @@ export async function ringSince(p: any, t0: number) {
   const recent = arr.filter((e) => e.t >= t0)
   const counts: Record<string, number> = {}
   for (const e of recent) counts[e.e] = (counts[e.e] || 0) + 1
-  // ingest_gap fires on any 3s+ pause after a burst; the overlay itself only treats 10s+ as an
-  // outage. A shorter one counts when its probe found the worker holding newer lines than the
-  // tab (delivery died), not when nothing was said upstream either (a chat that paused).
-  const delivered = (e: any) =>
-    e.e !== 'ingest_gap' ||
-    e.gapS >= 10 ||
-    recent.some((x) => x.e === 'ingest_gap_probe' && x.ch === e.ch && x.t >= e.t && x.t - e.t < 5000 && x.bgAheadS >= 2)
+  // ingest_gap fires on any 3s+ pause after a burst. Its probe asks the worker right after:
+  // the worker holding newer lines than the tab = delivery died (ours); not = nothing was
+  // said upstream either (a chat that paused). With no probe, only a 10s+ gap counts (the
+  // overlay's own outage line).
+  const delivered = (e: any) => {
+    if (e.e !== 'ingest_gap') return true
+    const probe = recent.find((x) => x.e === 'ingest_gap_probe' && x.ch === e.ch && x.t >= e.t && x.t - e.t < 5000)
+    return probe ? probe.bgAheadS >= 2 : e.gapS >= 10
+  }
   const bad = recent.filter((e) => (BAD_RING as readonly string[]).includes(e.e) && delivered(e))
   return { recent, counts, bad }
 }

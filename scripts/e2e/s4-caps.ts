@@ -18,6 +18,7 @@ import {
   launch,
   liveChannels,
   ok,
+  panel,
   ringSince,
   rowsFlow,
   type SavedChannel,
@@ -82,8 +83,7 @@ export async function s4Caps() {
   scenario('s4 more channels than the caches hold')
   const tw = await liveChannels('twitch', 18)
   const kk = await liveChannels('kick', 7)
-  const watched = tw[0]
-  const key = `twitch/${watched}`
+  let watched = tw[0]
   const saved: SavedChannel[] = [
     ...tw.map((t) => ({ id: t, twitch: t })),
     ...kk.map((k) => ({ id: `k-${k}`, kick: k })),
@@ -98,6 +98,26 @@ export async function s4Caps() {
     if (!(await waitPanel(p))) return bad('panel never mounted on the watched stream')
     if (!(await rowsFlow(p, 45_000))) return bad('the watched stream never flowed')
     await sleep(15_000)
+    // watch the busiest channel with the biggest set: a 17-emote channel proves nothing
+    const sizes: Record<string, number> = await env.worker().evaluate(
+      (names: string[]) => {
+        const out: Record<string, number> = {}
+        // @ts-ignore — worker global
+        for (const n of names)
+          out[n] = Array.isArray(channelEmotesMap[`twitch/${n}`]) ? channelEmotesMap[`twitch/${n}`].length : 0
+        return out
+      },
+      tw.slice(0, 6),
+    )
+    const best = Object.entries(sizes).sort((a, b) => b[1] - a[1])[0]?.[0]
+    if (best && best !== watched) {
+      watched = best
+      await p.goto(`https://www.twitch.tv/${watched}`, { waitUntil: 'domcontentloaded' })
+      if (!(await waitPanel(p)) || !(await rowsFlow(p, 45_000))) return bad(`${watched} never flowed`)
+      await sleep(15_000)
+    }
+    const key = `twitch/${watched}`
+    info(`watching ${watched} (sets: ${JSON.stringify(sizes)})`)
     const s0 = await cacheState(env, key)
     const e0 = await emoteText(p, s0.names)
     info(`start: ${JSON.stringify({ held: s0.held, set: s0.n, ...e0 })}`)
@@ -107,7 +127,7 @@ export async function s4Caps() {
     const t0 = Date.now()
 
     const others = saved.filter((c) => c.id !== watched)
-    for (let lap = 0; lap < 2; lap++) {
+    for (let lap = 0; lap < Number(process.env.E2E_S4_LAPS || 2); lap++) {
       for (let i = 0; i < others.length; i++) {
         const tab = await p.$(`.hs-mc-tab[data-tab="${others[i].id}"]`)
         if (!tab) {
@@ -122,7 +142,11 @@ export async function s4Caps() {
         // back to the stream every few channels, the way a reader glances back
         if (i % 6 === 5 || i === others.length - 1) {
           await p.click('.hs-mc-tab[data-tab="live"]').catch(() => {})
-          await sleep(8000)
+          await sleep(3000)
+          if (!(await rowsFlow(p, 30_000))) {
+            bad(`lap ${lap}: back on the stream after ${i + 1} other channels, its chat is still`, await panel(p))
+            await shot(p, `s4-still-lap${lap}-${i}`)
+          }
           const s = await cacheState(env, key)
           const e = await emoteText(p, s.names.length ? s.names : s0.names)
           info(
@@ -140,7 +164,9 @@ export async function s4Caps() {
     }
     const end = await cacheState(env, key)
     if (end.has)
-      ok(`${key} kept its emote set through 2 laps of ${others.length} other channels (cache held ${end.held})`)
+      ok(
+        `${key} kept its emote set through ${Number(process.env.E2E_S4_LAPS || 2)} laps of ${others.length} other channels (cache held ${end.held})`,
+      )
     const ring = await ringSince(p, t0)
     if (ring.bad.length) bad('overlay watchdogs fired during the churn', ring.bad.slice(0, 6))
     if (errs.length) bad('page errors', errs.slice(0, 5))

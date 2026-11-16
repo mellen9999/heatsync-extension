@@ -10,6 +10,7 @@
  *   - the panel's listeners, and the page's window/document listeners, stay flat
  *   - the panel's nodes per row stay flat (a slow chat fills to the row cap: count alone grows)
  *   The extension process's memory is logged as context, not judged: v8 keeps freed pages.
+ *   Chrome's own breakdown of it (memory-infra) says which allocator grew.
  *
  *   E2E_S8_MIN=60 bun scripts/e2e/run.ts --only s8   # inside heavy, under a MemoryMax scope
  */
@@ -129,38 +130,99 @@ async function listenerCounts(env: Env, p: any) {
   }
 }
 
-/** The worker's js heap after a full gc, in MB, over the browser's own devtools port. */
+/** A raw devtools socket: the browser's own endpoint or one target's. */
+async function cdp(env: Env, pick: (port: string) => Promise<string | undefined>) {
+  const port = readFileSync(`${env.profile}/DevToolsActivePort`, 'utf8').split('\n')[0]
+  const url = await pick(port)
+  if (!url) return null
+  const ws = new WebSocket(url)
+  await new Promise((res, rej) => {
+    ws.onopen = res
+    ws.onerror = rej
+  })
+  let id = 0
+  const on = (method: string, cb: (params: any) => void) =>
+    ws.addEventListener('message', (ev: MessageEvent) => {
+      const m = JSON.parse(String(ev.data))
+      if (m.method === method) cb(m.params)
+    })
+  const call = (method: string, params: object = {}) =>
+    new Promise<any>((res) => {
+      const my = ++id
+      ws.addEventListener('message', function got(ev: MessageEvent) {
+        const m = JSON.parse(String(ev.data))
+        if (m.id !== my) return
+        ws.removeEventListener('message', got)
+        res(m.result)
+      })
+      ws.send(JSON.stringify({ id: my, method, params }))
+    })
+  return { call, on, close: () => ws.close() }
+}
+
+/** The worker's js heap after a full gc, in MB. */
 async function workerHeapMb(env: Env): Promise<number> {
   try {
-    const port = readFileSync(`${env.profile}/DevToolsActivePort`, 'utf8').split('\n')[0]
-    const list: any[] = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()
-    const t = list.find((x) => x.type === 'service_worker' && x.url.includes(env.extId))
-    if (!t?.webSocketDebuggerUrl) return -1
-    const ws = new WebSocket(t.webSocketDebuggerUrl)
-    await new Promise((res, rej) => {
-      ws.onopen = res
-      ws.onerror = rej
+    const w = await cdp(env, async (port) => {
+      const list: any[] = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()
+      return list.find((x) => x.type === 'service_worker' && x.url.includes(env.extId))?.webSocketDebuggerUrl
     })
-    let id = 0
-    const call = (method: string) =>
-      new Promise<any>((res) => {
-        const my = ++id
-        ws.addEventListener('message', function on(ev: MessageEvent) {
-          const m = JSON.parse(String(ev.data))
-          if (m.id !== my) return
-          ws.removeEventListener('message', on)
-          res(m.result)
-        })
-        ws.send(JSON.stringify({ id: my, method }))
-      })
-    await call('HeapProfiler.enable')
-    await call('HeapProfiler.collectGarbage')
-    const r = await call('Runtime.getHeapUsage')
-    ws.close()
+    if (!w) return -1
+    await w.call('HeapProfiler.enable')
+    await w.call('HeapProfiler.collectGarbage')
+    const r = await w.call('Runtime.getHeapUsage')
+    w.close()
     return Math.round((r.usedSize / 1048576) * 10) / 10
   } catch {
     return -1
   }
+}
+
+/**
+ * Chrome's own memory breakdown for one process (a memory-infra dump): its footprint and
+ * each allocator's size in MB (malloc, partition_alloc, v8, blink_gc, ...), two levels deep.
+ * What tells "v8 keeps freed pages" from a leak outside the js heap.
+ */
+async function memoryBreakdown(env: Env, pid: number): Promise<Record<string, number>> {
+  const out: Record<string, number> = {}
+  const b = await cdp(env, async (port) => (await (await fetch(`http://127.0.0.1:${port}/json/version`)).json()).webSocketDebuggerUrl).catch(() => null)
+  if (!b || !pid) return out
+  try {
+    const events: any[] = []
+    b.on('Tracing.dataCollected', (p) => events.push(...p.value))
+    const done = new Promise((res) => b.on('Tracing.tracingComplete', res))
+    await b.call('Tracing.start', {
+      traceConfig: { includedCategories: ['disabled-by-default-memory-infra'], memoryDumpConfig: { triggers: [] } },
+      transferMode: 'ReportEvents',
+    })
+    await b.call('Tracing.requestMemoryDump', { deterministic: true, levelOfDetail: 'detailed' })
+    await b.call('Tracing.end')
+    await Promise.race([done, sleep(20_000)])
+    const mb = (hex: unknown) => Math.round((Number.parseInt(String(hex), 16) / 1048576) * 10) / 10
+    for (const e of events) {
+      if (e.ph !== 'v' || e.pid !== pid) continue
+      const d = e.args?.dumps
+      if (d?.process_totals?.private_footprint_bytes) out.footprint = mb(d.process_totals.private_footprint_bytes)
+      for (const [name, node] of Object.entries<any>(d?.allocators || {})) {
+        const v = node?.attrs?.size?.value
+        // shared_memory's children are one per segment id: noise, the parent carries the total
+        if (v && name.split('/').length <= 2 && !name.startsWith('shared_memory/')) out[name] = mb(v)
+      }
+    }
+  } finally {
+    b.close()
+  }
+  return out
+}
+
+/** The allocators that grew most between two breakdowns. */
+function grewMost(a: Record<string, number>, b: Record<string, number>, n = 8) {
+  return Object.keys(b)
+    .map((k) => [k, Math.round((b[k] - (a[k] || 0)) * 10) / 10] as const)
+    .filter(([, d]) => d > 1)
+    .sort((x, y) => y[1] - x[1])
+    .slice(0, n)
+    .map(([k, d]) => `${k} +${d}`)
 }
 
 /** Lowest of the first and last three samples: one GC landing late moves neither. */
@@ -208,6 +270,8 @@ export async function s8Soak() {
     const ext: number[] = []
     const tree: number[] = []
     const heap: number[] = []
+    let firstDump: Record<string, number> | null = null
+    let lastDump: Record<string, number> = {}
     const ours: number[][] = pages.map(() => [])
     const host: number[][] = pages.map(() => [])
     const perRow: number[][] = pages.map(() => [])
@@ -233,6 +297,8 @@ export async function s8Soak() {
         ext.push(mem.ext)
         tree.push(mem.tree)
         heap.push(await workerHeapMb(env))
+        lastDump = await memoryBreakdown(env, mem.extPid)
+        firstDump ??= lastDump
         for (let j = 0; j < pages.length; j++) {
           const c = await listenerCounts(env, pages[j])
           ours[j].push(c.panel)
@@ -241,7 +307,7 @@ export async function s8Soak() {
         }
         const sw = await swRings(env)
         info(
-          `minute ${Math.round((Date.now() - t0) / 60_000)}: worker heap ${heap.at(-1)}MB (process ${mem.ext}MB), chromium ${mem.tree}MB, panel listeners ${ours.map((l) => l.at(-1)).join('/')}, window+document ${host.map((l) => l.at(-1)).join('/')}, nodes/row ${perRow.map((n) => n.at(-1)).join('/')}, worker ${JSON.stringify(sw)}`,
+          `minute ${Math.round((Date.now() - t0) / 60_000)}: worker heap ${heap.at(-1)}MB (process ${mem.ext}MB, footprint ${lastDump.footprint ?? '?'}MB), chromium ${mem.tree}MB, panel listeners ${ours.map((l) => l.at(-1)).join('/')}, window+document ${host.map((l) => l.at(-1)).join('/')}, nodes/row ${perRow.map((n) => n.at(-1)).join('/')}, worker ${JSON.stringify(sw)}`,
         )
       }
       rot++
@@ -255,6 +321,7 @@ export async function s8Soak() {
     else ok(`the worker heap held ${h.from}→${h.to}MB after warm-up`)
     const e = growth(ext)
     if (e) info(`the extension process ${e.from}→${e.to}MB (+${e.pct}%)`)
+    if (firstDump) info(`extension process, chrome's breakdown grew most: ${grewMost(firstDump, lastDump).join(', ') || 'nothing over 1MB'}`)
     const t = growth(tree)
     if (t) info(`chromium as a whole ${t.from}→${t.to}MB (+${t.pct}%, mostly the sites' own pages)`)
     for (let j = 0; j < pages.length; j++) {

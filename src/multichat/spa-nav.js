@@ -216,6 +216,7 @@ function fullSpaReinit() {
         channelId: ch.id,
         url: ch.youtube,
         videoId: link?.videoId || '',
+        keep: true, // still saved: init() resubscribes it, and other tabs show its history
       })
       .catch(() => {})
     clearYtPace(ch.id)

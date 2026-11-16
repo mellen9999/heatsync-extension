@@ -671,7 +671,7 @@ async function handleMessage(message, sender, sendResponse) {
     // Clean up storage
     if (channelId === 'global') {
       browser.storage.local.remove(['youtube_url'])
-    } else {
+    } else if (!message.keep) {
       delete youtubeChannelUrls[channelId]
       browser.storage.local.set({ youtube_channel_urls: { ...youtubeChannelUrls } })
       // Channel removed from config — drop its persisted history buffer too,

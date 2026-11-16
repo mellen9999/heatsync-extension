@@ -27,3 +27,9 @@ export function mcTwitchStillShown(name, channels, extra = []) {
   const same = (n) => typeof n === 'string' && n.trim().toLowerCase() === tw
   return (channels || []).some((ch) => same(ch?.twitch)) || extra.some(same)
 }
+
+/** True when this kick slug is a leg of a saved tab: the saved list owns its room, so a page tearing down never leaves it. */
+export function mcKickSaved(slug, channels) {
+  const k = typeof slug === 'string' ? slug.trim().toLowerCase() : ''
+  return !!k && (channels || []).some((ch) => typeof ch?.kick === 'string' && ch.kick.trim().toLowerCase() === k)
+}

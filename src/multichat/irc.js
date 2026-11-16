@@ -1679,8 +1679,12 @@ class KickChat extends ChatClient {
       chrome.runtime?.onMessage?.removeListener(this._listener)
       this._listener = null
     }
-    // Leave all channels
+    // Leave the channels only this page joined. A saved channel's room is shared by every
+    // tab (and the background drops its history on leave): a page rebuilding itself left
+    // the other tabs' saved kick chats silent and emptied until a watchdog rejoin.
+    const saved = typeof config !== 'undefined' ? config?.channels : null
     for (const username of this.channels.keys()) {
+      if (mcKickSaved(username, saved)) continue
       safeSendMessage({ type: 'ws_send', data: { type: 'channel:leave', platform: 'kick', channel: username } })
     }
     this.channels.clear()

@@ -1,6 +1,6 @@
 /**
- * s7 — the host page's own look: twitch's light and dark theme, youtube following the
- * system scheme, small and large windows, and browser zoom (css px shrink, pixels grow).
+ * s7 — the host page's own look: twitch's light and dark theme, youtube and kick following
+ * the system scheme, small and large windows, and browser zoom (css px shrink, pixels grow).
  *
  * Bugs of this shape that shipped: the first-run tour inherited twitch's light-theme ink
  * and went dark grey on black (6d555b5b), a panel measured before its host laid out
@@ -106,7 +106,7 @@ async function look(p: any) {
   })
 }
 
-async function runCase(site: 'twitch' | 'youtube', url: string, c: Case) {
+async function runCase(site: 'twitch' | 'youtube' | 'kick', url: string, c: Case) {
   // browser zoom = fewer css px across the same window, each drawn bigger
   const env = await launch({
     width: Math.round(c.width / c.zoom),
@@ -150,9 +150,11 @@ async function runCase(site: 'twitch' | 'youtube', url: string, c: Case) {
 export async function s7Host() {
   scenario('s7 host themes, sizes and zoom')
   const [tw] = await liveChannels('twitch', 1)
+  const [kk] = await liveChannels('kick', 1)
   const yt = await liveYtVideo()
   for (const c of CASES) {
     await runCase('twitch', `https://www.twitch.tv/${tw}`, c)
+    await runCase('kick', `https://kick.com/${kk}`, c)
     if (yt) await runCase('youtube', `https://www.youtube.com/watch?v=${yt.id}`, c)
   }
 }

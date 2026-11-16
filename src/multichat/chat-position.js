@@ -181,6 +181,20 @@ function _hsShowVolumeOsd(playerEl, video) {
     if (_hsVolOsdEl) _hsVolOsdEl.classList.remove('visible')
   }, 800)
 }
+/**
+ * Where the host's fixed top bar ends, so a docked player is sized into what is below it. Takes
+ * the first match that is actually drawn at the top: kick keeps a zero-size twin of its bar ahead
+ * of the real one, and reading that one sized the player 60px too tall, its controls under a
+ * bottom-docked panel. 0 when the bar is hidden (fullscreen).
+ */
+function hostTopBarBottom(sel) {
+  for (const e of document.querySelectorAll(sel)) {
+    const r = e.getBoundingClientRect()
+    if (r.height > 0 && r.top < 1) return Math.round(r.bottom)
+  }
+  return 0
+}
+
 function setupScrollWheelVolume() {
   const sel = HS_PLAYER_SELECTOR[hostPlatform]
   const modSel = HS_MODIFIER_PLAYER_SELECTOR[hostPlatform]
@@ -703,6 +717,9 @@ function applyPlatformPositionOverrides() {
       // tuck its right edge (where the Skip Ad / fullscreen buttons live)
       // under the panel.
       const usableW = document.documentElement.clientWidth
+      // youtube's top bar holds the page's first 56px, so the player starts under it. A top-docked
+      // panel covers the bar instead; fullscreen hides it (0px).
+      const mastH = chatPosition === 'top' ? 0 : hostTopBarBottom('#masthead-container')
       let availH, availW
       if (chatPosition === 'left' || chatPosition === 'right') {
         // Opt-in suggestions strip eats a fixed column beside the player on
@@ -715,9 +732,9 @@ function applyPlatformPositionOverrides() {
         if (suggOn) document.documentElement.style.setProperty('--hs-yt-sugg-w', `${suggW}px`)
         else document.documentElement.style.removeProperty('--hs-yt-sugg-w')
         availW = Math.max(200, usableW - chatWidth - suggW)
-        availH = innerHeight
+        availH = Math.max(200, innerHeight - mastH)
       } else {
-        availH = Math.max(200, innerHeight - chatHeight)
+        availH = Math.max(200, innerHeight - chatHeight - mastH)
         availW = usableW - 32
       }
       const aspectW = (availH * 16) / 9
@@ -792,7 +809,8 @@ function applyPlatformPositionOverrides() {
     // top/bottom. Force aspect-preserved width + height inline on the
     // player wrapper + injected container. Don't touch <main> — that's
     // the entire content column.
-    const injected = document.querySelector('#injected-channel-player')
+    // the player on screen: kick keeps the pages it left in-page, each with its own player, hidden
+    const injected = [...document.querySelectorAll('#injected-channel-player')].find((e) => !kickPageHidden(e))
     const playerWrap = injected?.parentElement // div.bg-black, immediate player box
     const kickPlayerEls = [playerWrap, injected].filter(Boolean)
     const KICK_PLAYER_GEOM = ['width', 'height', 'max-width', 'max-height', 'min-height', 'aspect-ratio']
@@ -809,8 +827,7 @@ function applyPlatformPositionOverrides() {
       })
     }
     if (chatPosition === 'top' || chatPosition === 'bottom' || chatPosition === 'left' || chatPosition === 'right') {
-      const navEl = document.querySelector('nav, [class*="navbar"]')
-      const navH = navEl ? Math.round(navEl.getBoundingClientRect().height) : 60
+      const navH = hostTopBarBottom('nav, [class*="navbar"]') || 60
       // Kick reserves space for its left sidebar (~56px) inside main's flex
       // parent — when the sidebar is present, the freed video area is
       // innerWidth - chatWidth - sidebar. Use the live measurement (not a

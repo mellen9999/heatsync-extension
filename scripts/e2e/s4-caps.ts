@@ -37,9 +37,13 @@ async function cacheState(env: Env, key: string) {
       const m = channelEmotesMap
       const keys = Object.keys(m).filter((x) => Array.isArray(m[x]))
       const set = Array.isArray(m[k]) ? m[k] : null
-      // names only an emote would have: 4+ chars with a capital or digit after the first
+      // names only an emote would have: 4+ chars with a capital or digit after the first. twitch's
+      // own (sub) emotes draw only with the line's emote tag, so a name alone proves nothing
       const names = set
-        ? set.map((e: any) => String(e?.name || '')).filter((n: string) => n.length >= 4 && /.[A-Z0-9]/.test(n))
+        ? set
+            .filter((e: any) => e?.source !== 'twitch')
+            .map((e: any) => String(e?.name || ''))
+            .filter((n: string) => n.length >= 4 && /.[A-Z0-9]/.test(n))
         : []
       // @ts-ignore
       const inUse = new Set(
@@ -98,6 +102,8 @@ export async function s4Caps() {
     const e0 = await emoteText(p, s0.names)
     info(`start: ${JSON.stringify({ held: s0.held, set: s0.n, ...e0 })}`)
     if (!s0.has) return bad(`${key} has no emote set at the start`, s0)
+    // history drawn before the set landed must have picked it up by now (history-rows-take-late-emotes)
+    if (e0.asText > 2) bad(`the watched stream shows ${e0.asText} of its emote names as text at the start`, e0)
     const t0 = Date.now()
 
     const others = saved.filter((c) => c.id !== watched)
@@ -123,7 +129,7 @@ export async function s4Caps() {
             `lap ${lap} after ${i + 1}: ${JSON.stringify({ held: s.held, set: s.n, img: e.asImg, text: e.asText, sample: e.sample })}`,
           )
           if (!s.has) bad(`lap ${lap}: ${key} lost its emote set after ${i + 1} other channels opened`, s)
-          if (e.asText > e0.asText + 5 && e.asText > e.asImg / 10) {
+          if (e.asText > 2) {
             bad(`lap ${lap}: the watched stream shows emote names as text`, e)
             await shot(p, `s4-text-lap${lap}-${i}`)
           }

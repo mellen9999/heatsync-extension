@@ -191,7 +191,15 @@ export async function ringSince(p: any, t0: number) {
   const recent = arr.filter((e) => e.t >= t0)
   const counts: Record<string, number> = {}
   for (const e of recent) counts[e.e] = (counts[e.e] || 0) + 1
-  return { recent, counts, bad: recent.filter((e) => (BAD_RING as readonly string[]).includes(e.e)) }
+  // ingest_gap fires on any 3s+ pause after a burst; the overlay itself only treats 10s+ as an
+  // outage. A shorter one counts when its probe found the worker holding newer lines than the
+  // tab (delivery died), not when nothing was said upstream either (a chat that paused).
+  const delivered = (e: any) =>
+    e.e !== 'ingest_gap' ||
+    e.gapS >= 10 ||
+    recent.some((x) => x.e === 'ingest_gap_probe' && x.ch === e.ch && x.t >= e.t && x.t - e.t < 5000 && x.bgAheadS >= 2)
+  const bad = recent.filter((e) => (BAD_RING as readonly string[]).includes(e.e) && delivered(e))
+  return { recent, counts, bad }
 }
 
 /** dev-build probe: buffers per channel, currentTab, saved channels. */

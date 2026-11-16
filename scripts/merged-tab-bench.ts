@@ -5,6 +5,7 @@
  *
  *   bun run build.js chrome --minify && bun scripts/merged-tab-bench.ts
  *   bun scripts/merged-tab-bench.ts --seconds 30 --twitch 30 --kick 6 --yt 3
+ *   bun scripts/merged-tab-bench.ts --cpu-slowdown 8   # as starved as the 2-core ci runner
  *   bun scripts/merged-tab-bench.ts --budget scripts/merged-tab-budget.json   # the nightly: fails over the limit
  *
  * Why it exists: a merged tab used to repaint the whole pane (the diff render,
@@ -33,6 +34,7 @@ const arg = (name: string, dflt: number) => {
   return i > -1 ? Number(process.argv[i + 1]) : dflt
 }
 const SECONDS = arg('seconds', 30)
+const SLOWDOWN = arg('cpu-slowdown', 1) // e.g. 6: the page runs as starved as the 2-core ci runner
 const RATE = { twitch: arg('twitch', 30), kick: arg('kick', 6), yt: arg('yt', 3) }
 const JSON_OUT = process.argv.includes('--json')
 const PROFILE = process.argv.includes('--profile') // where the script time goes, by function
@@ -198,6 +200,7 @@ try {
 
   const cdp = await c.newCDPSession(page)
   await cdp.send('Performance.enable')
+  if (SLOWDOWN > 1) await cdp.send('Emulation.setCPUThrottlingRate', { rate: SLOWDOWN })
   const metrics = async () => {
     const { metrics: m } = await cdp.send('Performance.getMetrics')
     const o: Record<string, number> = {}
@@ -243,16 +246,28 @@ try {
     page.evaluate(() =>
       [...document.querySelectorAll('#hs-mc-messages > .hs-mc-msg')].map((r) => (r as HTMLElement).dataset.msgKey),
     )
-  await page.waitForTimeout(800)
-  const before: string[] = await snapshot()
+  // a slow machine (the 2-core ci runner spends ~24s of the 30 on the feed) is still drawing
+  // the backlog when the feed stops: compare only a pane that has stopped changing
+  const settled = async () => {
+    let prev = ''
+    for (let i = 0; i < 30; i++) {
+      await page.waitForTimeout(800)
+      const keys: string[] = await snapshot()
+      const sig = keys.join('|')
+      if (sig === prev) return keys
+      prev = sig
+    }
+    throw new Error('the pane never settled after the feed stopped')
+  }
+  const before: string[] = await settled()
   await drv.evaluate(async () => {
     // @ts-ignore — flip a setting whose change re-renders the pane
     const cur = (await chrome.storage.sync.get('ui_settings')).ui_settings || {}
     // @ts-ignore
     await chrome.storage.sync.set({ ui_settings: { ...cur, messageDensity: cur.messageDensity === 'cozy' ? 'compact' : 'cozy' } })
   })
-  await page.waitForTimeout(1500)
-  const after: string[] = await snapshot()
+  await page.waitForTimeout(700)
+  const after: string[] = await settled()
   const sameSet = before.length === after.length && new Set(before).size === new Set(after).size && before.every((k) => new Set(after).has(k))
   const sameOrder = before.length === after.length && before.every((k, i) => k === after[i])
   const dupes = before.length - new Set(before).size

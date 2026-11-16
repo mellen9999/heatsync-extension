@@ -1667,7 +1667,13 @@ function reprocessEmoteTextInPlace() {
     const span = div.querySelector(':scope > .hs-mc-text')
     const m = div._hsMsg
     if (!span || !m) return
-    const html = computeMessageText(m) // m._renderedHtml cleared by caller → recomputes
+    // The row can hold an older copy of its line than the ring does: a history
+    // re-pull swaps fresh objects into the ring (mergeIntoRing), the row keeps
+    // the one it was drawn from, and the caller only clears the ring's copies.
+    // That memo handed back the text the row was first drawn with, so history
+    // drawn before the channel's set landed kept its emote names as text.
+    m._renderedHtml = null
+    const html = computeMessageText(m)
     // No-op when the recompute produced identical HTML — innerHTML assignment
     // recreates every <img> even for byte-identical markup, and a recreated
     // emote paints its alt TEXT for a frame before the image decodes (the

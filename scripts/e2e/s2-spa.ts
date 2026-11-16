@@ -222,6 +222,22 @@ export async function s2Kick() {
       await sleep(4000)
       await hopCheck(env, p, `kick-round${round}-${target.slice(1)}`, t0, 'chat')
     }
+    // kick keeps a hidden ad player on every channel page and the old page's player in a hidden
+    // copy: an offline channel reached in-page must not read live (11-16)
+    const off = 'mellen'
+    const offline = await p
+      .evaluate((s: string) => fetch(`/api/v2/channels/${s}`).then((r) => r.json()).then((j) => !j.livestream), off)
+      .catch(() => false)
+    if (!offline) info(`kick offline check skipped: ${off} is live or the channel api did not answer`)
+    else {
+      await p.evaluate((t: string) => (window as any).next?.router?.push(t), `/${off}`)
+      await sleep(15_000)
+      const dot = await p.evaluate(
+        () => (document.querySelector('.hs-mc-tab[data-tab="live"]') as HTMLElement | null)?.dataset.live,
+      )
+      if (dot === 'true') bad(`offline kick channel ${off} reached in-page reads live`)
+      else ok('offline kick channel reached in-page reads offline')
+    }
     if (errs.length) bad('page errors', errs.slice(0, 5))
   } finally {
     await env.close()

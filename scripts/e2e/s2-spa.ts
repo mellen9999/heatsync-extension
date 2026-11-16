@@ -193,6 +193,16 @@ export async function s2Kick() {
       await clickFirst(p, ['a[href="/browse"]', 'a[href^="/browse"]'], 'browse link')
       await p.waitForURL(/\/browse/, { timeout: 15_000 }).catch(() => {})
       await sleep(6000)
+      // kick keeps the channel page it left hidden in the DOM: browse must still read as a
+      // no-channel page, the panel floating over it, not squeezed into a strip (11-16)
+      const br = await p.evaluate(() => {
+        const r = document.getElementById('hs-mc-container')?.getBoundingClientRect()
+        return { noChannel: document.body.classList.contains('hs-kick-no-channel'), h: r ? Math.round(r.height) : -1 }
+      })
+      if (!br.noChannel || (br.h >= 0 && br.h < 150)) {
+        bad(`round ${round}: kick browse reached in-page reads as a channel page or squeezes the panel`, br)
+        await shot(p, `s2-kick-browse-${round}`)
+      }
       const cards = await p.$$eval('a[href^="/"]', (as: Element[]) =>
         as
           .map((x) => (x as HTMLAnchorElement).getAttribute('href') || '')

@@ -1909,11 +1909,7 @@ function handleWSMessage(msg) {
           if (ch && list.length > 0) {
             if (!BG_KICK.channels.has(ch)) {
               BG_KICK.channels.set(ch, new BGCircularBuffer(BG_KICK_PERSIST_MAX))
-              if (BG_KICK.channels.size > MAX_BG_KICK_CHANNELS) {
-                const oldest = BG_KICK.channels.keys().next().value
-                BG_KICK.channels.delete(oldest)
-                bgIdbDelete(BG_IDB_KICK, oldest)
-              }
+              bgCapRings(BG_KICK.channels, MAX_BG_KICK_CHANNELS, 'kick', ch, BG_IDB_KICK)
               bgKickFetchArchive(ch).catch(() => {})
             }
             const buf = BG_KICK.channels.get(ch)

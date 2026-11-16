@@ -1319,6 +1319,39 @@ const tabChannels = new Map() // tabId → { channel, channelOwner }
 // On WS reconnect (incl. server restart) these must be re-joined or messages drop silently.
 const joinedExtraChannels = new Set() // "platform/channel" keys
 
+/**
+ * Hold a per-channel history store to `max` rings without dropping one a tab is
+ * showing. Insertion order puts the channel shown longest first (a saved channel
+ * restored at boot, the stream open all evening), so dropping the oldest took
+ * exactly that one once `max` others had passed through: its history went and
+ * came back empty (the emote-cache twin, 96a04361). Only rings nothing names go,
+ * oldest first; when every ring is in use the store stays over cap, bounded by
+ * the user's own channels. The ring being added never goes: its caller writes to
+ * it next. Keys: twitch/kick lowercase names, youtube channel ids.
+ */
+function bgCapRings(map, max, platform, adding, store, onDrop) {
+  if (map.size <= max) return
+  const inUse = bgRingsInUse(platform)
+  for (const k of map.keys()) {
+    if (map.size <= max) break
+    if (k === adding || inUse.has(k)) continue
+    map.delete(k)
+    bgIdbDelete(store, k)
+    onDrop?.(k)
+  }
+}
+
+function bgRingsInUse(platform) {
+  const out = new Set()
+  const pre = `${platform}/`
+  const yt = platform === 'youtube'
+  for (const k of [...joinedExtraChannels, ...[...tabChannels.values()].map((t) => t?.channel)])
+    if (k?.startsWith?.(pre)) out.add(yt ? k.slice(pre.length) : k.slice(pre.length).toLowerCase())
+  if (platform === 'twitch') for (const [ch, tabs] of BG_IRC.channelTabs) if (tabs?.size) out.add(ch)
+  if (yt) for (const id in youtubeChannelUrls) out.add(id)
+  return out
+}
+
 // Feed thread rooms (feed:join `thread:<id>`) — one per tab, the thread that tab
 // is showing. The server fans reaction/vote frames for it to this socket only
 // while joined. The room is held while any tab shows it and re-joined on

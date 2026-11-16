@@ -1389,14 +1389,11 @@ function bgIrcEnsureChannel(ch, restored = null) {
   if (isNew) {
     BG_IRC.channels.set(ch, restored || new BGCircularBuffer(BG_IRC_PERSIST_MAX))
     BG_IRC.chanLastSeen.set(ch, Date.now())
-    if (BG_IRC.channels.size > MAX_BG_IRC_CHANNELS) {
-      const oldest = BG_IRC.channels.keys().next().value
-      BG_IRC.channels.delete(oldest)
-      BG_IRC.chanLastSeen.delete(oldest)
-      BG_IRC.lastJustlogAt?.delete?.(oldest)
-      BG_IRC.chanRejoinAttempts.delete(oldest)
-      bgIrcRingDelete(oldest)
-    }
+    bgCapRings(BG_IRC.channels, MAX_BG_IRC_CHANNELS, 'twitch', ch, BG_IDB_RINGS, (old) => {
+      BG_IRC.chanLastSeen.delete(old)
+      BG_IRC.lastJustlogAt?.delete?.(old)
+      BG_IRC.chanRejoinAttempts.delete(old)
+    })
     if (BG_IRC.ws?.readyState === WebSocket.OPEN) {
       try {
         BG_IRC.ws.send(`JOIN #${ch}\r\n`)

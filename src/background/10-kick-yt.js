@@ -231,11 +231,7 @@ function bgKickAppend(channel, rows) {
   const buf = new BGCircularBuffer(BG_KICK_PERSIST_MAX)
   for (const m of all.slice(-BG_KICK_PERSIST_MAX)) buf.push(m)
   BG_KICK.channels.set(ch, buf)
-  if (BG_KICK.channels.size > MAX_BG_KICK_CHANNELS) {
-    const oldest = BG_KICK.channels.keys().next().value
-    BG_KICK.channels.delete(oldest)
-    bgIdbDelete(BG_IDB_KICK, oldest)
-  }
+  bgCapRings(BG_KICK.channels, MAX_BG_KICK_CHANNELS, 'kick', ch, BG_IDB_KICK)
   bgKickPersistChannel(ch)
   return added
 }
@@ -284,11 +280,7 @@ function bgKickIngest(data) {
   const isFirstSightOfChannel = !BG_KICK.channels.has(ch)
   if (isFirstSightOfChannel) {
     BG_KICK.channels.set(ch, new BGCircularBuffer(BG_KICK_PERSIST_MAX))
-    if (BG_KICK.channels.size > MAX_BG_KICK_CHANNELS) {
-      const oldest = BG_KICK.channels.keys().next().value
-      BG_KICK.channels.delete(oldest)
-      bgIdbDelete(BG_IDB_KICK, oldest)
-    }
+    bgCapRings(BG_KICK.channels, MAX_BG_KICK_CHANNELS, 'kick', ch, BG_IDB_KICK)
     // First time we see this Kick channel — pull deep history from postgres
     // archive in addition to the 200-msg server ring (which came via
     // kick-chat-backfill on the WS).
@@ -2178,11 +2170,7 @@ function bgYtIngest(payload) {
   const channelId = payload.channelId
   if (!BG_YT.channels.has(channelId)) {
     BG_YT.channels.set(channelId, new BGCircularBuffer(BG_YT_PERSIST_MAX))
-    if (BG_YT.channels.size > MAX_BG_YT_CHANNELS) {
-      const oldest = BG_YT.channels.keys().next().value
-      BG_YT.channels.delete(oldest)
-      bgIdbDelete(BG_IDB_YT, oldest)
-    }
+    bgCapRings(BG_YT.channels, MAX_BG_YT_CHANNELS, 'youtube', channelId, BG_IDB_YT)
   }
   // Strip transient flags before storing. `id` (innertube) is NOT transient —
   // it's the only cross-source-stable identity a yt message has. Without it a

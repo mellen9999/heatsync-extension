@@ -2099,10 +2099,7 @@ async function init() {
         startLayoutWatcher()
       })
     } else {
-      waitForMount(
-        () => document.getElementById('channel-chatroom') || document.querySelector('[id*="chatroom"]'),
-        'Kick chatroom',
-      )
+      waitForMount(() => kickChatroomLoose(), 'Kick chatroom')
     }
   } else {
     // Twitch: try to hook into React, fall back to MutationObserver

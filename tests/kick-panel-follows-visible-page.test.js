@@ -1,8 +1,9 @@
 /**
- * Kick keeps the page it left in the DOM, hidden (display:none !important), and draws the
- * new page in a fresh copy with its own #channel-chatroom. The panel must end up beside the
- * chatroom on screen, never in the hidden copy (s2 kick chain, 11-16: panel 0x0, no chat).
- * Runs the real kickVisibleChatroom / rehomeKickPanel from src/multichat/kick-host.js.
+ * Kick keeps the pages it left in the DOM, hidden by an inline display:none !important on the
+ * copy's root, and draws the new page in a fresh copy with its own #channel-chatroom. Every
+ * chatroom lookup must skip the hidden copies: the panel sat in one at 0x0 with no chat, and
+ * /browse read as a channel page (s2 kick chain, 11-16). Runs the real kickPageHidden,
+ * kickChatroom, kickChatroomLoose and rehomeKickPanel from src/multichat/kick-host.js.
  */
 import { afterEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
@@ -19,56 +20,58 @@ const fn = (name) => {
 let win
 afterEach(() => win?.happyDOM.close())
 
-/** Two page copies like kick's, the panel beside the first one's chatroom. */
-function kickPage() {
+/** Kick's layout: page copies side by side, the panel beside the first copy's chatroom. */
+function kickPage(newPage = '<div id="channel-chatroom"></div>') {
   win = new Window()
   const document = win.document
-  // a node draws when no ancestor (or itself) is display:none
-  win.Element.prototype.checkVisibility = function () {
-    for (let e = this; e; e = e.parentElement) if (e.style?.display === 'none') return false
-    return true
-  }
   document.body.innerHTML = `
     <div id="old" class="page"><div class="col"><div id="channel-chatroom"></div><div id="hs-mc-container"></div></div></div>
-    <div id="new" class="page"><div class="col"><div id="channel-chatroom"></div></div></div>`
+    <div id="new" class="page"><div class="col">${newPage}</div></div>`
   const calls = []
   const api = new Function(
     'document',
     'updateKickNoChannelClass',
-    `${fn('kickShown')}\n${fn('kickVisibleChatroom')}\n${fn('rehomeKickPanel')}\nreturn { kickVisibleChatroom, rehomeKickPanel }`,
+    `${['kickPageHidden', 'kickChatroom', 'kickChatroomLoose', 'rehomeKickPanel'].map(fn).join('\n')}
+     return { kickChatroom, kickChatroomLoose, rehomeKickPanel }`,
   )(document, () => calls.push('class'))
-  const panelPage = () => document.getElementById('hs-mc-container').closest('.page').id
-  return { document, api, panelPage, calls }
+  const hideOld = () => document.getElementById('old').setAttribute('style', 'display: none !important;')
+  const where = () => {
+    const c = document.getElementById('hs-mc-container')
+    return c.parentElement === document.body ? 'body' : c.closest('.page').id
+  }
+  return { document, api, hideOld, where, calls }
 }
 
-describe('kick: the panel follows the page on screen', () => {
+describe('kick: chatroom lookups skip the pages kick keeps hidden', () => {
   test('old copy hidden after the nav: the panel moves beside the new chatroom', () => {
-    const { document, api, panelPage, calls } = kickPage()
-    document.getElementById('old').setAttribute('style', 'display: none !important;')
+    const { document, api, hideOld, where, calls } = kickPage()
+    hideOld()
     expect(api.rehomeKickPanel()).toBe(true)
-    expect(panelPage()).toBe('new')
+    expect(where()).toBe('new')
     expect(document.getElementById('hs-mc-container').previousElementSibling.id).toBe('channel-chatroom')
     expect(calls).toEqual(['class'])
   })
 
-  test('the nav picks the chatroom on screen, not the first one in the document', () => {
-    const { document, api } = kickPage()
-    document.getElementById('old').style.display = 'none'
-    expect(api.kickVisibleChatroom().closest('.page').id).toBe('new')
+  test('the chatroom found is the one on screen, not the first in the document', () => {
+    const { api, hideOld } = kickPage()
+    hideOld()
+    expect(api.kickChatroom().closest('.page').id).toBe('new')
   })
 
-  test('host on screen: nothing moves (a panel the user hid stays where it is)', () => {
-    const { document, api, panelPage } = kickPage()
-    document.getElementById('hs-mc-container').style.display = 'none' // chat hidden by the user
-    expect(api.rehomeKickPanel()).toBe(false)
-    expect(panelPage()).toBe('old')
+  test('left for /browse (no chatroom on screen): no chatroom, and the panel goes to the body', () => {
+    const { api, hideOld, where } = kickPage('<div class="browse-grid"></div>')
+    hideOld()
+    expect(api.kickChatroom()).toBe(null)
+    expect(api.kickChatroomLoose()).toBe(null)
+    expect(api.rehomeKickPanel()).toBe(true)
+    expect(where()).toBe('body')
   })
 
-  test('both copies hidden (new page not drawn yet): stays put until one shows', () => {
-    const { document, api, panelPage } = kickPage()
-    document.getElementById('old').style.display = 'none'
-    document.getElementById('new').style.display = 'none'
+  test('chat the user hid (by class, not inline on the page) is not a hidden copy', () => {
+    const { document, api, where } = kickPage()
+    document.getElementById('hs-mc-container').classList.add('hs-hidden-by-user')
     expect(api.rehomeKickPanel()).toBe(false)
-    expect(panelPage()).toBe('old')
+    expect(where()).toBe('old')
+    expect(api.kickChatroom().closest('.page').id).toBe('old')
   })
 })

@@ -708,7 +708,7 @@ function ensureUIElements() {
       document.querySelector('ytd-live-chat-frame#chat')?.parentElement ||
       document.querySelector('#secondary')
   } else if (isKick) {
-    chatRoom = document.getElementById('channel-chatroom') || document.querySelector('[id*="chatroom"]')
+    chatRoom = kickChatroomLoose()
   } else {
     chatRoom =
       document.querySelector('[class*="chat-room__content"]') ||

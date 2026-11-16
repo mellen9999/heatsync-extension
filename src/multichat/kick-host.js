@@ -25,7 +25,7 @@ function syncKickSidebarVar() {
  * Apply chat width to Kick's fixed #channel-chatroom panel
  */
 function applyKickChatWidth() {
-  const chatroom = document.getElementById('channel-chatroom')
+  const chatroom = kickChatroom()
   if (!chatroom) return
   chatWidth = Math.min(MAX_CHAT_WIDTH, Math.max(MIN_CHAT_WIDTH, chatWidth))
   document.documentElement.style.setProperty('--hs-kick-chat-width', `${chatWidth}px`)
@@ -43,7 +43,7 @@ function applyKickChatWidth() {
  * Uses rAF batching, iframe overlay, and kills Kick's native transitions
  */
 function setupKickResizeHandle() {
-  const chatroom = document.getElementById('channel-chatroom')
+  const chatroom = kickChatroom()
   const mcContainer = document.getElementById('hs-mc-container')
   if (!chatroom || !mcContainer || document.getElementById('hs-kick-resize-handle')) return
 
@@ -264,7 +264,7 @@ function updateKickNoChannelClass() {
     injectStyles()
   } catch (_) {} // kick SPA navs — same sweep guard
 
-  const onChannel = !!document.getElementById('channel-chatroom')
+  const onChannel = !!kickChatroom()
   const popout = document.body.classList.contains('hs-popout')
   const noChannel = !onChannel && !popout
   const prev = document.body.classList.contains('hs-kick-no-channel')
@@ -291,7 +291,7 @@ function armKickChatroomWatch() {
     _kickChatroomWatch = null
   }
   _kickChatroomWatch = new MutationObserver(() => {
-    if (!document.getElementById('channel-chatroom')) return
+    if (!kickChatroom()) return
     stop()
     updateKickNoChannelClass()
   })
@@ -301,26 +301,34 @@ function armKickChatroomWatch() {
   cleanup.setTimeout(stop, 15000, 'kick-chatroom-watch')
 }
 
-// Kick keeps the page it navigated away from in the DOM, hidden (display:none
-// !important: react's Activity, next's instant back) and draws the new page in a
-// fresh copy beside it, with its own #channel-chatroom. A panel left beside the
-// old copy's chatroom draws nothing (0x0, no chat: s2 kick chain, 11-16). Its
-// host's visibility, not the panel's: chat the user hid keeps the panel hidden.
-function kickShown(el) {
-  if (!el) return false
-  return typeof el.checkVisibility === 'function' ? el.checkVisibility() : el.getClientRects().length > 0
+// Kick keeps the pages it navigated away from in the DOM, hidden with an inline
+// display:none !important on the copy's root (react's Activity, next's instant
+// back), and draws the new page in a fresh copy with its own #channel-chatroom.
+// getElementById can hand back a hidden copy's: the panel sat there at 0x0 with no
+// chat, and /browse read as a channel page (s2 kick chain, 11-16). Every chatroom
+// lookup goes through kickChatroom(). Inline only: our own modes hide by class, so a
+// chat the user hid never reads as a kept copy.
+function kickPageHidden(el) {
+  for (let e = el; e && e !== document.body; e = e.parentElement)
+    if (e.style?.getPropertyValue('display') === 'none') return true
+  return false
 }
-function kickVisibleChatroom() {
-  for (const r of document.querySelectorAll('#channel-chatroom')) if (kickShown(r.parentElement)) return r
+function kickChatroom() {
+  for (const r of document.querySelectorAll('#channel-chatroom')) if (!kickPageHidden(r.parentElement)) return r
   return null
+}
+/** kickChatroom, else any shown node whose id names a chatroom (older kick markup). */
+function kickChatroomLoose() {
+  return kickChatroom() || [...document.querySelectorAll('[id*="chatroom"]')].find((e) => !kickPageHidden(e)) || null
 }
 /** The panel's host went hidden: move it beside the chatroom on screen. True when moved. */
 function rehomeKickPanel() {
   const c = document.getElementById('hs-mc-container')
-  if (!c?.parentElement || kickShown(c.parentElement)) return false
-  const room = kickVisibleChatroom()
-  if (!room || room.nextElementSibling === c) return false
-  room.after(c)
+  if (!c?.parentElement || !kickPageHidden(c.parentElement)) return false
+  // no chatroom on screen (left for /browse): the body, where a no-channel page keeps it
+  const room = kickChatroom()
+  if (room) room.after(c)
+  else document.body.appendChild(c)
   try {
     updateKickNoChannelClass()
   } catch (_) {}
@@ -423,7 +431,7 @@ function softKickNav(prevLiveCh) {
   const tryReparent = () => {
     if (done) return true
     // the chatroom of the copy on screen: getElementById can return the hidden old page's
-    const chatRoom = kickVisibleChatroom()
+    const chatRoom = kickChatroom()
     const c = document.getElementById('hs-mc-container')
     if (chatRoom && c && c.previousElementSibling !== chatRoom) {
       chatRoom.after(c)

@@ -630,7 +630,7 @@ function positionChatResizeHandle() {
     const platformAnchor = noChannelMode
       ? null
       : hostPlatform === 'kick'
-        ? document.getElementById('channel-chatroom')
+        ? kickChatroom()
         : document.querySelector('.right-column.right-column--beside')
     if (platformAnchor) {
       handle.style.display = 'none'

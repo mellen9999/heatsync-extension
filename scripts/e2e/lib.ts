@@ -81,7 +81,7 @@ export async function launch(opts: { width?: number; height?: number; scale?: nu
     await ctx.close().catch(() => {})
     rmSync(profile, { recursive: true, force: true })
   }
-  return { ctx, extId, close, worker: () => ctx.serviceWorkers()[0] || sw }
+  return { ctx, extId, profile, close, worker: () => ctx.serviceWorkers()[0] || sw }
 }
 export type Env = Awaited<ReturnType<typeof launch>>
 

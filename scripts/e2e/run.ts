@@ -4,7 +4,7 @@
  * classes that have shipped. Read-only on the platforms: no login, no sends.
  *
  *   bun run build.js chrome            # a plain (non-minified) build keeps the debug probes
- *   bun scripts/e2e/run.ts             # every scenario
+ *   bun scripts/e2e/run.ts             # every scenario (s8 runs an hour: E2E_S8_MIN)
  *   bun scripts/e2e/run.ts --only s2   # one family (prefix match on the scenario id)
  *
  * Exit 1 on any finding. Artifacts (report.json, screenshots) go to E2E_OUT.
@@ -16,6 +16,7 @@ import { s3Sw } from './s3-sw'
 import { s4Caps } from './s4-caps'
 import { s5Outage } from './s5-outage'
 import { s7Host } from './s7-host'
+import { s8Soak } from './s8-soak'
 
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
@@ -26,6 +27,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s4-caps', s4Caps],
   ['s5-outage', s5Outage],
   ['s7-host', s7Host],
+  ['s8-soak', s8Soak],
 ]
 
 const args = process.argv.slice(2)

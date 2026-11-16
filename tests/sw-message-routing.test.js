@@ -228,6 +228,56 @@ describe('join_channel (a tab announcing the room it is in)', () => {
   })
 })
 
+// A tab is booked as its page's channel; the panel beside it shows other channels too. The
+// panel used to join those with join_channel, and the last join won: a kick tab with a saved
+// twitch channel was booked as that twitch channel (seen live in the s3 e2e run), so the page's
+// own set left the in-use list (evictable), the retry alarm skipped it, and its emote use went
+// to the other channel's room.
+describe('a tab keeps its page channel while its panel joins others', () => {
+  const kickTab = tabSender(8, 'https://kick.com/coringa')
+  const quiet = (sw) => {
+    sw.net.on(/emotes\/user\//, json({ emotes: [] }))
+    sw.net.on(/betterttv|frankerfacez|7tv\.io|helix|gql|emotes\/twitch|kick\.com|youtube/, status(404))
+  }
+
+  test('a saved channel joins as an extra: the kick page stays booked as kick', async () => {
+    const sw = await boot()
+    quiet(sw)
+    await sw.send({ type: 'join_channel', platform: 'kick', channel: 'coringa' }, kickTab)
+    await sw.send({ type: 'ws_send', data: { type: 'channel:join', platform: 'twitch', channel: 'jynxzi' } }, kickTab)
+    expect(sw.eval('tabChannels.get(8).channel')).toBe('kick/coringa')
+    expect(sw.eval('[...joinedExtraChannels]')).toEqual(['twitch/jynxzi'])
+  })
+
+  test('a join with book: false loads the set and the room without claiming the tab', async () => {
+    const sw = await boot()
+    quiet(sw)
+    const ws = sw.socket()
+    await sw.send({ type: 'join_channel', platform: 'twitch', channel: 'kripp', channelId: '1' }, twitchTab)
+    await sw.send({ type: 'join_channel', platform: 'youtube', channel: 'kripp', book: false }, twitchTab)
+    expect(sw.eval('tabChannels.get(7).channel')).toBe('twitch/kripp')
+    await sw.advance(5000)
+    expect(ws.frames).toContainEqual({ type: 'channel:join', platform: 'youtube', channel: 'kripp' })
+  })
+
+  test('leaving a saved channel a page is still on keeps that page in its room', async () => {
+    const sw = await boot()
+    quiet(sw)
+    const ws = sw.socket()
+    await sw.send({ type: 'join_channel', platform: 'kick', channel: 'coringa' }, kickTab)
+    for (const ch of ['coringa', 'other'])
+      await sw.send({ type: 'ws_send', data: { type: 'channel:join', platform: 'kick', channel: ch } }, twitchTab)
+    await sw.advance(5000)
+    for (const ch of ['coringa', 'other'])
+      await sw.send({ type: 'ws_send', data: { type: 'channel:leave', platform: 'kick', channel: ch } }, twitchTab)
+    await sw.advance(5000)
+    expect(sw.eval('[...joinedExtraChannels]')).toEqual([])
+    expect(ws.frames.filter((f) => f.type === 'channel:leave')).toEqual([
+      { type: 'channel:leave', platform: 'kick', channel: 'other' },
+    ])
+  })
+})
+
 describe('blocked_terms (server error -> what the overlay is told)', () => {
   const ask = (sw, over = {}) =>
     sw.send({ type: 'blocked_terms', broadcasterId: '123', op: 'list', ...over }, twitchTab)

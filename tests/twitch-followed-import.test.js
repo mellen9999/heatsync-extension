@@ -23,7 +23,7 @@ const BULK = slice('function addChannelsBulk', 'function makeMcLink')
 /** Run the real guard + bulk-add against a fake config, counting side effects. */
 function harness(channels) {
   const config = { channels: [...channels] }
-  const joined = { twitch: [], kick: [], yt: [] }
+  const joined = { twitch: [], kick: [], yt: [], extras: [] }
   let saves = 0
   let tabBarUpdates = 0
   const fn = new Function(
@@ -33,6 +33,7 @@ function harness(channels) {
     'irc',
     'kickChat',
     'safeSendMessage',
+    'joinExtraChannel',
     'youtubeLinks',
     'ytSubscribedUrls',
     'ytChanLastSeen',
@@ -46,6 +47,7 @@ function harness(channels) {
     { join: (c) => joined.twitch.push(c) },
     { join: (c) => joined.kick.push(c) },
     () => {},
+    (platform, ch) => joined.extras.push(`${platform}/${ch}`),
     new Map(),
     new Map(),
     new Map(),
@@ -121,6 +123,8 @@ describe('addChannelsBulk — one commit, not N', () => {
     const h = harness([])
     h.addChannelsBulk([{ twitch: 'a' }, { twitch: 'b' }])
     expect(h.joined.twitch).toEqual(['a', 'b'])
+    // emote set + server room as extras: the tab stays booked as its page's channel
+    expect(h.joined.extras).toEqual(['twitch/a', 'twitch/b'])
   })
 })
 

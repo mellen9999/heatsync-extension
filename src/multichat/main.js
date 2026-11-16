@@ -755,6 +755,8 @@ async function init() {
           platform: 'youtube',
           channel: currentChannel,
           channelId: ytUrl || null,
+          // the tab's own channel only on youtube; a twitch or kick page keeps its booking
+          ...(hostPlatform === 'yt' ? {} : { book: false }),
         })
       }
       // Zero-config cross-platform: resolve the page channel's heatsync
@@ -794,7 +796,7 @@ async function init() {
             // delay the BG channel-emotes fetch indefinitely. Kick off both
             // independently; emote fetch only needs the channel name.
             trackJoin(ch.id, irc.join(twitchName))
-            safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: twitchName })
+            joinExtraChannel('twitch', twitchName)
           }
           if (gKick && kickName) {
             trackJoin(ch.id, kickChat.join(kickName))
@@ -815,7 +817,7 @@ async function init() {
         for (const tw of mcDroppedTwitch(config.channels, irc.channels, page)) {
           log('[heatsync-mc] rejoining dropped channel', tw)
           irc.join(tw)
-          safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: tw })
+          joinExtraChannel('twitch', tw)
         }
       }, 15000)
     }

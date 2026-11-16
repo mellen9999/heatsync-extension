@@ -772,6 +772,14 @@ async function handleMessage(message, sender, sendResponse) {
       } else if (message.data.type === 'channel:leave' && message.data.platform && message.data.channel) {
         const key = `${message.data.platform}/${message.data.channel.toLowerCase()}`
         if (joinedExtraChannels.delete(key)) saveJoinedExtraChannels()
+        // a channel some tab's page is on keeps its room: removing it from the
+        // saved list does not take it from the page showing it
+        for (const t of tabChannels.values()) {
+          if (t?.channel?.toLowerCase() === key) {
+            sendResponse({ ok: true })
+            return
+          }
+        }
         if (message.data.platform.toLowerCase() === 'kick') {
           const kch = message.data.channel.toLowerCase()
           try {
@@ -1075,7 +1083,11 @@ async function handleMessage(message, sender, sendResponse) {
         log(' 📺 join_channel: init failed, joining anyway:', e?.message || e)
       }
       try {
-        const p = joinChannel(safePlatform, safeChannel, message.channelId, sender.tab?.id)
+        // book: false = load the set and join the room without claiming the tab: the
+        // tab's channel is its page's, and a second channel shown beside it must not
+        // replace it (in-use for the emote cache, the retry alarm, emote-use routing)
+        const tabId = message.book === false ? null : sender.tab?.id
+        const p = joinChannel(safePlatform, safeChannel, message.channelId, tabId)
         if (p && typeof p.catch === 'function') p.catch(() => {})
       } catch (_) {}
       sendResponse({ received: true })

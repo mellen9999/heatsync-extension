@@ -1298,7 +1298,7 @@ async function resolveLiveCandidateToTab({ name, platform, youtubeUrl, _videoId 
       try {
         trackJoin(entry.id, irc?.join?.(entry.twitch))
       } catch {}
-      safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: entry.twitch })
+      joinExtraChannel('twitch', entry.twitch)
     }
     if (entry.kick) {
       try {
@@ -1330,7 +1330,7 @@ async function resolveLiveCandidateToTab({ name, platform, youtubeUrl, _videoId 
       try {
         trackJoin(entry.id, irc?.join?.(twitchName))
       } catch {}
-      safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: twitchName })
+      joinExtraChannel('twitch', twitchName)
     }
     if (!entry.kick && kickName) {
       entry.kick = kickName

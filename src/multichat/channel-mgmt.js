@@ -73,7 +73,7 @@ function addChannelsBulk(entries) {
 
     if (twitchVal) {
       irc?.join(twitchVal)
-      safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: twitchVal })
+      joinExtraChannel('twitch', twitchVal)
     }
     if (kickVal) kickChat?.join(kickVal)
     if (ytVal) {
@@ -575,7 +575,7 @@ function renderAddChannelForm(msgsEl) {
 
     if (twitchVal) {
       irc?.join(twitchVal)
-      safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: twitchVal })
+      joinExtraChannel('twitch', twitchVal)
     }
     if (kickVal) {
       kickChat?.join(kickVal)
@@ -738,6 +738,7 @@ function removeChannel(tabId) {
 
   const twitchName = ch?.twitch
   if (twitchName) irc?.part(twitchName)
+  if (twitchName && !mcTwitchStillShown(twitchName, config.channels)) leaveExtraChannel('twitch', twitchName)
 
   const kickName = ch?.kick
   if (kickName) kickChat?.part(kickName)
@@ -1049,7 +1050,10 @@ function showEditChannelForm(tabId) {
     const oldKick = ch.kick
     const oldYt = ch.youtube
 
-    if (oldTwitch && oldTwitch !== twitchVal) irc?.part(oldTwitch)
+    if (oldTwitch && oldTwitch !== twitchVal) {
+      irc?.part(oldTwitch)
+      if (!mcTwitchStillShown(oldTwitch, config.channels)) leaveExtraChannel('twitch', oldTwitch)
+    }
     if (oldKick && oldKick !== kickVal) kickChat?.part(oldKick)
 
     // Unsubscribe old YouTube if changed
@@ -1118,7 +1122,7 @@ function showEditChannelForm(tabId) {
     // Join new channels if changed
     if (twitchVal && twitchVal !== oldTwitch) {
       irc?.join(twitchVal)
-      safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: twitchVal })
+      joinExtraChannel('twitch', twitchVal)
     }
     if (kickVal && kickVal !== oldKick) kickChat?.join(kickVal)
     if (ytVal && ytVal !== oldYt) {

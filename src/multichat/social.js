@@ -85,7 +85,9 @@ function ytSubscribe(channelId, url, emoteChannel) {
   emit(url)
   hsYtOriginRoom(channelId, url)
   if (emoteChannel) {
-    safeSendMessage({ type: 'join_channel', platform: 'youtube', channel: emoteChannel, channelId: url })
+    const msg = { type: 'join_channel', platform: 'youtube', channel: emoteChannel, channelId: url }
+    if (channelId !== '__live_yt_auto__' || hostPlatform !== 'yt') msg.book = false // only yt's own page books the tab
+    safeSendMessage(msg)
   }
   // Asking for a stream's chat IS joining it: the tab reads "connecting…" until this settles, and a
   // youtube-only tab has no twitch/kick join to settle it.

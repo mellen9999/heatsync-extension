@@ -1928,7 +1928,7 @@ async function pcAddAsChannel(username) {
   if (typeof updateTabBar === 'function') updateTabBar()
   if (channel.twitch) {
     irc?.join(channel.twitch)
-    safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: channel.twitch })
+    joinExtraChannel('twitch', channel.twitch)
   }
   if (channel.kick) kickChat?.join(channel.kick)
   if (channel.youtube) {

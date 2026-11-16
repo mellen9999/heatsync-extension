@@ -1,5 +1,19 @@
 // IRC - read-only IRC client, message parsing, CircularBuffer
 
+// A saved channel's emote set and server room, held by the worker as an extra
+// channel (joinedExtraChannels): in use, so never evicted, and rejoined on a
+// reconnect. Never `join_channel` for these: that names the TAB's own channel
+// (content.js, from the page), and the last sender won, so a kick tab showing
+// a saved twitch channel was booked as that twitch channel: its own set fell
+// out of the in-use list and the retry alarm, its emote use went to the wrong
+// room.
+function joinExtraChannel(platform, channel) {
+  safeSendMessage({ type: 'ws_send', data: { type: 'channel:join', platform, channel } })
+}
+function leaveExtraChannel(platform, channel) {
+  safeSendMessage({ type: 'ws_send', data: { type: 'channel:leave', platform, channel } })
+}
+
 // Raid windows: channel(lowercase) → ms timestamp until which incoming
 // first-time chatters are flagged as raiders. Opened by a raid USERNOTICE and
 // read in the PRIVMSG branch. Expired entries are pruned on each new raid —

@@ -21,7 +21,7 @@ async function _adoptSeedLegs(entry) {
     saveConfig()
     if (added.includes('twitch') && isEnabled('irc-twitch')) {
       irc?.join(entry.twitch)
-      safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: entry.twitch })
+      joinExtraChannel('twitch', entry.twitch)
     }
     if (added.includes('kick') && isEnabled('chat-kick')) kickChat?.join(entry.kick)
   } catch (_) {}
@@ -1184,7 +1184,10 @@ function listenForSettingsChanges() {
             // another tab (or the page itself) can still show the same name
             const twitchName = ch.twitch
             const page = hostPlatform === 'twitch' ? [getLiveChannel()] : []
-            if (twitchName && !mcTwitchStillShown(twitchName, newChannels, page)) irc?.part(twitchName)
+            if (twitchName && !mcTwitchStillShown(twitchName, newChannels, page)) {
+              irc?.part(twitchName)
+              leaveExtraChannel('twitch', twitchName)
+            }
             const kickName = ch.kick
             if (kickName) kickChat?.part(kickName)
             if (ch.youtube) {
@@ -1211,7 +1214,7 @@ function listenForSettingsChanges() {
             const twitchName = ch.twitch
             if (twitchName && isEnabled('irc-twitch')) {
               irc?.join(twitchName)
-              safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: twitchName })
+              joinExtraChannel('twitch', twitchName)
             }
             const kickName = ch.kick
             if (kickName && isEnabled('chat-kick')) kickChat?.join(kickName)
@@ -1233,7 +1236,7 @@ function listenForSettingsChanges() {
           if (!was) continue
           if (ch.twitch && !was.twitch && isEnabled('irc-twitch')) {
             irc?.join(ch.twitch)
-            safeSendMessage({ type: 'join_channel', platform: 'twitch', channel: ch.twitch })
+            joinExtraChannel('twitch', ch.twitch)
           }
           if (ch.kick && !was.kick && isEnabled('chat-kick')) kickChat?.join(ch.kick)
         }

@@ -1,0 +1,62 @@
+/**
+ * Real-site end-to-end hunt. Loads the built extension (dist/chrome, or E2E_EXT) into
+ * chromium against live twitch, kick and youtube and runs scenarios built from the bug
+ * classes that have shipped. Read-only on the platforms: no login, no sends.
+ *
+ *   bun run build.js chrome            # a plain (non-minified) build keeps the debug probes
+ *   bun scripts/e2e/run.ts             # every scenario
+ *   bun scripts/e2e/run.ts --only s2   # one family (prefix match on the scenario id)
+ *
+ * Exit 1 on any finding. Artifacts (report.json, screenshots) go to E2E_OUT.
+ */
+import { findings, OUT, passes, writeReport } from './lib'
+import { s1Tabs } from './s1-tabs'
+import { s2Kick, s2Twitch, s2Youtube } from './s2-spa'
+import { s3Sw } from './s3-sw'
+import { s4Caps } from './s4-caps'
+import { s5Outage } from './s5-outage'
+import { s7Host } from './s7-host'
+
+const SCENARIOS: [string, () => Promise<unknown>][] = [
+  ['s1-tabs', s1Tabs],
+  ['s2-twitch', s2Twitch],
+  ['s2-youtube', s2Youtube],
+  ['s2-kick', s2Kick],
+  ['s3-sw', s3Sw],
+  ['s4-caps', s4Caps],
+  ['s5-outage', s5Outage],
+  ['s7-host', s7Host],
+]
+
+const args = process.argv.slice(2)
+const only = args.includes('--only') ? args[args.indexOf('--only') + 1] : ''
+const picked = SCENARIOS.filter(([id]) => !only || only.split(',').some((o) => id.startsWith(o)))
+if (!picked.length) {
+  console.error(`no scenario matches "${only}" — have: ${SCENARIOS.map(([id]) => id).join(', ')}`)
+  process.exit(2)
+}
+
+const ceiling = setTimeout(
+  () => {
+    console.error('✗ e2e run exceeded its ceiling — aborting')
+    writeReport({ aborted: true })
+    process.exit(1)
+  },
+  Number(process.env.E2E_CEILING_MIN || 120) * 60_000,
+)
+
+for (const [id, run] of picked) {
+  try {
+    await run()
+  } catch (e) {
+    findings.push({ scenario: id, what: `scenario crashed: ${String((e as Error)?.message || e).slice(0, 300)}` })
+    console.log(`  ✗ ${id} crashed: ${String((e as Error)?.message || e).slice(0, 300)}`)
+  }
+}
+clearTimeout(ceiling)
+writeReport()
+console.log(
+  `\n${findings.length ? '✗' : '✓'} e2e: ${passes.length} checks passed, ${findings.length} findings — ${OUT}`,
+)
+for (const f of findings) console.log(`  ✗ [${f.scenario}] ${f.what}`)
+process.exit(findings.length ? 1 : 0)

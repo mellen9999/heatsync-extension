@@ -524,7 +524,9 @@ function _renderMessagesImpl(id, opts) {
   // placed, however many older rows sit out of order below it. In the sorted
   // case this is exactly "after the previous desired row" (the O(1) path).
   let prevNode = null
-  let zebraMid = false // a row landed mid-list: the rows around it may be out of phase
+  // the first and last rows (in list order) that landed mid-list: the rows around them may be out of phase
+  let midTop = null
+  let midLow = null
   let zebraRebuilt = false // a stale row was rebuilt in place
   // The lowest row already on screen. A LIVE line (it carries an ord) is
   // never slotted above one: a kick line a beat behind the twitch line it
@@ -627,20 +629,21 @@ function _renderMessagesImpl(id, opts) {
       after = settledEnd.nextSibling
     }
     stampZebra(div, m, prevNode)
-    if (after) zebraMid = true
     msgsEl.insertBefore(div, after)
+    if (after) {
+      if (!midTop || div.compareDocumentPosition(midTop) & Node.DOCUMENT_POSITION_FOLLOWING) midTop = div
+      if (!midLow || midLow.compareDocumentPosition(div) & Node.DOCUMENT_POSITION_FOLLOWING) midLow = div
+    }
     _indexMessageDiv(div, key)
     prevNode = div
   }
 
   // Re-pin yt-status notices to the very end.
   for (const ex of detachedExtras) msgsEl.appendChild(ex)
-  // One upward pass, anchored on the newest row: the rows being read keep their
-  // stripes and the older ones above realign. A downward pass from a mid insert
-  // flipped every row under it, the visible tail included, whenever an odd
-  // number of history rows wove in above (each backfill batch after a channel
-  // switch flickered the whole screen).
-  if (zebraMid || zebraRebuilt) zebraRepaintUp(msgsEl, null)
+  // A mid insert restripes the side of it that shows fewer rows; an in-place
+  // rebuild alone settles upward, the newest rows keeping their stripes.
+  if (midTop) zebraSettleMid(msgsEl, midTop, midLow)
+  else if (zebraRebuilt) zebraRepaintUp(msgsEl, null)
 
   // Final safety net: hard-cap DOM so no future regression can OOM the tab.
   // toRender is already sliced to 500; anything beyond that + yt-status

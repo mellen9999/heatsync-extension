@@ -27,6 +27,10 @@ const zebraRepaintUp = new Function(
   'zebraEnabled',
   `${sliceFn('zebraRepaint')}; ${sliceFn('zebraRepaintUp')}; return zebraRepaintUp`,
 )(true)
+const zebraSettleMid = new Function(
+  'zebraEnabled',
+  `${sliceFn('zebraRepaint')}; ${sliceFn('zebraRepaintUp')}; ${sliceFn('zebraRowsShown')}; ${sliceFn('zebraSettleMid')}; return zebraSettleMid`,
+)(true)
 
 // minimal linked-list DOM: rows with classList + sibling pointers
 function fakeList(types) {
@@ -241,9 +245,55 @@ describe('zebra parity', () => {
     expect(stripes(tail)).toEqual(before.map((z) => !z))
   })
 
-  test('render restripes upward after a mid-list removal, a mid-list insert, and an in-place rebuild', () => {
+  // the list laid out 20px a row in a 200px pane scrolled so rows [first, first+10) show
+  function laidOut(t, first) {
+    t.list.forEach((e, i) => {
+      e.getBoundingClientRect = () => ({ top: (i - first) * 20, bottom: (i - first + 1) * 20 })
+    })
+    t.msgsEl.getBoundingClientRect = () => ({ top: 0, bottom: 200 })
+    return t
+  }
+  const flipped = (a, b) => a.filter((z, i) => z !== b[i]).length
+
+  test('a late line landing just over the newest rows flips the few under it, not the screen above', () => {
+    // a merged tab's kick line arriving after two newer twitch lines were drawn
+    const t = laidOut(withRowsInserted(40, 38, 1), 31)
+    const shown = t.list.slice(31)
+    const before = stripes(shown)
+    zebraSettleMid(t.msgsEl, t.added[0], t.added[0])
+    expect(
+      flipped(
+        stripes(shown.filter((e) => !t.added.includes(e))),
+        before.filter((_, i) => shown[i] !== t.added[0]),
+      ),
+    ).toBe(2)
+    const s = stripes(t.list)
+    for (let i = 1; i < s.length; i++) expect(s[i]).toBe(!s[i - 1])
+  })
+
+  test('history woven in above the screen still leaves every row on screen alone', () => {
+    const t = laidOut(withRowsInserted(40, 5, 3), 33)
+    const shown = t.list.slice(33)
+    const before = stripes(shown)
+    zebraSettleMid(t.msgsEl, t.added[0], t.added.at(-1))
+    expect(stripes(shown)).toEqual(before)
+    const s = stripes(t.list)
+    for (let i = 1; i < s.length; i++) expect(s[i]).toBe(!s[i - 1])
+  })
+
+  test('a pane with no size (hidden tab) settles upward, the newest rows keeping their stripes', () => {
+    const t = withRowsInserted(12, 10, 1)
+    for (const e of t.list) e.getBoundingClientRect = () => ({ top: 0, bottom: 0 })
+    t.msgsEl.getBoundingClientRect = () => ({ top: 0, bottom: 0 })
+    const before = stripes(t.tail)
+    zebraSettleMid(t.msgsEl, t.added[0], t.added[0])
+    expect(stripes(t.tail)).toEqual(before)
+  })
+
+  test('render settles a removal upward, and a mid insert on the side that shows fewer rows', () => {
     expect(MAIN_SRC).toContain('if (zebraGap) zebraRepaintUp(msgsEl,')
-    expect(MAIN_SRC).toContain('if (zebraMid || zebraRebuilt) zebraRepaintUp(msgsEl, null)')
+    expect(MAIN_SRC).toContain('if (midTop) zebraSettleMid(msgsEl, midTop, midLow)')
+    expect(MAIN_SRC).toContain('else if (zebraRebuilt) zebraRepaintUp(msgsEl, null)')
     expect(MAIN_SRC).not.toMatch(/zebraRepaint\(msgsEl, zebraFrom\)/)
   })
 })

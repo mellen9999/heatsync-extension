@@ -2239,6 +2239,33 @@ function zebraRepaintUp(msgsEl, anchor) {
     next = el
   }
 }
+// Settle stripes after rows landed mid-list, `top` and `low` the first and last
+// of them. One side of an insert has to flip, so flip the side showing fewer
+// rows: history weaving in above the screen realigns rows nobody sees (flipping
+// the rows under it flickered the whole screen on every odd backfill batch),
+// and a merged tab's late line landing just over the newest rows flips the few
+// under it, not the screen of rows above.
+function zebraSettleMid(msgsEl, top, low) {
+  if (zebraRowsShown(msgsEl, low, true) > zebraRowsShown(msgsEl, top, false)) {
+    zebraRepaint(msgsEl, top)
+    zebraRepaintUp(msgsEl, top) // rows above an in-place rebuild settle too
+  } else zebraRepaintUp(msgsEl, null)
+}
+// how many rows past `el` (above it when `up`) are on screen
+function zebraRowsShown(msgsEl, el, up) {
+  const view = msgsEl.getBoundingClientRect()
+  let n = 0
+  for (
+    let r = up ? el.previousElementSibling : el.nextElementSibling;
+    r;
+    r = up ? r.previousElementSibling : r.nextElementSibling
+  ) {
+    const b = r.getBoundingClientRect()
+    if (up ? b.bottom <= view.top : b.top >= view.bottom) break
+    if (up ? b.top < view.bottom : b.bottom > view.top) n++
+  }
+  return n
+}
 function zebraOfInsert(m, prevDiv) {
   // the video player sits in the list but is not a row — stripe off the row before it
   // ...and neither does a notice row: stripe off the last row that was counted

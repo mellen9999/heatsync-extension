@@ -2654,6 +2654,8 @@ function renderStallCheck() {
 // layout) — keep the worst one per 20s in the diag ring.
 let _loafLoggedAt = 0
 function watchLongFrames() {
+  // chromium only: firefox warns on every page that it ignores the entry type
+  if (!globalThis.PerformanceObserver?.supportedEntryTypes?.includes('long-animation-frame')) return
   try {
     const po = new PerformanceObserver((list) => {
       for (const e of list.getEntries()) {

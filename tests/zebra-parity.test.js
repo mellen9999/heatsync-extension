@@ -205,7 +205,7 @@ describe('zebra parity', () => {
     const { els } = fakeList(Array(live + n).fill('chat'))
     const liveRows = els.slice(0, live)
     const added = els.slice(live)
-    liveRows.forEach((e, i) => e.classList.toggle('hs-mc-zebra', i % 2 === 1))
+    for (const [i, e] of liveRows.entries()) e.classList.toggle('hs-mc-zebra', i % 2 === 1)
     const list = [...liveRows.slice(0, at), ...added, ...liveRows.slice(at)]
     list.forEach((e, i) => {
       e.previousElementSibling = list[i - 1] || null

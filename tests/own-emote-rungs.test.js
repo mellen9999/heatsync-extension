@@ -204,6 +204,7 @@ describe('getHighResUrl — a tooltip wants the original of one of our copies', 
 
 // ── the channel emote cache keeps them ───────────────────────────────────────
 
+globalThis.evictChannelEmoteCaches = () => {} // emote-cache-evict.js, its own test
 globalThis.cleanup = { setIntervalIfVisible: () => {}, persistInterval: () => {} }
 globalThis.HS_MOD_TOKENS = mods.HS_MOD_TOKENS
 globalThis.hsModClassify = mods.hsModClassify

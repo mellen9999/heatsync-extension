@@ -911,6 +911,7 @@ const MULTICHAT_MODULES = [
   'kick-send.js',
   'emote-rungs.js',
   'emotes.js',
+  'emote-cache-evict.js',
   'emote-upload-core.js',
   'emote-upload.js',
   'gifs.js',

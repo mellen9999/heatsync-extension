@@ -13,6 +13,7 @@ import { beforeEach, describe, expect, test } from 'bun:test'
 import * as mods from '../src/lib/modifiers.js'
 import { EMOTE_TIER_ORDER, emoteProviderOrder, resolveEmoteProviderWinner } from '../src/lib/utils.js'
 
+globalThis.evictChannelEmoteCaches = () => {} // emote-cache-evict.js, its own test
 globalThis.cleanup = { setIntervalIfVisible: () => {}, persistInterval: () => {} }
 globalThis.HS_MOD_TOKENS = mods.HS_MOD_TOKENS
 globalThis.hsModClassify = mods.hsModClassify

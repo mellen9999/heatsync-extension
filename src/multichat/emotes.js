@@ -3710,12 +3710,7 @@ function _buildChannelEmoteCache(ch, emotes, platform) {
       if (sm.size === 0) sreg.delete((ch || '').toLowerCase())
     }
   } catch (_) {}
-  const keys = Object.keys(channelEmoteCaches)
-  if (keys.length > 20) {
-    for (const old of keys.slice(0, keys.length - 20)) {
-      if (old !== ch) delete channelEmoteCaches[old]
-    }
-  }
+  evictChannelEmoteCaches(ch)
 }
 
 let _channelMapSeeded = false // loadEmotes pulled the background's channel sets once
@@ -3969,13 +3964,7 @@ function scanDomForEmotes() {
 
   // Ensure channel cache exists
   if (!channelEmoteCaches[ch]) channelEmoteCaches[ch] = new Map()
-  // Evict oldest if exceeds 20
-  const chKeys = Object.keys(channelEmoteCaches)
-  if (chKeys.length > 20) {
-    // never evict the active channel — deleting it then reading cache.size below throws
-    const old = chKeys[0]
-    if (old !== ch) delete channelEmoteCaches[old]
-  }
+  evictChannelEmoteCaches(ch) // never the active channel: reading cache.size below would throw
   const cache = channelEmoteCaches[ch]
 
   // Cap per-channel to prevent unbounded growth. 2300 = the authoritative

@@ -301,6 +301,46 @@ function armKickChatroomWatch() {
   cleanup.setTimeout(stop, 15000, 'kick-chatroom-watch')
 }
 
+// Kick keeps the page it navigated away from in the DOM, hidden (display:none
+// !important: react's Activity, next's instant back) and draws the new page in a
+// fresh copy beside it, with its own #channel-chatroom. A panel left beside the
+// old copy's chatroom draws nothing (0x0, no chat: s2 kick chain, 11-16). Its
+// host's visibility, not the panel's: chat the user hid keeps the panel hidden.
+function kickShown(el) {
+  if (!el) return false
+  return typeof el.checkVisibility === 'function' ? el.checkVisibility() : el.getClientRects().length > 0
+}
+function kickVisibleChatroom() {
+  for (const r of document.querySelectorAll('#channel-chatroom')) if (kickShown(r.parentElement)) return r
+  return null
+}
+/** The panel's host went hidden: move it beside the chatroom on screen. True when moved. */
+function rehomeKickPanel() {
+  const c = document.getElementById('hs-mc-container')
+  if (!c?.parentElement || kickShown(c.parentElement)) return false
+  const room = kickVisibleChatroom()
+  if (!room || room.nextElementSibling === c) return false
+  room.after(c)
+  try {
+    updateKickNoChannelClass()
+  } catch (_) {}
+  return true
+}
+// The hide lands after the nav's reparent ran, in the commit that shows the new
+// page: the panel's box going to 0 is the moment to look.
+let _kickHostWatch = null
+function armKickHostWatch(c) {
+  if (!c || typeof ResizeObserver === 'undefined' || _kickHostWatch?.el === c) return
+  if (_kickHostWatch) cleanup.untrackObserver(_kickHostWatch.ro)
+  const ro = new ResizeObserver((entries) => {
+    const r = entries[entries.length - 1]?.contentRect
+    if (r && !r.width && !r.height) rehomeKickPanel()
+  })
+  ro.observe(c)
+  _kickHostWatch = { el: c, ro }
+  cleanup.trackObserver(ro)
+}
+
 // Kick mirror of softTwitchNav — keep the panel mounted across SPA nav.
 // Pre-emptively migrate to <body> so kick's React teardown of the
 // #channel-chatroom region doesn't take it down, refresh the no-channel
@@ -316,6 +356,7 @@ function softKickNav(prevLiveCh) {
     fullSpaReinit()
     return
   }
+  armKickHostWatch(container)
   // Only invalidate live cache — per-channel tabs stay valid (their
   // buffers are keyed by channel name, unchanged by URL).
   try {
@@ -381,7 +422,8 @@ function softKickNav(prevLiveCh) {
   }
   const tryReparent = () => {
     if (done) return true
-    const chatRoom = document.getElementById('channel-chatroom')
+    // the chatroom of the copy on screen: getElementById can return the hidden old page's
+    const chatRoom = kickVisibleChatroom()
     const c = document.getElementById('hs-mc-container')
     if (chatRoom && c && c.previousElementSibling !== chatRoom) {
       chatRoom.after(c)

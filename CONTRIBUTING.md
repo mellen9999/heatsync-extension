@@ -29,6 +29,19 @@ after building, reload the extension in your browser:
 bun test
 ```
 
+a `fix:` ships a test that runs the code it fixes: the service worker through
+`tests/harness/sw.js`, a panel function lifted out of its file, a happy-dom
+page, or a render-harness check. a test that only reads the source text guards
+wiring and build output; it never proves a fix on its own. check the new test
+fails on the code before the fix.
+
+the real sites (live twitch, kick and youtube, read-only, no login):
+
+```bash
+bun run build.js chrome            # plain build: the scenarios read its debug probe
+bun scripts/e2e/run.ts --only s2   # one family; no flag runs them all
+```
+
 ## code style
 
 - no semicolons

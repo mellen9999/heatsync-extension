@@ -12,6 +12,11 @@ name: nightly-heap
 #                   run against the site's CURRENT main. A change on the site
 #                   side alone (no push here) turns this red within a day.
 #   supply-chain    bun audit and gitleaks over the whole history.
+#   e2e-live        the extension on live twitch, kick and youtube (scripts/e2e):
+#                   three sites in three tabs, single-page navigation chains,
+#                   every emote provider down then back, host themes / sizes /
+#                   zoom. Read-only, no login. The worker-stop, cache-cap and
+#                   hour-long soak scenarios stay manual runs.
 # Twice a day so the sentinel's 26h staleness window survives GitHub dropping
 # one cron fire (2026-10-19 did).
 on:
@@ -163,10 +168,44 @@ jobs:
           # every allowlist in .gitleaks.toml; 8.30.1 is checksum-verified clean on full history
           GITLEAKS_VERSION: 8.30.1
 
+  e2e-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+
+      - name: install dependencies
+        run: bun install --frozen-lockfile
+
+      # same reason as heap-quick: playwright's own chromium, not branded chrome
+      - name: install chromium
+        run: |
+          bunx playwright-core install chromium
+          echo "CHROMIUM_BIN=$(bun -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_ENV"
+
+      # a plain build: the minified one drops the debug probe the scenarios read
+      - name: build
+        run: bun run build.js chrome --no-test
+
+      - name: real-site scenarios
+        timeout-minutes: 35
+        env:
+          E2E_OUT: ${{ runner.temp }}/e2e
+          E2E_S1_MIN: '4'
+        run: bun scripts/e2e/run.ts --only s1,s2,s5,s7
+
+      - name: report
+        if: ${{ failure() }}
+        run: cat "${{ runner.temp }}/e2e/report.json" || true
+
   notify-failure:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [heap-quick, browser-suites, contracts, supply-chain]
+    needs: [heap-quick, browser-suites, contracts, supply-chain, e2e-live]
     # Only the SCHEDULED run pages. A workflow_dispatch is somebody at a
     # terminal asking a question — they are reading the answer already, and a
     # red is their experiment's RESULT, not an incident. On 2026-10-14 this job

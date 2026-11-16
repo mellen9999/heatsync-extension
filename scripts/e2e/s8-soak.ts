@@ -9,8 +9,10 @@
  *   - the worker's heap after a full gc stops growing (read over the browser's devtools port)
  *   - the panel's listeners, and the page's window/document listeners, stay flat
  *   - the panel's nodes per row stay flat (a slow chat fills to the row cap: count alone grows)
- *   The extension process's memory is logged as context, not judged: v8 keeps freed pages.
- *   Chrome's own breakdown of it (memory-infra) says which allocator grew.
+ *   The extension process's memory is logged as context, not judged: playwright attaches to the
+ *   worker, and devtools then keeps every fetch it makes (NetworkResourcesData, blink_gc/workers,
+ *   ~3MB/min with busy tabs). Unattached, the same tabs hold it flat (11-16: 1.1→1.3MB in 22 min).
+ *   Chrome's own breakdown (memory-infra) still names the allocator if something else grows.
  *
  *   E2E_S8_MIN=60 bun scripts/e2e/run.ts --only s8   # inside heavy, under a MemoryMax scope
  */

@@ -119,6 +119,7 @@ export async function s2Twitch() {
 export async function s2Youtube() {
   scenario('s2 youtube chain')
   const live = await liveYtVideo()
+  if (!live) return
   const env = await launch()
   const errs: string[] = []
   try {

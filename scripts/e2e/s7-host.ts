@@ -153,6 +153,6 @@ export async function s7Host() {
   const yt = await liveYtVideo()
   for (const c of CASES) {
     await runCase('twitch', `https://www.twitch.tv/${tw}`, c)
-    await runCase('youtube', `https://www.youtube.com/watch?v=${yt.id}`, c)
+    if (yt) await runCase('youtube', `https://www.youtube.com/watch?v=${yt.id}`, c)
   }
 }

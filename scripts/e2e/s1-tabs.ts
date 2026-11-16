@@ -43,13 +43,13 @@ export async function s1Tabs() {
       { id: tw[2], twitch: tw[2] },
       { id: `k-${kk[1]}`, kick: kk[1] },
       { id: `k-${kk[2]}`, kick: kk[2] },
-      { id: 'yt-lofi', youtube: yt.handle },
+      ...(yt ? [{ id: 'yt-lofi', youtube: yt.handle }] : []),
       { id: `mix-${tw[0]}`, twitch: tw[0], kick: kk[0] },
     ])
     const tabs = [
       { name: `twitch ${tw[0]}`, url: `https://www.twitch.tv/${tw[0]}`, own: tw[0] },
       { name: `kick ${kk[0]}`, url: `https://kick.com/${kk[0]}`, own: kk[0] },
-      { name: `youtube ${yt.handle}`, url: `https://www.youtube.com/watch?v=${yt.id}`, own: '' },
+      ...(yt ? [{ name: `youtube ${yt.handle}`, url: `https://www.youtube.com/watch?v=${yt.id}`, own: '' }] : []),
     ]
     const pages: any[] = []
     for (const t of tabs) {
@@ -61,14 +61,14 @@ export async function s1Tabs() {
     }
     // the youtube live tab names the channel, which the page shows: read it once settled
     await sleep(15_000)
-    const ytLive = ((await panel(pages[2])).tabs || []).find((x: string) => x.startsWith('live='))
-    info(`youtube live tab: ${ytLive}`)
+    const ytLive = yt ? ((await panel(pages[2])).tabs || []).find((x: string) => x.startsWith('live=')) : ''
+    if (yt) info(`youtube live tab: ${ytLive}`)
 
     const t0 = Date.now()
     const end = t0 + minutes * 60_000
     let rot = 0
     while (Date.now() < end) {
-      const i = rot % 3
+      const i = rot % pages.length
       const p = pages[i]
       await p.bringToFront()
       const flowing = await rowsFlow(p, 45_000)
@@ -77,7 +77,7 @@ export async function s1Tabs() {
         bad(`rotation ${rot}: ${tabs[i].name} came to the front with its chat still`, await panel(p))
         await shot(p, `s1-rot${rot}`)
       }
-      for (let j = 0; j < 3; j++) {
+      for (let j = 0; j < pages.length; j++) {
         const st = await panel(pages[j])
         const live = (st.tabs || []).find((x: string) => x.startsWith('live=')) || ''
         const own = tabs[j].own
@@ -94,7 +94,7 @@ export async function s1Tabs() {
       rot++
       await sleep(Math.min(120_000, Math.max(0, end - Date.now())))
     }
-    for (let j = 0; j < 3; j++) {
+    for (let j = 0; j < pages.length; j++) {
       const ring = await ringSince(pages[j], t0)
       if (ring.bad.length) bad(`${tabs[j].name}: overlay watchdogs fired`, ring.bad.slice(0, 6))
     }

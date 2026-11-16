@@ -20,6 +20,7 @@ import {
   ok,
   rowsFlow,
   scenario,
+  setUiSetting,
   shot,
   sleep,
   waitPanel,
@@ -147,6 +148,35 @@ async function runCase(site: 'twitch' | 'youtube' | 'kick', url: string, c: Case
   }
 }
 
+/** Chat docked on each side: the player is sized into what is left, never under the panel. */
+async function dockCase(site: 'twitch' | 'youtube' | 'kick', url: string) {
+  const env = await launch({ width: 1600, height: 900 })
+  const errs: string[] = []
+  try {
+    const p = await env.ctx.newPage()
+    watchErrors(p, `${site} docked`, errs)
+    await p.goto(url, { waitUntil: 'domcontentloaded' })
+    if (!(await waitPanel(p))) return bad(`${site} docked: panel never mounted`)
+    await rowsFlow(p, 30_000)
+    for (const dock of ['bottom', 'top', 'left']) {
+      await setUiSetting(env, 'chatPosition', dock)
+      await sleep(5000)
+      const l: any = await look(p)
+      const label = `${site} chat docked ${dock}`
+      info(`${label}: ${JSON.stringify({ box: l.box, overlap: l.overlap })}`)
+      if (!l.mounted || !l.inView) bad(`${label}: panel not on screen`)
+      else if (l.overlap > 2000) {
+        bad(`${label}: panel covers ${l.overlap}px² of the video`)
+        await shot(p, `s7-${site}-dock-${dock}`)
+      } else ok(`${label}: player sized clear of the panel`)
+    }
+    await setUiSetting(env, 'chatPosition', 'right')
+    if (errs.length) bad(`${site} docked: page errors`, errs.slice(0, 5))
+  } finally {
+    await env.close()
+  }
+}
+
 export async function s7Host() {
   scenario('s7 host themes, sizes and zoom')
   const [tw] = await liveChannels('twitch', 1)
@@ -157,4 +187,7 @@ export async function s7Host() {
     await runCase('kick', `https://kick.com/${kk}`, c)
     if (yt) await runCase('youtube', `https://www.youtube.com/watch?v=${yt.id}`, c)
   }
+  await dockCase('twitch', `https://www.twitch.tv/${tw}`)
+  await dockCase('kick', `https://kick.com/${kk}`)
+  if (yt) await dockCase('youtube', `https://www.youtube.com/watch?v=${yt.id}`)
 }

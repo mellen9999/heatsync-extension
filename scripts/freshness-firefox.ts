@@ -130,38 +130,19 @@ async function watch(label: string, ms: number, every = 4000) {
   results.push({ label, pct })
 }
 
-// put another tab in front for `ms`, then close it and come back to `main`
-async function flipTo(main: string, ms = 500) {
-  const tab = await ff.wd<{ handle: string }>('POST', '/window/new', { type: 'tab' })
-  await ff.wd('POST', '/window', { handle: tab.handle })
-  await ff.goto('about:blank')
-  await sleep(ms)
-  await ff.wd('DELETE', '/window')
-  await ff.wd('POST', '/window', { handle: main })
-}
-
 let code = 0
 try {
   console.log(`firefox ${ff.version}, add-on ${await ff.install(EXT)}, #${chan}`)
   await ff.goto(`https://www.twitch.tv/${chan}`)
   for (let i = 0; i < 20 && (await fresh()).got < 0; i++) await sleep(1500)
-  // headless firefox can load the page believing itself hidden, and a hidden
-  // panel rightly skips drawing until it is shown: a tab opened and closed over
-  // it makes it the shown one, the way a person's tab is
-  // (headless firefox sometimes still reads hidden after one flip: ~1 run in 3, 11-16)
-  let vis = ''
-  for (let i = 0; i < 4 && vis !== 'visible'; i++) {
-    await flipTo(await ff.wd<string>('GET', '/window'))
-    vis = await ff.page<string>('return document.visibilityState')
-  }
-  if (vis !== 'visible') throw new Error(`the twitch tab reads ${vis}: every number below would be about a hidden pane`)
+  if (!(await ff.ensureVisible())) throw new Error('the twitch tab reads hidden: every number below would be about a hidden pane')
   await sleep(6000)
 
   if (steps.includes('base')) await watch('baseline (40s)', 40_000)
 
   if (steps.includes('hidden')) {
     console.log(`${ts()} twitch tab in the background for ${HIDE_MS / 1000}s`)
-    await flipTo(await ff.wd<string>('GET', '/window'), HIDE_MS)
+    await ff.cover(HIDE_MS)
     await watch('back from the background (first 40s)', 40_000)
   }
 

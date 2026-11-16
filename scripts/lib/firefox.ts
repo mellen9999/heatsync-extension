@@ -126,6 +126,30 @@ export async function launchFirefox() {
     }
   }
 
+  /** Put a blank tab in front of the current one for `ms`, then close it and come back. */
+  async function cover(ms = 500) {
+    const main = await call<string>('GET', '/window')
+    const tab = await call<{ handle: string }>('POST', '/window/new', { type: 'tab' })
+    await call('POST', '/window', { handle: tab.handle })
+    await call('POST', '/url', { url: 'about:blank' })
+    await new Promise((r) => setTimeout(r, ms))
+    await call('DELETE', '/window')
+    await call('POST', '/window', { handle: main })
+  }
+
+  /**
+   * Headless firefox can load a page believing itself hidden, and a hidden panel rightly skips
+   * drawing until shown: a tab opened and closed over it makes it the shown one, the way a
+   * person's tab is. One flip is sometimes not enough (~1 run in 3, 11-16). True once visible.
+   */
+  async function ensureVisible() {
+    for (let i = 0; i < 4; i++) {
+      await cover()
+      if ((await run<string>('execute/sync', 'return document.visibilityState')) === 'visible') return true
+    }
+    return false
+  }
+
   return {
     version: created.capabilities.browserVersion,
     /** A raw WebDriver call on this session (windows, tabs: what the helpers here don't cover). */
@@ -144,6 +168,18 @@ export async function launchFirefox() {
     pageAsync: <T>(script: string, args?: unknown[]) => run<T>('execute/async', script, args),
 
     privileged,
+
+    /**
+     * The current page behind the same `evaluate(fn, arg)` a playwright page has, so the e2e
+     * oracles (panel, rowsFlow, ringSince) read firefox too. `fn` must not close over anything.
+     */
+    asPage: () => ({
+      evaluate: <T>(fn: (arg?: any) => T, arg?: unknown) =>
+        run<T>('execute/sync', `return (${fn.toString()})(arguments[0])`, [arg]),
+    }),
+
+    cover,
+    ensureVisible,
 
     /**
      * What firefox's console service has buffered that mentions `match`. This is where

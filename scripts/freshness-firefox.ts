@@ -11,8 +11,8 @@
  *
  * Ground truth is an independent anonymous IRC socket in this process. For every
  * sample it asks: of the lines twitch sent 4 to 12 seconds ago, how many does
- * the panel show? A healthy panel shows ~90%+ (the rest is lines the panel
- * hides on purpose, or keys mangled by emote text). Each step then breaks
+ * the panel show? A healthy panel shows ~99% (emote names read from each image's
+ * alt; the rest is lines the panel hides on purpose). Each step then breaks
  * something the way real life does and measures the recovery:
  *
  *   base     nothing happens
@@ -97,7 +97,17 @@ async function fresh() {
   const panel = await ff.page<string | null>(`
     const el = document.getElementById('hs-mc-messages')
     if (!el) return null
-    return [...el.children].slice(-250).map((r) => r.textContent.replace(/\\s+/g, ' ').toLowerCase()).join('\\n')`)
+    // an emote draws as an image: read its name from alt, or every emote line reads as missing
+    const text = (r) => {
+      let t = ''
+      const w = document.createTreeWalker(r, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT)
+      for (let n = w.nextNode(); n; n = w.nextNode()) {
+        if (n.nodeType === 3) t += n.nodeValue
+        else if (n.tagName === 'IMG' && n.alt) t += n.alt
+      }
+      return t
+    }
+    return [...el.children].slice(-250).map((r) => text(r).replace(/\\s+/g, ' ').toLowerCase()).join('\\n')`)
   if (panel === null) return { want: want.length, got: -1 }
   return { want: want.length, got: want.filter((l) => panel.includes(l.key)).length }
 }
@@ -138,8 +148,12 @@ try {
   // headless firefox can load the page believing itself hidden, and a hidden
   // panel rightly skips drawing until it is shown: a tab opened and closed over
   // it makes it the shown one, the way a person's tab is
-  await flipTo(await ff.wd<string>('GET', '/window'))
-  const vis = await ff.page<string>('return document.visibilityState')
+  // (headless firefox sometimes still reads hidden after one flip: ~1 run in 3, 11-16)
+  let vis = ''
+  for (let i = 0; i < 4 && vis !== 'visible'; i++) {
+    await flipTo(await ff.wd<string>('GET', '/window'))
+    vis = await ff.page<string>('return document.visibilityState')
+  }
   if (vis !== 'visible') throw new Error(`the twitch tab reads ${vis}: every number below would be about a hidden pane`)
   await sleep(6000)
 
@@ -181,9 +195,13 @@ try {
     await sleep(6000)
     await watch('after leaving and coming back (40s)', 40_000)
   }
+} catch (e) {
+  // the finally below exits: without this, a crash left no results and exited 0, a pass
+  console.log(`${ts()} crashed: ${String((e as Error)?.stack || e).slice(0, 600)}`)
+  code = 1
 } finally {
   console.log(`\n${results.map((r) => `${r.pct >= MIN_PCT ? 'ok  ' : 'LOW '} ${r.pct}%  ${r.label}`).join('\n')}`)
-  if (results.some((r) => r.pct < MIN_PCT)) code = 1
+  if (!results.length || results.some((r) => r.pct < MIN_PCT)) code = 1
   await ff.close()
   process.exit(code)
 }

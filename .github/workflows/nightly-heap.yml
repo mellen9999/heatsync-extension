@@ -30,7 +30,7 @@ permissions:
 jobs:
   heap-quick:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 28
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
@@ -58,9 +58,10 @@ jobs:
         run: bun run build.js chrome --minify --no-test
 
       - name: non-chat heap budget
-        # below the job's 15: a step that times out fails the job (and pages);
-        # a job that times out is `cancelled`, which pages nobody
-        timeout-minutes: 10
+        # below the job's 28: a step that times out fails the job (and pages);
+        # a job that times out is `cancelled`, which pages nobody. 12 probes (3 per page
+        # and side) at ~50s each
+        timeout-minutes: 20
         run: bun scripts/heap-budget.ts --quick
 
   browser-suites:

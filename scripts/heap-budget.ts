@@ -38,6 +38,10 @@ const minutes = opt('--minutes', 60)
 // for its first minutes — that rise is the cap being reached, not a leak
 const warmup = opt('--warmup', 15)
 const seedN = opt('--seed', 12)
+// probes per page and side: the budget compares medians. One probe each read the twitch
+// directory at 3.9-5.2MB over ten nights with no code change (its thumbnails and streams
+// differ per load), a coin flip against the 5MB budget
+const samples = opt('--samples', 3)
 if (minutes <= warmup) throw new Error('--minutes must exceed --warmup')
 // bounds a whole probe child, launch to close
 const PROBE_MS = 3 * 60_000
@@ -122,21 +126,27 @@ async function measure(ctx: any, profile: string, url: string) {
 async function nonChatHeaps(ext: boolean) {
   const out: Record<string, number> = {}
   for (const url of NON_CHAT_URLS) {
-    const child = Bun.spawn([process.execPath, import.meta.path, '--probe', ext ? 'on' : 'off', url], {
-      stdout: 'pipe',
-      stderr: 'inherit',
-    })
-    const killer = setTimeout(() => child.kill(), PROBE_MS)
-    const text = await new Response(child.stdout).text()
-    clearTimeout(killer)
-    const code = await child.exited
-    const mb = Number(text.match(/^HEAP (\S+)$/m)?.[1])
-    process.stdout.write(text.replace(/^HEAP .*\n/m, ''))
-    if (code !== 0 || !Number.isFinite(mb)) throw new Error(`probe ${ext ? 'ext on' : 'ext off'} ${url} failed (exit ${code})`)
-    out[url] = mb
-    console.log(`  ${ext ? 'ext on ' : 'ext off'}  ${url}  ${mb.toFixed(2)}MB`)
+    const runs: number[] = []
+    for (let i = 0; i < samples; i++) runs.push(await nonChatProbe(ext, url))
+    out[url] = runs.sort((a, b) => a - b)[Math.floor(runs.length / 2)]
+    console.log(`  ${ext ? 'ext on ' : 'ext off'}  ${url}  ${out[url].toFixed(2)}MB (median of ${runs.map((x) => x.toFixed(2)).join(', ')})`)
   }
   return out
+}
+
+async function nonChatProbe(ext: boolean, url: string) {
+  const child = Bun.spawn([process.execPath, import.meta.path, '--probe', ext ? 'on' : 'off', url], {
+    stdout: 'pipe',
+    stderr: 'inherit',
+  })
+  const killer = setTimeout(() => child.kill(), PROBE_MS)
+  const text = await new Response(child.stdout).text()
+  clearTimeout(killer)
+  const code = await child.exited
+  const mb = Number(text.match(/^HEAP (\S+)$/m)?.[1])
+  process.stdout.write(text.replace(/^HEAP .*\n/m, ''))
+  if (code !== 0 || !Number.isFinite(mb)) throw new Error(`probe ${ext ? 'ext on' : 'ext off'} ${url} failed (exit ${code})`)
+  return mb
 }
 
 /** A probe hung: say which chromium process was burning cpu, what was open, and whether the page answers. */

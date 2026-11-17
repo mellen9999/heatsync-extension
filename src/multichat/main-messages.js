@@ -1422,11 +1422,13 @@ function highlightThreadRefsInHtml(html) {
 }
 
 // Scroll helper — reused by both renderMessages and appendMessage
+let _pinRanAt = 0 // last time a pin put the view on the tail (unpinnedCheck)
 function scrollMsgsToBottom(msgsEl) {
   const newBtn = document.getElementById('hs-mc-new-msgs')
   newMessageCount = 0
   if (newBtn) newBtn.style.display = 'none'
   if (isScrolledUp) return
+  _pinRanAt = Date.now()
   // Single sync write — reading scrollHeight forces layout flush so the
   // new content's height is reflected before we set scrollTop. The +rAF
   // catches the rare case where layout settles a frame later (e.g. font
@@ -2785,6 +2787,36 @@ function rowInView(msgsEl) {
     return r.bottom > view.top && r.top < view.bottom
   }
 }
+// Rows land but the view sits above the tail: the pin never ran (a pending
+// pin handle that never settles skips every later one). The user sees a
+// frozen pane while rows append off-screen below. A pane whose pins keep
+// running is following, a frame behind a busy chat's newest rows: sampled
+// mid-flight twice in a row, that read as stuck (s10 on a slow runner, 11-16).
+function unpinnedCheck(msgsEl) {
+  const gap = msgsEl.scrollHeight - msgsEl.scrollTop - msgsEl.clientHeight
+  const following = Date.now() - _pinRanAt < 2500
+  if (isScrolledUp || following || gap <= 40 || currentTab === 'settings' || !msgsEl.children.length) {
+    _unpinnedStreak = 0
+    return
+  }
+  if (++_unpinnedStreak < 2) return
+  const now = Date.now()
+  if (now - _unpinLoggedAt > 20000) {
+    _unpinLoggedAt = now
+    hsDiagLog('unpinned', {
+      tab: String(currentTab).slice(0, 24),
+      gap: Math.round(gap),
+      pinPending: !!_scrollPinRaf,
+      prog: !!isProgrammaticScroll,
+      domN: msgsEl.children.length,
+    })
+  }
+  _unpinnedStreak = 0
+  if (_noHeal()) return
+  _scrollPinRaf = null
+  isProgrammaticScroll = false
+  scrollMsgsToBottom(msgsEl)
+}
 function domThrashCheck() {
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl || (document.hidden && !document.body.classList.contains('hs-popout'))) return
@@ -2814,30 +2846,7 @@ function domThrashCheck() {
     })
     return
   }
-  // Rows land but the view sits above the tail: the pin never ran (a pending
-  // pin handle that never settles skips every later one). The user sees a
-  // frozen pane while rows append off-screen below.
-  const gap = msgsEl.scrollHeight - msgsEl.scrollTop - msgsEl.clientHeight
-  if (!isScrolledUp && gap > 40 && currentTab !== 'settings' && msgsEl.children.length) {
-    if (++_unpinnedStreak >= 2) {
-      const now = Date.now()
-      if (now - _unpinLoggedAt > 20000) {
-        _unpinLoggedAt = now
-        hsDiagLog('unpinned', {
-          tab: String(currentTab).slice(0, 24),
-          gap: Math.round(gap),
-          pinPending: !!_scrollPinRaf,
-          prog: !!isProgrammaticScroll,
-          domN: msgsEl.children.length,
-        })
-      }
-      _unpinnedStreak = 0
-      if (_noHeal()) return
-      _scrollPinRaf = null
-      isProgrammaticScroll = false
-      scrollMsgsToBottom(msgsEl)
-    }
-  } else _unpinnedStreak = 0
+  unpinnedCheck(msgsEl)
   // Busy channel, silent pane: say which side went quiet. A fresh buffer with
   // a still DOM is the render path; a stale buffer is delivery.
   const nowQ = Date.now()

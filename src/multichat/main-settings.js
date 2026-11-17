@@ -443,7 +443,11 @@ const _RUNTIME_BRIDGE = {
   },
   chatPosition: {
     get: () => chatPosition,
+    // The stored value is where chat sits when it shows. A tab hidden with \ keeps its own
+    // 'hidden': settings load lands after loadChatPosition and used to write the stored side
+    // over it, so a hidden tab came back on every reload. The applier owns a pick made here.
     set: (v) => {
+      if (chatHiddenLocal && v !== 'hidden') return
       chatPosition = v
     },
   },
@@ -635,6 +639,7 @@ const _APPLIERS = {
       // Explicit position pick in THIS tab (settings dropdown / C rotate)
       // overrides the tab-local hide.
       chatHiddenLocal = false
+      chatPosition = v
       _saveChatHiddenLocal()
     }
     applyChatPosition()

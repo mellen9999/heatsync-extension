@@ -377,7 +377,9 @@ function softTwitchNav(prevLiveCh) {
         try {
           startNativeTap(newCh)
         } catch (_) {}
-      renderMessages('live')
+      // the live tab only: a tab the reader picked keeps its own chat (repainting live here
+      // blanked a picked saved tab to "connecting" on every channel the page moved to, 11-16)
+      if (currentTab === 'live') renderMessages('live')
     } catch (_) {}
     // Hold the nav guard for ~300ms so Twitch's render cycle + width
     // transitions on chat-shell ancestors complete entirely behind it.

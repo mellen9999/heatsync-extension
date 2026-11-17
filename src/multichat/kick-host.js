@@ -418,7 +418,9 @@ function softKickNav(prevLiveCh) {
       }
       if (newCh && irc && !irc.channels.has(newCh)) irc.join(newCh)
       if (newCh && kickChat && !kickChat.channels.has(newCh)) kickChat.join(newCh)
-      renderMessages('live')
+      // the live tab only: a tab the reader picked keeps its own chat (repainting live here
+      // blanked a picked saved tab to "connecting" on every channel the page moved to, 11-16)
+      if (currentTab === 'live') renderMessages('live')
     } catch (_) {}
     cleanup.setTimeout(
       () => {

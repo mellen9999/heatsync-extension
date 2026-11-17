@@ -443,12 +443,13 @@ async function setTwitchChatColor(arg, login) {
   }
 }
 
-function makeCoinSvg(size) {
+/** The channel-points coin: twitch's own mark, the one drawing in this file (icons are text). */
+function makeCoinSvg(size, lift = -2) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   svg.setAttribute('width', String(size))
   svg.setAttribute('height', String(size))
   svg.setAttribute('viewBox', '0 0 20 20')
-  svg.style.verticalAlign = '-2px'
+  svg.style.verticalAlign = `${lift}px`
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
   path.style.fill = 'var(--hs-gold)'
   path.setAttribute('d', 'M10 6a4 4 0 100 8 4 4 0 000-8zm0-4a8 8 0 110 16 8 8 0 010-16z')
@@ -847,16 +848,7 @@ function renderRewards(rewards, balance, channelId) {
   if (balance != null) {
     const bal = document.createElement('span')
     bal.className = 'hs-mc-rewards-balance'
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    svg.setAttribute('width', '12')
-    svg.setAttribute('height', '12')
-    svg.setAttribute('viewBox', '0 0 20 20')
-    svg.style.verticalAlign = '-1px'
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    path.style.fill = 'var(--hs-gold)'
-    path.setAttribute('d', 'M10 6a4 4 0 100 8 4 4 0 000-8zm0-4a8 8 0 110 16 8 8 0 010-16z')
-    svg.appendChild(path)
-    bal.appendChild(svg)
+    bal.appendChild(makeCoinSvg(12, -1))
     bal.appendChild(document.createTextNode(` ${formatPoints(balance)}`))
     header.appendChild(bal)
   }
@@ -906,16 +898,7 @@ function renderRewards(rewards, balance, channelId) {
 
     const costEl = document.createElement('div')
     costEl.className = 'hs-mc-reward-cost'
-    const costSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    costSvg.setAttribute('width', '10')
-    costSvg.setAttribute('height', '10')
-    costSvg.setAttribute('viewBox', '0 0 20 20')
-    costSvg.style.verticalAlign = '-1px'
-    const costPath = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    costPath.style.fill = 'var(--hs-gold)'
-    costPath.setAttribute('d', 'M10 6a4 4 0 100 8 4 4 0 000-8zm0-4a8 8 0 110 16 8 8 0 010-16z')
-    costSvg.appendChild(costPath)
-    costEl.appendChild(costSvg)
+    costEl.appendChild(makeCoinSvg(10, -1))
     costEl.appendChild(document.createTextNode(` ${formatPoints(reward.cost)}`))
     info.appendChild(costEl)
 
@@ -1730,51 +1713,27 @@ function getActiveTwitchChannel() {
 }
 
 // ── Twitch tab sub-tabs ──────────────────────────────────────────────────────
-// The picker's "twitch" tab is split into four square-icon sub-tabs at the top
-// so the user can pick which surface (bits / predictions / chat tools / links)
-// instead of getting one giant vertical stack. Active sub-tab persists in
-// module state so it survives picker re-opens.
+// The picker's "twitch" tab is split into three word cells at the top so the
+// user picks a surface (events / bits / links) instead of getting one giant
+// vertical stack. Active sub-tab persists in module state so it survives
+// picker re-opens.
 let _hsTwSubtab = 'predictions'
-
-const HS_TW_ICON_BITS_PATHS = [
-  'M15 2h2v2h-2V2Zm5 10h2v2h-2v-2Zm0-8v2a1 1 0 0 1-1 1h-2v2h2a3 3 0 0 0 3-3V4h-2Z',
-  'M13 9a1 1 0 0 0-1 1l7 7-14 5-3-3L7 5l3.438 3.438A2.998 2.998 0 0 1 13 7h2v2h-2Zm-5.18-.351-.725 2.03 3.762 7.106 2.572-.92-2.934-5.542L7.82 8.649Zm-2.976 8.334 1.235-3.458 2.67 5.012-2.592.926-1.313-2.48Z',
-]
-const HS_TW_ICON_PRED_PATHS = ['M3 3h2v18H3V3Zm4 10h2v8H7v-8Zm4-6h2v14h-2V7Zm4 9h2v5h-2v-5Zm4-12h2v17h-2V4Z']
-const HS_TW_ICON_LINKS_PATHS = ['M14 3h7v7h-2V6.41l-9.3 9.3-1.4-1.42L17.58 5H14V3Zm-4 3H4v14h14v-6h2v8H2V4h8v2Z']
-
-function hsTwBuildIconSvg(paths, size) {
-  const arr = Array.isArray(paths) ? paths : [paths]
-  const ns = 'http://www.w3.org/2000/svg'
-  const svg = document.createElementNS(ns, 'svg')
-  svg.setAttribute('viewBox', '0 0 24 24')
-  svg.setAttribute('width', String(size || 20))
-  svg.setAttribute('height', String(size || 20))
-  svg.setAttribute('fill', 'currentColor')
-  for (const d of arr) {
-    const p = document.createElementNS(ns, 'path')
-    p.setAttribute('d', d)
-    svg.appendChild(p)
-  }
-  return svg
-}
 
 function buildTwSubtabBar() {
   const bar = document.createElement('div')
   bar.className = 'hs-mc-tw-subtabs'
+  // words, not pictures: a cell says what it opens (icons are never svg)
   const items = [
-    { id: 'predictions', label: t('mc_twapi_tab_events'), paths: HS_TW_ICON_PRED_PATHS },
-    { id: 'bits', label: t('mc_twapi_tab_bits'), paths: HS_TW_ICON_BITS_PATHS },
-    { id: 'links', label: t('mc_twapi_tab_links'), paths: HS_TW_ICON_LINKS_PATHS },
+    { id: 'predictions', label: t('mc_twapi_tab_events') },
+    { id: 'bits', label: t('mc_twapi_tab_bits') },
+    { id: 'links', label: t('mc_twapi_tab_links') },
   ]
   for (const it of items) {
     const btn = document.createElement('button')
     btn.type = 'button'
     btn.className = `hs-mc-tw-subtab${it.id === _hsTwSubtab ? ' active' : ''}`
     btn.dataset.twSubtab = it.id
-    btn.title = it.label
-    btn.setAttribute('aria-label', it.label)
-    btn.appendChild(hsTwBuildIconSvg(it.paths, 20))
+    btn.textContent = it.label
     btn.addEventListener('click', (e) => {
       // stopPropagation is critical — the picker has a document-level
       // outside-click close handler that fires AFTER this. If we let the

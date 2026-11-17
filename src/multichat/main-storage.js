@@ -211,6 +211,13 @@ let _savedYtNative = false
 // 'whispers' belongs here too — it's a real, restorable tab; leaving it out
 // silently bounced you to 'live' every reload if that's where you were.
 const BUILTIN_TABS = mcRestorableTabs()
+
+/** Another tab or device rewrote the saved channels: is the tab on screen one it removed?
+ *  A built-in tab (settings, the + form, discover, pinned…) is never a saved channel: it stays,
+ *  with whatever the reader has typed into it. */
+function tabRemovedBySync(tab, newIds) {
+  return !mcChromeTabIds().includes(tab) && !newIds.has(tab)
+}
 /** The channel a twitch/kick popout window is locked to, from its path. */
 function popoutUrlChannel() {
   return location.pathname.match(/^\/(?:popout|embed)\/([a-zA-Z0-9_-]+)/)?.[1] || null
@@ -1257,15 +1264,7 @@ function listenForSettingsChanges() {
         config.enabled = newConfig.enabled !== undefined ? newConfig.enabled : config.enabled
         updateTabBar()
         // If current tab was removed, fall back (temp tab or a saved one covering it)
-        if (
-          currentTab !== 'live' &&
-          currentTab !== 'feed' &&
-          currentTab !== 'mentions' &&
-          currentTab !== 'whispers' &&
-          !newIds.has(currentTab)
-        ) {
-          switchTab(liveTarget())
-        }
+        if (tabRemovedBySync(currentTab, newIds)) switchTab(liveTarget())
         log('Config synced from another tab/device:', newChannels.length, 'channels')
       }
     }

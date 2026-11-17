@@ -103,6 +103,43 @@ async function nativeChat(p: any) {
     .catch(() => false)
 }
 
+/**
+ * Pointing at an emote holds the feed; a pointer merely resting over the chat must not. A resting
+ * pointer gets mouseover whenever a row slides an emote under it (and when the window gets the
+ * pointer back after a workspace switch): the feed froze on old rows with no "new messages" until
+ * the mouse moved (11-16).
+ */
+async function pointerHold(p: any) {
+  const lastRow = () => p.evaluate(() => document.querySelector('#hs-mc-messages')?.lastElementChild?.getAttribute('data-msg-key') || '')
+  const pane = await p.evaluate(() => {
+    const r = document.getElementById('hs-mc-messages')!.getBoundingClientRect()
+    return { x: r.left + 150, y: r.bottom - 40 }
+  })
+  await p.mouse.move(pane.x, pane.y)
+  const k0 = await lastRow()
+  await sleep(25_000)
+  if ((await lastRow()) === k0) {
+    bad('a pointer resting over the chat froze the feed (rows slid an emote or name under it)')
+    await shot(p, 's6-parked-pointer')
+  } else ok('a pointer resting over the chat leaves the feed moving')
+  // a real move onto an emote holds; moving off lets go
+  const em = await p.evaluate(() => {
+    const e = [...document.querySelectorAll('#hs-mc-messages .hs-mc-emote-wrapper')].at(-1)?.getBoundingClientRect()
+    return e ? { x: e.left + e.width / 2, y: e.top + e.height / 2 } : null
+  })
+  if (!em) return info('pointer hold: no emote on screen to point at')
+  await p.mouse.move(em.x - 6, em.y)
+  await p.mouse.move(em.x, em.y, { steps: 3 })
+  const k1 = await lastRow()
+  await sleep(4000)
+  const held = (await lastRow()) === k1
+  await p.mouse.move(5, 5)
+  const resumed = await rowsFlow(p, 20_000)
+  if (!held) info('pointer hold: the feed kept moving under an emote being pointed at (chat may have been quiet)')
+  if (!resumed) bad('pointer hold: moving off the emote did not let the feed go')
+  else if (held) ok('pointing at an emote holds the feed, moving off lets it go')
+}
+
 async function siteSwitch(env: Env, p: any, url: string) {
   await setUiSetting(env, 'subsystems', { 'overlay-twitch': false, 'overlay-kick': true, 'overlay-youtube': true })
   await p.goto(url, { waitUntil: 'domcontentloaded' })
@@ -158,6 +195,7 @@ export async function s6Settings() {
     const ring = await ringSince(p, t0)
     if (ring.bad.length) bad('overlay watchdogs fired during the settings churn', ring.bad.slice(0, 6))
 
+    await pointerHold(p)
     await siteSwitch(env, p, url)
     if (errs.length) bad('page errors', errs.slice(0, 5))
   } finally {

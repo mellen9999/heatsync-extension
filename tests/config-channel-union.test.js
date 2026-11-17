@@ -29,12 +29,14 @@ function run({ mine, theirs, lastPersisted }) {
     '_lastPersistedChannelKeys',
     '_lastPersistedLegs',
     'mcMergeLegs',
+    '_cfgChannelKey',
     `return (async () => { ${UNION} ; return persistable.channels })()`,
   )
-  return fn(persistable, browser, 'cfg', lastPersisted, null, mcMergeLegs)
+  return fn(persistable, browser, 'cfg', lastPersisted, null, mcMergeLegs, key)
 }
 
-const key = (c) => `${c.platform || 'twitch'}:${(c.id || c.twitch || c.name || '').toLowerCase()}`
+// the real key, lifted the same way
+const key = new Function(`${slice('const _cfgChannelKey =', '\nfunction _rememberPersisted')}\nreturn _cfgChannelKey`)()
 
 describe('saveConfig cross-tab channel union', () => {
   test('adopts a channel another tab added (the lost-update this fixes)', async () => {
@@ -91,5 +93,70 @@ describe('saveConfig cross-tab channel union', () => {
       lastPersisted: null,
     })
     expect(out.map(key).sort()).toEqual(['twitch:lirik', 'twitch:xqc'])
+  })
+})
+
+describe('what the tab knew before its first write', () => {
+  // _rememberPersisted lifted with its key: the snapshot loadConfig / onChanged take
+  const remember = new Function(
+    `let _lastPersistedLegs = null, _lastPersistedChannelKeys = null
+     ${slice('const _cfgChannelKey =', '\nasync function _saveConfigNow')}
+     return (list) => { _rememberPersisted(list); return _lastPersistedChannelKeys }`,
+  )()
+  const both = [
+    { id: 'xqc', twitch: 'xqc' },
+    { id: 'lirik', twitch: 'lirik' },
+  ]
+
+  test('a tab that never saved removes a channel: it stays removed', async () => {
+    const known = remember(both) // loaded at boot
+    const out = await run({ mine: [both[0]], theirs: both, lastPersisted: known })
+    expect(out.map(key)).toEqual(['twitch:xqc'])
+  })
+
+  test("another tab's add it heard about, then removed here: stays removed", async () => {
+    remember([both[0]]) // loaded with xqc
+    const known = remember(both) // heard lirik arrive from another tab
+    const out = await run({ mine: [both[0]], theirs: both, lastPersisted: known })
+    expect(out.map(key)).toEqual(['twitch:xqc'])
+  })
+
+  test('an add it never heard about is still adopted', async () => {
+    const known = remember([both[0]])
+    const out = await run({ mine: [both[0]], theirs: both, lastPersisted: known })
+    expect(out.map(key).sort()).toEqual(['twitch:lirik', 'twitch:xqc'])
+  })
+
+  test('loadConfig and the cross-tab handler both take the snapshot', () => {
+    const load = slice('async function loadConfig()', 'config = {')
+    expect(load).toContain('_rememberPersisted(_raw?.channels)')
+    expect(slice('config.channels = newChannels', 'updateTabBar()')).toContain('_rememberPersisted(newChannels)')
+  })
+})
+
+describe('our own write coming back is told apart by content', () => {
+  const echo = new Function(
+    `${slice('let _lastWrittenConfig', '\nlet _lastPersistedChannelKeys')}
+     return { wrote: (v) => { _lastWrittenConfig = JSON.stringify(v) }, is: _isOwnConfigEcho }`,
+  )()
+  const a = { enabled: true, channels: [{ id: 'xqc', twitch: 'xqc' }] }
+  const b = { enabled: true, channels: [] }
+
+  test('our write is our echo; another tab’s is not', () => {
+    echo.wrote(a)
+    expect(echo.is(structuredClone(a))).toBe(true)
+    expect(echo.is(b)).toBe(false)
+    expect(echo.is(undefined)).toBe(false)
+  })
+
+  test('a save that changed nothing does not swallow the next real change', () => {
+    echo.wrote(a)
+    echo.wrote(a) // no-op save: chrome fires no onChanged for it
+    expect(echo.is(b)).toBe(false) // the other tab's removal still applies
+  })
+
+  test('no skip-next flag is left in the handler', () => {
+    expect(SRC).not.toContain('_skipNextConfigSync')
+    expect(SRC).toContain('if (!_isOwnConfigEcho(changes.heatsync_multichat.newValue))')
   })
 })

@@ -31,6 +31,7 @@ async function loadConfig() {
   try {
     const s = await browser.storage.local.get([STORAGE_KEY])
     const _raw = s[STORAGE_KEY]
+    _rememberPersisted(_raw?.channels)
     config = { channels: [], enabled: true, ...(_raw && typeof _raw === 'object' ? _raw : {}) }
     // Guard: a persisted null channels field (corrupted storage) would propagate
     // through the spread and cause config.channels.some() to throw below.
@@ -95,11 +96,37 @@ async function loadConfig() {
   } catch (_) {}
 }
 
-let _skipNextConfigSync = false
-// Snapshot of what we last wrote, so the cross-tab union below can tell
-// "another tab added this" from "we deliberately removed this".
+// Our own write coming back through storage.onChanged is recognised by its
+// content, not by a "skip the next one" flag: chrome fires nothing for a write
+// that changes nothing, so the flag outlived a no-op save and swallowed the
+// next tab's real change (a channel removed elsewhere stayed here, then this
+// tab's next save put it back), 11-17.
+let _lastWrittenConfig = ''
+function _isOwnConfigEcho(newValue) {
+  try {
+    return !!newValue && JSON.stringify(newValue) === _lastWrittenConfig
+  } catch {
+    return false
+  }
+}
+// What this tab last knew storage to hold — loaded, written, or another tab's
+// write — so the cross-tab union below can tell "another tab added this" from
+// "we deliberately removed this". Known since load, not only since our first
+// write: a tab that had never saved re-adopted every channel it removed (the
+// removal undone by its own write, 11-17, e2e s16).
 let _lastPersistedChannelKeys = null
 let _lastPersistedLegs = null
+const _cfgChannelKey = (c) =>
+  typeof c === 'string'
+    ? `twitch:${c.toLowerCase()}`
+    : `${c?.platform || 'twitch'}:${(c?.id || c?.twitch || c?.name || '').toLowerCase()}`
+function _rememberPersisted(channels) {
+  const list = Array.isArray(channels) ? channels : []
+  _lastPersistedLegs = new Map(
+    list.map((c) => [_cfgChannelKey(c), { twitch: c?.twitch || '', kick: c?.kick || '', youtube: c?.youtube || '' }]),
+  )
+  _lastPersistedChannelKeys = new Set(list.map(_cfgChannelKey))
+}
 // Serializes saveConfig bodies — two rapid saves must not interleave their
 // read-then-write halves (the same lost-update the union above prevents
 // cross-tab, but within one tab). Mirrors the ui_settings write mutex.
@@ -118,7 +145,6 @@ function saveConfig() {
 
 async function _saveConfigNow() {
   try {
-    _skipNextConfigSync = true
     const persistable = { ...config, channels: config.channels || [] }
     // Union the channel list with what's in storage before writing. A blind
     // full-object set makes two tabs (twitch + kick, the normal setup) race:
@@ -129,7 +155,7 @@ async function _saveConfigNow() {
       const stored = (await browser.storage.local.get(STORAGE_KEY))?.[STORAGE_KEY]
       const theirs = Array.isArray(stored?.channels) ? stored.channels : null
       if (theirs?.length) {
-        const key = (c) => `${c?.platform || 'twitch'}:${(c?.id || c?.twitch || c?.name || '').toLowerCase()}`
+        const key = _cfgChannelKey
         const mine = new Set(persistable.channels.map(key))
         // A channel we deliberately removed this session must stay removed —
         // only adopt entries that appeared after our last known snapshot.
@@ -147,17 +173,8 @@ async function _saveConfigNow() {
         }
       }
     } catch {}
-    _lastPersistedLegs = new Map(
-      persistable.channels.map((c) => [
-        `${c?.platform || 'twitch'}:${(c?.id || c?.twitch || c?.name || '').toLowerCase()}`,
-        { twitch: c?.twitch || '', kick: c?.kick || '', youtube: c?.youtube || '' },
-      ]),
-    )
-    _lastPersistedChannelKeys = new Set(
-      persistable.channels.map(
-        (c) => `${c?.platform || 'twitch'}:${(c?.id || c?.twitch || c?.name || '').toLowerCase()}`,
-      ),
-    )
+    _rememberPersisted(persistable.channels)
+    _lastWrittenConfig = JSON.stringify(persistable)
     await browser.storage.local.set({ [STORAGE_KEY]: persistable })
     // Sync to server for cross-device sync
     safeSendMessage({
@@ -1166,9 +1183,7 @@ function listenForSettingsChanges() {
 
     // Multichat config sync (cross-tab + cross-device)
     if (changes.heatsync_multichat) {
-      if (_skipNextConfigSync) {
-        _skipNextConfigSync = false
-      } else {
+      if (!_isOwnConfigEcho(changes.heatsync_multichat.newValue)) {
         const newConfig = changes.heatsync_multichat.newValue || { channels: [], enabled: true }
         const oldChannels = config.channels || []
         const newChannels = newConfig.channels || []
@@ -1181,15 +1196,9 @@ function listenForSettingsChanges() {
         for (const ch of oldChannels) {
           const id = ch.id
           if (!newIds.has(id)) {
-            // another tab (or the page itself) can still show the same name
-            const twitchName = ch.twitch
-            const page = hostPlatform === 'twitch' ? [getLiveChannel()] : []
-            if (twitchName && !mcTwitchStillShown(twitchName, newChannels, page)) {
-              irc?.part(twitchName)
-              leaveExtraChannel('twitch', twitchName)
-            }
-            const kickName = ch.kick
-            if (kickName) kickChat?.part(kickName)
+            // another tab (or the page's stream) can still show the same name
+            mcLeaveUnshown('twitch', ch.twitch, newChannels)
+            mcLeaveUnshown('kick', ch.kick, newChannels)
             if (ch.youtube) {
               const link = youtubeLinks.get(id)
               chrome.runtime
@@ -1243,6 +1252,7 @@ function listenForSettingsChanges() {
 
         // Update config and UI
         config.channels = newChannels
+        _rememberPersisted(newChannels)
         _channelLookup = null
         config.enabled = newConfig.enabled !== undefined ? newConfig.enabled : config.enabled
         updateTabBar()

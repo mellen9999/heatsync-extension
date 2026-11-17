@@ -3308,7 +3308,8 @@ function applyMcMutes() {
   // true for a name in (or aliased into) mutedUsers, so size 0 = no mutes.
   if (typeof mutedUsers === 'undefined' || mutedUsers.size === 0) return
   document.querySelectorAll('.hs-mc-msg').forEach((msg) => {
-    const userEl = msg.querySelector('.hs-mc-user')
+    // the author, past a reply bar's "@name" (also .hs-mc-user)
+    const userEl = msg.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
     const username = userEl?.textContent?.trim()?.toLowerCase()
     const platform = userEl?.dataset?.platform
     const muted =

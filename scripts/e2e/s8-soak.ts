@@ -283,7 +283,9 @@ export async function s8Soak() {
     while (Date.now() < end) {
       const i = rot % pages.length
       await pages[i].bringToFront()
-      if (!(await rowsFlow(pages[i], 45_000))) {
+      // a thin youtube chat (lofi at night: ~5 lines a minute) can say nothing for 45s; nothing in
+      // 105s is a stop
+      if (!(await rowsFlow(pages[i], 45_000)) && !(await rowsFlow(pages[i], 60_000))) {
         still++
         bad(`minute ${Math.round((Date.now() - t0) / 60_000)}: ${tabs[i].name} came to the front with its chat still`, await panel(pages[i]))
         await shot(pages[i], `s8-still-${rot}`)

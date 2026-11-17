@@ -95,7 +95,8 @@ function pinCanAct(platform, channel) {
 
 // the room a chat row's pin lives on, or null (youtube / no channel / not on this tab)
 function pinRoomOfRow(row) {
-  const platform = row?.dataset?.msgPlatform || ''
+  // a twitch row carries no platform (buildMessageDiv stamps `m.platform || ''`)
+  const platform = row?.dataset?.msgPlatform || 'twitch'
   const channel = String(row?.dataset?.msgChannel || '').toLowerCase()
   if ((platform !== 'twitch' && platform !== 'kick') || !channel) return null
   const room = `${platform}/${channel}`

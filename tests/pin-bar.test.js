@@ -102,7 +102,9 @@ function mount(opts = {}) {
 }
 
 const bar = () => win.document.getElementById('hs-mc-pinbar')
-const row = (id = 'm1', ch = 'somechan', plat = 'twitch') => {
+// a real twitch row carries no platform: buildMessageDiv stamps `m.platform || ''` and twitch
+// messages have none. The default here is that row, not a tidier one.
+const row = (id = 'm1', ch = 'somechan', plat = '') => {
   const r = win.document.createElement('div')
   r.className = 'hs-mc-msg'
   r.dataset.msgId = id
@@ -326,6 +328,9 @@ describe('pin bar', () => {
     await p.pinSync('chan')
     expect(p.pinRoomOfRow(row('m1', 'somechan', 'youtube'))).toBeNull()
     expect(p.pinRoomOfRow(row('m1', 'somechan', 'twitch'))?.room).toBe('twitch/somechan')
+    // the row twitch chat really draws: no platform stamped
+    expect(p.pinRoomOfRow(row('m1', 'somechan', ''))?.room).toBe('twitch/somechan')
+    expect(p.pinRoomOfRow(row('m1', 'some-kick', 'kick'))?.room).toBe('kick/some-kick')
   })
 })
 

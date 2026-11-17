@@ -3517,10 +3517,16 @@ function handleInputKeydownInner(e, input) {
       return
     }
     if (e.key === 'Tab' || e.key === 'Enter') {
-      e.preventDefault()
       const sel = slashAcState.matches[slashAcState.index]
-      if (sel) insertSlashCommand(sel)
-      return
+      // the whole command is typed and needs nothing more: Enter runs it,
+      // instead of filling in what is already there and waiting for a second
+      if (e.key === 'Enter' && sel && slashRunsAsTyped(sel, getInputText())) {
+        hideSlashDropdown()
+      } else {
+        e.preventDefault()
+        if (sel) insertSlashCommand(sel)
+        return
+      }
     }
     if (e.key === 'Escape') {
       e.preventDefault()
@@ -6830,6 +6836,16 @@ function hideSlashDropdown() {
   slashAcState.index = 0
   const dd = document.getElementById('hs-mc-slash-dropdown')
   if (dd) hsListboxHide(dd)
+}
+
+// "/lclear" typed out in full (or an alias of it), on a command whose
+// arguments are none or optional
+function slashRunsAsTyped(c, text) {
+  if (c.args && !c.args.startsWith('[')) return false
+  const typed = String(text || '')
+    .trim()
+    .toLowerCase()
+  return [c.cmd, ...(c.alias || [])].some((n) => typed === `/${n}`)
 }
 
 function insertSlashCommand(c) {

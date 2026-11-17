@@ -2082,14 +2082,16 @@ function fairCoLive(newestOrds) {
   return hi - Math.min(...newestOrds) < 10 * 60 * 1000 && hi > Date.now() - 60 * 60 * 1000
 }
 
-function fairMerge(sources) {
+// `limit`: how many rows the pane may hold. The live tail's cap unless the reader has scrolled
+// to the top and asked for older rows (renderRowCap). It was fixed at the live cap, so the render
+// never saw a row past it and scrolling to the top loaded nothing (real twitch + kick, 11-17).
+function fairMerge(sources, limit = DOM_RENDER_CAP) {
   sources = sources.map(_ordSortedRun)
   if (MC_DEBUG)
     log(
       'fairMerge sources:',
       sources.map((s) => s.length),
     )
-  const limit = DOM_RENDER_CAP
   const active = sources.filter((s) => s.length > 0)
   if (active.length === 0) return []
   if (active.length === 1) {

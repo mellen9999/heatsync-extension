@@ -148,7 +148,7 @@ function _renderMessagesImpl(id, opts) {
     // live tab or channel tab: twitch + kick + youtube, merged fairly (see
     // merged-tab.js for where each source comes from)
     mtSrcs = mergedTabSources(id, SCROLLBACK_MAX, true)
-    msgs = fairMerge(mtSrcs)
+    msgs = fairMerge(mtSrcs, renderRowCap())
   }
 
   // Merge follow stream events into channel + live tabs (went live,
@@ -273,8 +273,7 @@ function _renderMessagesImpl(id, opts) {
   // Live tail is always DOM_RENDER_CAP; _scrollbackWindow adds older rows
   // when the user has scrolled to the top (loadOlderScrollback). Capped at
   // SCROLLBACK_MAX so the DOM stays bounded on low-RAM hardware.
-  const _renderCap = Math.min(DOM_RENDER_CAP + _scrollbackWindow, SCROLLBACK_MAX)
-  let _cap = _renderCap
+  let _cap = renderRowCap()
   if (_paintFor === id) _cap = Math.min(_cap, _paintCap)
   else if (
     _paintFor === null &&

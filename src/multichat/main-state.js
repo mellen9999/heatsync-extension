@@ -589,6 +589,8 @@ const DOM_RENDER_CAP = 500
 let _scrollbackWindow = 0
 const SCROLLBACK_STEP = 250
 const SCROLLBACK_MAX = 1500 // hard ceiling on rendered rows (3x the live cap)
+/** Rows the pane may hold right now: the live tail, plus what scrolling to the top has added. */
+const renderRowCap = () => Math.min(DOM_RENDER_CAP + _scrollbackWindow, SCROLLBACK_MAX)
 
 // First paint of a cold list: the newest FIRST_PAINT_ROWS now, the older rows in chunks right after, so
 // the chat is on screen and live in one short task instead of one 500-row build. _paintFor names the tab
@@ -611,7 +613,7 @@ function growFirstPaint(id) {
     renderMessages(id)
     // overflow-anchor is off on the list: older rows landing above a scrolled-up viewer would move it
     if (isScrolledUp) el.scrollTop = top0 + (el.scrollHeight - h0)
-    if (_paintCap >= Math.min(DOM_RENDER_CAP + _scrollbackWindow, SCROLLBACK_MAX)) _paintFor = null
+    if (_paintCap >= renderRowCap()) _paintFor = null
     else growFirstPaint(id)
   }, 0)
 }

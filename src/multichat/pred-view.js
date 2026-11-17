@@ -71,7 +71,7 @@ async function refreshPredViewData() {
 function renderPredView() {
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl || !activePredView) return
-  msgsEl.textContent = ''
+  takePane(msgsEl)
 
   const wrap = document.createElement('div')
   wrap.className = 'hs-pv-wrap'

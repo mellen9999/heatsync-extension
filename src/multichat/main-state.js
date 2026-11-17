@@ -838,6 +838,15 @@ function _clearMessageIndices() {
   _mentionIndex.clear()
 }
 
+// A view that takes the whole pane (profile card, prediction, picture) drops the rows and what
+// indexes them in one step. Wiping the rows alone left every key behind: the index watchdog read
+// that as drift (index_desync, dom 0 / idx 400), "healed" it with a render, and that render
+// redrew the open card under the reader. The view's close repaints the tab from its buffers.
+function takePane(msgsEl) {
+  _clearMessageIndices()
+  msgsEl.textContent = ''
+}
+
 // Trim variant that maintains the indices. Use anywhere we trim
 // #hs-mc-messages — never call trimChildren directly on that element.
 function trimMessagesEl(el, limit) {

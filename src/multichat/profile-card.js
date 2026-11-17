@@ -942,7 +942,7 @@ function renderProfileCardView() {
   if (!mount) return
   const { el: msgsEl, floating } = mount
   activeProfileCard.floating = floating
-  if (!floating) msgsEl.textContent = ''
+  if (!floating) takePane(msgsEl)
 
   const { username, data, platform } = activeProfileCard
 

@@ -29,6 +29,7 @@ import { s16Channels } from './s16-channels'
 import { s17MuteBlock } from './s17-mute-block'
 import { s18Kick, s18Twitch, s18Youtube } from './s18-composer'
 import { s19FirstRun } from './s19-first-run'
+import { s20Scroll } from './s20-scroll'
 import { s21Hide } from './s21-hide'
 import { s22Keys } from './s22-keys'
 
@@ -57,6 +58,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s18-youtube', s18Youtube],
   ['s19-first-run', s19FirstRun],
   ['s21-hide', s21Hide],
+  ['s20-scroll', s20Scroll],
   ['s22-keys', s22Keys],
 ]
 

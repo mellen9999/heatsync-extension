@@ -1,20 +1,25 @@
 // Shared utilities for Heatsync browser extension
 // Loaded FIRST via manifest content_scripts — exposes window.HS
-// Chrome compatibility - Firefox uses 'browser', Chrome uses 'chrome'
-const browser = globalThis.browser || chrome
-// Lib's t() (locale override aware) lives in the sibling content script's scope;
-// resolved at call time, falling back to the raw runtime i18n.
-const _hsT = (key, subs) => {
-  if (typeof t === 'function') return t(key, subs)
-  try {
-    return browser.i18n?.getMessage(key, subs?.map(String)) || key
-  } catch {
-    return key
-  }
-}
+//
+// Nothing at the top level but this function: firefox runs every content script of the add-on in
+// one scope per page, and this file is in two manifest entries that both match twitch and kick. A
+// top-level const there threw "redeclaration of const browser" on the second load (firefox 160,
+// s9 11-16) before the double-load guard below could run.
 ;(() => {
   // Guard against double-load
   if (window.HS) return
+  // Chrome compatibility - Firefox uses 'browser', Chrome uses 'chrome'
+  const browser = globalThis.browser || chrome
+  // Lib's t() (locale override aware) lives in the sibling content script's scope;
+  // resolved at call time, falling back to the raw runtime i18n.
+  const _hsT = (key, subs) => {
+    if (typeof t === 'function') return t(key, subs)
+    try {
+      return browser.i18n?.getMessage(key, subs?.map(String)) || key
+    } catch {
+      return key
+    }
+  }
 
   /**
    * Create a lifecycle controller — abort() tears down ALL listeners, timers, observers.

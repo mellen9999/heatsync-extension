@@ -19,6 +19,7 @@ import { s6Settings } from './s6-settings'
 import { s7Host } from './s7-host'
 import { s8Soak } from './s8-soak'
 import { s9Firefox } from './s9-firefox'
+import { s10Merged } from './s10-merged'
 
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
@@ -32,6 +33,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s7-host', s7Host],
   ['s8-soak', s8Soak],
   ['s9-firefox', s9Firefox],
+  ['s10-merged', s10Merged],
 ]
 
 const args = process.argv.slice(2)

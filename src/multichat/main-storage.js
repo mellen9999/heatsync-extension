@@ -1559,8 +1559,17 @@ function detectOfflineState() {
       // Symmetric restore — if the panel goes away (opt-out flip, stream
       // ends, or the page resolved to a VOD) and WE hid/collapsed native
       // chat, give it back.
-      if (!showYtChat && frameEl && _hsHidNativeYt && frameEl.style.display === 'none') {
-        frameEl.style.removeProperty('display')
+      // data-hs-hidden: a frame the panel's mount hid, which this flag never knew about
+      if (
+        !showYtChat &&
+        frameEl &&
+        (_hsHidNativeYt || frameEl.dataset.hsHidden) &&
+        frameEl.style.display === 'none'
+      ) {
+        if (frameEl.dataset.hsPrevDisplay) frameEl.style.display = frameEl.dataset.hsPrevDisplay
+        else frameEl.style.removeProperty('display')
+        delete frameEl.dataset.hsHidden
+        delete frameEl.dataset.hsPrevDisplay
         _hsHidNativeYt = false
       }
       if (!showYtChat && frameEl && _hsCollapsedNativeYt && frameEl.hasAttribute('collapsed')) {

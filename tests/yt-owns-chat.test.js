@@ -22,7 +22,7 @@ describe('youtube owns the chat', () => {
     expect(main).toContain('if (ytOwnsChat()) return true') // mount-time frame hide
     expect(main).toContain("document.body.classList.toggle('hs-yt-owns-chat', ownsChat)")
     expect(main).toContain('(!ownsChat &&') // panel visibility
-    expect(css).toContain('body:not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame#chat')
+    expect(css).toContain('body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame#chat')
   })
 
   test('a premiere keeps its chat frame loaded: it is the only feed and the send path', () => {

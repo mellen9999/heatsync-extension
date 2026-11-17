@@ -567,6 +567,9 @@ function getOrCreateHsContainer(chatRoom) {
       const f = document.querySelector('ytd-live-chat-frame#chat')
       if (!f) return false
       if (ytOwnsChat()) return true
+      // our panel is down on this page (a past stream, a video): its chat replay is youtube's
+      // to show. checkYtLive hides the frame itself once the page turns out to be live.
+      if (document.body.classList.contains('hs-offline')) return true
       if (f.style.display !== 'none') {
         const frameHeight = f.offsetHeight || 500
         f.dataset.hsPrevDisplay = f.style.display ?? ''

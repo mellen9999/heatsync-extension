@@ -181,7 +181,7 @@ export async function liveYtVideo(handles = ['LofiGirl', 'lofigirl', 'chillhopmu
 export const YT_VOD = 'jNQXAC9IVRw' // "me at the zoo" — a plain upload, never live
 
 // ── page oracles ─────────────────────────────────────────────────────────────
-export const BAD_RING = ['render_stall', 'ingest_gap', 'dom_thrash', 'zebra_flicker', 'vis-render-error'] as const
+export const BAD_RING = ['render_stall', 'ingest_gap', 'dom_thrash', 'zebra_flicker', 'vis-render-error', 'index_desync'] as const
 
 /** Ring events since t0 (all tabs of this origin share the ring; each entry names its tab). */
 export async function ringSince(p: any, t0: number) {

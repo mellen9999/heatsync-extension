@@ -15,6 +15,6 @@ export function makeCardL10n(t = enT) {
     't',
     'escapeHtml',
     'hsCardHtml',
-    `${CARD_L10N_SRC}\nreturn { hsCardHtmlL10n, cardL10nModel, cardL10nHtml, CARD_HTML_LITERALS, CARD_SHEET_LABEL, CARD_REL_LABEL, CARD_TYPE_VALUE, CARD_REL_TEXT }`,
+    `${CARD_L10N_SRC}\nreturn { hsCardHtmlL10n, cardL10nModel, cardL10nHtml, CARD_HTML_LITERALS, CARD_SHEET_LABEL, CARD_REL_LABEL, CARD_TYPE_VALUE, CARD_REL_TEXT, cardAbsAssets, cardImgFallback, CARD_ASSET_ORIGIN }`,
   )(t, escapeHtml, hsCardHtml)
 }

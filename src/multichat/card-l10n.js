@@ -113,7 +113,24 @@ function cardL10nHtml(html) {
   return out
 }
 
-/** hsCardHtml, in the extension's language. Same arguments, same markup, only the words differ. */
+// The shared renderer names heatsync's own pictures from the root ("/anon.webp"). On heatsync.org
+// that is the right file; on twitch, kick and youtube "/" is the host, so the picture was a broken
+// image there. Rewritten in the markup, before it is ever parsed, so the host is never asked.
+const CARD_ASSET_ORIGIN = 'https://heatsync.org'
+function cardAbsAssets(html) {
+  return html.replace(/\b(src|data-imgerr-src)="\/(?!\/)/g, `$1="${CARD_ASSET_ORIGIN}/`)
+}
+
+/** A card picture that fails to load falls back, once, to the one the renderer named for it. */
+function cardImgFallback(e) {
+  const img = e.target
+  const fb = img?.tagName === 'IMG' ? img.getAttribute('data-imgerr-src') : null
+  if (!fb) return
+  img.removeAttribute('data-imgerr-src')
+  if (img.src !== fb) img.src = fb
+}
+
+/** hsCardHtml, in the extension's language and with its pictures on heatsync's origin. */
 function hsCardHtmlL10n(model, opts) {
-  return cardL10nHtml(hsCardHtml(cardL10nModel(model), opts))
+  return cardAbsAssets(cardL10nHtml(hsCardHtml(cardL10nModel(model), opts)))
 }

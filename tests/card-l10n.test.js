@@ -93,7 +93,11 @@ describe('in english the wrapper is the bare renderer', () => {
   const l10n = makeCardL10n(enT)
   for (const variant of ['peek', 'full', 'panel']) {
     test(`variant ${variant}: same bytes for every fixture`, () => {
-      for (const m of allModels) expect(l10n.hsCardHtmlL10n(m, opts(variant))).toBe(hsCardHtml(m, opts(variant)))
+      // same words; only the pictures move to heatsync's origin (card-pictures-on-heatsync.test.js)
+      for (const m of allModels)
+        expect(l10n.hsCardHtmlL10n(m, opts(variant))).toBe(l10n.cardAbsAssets(hsCardHtml(m, opts(variant))))
+      for (const m of allModels)
+        expect(l10n.cardL10nHtml(hsCardHtml(l10n.cardL10nModel(m), opts(variant)))).toBe(hsCardHtml(m, opts(variant)))
     })
   }
   test('an error card, a not-found card and a null model pass through', () => {

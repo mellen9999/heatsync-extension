@@ -9,6 +9,9 @@ const _onceGuardsProfileCard = {}
 
 let activeProfileCard = null // { username, platform, data, ts }
 
+// `error` does not bubble: caught on the way down, for every card picture (panel, floating, hover)
+document.addEventListener('error', cardImgFallback, { capture: true, signal: mcSignal })
+
 // In-page LRU for fetched banners — survives card open/close within a session.
 // Background SW caches authoritatively (12h); this layer just avoids the SW
 // round-trip for repeat hovers/opens. Keyed `${platform}:${login}` so the

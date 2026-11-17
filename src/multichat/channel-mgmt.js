@@ -727,6 +727,27 @@ function channelMoveOptions(tabId, { vertical = false, rtl = false } = {}) {
   return out
 }
 
+/**
+ * Leave a twitch or kick room no tab names any more. Kept while another tab in `channels`
+ * still names it, or the stream on this page reads it: removing (or re-pointing) the saved
+ * tab of the stream being watched parted the live tab's own chat, which then sat empty
+ * until a rejoin (kick: never by itself; twitch: up to the 15s tick), 11-17.
+ * @param {'twitch'|'kick'} platform
+ * @param {string} name
+ * @param {object[]} channels the tabs that stay
+ */
+function mcLeaveUnshown(platform, name, channels) {
+  if (!name) return
+  // the live tab reads its page's channel plus the linked legs (same name, or the identity)
+  const live = getLivePlatformNames()
+  const page = hostPlatform === platform ? getLiveChannel() : ''
+  if (platform === 'twitch') {
+    if (mcTwitchStillShown(name, channels, [live.twitch, page])) return
+    irc?.part(name)
+    leaveExtraChannel('twitch', name)
+  } else if (!mcKickStillShown(name, channels, [live.kick, page])) kickChat?.part(name)
+}
+
 function removeChannel(tabId) {
   const ch = getChannelById(tabId)
   config.channels = config.channels.filter((c) => c.id !== tabId)
@@ -737,11 +758,9 @@ function removeChannel(tabId) {
   dropTabActivity(tabId)
 
   const twitchName = ch?.twitch
-  if (twitchName) irc?.part(twitchName)
-  if (twitchName && !mcTwitchStillShown(twitchName, config.channels)) leaveExtraChannel('twitch', twitchName)
-
   const kickName = ch?.kick
-  if (kickName) kickChat?.part(kickName)
+  mcLeaveUnshown('twitch', twitchName, config.channels)
+  mcLeaveUnshown('kick', kickName, config.channels)
 
   // Clean up per-channel sub tenure data to prevent stale map growth
   if (twitchName) subTenureMap.delete(twitchName.toLowerCase())
@@ -1050,11 +1069,10 @@ function showEditChannelForm(tabId) {
     const oldKick = ch.kick
     const oldYt = ch.youtube
 
-    if (oldTwitch && oldTwitch !== twitchVal) {
-      irc?.part(oldTwitch)
-      if (!mcTwitchStillShown(oldTwitch, config.channels)) leaveExtraChannel('twitch', oldTwitch)
-    }
-    if (oldKick && oldKick !== kickVal) kickChat?.part(oldKick)
+    // the tab still holds its old names here: judge by the others
+    const others = config.channels.filter((c) => c !== ch)
+    if (oldTwitch && oldTwitch !== twitchVal) mcLeaveUnshown('twitch', oldTwitch, others)
+    if (oldKick && oldKick !== kickVal) mcLeaveUnshown('kick', oldKick, others)
 
     // Unsubscribe old YouTube if changed
     if (oldYt && oldYt !== ytVal) {

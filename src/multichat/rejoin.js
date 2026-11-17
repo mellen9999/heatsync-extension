@@ -20,16 +20,25 @@ export function mcDroppedTwitch(channels, joined, extra = []) {
   return out
 }
 
-/** True while some tab other than the one going away still names this twitch login. */
+/** True while a tab in `channels`, or a name in `extra` (what the stream on this page reads), names this login on `field`. */
+function mcStillNamed(field, name, channels, extra) {
+  const want = typeof name === 'string' ? name.trim().toLowerCase() : ''
+  if (!want) return false
+  const same = (n) => typeof n === 'string' && n.trim().toLowerCase() === want
+  return (channels || []).some((ch) => same(ch?.[field])) || extra.some(same)
+}
+
+/** True while some tab other than the one going away, or the page's stream, still names this twitch login. */
 export function mcTwitchStillShown(name, channels, extra = []) {
-  const tw = typeof name === 'string' ? name.trim().toLowerCase() : ''
-  if (!tw) return false
-  const same = (n) => typeof n === 'string' && n.trim().toLowerCase() === tw
-  return (channels || []).some((ch) => same(ch?.twitch)) || extra.some(same)
+  return mcStillNamed('twitch', name, channels, extra)
+}
+
+/** The same for a kick slug: leaving a room the page's stream reads silences the live tab. */
+export function mcKickStillShown(slug, channels, extra = []) {
+  return mcStillNamed('kick', slug, channels, extra)
 }
 
 /** True when this kick slug is a leg of a saved tab: the saved list owns its room, so a page tearing down never leaves it. */
 export function mcKickSaved(slug, channels) {
-  const k = typeof slug === 'string' ? slug.trim().toLowerCase() : ''
-  return !!k && (channels || []).some((ch) => typeof ch?.kick === 'string' && ch.kick.trim().toLowerCase() === k)
+  return mcStillNamed('kick', slug, channels, [])
 }

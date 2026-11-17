@@ -71,10 +71,10 @@ describe('wired in', () => {
 
   test('the config-change part checks the name is not still shown', () => {
     const storage = src('main-storage.js')
-    expect(storage).toContain(
-      'if (twitchName && !mcTwitchStillShown(twitchName, newChannels, page)) {\n              irc?.part(twitchName)',
-    )
-    expect(storage).not.toMatch(/if \(twitchName\) irc\?\.part\(twitchName\)/)
+    // through the one helper that keeps what another tab or the page's stream still shows
+    // (its behaviour: remove-keeps-live-chat.test.js)
+    expect(storage).toContain("mcLeaveUnshown('twitch', ch.twitch, newChannels)")
+    expect(storage).not.toMatch(/irc\?\.part\(/)
   })
 
   test('the join-failed toast is said once per channel until a join lands', () => {

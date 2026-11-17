@@ -722,8 +722,8 @@ function listenForSettingsChanges() {
       mutedUsers.clear()
       renderMessages(currentTab, { bypassScrollPause: true })
     }
-    // Cross-surface block sync (content.js, other tabs). Full re-render so blocked
-    // users drop out / reappear (buildMessageDiv filters them).
+    // Cross-surface block sync (content.js, other tabs). Re-render: the render pass
+    // drops blocked people's rows and draws them back (isMsgUserDropped).
     if (msg.type === 'user_blocked') {
       const u = msg.username?.toLowerCase()
       if (u && !blockedUsers.has(u)) {

@@ -8,21 +8,20 @@ function hsNameMarksHtml(since, badgeId) {
   return (since ? renderPlusTenureToken(since) : '') + renderHsBadgeToken(badgeId)
 }
 
+// A blocked person, or one hidden in this tab (/hide, per tab only), is never
+// drawn. m.actor covers stream-events whose sender rides in actor, not user:
+// channel-point redeems and 7TV emote-change banners; online/offline/raid/hype/
+// sub events leave actor null, so their banners still render. The render pass
+// filters on this too, so a row already on screen leaves when the block lands
+// (an existing row is reused, never rebuilt) and comes back on unblock.
+function isMsgUserDropped(m, tabId) {
+  const p = m.platform || 'twitch' // twitch chat carries no platform; the keys are twitch:<name>
+  if (m.user && (isUserBlocked(m.user, p) || isUserHiddenInTab(m.user, p, tabId))) return true
+  return !!(m.actor && (isUserBlocked(m.actor, p) || isUserHiddenInTab(m.actor, p, tabId)))
+}
+
 function buildMessageDiv(m, tabId) {
-  // Blocked user — fully hide (skip render entirely). Both the append and the
-  // full-rebuild path go through buildMessageDiv, so returning null here hides
-  // the message everywhere. Unblock + renderMessages brings them back.
-  // m.actor covers stream-events whose sender is carried in actor, not user —
-  // channel-point redeems (redeemer, set ~13343) and 7TV emote-change banners
-  // (set ~12245). Those have no m.user so the first check misses them. Hiding a
-  // blocked user's emote-add banner is desirable too. online/offline/raid/hype/
-  // sub events leave actor null, so their banners still render.
-  if (m.user && isUserBlocked(m.user, m.platform)) return null
-  if (m.actor && isUserBlocked(m.actor, m.platform)) return null
-  // Per-tab hide (/hide) — fully drop this user's rows, but only when building
-  // for the tab they were hidden in (tabId), never globally.
-  if (m.user && isUserHiddenInTab(m.user, m.platform, tabId)) return null
-  if (m.actor && isUserHiddenInTab(m.actor, m.platform, tabId)) return null
+  if (isMsgUserDropped(m, tabId)) return null
   // Per-tab platform filter (right-click the tab) — hides every row from a muted platform.
   if (isPlatformHiddenInTab(m, tabId)) return null
   // Stream event — render as magenta inline notification.
@@ -872,7 +871,7 @@ function buildMessageDiv(m, tabId) {
   // A blocked user's name + message snippet must not leak through a reply
   // context bar when someone else replies to them. Show a neutral marker
   // with no name, no text, no profile link.
-  const replyBlocked = m.replyTo?.user && isUserBlocked(m.replyTo.user, m.platform)
+  const replyBlocked = m.replyTo?.user && isUserBlocked(m.replyTo.user, m.platform || 'twitch')
   const replyBar = replyBlocked
     ? `<span class="hs-mc-reply-ctx hs-reply-ctx">&#8618;${t('mc_reply_blocked')}</span> `
     : m.replyTo?.user
@@ -1916,7 +1915,7 @@ function appendMessage(msg, tabId) {
   // through isUserMuted so a kick chatter whose linked twitch handle was
   // muted (or vice-versa) gets stripped on either platform.
   const username = msg.user ? String(msg.user).toLowerCase() : ''
-  if (username && isUserMuted(username, msg.platform)) {
+  if (username && isUserMuted(username, msg.platform || 'twitch')) {
     stripMcMutedMessage(div)
   }
 

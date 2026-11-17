@@ -54,7 +54,7 @@ function isMention(msg) {
   // Blocked users can't ping you — gating here kills the notification, sound,
   // title-flash, mentions buffer AND the tab indicator in one place (every
   // mention surface routes through isMention).
-  if (typeof isUserBlocked === 'function' && isUserBlocked(msg.user, msg.platform)) return false
+  if (typeof isUserBlocked === 'function' && isUserBlocked(msg.user, msg.platform || 'twitch')) return false
 
   // Someone hit "reply" on YOUR message. Twitch and Kick carry that in the
   // reply tags and leave the text alone, so a plain "yeah agreed" reply used to
@@ -267,7 +267,7 @@ if (!_onceGuardsMentions.mentionAudioStorageListener) {
 function ruleAlertsMention(msg, verdict) {
   if (!verdict?.notify) return false
   if (!isEnabled('mentions')) return false
-  if (typeof isUserBlocked === 'function' && isUserBlocked(msg.user, msg.platform)) return false
+  if (typeof isUserBlocked === 'function' && isUserBlocked(msg.user, msg.platform || 'twitch')) return false
   return true
 }
 

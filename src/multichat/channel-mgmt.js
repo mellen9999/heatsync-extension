@@ -142,6 +142,8 @@ function makeAddViewShell(msgsEl, titleText, descText) {
   _clearMessageIndices()
   msgsEl.textContent = ''
   const wrapper = document.createElement('div')
+  // the render pass reads this class: a view already up is left alone (main-live.js)
+  wrapper.className = 'hs-mc-add-pane'
   wrapper.style.cssText =
     'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
   const title = document.createElement('div')
@@ -472,6 +474,15 @@ function parseKickSlugValue(raw) {
   return v.toLowerCase()
 }
 
+/** The caret goes to a form's first field one frame after the form is drawn, unless the reader
+ *  is already in the form. A frame can be long (a busy page, a tab in the background): by then
+ *  they may be typing in another field, and what they type next must not land in this one. */
+function cmgFocusFirst(wrapper, input) {
+  cleanup.raf(() => {
+    if (!wrapper.contains(document.activeElement)) input.focus()
+  })
+}
+
 // One "<platform> [username]" row of the add / edit channel forms.
 function cmgPlatformRow(label, placeholder, value) {
   const row = document.createElement('div')
@@ -497,21 +508,7 @@ function cmgPlatformRow(label, placeholder, value) {
 }
 
 function renderAddChannelForm(msgsEl) {
-  _clearMessageIndices()
-  msgsEl.textContent = ''
-  const wrapper = document.createElement('div')
-  wrapper.style.cssText =
-    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
-
-  const title = document.createElement('div')
-  title.textContent = t('mc_add_channel')
-  title.style.cssText = 'font-size:17px;font-weight:700;color:#ffffff;letter-spacing:.5px;'
-  wrapper.appendChild(title)
-
-  const desc = document.createElement('div')
-  desc.textContent = t('mc_enter_platform')
-  desc.style.cssText = 'font-size:13px;color:#ffffff;margin-bottom:2px;'
-  wrapper.appendChild(desc)
+  const wrapper = makeAddViewShell(msgsEl, t('mc_add_channel'), t('mc_enter_platform'))
 
   const twitch = cmgPlatformRow('twitch', t('mc_username_placeholder'))
   const kick = cmgPlatformRow('kick', t('mc_username_placeholder'))
@@ -549,8 +546,6 @@ function renderAddChannelForm(msgsEl) {
   bulkRow.appendChild(importLink)
   bulkRow.appendChild(pasteLink)
   wrapper.appendChild(bulkRow)
-
-  msgsEl.appendChild(wrapper)
 
   cancelBtn.addEventListener('click', () => switchTab(liveTarget()))
 
@@ -676,7 +671,7 @@ function renderAddChannelForm(msgsEl) {
   })
 
   // Auto-focus twitch input
-  cleanup.raf(() => twitch.input.focus())
+  cmgFocusFirst(wrapper, twitch.input)
 }
 
 /**
@@ -1171,5 +1166,5 @@ function showEditChannelForm(tabId) {
       if (e.key === 'Escape') switchTab(tabId)
     })
   })
-  cleanup.raf(() => twitch.input.focus())
+  cmgFocusFirst(wrapper, twitch.input)
 }

@@ -139,7 +139,10 @@ function _renderMessagesImpl(id, opts) {
     msgs = mentionsBuffer
   } else if (id === 'add') {
     hideMultistreamBanner()
-    renderAddChannelForm(msgsEl)
+    // The form (or its import / paste view) is already up. Renders land here from all over
+    // (an emote set arriving, a setting or rule changed in another tab): building it again
+    // would empty what the reader has typed.
+    if (!msgsEl.querySelector(':scope > .hs-mc-add-pane')) renderAddChannelForm(msgsEl)
     return
   } else {
     // live tab or channel tab: twitch + kick + youtube, merged fairly (see

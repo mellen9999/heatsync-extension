@@ -308,7 +308,8 @@ async function maybeCrowdReportSocials(urlCh) {
     const yt = ytLinks.find((s) => /\blive\b/i.test(`${s?.title || ''} ${s?.name || ''}`)) || ytLinks[0]
     // definitive answer either way — stamp the throttle before the report so
     // a flaky POST can't turn one channel into a per-nav GQL hammer
-    map[safe] = Date.now()
+    // the lookup took a while: fold in what other tabs stamped meanwhile
+    Object.assign(map, (await api.storage.local.get('hs_crowd_reported'))?.hs_crowd_reported, { [safe]: Date.now() })
     const keys = Object.keys(map)
     if (keys.length > CROWD_REPORT_MAP_MAX) {
       keys

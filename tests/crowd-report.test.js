@@ -49,7 +49,7 @@ describe('crowd report wiring', () => {
     expect(src).toContain('const CROWD_REPORT_TTL_MS = 7 * 24 * 60 * 60 * 1000')
     // stamp happens before the `if (!yt) return` bail so "no socials" is
     // also throttled — otherwise every soft-nav re-runs the GQL query
-    const stamp = fn.indexOf('map[safe] = Date.now()')
+    const stamp = fn.indexOf('[safe]: Date.now()')
     const bail = fn.indexOf('if (!yt) return')
     expect(stamp).toBeGreaterThan(-1)
     expect(stamp).toBeLessThan(bail)
@@ -77,5 +77,38 @@ describe('crowd report wiring', () => {
   test('report rides the BG api_fetch relay (CF walls content-script fetches)', () => {
     expect(fn).toContain("apiFetch('/api/identity/crowd-report'")
     expect(fn).toContain("method: 'POST'")
+  })
+})
+
+describe('the throttle map with two tabs', () => {
+  test("a stamp another tab wrote during this tab's lookup is kept", async () => {
+    let stored = { hs_crowd_reported: { a: 1 } }
+    const api = {
+      storage: {
+        local: {
+          get: async () => structuredClone(stored),
+          set: async (v) => {
+            stored = structuredClone(v)
+          },
+        },
+      },
+    }
+    const run = new Function(
+      'api',
+      'hsAuthToken',
+      'twitchGql',
+      'apiFetch',
+      `const CROWD_REPORT_TTL_MS = 1e9, CROWD_REPORT_MAP_MAX = 200\n${fn}\nreturn maybeCrowdReportSocials`,
+    )(
+      api,
+      true,
+      async () => {
+        stored = { hs_crowd_reported: { a: 1, other: 2 } } // the other tab's stamp lands mid-lookup
+        return { data: { user: { channel: { socialMedias: [] } } } }
+      },
+      async () => {},
+    )
+    await run('mine')
+    expect(Object.keys(stored.hs_crowd_reported).sort()).toEqual(['a', 'mine', 'other'])
   })
 })

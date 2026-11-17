@@ -22,10 +22,17 @@
  * Hovering is checked live via :hover rather than tracked with enter/leave
  * bookkeeping that can desync when the panel re-renders under the cursor.
  *
- * Everything else mirrors the site's contract deliberately, including the
- * `defaultPrevented` guard: this runs in the BUBBLE phase, so a capture-phase
- * handler that already claimed the key (vi's i/a) would otherwise ALSO get it
- * typed as a literal character.
+ * WHERE IT LISTENS
+ *
+ * On the root element (<html>), in the capture phase. That one spot is after
+ * every capture listener on window and document, which is where our own
+ * single-key handlers live (vi's i/a, `\`, row mode): one of them claiming the
+ * key shows as `defaultPrevented`, and we stand down. And it is before every
+ * listener on the way back up, which is where the host's player shortcuts
+ * live. It used to listen on document in the bubble phase, behind the host:
+ * on twitch and kick, `k` with the pointer over chat paused the stream, and
+ * on twitch the letter was not even typed (e2e s22, 11-17). Taking the key
+ * here and stopping it is what keeps the player from hearing it.
  */
 
 /** The composer, if one is actually usable right now. */
@@ -76,14 +83,14 @@ function insertChar(el, ch) {
 }
 
 export function initTypeToFocus(signal) {
-  document.addEventListener(
+  document.documentElement.addEventListener(
     'keydown',
     (e) => {
       // printable single character only — no shortcuts, no navigation keys
       if (e.ctrlKey || e.metaKey || e.altKey) return
       if (!e.key || e.key.length !== 1) return
-      // A key another handler already claimed must not ALSO be typed. Bubble
-      // phase means preventDefault upstream does not stop us; the flag does.
+      // A key one of our own capture handlers already claimed must not ALSO be
+      // typed. preventDefault upstream does not stop us; the flag does.
       if (e.defaultPrevented) return
       // never steal from something already accepting text — ours or the host's
       const a = document.activeElement
@@ -95,9 +102,11 @@ export function initTypeToFocus(signal) {
 
       input.focus()
       insertChar(input, e.key)
-      // Claim it, so the host does not ALSO act on the key we just consumed.
+      // Claim it and end it here, so the host does not ALSO act on the key we
+      // just consumed (its listeners are all still ahead on the event's path).
       e.preventDefault()
+      e.stopImmediatePropagation()
     },
-    { signal },
+    { signal, capture: true },
   )
 }

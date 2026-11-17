@@ -6860,10 +6860,10 @@
 
         const blocking = !localBlockedEmoteNames.has(name)
         try {
-          const { local_blocked_emote_names: stored } = await chrome.storage.local.get('local_blocked_emote_names')
+          const { local_blocked_emote_names: stored } = await browser.storage.local.get('local_blocked_emote_names')
           const next = blockedNamesWith(stored, name, blocking)
           applyBlockedEmoteNames(next)
-          await chrome.storage.local.set({ local_blocked_emote_names: next })
+          await browser.storage.local.set({ local_blocked_emote_names: next })
         } catch {
           // storage is gone (the add-on reloaded under this page): the toggle still shows here
           applyBlockedEmoteNames(blockedNamesWith([...localBlockedEmoteNames], name, blocking))

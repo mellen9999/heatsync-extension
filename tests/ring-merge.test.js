@@ -136,7 +136,8 @@ test('multi-platform render debounce cannot be held forever by a frozen rAF', ()
   const main = mainSource()
   expect(main).toMatch(/nowMp - _multiPlatformRenderAt > 500/)
   expect(main).toMatch(/cleanup\.setTimeout\(run, 500\)/)
-  expect(main).toMatch(/hs-popout'\)\) \{\s*_hiddenSkippedAppend = true/)
+  // and never draws in a hidden tab (tests/hidden-pane-no-render.test.js runs it)
+  expect(main).toMatch(/function scheduleMergedRender\(\) \{[^}]*if \(_skipHiddenRender\(\)\) return/)
 })
 
 test('a quiet pane on a busy channel logs which side went quiet', () => {

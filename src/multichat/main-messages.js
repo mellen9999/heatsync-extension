@@ -1573,8 +1573,28 @@ function scheduleScrollPin(msgsEl) {
 // Check if a tab has multiple platform sources active (needs fair merge)
 let _multiPlatformRenderTimer = null
 let _multiPlatformRenderAt = 0
+// A pane nobody can see draws nothing: buffers keep every message and the
+// visibilitychange catch-up (main-state.js) renders once on return.
+// hasFocus() and the BG-oracle wedge flag override a stuck 'hidden': if the
+// visibility flip got lost (popout/wayland occlusion) but the window is
+// focused or the BG proved it on-screen, the user IS looking. A popout chat
+// window exists to be read: its visibility flag lies often enough (wayland
+// occlusion, tiled windows) that skipping froze the pane until a full
+// repaint. Only a tab shares the screen with other work.
+function _paneHidden() {
+  return document.hidden && !document.hasFocus() && !_visWedged && !document.body.classList.contains('hs-popout')
+}
+function _skipHiddenRender() {
+  if (!_paneHidden()) return false
+  _hiddenSkippedAppend = true
+  return true
+}
+
 // Ask for the real render on the next frame (one request at a time).
 function scheduleMergedRender() {
+  // Hidden: the 500ms fallback below would otherwise rebuild the whole pane
+  // twice a second in every background tab showing a merged channel (11-16)
+  if (_skipHiddenRender()) return
   // The pending handle is only trusted for 500ms: a window the browser
   // calls hidden never runs its rAF, and a handle that never clears would
   // swallow every later message here (frozen pane until a full repaint).
@@ -1586,7 +1606,7 @@ function scheduleMergedRender() {
       if (ran) return
       ran = true
       _multiPlatformRenderTimer = null
-      renderMessages(currentTab)
+      if (!_skipHiddenRender()) renderMessages(currentTab)
     }
     _multiPlatformRenderTimer = rafOrTimeout(run)
     cleanup.setTimeout(run, 500)
@@ -1847,20 +1867,8 @@ function appendMessage(msg, tabId) {
     return true // tell caller we handled it
   }
 
-  // Hidden tab: skip ALL DOM work (build/append/trim/pin) — buffers keep the
-  // message and the visibilitychange handler rebuilds once on return. The
-  // multi-platform path above pauses for free (rAF never fires while hidden).
-  // hasFocus() and the BG-oracle wedge flag override a stuck 'hidden': if
-  // the visibility flip got lost (popout/wayland occlusion) but the window
-  // is focused or the BG proved it on-screen, the user IS looking — keep
-  // appending instead of freezing the pane.
-  // A popout chat window exists to be read: its visibility flag lies often
-  // enough (wayland occlusion, tiled windows) that skipping here froze the
-  // pane until a full repaint. Only a tab shares the screen with other work.
-  if (document.hidden && !document.hasFocus() && !_visWedged && !document.body.classList.contains('hs-popout')) {
-    _hiddenSkippedAppend = true
-    return true
-  }
+  // Hidden tab: skip ALL DOM work (build/append/trim/pin)
+  if (_skipHiddenRender()) return true
 
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return false
@@ -2956,6 +2964,7 @@ function scheduleRenderMessages() {
   const wait = Math.min(80, Math.max(16, 400 - (now - _renderCollapseFirstAt)))
   _renderCollapseTimer = cleanup.setTimeout(() => {
     _renderCollapseTimer = null
+    if (_skipHiddenRender()) return
     if (currentTab === 'live' || getChannelById(currentTab)) renderMessages(currentTab)
   }, wait)
 }

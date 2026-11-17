@@ -146,7 +146,7 @@ function mtNoteAppend() {
     s.timer = cleanup.setTimeout(
       () => {
         s.timer = 0
-        if (mtState === s && currentTab === s.tab && !isScrolledUp) renderMessages(s.tab)
+        if (mtState === s && currentTab === s.tab && !isScrolledUp && !_skipHiddenRender()) renderMessages(s.tab)
       },
       Math.max(0, MT_RECONCILE_MS - (Date.now() - s.at)),
     )

@@ -1158,7 +1158,7 @@ function listenForSettingsChanges() {
             // visible-row swap when scrolled up. non-cold emote edits render
             // now (only when at/near bottom, to not yank a scrolled-up reader).
             if (_emoteColdLoad(pending)) reloadEmotesInPlace(!isScrolledUp)
-            else if (!isScrolledUp) renderMessages(currentTab)
+            else if (!isScrolledUp && !_skipHiddenRender()) renderMessages(currentTab)
           })
           .catch((e) => log('[heatsync-mc] loadEmotes error:', e))
       }, 300)

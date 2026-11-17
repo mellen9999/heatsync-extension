@@ -978,6 +978,25 @@ let _cacheJustRestored = false
 // diag line so a laggy tab says which step it was, not just that it was slow.
 let _restoreParts = null
 
+// A restored fragment was cut while its tab was away. A row whose line the render now leaves
+// out on purpose (a block, a /hide, /lclear, a content filter: in the tab's lines, not in the
+// render) goes; a row the merge merely no longer picks is not among those lines and stays, so
+// nothing reshuffles. Trusting the fragment whole kept a hidden chatter's rows on screen when
+// the hide's render was the first after a restore (e2e s18, 11-17).
+function dropRestoredFiltered(msgsEl, lines, desiredSet) {
+  let gone = null
+  for (const m of lines) {
+    const k = msgKeyOf(m)
+    if (!desiredSet.has(k)) (gone ||= new Set()).add(k)
+  }
+  if (!gone) return
+  for (const row of [...msgsEl.children]) {
+    if (!gone.has(row.dataset?.msgKey)) continue
+    _unindexMessageDiv(row)
+    row.remove()
+  }
+}
+
 function restoreTabState(tabId) {
   _msgKeyIndex.clear()
   _uidIndex.clear()

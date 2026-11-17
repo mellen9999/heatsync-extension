@@ -340,6 +340,7 @@ function _renderMessagesImpl(id, opts) {
   // shifting after new msgs arrived during the user's absence.
   if (justRestored) {
     const _rp0 = performance.now()
+    dropRestoredFiltered(msgsEl, msgs, desiredSet)
     const insertedKeys = _rmInsertedKeys
     insertedKeys.clear()
     for (let j = 0; j < toRender.length; j++) {

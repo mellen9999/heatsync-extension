@@ -1474,9 +1474,10 @@ async function _kpConnect() {
   // Capture the socket locally — a stale socket's late close/error/message
   // events must never clobber a newer _kpWs (leave→join races spawn orphaned
   // duplicate-subscribed sockets otherwise).
+  // opened in a kick.com frame: kick refuses the extension's own origin (10-kick-socket-host.js)
   let ws
   try {
-    ws = new WebSocket(ep.url)
+    ws = _kpOpenSocket(ep.url)
   } catch {
     return _kpRefuse('socket unopenable')
   }
@@ -2161,6 +2162,7 @@ function kickTapLeave(slug) {
     // zero-subscription socket after the last channel leaves.
     _kpClearTimers()
     _kpDetach()
+    _kpHostRelease()
   }
 }
 

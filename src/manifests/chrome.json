@@ -13,7 +13,8 @@
     "unlimitedStorage",
     "cookies",
     "alarms",
-    "notifications"
+    "notifications",
+    "offscreen"
   ],
   "host_permissions": [
     "https://heatsync.org/*",
@@ -28,7 +29,7 @@
     "https://api.7tv.app/*"
   ],
   "content_security_policy": {
-    "extension_pages": "default-src 'self'; script-src 'self'; object-src 'none'; require-trusted-types-for 'script'; connect-src 'self' data: https://heatsync.org wss://heatsync.org https://*.twitch.tv https://api.twitch.tv https://static-cdn.jtvnw.net wss://irc-ws.chat.twitch.tv wss://eventsub.wss.twitch.tv https://api.betterttv.net wss://sockets.betterttv.net https://api.frankerfacez.com https://7tv.io https://events.7tv.io wss://events.7tv.io https://api.7tv.app https://kick.com https://*.kick.com wss://*.platform.kick.com https://www.youtube.com; img-src 'self' data: blob: https://static-cdn.jtvnw.net https://cdn.7tv.app https://cdn.betterttv.net https://cdn.frankerfacez.com https://files.kick.com https://heatsync.org https://cdn.heatsync.org https://i.imgur.com https://d3aqoihi2n8ty8.cloudfront.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:"
+    "extension_pages": "default-src 'self'; frame-src https://web.kick.com; script-src 'self'; object-src 'none'; require-trusted-types-for 'script'; connect-src 'self' data: https://heatsync.org wss://heatsync.org https://*.twitch.tv https://api.twitch.tv https://static-cdn.jtvnw.net wss://irc-ws.chat.twitch.tv wss://eventsub.wss.twitch.tv https://api.betterttv.net wss://sockets.betterttv.net https://api.frankerfacez.com https://7tv.io https://events.7tv.io wss://events.7tv.io https://api.7tv.app https://kick.com https://*.kick.com wss://*.platform.kick.com https://www.youtube.com; img-src 'self' data: blob: https://static-cdn.jtvnw.net https://cdn.7tv.app https://cdn.betterttv.net https://cdn.frankerfacez.com https://files.kick.com https://heatsync.org https://cdn.heatsync.org https://i.imgur.com https://d3aqoihi2n8ty8.cloudfront.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:"
   },
   "background": {
     "service_worker": "background.js"
@@ -112,7 +113,8 @@
         "https://www.youtube.com/live_chat*",
         "https://id.kick.com/*",
         "https://kick.com/oauth/*",
-        "https://kick.com/oauth2/*"
+        "https://kick.com/oauth2/*",
+        "https://web.kick.com/*"
       ],
       "js": [
         "player-volume.js"
@@ -272,6 +274,16 @@
       ],
       "run_at": "document_end",
       "all_frames": true
+    },
+    {
+      "matches": [
+        "https://web.kick.com/robots.txt"
+      ],
+      "js": [
+        "kick-socket-host.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_end"
     }
   ],
   "action": {

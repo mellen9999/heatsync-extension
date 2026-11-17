@@ -385,6 +385,7 @@ const BG_PARTS = [
   '08-diag-push.js',
   '09-irc.js',
   '10-kick-yt.js',
+  '10-kick-socket-host.js',
   '11-boot.js',
 ]
 let bgSourceCache = null
@@ -716,6 +717,8 @@ const COPY_FILES = [
   'twitch-callout-token.js',
   'kick-nav-watcher.js',
   'kick-chat-intercept.js',
+  'kick-socket-host.js',
+  'offscreen.html',
   'youtube-keyboard-guard.js',
   'yt-data-bridge.js',
   'platform-detector.js',

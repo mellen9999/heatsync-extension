@@ -23,6 +23,7 @@ export const BG_PART_FILES = [
   '08-diag-push.js',
   '09-irc.js',
   '10-kick-yt.js',
+  '10-kick-socket-host.js',
   '11-boot.js',
 ]
 

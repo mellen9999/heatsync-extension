@@ -39,9 +39,12 @@ describe('isKickChannelRoute', () => {
 describe('kick content scripts skip the sign-in pages', () => {
   for (const file of ['src/manifests/chrome.json', 'src/manifests/firefox.json']) {
     // id.kick.com is never matched at all (content-scripts-stay-on-the-apps); kick.com/* is, so its
-    // consent routes are excluded by name.
+    // consent routes are excluded by name. (The tap's socket frame matches one web.kick.com url
+    // and nothing on kick.com itself.)
     test(`${file}: every kick entry excludes /oauth*`, () => {
-      const kick = JSON.parse(read(file)).content_scripts.filter((c) => c.matches.some((m) => m.includes('kick.com')))
+      const kick = JSON.parse(read(file)).content_scripts.filter((c) =>
+        c.matches.some((m) => m.startsWith('https://kick.com/') || m.includes('*.kick.com')),
+      )
       expect(kick.length).toBeGreaterThan(0)
       for (const c of kick) {
         for (const ex of ['https://kick.com/oauth/*', 'https://kick.com/oauth2/*']) {

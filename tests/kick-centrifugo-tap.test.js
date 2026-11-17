@@ -54,7 +54,8 @@ function makeTap({ discovery } = {}) {
     return { ok: r !== null, json: async () => r }
   }
   const api = new Function(
-    'WebSocket',
+    '_kpOpenSocket',
+    '_kpHostRelease',
     'fetch',
     'setTimeout',
     'clearTimeout',
@@ -74,7 +75,8 @@ function makeTap({ discovery } = {}) {
     }
   `,
   )(
-    FakeWS,
+    (url) => new FakeWS(url),
+    () => {},
     fakeFetch,
     (fn, ms) => {
       timers.set(++tid, { fn, ms })

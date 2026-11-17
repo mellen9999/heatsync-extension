@@ -4798,6 +4798,11 @@
 
       // Kick fallback — anchor near the chat input area
       if (!anchor && window.location.hostname.includes('kick.com')) {
+        // Kick server-renders the input and hydrates it later (a pop-out has it in the first html):
+        // a button put inside it before then broke kick's hydration (React #418, the page redrawn
+        // client-side). The editor's first paragraph is drawn by kick's editor once it is live.
+        const editor = document.querySelector('[class*="editor-input"]')
+        if (editor ? !editor.firstElementChild : !document.querySelector('next-route-announcer')) return
         anchor =
           document.querySelector('.editor-input')?.parentElement ||
           document.querySelector('[class*="editor-input"]')?.parentElement ||

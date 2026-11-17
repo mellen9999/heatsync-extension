@@ -708,7 +708,10 @@ function ensureUIElements() {
       document.querySelector('ytd-live-chat-frame#chat')?.parentElement ||
       document.querySelector('#secondary')
   } else if (isKick) {
-    chatRoom = kickChatroomLoose()
+    // A pop-out's chatroom is server-rendered and still waiting for kick's React to hydrate it at
+    // mount: a panel placed beside it broke the hydration (React #418, kick re-rendered the page
+    // client-side). The pop-out window is all chat, so the panel fills it from <body>.
+    chatRoom = document.body.classList.contains('hs-popout') ? null : kickChatroomLoose()
   } else {
     chatRoom =
       document.querySelector('[class*="chat-room__content"]') ||

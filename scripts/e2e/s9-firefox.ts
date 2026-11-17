@@ -152,19 +152,7 @@ export async function s9Firefox() {
       const ring = await ringSince(p, t0)
       if (ring.bad.length) bad(`ff ${site}: overlay watchdogs fired`, ring.bad.slice(0, 6))
     }
-    // youtube ships img-src as a report-only policy: firefox logs every badge it would have
-    // blocked, and draws it anyway (the same reports a77b2fde stopped the diag from filing)
-    const errs = (await ff.consoleMessages('moz-extension://').catch(() => [] as string[])).filter(
-      // and a page left with a message to the background in flight: firefox logs that one rejecting
-      // after the page's scripts are gone, where nothing of ours can catch it
-      (m) =>
-        /error|exception|uncaught/i.test(m) &&
-        !m.includes('(Report-Only policy)') &&
-        !m.includes('Promise rejected after context unloaded') &&
-        // a socket that could not connect is the network's (kick refuses datacenter ips); whether
-        // chat still arrived is what the chains above judge
-        !m.includes('establish a connection to the server'),
-    )
+    const errs = await ff.addonErrors()
     if (errs.length) bad('ff: the add-on logged errors', errs.slice(0, 6))
   } finally {
     await ff.close()

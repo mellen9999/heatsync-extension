@@ -199,7 +199,8 @@ jobs:
         env:
           E2E_OUT: ${{ runner.temp }}/e2e
           E2E_S1_MIN: '4'
-        run: bun scripts/e2e/run.ts --only s1,s2,s5,s6,s7,s9,s10
+          E2E_S11_MIN: '4'
+        run: bun scripts/e2e/run.ts --only s1,s2,s5,s6,s7,s9,s10,s11
 
       - name: report
         if: ${{ failure() }}

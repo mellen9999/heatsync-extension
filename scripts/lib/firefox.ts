@@ -150,6 +150,35 @@ export async function launchFirefox() {
     return false
   }
 
+  /**
+   * Write add-on `id`'s storage.local from its own page, the way the popup does: a tab opened on
+   * popup.html, closed again, and the tab before it put back in front.
+   */
+  async function storageSet(id: string, items: Record<string, unknown>) {
+    const host = await privileged<string>('return WebExtensionPolicy.getByID(arguments[0]).mozExtensionHostname', [id])
+    const back = await call<string>('GET', '/window')
+    const tab = await call<{ handle: string }>('POST', '/window/new', { type: 'tab' })
+    await call('POST', '/window', { handle: tab.handle })
+    try {
+      await call('POST', '/url', { url: `moz-extension://${host}/popup.html` })
+      const r = await run<number | string>(
+        'execute/async',
+        'const done = arguments[arguments.length - 1]; browser.storage.local.set(arguments[0]).then(() => done(1), (e) => done(String(e)))',
+        [items],
+      )
+      if (r !== 1) throw new Error(`storage.local.set from the add-on's page: ${r}`)
+    } finally {
+      await call('DELETE', '/window')
+      await call('POST', '/window', { handle: back })
+    }
+  }
+
+  const consoleMessages = (match: string) =>
+    privileged<string[]>(
+      'return Services.console.getMessageArray().map((m) => m.message).filter((m) => m.includes(arguments[0]))',
+      [match],
+    )
+
   return {
     version: created.capabilities.browserVersion,
     /** A raw WebDriver call on this session (windows, tabs: what the helpers here don't cover). */
@@ -180,16 +209,32 @@ export async function launchFirefox() {
 
     cover,
     ensureVisible,
+    storageSet,
 
     /**
      * What firefox's console service has buffered that mentions `match`. This is where
      * uncaught errors, CSP blocks and manifest errors land — none of them reach stdout.
      */
-    consoleMessages: (match: string) =>
-      privileged<string[]>(
-        'return Services.console.getMessageArray().map((m) => m.message).filter((m) => m.includes(arguments[0]))',
-        [match],
-      ),
+    consoleMessages,
+
+    /**
+     * Errors the add-on's scripts logged, less what firefox reports about pages and sockets
+     * rather than about us: youtube's report-only img-src policy (every badge it would have
+     * blocked, drawn anyway); a message to the background still in flight when its page or
+     * frame went away (firefox logs that one after our scripts are gone, where nothing can
+     * catch it); a socket that could not connect (kick refuses datacenter ips; whether chat
+     * still arrived is each scenario's own check).
+     */
+    async addonErrors() {
+      const all = await consoleMessages('moz-extension://').catch(() => [] as string[])
+      return all.filter(
+        (m) =>
+          /error|exception|uncaught/i.test(m) &&
+          !m.includes('(Report-Only policy)') &&
+          !/Promise (rejected|resolved) (after context unloaded|while context is inactive)/.test(m) &&
+          !m.includes('establish a connection to the server'),
+      )
+    },
 
     async close() {
       // ending the session is what quits firefox; killing geckodriver alone leaves it running

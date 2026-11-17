@@ -5,7 +5,7 @@
  *
  *   bun run build.js chrome            # a plain (non-minified) build keeps the debug probes
  *   bun scripts/e2e/run.ts             # every scenario (s8 runs an hour: E2E_S8_MIN)
- *   bun scripts/e2e/run.ts --only s2   # one family (prefix match on the scenario id)
+ *   bun scripts/e2e/run.ts --only s2   # one family: s2-twitch, s2-youtube, s2-kick
  *
  * Exit 1 on any finding. Artifacts (report.json, screenshots) go to E2E_OUT.
  */
@@ -20,6 +20,7 @@ import { s7Host } from './s7-host'
 import { s8Soak } from './s8-soak'
 import { s9Firefox } from './s9-firefox'
 import { s10Merged } from './s10-merged'
+import { s11FirefoxTabs } from './s11-firefox-tabs'
 
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
@@ -34,11 +35,13 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s8-soak', s8Soak],
   ['s9-firefox', s9Firefox],
   ['s10-merged', s10Merged],
+  ['s11-firefox-tabs', s11FirefoxTabs],
 ]
 
 const args = process.argv.slice(2)
 const only = args.includes('--only') ? args[args.indexOf('--only') + 1] : ''
-const picked = SCENARIOS.filter(([id]) => !only || only.split(',').some((o) => id.startsWith(o)))
+// a family by its number: s2 is s2-twitch, s2-youtube and s2-kick; s1 is s1-tabs, never s10 or s11
+const picked = SCENARIOS.filter(([id]) => !only || only.split(',').some((o) => id === o || id.startsWith(`${o}-`)))
 if (!picked.length) {
   console.error(`no scenario matches "${only}" — have: ${SCENARIOS.map(([id]) => id).join(', ')}`)
   process.exit(2)

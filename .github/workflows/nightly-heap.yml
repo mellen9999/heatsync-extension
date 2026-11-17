@@ -13,12 +13,14 @@ name: nightly-heap
 #                   side alone (no push here) turns this red within a day.
 #   supply-chain    bun audit and gitleaks over the whole history.
 #   e2e-live        the extension on live twitch, kick and youtube (scripts/e2e),
-#                   three runners side by side. sites: three sites in three tabs,
+#                   four runners side by side. sites: three sites in three tabs,
 #                   single-page navigation chains, every emote provider down then
 #                   back, host themes / sizes / zoom, firefox, merged channels,
 #                   pop-outs. settings: every setting flipped on each site and in
 #                   firefox, the settings page clicked through. panel: saved
-#                   channels, mute and block, the composer. Read-only, no login,
+#                   channels, mute and block, the composer. fresh: a new install's
+#                   first minutes (welcome, tour, feed tabs, popup), chat hidden and
+#                   shown per tab, start hidden. Read-only, no login,
 #                   nothing is ever sent. The worker-stop, cache-cap and hour-long
 #                   soak scenarios stay manual runs.
 # Twice a day so the sentinel's 26h staleness window survives GitHub dropping
@@ -188,6 +190,8 @@ jobs:
             only: s13,s14,s15
           - shard: panel
             only: s16,s17,s18
+          - shard: fresh
+            only: s19,s21
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 

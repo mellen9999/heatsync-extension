@@ -2753,6 +2753,7 @@ let _thrashEl = null
 let _thrashCount = 0
 let _thrashTail = null
 let _thrashStreak = 0
+let _thrashEpoch = 0 // the render epoch the last check saw
 let _thrashLoggedAt = 0
 let _unpinnedStreak = 0
 let _unpinLoggedAt = 0
@@ -2888,7 +2889,12 @@ function domThrashCheck() {
   const tail = msgsEl.lastElementChild?.dataset?.msgKey || ''
   const churn = _thrashCount
   _thrashCount = 0
-  if (churn >= 4 && tail && tail === _thrashTail) _thrashStreak++
+  // a setting that changes how rows look redraws every row on purpose (bumpRenderEpoch): on a
+  // quiet chat that churn with the newest row unchanged is the thrash signature, and the heal
+  // below blanked the pane of someone flipping display settings (e2e s13, youtube, 11-16)
+  const repainted = _thrashEpoch !== _renderEpoch
+  _thrashEpoch = _renderEpoch
+  if (churn >= 4 && tail && tail === _thrashTail && !repainted) _thrashStreak++
   else _thrashStreak = 0
   _thrashTail = tail
   if (_thrashStreak < 3) return
@@ -2909,11 +2915,18 @@ function domThrashCheck() {
     } catch (_) {}
   }
   if (_noHeal()) return
+  // a chat pane only, and only one nothing else is drawn over: renderMessages paints those
+  // instead of the rows, and a cleared pane would stay blank under them
+  if (currentTab !== 'live' && !getChannelById(currentTab)) return
+  if (editingChannel || hsPanePanelOpen() || (typeof activeProfileCard !== 'undefined' && activeProfileCard)) return
+  if ((typeof predViewOpen === 'function' && predViewOpen()) || (typeof imgViewOpen === 'function' && imgViewOpen()))
+    return
   try {
     _dropAllTabCaches()
     msgsEl.textContent = ''
     _clearMessageIndices()
-    scheduleRenderMessages()
+    // rebuilt in the same task: a render left to the scheduler painted an empty pane first
+    renderMessages(currentTab)
   } catch (_) {}
 }
 

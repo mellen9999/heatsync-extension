@@ -11,6 +11,8 @@
  *     shows no chat rows from the stream before it
  *   - the overlay's watchdogs logged no stall / gap / thrash
  *   - listeners on the page do not pile up as the same kind of page is revisited
+ *   - a tab the reader picked keeps its own chat when the page moves to another channel: the
+ *     pane never shows the new channel's chat under the picked tab
  */
 import {
   bad,
@@ -42,6 +44,63 @@ async function clickFirst(p: any, selectors: string[], label: string) {
     }
   }
   throw new Error(`no clickable ${label} (${selectors.join(' | ')})`)
+}
+
+/**
+ * The reader picks the saved tab `saved`, then the page moves to another channel (`nav`). The
+ * pick stands, and the pane keeps that tab's chat: an in-page observer reads the pane after every
+ * change for 8s, and no read may show the picked tab over another channel's rows or over an empty
+ * "connecting" pane (a repaint of the page's channel into the picked tab, 11-16).
+ */
+async function pickHolds(p: any, label: string, saved: string, nav: () => Promise<unknown>) {
+  const tab = `.hs-mc-tab[data-tab="${saved}"]`
+  if (!(await p.$(tab))) return info(`${label}: no saved tab ${saved} to pick`)
+  await p.click(tab, { timeout: 5000 }).catch(() => {})
+  await sleep(1500)
+  const sv = saved.toLowerCase()
+  const armed = await p.evaluate((sv: string) => {
+    const w = window as any
+    const read = () => {
+      const act = document.querySelector('.hs-mc-tab.active, .hs-mc-tab[aria-selected="true"]') as HTMLElement | null
+      const rows = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')] as HTMLElement[]
+      const foreign = rows.map((r) => (r.dataset.msgChannel || '').toLowerCase()).filter((c) => c && c !== sv)
+      return {
+        active: (act?.dataset.tab || '').toLowerCase(),
+        rows: rows.length,
+        foreign: foreign.length,
+        from: [...new Set(foreign)].slice(0, 3),
+        empty: !!document.querySelector('#hs-mc-messages > .hs-mc-empty'),
+      }
+    }
+    const rec = (w.__pick = { t0: 0, wrong: [] as any[], last: read() })
+    if (rec.last.active !== sv) return rec.last.active
+    const mo = new MutationObserver(() => {
+      const r = read()
+      rec.last = r
+      if (rec.t0 && r.active === sv && (r.foreign >= 3 || r.empty) && rec.wrong.length < 5)
+        rec.wrong.push({ ms: Math.round(performance.now() - rec.t0), ...r })
+    })
+    mo.observe(document.getElementById('hs-mc-container') || document.body, { childList: true, subtree: true })
+    w.__pickStop = () => mo.disconnect()
+    return sv
+  }, sv)
+  if (armed !== sv) return info(`${label}: the pick of ${saved} did not take (${armed})`)
+  await p.evaluate(() => {
+    ;(window as any).__pick.t0 = performance.now()
+  })
+  await nav()
+  await sleep(8000)
+  const rec = await p.evaluate(() => {
+    const w = window as any
+    w.__pickStop?.()
+    return w.__pick
+  })
+  if (rec.last.active !== sv) bad(`${label}: the page moved and took the picked tab ${saved} away (now ${rec.last.active})`)
+  else if (rec.wrong.length)
+    bad(`${label}: the page moved and the picked tab ${saved} showed another channel's chat`, rec.wrong.slice(0, 3))
+  else ok(`${label}: the picked tab ${saved} kept its chat through the nav (${rec.last.rows} rows)`)
+  // back to following the page, as the chain expects
+  await p.click('.hs-mc-tab[data-tab="live"]', { timeout: 5000 }).catch(() => {})
 }
 
 async function hopCheck(env: Env, p: any, label: string, t0: number, expect: 'chat' | 'quiet') {
@@ -89,9 +148,14 @@ export async function s2Twitch() {
       // directory → a live channel from the side nav (a different one each round)
       t0 = Date.now()
       const side = await p.$$('a.side-nav-card__link')
-      const pickEl = side[round] || side[0]
+      // the pick round needs a channel other than the saved one
+      const others = []
+      for (const el of side) if (((await el.getAttribute('href')) || '').toLowerCase() !== `/${a.toLowerCase()}`) others.push(el)
+      const pickEl = round === 2 ? others[0] || side[0] : side[round] || side[0]
       if (!pickEl) throw new Error('no side-nav channel link on the directory')
-      await pickEl.click({ timeout: 10_000 })
+      // last round: the reader is on the saved tab when they click through
+      if (round === 2) await pickHolds(p, `tw-round${round}`, a, () => pickEl.click({ timeout: 10_000 }))
+      else await pickEl.click({ timeout: 10_000 })
       await sleep(4000)
       const ch = new URL(p.url()).pathname.split('/')[1]?.toLowerCase()
       const st = await hopCheck(env, p, `tw-round${round}-${ch}`, t0, 'chat')
@@ -225,7 +289,9 @@ export async function s2Kick() {
       }
       seen.push(target.slice(1).toLowerCase())
       t0 = Date.now()
-      await p.click(`a[href="${target}"]`, { timeout: 10_000 }).catch(() => {})
+      const go = () => p.click(`a[href="${target}"]`, { timeout: 10_000 }).catch(() => {})
+      if (round === 1) await pickHolds(p, `kick-round${round}`, a, go)
+      else await go()
       await sleep(4000)
       await hopCheck(env, p, `kick-round${round}-${target.slice(1)}`, t0, 'chat')
     }

@@ -96,7 +96,15 @@ const HOST_OWN = [/getLayoutMap\(\) must be called from a top-level browsing con
 export function watchErrors(p: any, label: string, sink: string[]) {
   p.on('pageerror', (e: unknown) => {
     const msg = String(e)
-    if (!HOST_OWN.some((re) => re.test(msg))) sink.push(`${label} pageerror: ${msg.slice(0, 300)}`)
+    // where it threw: an extension frame is ours, a site frame is the site's
+    const at = String((e as Error)?.stack || '')
+      .split('\n')
+      .find((l) => /^\s+at /.test(l))
+      ?.trim()
+    // a twitch panel extension's iframe (*.ext-twitch.tv) is a third party's code, not ours
+    if (/\.ext-twitch\.tv\//.test(at || '')) return
+    if (!HOST_OWN.some((re) => re.test(msg)))
+      sink.push(`${label} pageerror: ${msg.slice(0, 300)}${at ? ` (${at.slice(0, 160)})` : ''}`)
   })
 }
 

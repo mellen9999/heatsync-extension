@@ -289,7 +289,19 @@ export async function s2Kick() {
       }
       seen.push(target.slice(1).toLowerCase())
       t0 = Date.now()
-      const go = () => p.click(`a[href="${target}"]`, { timeout: 10_000 }).catch(() => {})
+      // kick keeps the page it left in the DOM, hidden: the first match can be that copy. a visible
+      // card, and if none takes the click (seen on the nightly runner, 11-17) the
+      // same in-page nav through kick's router, so the hop is still single-page
+      const go = async () => {
+        await p.locator(`a[href="${target}"]:visible`).first().click({ timeout: 10_000 }).catch(() => {})
+        const there = () => new URL(p.url()).pathname.toLowerCase() === target.toLowerCase()
+        for (let i = 0; i < 10 && !there(); i++) await sleep(500)
+        if (!there()) {
+          info(`round ${round}: the ${target} card took no click; kick's router goes there`)
+          await p.evaluate((t: string) => (window as any).next?.router?.push(t), target).catch(() => {})
+          await p.waitForURL((u: URL) => u.pathname.toLowerCase() === target.toLowerCase(), { timeout: 10_000 }).catch(() => {})
+        }
+      }
       if (round === 1) await pickHolds(p, `kick-round${round}`, a, go)
       else await go()
       await sleep(4000)

@@ -345,10 +345,10 @@
     "message": "đang xem"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "tab tạm: xem stream khác sẽ chiếm chỗ của nó · chuột phải để giữ"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "giữ tab"
   },
   "mc_tab_pinned": {
     "message": "đã lưu"
@@ -741,7 +741,7 @@
     "message": "đăng lên heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "gửi tới $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

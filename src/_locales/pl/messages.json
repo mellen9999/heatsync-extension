@@ -345,10 +345,10 @@
     "message": "oglądam"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "karta tymczasowa: inny stream zajmie jej miejsce · prawy klik, żeby zachować"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "zachowaj kartę"
   },
   "mc_tab_pinned": {
     "message": "zapisane"
@@ -741,7 +741,7 @@
     "message": "opublikuj na heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "wysyła do: $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

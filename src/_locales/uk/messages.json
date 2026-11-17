@@ -345,10 +345,10 @@
     "message": "дивлюся"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "тимчасова вкладка: інший стрім займе її місце · правий клік, щоб залишити"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "залишити вкладку"
   },
   "mc_tab_pinned": {
     "message": "збережене"
@@ -741,7 +741,7 @@
     "message": "опублікуй у heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "надсилає в $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

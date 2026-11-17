@@ -345,10 +345,10 @@
     "message": "menonton"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "tab sementara: menonton strim lain mengambil tempatnya · klik kanan untuk simpan"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "simpan tab"
   },
   "mc_tab_pinned": {
     "message": "disimpan"
@@ -741,7 +741,7 @@
     "message": "siar di heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "hantar ke $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

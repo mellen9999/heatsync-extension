@@ -345,10 +345,10 @@
     "message": "katselu"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "väliaikainen välilehti: toinen stream vie sen paikan · oikea klikkaus säilyttää"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "säilytä välilehti"
   },
   "mc_tab_pinned": {
     "message": "tallennetut"
@@ -741,7 +741,7 @@
     "message": "julkaise heatsynciin..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "lähettää: $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

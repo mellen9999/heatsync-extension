@@ -345,10 +345,10 @@
     "message": "izliyor"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "geçici tab: başka bir yayın izlenince yerini o alır · tutmak için sağ tık"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "tabı tut"
   },
   "mc_tab_pinned": {
     "message": "kayıtlı"
@@ -741,7 +741,7 @@
     "message": "heatsync'e post at..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "şuraya gönderir: $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

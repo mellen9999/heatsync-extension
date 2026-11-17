@@ -345,10 +345,10 @@
     "message": "tittar"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "tillfällig flik: en annan stream tar dess plats · högerklicka för att behålla"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "behåll fliken"
   },
   "mc_tab_pinned": {
     "message": "sparade"
@@ -741,7 +741,7 @@
     "message": "posta på heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "skickar till $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

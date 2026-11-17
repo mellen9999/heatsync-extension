@@ -345,10 +345,10 @@
     "message": "kijken"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "tijdelijke tab: een andere stream neemt de plek over · rechtsklik om te houden"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "tab houden"
   },
   "mc_tab_pinned": {
     "message": "opgeslagen"
@@ -741,7 +741,7 @@
     "message": "plaats op heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "stuurt naar $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

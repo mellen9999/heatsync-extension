@@ -345,10 +345,10 @@
     "message": "vizionez"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "tab temporar: alt stream îi ia locul · click dreapta ca să-l păstrezi"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "păstrează tabul"
   },
   "mc_tab_pinned": {
     "message": "salvate"
@@ -741,7 +741,7 @@
     "message": "postează pe heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "trimite către $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

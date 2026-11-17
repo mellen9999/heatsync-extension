@@ -345,10 +345,10 @@
     "message": "시청 중"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "임시 탭: 다른 방송을 보면 이 자리가 바뀌어 · 우클릭으로 유지"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "탭 유지"
   },
   "mc_tab_pinned": {
     "message": "저장됨"
@@ -741,7 +741,7 @@
     "message": "heatsync에 포스트..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "보내는 곳: $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

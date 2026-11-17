@@ -345,10 +345,10 @@
     "message": "ser"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "midlertidig fane: en anden stream overtager pladsen · højreklik for at beholde"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "behold fane"
   },
   "mc_tab_pinned": {
     "message": "gemt"
@@ -741,7 +741,7 @@
     "message": "post på heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "sender til $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

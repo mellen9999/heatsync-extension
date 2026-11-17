@@ -345,10 +345,10 @@
     "message": "視聴中"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "一時タブ: 別の配信を見るとこの枠が入れ替わる · 右クリックで残す"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "タブを残す"
   },
   "mc_tab_pinned": {
     "message": "保存済み"
@@ -741,7 +741,7 @@
     "message": "heatsyncに投稿..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "送信先: $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

@@ -345,10 +345,10 @@
     "message": "sledujem"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "dočasná karta: iný stream zaberie jej miesto · pravý klik ju ponechá"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "ponechať kartu"
   },
   "mc_tab_pinned": {
     "message": "uložené"
@@ -741,7 +741,7 @@
     "message": "publikuj na heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "odosiela do $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

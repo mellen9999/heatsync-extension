@@ -345,10 +345,10 @@
     "message": "a ver"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "separador temporário: ver outra stream ocupa o lugar dele · clique direito para manter"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "manter separador"
   },
   "mc_tab_pinned": {
     "message": "guardados"
@@ -741,7 +741,7 @@
     "message": "publica no heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "envia para $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

@@ -345,10 +345,10 @@
     "message": "देख रहे"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "अस्थायी टैब: दूसरी स्ट्रीम देखने पर इसकी जगह चली जाती है · रखने के लिए राइट-क्लिक करो"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "टैब रखो"
   },
   "mc_tab_pinned": {
     "message": "सहेजे"
@@ -741,7 +741,7 @@
     "message": "heatsync पर पोस्ट करें..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "$TARGETS$ पर भेजता है",
     "placeholders": {
       "targets": {
         "content": "$1"

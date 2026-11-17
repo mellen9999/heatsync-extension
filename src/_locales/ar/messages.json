@@ -345,10 +345,10 @@
     "message": "المشاهدة"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "تبويب مؤقت: مشاهدة بث آخر تأخذ مكانه · انقر يمينًا للاحتفاظ به"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "الاحتفاظ بالتبويب"
   },
   "mc_tab_pinned": {
     "message": "محفوظ"
@@ -741,7 +741,7 @@
     "message": "انشر على heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "يرسل إلى $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

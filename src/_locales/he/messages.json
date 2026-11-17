@@ -345,10 +345,10 @@
     "message": "צופה"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "לשונית זמנית: צפייה בסטרים אחר תופסת את מקומה · קליק ימני כדי לשמור"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "שמור לשונית"
   },
   "mc_tab_pinned": {
     "message": "שמור"
@@ -741,7 +741,7 @@
     "message": "פרסם ב-heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "שולח אל $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

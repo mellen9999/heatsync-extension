@@ -345,10 +345,10 @@
     "message": "θέαση"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "προσωρινή καρτέλα: άλλο stream παίρνει τη θέση της · δεξί κλικ για να την κρατήσεις"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "κράτα την καρτέλα"
   },
   "mc_tab_pinned": {
     "message": "αποθηκευμένα"
@@ -741,7 +741,7 @@
     "message": "δημοσίευση στο heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "στέλνει σε $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

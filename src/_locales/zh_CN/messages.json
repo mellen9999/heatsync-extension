@@ -345,10 +345,10 @@
     "message": "观看中"
   },
   "mc_tab_temp_title": {
-    "message": "temporary tab: watching another stream takes its slot · right-click to keep"
+    "message": "临时标签页：观看其他直播会占用它的位置 · 右键保留"
   },
   "mc_tab_keep": {
-    "message": "keep tab"
+    "message": "保留标签页"
   },
   "mc_tab_pinned": {
     "message": "已保存"
@@ -741,7 +741,7 @@
     "message": "发布到 heatsync..."
   },
   "mc_input_send_tag_title": {
-    "message": "sends to $TARGETS$",
+    "message": "发送到 $TARGETS$",
     "placeholders": {
       "targets": {
         "content": "$1"

@@ -286,12 +286,12 @@ async function mcSearchFfzApi(q, signal, opts) {
 async function mcSearchHsApi(q, signal, opts) {
   const page = opts && Number.isFinite(opts.page) ? opts.page : 1
   if (page > 1) return [] // no server-side pagination — tail after page 1
-  const r = await fetch(`https://heatsync.org/api/emote-search?q=${encodeURIComponent(q)}&p=hs`, {
-    signal,
-    credentials: 'omit',
-  })
-  if (!r.ok) throw new Error(`hs ${r.status}`)
-  const data = await r.json()
+  // through the background: heatsync.org sends no CORS allowance for twitch,
+  // kick or youtube, so a fetch from this page was refused every time
+  const r = await apiFetch(`/api/emote-search?q=${encodeURIComponent(q)}&p=hs`, { auth: false })
+  if (signal?.aborted) throw new DOMException('aborted', 'AbortError')
+  if (!r?.ok) throw new Error(`hs ${r?.status || r?.error || 'failed'}`)
+  const data = r.data?.results ? r.data : r
   const items = (data?.results && Array.isArray(data.results.hs) && data.results.hs) || []
   return items.map((e) => ({
     name: e.name,

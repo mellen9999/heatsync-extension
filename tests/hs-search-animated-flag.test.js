@@ -22,11 +22,12 @@ function carve(startAnchor) {
   return SRC.slice(a, SRC.indexOf('\n}', a) + 2)
 }
 
-const searchHs = (fetchImpl) =>
-  new Function('fetch', `${carve('async function mcSearchHsApi(')}\nreturn mcSearchHsApi`)(fetchImpl)
+// the search goes through the background proxy (apiFetch), never a page fetch
+const searchHs = (apiFetch) =>
+  new Function('apiFetch', `${carve('async function mcSearchHsApi(')}\nreturn mcSearchHsApi`)(apiFetch)
 const deriveStatic = new Function(`${carve('function deriveStaticEmoteSrc(')}\nreturn deriveStaticEmoteSrc`)()
 
-const reply = (hs) => async () => ({ ok: true, status: 200, json: async () => ({ results: { hs } }) })
+const reply = (hs) => async () => ({ ok: true, data: { results: { hs } } })
 const CDN = 'https://cdn.heatsync.org/uploads'
 
 describe('heatsync search results', () => {

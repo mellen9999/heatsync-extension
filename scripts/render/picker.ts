@@ -33,7 +33,7 @@ const PICKER_SURFACES = [
     name: 'kick',
     url: 'https://kick.com/somechannel',
     glob: 'https://kick.com/**',
-    body: '<div id="chatwrap"><div class="editor-input" contenteditable="true"></div></div>',
+    body: '<div id="chatwrap"><div class="editor-input" contenteditable="true"><p><br></p></div></div>',
     input: 'div.editor-input',
   },
   {

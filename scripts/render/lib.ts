@@ -41,7 +41,7 @@ export const PLATFORMS = [
     body:
       '<div id="host-content" style="height:100vh">host page</div>' +
       '<div id="channel-chatroom"><div id="chatroom-messages"><div class="no-scrollbar"></div></div>' +
-      '<div id="chatwrap"><div class="editor-input" contenteditable="true"></div></div></div>',
+      '<div id="chatwrap"><div class="editor-input" contenteditable="true"><p><br></p></div></div></div>',
     rerender: false,
   },
   {

@@ -26,7 +26,7 @@ export async function kickSendCheck() {
     const body =
       '<div id="host-content" style="height:100vh">kick</div>' +
       '<div id="channel-chatroom"><div id="chatroom-messages"><div class="no-scrollbar"></div></div>' +
-      '<div id="chatwrap"><div class="editor-input" contenteditable="true"></div></div></div>'
+      '<div id="chatwrap"><div class="editor-input" contenteditable="true"><p><br></p></div></div></div>'
 
     await c.route('https://heatsync.org/**', (r: any) => r.abort())
     await c.route('https://kick.com/**', (r: any) => {

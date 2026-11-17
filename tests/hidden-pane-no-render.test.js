@@ -17,7 +17,7 @@ const fn = (name) => {
 }
 const BODY = ['_paneHidden', '_skipHiddenRender', 'scheduleMergedRender', 'scheduleRenderMessages'].map(fn).join('\n')
 
-function pane({ hidden, focus = false, popout = false, wedged = false }) {
+function pane({ hidden, focus = false, popout = false, wedged = false, tab = 'live' }) {
   const timers = []
   const rafs = []
   const state = { renders: 0, skipped: false }
@@ -33,12 +33,12 @@ function pane({ hidden, focus = false, popout = false, wedged = false }) {
     },
     rafOrTimeout: (f) => rafs.push(f) && 1,
     renderMessages: () => state.renders++,
-    getChannelById: () => ({ id: 'kripp' }),
+    getChannelById: (id) => (id === 'settings' ? null : { id }),
   }
   const run = new Function(
     ...Object.keys(env),
     'state',
-    `let _hiddenSkippedAppend = false, _visWedged = ${wedged}, currentTab = 'live'
+    `let _hiddenSkippedAppend = false, _visWedged = ${wedged}, currentTab = '${tab}'
      let _multiPlatformRenderTimer = null, _multiPlatformRenderAt = 0
      let _renderCollapseTimer = null, _renderCollapseFirstAt = 0
      ${BODY}
@@ -93,4 +93,12 @@ test('the collapsed render waits out a hidden tab too', () => {
   p.flush()
   expect(p.state.renders).toBe(0)
   expect(p.skipped()).toBe(true)
+})
+
+test('a hidden settings pane is not queued for a redraw on return', () => {
+  const p = pane({ hidden: true, tab: 'settings' })
+  p.scheduleRenderMessages()
+  p.flush()
+  expect(p.state.renders).toBe(0)
+  expect(p.skipped()).toBe(false) // nothing owed: the return must not repaint settings
 })

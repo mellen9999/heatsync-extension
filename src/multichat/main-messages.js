@@ -2973,8 +2973,9 @@ function scheduleRenderMessages() {
   const wait = Math.min(80, Math.max(16, 400 - (now - _renderCollapseFirstAt)))
   _renderCollapseTimer = cleanup.setTimeout(() => {
     _renderCollapseTimer = null
-    if (_skipHiddenRender()) return
-    if (currentTab === 'live' || getChannelById(currentTab)) renderMessages(currentTab)
+    // a chat pane only; a settings or feed pane is never redrawn behind the reader's back
+    if (currentTab !== 'live' && !getChannelById(currentTab)) return
+    if (!_skipHiddenRender()) renderMessages(currentTab)
   }, wait)
 }
 

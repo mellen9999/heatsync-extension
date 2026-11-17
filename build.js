@@ -1360,12 +1360,12 @@ function build(browser) {
     cpSync(localesDir, join(chromeDir, '_locales'), { recursive: true })
     // src stays pretty for diffs and translators; a minified build ships
     // compact json — the indentation alone was ~1.2MB across 34 locales.
-    if (shouldMinify) {
-      for (const dir of new Set([outDir, chromeDir])) {
-        for (const loc of readdirSync(join(dir, '_locales'))) {
-          const f = join(dir, '_locales', loc, 'messages.json')
-          if (existsSync(f)) writeFileSync(f, JSON.stringify(JSON.parse(readFileSync(f, 'utf8'))))
-        }
+    // chrome/_locales is tracked: it is compact on every build, or a plain
+    // (debug/e2e) build rewrites all 34 files as a 250k-line diff
+    for (const dir of new Set(shouldMinify ? [outDir, chromeDir] : [chromeDir])) {
+      for (const loc of readdirSync(join(dir, '_locales'))) {
+        const f = join(dir, '_locales', loc, 'messages.json')
+        if (existsSync(f)) writeFileSync(f, JSON.stringify(JSON.parse(readFileSync(f, 'utf8'))))
       }
     }
     console.log(`  Copied _locales`)

@@ -34,16 +34,40 @@ function makeMcBtn(text, primary) {
  * list all have to agree about what a duplicate is; a guard enforced at only
  * one of three entry points is not a guard.
  */
-function channelAddError(twitchVal, kickVal, ytVal) {
+function channelAddError(twitchVal, kickVal, ytVal, self = null) {
   const id = twitchVal || kickVal || ''
-  if (id && mcIsReservedTab(id)) return 'mc_reserved_name'
-  if (id && config.channels.some((c) => c.id === id)) return 'mc_channel_exists'
-  if (twitchVal && config.channels.some((c) => c.twitch === twitchVal)) return 'mc_twitch_exists'
-  if (kickVal && config.channels.some((c) => c.kick === kickVal)) return 'mc_kick_exists'
+  // the edit form checks its own tab against everyone else's
+  const others = self ? config.channels.filter((c) => c !== self) : config.channels
+  if (id && id !== self?.id && mcIsReservedTab(id)) return 'mc_reserved_name'
+  if (id && others.some((c) => c.id === id)) return 'mc_channel_exists'
+  if (twitchVal && others.some((c) => c.twitch === twitchVal)) return 'mc_twitch_exists'
+  if (kickVal && others.some((c) => c.kick === kickVal)) return 'mc_kick_exists'
   // youtube's generated yt-<ts> id is unique every time, so the id check above
   // can never catch a repeat — it needs its own.
-  if (ytVal && config.channels.some((c) => c.youtube === ytVal)) return 'mc_channel_exists'
+  if (ytVal && others.some((c) => c.youtube === ytVal)) return 'mc_channel_exists'
   return null
+}
+
+// A name outside the platform's charset can never be a real channel (twitch
+// [a-z0-9_], kick adds '-'): a typo or a half-parsed URL would be a silent dead tab.
+const MC_TWITCH_LOGIN = /^[a-z0-9_]{1,25}$/
+const MC_KICK_SLUG = /^[a-z0-9_-]{1,25}$/
+
+/**
+ * What the add and edit forms save: each field reduced to a clean name (a pasted
+ * twitch.tv/kick.com link or an @name works), or the locale key saying why not.
+ * @returns {{twitchVal: string, kickVal: string, ytVal: string, err: string|null}}
+ */
+function mcChannelInputs(twitchRaw, kickRaw, ytRaw, self = null) {
+  const twitchVal = parseTwitchLoginValue(twitchRaw)
+  const kickVal = parseKickSlugValue(kickRaw)
+  const ytVal = (ytRaw || '').trim() ? normalizeYtUrl(ytRaw.trim()) : ''
+  let err = null
+  if (!twitchVal && !kickVal && !ytVal) err = 'mc_enter_platform'
+  else if ((twitchVal && !MC_TWITCH_LOGIN.test(twitchVal)) || (kickVal && !MC_KICK_SLUG.test(kickVal)))
+    err = 'mc_invalid_name'
+  else err = channelAddError(twitchVal, kickVal, ytVal, self)
+  return { twitchVal, kickVal, ytVal, err }
 }
 
 /**
@@ -382,12 +406,12 @@ function renderPasteListForm(msgsEl) {
     const entries = []
     for (const raw of splitLines(twitchTa.value)) {
       const v = parseTwitchLoginValue(raw)
-      if (!/^[a-z0-9_]{1,25}$/.test(v)) bad.push(raw)
+      if (!MC_TWITCH_LOGIN.test(v)) bad.push(raw)
       else entries.push({ twitch: v })
     }
     for (const raw of splitLines(kickTa.value)) {
       const v = parseKickSlugValue(raw)
-      if (!/^[a-z0-9_-]{1,25}$/.test(v)) bad.push(raw)
+      if (!MC_KICK_SLUG.test(v)) bad.push(raw)
       else entries.push({ kick: v })
     }
     for (const raw of splitLines(ytTa.value)) {
@@ -517,58 +541,17 @@ function renderAddChannelForm(msgsEl) {
     errEl.style.display = 'block'
   }
 
-  // Parse a typed/pasted value into a clean platform slug: strip a leading
-  // @, and if the user pasted a platform URL (twitch.tv/xqc, kick.com/xqc,
-  // popout/mod links) reduce it to just the slug. Without this, pasting a URL
-  // or a name with trailing junk created a permanent dead tab that forever
-  // showed nothing (Bug #9). A malformed remainder is rejected by the charset
-  // check below — a name with spaces/slashes can never be a real channel.
-  const parseTwitchLogin = (raw) => {
-    let v = (raw || '').trim().replace(/^@/, '')
-    const m = v.match(/twitch\.tv\/(?:popout\/|moderator\/)?([^/?#\s]+)/i)
-    if (m) v = m[1]
-    return v.toLowerCase()
-  }
-  const parseKickSlug = (raw) => {
-    let v = (raw || '').trim().replace(/^@/, '')
-    const m = v.match(/kick\.com\/([^/?#\s]+)/i)
-    if (m) v = m[1]
-    return v.toLowerCase()
-  }
-
+  // One rule set for the add and edit forms (mcChannelInputs): a pasted link
+  // reduces to its name, a name no platform allows is refused (Bug #9), and
+  // reserved ids / duplicates come from channelAddError.
   const doAdd = () => {
     errEl.style.display = 'none'
-    const twitchVal = parseTwitchLogin(twitch.input.value)
-    const kickVal = parseKickSlug(kick.input.value)
-    const ytVal = yt.input.value.trim() ? normalizeYtUrl(yt.input.value.trim()) : ''
-
-    if (!twitchVal && !kickVal && !ytVal) {
-      showErr(t('mc_enter_platform'))
+    const { twitchVal, kickVal, ytVal, err } = mcChannelInputs(twitch.input.value, kick.input.value, yt.input.value)
+    if (err) {
+      showErr(t(err))
       return
     }
-
-    // Charset gate — a slug outside the platform's allowed character set can
-    // never resolve to a real channel (twitch [a-z0-9_], kick adds '-'), so a
-    // typo with spaces or a half-parsed URL is rejected here instead of
-    // becoming a silent dead tab. Real channel names always pass.
-    if (twitchVal && !/^[a-z0-9_]{1,25}$/.test(twitchVal)) {
-      showErr(t('mc_invalid_name'))
-      return
-    }
-    if (kickVal && !/^[a-z0-9_-]{1,25}$/.test(kickVal)) {
-      showErr(t('mc_invalid_name'))
-      return
-    }
-
     const id = twitchVal || kickVal || `yt-${Date.now()}`
-    // Reserved-id / duplicate rules live in channelAddError so this form, the
-    // follow-import picker and the paste list can never disagree about them.
-    const addErr = channelAddError(twitchVal, kickVal, ytVal)
-    if (addErr) {
-      showErr(t(addErr))
-      return
-    }
-
     const channel = { id, twitch: twitchVal, kick: kickVal, youtube: ytVal }
     config.channels.push(channel)
     saveConfig()
@@ -836,6 +819,11 @@ function renderLivePlatformsPane(pane) {
   wrapper.appendChild(kick.row)
   wrapper.appendChild(yt.row)
 
+  const errEl = document.createElement('div')
+  errEl.style.cssText = 'font-size:13px;color:var(--hs-danger);display:none;'
+  errEl.setAttribute('role', 'alert')
+  wrapper.appendChild(errEl)
+
   const btnRow = document.createElement('div')
   btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
 
@@ -858,12 +846,22 @@ function renderLivePlatformsPane(pane) {
   })
 
   const doSave = () => {
-    const tw = twitch.input.value.trim().toLowerCase().replace(/^@/, '')
-    const ki = kick.input.value.trim().toLowerCase().replace(/^@/, '')
+    // a blank field means no chat from that platform; anything else must be a name
+    // (a pasted link reduces to its name, as in the add and edit forms)
+    const tw = parseTwitchLoginValue(twitch.input.value)
+    const ki = parseKickSlugValue(kick.input.value)
     const ytVal = yt.input.value.trim() ? normalizeYtUrl(yt.input.value.trim()) : ''
-
+    if ((tw && !MC_TWITCH_LOGIN.test(tw)) || (ki && !MC_KICK_SLUG.test(ki))) {
+      errEl.textContent = t('mc_invalid_name')
+      errEl.style.display = 'block'
+      return
+    }
+    const was = getLivePlatformNames()
     livePlatformMap[urlCh] = { twitch: tw, kick: ki, youtube: ytVal }
     saveLivePlatformMap()
+    // the room the live tab read before goes, unless something else still shows it
+    if (was.twitch !== tw) mcLeaveUnshown('twitch', was.twitch, config.channels)
+    if (was.kick !== ki) mcLeaveUnshown('kick', was.kick, config.channels)
     home()
     applyLivePlatformOverrides()
   }
@@ -1045,22 +1043,11 @@ function showEditChannelForm(tabId) {
 
   const doSave = () => {
     errEl.style.display = 'none'
-    const twitchVal = twitch.input.value.trim().toLowerCase().replace(/^@/, '')
-    const kickVal = kick.input.value.trim().toLowerCase().replace(/^@/, '')
-    const ytVal = yt.input.value.trim() ? normalizeYtUrl(yt.input.value.trim()) : ''
-
-    if (!twitchVal && !kickVal && !ytVal) {
-      showErr(t('mc_enter_platform'))
-      return
-    }
-
-    // Check duplicate twitch/kick (excluding self)
-    if (twitchVal && config.channels.some((c) => c !== ch && c.twitch === twitchVal)) {
-      showErr(t('mc_twitch_exists'))
-      return
-    }
-    if (kickVal && config.channels.some((c) => c !== ch && c.kick === kickVal)) {
-      showErr(t('mc_kick_exists'))
+    // the add form's rules, checked against every tab but this one: a pasted link
+    // saved as-is was a dead tab, and a new name could take a reserved or used id
+    const { twitchVal, kickVal, ytVal, err } = mcChannelInputs(twitch.input.value, kick.input.value, yt.input.value, ch)
+    if (err) {
+      showErr(t(err))
       return
     }
 

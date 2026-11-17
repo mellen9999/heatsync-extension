@@ -388,6 +388,16 @@ export async function s2Kick() {
     if (!offline) info(`kick offline check skipped: ${off} is live or the channel api did not answer`)
     else {
       await p.evaluate((t: string) => (window as any).next?.router?.push(t), `/${off}`)
+      // the hop itself has to land: on a slow runner kick's router was not there yet, the page
+      // stayed on the live channel and its lit dot read as "offline channel reads live" (nightly 11-17)
+      const arrived = await p
+        .waitForFunction((t: string) => location.pathname === t, `/${off}`, { timeout: 20_000 })
+        .then(() => true)
+        .catch(() => false)
+      if (!arrived) {
+        await p.evaluate((t: string) => (window as any).next?.router?.push(t), `/${off}`)
+        await p.waitForFunction((t: string) => location.pathname === t, `/${off}`, { timeout: 20_000 }).catch(() => {})
+      }
       await sleep(15_000)
       // the live tab's dot, the video kick draws, and the tab the panel is on
       const look = () =>
@@ -403,7 +413,8 @@ export async function s2Kick() {
           }
         })
       const now = await look()
-      if (now.dot === 'true') {
+      if (now.path !== `/${off}`) info(`kick offline check skipped: the in-page hop to /${off} never landed (still ${now.path})`)
+      else if (now.dot === 'true') {
         await sleep(20_000)
         bad(`offline kick channel ${off} reached in-page reads live`, { at15s: now, at35s: await look() })
       } else ok('offline kick channel reached in-page reads offline')

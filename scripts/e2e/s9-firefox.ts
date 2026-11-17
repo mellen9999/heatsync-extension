@@ -109,8 +109,16 @@ async function kick(ff: FF, p: Page) {
   if (!offline) return info(`ff kick offline check skipped: ${off} is live or the channel api did not answer`)
   await ff.page(`window.next?.router?.push('/${off}'); return 1`)
   await sleep(15_000)
+  // the hop itself has to land, or the live channel's lit dot reads as this check failing
+  let path = await ff.page<string>('return location.pathname')
+  if (path !== `/${off}`) {
+    await ff.page(`window.next?.router?.push('/${off}'); return 1`)
+    await sleep(15_000)
+    path = await ff.page<string>('return location.pathname')
+  }
   const dot = await ff.page<string>(`return document.querySelector('.hs-mc-tab[data-tab="live"]')?.dataset.live`)
-  if (dot === 'true') bad(`ff kick: offline channel ${off} reached in-page reads live`)
+  if (path !== `/${off}`) info(`ff kick offline check skipped: the in-page hop to /${off} never landed (still ${path})`)
+  else if (dot === 'true') bad(`ff kick: offline channel ${off} reached in-page reads live`)
   else ok('ff kick: offline channel reached in-page reads offline')
 }
 

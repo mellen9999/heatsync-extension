@@ -2308,9 +2308,13 @@ async function loadMultistreamDismissed() {
   }
   return _multistreamDismissed
 }
-function persistMultistreamDismissed() {
+// Added into what storage holds now: writing this tab's set (read once at boot)
+// dropped dismissals another open tab saved since, so those banners came back.
+async function persistMultistreamDismissed() {
   try {
-    chrome.storage.local.set({ hs_multistream_dismissed: [..._multistreamDismissed] })
+    const stored = (await browser.storage.local.get('hs_multistream_dismissed')).hs_multistream_dismissed
+    for (const k of Array.isArray(stored) ? stored : []) _multistreamDismissed.add(k)
+    await browser.storage.local.set({ hs_multistream_dismissed: [..._multistreamDismissed] })
   } catch {}
 }
 function hideMultistreamBanner() {

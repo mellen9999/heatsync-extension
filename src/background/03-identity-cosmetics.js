@@ -979,31 +979,21 @@ async function fetch7TVChannelEmotes(channelName, channelId = null, platform = '
       if (DEBUG)
         broadcastToTabs({ type: 'debug_log', msg: `7TV fetch ${channelName}: ${sevenTvUrl} → ${response.status}` })
 
-      if (!response.ok) {
-        const firstStatus = response.status
+      // 404 = this twitch account has no 7TV. There is no second lookup: /v3/users/<x> takes a 7TV
+      // id and answers 400 to a login, so the old username fallback turned every channel without
+      // 7TV into a "transient" failure, refetching its whole set every 90s for as long as anyone
+      // watched it (hasanabi, 11-16).
+      if (response.status === 404) {
         response.body?.cancel()
-        log(` 7TV: Twitch ID lookup failed (${firstStatus}), trying username fallback...`)
-
-        // Fallback to username-based lookup
-        response = await fetchWithTimeout(`https://7tv.io/v3/users/${channelName}`, {}, 15000)
-        if (response.status === 404) {
-          response.body?.cancel()
-          // Both Twitch ID and username 404 = user genuinely has no 7TV account
-          if (firstStatus === 404) return []
-          return null // mixed: first was 5xx, second was 404 — treat as transient
-        }
-        if (!response.ok) {
-          response.body?.cancel()
-          log(` 7TV: Username lookup also failed (${response.status})`)
-          return null // transient: 5xx etc.
-        }
-
-        data = await response.json()
-        log(' ✅ 7TV: Username fallback succeeded!')
-      } else {
-        data = await response.json()
-        log(' ✅ 7TV: Twitch ID lookup succeeded')
+        return []
       }
+      if (!response.ok) {
+        response.body?.cancel()
+        log(` 7TV: Twitch ID lookup failed (${response.status})`)
+        return null // transient: 5xx etc.
+      }
+      data = await response.json()
+      log(' ✅ 7TV: Twitch ID lookup succeeded')
     }
 
     stvCheckShape('user', data)

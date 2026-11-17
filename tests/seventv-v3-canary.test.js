@@ -513,3 +513,32 @@ describe('the poll never reads an unreadable answer as "every emote was removed"
     expect(w.rec.records.map((r) => r.stack)).toEqual(['stv-canary:schema'])
   })
 })
+
+// A twitch account with no 7TV answers 404. The old follow-up lookup by login always got a 400
+// (/v3/users/<x> takes a 7TV id), so every channel without 7TV read as a transient failure and
+// its whole set refetched every 90s for as long as anyone watched it (hasanabi, 11-16).
+describe('a twitch channel with no 7TV', () => {
+  const answer = (status, body = {}) => ({
+    ok: status >= 200 && status < 300,
+    status,
+    body: { cancel() {} },
+    json: async () => body,
+  })
+  const asked = []
+  const fetcher = (status) => async (url) => {
+    asked.push(url)
+    return answer(status, { status: 'Not Found' })
+  }
+
+  test('404 is an empty set, from one request', async () => {
+    asked.length = 0
+    const { fetch7TVChannelEmotes } = world(mk(), { fetchWithTimeout: fetcher(404) })
+    expect(await fetch7TVChannelEmotes('hasanabi', null, 'twitch')).toEqual([])
+    expect(asked).toEqual(['https://7tv.io/v3/users/twitch/1'])
+  })
+
+  test('a 5xx is still transient', async () => {
+    const { fetch7TVChannelEmotes } = world(mk(), { fetchWithTimeout: fetcher(502) })
+    expect(await fetch7TVChannelEmotes('hasanabi', null, 'twitch')).toBe(null)
+  })
+})

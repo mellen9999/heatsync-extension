@@ -148,7 +148,9 @@ describe('hover hold', () => {
   })
   test('a real scroll-up, the resume button and a scroll back to the bottom all end the hold cleanly', () => {
     expect(main).toMatch(/if \(hoverHeld\) \{\s*hoverHeld = false\s*isScrolledUp = false\s*\}/)
-    expect(main).toMatch(/'click',\s*\(\) => \{\s*hoverHeld = false/)
+    // the resume button and the End key share one jump
+    expect(main).toMatch(/const jumpToTail = \(\) => \{\s*hoverHeld = false/)
+    expect(main).toContain("newBtn.addEventListener('click', jumpToTail")
     expect(main).toMatch(/if \(checkAtBottom\(\)\) \{\s*hoverHeld = false/)
   })
 })

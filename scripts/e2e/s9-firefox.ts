@@ -73,6 +73,13 @@ async function twitch(ff: FF, p: Page) {
 async function kick(ff: FF, p: Page) {
   const [a] = await liveChannels('kick', 1)
   if (!(await land(ff, p, `https://kick.com/${a}`, `ff kick-${a}`))) return
+  // kick's own socket opens in a frame of the background page (kick refuses the add-on's origin)
+  await ff.page(`document.dispatchEvent(new Event('hs-dbg-kick-tap')); return 1`)
+  await sleep(1000)
+  const tap = JSON.parse((await ff.page<string>('return document.documentElement.dataset.hsDbgKickTap || "{}"').catch(() => '{}')) || '{}')
+  const last = (tap.tap || []).find(([s]: [string]) => s === a)?.[1]?.lastAt || 0
+  if (!tap.net?.connects || Date.now() - last > 30_000) bad(`ff kick: kick's own chat socket never delivered ${a}`, { net: tap.net, tap: tap.tap })
+  else ok(`ff kick: kick's own chat socket delivers ${a}`)
   await ff.page(`document.querySelector('a[href="/browse"], a[href^="/browse"]')?.click(); return 1`)
   await sleep(8000)
   const br = await ff.page<{ path: string; noChannel: boolean; h: number }>(`

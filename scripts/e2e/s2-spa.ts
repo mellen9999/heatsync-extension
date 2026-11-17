@@ -256,6 +256,11 @@ export async function s2Kick() {
     await p.goto(`https://kick.com/${a}`, { waitUntil: 'domcontentloaded' })
     if (!(await waitPanel(p))) return bad('panel never mounted on a live kick channel')
     await hopCheck(env, p, `kick-${a}`, t0, 'chat')
+    // kick's own socket, not only the server relay: from 11-10 to 11-17 it was refused on every
+    // connect (kick takes a kick.com origin only) and nothing noticed
+    const k = (await swState(env) as any).kick
+    if (!k?.net?.connects || !(k.tapAgoS?.[a] <= 30)) bad(`kick's own chat socket never delivered ${a}`, k)
+    else ok(`kick's own chat socket delivers ${a} (${k.tapAgoS[a]}s ago)`)
     for (let round = 0; round < 2; round++) {
       t0 = Date.now()
       await clickFirst(p, ['a[href="/browse"]', 'a[href^="/browse"]'], 'browse link')

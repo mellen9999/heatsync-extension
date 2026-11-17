@@ -159,13 +159,16 @@ export async function s5Outage() {
     // forward again to the channel first seen during the outage, then leave it idle
     await p.goForward().catch(() => {})
     let setB2 = await channelSet(env, keyB)
-    while (Date.now() - restoredAt < 200_000 && setB2.at < restoredAt) {
+    // judged by the set, not its stamp: a fetch where one provider is merely slow (ffz takes 10s+
+    // at times) is stamped early on purpose so it retries, yet holds everything that answered
+    const grew = (s: typeof setB2) => s.state === 'set' && s.n > setB1.n
+    while (Date.now() - restoredAt < 200_000 && !grew(setB2)) {
       await sleep(10_000)
       setB2 = await channelSet(env, keyB)
     }
     info(`${keyB} after restore: ${JSON.stringify(setB2)} (${Math.round((Date.now() - restoredAt) / 1000)}s)`)
-    if (setB2.at >= restoredAt) ok(`${keyB} got a clean fetch after the providers came back`)
-    else bad(`${keyB} never refetched cleanly within 200s of the providers coming back`, setB2)
+    if (grew(setB2)) ok(`${keyB} got its emotes once the providers came back (${setB1.n} → ${setB2.n})`)
+    else bad(`${keyB} never got its emotes within 200s of the providers coming back`, setB2)
 
     const imgs = await newRowImages(p, lastKey)
     info(`emote images in rows after the restore: ${JSON.stringify(imgs)}`)

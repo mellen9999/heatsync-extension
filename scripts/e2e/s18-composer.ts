@@ -84,6 +84,8 @@ function screen(p: any, plat: Plat) {
     const by: Record<string, number> = {}
     for (const r of document.querySelectorAll('#hs-mc-messages .hs-mc-msg') as any) {
       if (r.dataset.msgKey) keys.push(r.dataset.msgKey)
+      // a mod notice ("x timed out") carries x's name but is not x's row: a hide leaves it
+      if (r.classList.contains('hs-mc-system')) continue
       const a = r.querySelector('.hs-mc-user:not(.hs-mc-reply-user)') as HTMLElement | null
       const u = (a?.dataset.username || '').toLowerCase()
       if (u && u !== 'anonymous' && a?.dataset.platform === plat) by[u] = (by[u] || 0) + 1
@@ -231,6 +233,7 @@ async function s18Composer(plat: Plat) {
         const left = a
           ? await p.evaluate((who: string) =>
               [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')]
+                .filter((r) => !r.classList.contains('hs-mc-system'))
                 .filter((r) => (r.querySelector('.hs-mc-user:not(.hs-mc-reply-user)') as HTMLElement | null)?.dataset.username?.toLowerCase() === who)
                 .map((r) => ({ ...(r as HTMLElement).dataset, cls: r.className.slice(0, 80), t: (r.textContent || '').slice(0, 40) })),
             hideWho)

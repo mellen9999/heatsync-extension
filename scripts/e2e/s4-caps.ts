@@ -118,7 +118,17 @@ export async function s4Caps() {
     }
     const key = `twitch/${watched}`
     info(`watching ${watched} (sets: ${JSON.stringify(sizes)})`)
-    const s0 = await cacheState(env, key)
+    let s0 = await cacheState(env, key)
+    if (!s0.has) {
+      // slow or never: a set that lands within a minute is a slow first fetch (25 channels join at
+      // once), one that never lands is lost
+      const t = Date.now()
+      while (!s0.has && Date.now() - t < 60_000) {
+        await sleep(5000)
+        s0 = await cacheState(env, key)
+      }
+      info(`${key}: no set 15s after its chat flowed; ${s0.has ? `landed ${Math.round((Date.now() - t) / 1000)}s later` : 'still none after 60s more'} (sets then: ${JSON.stringify(sizes)})`)
+    }
     const e0 = await emoteText(p, s0.names)
     info(`start: ${JSON.stringify({ held: s0.held, set: s0.n, ...e0 })}`)
     if (!s0.has) return bad(`${key} has no emote set at the start`, s0)
@@ -141,8 +151,13 @@ export async function s4Caps() {
         await sleep(6000)
         // back to the stream every few channels, the way a reader glances back
         if (i % 6 === 5 || i === others.length - 1) {
-          await p.click('.hs-mc-tab[data-tab="live"]').catch(() => {})
+          // the stream's own saved tab: the live tab hides under a saved tab that covers it, and a
+          // click on a hidden tab leaves the reader where they were
+          const back = (await p.$(`.hs-mc-tab[data-tab="${watched}"]`)) ? watched : 'live'
+          await p.click(`.hs-mc-tab[data-tab="${back}"]`, { timeout: 5000 }).catch(() => {})
           await sleep(3000)
+          const on = (await panel(p)).activeTab
+          if (on !== back) info(`lap ${lap}: the click back to ${back} landed on ${on}`)
           if (!(await rowsFlow(p, 30_000))) {
             bad(`lap ${lap}: back on the stream after ${i + 1} other channels, its chat is still`, await panel(p))
             await shot(p, `s4-still-lap${lap}-${i}`)

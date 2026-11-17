@@ -954,3 +954,139 @@ describe('global handlers registered', () => {
     expect(stored ?? []).toHaveLength(0)
   })
 })
+
+// ── chrome.* listeners ─────────────────────────────────────────────────────────
+// chrome swallows a listener's throw into a native "Error in event handler" log:
+// no window 'error', no console.error. Proven on a live twitch tab by e2e s13
+// (11-16): a settings-sync throw reached the console and nothing reached hs_errors.
+
+function fakeEvent() {
+  const fns = new Set()
+  return {
+    addListener: (fn) => fns.add(fn),
+    removeListener: (fn) => fns.delete(fn),
+    hasListener: (fn) => fns.has(fn),
+    // chrome's dispatch: each listener runs, a throw is logged and the rest still run
+    _fire(...args) {
+      const out = []
+      for (const fn of fns) {
+        try {
+          out.push(fn(...args))
+        } catch (e) {
+          out.push(e)
+        }
+      }
+      return out
+    },
+    _size: () => fns.size,
+  }
+}
+
+describe('chrome.* listener throws', () => {
+  // loadReporter's chrome stub has no events: add them before the IIFE runs
+  function load() {
+    const onChanged = fakeEvent()
+    const onMessage = fakeEvent()
+    const timers = []
+    const chrome = {
+      runtime: { getManifest: () => ({ version: '9.9.9' }), lastError: null, id: 'fakeid', onMessage },
+      storage: {
+        onChanged,
+        local: {
+          _store: {},
+          get(key, cb) {
+            cb({ [key]: this._store[key] })
+          },
+          set(obj, cb) {
+            Object.assign(this._store, obj)
+            cb?.()
+          },
+        },
+      },
+    }
+    const win = { addEventListener() {} }
+    const doc = { visibilityState: 'visible', addEventListener() {}, removeEventListener() {} }
+    new Function(
+      'window',
+      'globalThis',
+      'chrome',
+      'location',
+      'console',
+      'document',
+      'setTimeout',
+      'clearTimeout',
+      SRC,
+    )(
+      win,
+      win,
+      chrome,
+      { hostname: 'www.twitch.tv', href: 'https://www.twitch.tv/x' },
+      { error() {} },
+      doc,
+      (cb) => timers.push(cb),
+      () => {},
+    )
+    const flush = () => {
+      for (const cb of timers.splice(0)) cb()
+    }
+    return { chrome, onChanged, onMessage, flush }
+  }
+
+  test('a settings listener that throws lands in hs_errors and still throws', () => {
+    const { chrome, onChanged, flush } = load()
+    const boom = () => {
+      throw new Error('applier blew up')
+    }
+    chrome.storage.onChanged.addListener(boom)
+    const [res] = onChanged._fire({ ui_settings: {} }, 'sync')
+    expect(res).toBeInstanceOf(Error) // chrome still sees the throw and logs it
+    flush()
+    const rec = chrome.storage.local._store.hs_errors?.[0]
+    expect(rec?.type).toBe('listener')
+    expect(rec?.msg).toBe('storage.onChanged: applier blew up')
+    expect(rec?.stack).toContain('applier blew up')
+  })
+
+  test('a message listener that throws lands in hs_errors', () => {
+    const { chrome, onMessage, flush } = load()
+    chrome.runtime.onMessage.addListener(() => {
+      throw new TypeError('x is undefined')
+    })
+    onMessage._fire({ type: 'irc_batch' }, {}, () => {})
+    flush()
+    expect(chrome.storage.local._store.hs_errors?.[0]?.msg).toBe('runtime.onMessage: x is undefined')
+  })
+
+  test('return values pass through: an async sendResponse keeps its true', () => {
+    const { chrome, onMessage, flush } = load()
+    chrome.runtime.onMessage.addListener((_m, _s, send) => {
+      setTimeout(send)
+      return true
+    })
+    expect(onMessage._fire({}, {}, () => {})).toEqual([true])
+    flush()
+    expect(chrome.storage.local._store.hs_errors).toBeUndefined()
+  })
+
+  test('remove and has find the listener they were given', () => {
+    const { chrome, onChanged } = load()
+    const fn = () => {}
+    chrome.storage.onChanged.addListener(fn)
+    chrome.storage.onChanged.addListener(fn) // chrome adds a function once
+    expect(onChanged._size()).toBe(1)
+    expect(chrome.storage.onChanged.hasListener(fn)).toBe(true)
+    chrome.storage.onChanged.removeListener(fn)
+    expect(onChanged._size()).toBe(0)
+    expect(chrome.storage.onChanged.hasListener(fn)).toBe(false)
+  })
+
+  test('noise stays out: a dead extension context is not a bug report', () => {
+    const { chrome, onChanged, flush } = load()
+    chrome.storage.onChanged.addListener(() => {
+      throw new Error('Extension context invalidated.')
+    })
+    onChanged._fire({}, 'local')
+    flush()
+    expect(chrome.storage.local._store.hs_errors).toBeUndefined()
+  })
+})

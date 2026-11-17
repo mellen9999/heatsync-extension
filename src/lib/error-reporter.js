@@ -397,6 +397,61 @@
     }
   } catch (_) {}
 
+  // A throw inside a chrome.* event listener (settings sync, the background's pushes) never
+  // reaches window 'error': chrome catches it and prints "Error in event handler" from native
+  // code, past the console.error wrap above. Wrap the listeners as they are added, record the
+  // throw, and rethrow so chrome still logs it. One wrapper per listener, so remove/has still
+  // find the function they were given.
+  function _wrapEvent(ev, where) {
+    try {
+      if (!ev?.addListener || ev.addListener.__hsWrapped) return
+      const add = ev.addListener.bind(ev)
+      const rm = ev.removeListener.bind(ev)
+      const has = ev.hasListener.bind(ev)
+      const wrapped = new WeakMap()
+      const wrap = (fn) => {
+        if (typeof fn !== 'function') return fn
+        let w = wrapped.get(fn)
+        if (!w) {
+          w = function (...args) {
+            try {
+              return fn.apply(this, args)
+            } catch (e) {
+              try {
+                const f = _fmtErr(e)
+                if (!_isNoise(f.msg))
+                  _capture({
+                    ts: Date.now(),
+                    type: 'listener',
+                    plat: _plat,
+                    ver: _ver,
+                    url: _truncate(_scrubUrl(location.href), 200),
+                    msg: _truncate(`${where}: ${f.msg}`, MSG_CAP),
+                    stack: f.stack,
+                  })
+              } catch (_) {}
+              throw e
+            }
+          }
+          wrapped.set(fn, w)
+        }
+        return w
+      }
+      const addListener = (fn, ...rest) => add(wrap(fn), ...rest)
+      addListener.__hsWrapped = true
+      ev.addListener = addListener
+      ev.removeListener = (fn) => rm(wrapped.get(fn) || fn)
+      ev.hasListener = (fn) => has(wrapped.get(fn) || fn)
+    } catch (_) {}
+  }
+  try {
+    // an extension world only (the page's own world has no chrome.storage)
+    if (typeof chrome !== 'undefined' && chrome.runtime?.id) {
+      _wrapEvent(chrome.storage?.onChanged, 'storage.onChanged')
+      _wrapEvent(chrome.runtime.onMessage, 'runtime.onMessage')
+    }
+  } catch (_) {}
+
   window.__hsErrorReporter = {
     capture: _capture,
     flush: _flush,

@@ -990,7 +990,10 @@ function dropRestoredFiltered(msgsEl, lines, desiredSet) {
     if (!desiredSet.has(k)) (gone ||= new Set()).add(k)
   }
   if (!gone) return
-  for (const row of [...msgsEl.children]) {
+  // the tab's older rows are still detached in _heldOlder and mount right after this render:
+  // left unchecked, a hidden chatter's older rows came back above the ones just dropped
+  const rows = _heldOlder ? [..._heldOlder.frag.children, ...msgsEl.children] : [...msgsEl.children]
+  for (const row of rows) {
     if (!gone.has(row.dataset?.msgKey)) continue
     _unindexMessageDiv(row)
     row.remove()

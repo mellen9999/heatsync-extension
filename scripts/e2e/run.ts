@@ -23,6 +23,7 @@ import { s10Merged } from './s10-merged'
 import { s11FirefoxTabs } from './s11-firefox-tabs'
 import { s12Popout } from './s12-popout'
 import { s13SettingsSweep } from './s13-settings-sweep'
+import { s14FirefoxSettings } from './s14-firefox-settings'
 
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
@@ -40,6 +41,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s11-firefox-tabs', s11FirefoxTabs],
   ['s12-popout', s12Popout],
   ['s13-settings-sweep', s13SettingsSweep],
+  ['s14-firefox-settings', s14FirefoxSettings],
 ]
 
 const args = process.argv.slice(2)

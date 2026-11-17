@@ -36,9 +36,9 @@ type Def = { key: string; type: string; scope?: string; default: unknown; option
 // panel by design are left out; ui languages are sampled: one right-to-left, one cjk, back to auto
 const SKIP_VALUES: Record<string, unknown[]> = { fontFamily: ['custom'], mentionSound: ['custom'] }
 const ONLY_VALUES: Record<string, unknown[]> = { hs_ui_locale: ['ar', 'ja'] }
-const HIDES_PANEL: Record<string, unknown> = { chatPosition: 'hidden' }
+export const HIDES_PANEL: Record<string, unknown> = { chatPosition: 'hidden' }
 
-function steps(): { key: string; scope: string; value: unknown; back: unknown }[] {
+export function steps(): { key: string; scope: string; value: unknown; back: unknown }[] {
   const out: { key: string; scope: string; value: unknown; back: unknown }[] = []
   for (const d of SETTINGS as Def[]) {
     const scope = d.scope || 'sync'

@@ -1502,7 +1502,7 @@ async function pcToggleFollow(profileId, username, currentlyFollowing) {
 // idempotent error responses ('User already blocked' / no record) are treated
 // as success. After block, profile auto-unfollows server-side, so we mirror
 // that in the relationship object.
-async function pcToggleBlock(profileId, username, currentlyBlocked) {
+async function pcToggleBlock(profileId, username, currentlyBlocked, platform = activeProfileCard?.platform) {
   if (!profileId) {
     if (typeof showToast === 'function') showToast(t('mc_profile_not_registered'), 'error')
     return
@@ -1532,6 +1532,18 @@ async function pcToggleBlock(profileId, username, currentlyBlocked) {
     const resp = targetBlocked
       ? await apiFetch(path, { method: 'POST', auth: true, body: {} })
       : await apiFetch(`${path}?sync_twitch=0`, { method: 'DELETE', auth: true })
+    // signed out: no account to keep the block on, so it stays in this browser,
+    // like a chatter who isn't on heatsync (the mute works the same way)
+    if (resp?.status === 401 && typeof _toggleMcBlock === 'function') {
+      if (activeProfileCard?.data?.relationship) {
+        activeProfileCard.data.relationship.youBlock = currentlyBlocked
+        activeProfileCard.data.relationship.isBlocked = currentlyBlocked
+        renderProfileCardView()
+      }
+      _patchProfileCacheRel(username, { youBlock: currentlyBlocked, isBlocked: currentlyBlocked })
+      await _toggleMcBlock(username, platform)
+      return
+    }
     if (!resp?.ok) {
       const msg = String(resp?.error || '').toLowerCase()
       if (!msg.includes('already blocked') && !msg.includes('not blocked')) {
@@ -1554,7 +1566,6 @@ async function pcToggleBlock(profileId, username, currentlyBlocked) {
     // the chat right-click path; without it a profile-card block only took
     // effect on next reload. Fans out across linked twitch/kick aliases.
     try {
-      const platform = activeProfileCard?.platform
       // Use namespaced keys so block_user/unblock_user messages carry platform scope,
       // preventing twitch:alice from hiding an unrelated kick:alice.
       const aliasKeys =

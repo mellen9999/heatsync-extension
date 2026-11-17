@@ -2477,7 +2477,7 @@ async function hsBlockFromMenu(username, platform) {
   const id = p?.id || p?.userId
   // Registered → real account-level block (persists, auto-unfollows). Otherwise
   // fall back to a local session hide so block still works on non-heatsync users.
-  if (id) pcToggleBlock(id, username, !!(p.relationship?.youBlock || p.relationship?.isBlocked))
+  if (id) pcToggleBlock(id, username, !!(p.relationship?.youBlock || p.relationship?.isBlocked), platform)
   else _toggleMcBlock(username, platform)
 }
 
@@ -2989,7 +2989,7 @@ async function _toggleMcBlock(username, platform) {
     showToast(t('mc_input_blocked', [username + aliasNote]), 'success')
     for (const k of aliasKeys) safeSendMessage({ type: 'block_user', username: k })
   }
-  // buildMessageDiv filters blocked users, so a full re-render hides/restores them.
+  // the render pass drops blocked people's rows (isMsgUserDropped) and draws them back on unblock.
   // bypassScrollPause so a block applied while scrolled up takes effect now
   // instead of silently waiting until the reader returns to the bottom.
   renderMessages(currentTab, { bypassScrollPause: true })

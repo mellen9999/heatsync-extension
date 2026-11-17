@@ -16,7 +16,9 @@
  *     stream, the page still holds the stream's room, and its chat keeps coming, with no pause
  *     longer than STILL_MS
  *   - on twitch also a second channel saved with a kick leg (one merged tab): both platforms
- *     draw, then removed the same way, the stream's chat unbroken
+ *     draw; its kick leg changed in the edit form by pasting a kick.com link (saved as the
+ *     name, the new room joined, the old one left); then removed the same way, the stream's
+ *     chat unbroken
  *   - nothing threw on the page, the console, or the add-on's error log; watchdogs quiet
  */
 import { readFileSync } from 'node:fs'
@@ -42,6 +44,7 @@ import {
 
 const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages.json'), 'utf8'))
 const REMOVE = EN.mc_ctx_remove.message as string
+const EDIT = EN.mc_ctx_edit.message as string
 const WATCH_MS = 40_000
 const STILL_MS = 10_000
 
@@ -79,7 +82,7 @@ async function watch(p: any, ms: number) {
 export async function s16Channels() {
   scenario('s16 channels added and removed from the panel')
   const [twA, twB] = await liveChannels('twitch', 2)
-  const [kkA, kkB] = await liveChannels('kick', 2)
+  const [kkA, kkB, kkC] = await liveChannels('kick', 3)
   const env = await launch()
   const errs: string[] = []
   const cons: string[] = []
@@ -120,7 +123,7 @@ export async function s16Channels() {
       await sleep(500)
     }
 
-    const round = async (host: string, url: string, elsewhere: string, mine: Legs, other?: Legs) => {
+    const round = async (host: string, url: string, elsewhere: string, mine: Legs, other?: Legs, swapKick?: string) => {
       const id = (mine.twitch || mine.kick) as string
       await p.goto(url, { waitUntil: 'domcontentloaded' })
       if (!(await waitPanel(p)) || !(await rowsFlow(p, 45_000))) return bad(`${host}: chat never flowed`, await panel(p))
@@ -206,10 +209,35 @@ export async function s16Channels() {
           const tab = await p.$eval('.hs-mc-tab.active', (t: Element) => (t as HTMLElement).dataset.tab).catch(() => null)
           if (tab !== oid) why.push(`opened ${tab}, not ${oid}`)
           const w = await watch(p, 60_000)
-          info(`${host}: merged ${oid}: platforms ${w.plats.join('+') || 'none'}, longest still ${Math.round(w.still / 1000)}s`)
+          info(`${host}: merged ${oid} (kick ${other.kick}): platforms ${w.plats.join('+') || 'none'}, longest still ${Math.round(w.still / 1000)}s`)
           for (const pl of Object.keys(other)) if (!w.plats.includes(pl)) why.push(`no ${pl} rows`)
           return why
         })
+        if (swapKick) {
+          await step('its kick leg changed in the edit form by pasting a link', async () => {
+            const why: string[] = []
+            await p.click(`.hs-mc-tab[data-tab="${oid}"]`, { button: 'right', timeout: 5000 })
+            await p.locator('#hs-mc-ctx-menu [role="menuitem"]', { hasText: new RegExp(`^${EDIT}$`) }).click({ timeout: 5000 })
+            await p.fill('#hs-mc-messages input.hs-mc-ch-input[aria-label="kick"]', `https://kick.com/${swapKick}`)
+            await p.locator('#hs-mc-messages button', { hasText: /^save$/ }).click({ timeout: 5000 })
+            await sleep(1500)
+            const err = await p.evaluate(() => {
+              const e = document.querySelector('#hs-mc-messages [role="alert"]') as HTMLElement | null
+              return e && e.style.display !== 'none' ? e.textContent || '' : ''
+            })
+            if (err) why.push(`refused: ${err}`)
+            const kept = (await saved()).find((c) => c.id === oid)
+            if (kept?.kick !== swapKick) why.push(`saved kick ${JSON.stringify(kept?.kick)}, not ${swapKick}`)
+            const d = await dbg(p)
+            if (d.kick && typeof d.kick === 'object') {
+              if (!d.kick[swapKick]) why.push(`never joined kick ${swapKick}`)
+              if (other.kick && d.kick[other.kick]) why.push(`still in the old kick room ${other.kick}`)
+            }
+            const w = await watch(p, 45_000)
+            if (!w.plats.includes('kick')) why.push('no kick rows after the change')
+            return why
+          })
+        }
         await step(`the merged channel removed, the stream's chat unbroken`, async () => {
           const why: string[] = []
           await remove(oid)
@@ -226,7 +254,7 @@ export async function s16Channels() {
       if (ring.bad.length) bad(`${host}: overlay watchdogs fired`, ring.bad.slice(0, 6))
     }
 
-    await round('twitch', `https://www.twitch.tv/${twA}`, `https://kick.com/${kkA}`, { twitch: twA }, { twitch: twB, kick: kkB })
+    await round('twitch', `https://www.twitch.tv/${twA}`, `https://kick.com/${kkA}`, { twitch: twA }, { twitch: twB, kick: kkB }, kkC)
     await round('kick', `https://kick.com/${kkA}`, `https://www.twitch.tv/${twA}`, { kick: kkA })
   } finally {
     await env.close()

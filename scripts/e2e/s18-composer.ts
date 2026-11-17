@@ -3,9 +3,9 @@
  * the local slash commands, with the stream open in a second tab. Nothing is ever sent: Enter
  * is only pressed on a slash command that stays in this browser, and the profile is signed out.
  *
- *   bun scripts/e2e/run.ts --only s18
+ *   bun scripts/e2e/run.ts --only s18          (s18-twitch, s18-kick)
  *
- * Two pages on one busy twitch channel (its saved tab), then page 2 on a second channel (the
+ * Two pages on one busy twitch or kick channel (its saved tab), then page 2 on a second channel (the
  * live tab, nothing saved):
  *   - an emote on screen, its name typed and Tab: becomes that emote
  *   - "@" and the start of a chatter on screen, Tab: a chatter's full name with that start
@@ -20,6 +20,9 @@
 import { bad, extStorage, info, launch, liveChannels, ok, panel, rowsFlow, scenario, shot, sleep, waitPanel, watchErrors } from './lib'
 
 const SETTLE_MS = 800
+
+type Plat = 'twitch' | 'kick'
+const url = (plat: Plat, ch: string) => (plat === 'kick' ? `https://kick.com/${ch}` : `https://www.twitch.tv/${ch}`)
 
 /** The input as a person reads it: text, and each emote chip by its name. */
 function inputText(p: any): Promise<string> {
@@ -61,18 +64,18 @@ const toasts = (p: any): Promise<string[]> =>
   p.$$eval('[class*="toast"]', (e: Element[]) => e.map((x) => (x.textContent || '').trim()).filter(Boolean))
 
 /** Row keys on screen, and the authors of plain rows. */
-function screen(p: any) {
-  return p.evaluate(() => {
+function screen(p: any, plat: Plat) {
+  return p.evaluate((plat: string) => {
     const keys: string[] = []
     const by: Record<string, number> = {}
     for (const r of document.querySelectorAll('#hs-mc-messages .hs-mc-msg') as any) {
       if (r.dataset.msgKey) keys.push(r.dataset.msgKey)
       const a = r.querySelector('.hs-mc-user:not(.hs-mc-reply-user)') as HTMLElement | null
       const u = (a?.dataset.username || '').toLowerCase()
-      if (u && u !== 'anonymous' && a?.dataset.platform === 'twitch') by[u] = (by[u] || 0) + 1
+      if (u && u !== 'anonymous' && a?.dataset.platform === plat) by[u] = (by[u] || 0) + 1
     }
     return { keys, by }
-  }) as Promise<{ keys: string[]; by: Record<string, number> }>
+  }, plat) as Promise<{ keys: string[]; by: Record<string, number> }>
 }
 
 /** A third-party emote drawn in chat right now, with a plain name. */
@@ -112,9 +115,9 @@ async function channelEmote(p: any): Promise<string | null> {
   return listed
 }
 
-export async function s18Composer() {
-  scenario('s18 the composer: tab-complete, picker, local slash commands, two tabs')
-  const [ch, other] = await liveChannels('twitch', 2)
+async function s18Composer(plat: Plat) {
+  scenario(`s18 the composer on ${plat}: tab-complete, picker, local slash commands, two tabs`)
+  const [ch, other] = await liveChannels(plat, 2)
   const env = await launch()
   const errs: string[] = []
   const cons: string[] = []
@@ -133,7 +136,7 @@ export async function s18Composer() {
     const p2 = await env.ctx.newPage()
     listen(p, 'page 1')
     listen(p2, 'page 2')
-    for (const pg of [p, p2]) await pg.goto(`https://www.twitch.tv/${ch}`, { waitUntil: 'domcontentloaded' })
+    for (const pg of [p, p2]) await pg.goto(url(plat, ch), { waitUntil: 'domcontentloaded' })
     for (const [pg, n] of [[p, 1], [p2, 2]] as const)
       if (!(await waitPanel(pg)) || !(await rowsFlow(pg, 45_000))) return bad(`page ${n}: chat never flowed on ${ch}`, await panel(pg))
     await sleep(15_000)
@@ -150,7 +153,7 @@ export async function s18Composer() {
       errBase = nowErr
       if (why.length) {
         bad(`${what}: ${why.join('; ')}`, await panel(pages[0]))
-        for (const [i, pg] of pages.entries()) await shot(pg, `s18-${what.replace(/\W+/g, '-').slice(0, 60)}-p${i + 1}`)
+        for (const [i, pg] of pages.entries()) await shot(pg, `s18-${plat}-${what.replace(/\W+/g, '-').slice(0, 60)}-p${i + 1}`)
       } else ok(what)
     }
 
@@ -168,7 +171,7 @@ export async function s18Composer() {
         return txt.toLowerCase() === emote.toLowerCase() && c.length === 1 ? [] : [`input reads "${txt}", chips [${c.join(', ')}]`]
       })
 
-    const { by } = await screen(p)
+    const { by } = await screen(p, plat)
     const chatter = Object.keys(by).find((u) => u.length >= 6 && /^[a-z0-9_]+$/.test(u))
     if (!chatter) info(`${ch}: no chatter on screen with a 6+ letter name`)
     else
@@ -196,11 +199,11 @@ export async function s18Composer() {
     })
 
     // ── /hide is this tab only ──
-    const hideWho = Object.entries((await screen(p)).by)
+    const hideWho = Object.entries((await screen(p, plat)).by)
       .filter(([u]) => /^[a-z0-9_]+$/.test(u))
       .sort((a, b) => b[1] - a[1])[0]?.[0]
     if (hideWho) {
-      const count = async (pg: any) => (await screen(pg)).by[hideWho] || 0
+      const count = async (pg: any) => (await screen(pg, plat)).by[hideWho] || 0
       const before2 = await count(p2)
       await step(`/hide ${hideWho} on page 1: gone there, still on page 2`, async () => {
         await type(p, `/hide ${hideWho}`)
@@ -254,8 +257,8 @@ export async function s18Composer() {
     const lclear = async (pg: any, where: string, other?: any) => {
       await step(`/lclear on ${where}: its rows gone and they stay gone, chat keeps coming`, async () => {
         const why: string[] = []
-        const old = new Set((await screen(pg)).keys)
-        const otherBefore = other ? (await screen(other)).keys.length : 0
+        const old = new Set((await screen(pg, plat)).keys)
+        const otherBefore = other ? (await screen(other, plat)).keys.length : 0
         await type(pg, '/lclear')
         await pg.keyboard.press('Enter')
         await sleep(SETTLE_MS)
@@ -266,16 +269,16 @@ export async function s18Composer() {
           await sleep(SETTLE_MS)
         }
         const said = await toasts(pg)
-        const right = (await screen(pg)).keys.filter((k) => old.has(k)).length
+        const right = (await screen(pg, plat)).keys.filter((k) => old.has(k)).length
         info(`${where}: ${old.size} rows before, ${right} of them right after; toast [${said.join(' | ')}]`)
         if (right) why.push(`${right} of ${old.size} rows still there right after`)
         await sleep(15_000)
-        const later = (await screen(pg)).keys
+        const later = (await screen(pg, plat)).keys
         const back = later.filter((k) => old.has(k)).length
         if (back && !right) why.push(`${back} cleared rows came back`)
         if (!later.length) why.push('no new chat in 15s')
         if (other) {
-          const o = (await screen(other)).keys.length
+          const o = (await screen(other, plat)).keys.length
           info(`the other page: ${otherBefore} rows before, ${o} after`)
           if (o < otherBefore / 2) why.push(`the other page lost its rows too (${otherBefore}→${o})`)
         }
@@ -283,7 +286,7 @@ export async function s18Composer() {
       }, other ? [pg, other] : [pg])
     }
     await lclear(p, `${ch}'s saved tab (page 1)`, p2)
-    await p2.goto(`https://www.twitch.tv/${other}`, { waitUntil: 'domcontentloaded' })
+    await p2.goto(url(plat, other), { waitUntil: 'domcontentloaded' })
     if (!(await waitPanel(p2)) || !(await rowsFlow(p2, 45_000))) bad(`page 2: chat never flowed on ${other}`, await panel(p2))
     else {
       await sleep(10_000)
@@ -295,3 +298,6 @@ export async function s18Composer() {
     await env.close()
   }
 }
+
+export const s18Twitch = () => s18Composer('twitch')
+export const s18Kick = () => s18Composer('kick')

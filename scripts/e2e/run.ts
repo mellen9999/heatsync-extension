@@ -29,6 +29,7 @@ import { s16Channels } from './s16-channels'
 import { s17MuteBlock } from './s17-mute-block'
 import { s18Kick, s18Twitch, s18Youtube } from './s18-composer'
 import { s19FirstRun } from './s19-first-run'
+import { s21Hide } from './s21-hide'
 
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
@@ -54,6 +55,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s18-kick', s18Kick],
   ['s18-youtube', s18Youtube],
   ['s19-first-run', s19FirstRun],
+  ['s21-hide', s21Hide],
 ]
 
 const args = process.argv.slice(2)

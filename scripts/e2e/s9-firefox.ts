@@ -160,7 +160,10 @@ export async function s9Firefox() {
       (m) =>
         /error|exception|uncaught/i.test(m) &&
         !m.includes('(Report-Only policy)') &&
-        !m.includes('Promise rejected after context unloaded'),
+        !m.includes('Promise rejected after context unloaded') &&
+        // a socket that could not connect is the network's (kick refuses datacenter ips); whether
+        // chat still arrived is what the chains above judge
+        !m.includes('establish a connection to the server'),
     )
     if (errs.length) bad('ff: the add-on logged errors', errs.slice(0, 6))
   } finally {

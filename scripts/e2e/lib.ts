@@ -49,7 +49,18 @@ export function info(msg: string) {
 }
 
 // ── launch ───────────────────────────────────────────────────────────────────
-export async function launch(opts: { width?: number; height?: number; scale?: number; args?: string[] } = {}) {
+export async function launch(
+  opts: {
+    width?: number
+    height?: number
+    scale?: number
+    args?: string[]
+    /** keep the install tab (the welcome page) open and hand it back as env.welcome */
+    keepWelcome?: boolean
+    /** called for every page the browser opens, from the first moment: listeners attached here miss nothing */
+    onPage?: (pg: any) => void
+  } = {},
+) {
   if (!existsSync(join(EXT, 'manifest.json'))) throw new Error(`no built extension at ${EXT}`)
   const chromium = await loadChromium()
   const profile = mkdtempSync(join(tmpdir(), 'hs-e2e-prof-'))
@@ -70,6 +81,10 @@ export async function launch(opts: { width?: number; height?: number; scale?: nu
       ...(opts.args ?? []),
     ],
   })
+  if (opts.onPage) {
+    ctx.on('page', opts.onPage)
+    for (const pg of ctx.pages()) opts.onPage(pg)
+  }
   // E2E_CPU_SLOW=4: every page runs on a cpu four times slower, the way a ci runner does
   const slow = Number(process.env.E2E_CPU_SLOW || 0)
   if (slow > 1)
@@ -85,12 +100,13 @@ export async function launch(opts: { width?: number; height?: number; scale?: nu
   const extId = sw.url().match(/chrome-extension:\/\/([a-p]+)\//)?.[1] as string
   // the install tab (welcome page) is not part of any scenario
   await sleep(2500)
-  for (const pg of ctx.pages()) if (pg.url().includes('welcome')) await pg.close().catch(() => {})
+  if (!opts.keepWelcome) for (const pg of ctx.pages()) if (pg.url().includes('welcome')) await pg.close().catch(() => {})
+  const welcome = opts.keepWelcome ? ctx.pages().find((pg: any) => pg.url().includes('welcome')) : undefined
   const close = async () => {
     await ctx.close().catch(() => {})
     rmSync(profile, { recursive: true, force: true })
   }
-  return { ctx, extId, profile, close, worker: () => ctx.serviceWorkers()[0] || sw }
+  return { ctx, extId, profile, close, welcome, worker: () => ctx.serviceWorkers()[0] || sw }
 }
 export type Env = Awaited<ReturnType<typeof launch>>
 

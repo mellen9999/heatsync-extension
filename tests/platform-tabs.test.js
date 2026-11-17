@@ -142,7 +142,7 @@ describe('hover hold', () => {
   test('the feed stops sliding while the pointer is on an emote, name or badge, and lets go after a beat', () => {
     expect(main).toContain("el.closest('.hs-mc-emote-wrapper, .hs-mc-user, .hs-mc-badge-img')")
     expect(main).toContain('_hoverRelease = cleanup.setTimeout(releaseHold, 120)')
-    expect(main).toContain("msgsEl.addEventListener('mouseleave', releaseHold")
+    expect(main).toContain("msgsEl.addEventListener('mouseleave', leave")
   })
   test('a real scroll-up, the resume button and a scroll back to the bottom all end the hold cleanly', () => {
     expect(main).toMatch(/if \(hoverHeld\) \{\s*hoverHeld = false\s*isScrolledUp = false\s*\}/)

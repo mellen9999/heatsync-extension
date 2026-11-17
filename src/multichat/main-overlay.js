@@ -1291,6 +1291,27 @@ function createOverlay() {
           cleanup.clearTimeout(_hoverRelease)
           _hoverRelease = null
         }
+      },
+      { passive: true, signal: mcSignal },
+    )
+    // Only a pointer that MOVES onto the thing holds the feed. A resting pointer gets a mouseover
+    // too whenever a row slides an emote or name under it, and so does one the window gets back
+    // (switching back to the browser's workspace): holding on those froze the feed on old rows,
+    // with no "new messages" to say so, until the mouse happened to move (11-16).
+    let _ptrX = Number.NaN
+    let _ptrY = Number.NaN
+    const forgetPointer = () => {
+      _ptrX = Number.NaN
+      _ptrY = Number.NaN
+    }
+    msgsEl.addEventListener(
+      'mousemove',
+      (e) => {
+        const moved = e.clientX !== _ptrX || e.clientY !== _ptrY
+        const arrived = Number.isNaN(_ptrX)
+        _ptrX = e.clientX
+        _ptrY = e.clientY
+        if (arrived || !moved || !(e.target instanceof Element) || !holdTarget(e.target)) return
         if (hoverHeld && !isScrolledUp) hoverHeld = false // resumed by other means
         if (hoverHeld || isScrolledUp || isStaticTab()) return
         hoverHeld = true
@@ -1299,8 +1320,12 @@ function createOverlay() {
       },
       { passive: true, signal: mcSignal },
     )
-    msgsEl.addEventListener('mouseleave', releaseHold, { passive: true, signal: mcSignal })
-    window.addEventListener('blur', releaseHold, { passive: true, signal: mcSignal })
+    const leave = () => {
+      forgetPointer()
+      releaseHold()
+    }
+    msgsEl.addEventListener('mouseleave', leave, { passive: true, signal: mcSignal })
+    window.addEventListener('blur', leave, { passive: true, signal: mcSignal })
 
     // Bulletproof sticky-bottom: any change to msgsEl's box (panel resize,
     // window resize, tab/input bar height shift, font-size change) re-pins

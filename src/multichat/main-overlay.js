@@ -56,6 +56,32 @@ function findChatRoomComponent() {
 }
 
 // ============================================
+// THE CHAT LIST'S SCROLL KEYS
+// ============================================
+
+/** What a key does to the chat list: 'tail', 'top', a number of pixels (up is negative), or null. */
+function listKeyMove(key, pageHeight) {
+  if (key === 'End') return 'tail'
+  if (key === 'Home') return 'top'
+  const page = Math.max(40, Math.round(pageHeight * 0.9))
+  if (key === 'PageUp') return -page
+  if (key === 'PageDown') return page
+  if (key === 'ArrowUp') return -60
+  if (key === 'ArrowDown') return 60
+  return null
+}
+
+/** Is a scroll key meant for the chat list? Focus inside the list always is. Otherwise the pointer
+ *  has to be on the list and focus on nothing (a click on a row leaves it on the page body) or on
+ *  some other part of our panel: a focused player or field of the host keeps its own keys. */
+function listKeyWanted(active, listEl, panelEl, hovered) {
+  if (active && (active.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName))) return false
+  if (active && listEl.contains(active)) return true
+  if (!hovered) return false
+  return !active || active.tagName === 'BODY' || active.tagName === 'HTML' || !!panelEl?.contains(active)
+}
+
+// ============================================
 // UI CREATION (React-compatible elements)
 // ============================================
 
@@ -1209,19 +1235,33 @@ function createOverlay() {
       { passive: true, signal: mcSignal },
     )
 
-    // Keys that scroll up — pause.
-    msgsEl.addEventListener(
+    // Keys that scroll: End, Home, the page keys and the arrows. The list is not focusable and
+    // a click on a row focuses nothing, so a listener on the list never heard them, and the
+    // browser scrolled whatever it took for the scroller: End did not return to the tail on any
+    // site (e2e s20, 11-17). Heard on the root element instead (after our own capture handlers,
+    // which may claim the key; before the host's), and the list is moved here, not left to luck.
+    document.documentElement.addEventListener(
       'keydown',
       (e) => {
-        if (isStaticTab()) return
-        if (e.key === 'PageUp' || e.key === 'Home' || e.key === 'ArrowUp') {
-          _userInputScroll = true
-          setPaused(true)
-        } else if (e.key === 'PageDown' || e.key === 'End' || e.key === 'ArrowDown' || e.key === ' ') {
-          _userInputScroll = true
+        if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return
+        const move = listKeyMove(e.key, msgsEl.clientHeight)
+        if (move === null || isStaticTab()) return
+        const panel = document.getElementById('hs-mc-container')
+        if (!listKeyWanted(document.activeElement, msgsEl, panel, msgsEl.matches(':hover'))) return
+        e.preventDefault()
+        e.stopImmediatePropagation()
+        if (move === 'tail') {
+          if (isScrolledUp || !checkAtBottom()) jumpToTail()
+          return
         }
+        const max = msgsEl.scrollHeight - msgsEl.clientHeight
+        const to = move === 'top' ? 0 : Math.max(0, Math.min(max, msgsEl.scrollTop + move))
+        if (to === msgsEl.scrollTop) return // already there: no scroll event will come to clear the flag
+        _userInputScroll = true
+        if (to < msgsEl.scrollTop) setPaused(true)
+        msgsEl.scrollTop = to
       },
-      { signal: mcSignal },
+      { signal: mcSignal, capture: true },
     )
 
     // Mousedown on scrollbar thumb (target === msgsEl, click outside content)
@@ -1234,28 +1274,26 @@ function createOverlay() {
       { passive: true, signal: mcSignal },
     )
 
-    newBtn.addEventListener(
-      'click',
-      () => {
-        hoverHeld = false
-        isScrolledUp = false
-        newMessageCount = 0
-        newBtn.style.display = 'none'
-        _scrollbackWindow = 0 // jumping to live tail — drop scrollback DOM
-        if (isStaticTab()) {
-          // Static tabs: re-render then scroll to top (newest content)
-          renderMessages(currentTab)
-          msgsEl.scrollTop = 0
-        } else {
-          // Chat tabs: re-render then teleport to bottom. The new render
-          // diff only auto-pins if user was AT bottom; here the user was
-          // scrolled UP and clicked to come back, so force the scroll.
-          renderMessages(currentTab)
-          scrollMsgsToBottom(msgsEl)
-        }
-      },
-      { signal: mcSignal },
-    )
+    // Back to the newest rows: the "N new" pill's click, and the End key.
+    const jumpToTail = () => {
+      hoverHeld = false
+      isScrolledUp = false
+      newMessageCount = 0
+      newBtn.style.display = 'none'
+      _scrollbackWindow = 0 // jumping to live tail — drop scrollback DOM
+      if (isStaticTab()) {
+        // Static tabs: re-render then scroll to top (newest content)
+        renderMessages(currentTab)
+        msgsEl.scrollTop = 0
+      } else {
+        // Chat tabs: re-render then teleport to bottom. The new render
+        // diff only auto-pins if user was AT bottom; here the user was
+        // scrolled UP and clicked to come back, so force the scroll.
+        renderMessages(currentTab)
+        scrollMsgsToBottom(msgsEl)
+      }
+    }
+    newBtn.addEventListener('click', jumpToTail, { signal: mcSignal })
 
     // Hover hold: while the pointer rests on an emote, name or badge the feed
     // stops sliding, so the thing under the cursor stays under it (a new

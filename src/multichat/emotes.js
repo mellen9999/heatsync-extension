@@ -881,10 +881,7 @@ function recordRecentEmote(name) {
   try {
     localStorage.setItem(RECENT_KEY, JSON.stringify(list))
   } catch (_) {}
-  bumpEmoteFrecency(name)
-  // The cache key doesn't track the MRU list, so force a rebuild on next
-  // open (idle prebuild repopulates before reopen → still instant).
-  markPickerDirty()
+  bumpEmoteFrecency(name) // the picker's cache key carries the list: next open rebuilds
 }
 
 // Frecency — per-emote use count with recency decay, feeding tab-complete
@@ -1295,7 +1292,12 @@ function pickerCacheKey() {
   // _blockedRev: a cross-device block/unblock (applyBlockedHashDelta) changes
   // no size here — without it a rebuild triggered by an unrelated key change
   // would be the only thing correcting a stale cached picker DOM.
-  return `${ch}|${emoteSize}|${emoteCache.size}|${chSize}|${_blockedRev}`
+  // the recents row too: another tab on this site writes the same list
+  let recent = ''
+  try {
+    recent = localStorage.getItem(RECENT_KEY) || ''
+  } catch (_) {}
+  return `${ch}|${emoteSize}|${emoteCache.size}|${chSize}|${_blockedRev}|${recent}`
 }
 
 function markPickerDirty() {

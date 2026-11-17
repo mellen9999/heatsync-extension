@@ -70,6 +70,15 @@ export async function launch(opts: { width?: number; height?: number; scale?: nu
       ...(opts.args ?? []),
     ],
   })
+  // E2E_CPU_SLOW=4: every page runs on a cpu four times slower, the way a ci runner does
+  const slow = Number(process.env.E2E_CPU_SLOW || 0)
+  if (slow > 1)
+    ctx.on('page', (pg: any) => {
+      ctx
+        .newCDPSession(pg)
+        .then((c: any) => c.send('Emulation.setCPUThrottlingRate', { rate: slow }))
+        .catch(() => {})
+    })
   // youtube's consent wall would otherwise sit over every page
   await ctx.addCookies([{ name: 'SOCS', value: 'CAI', domain: '.youtube.com', path: '/' }])
   const sw = ctx.serviceWorkers()[0] || (await ctx.waitForEvent('serviceworker', { timeout: 20_000 }))
@@ -310,8 +319,21 @@ export async function swState(env: Env) {
       const errs = ((await chrome.storage.local.get('hs_errors')).hs_errors || []).map((e: any) =>
         String(e?.msg || e?.message || JSON.stringify(e)).slice(0, 200),
       )
+      // kick's own socket: which rooms it holds and how long since each one last delivered
+      const ago = (m: Map<string, any>) => Object.fromEntries([...m].map(([k, e]) => [k, Math.round((Date.now() - e.lastAt) / 1000)]))
       // @ts-ignore
-      return { boot: self.__hsBootOk === true, sets, tabs, extras, errs }
+      const kst = typeof _kickSrcStats !== 'undefined' ? _kickSrcStats : null
+      const kick = kst && {
+        // @ts-ignore
+        rooms: typeof _kpChannels !== 'undefined' ? [..._kpChannels.keys()] : [],
+        // @ts-ignore
+        sock: typeof _kpWs !== 'undefined' ? (_kpWs?.readyState ?? null) : null,
+        tapAgoS: ago(kst.tap),
+        relayAgoS: ago(kst.relay),
+        net: { stopped: kst.net.stopped, streak: kst.net.streak, why: kst.net.lastReason, connects: kst.net.connects },
+      }
+      // @ts-ignore
+      return { boot: self.__hsBootOk === true, sets, tabs, extras, errs, kick }
     })
     .catch((e: unknown) => ({ err: String(e) }))
 }

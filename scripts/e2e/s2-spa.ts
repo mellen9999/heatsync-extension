@@ -29,6 +29,7 @@ import {
   rowsFlow,
   scenario,
   shot,
+  swState,
   sleep,
   waitPanel,
   watchErrors,
@@ -111,7 +112,8 @@ async function hopCheck(env: Env, p: any, label: string, t0: number, expect: 'ch
     `${label}: ${JSON.stringify({ url: st.url?.slice(0, 70), rows: st.rows, offline: st.offline, active: st.activeTab, tabs: st.tabs?.filter((t: string) => !/^(feed|discover|whispers|mentions|pinned)=/.test(t)) })}`,
   )
   if (expect === 'chat' && !flowing) {
-    bad(`${label}: chat did not flow in the panel within 45s`, st)
+    const sw: any = await swState(env)
+    bad(`${label}: chat did not flow in the panel within 45s`, { ...st, extras: sw.extras, swTabs: sw.tabs, kick: sw.kick, ring: ring.counts })
     await shot(p, `s2-${label}`)
   } else if (expect === 'chat') ok(`${label}: chat flows`)
   if (ring.bad.length) bad(`${label}: overlay watchdogs fired`, ring.bad.slice(0, 6))
@@ -317,11 +319,24 @@ export async function s2Kick() {
     else {
       await p.evaluate((t: string) => (window as any).next?.router?.push(t), `/${off}`)
       await sleep(15_000)
-      const dot = await p.evaluate(
-        () => (document.querySelector('.hs-mc-tab[data-tab="live"]') as HTMLElement | null)?.dataset.live,
-      )
-      if (dot === 'true') bad(`offline kick channel ${off} reached in-page reads live`)
-      else ok('offline kick channel reached in-page reads offline')
+      // the live tab's dot, the video kick draws, and the tab the panel is on
+      const look = () =>
+        p.evaluate(() => {
+          const live = document.querySelector('.hs-mc-tab[data-tab="live"]') as HTMLElement | null
+          const shown = [...document.querySelectorAll('video')].filter((v) => v.getClientRects().length && !v.closest('#hs-mc-container'))
+          return {
+            dot: live?.dataset.live,
+            label: live?.textContent,
+            videos: shown.length,
+            active: document.querySelector('.hs-mc-tab.active')?.getAttribute('data-tab'),
+            path: location.pathname,
+          }
+        })
+      const now = await look()
+      if (now.dot === 'true') {
+        await sleep(20_000)
+        bad(`offline kick channel ${off} reached in-page reads live`, { at15s: now, at35s: await look() })
+      } else ok('offline kick channel reached in-page reads offline')
     }
     if (errs.length) bad('page errors', errs.slice(0, 5))
   } finally {

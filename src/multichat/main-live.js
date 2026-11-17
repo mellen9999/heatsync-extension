@@ -719,8 +719,28 @@ function getLivePlatformNames() {
   }
 }
 
-function saveLivePlatformMap() {
-  chrome.storage.local.set({ hs_live_platform_map: livePlatformMap })
+// Write one channel's entry (or its removal) into the stored map, read fresh:
+// writing this tab's whole copy dropped what another open tab saved since this
+// one loaded. Other tabs' entries are adopted on the way. Chained, so two saves
+// in this tab never interleave their read and write.
+let _liveMapChain = Promise.resolve()
+function saveLivePlatformMap(ch) {
+  _liveMapChain = _liveMapChain.then(() => _saveLivePlatformMapNow(ch))
+  return _liveMapChain
+}
+async function _saveLivePlatformMapNow(ch) {
+  try {
+    const stored = (await browser.storage.local.get('hs_live_platform_map')).hs_live_platform_map
+    const next = { ...(stored && typeof stored === 'object' ? stored : {}) }
+    if (livePlatformMap[ch]) next[ch] = livePlatformMap[ch]
+    else delete next[ch]
+    // adopt what other tabs saved, never over this tab's own entries (one may be
+    // waiting in the chain behind this save)
+    for (const k of Object.keys(next)) if (!(k in livePlatformMap) && k !== ch) livePlatformMap[k] = next[k]
+    await browser.storage.local.set({ hs_live_platform_map: next })
+  } catch (e) {
+    reportStorageWriteFailure('live platforms', e, 'mc_main_config_save_failed')
+  }
 }
 
 async function loadLivePlatformMap() {

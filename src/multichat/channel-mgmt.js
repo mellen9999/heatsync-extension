@@ -840,7 +840,7 @@ function renderLivePlatformsPane(pane) {
 
   resetBtn.addEventListener('click', () => {
     delete livePlatformMap[urlCh]
-    saveLivePlatformMap()
+    saveLivePlatformMap(urlCh)
     home()
     applyLivePlatformOverrides()
   })
@@ -858,7 +858,7 @@ function renderLivePlatformsPane(pane) {
     }
     const was = getLivePlatformNames()
     livePlatformMap[urlCh] = { twitch: tw, kick: ki, youtube: ytVal }
-    saveLivePlatformMap()
+    saveLivePlatformMap(urlCh)
     // the room the live tab read before goes, unless something else still shows it
     if (was.twitch !== tw) mcLeaveUnshown('twitch', was.twitch, config.channels)
     if (was.kick !== ki) mcLeaveUnshown('kick', was.kick, config.channels)

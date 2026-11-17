@@ -223,7 +223,8 @@ export async function launchFirefox() {
      * blocked, drawn anyway); a message to the background still in flight when its page or
      * frame went away (firefox logs that one after our scripts are gone, where nothing can
      * catch it); a socket that could not connect (kick refuses datacenter ips; whether chat
-     * still arrived is each scenario's own check).
+     * still arrived is each scenario's own check), or that firefox cut because its page
+     * reloaded mid-handshake (a setting that reloads the page, s14).
      */
     async addonErrors() {
       const all = await consoleMessages('moz-extension://').catch(() => [] as string[])
@@ -232,7 +233,8 @@ export async function launchFirefox() {
           /error|exception|uncaught/i.test(m) &&
           !m.includes('(Report-Only policy)') &&
           !/Promise (rejected|resolved) (after context unloaded|while context is inactive)/.test(m) &&
-          !m.includes('establish a connection to the server'),
+          !m.includes('establish a connection to the server') &&
+          !m.includes('was interrupted while the page was loading'),
       )
     },
 

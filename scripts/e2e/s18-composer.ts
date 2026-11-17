@@ -227,7 +227,18 @@ async function s18Composer(plat: Plat) {
         await sleep(SETTLE_MS * 2)
         const [a, b] = [await count(p), await count(p2)]
         info(`${hideWho}: page 1 ${a} rows, page 2 ${b} rows (had ${before2})`)
-        return [...(a ? [`page 1 still shows ${a} of their rows`] : []), ...(before2 && !b ? ['page 2 lost them too'] : [])]
+        // the rows left, by what they carry: which path drew them
+        const left = a
+          ? await p.evaluate((who: string) =>
+              [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')]
+                .filter((r) => (r.querySelector('.hs-mc-user:not(.hs-mc-reply-user)') as HTMLElement | null)?.dataset.username?.toLowerCase() === who)
+                .map((r) => ({ ...(r as HTMLElement).dataset, cls: r.className.slice(0, 80), t: (r.textContent || '').slice(0, 40) })),
+            hideWho)
+          : []
+        return [
+          ...(a ? [`page 1 still shows ${a} of their rows: ${JSON.stringify(left).slice(0, 900)}`] : []),
+          ...(before2 && !b ? ['page 2 lost them too'] : []),
+        ]
       })
       await step(`/unhide ${hideWho} on page 1: back`, async () => {
         await type(p, `/unhide ${hideWho}`)

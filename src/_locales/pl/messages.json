@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "udostępnienie celebracji nie powiodło się — wysyłam twoją wiadomość na czat"
   },
+  "mc_main_cw_signin": {
+    "message": "zaloguj się do heatsync, aby to zmienić"
+  },
   "mc_main_cw_save_failed": {
     "message": "nie udało się zapisać: $NOUN$ — spróbuj ponownie",
     "placeholders": {

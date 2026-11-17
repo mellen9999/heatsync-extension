@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "فشلت مشاركة الاحتفال — أرسل رسالتك إلى الدردشة"
   },
+  "mc_main_cw_signin": {
+    "message": "سجّل الدخول إلى heatsync لتغيير هذا"
+  },
   "mc_main_cw_save_failed": {
     "message": "تعذّر حفظ $NOUN$ — حاول مرة أخرى",
     "placeholders": {

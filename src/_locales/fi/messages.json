@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "juhlinnan jako epäonnistui — viestisi lähetetään chattiin"
   },
+  "mc_main_cw_signin": {
+    "message": "kirjaudu heatsynciin muuttaaksesi tätä"
+  },
   "mc_main_cw_save_failed": {
     "message": "kohteen $NOUN$ tallennus epäonnistui — yritä uudelleen",
     "placeholders": {

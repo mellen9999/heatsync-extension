@@ -717,6 +717,13 @@ async function _cwPatch(def, v, retried) {
     safeSendMessage({ type: 'refresh_all' }).catch(() => {})
     return
   }
+  // signed out: these live on the account, so there is nothing to save to and
+  // "try again" never works — say what does
+  if (resp?.status === 401) {
+    _cwRollback(def, v, true)
+    showToast(t('mc_main_cw_signin'), 'error')
+    return
+  }
   if (!retried && v === true && resp?.code === 'AGE_REQUIRED') {
     // an account the server already knows can't verify (under 18, or no birth
     // year) is never asked "are you 18?" — the refusal is the answer

@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "deling av feiring feilet — sender meldingen din til chatten"
   },
+  "mc_main_cw_signin": {
+    "message": "logg inn på heatsync for å endre dette"
+  },
   "mc_main_cw_save_failed": {
     "message": "kunne ikke lagre $NOUN$ — prøv igjen",
     "placeholders": {

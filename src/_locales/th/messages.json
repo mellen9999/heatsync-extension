@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "แชร์การฉลองไม่สำเร็จ — ส่งข้อความของคุณเข้าแชทแทน"
   },
+  "mc_main_cw_signin": {
+    "message": "ลงชื่อเข้าใช้ heatsync เพื่อเปลี่ยนค่านี้"
+  },
   "mc_main_cw_save_failed": {
     "message": "บันทึก $NOUN$ ไม่สำเร็จ — ลองอีกครั้ง",
     "placeholders": {

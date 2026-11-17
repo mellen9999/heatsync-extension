@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "споделянето на празненството не успя — пращам съобщението ти в чата"
   },
+  "mc_main_cw_signin": {
+    "message": "влезте в heatsync, за да промените това"
+  },
   "mc_main_cw_save_failed": {
     "message": "не успях да запазя $NOUN$ — опитай пак",
     "placeholders": {

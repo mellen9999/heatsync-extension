@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "お祝いの共有に失敗 — メッセージをチャットに送信中"
   },
+  "mc_main_cw_signin": {
+    "message": "変更するには heatsync にサインイン"
+  },
   "mc_main_cw_save_failed": {
     "message": "$NOUN$ を保存できなかった — もう一度試して",
     "placeholders": {

@@ -2180,6 +2180,9 @@
   "mc_main_celebration_share_failed": {
     "message": "celebration share failed — sending your message to chat"
   },
+  "mc_main_cw_signin": {
+    "message": "sign in to heatsync to change this"
+  },
   "mc_main_cw_save_failed": {
     "message": "failed to save $NOUN$ — try again",
     "placeholders": {

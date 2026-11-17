@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "не удалось поделиться праздником — отправляю твоё сообщение в чат"
   },
+  "mc_main_cw_signin": {
+    "message": "войдите в heatsync, чтобы изменить это"
+  },
   "mc_main_cw_save_failed": {
     "message": "не удалось сохранить $NOUN$ — попробуй ещё раз",
     "placeholders": {

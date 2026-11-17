@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "chia sẻ ăn mừng thất bại — đang gửi tin nhắn của bạn vào chat"
   },
+  "mc_main_cw_signin": {
+    "message": "đăng nhập heatsync để thay đổi mục này"
+  },
   "mc_main_cw_save_failed": {
     "message": "lưu $NOUN$ thất bại — thử lại nhé",
     "placeholders": {

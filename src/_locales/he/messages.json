@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "שיתוף החגיגה נכשל — ההודעה שלך נשלחת לצ'אט"
   },
+  "mc_main_cw_signin": {
+    "message": "התחברו ל-heatsync כדי לשנות את זה"
+  },
   "mc_main_cw_save_failed": {
     "message": "שמירת $NOUN$ נכשלה — נסה שוב",
     "placeholders": {

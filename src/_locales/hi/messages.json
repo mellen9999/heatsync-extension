@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "सेलिब्रेशन शेयर नहीं हुआ — तुम्हारा मैसेज चैट में जा रहा है"
   },
+  "mc_main_cw_signin": {
+    "message": "इसे बदलने के लिए heatsync में साइन इन करें"
+  },
   "mc_main_cw_save_failed": {
     "message": "$NOUN$ सेव नहीं हो पाया — फिर कोशिश करो",
     "placeholders": {

@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "falló compartir la celebración — enviando tu mensaje al chat"
   },
+  "mc_main_cw_signin": {
+    "message": "inicia sesión en heatsync para cambiar esto"
+  },
   "mc_main_cw_save_failed": {
     "message": "no se pudo guardar $NOUN$ — intenta de nuevo",
     "placeholders": {

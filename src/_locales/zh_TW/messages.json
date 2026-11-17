@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "分享慶祝失敗 — 正在把你的訊息傳到聊天"
   },
+  "mc_main_cw_signin": {
+    "message": "登入 heatsync 後才能變更"
+  },
   "mc_main_cw_save_failed": {
     "message": "儲存 $NOUN$ 失敗 — 請重試",
     "placeholders": {

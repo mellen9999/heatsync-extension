@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "bigo ang pag-share ng celebration — ipinapadala ang mensahe mo sa chat"
   },
+  "mc_main_cw_signin": {
+    "message": "mag-sign in sa heatsync para baguhin ito"
+  },
   "mc_main_cw_save_failed": {
     "message": "hindi nai-save ang $NOUN$ — subukan ulit",
     "placeholders": {

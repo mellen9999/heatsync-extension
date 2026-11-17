@@ -2179,6 +2179,9 @@
   "mc_main_celebration_share_failed": {
     "message": "az ünneplés megosztása nem sikerült — az üzeneted a chatbe megy"
   },
+  "mc_main_cw_signin": {
+    "message": "jelentkezz be a heatsyncbe a módosításhoz"
+  },
   "mc_main_cw_save_failed": {
     "message": "$NOUN$ mentése nem sikerült — próbáld újra",
     "placeholders": {

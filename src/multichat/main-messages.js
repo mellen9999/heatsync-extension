@@ -2578,12 +2578,17 @@ let _desyncLoggedAt = 0
 // without unindexing) makes appendMessage and the diff skip that message as
 // "already shown" forever — chat freezes while buffers keep filling. The DOM
 // is the truth: rebuild the index from it and repaint.
+// Rows a cache restore holds back to mount in chunks (holdOlderRows) are this
+// tab's rows too, indexed already: a check between two chunks read them as
+// strays, logged index_desync and dropped their keys (11-16, dom 200 / idx 428).
 function _reconcileMsgKeyIndex(msgsEl) {
   const dom = new Set()
-  for (const el of msgsEl.children) {
-    const k = el.dataset?.msgKey
-    if (k) dom.add(k)
-  }
+  const held = _heldOlder?.id === currentTab ? _heldOlder.frag.children : []
+  for (const rows of [held, msgsEl.children])
+    for (const el of rows) {
+      const k = el.dataset?.msgKey
+      if (k) dom.add(k)
+    }
   let drift = dom.size !== _msgKeyIndex.size
   if (!drift)
     for (const k of _msgKeyIndex)

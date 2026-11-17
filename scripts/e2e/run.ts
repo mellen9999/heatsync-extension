@@ -21,6 +21,7 @@ import { s8Soak } from './s8-soak'
 import { s9Firefox } from './s9-firefox'
 import { s10Merged } from './s10-merged'
 import { s11FirefoxTabs } from './s11-firefox-tabs'
+import { s12Popout } from './s12-popout'
 
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
@@ -36,6 +37,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s9-firefox', s9Firefox],
   ['s10-merged', s10Merged],
   ['s11-firefox-tabs', s11FirefoxTabs],
+  ['s12-popout', s12Popout],
 ]
 
 const args = process.argv.slice(2)

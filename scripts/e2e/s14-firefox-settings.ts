@@ -107,6 +107,12 @@ export async function s14FirefoxSettings() {
           bad(`${name} ${label}: ${why.join('; ')}`)
         }
       }
+      // the stream's tab is hidden while the settings tab is in front, and firefox throttles a hidden
+      // tab's timers: the error log's 500ms write can land seconds later, after the step that caused
+      // it was judged. Whatever arrived late is counted here
+      await sleep(8000)
+      const hsEnd = await write('hs_e2e_probe', 'local', Date.now())
+      if (hsEnd > hsBase) bad(`${name}: ${hsEnd - hsBase} error(s) reached hs_errors after their step was judged`)
       if (!broke.length) ok(`${name}: all ${all.length} changes from the settings tab, nothing threw, the panel stayed and drew rows`)
       if (!(await rowsFlow(p, 90_000))) bad(`${name}: chat stopped after the sweep`, await panel(p))
       else ok(`${name}: chat still flows after the sweep`)

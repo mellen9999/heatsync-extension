@@ -82,7 +82,9 @@ test('no history push straight onto a ring remains', () => {
 
 test('the render merge re-sorts any run that arrives out of order', () => {
   const main = mainSource()
-  expect(main).toMatch(/function fairMerge\(sources, limit = DOM_RENDER_CAP\) \{\s*sources = sources\.map\(_ordSortedRun\)/)
+  expect(main).toMatch(
+    /function fairMerge\(sources, limit = DOM_RENDER_CAP\) \{\s*sources = sources\.map\(_ordSortedRun\)/,
+  )
   const s = main.indexOf('function _ordSortedRun(')
   const sortRun = new Function('ordOf', `${main.slice(s, main.indexOf('\n}\n', s) + 3)}; return _ordSortedRun`)(ordOf)
   const ok = [{ time: 1 }, { time: 2 }]

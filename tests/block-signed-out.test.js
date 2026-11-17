@@ -27,7 +27,7 @@ function harness(resp) {
   )(
     async () => resp,
     async (u, p) => calls.local.push([u, p]),
-    (m, type) => calls.toasts.push(type),
+    (_m, type) => calls.toasts.push(type),
     (m) => calls.sent.push(m.type),
     () => {},
     () => {},

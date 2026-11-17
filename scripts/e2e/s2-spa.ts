@@ -19,6 +19,7 @@ import {
   dbg,
   domCounters,
   type Env,
+  UA,
   info,
   launch,
   liveChannels,
@@ -182,6 +183,66 @@ export async function s2Twitch() {
   }
 }
 
+/** Past livestreams of channels that stream often, newest first: ids youtube lists as "Streamed … ago". */
+async function pastYtStreams(handles = ['ThePrimeTimeagen', 'NASA', 'SpaceX', 'LofiGirl']): Promise<string[]> {
+  const ids: string[] = []
+  for (const h of handles) {
+    const res = await fetch(`https://www.youtube.com/@${h}/streams`, {
+      headers: { 'user-agent': UA, 'accept-language': 'en', cookie: 'SOCS=CAI' },
+    }).catch(() => null)
+    const html = res?.ok ? await res.text() : ''
+    for (const m of html.matchAll(/Streamed \d+ (?:hour|day|week|month)s? ago/g)) {
+      const id = [...html.slice(Math.max(0, m.index - 6000), m.index).matchAll(/"videoId":"([\w-]{11})"/g)].at(-1)?.[1]
+      if (id && !ids.includes(id)) ids.push(id)
+      if (ids.length >= 6) return ids
+    }
+  }
+  return ids
+}
+
+/**
+ * On a past stream youtube shows its chat replay (some channels turn it off: the frame then
+ * carries youtube's own hide-chat-frame). Ours to check: nothing of ours hides the frame, and
+ * where youtube shows it, it is on screen.
+ */
+async function pastStreamKeepsReplay(p: any) {
+  const ids = await pastYtStreams()
+  if (!ids.length) return info('skipped: no past youtube stream found for the chat replay check')
+  let weak = ''
+  for (const id of ids.slice(0, 4)) {
+    await p.goto(`https://www.youtube.com/watch?v=${id}`, { waitUntil: 'domcontentloaded' })
+    await p.waitForSelector('ytd-live-chat-frame', { state: 'attached', timeout: 20_000 }).catch(() => {})
+    await sleep(8000)
+    const f = await p.evaluate(() => {
+      const el = document.querySelector('ytd-live-chat-frame') as HTMLElement | null
+      if (!el) return null
+      const r = el.getBoundingClientRect()
+      return {
+        ytHides: el.hasAttribute('hide-chat-frame'),
+        ours: !!el.dataset.hsHidden || el.style.display === 'none',
+        display: getComputedStyle(el).display,
+        box: [Math.round(r.width), Math.round(r.height)],
+        offline: document.body.classList.contains('hs-offline'),
+      }
+    })
+    if (!f) continue
+    if (!f.offline) {
+      info(`past stream ${id}: the panel is up there (still live, or chat on every page), not a replay page`)
+      continue
+    }
+    if (f.ours) return bad(`past stream ${id}: we hide youtube's chat replay though our panel is down`, f)
+    if (f.ytHides) {
+      weak = id // youtube hides this one itself: only "nothing of ours on it" can be said
+      continue
+    }
+    if (f.display === 'none' || f.box[0] < 100 || f.box[1] < 40)
+      return bad(`past stream ${id}: youtube's chat replay is not on screen`, f)
+    return ok(`past stream ${id}: youtube's chat replay is on screen (${f.box.join('x')}), our panel down`)
+  }
+  if (weak) ok(`past stream ${weak}: nothing of ours on the replay frame (youtube hides this one itself)`)
+  else info('skipped: no past stream with a chat frame found')
+}
+
 export async function s2Youtube() {
   scenario('s2 youtube chain')
   const live = await liveYtVideo()
@@ -204,6 +265,10 @@ export async function s2Youtube() {
     info(`vod (typed): ${JSON.stringify({ rows: vod.rows, offline: vod.offline, box: vod.box })}`)
     if (vod.rows > 0 && !vod.offline) bad('a vod opened after a livestream shows chat rows and a live panel', vod)
     else ok('typed vod after a livestream: no stream chat, panel down')
+
+    // a past stream: our panel is down, so its chat replay is youtube's to show. The panel's
+    // container sits on every youtube page and its native-chat hide took the replay with it.
+    await pastStreamKeepsReplay(p)
 
     // back to the live stream, then single-page hops: logo → home, search → vod
     await p.goto(`https://www.youtube.com/watch?v=${live.id}`, { waitUntil: 'domcontentloaded' })

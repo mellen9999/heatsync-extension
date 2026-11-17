@@ -2207,9 +2207,6 @@
   "mc_main_config_save_failed": {
     "message": "kanal kaydedilmedi — depolama hatası"
   },
-  "mc_main_mute_save_failed": {
-    "message": "susturma listesi kaydedilmedi — depolama hatası"
-  },
   "mc_main_no_share_token": {
     "message": "paylaşım jetonu yok — kutlama metinsiz gitti, mesajın sohbete gidiyor"
   },

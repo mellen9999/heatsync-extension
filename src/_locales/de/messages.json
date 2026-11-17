@@ -2207,9 +2207,6 @@
   "mc_main_config_save_failed": {
     "message": "kanal nicht gespeichert — Speicherfehler"
   },
-  "mc_main_mute_save_failed": {
-    "message": "stummliste nicht gespeichert — Speicherfehler"
-  },
   "mc_main_no_share_token": {
     "message": "kein Share-Token — Feier ohne Text gesendet, deine Nachricht geht in den Chat"
   },

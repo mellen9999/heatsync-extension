@@ -2207,9 +2207,6 @@
   "mc_main_config_save_failed": {
     "message": "채널이 저장되지 않음 — 저장소 오류"
   },
-  "mc_main_mute_save_failed": {
-    "message": "뮤트 목록이 저장되지 않음 — 저장소 오류"
-  },
   "mc_main_no_share_token": {
     "message": "공유 토큰 없음 — 축하는 텍스트 없이 전송, 메시지는 채팅으로"
   },

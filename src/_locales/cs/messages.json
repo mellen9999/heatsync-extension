@@ -2207,9 +2207,6 @@
   "mc_main_config_save_failed": {
     "message": "kanál neuložen — chyba úložiště"
   },
-  "mc_main_mute_save_failed": {
-    "message": "seznam ztlumených neuložen — chyba úložiště"
-  },
   "mc_main_no_share_token": {
     "message": "žádný sdílecí token — oslava odeslána bez textu, tvá zpráva jde do chatu"
   },

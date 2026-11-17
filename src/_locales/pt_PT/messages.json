@@ -2207,9 +2207,6 @@
   "mc_main_config_save_failed": {
     "message": "canal não guardado — erro de armazenamento"
   },
-  "mc_main_mute_save_failed": {
-    "message": "lista de silenciados não guardada — erro de armazenamento"
-  },
   "mc_main_no_share_token": {
     "message": "sem token de partilha — celebração enviada sem texto, a tua mensagem vai para o chat"
   },

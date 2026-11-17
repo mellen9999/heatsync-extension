@@ -2207,9 +2207,6 @@
   "mc_main_config_save_failed": {
     "message": "kanavaa ei tallennettu — tallennusvirhe"
   },
-  "mc_main_mute_save_failed": {
-    "message": "mykistyslistaa ei tallennettu — tallennusvirhe"
-  },
   "mc_main_no_share_token": {
     "message": "ei jakotokenia — juhlinta lähetettiin ilman tekstiä, viestisi menee chattiin"
   },

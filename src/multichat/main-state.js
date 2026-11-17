@@ -409,24 +409,9 @@ function reportStorageWriteFailure(what, err, toastKey) {
 }
 
 // Muted users (right-click to hide) — hydrated at boot from the
-// background-synced `muted_users` key (see PHASE 2), NOT from the
-// heatsync_mc_muted write below, which nothing reads. Do not "fix" that by
-// reading it back: unmutes routed straight to background (settings-ui.js)
-// never update it, so a stale entry would silently resurrect a mute.
+// background-synced `muted_users` key (see PHASE 2). Every change goes to the
+// background (mute_user / unmute_user), which owns the stored list.
 const mutedUsers = new Set()
-// Single persist path for the mute list — every toggle site routes here so
-// a storage failure (quota, mid-reload context death) surfaces as a toast
-// instead of dying in the MC_DEBUG-gated logger after the success toast
-// already fired. Mirrors the ui_settings save path's fail-loud convention.
-function persistMcMuted() {
-  try {
-    chrome.storage.local
-      .set({ heatsync_mc_muted: [...mutedUsers] })
-      .catch((e) => reportStorageWriteFailure('mute list', e, 'mc_main_mute_save_failed'))
-  } catch (e) {
-    reportStorageWriteFailure('mute list', e, 'mc_main_mute_save_failed')
-  }
-}
 // Blocked users (right-click → block) — fully hidden, not just stripped like mute.
 // Synced with background's block_user/unblock_user (shared with content.js).
 const blockedUsers = new Set()

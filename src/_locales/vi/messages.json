@@ -2207,9 +2207,6 @@
   "mc_main_config_save_failed": {
     "message": "chưa lưu kênh — lỗi bộ nhớ"
   },
-  "mc_main_mute_save_failed": {
-    "message": "chưa lưu danh sách tắt tiếng — lỗi bộ nhớ"
-  },
   "mc_main_no_share_token": {
     "message": "không có token chia sẻ — đã gửi ăn mừng không kèm chữ, tin nhắn của bạn vào chat"
   },

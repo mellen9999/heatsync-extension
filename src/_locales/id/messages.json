@@ -2207,9 +2207,6 @@
   "mc_main_config_save_failed": {
     "message": "channel tidak tersimpan — error penyimpanan"
   },
-  "mc_main_mute_save_failed": {
-    "message": "daftar bisu tidak tersimpan — error penyimpanan"
-  },
   "mc_main_no_share_token": {
     "message": "tidak ada token bagikan — perayaan terkirim tanpa teks, pesanmu masuk ke chat"
   },

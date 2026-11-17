@@ -2207,9 +2207,6 @@
   "mc_main_config_save_failed": {
     "message": "チャンネルを保存できなかった — ストレージエラー"
   },
-  "mc_main_mute_save_failed": {
-    "message": "ミュートリストを保存できなかった — ストレージエラー"
-  },
   "mc_main_no_share_token": {
     "message": "共有トークンなし — お祝いはテキストなしで送信、メッセージはチャットへ"
   },

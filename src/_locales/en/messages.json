@@ -2208,9 +2208,6 @@
   "mc_main_config_save_failed": {
     "message": "channel not saved — storage error"
   },
-  "mc_main_mute_save_failed": {
-    "message": "mute list not saved — storage error"
-  },
   "mc_main_no_share_token": {
     "message": "no share token — celebration sent without text, your message goes to chat"
   },

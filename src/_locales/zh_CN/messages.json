@@ -2207,9 +2207,6 @@
   "mc_main_config_save_failed": {
     "message": "频道未保存 — 存储出错"
   },
-  "mc_main_mute_save_failed": {
-    "message": "静音列表未保存 — 存储出错"
-  },
   "mc_main_no_share_token": {
     "message": "没有分享令牌 — 庆祝已发出但不含文字，你的消息会发到聊天"
   },

@@ -1363,7 +1363,6 @@ async function pcToggleMute(username) {
     const exp = Date.now() + 86400000
     for (const k of aliasKeys) safeSendMessage({ type: 'mute_user', username: k, expiresAt: exp })
   }
-  persistMcMuted()
   renderProfileCardView()
 }
 

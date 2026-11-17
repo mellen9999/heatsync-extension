@@ -2955,7 +2955,6 @@ async function _toggleMcMute(username, platform) {
     const exp = Date.now() + 86400000
     for (const k of aliasKeys) safeSendMessage({ type: 'mute_user', username: k, expiresAt: exp })
   }
-  persistMcMuted()
   if (wasUnmute) {
     // restoreMcUnmutedDom matches by bare DOM text — use bare aliases here.
     for (const a of aliases) restoreMcUnmutedDom(a)
@@ -7296,7 +7295,6 @@ async function handleSlashCommand(text, input) {
       return true
     }
     for (const k of aliasKeys) mutedUsers.add(k)
-    persistMcMuted()
     const exp = Date.now() + 86400000
     for (const k of aliasKeys) safeSendMessage({ type: 'mute_user', username: k, expiresAt: exp })
     const aliasNote = aliasKeys.length > 1 ? ` (+@${aliasKeys[1]})` : ''
@@ -7321,7 +7319,6 @@ async function handleSlashCommand(text, input) {
       return true
     }
     for (const k of forms) mutedUsers.delete(k)
-    persistMcMuted()
     for (const k of aliasKeys) safeSendMessage({ type: 'unmute_user', username: k })
     showToast(t('mc_input_unmuted', [u]), 'success')
     renderMessages(currentTab)

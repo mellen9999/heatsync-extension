@@ -20,6 +20,26 @@ function isMsgUserDropped(m, tabId) {
   return !!(m.actor && (isUserBlocked(m.actor, p) || isUserHiddenInTab(m.actor, p, tabId)))
 }
 
+// /lclear: what the tab showed up to the clear stays hidden, history that
+// arrives later for that span included, while the rooms' buffers stay whole
+// for every other tab. The live tab's mark is per stream, so the next stream
+// it follows starts with its own history.
+const _lclearCut = new Map()
+function _lclearKey(tabId) {
+  return tabId === 'live' ? `live:${getLiveChannel() || ''}` : tabId
+}
+function lclearTab(tabId) {
+  let newest = 0
+  for (const src of mergedTabSources(tabId, SCROLLBACK_MAX, false))
+    for (const m of src) if (m?.time > newest) newest = m.time
+  _lclearCut.set(_lclearKey(tabId), newest || Date.now())
+  return newest > 0
+}
+// the cut for this tab, 0 when it was never cleared
+function lclearCutFor(tabId) {
+  return _lclearCut.size ? _lclearCut.get(_lclearKey(tabId)) || 0 : 0
+}
+
 function buildMessageDiv(m, tabId) {
   if (isMsgUserDropped(m, tabId)) return null
   // Per-tab platform filter (right-click the tab) — hides every row from a muted platform.
@@ -1848,6 +1868,8 @@ function appendMessage(msg, tabId) {
   // Content filters — hidden at render, buffers keep the message
   const _ff = _filterFlags()
   if (isMsgFiltered(msg, _ff)) return true
+  const _cut = lclearCutFor(tabId)
+  if (_cut && msg.time <= _cut) return true
   if (typeof msg.text === 'string' && _ff.dups) {
     if (_lastMsgTextByTab.get(tabId) === msg.text) return true
     _lastMsgTextByTab.set(tabId, msg.text)

@@ -223,7 +223,8 @@ function _renderMessagesImpl(id, opts) {
   // removed leg that stood for the line must not leave another leg standing in.
   let toRender = msgs.filter((m) => !m?.hidden)
   if (mtSrcs) toRender = foldSimulcastLegs(toRender)
-  toRender = toRender.filter((m) => !isMsgFiltered(m, _ff) && !isMsgUserDropped(m, id))
+  const _cut = lclearCutFor(id)
+  toRender = toRender.filter((m) => !isMsgFiltered(m, _ff) && !isMsgUserDropped(m, id) && !(_cut && m.time <= _cut))
   if (_ff.dups) {
     const out = []
     let prevText = null

@@ -48,7 +48,7 @@ describe('who the render pass drops', () => {
 })
 
 test('the render filter and the row builder use the one predicate', () => {
-  expect(SRC).toContain('toRender.filter((m) => !isMsgFiltered(m, _ff) && !isMsgUserDropped(m, id))')
+  expect(SRC).toContain('toRender.filter((m) => !isMsgFiltered(m, _ff) && !isMsgUserDropped(m, id) &&')
   expect(SRC.slice(SRC.indexOf('function buildMessageDiv('))).toMatch(
     /^function buildMessageDiv\(m, tabId\) \{\n {2}if \(isMsgUserDropped\(m, tabId\)\) return null/,
   )

@@ -7355,16 +7355,10 @@ async function handleSlashCommand(text, input) {
   }
 
   if (cmd === 'lclear') {
-    let cleared = 0
-    if (irc?.channels?.has(currentTab)) {
-      irc.channels.get(currentTab).clear?.()
-      cleared++
-    }
-    if (kickChat?.channels?.has(currentTab)) {
-      kickChat.channels.get(currentTab).clear?.()
-      cleared++
-    }
-    renderMessages(currentTab)
+    // any chat tab, live included, every platform in it (see lclearTab)
+    const chat = currentTab === 'live' || !!getChannelById(currentTab)
+    const cleared = chat && lclearTab(currentTab)
+    if (cleared) renderMessages(currentTab, { bypassScrollPause: true })
     showToast(cleared ? t('mc_input_buffer_cleared') : t('mc_input_nothing_to_clear'), cleared ? 'success' : undefined)
     clearInput(input)
     return true

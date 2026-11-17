@@ -250,6 +250,41 @@ export async function s16Channels() {
           return why
         })
       }
+      await step('a name half typed into the + form outlives what other tabs save', async () => {
+        const why: string[] = []
+        const before = await saved()
+        // what another tab (or another device) writes: a filter rule, then a saved channel
+        const write = (o: Record<string, unknown>) =>
+          // @ts-ignore — extension page
+          extStorage(env, async (v) => chrome.storage.local.set(v), o)
+        const active = () => p.$eval('.hs-mc-tab.active', (t: Element) => (t as HTMLElement).dataset.tab).catch(() => null)
+        const typed = () => p.$eval('#hs-mc-messages input.hs-mc-ch-input[aria-label="twitch"]', (i: Element) => (i as HTMLInputElement).value).catch(() => null)
+        await p.click('.hs-mc-tab[data-tab="add"]', { timeout: 10_000 })
+        await p.fill('#hs-mc-messages input.hs-mc-ch-input[aria-label="twitch"]', 'half_a_na')
+        const rules = (await extStorage(
+          env,
+          // @ts-ignore — extension page
+          async () => (await chrome.storage.local.get('chat_filter_rules')).chat_filter_rules ?? null,
+        )) as string | null
+        await write({ chat_filter_rules: '[]' === rules ? '[ ]' : '[]' })
+        await sleep(2500)
+        if ((await typed()) !== 'half_a_na') why.push(`a rule changed elsewhere emptied the form (it reads ${JSON.stringify(await typed())})`)
+        await p.fill('#hs-mc-messages input.hs-mc-ch-input[aria-label="twitch"]', 'half_a_na').catch(() => {})
+        await write({ heatsync_multichat: { channels: [...before, { id: twB, twitch: twB, kick: '', youtube: '' }] } })
+        await sleep(3000)
+        if ((await active()) !== 'add') why.push(`a channel saved elsewhere moved the panel to ${await active()}`)
+        else if ((await typed()) !== 'half_a_na') why.push(`a channel saved elsewhere emptied the form (it reads ${JSON.stringify(await typed())})`)
+        if (!(await tabs()).includes(twB)) why.push(`the channel saved elsewhere got no tab`)
+        // and the settings pane stays put when that channel goes again
+        await p.click('.hs-mc-tab[data-tab="settings"]', { timeout: 5000 })
+        await sleep(800)
+        await write({ heatsync_multichat: { channels: before } })
+        await sleep(3000)
+        if ((await active()) !== 'settings') why.push(`a channel removed elsewhere moved the panel off settings, to ${await active()}`)
+        if (rules === null) await extStorage(env, async () => chrome.storage.local.remove('chat_filter_rules'))
+        else await write({ chat_filter_rules: rules })
+        return why
+      })
       const ring = await ringSince(p, t0)
       if (ring.bad.length) bad(`${host}: overlay watchdogs fired`, ring.bad.slice(0, 6))
     }

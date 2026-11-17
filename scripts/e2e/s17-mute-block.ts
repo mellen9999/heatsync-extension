@@ -16,7 +16,7 @@
  */
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { bad, extStorage, info, launch, liveChannels, ok, panel, ROOT, rowsFlow, scenario, shot, sleep, waitPanel, watchErrors } from './lib'
+import { bad, extStorage, info, launch, liveChannels, ok, panel, ringSince, ROOT, rowsFlow, scenario, shot, sleep, waitPanel, watchErrors } from './lib'
 
 const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages.json'), 'utf8'))
 const L = (k: string) => EN[k].message as string
@@ -72,6 +72,7 @@ export async function s17MuteBlock() {
   scenario('s17 mute and block from the right-click menu, two tabs')
   const [ch] = await liveChannels('twitch', 1)
   const env = await launch()
+  const t0 = Date.now()
   const errs: string[] = []
   const cons: string[] = []
   // @ts-ignore — extension page
@@ -198,6 +199,14 @@ export async function s17MuteBlock() {
           (await saved('blocked_users')) ? [] : ['the block was not saved (a heatsync account block lives on the server: see the info lines)'],
       )
     })
+    // the rows a reload draws come from saved history, built from nothing: the block has to be asked there too
+    await step(`${who} blocked: a reload of page 2 does not bring their rows back`, async () => {
+      await p2.reload({ waitUntil: 'domcontentloaded' })
+      if (!(await waitPanel(p2)) || !(await rowsFlow(p2, 45_000))) return ['chat never came back after the reload']
+      await sleep(4000)
+      const r = await rows(p2, who)
+      return r.theirs ? [`${r.theirs} of their rows are back on screen`] : []
+    })
     // their rows are gone, so there is no name left to right-click: /block toggles it back
     await step(`${who} unblocked on page 2 with /block: back on both pages`, async () => {
       await p2.click('#hs-mc-input', { timeout: 5000 })
@@ -211,6 +220,10 @@ export async function s17MuteBlock() {
 
     if (!(await rowsFlow(p, 20_000)) || !(await rowsFlow(p2, 20_000))) bad(`${ch}: chat stopped after the mute and block`)
     else ok(`${ch}: chat flows after the mute and block`)
+    // rows blanked, dropped and put back in bulk: where a row index or the stripes would drift
+    const ring = await ringSince(p, t0)
+    if (ring.bad.length) bad(`${ch}: overlay watchdogs fired`, ring.bad.slice(0, 6))
+    else ok(`${ch}: the watchdog ring stayed quiet`)
   } finally {
     await env.close()
   }

@@ -53,6 +53,10 @@ const KNOWN_ABSENT = {
   // Service-worker global. lib WebWorker declares the Clients *type*, not the
   // `clients` value, and background.js is an MV3 service worker.
   clients: 'service worker global, present at runtime in an MV3 background',
+  // Firefox gives content scripts exportFunction to hand a function to the page;
+  // chrome has no such name. kick-socket-host.js asks `typeof exportFunction`
+  // before the call, so chrome never reaches it.
+  exportFunction: 'firefox content-script global, typeof-guarded where it is called',
 }
 
 const DIST = 'dist/chrome'

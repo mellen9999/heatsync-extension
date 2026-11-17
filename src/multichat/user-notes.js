@@ -11,6 +11,10 @@
 
 const HS_NOTES_KEY = 'hs_user_notes_v1'
 const HS_NOTE_MAX = 2000 // chars — bounded so storage can't be griefed by a paste
+// A deleted note is kept as an empty one (a tombstone) with its delete time, so
+// the newest change wins across tabs and a tab still holding the old text can't
+// write it back. Dropped once older than this — every tab has heard by then.
+const HS_NOTE_TOMB_MS = 90 * 86400000
 
 // module scope resets on re-injection, so a fresh instance re-registers
 // after the old one's teardown; window-scope survives takeover and leaves
@@ -112,10 +116,20 @@ function _hsnLoad() {
           // pre-namespace (bare) keys are adopted as twitch; flag a write-back so it happens once
           let rekeyed = false
           if (raw.notes && typeof raw.notes === 'object') {
+            const now = _hsnNow()
             for (const [k, v] of Object.entries(raw.notes)) {
               if (v && typeof v.text === 'string') {
+                if (!v.text && now - (v.updatedAt || 0) > HS_NOTE_TOMB_MS) {
+                  rekeyed = true // an old tombstone: let it go
+                  continue
+                }
                 if (!k.includes(':')) rekeyed = true
-                _hsnNotes.set(_hsnKey(k), { text: v.text, updatedAt: v.updatedAt || 0 })
+                // the sync state stays with the note: losing it on a reload re-uploaded a
+                // note deleted on another device (the server's empty read as "never synced")
+                const rec = { text: v.text, updatedAt: v.updatedAt || 0 }
+                if (v.serverSynced) rec.serverSynced = true
+                if (v.profileId) rec.profileId = v.profileId
+                _hsnNotes.set(_hsnKey(k), rec)
               }
             }
           }
@@ -181,7 +195,7 @@ function _hsnLoad() {
 // from a remote payload — that payload only reflects the OTHER tab's (possibly
 // partial) view, so treating absence as "deleted" would just relocate the
 // wipe. (Trade-off: a delete can be resurrected by a tab that loaded the note
-// before the delete and saves later — no tombstone in the wire format yet.)
+// before the delete and saves later — a delete is a tombstone, HS_NOTE_TOMB_MS.)
 if (typeof window !== 'undefined' && _hsnHasStorage() && !_onceGuardsUserNotes.notesOnChangedWired) {
   _onceGuardsUserNotes.notesOnChangedWired = true
   cleanup.addListener(chrome.storage.onChanged, (changes, area) => {
@@ -194,7 +208,10 @@ if (typeof window !== 'undefined' && _hsnHasStorage() && !_onceGuardsUserNotes.n
         const k = _hsnKey(k0)
         const local = _hsnNotes.get(k)
         if (!local || (v.updatedAt || 0) >= (local.updatedAt || 0)) {
-          _hsnNotes.set(k, { text: v.text, updatedAt: v.updatedAt || 0 })
+          const rec = { text: v.text, updatedAt: v.updatedAt || 0 }
+          if (v.serverSynced) rec.serverSynced = true
+          if (v.profileId) rec.profileId = v.profileId
+          _hsnNotes.set(k, rec)
         }
       }
     }
@@ -211,8 +228,9 @@ function hsNoteGet(username, platform) {
   const aliases = _hsnAliasesSync(username, platform)
   for (const a of aliases) {
     const c = _hsnIndex.get(a)
-    if (c && _hsnNotes.has(c)) return _hsnNotes.get(c)
-    if (_hsnNotes.has(a)) return _hsnNotes.get(a)
+    const n = c && _hsnNotes.has(c) ? _hsnNotes.get(c) : _hsnNotes.get(a)
+    // a tombstone is "no note"
+    if (n) return n.text ? n : null
   }
   return null
 }
@@ -332,8 +350,8 @@ async function hsNoteDelete(username, platform, profileId) {
   if (typeof hsAuthToken !== 'undefined' && hsAuthToken && hsNoteServerEligible(profileId)) {
     await hsNotePutServer(profileId, '') // best-effort — local delete proceeds regardless of outcome
   }
-  if (!canonical) return false
-  _hsnNotes.delete(canonical)
+  if (!canonical || !_hsnNotes.get(canonical)?.text) return false
+  _hsnNotes.set(canonical, { text: '', updatedAt: _hsnNow() })
   for (const [a, c] of [..._hsnIndex]) if (c === canonical) _hsnIndex.delete(a)
   _hsnPersist()
   return true

@@ -358,3 +358,39 @@ test('notes saved before namespacing (bare keys) load as twitch and are written 
   expect(store.hs_user_notes_v1.notes.bob).toBeUndefined()
   expect(store.hs_user_notes_v1.notes['twitch:bob'].text).toBe('old note')
 })
+
+// ── deletes are tombstones (a tab still holding the old text can't write it back) ──
+
+test('a delete stores an empty note with its time, and reads as no note', async () => {
+  const { store } = fakeStorage({})
+  _hsNoteResetForTest(true)
+  await hsNoteSave('bob', 'twitch', 'evader', 100)
+  expect(await hsNoteDelete('bob', 'twitch')).toBe(true)
+  const tomb = store.hs_user_notes_v1.notes['twitch:bob']
+  expect(tomb.text).toBe('')
+  expect(tomb.updatedAt).toBeGreaterThan(100)
+  expect(hsNoteGet('bob', 'twitch')).toBeNull()
+  expect(hsNoteHas('bob', 'twitch')).toBe(false)
+  expect(await hsNoteDelete('bob', 'twitch')).toBe(false) // already gone
+  await hsNoteSave('bob', 'twitch', 'back again')
+  expect(hsNoteGet('bob', 'twitch')?.text).toBe('back again')
+})
+
+test('a reload keeps a note’s sync state and drops old tombstones', async () => {
+  const old = Date.now() - 91 * 86400000
+  const { store } = fakeStorage({
+    hs_user_notes_v1: {
+      notes: {
+        'twitch:bob': { text: 'synced', updatedAt: 5, serverSynced: true, profileId: 'p1' },
+        'twitch:gone': { text: '', updatedAt: old },
+        'twitch:fresh': { text: '', updatedAt: Date.now() },
+      },
+      index: {},
+    },
+  })
+  _hsNoteResetForTest(true)
+  await hsNoteSave('someoneelse', 'twitch', 'unrelated') // triggers the load, then a write
+  expect(hsNoteGet('bob', 'twitch')).toMatchObject({ serverSynced: true, profileId: 'p1' })
+  expect(store.hs_user_notes_v1.notes['twitch:gone']).toBeUndefined()
+  expect(store.hs_user_notes_v1.notes['twitch:fresh']).toMatchObject({ text: '' })
+})

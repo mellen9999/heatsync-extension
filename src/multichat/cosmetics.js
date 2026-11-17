@@ -1059,7 +1059,8 @@ function getMcPaintStyle(userId, colour = '') {
 // paint lands on the next render/in-place repaint. Returns '' when no paint
 // is available — callers fall back to their plain color.
 function userPaintStyle(uid, lower, platform) {
-  if (!uid && lower) uid = knownUserIds.get(userKey(lower, platform)) || ''
+  // ids are filed under `twitch:<name>`; a twitch message carries no platform
+  if (!uid && lower) uid = knownUserIds.get(userKey(lower, platform || 'twitch')) || ''
   if (!uid) return ''
   if (mcCosmeticsNeedLookup(uid)) queueMcCosmeticsLookup(uid)
   return getMcPaintStyle(uid)

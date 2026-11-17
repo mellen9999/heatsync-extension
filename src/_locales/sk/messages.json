@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "na ktorú stranu od prehrávača sa pripne panel chatu — hidden ho schová (prepína klávesa \\)"
   },
+  "mc_settings_start_hidden": {
+    "message": "spustiť skryto"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "každá karta sa otvorí so skrytým chatom. \\ ho v tej karte ukáže. dovtedy stránka zostane bez zmeny"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: pás návrhov"
   },

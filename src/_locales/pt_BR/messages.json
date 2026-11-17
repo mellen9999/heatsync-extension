@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "em qual lado do player o painel do chat fica acoplado — oculto esconde (a tecla \\ alterna)"
   },
+  "mc_settings_start_hidden": {
+    "message": "começar oculto"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "cada aba abre com o chat oculto. \\ mostra ele naquela aba. até lá a página fica como está"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: faixa de sugestões"
   },

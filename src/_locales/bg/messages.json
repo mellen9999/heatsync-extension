@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "към коя страна на плейъра се закача панелът на чата — hidden го скрива (клавишът \\ превключва)"
   },
+  "mc_settings_start_hidden": {
+    "message": "старт скрит"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "всеки таб се отваря със скрит чат. \\ го показва в този таб. дотогава страницата остава както си е"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: лента с предложения"
   },

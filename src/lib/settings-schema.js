@@ -462,6 +462,22 @@ const SETTINGS = [
     ],
   },
   {
+    // every tab opens with chat hidden; \ shows it in that tab (tab-local, like the \ hide itself)
+    key: 'startChatHidden',
+    type: 'bool',
+    default: false,
+    scope: 'sync',
+    category: 'display',
+    section: 'layout',
+    sectionKey: 'lib_sec_layout',
+    labelKey: 'mc_settings_start_hidden',
+    tipKey: 'mc_settings_start_hidden_desc',
+    control: 'pill',
+    apply: 'startChatHidden',
+    applyOnLoad: true,
+    alias: 'hide hidden backslash start collapsed off',
+  },
+  {
     key: 'ytShowSuggestions',
     hosts: ['youtube'],
     type: 'bool',

@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "po której stronie odtwarzacza dokuje panel czatu — hidden chowa go (klawisz \\ przełącza)"
   },
+  "mc_settings_start_hidden": {
+    "message": "uruchom ukryty"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "każda karta otwiera się z ukrytym czatem. \\ pokazuje go w tej karcie. do tego czasu strona zostaje bez zmian"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: pasek sugestii"
   },

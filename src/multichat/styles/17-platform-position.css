@@ -14,10 +14,11 @@
        wherever YT parks it is always safe — except on a premiere or scheduled stream
        (body.hs-yt-owns-chat), where YouTube owns the chat, and wherever our panel is
        down (body.hs-offline): the container exists on every youtube page, so without
-       that a past stream lost its chat replay, button and all. */
-    body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame#chat,
-    body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame,
-    body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-watch-flexy #chat-container {
+       that a past stream lost its chat replay, button and all. Hidden with \
+       (hs-chat-hidden) is the same case, named so it holds from the first frame. */
+    body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):not(.hs-chat-hidden):has(#hs-mc-container) ytd-live-chat-frame#chat,
+    body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):not(.hs-chat-hidden):has(#hs-mc-container) ytd-live-chat-frame,
+    body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):not(.hs-chat-hidden):has(#hs-mc-container) ytd-watch-flexy #chat-container {
       display: none !important;
     }
 

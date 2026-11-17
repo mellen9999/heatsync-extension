@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "su quale lato del player si aggancia il pannello chat — hidden lo nasconde (tasto \\ per alternare)"
   },
+  "mc_settings_start_hidden": {
+    "message": "avvia nascosta"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "ogni scheda si apre con la chat nascosta. \\ la mostra in quella scheda. fino ad allora la pagina resta com'è"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: striscia suggerimenti"
   },

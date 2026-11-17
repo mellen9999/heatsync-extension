@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "aan welke kant van de speler het chatpaneel vastzit — verborgen stopt het weg (\\ -toets wisselt)"
   },
+  "mc_settings_start_hidden": {
+    "message": "verborgen starten"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "elk tabblad opent met de chat verborgen. \\ toont hem in dat tabblad. tot dan blijft de pagina zoals hij is"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: suggestiestrook"
   },

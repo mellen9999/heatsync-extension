@@ -287,6 +287,15 @@ async function loadChatPosition() {
         if (sessionStorage.getItem('hs-chat-hidden-local')) {
           chatHiddenLocal = true
           chatPosition = 'hidden'
+        } else if (
+          // startChatHidden: a tab opens hidden until \ shows chat in it. Read
+          // from ui_settings, not getSetting — the registry loads in parallel.
+          stored.ui_settings?.startChatHidden === true &&
+          !document.body.classList.contains('hs-popout') &&
+          !sessionStorage.getItem('hs-chat-shown-local')
+        ) {
+          chatHiddenLocal = true
+          chatPosition = 'hidden'
         }
       } catch (_) {}
     }

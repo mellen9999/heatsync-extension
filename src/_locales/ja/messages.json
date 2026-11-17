@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "チャットパネルをプレーヤーのどちら側に固定するか — hidden で隠す (\\ キーで切替)"
   },
+  "mc_settings_start_hidden": {
+    "message": "非表示で開始"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "すべてのタブがチャット非表示で開く。\\ でそのタブに表示。それまではページはそのまま"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: おすすめ欄"
   },

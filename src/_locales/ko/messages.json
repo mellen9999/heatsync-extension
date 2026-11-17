@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "채팅 패널을 플레이어 어느 쪽에 붙일지 — hidden은 숨김 (\\ 키로 토글)"
   },
+  "mc_settings_start_hidden": {
+    "message": "숨긴 채로 시작"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "모든 탭이 채팅을 숨긴 채로 열려요. \\ 를 누르면 그 탭에서 보여요. 그 전까지 페이지는 그대로예요"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: 추천 영상 줄"
   },

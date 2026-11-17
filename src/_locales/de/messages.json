@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "an welcher Seite des Players das Chat-Panel andockt — hidden versteckt es (Taste \\ schaltet um)"
   },
+  "mc_settings_start_hidden": {
+    "message": "versteckt starten"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "jeder tab startet mit verstecktem chat. \\ blendet ihn in diesem tab ein. bis dahin bleibt die seite wie sie ist"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: Vorschlagsleiste"
   },

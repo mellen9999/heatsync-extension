@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "hvilken side af afspilleren chatpanelet docker til — hidden gemmer det væk (\\-tasten skifter)"
   },
+  "mc_settings_start_hidden": {
+    "message": "start skjult"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "hver fane åbner med chatten skjult. \\ viser den i den fane. indtil da forbliver siden som den er"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: forslagsbånd"
   },

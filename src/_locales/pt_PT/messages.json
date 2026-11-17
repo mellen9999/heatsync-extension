@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "a que lado do leitor fica ancorado o painel do chat — hidden esconde-o (a tecla \\ alterna)"
   },
+  "mc_settings_start_hidden": {
+    "message": "começar oculto"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "cada separador abre com o chat oculto. \\ mostra-o nesse separador. até lá a página fica como está"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: faixa de sugestões"
   },

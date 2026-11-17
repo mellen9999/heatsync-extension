@@ -1456,10 +1456,13 @@ function detectOfflineState() {
         delete frameEl.dataset.hsHidden
         delete frameEl.dataset.hsPrevDisplay
       }
+      // Hidden with \ (or startChatHidden): youtube is left as it is without us, no reserve, no
+      // forced dark theme, and its own chat stays up, same as a page we never show the panel on.
       const showYtChat =
         !isYtReplayPopout &&
         (isYtPopout ||
           (!ownsChat &&
+            chatPosition !== 'hidden' &&
             (liveChatFramePresent || ytAutoLiveMsgs > 0 || document.body.classList.contains('hs-yt-nonlive-chat'))))
       // YT sizes its grids/columns from a width measured once per resize —
       // the panel's reserve appearing/vanishing without one strands a
@@ -1576,6 +1579,8 @@ function detectOfflineState() {
       }
     }
     checkYtLive()
+    // \ flips the panel: settle youtube's layout now, not on the next poll tick
+    cleanup.addEventListener(document, 'hs-chat-hidden-change', checkYtLive)
     // 1.5s steady poll (was 4s): catches live→offline transitions + (only
     // while visible) keeps the panel state honest.
     cleanup.setIntervalIfVisible(checkYtLive, 1500)

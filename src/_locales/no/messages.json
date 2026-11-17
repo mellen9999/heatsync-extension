@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "hvilken side av spilleren chatpanelet fester seg til — skjult gjemmer det unna (\\-tasten bytter)"
   },
+  "mc_settings_start_hidden": {
+    "message": "start skjult"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "hver fane åpnes med chatten skjult. \\ viser den i den fanen. til da forblir siden som den er"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: forslagsstripe"
   },

@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "vilken sida om spelaren chattpanelen dockar mot — hidden gömmer den (tangenten \\ växlar)"
   },
+  "mc_settings_start_hidden": {
+    "message": "starta dold"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "varje flik öppnas med chatten dold. \\ visar den i den fliken. tills dess förblir sidan som den är"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: förslagsremsa"
   },

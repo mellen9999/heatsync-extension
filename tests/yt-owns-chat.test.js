@@ -23,7 +23,7 @@ describe('youtube owns the chat', () => {
     expect(main).toContain("document.body.classList.toggle('hs-yt-owns-chat', ownsChat)")
     expect(main).toContain('(!ownsChat &&') // panel visibility
     expect(css).toContain(
-      'body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame#chat',
+      'body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):not(.hs-chat-hidden):has(#hs-mc-container) ytd-live-chat-frame#chat',
     )
   })
 

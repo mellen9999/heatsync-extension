@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "pe ce parte a playerului se fixează panoul de chat — hidden îl ascunde (tasta \\ comută)"
   },
+  "mc_settings_start_hidden": {
+    "message": "pornește ascuns"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "fiecare tab se deschide cu chatul ascuns. \\ îl arată în acel tab. până atunci pagina rămâne neschimbată"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: bandă de sugestii"
   },

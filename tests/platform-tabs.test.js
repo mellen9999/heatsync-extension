@@ -49,7 +49,7 @@ describe('platform picker tabs', () => {
 
   test('the hide rules and checkYtLive both stand down while it is up', () => {
     expect(css).toContain(
-      'body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):has(#hs-mc-container) ytd-live-chat-frame#chat',
+      'body:not(.hs-offline):not(.hs-yt-owns-chat):not(.hs-yt-peek):not(.hs-chat-hidden):has(#hs-mc-container) ytd-live-chat-frame#chat',
     )
     expect(css).toContain('body.hs-yt-peek ytd-live-chat-frame#chat {')
     expect(css).toContain('body.hs-yt-peek ytd-watch-flexy #secondary {') // its view-transition-name pins a stacking context

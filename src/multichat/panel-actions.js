@@ -17,6 +17,9 @@ function _saveChatHiddenLocal() {
   try {
     if (chatHiddenLocal) sessionStorage.setItem('hs-chat-hidden-local', '1')
     else sessionStorage.removeItem('hs-chat-hidden-local')
+    // shown on purpose in this tab: a reload keeps it shown even with startChatHidden on
+    if (chatHiddenLocal) sessionStorage.removeItem('hs-chat-shown-local')
+    else sessionStorage.setItem('hs-chat-shown-local', '1')
   } catch (_) {}
 }
 
@@ -39,6 +42,9 @@ function toggleChatHidden() {
     applyChatPosition()
   }
   _saveChatHiddenLocal()
+  try {
+    document.dispatchEvent(new Event('hs-chat-hidden-change')) // youtube re-lays out at once (main-storage.js)
+  } catch (_) {}
   log('[chat-toggle] →', chatPosition, 'local-only:', chatHiddenLocal, 'prev:', chatPositionPrevious)
 }
 
@@ -46,7 +52,7 @@ function toggleChatHidden() {
 // restore (not a resize bar) — kept visible/thick on purpose, #fff, no text.
 function ensureChatRestorePill(show) {
   let pill = document.getElementById('hs-chat-restore-pill')
-  if (!show) {
+  if (!show || getSetting('startChatHidden') === true) {
     if (pill) pill.remove()
     return
   }

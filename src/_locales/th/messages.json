@@ -1023,6 +1023,12 @@
   "mc_settings_chat_position_desc": {
     "message": "แผงแชทยึดติดด้านไหนของเพลเยอร์ — hidden ซ่อนไว้ (กดปุ่ม \\ เพื่อสลับ)"
   },
+  "mc_settings_start_hidden": {
+    "message": "เริ่มแบบซ่อน"
+  },
+  "mc_settings_start_hidden_desc": {
+    "message": "ทุกแท็บเปิดโดยซ่อนแชทไว้ \\ จะแสดงแชทในแท็บนั้น ก่อนหน้านั้นหน้าเว็บจะเป็นแบบเดิม"
+  },
   "mc_settings_yt_suggestions": {
     "message": "youtube: แถบวิดีโอแนะนำ"
   },

@@ -651,6 +651,10 @@
       nativeRules.repaint()
     }
     if (changes.hs_dim_timeouts) dimTimeoutsEnabled = changes.hs_dim_timeouts.newValue !== false
+    // an emote name blocked or unblocked in another tab shows here at once
+    if (areaName === 'local' && changes.local_blocked_emote_names) {
+      applyBlockedEmoteNames(changes.local_blocked_emote_names.newValue)
+    }
   }
   chrome.storage.onChanged.addListener(_onStorageChanged)
 
@@ -2583,6 +2587,25 @@
   // Names blocked locally — covers emotes we never wrap (native Twitch sub/follower/bits).
   // Right-click any img[alt] in chat to toggle. Persisted in chrome.storage.local.
   let localBlockedEmoteNames = new Set()
+  const NATIVE_EMOTE_IMG = 'img[src*="static-cdn.jtvnw.net/emoticons"], img[src*="files.kick.com/emotes/"]'
+  /** The stored list with one name blocked or not. Always built on what storage holds now:
+   *  a tab's own copy is as old as its load, and writing that back dropped every name another
+   *  tab had blocked since. */
+  function blockedNamesWith(stored, name, blocked) {
+    const next = new Set(Array.isArray(stored) ? stored.filter((n) => typeof n === 'string' && n) : [])
+    if (blocked) next.add(name)
+    else next.delete(name)
+    return [...next]
+  }
+  /** Take a list of blocked names (this tab's toggle, or another tab's write) and mark the
+   *  emotes on screen to match. */
+  function applyBlockedEmoteNames(list) {
+    localBlockedEmoteNames = new Set(Array.isArray(list) ? list : [])
+    for (const im of document.querySelectorAll(NATIVE_EMOTE_IMG)) {
+      if (im.alt && localBlockedEmoteNames.has(im.alt)) im.setAttribute('data-hs-name-blocked', '1')
+      else im.removeAttribute('data-hs-name-blocked')
+    }
+  }
   // Tracks user-initiated block/unblock per hash so a late `emote_blocked` /
   // `emote_unblocked` broadcast (from server WS echo of the previous action)
   // can't reverse a fresh local toggle. Symptom this fixes: scrolled-to-bottom
@@ -5682,9 +5705,7 @@
 
     // Apply local name-blocks to native Twitch/Kick emotes in this message
     if (localBlockedEmoteNames.size > 0) {
-      const imgs = messageElement.querySelectorAll(
-        'img[src*="static-cdn.jtvnw.net/emoticons"], img[src*="files.kick.com/emotes/"]',
-      )
+      const imgs = messageElement.querySelectorAll(NATIVE_EMOTE_IMG)
       for (const im of imgs) {
         if (im.alt && localBlockedEmoteNames.has(im.alt)) {
           im.setAttribute('data-hs-name-blocked', '1')
@@ -6829,13 +6850,7 @@
         if (img.closest('.heatsync-emote-wrapper')) return
         if (img.closest('.heatsync-emote-stack')) return
 
-        const src = img.src || ''
-        const nativeCdnFrag = src.includes('static-cdn.jtvnw.net/emoticons')
-          ? 'static-cdn.jtvnw.net/emoticons'
-          : src.includes('files.kick.com/emotes/')
-            ? 'files.kick.com/emotes/'
-            : null
-        if (!nativeCdnFrag) return
+        if (!img.matches(NATIVE_EMOTE_IMG)) return
 
         const name = img.alt
         if (!name) return
@@ -6843,18 +6858,16 @@
         e.preventDefault()
         e.stopPropagation()
 
-        const escName = window.CSS && CSS.escape ? CSS.escape(name) : name.replace(/"/g, '\\"')
-        const sel = `img[alt="${escName}"][src*="${nativeCdnFrag}"]`
-        if (localBlockedEmoteNames.has(name)) {
-          localBlockedEmoteNames.delete(name)
-          document.querySelectorAll(sel).forEach((el) => el.removeAttribute('data-hs-name-blocked'))
-        } else {
-          localBlockedEmoteNames.add(name)
-          document.querySelectorAll(sel).forEach((el) => el.setAttribute('data-hs-name-blocked', '1'))
-        }
+        const blocking = !localBlockedEmoteNames.has(name)
         try {
-          chrome.storage.local.set({ local_blocked_emote_names: Array.from(localBlockedEmoteNames) })
-        } catch {}
+          const { local_blocked_emote_names: stored } = await chrome.storage.local.get('local_blocked_emote_names')
+          const next = blockedNamesWith(stored, name, blocking)
+          applyBlockedEmoteNames(next)
+          await chrome.storage.local.set({ local_blocked_emote_names: next })
+        } catch {
+          // storage is gone (the add-on reloaded under this page): the toggle still shows here
+          applyBlockedEmoteNames(blockedNamesWith([...localBlockedEmoteNames], name, blocking))
+        }
       },
       { capture: true },
       // Capture on purpose — preempts the page's own context menu.

@@ -106,7 +106,13 @@ export async function s5Outage() {
     await sleep(10_000)
     const keyA = `twitch/${a.toLowerCase()}`
     const keyB = `twitch/${b.toLowerCase()}`
-    const setA0 = await channelSet(env, keyA)
+    // a cold fetch is bounded but serial (ids, then each provider, 7tv falling back to the proxy,
+    // then the flags): ~40s worst case on a slow line. Only a set still loading after that is stuck
+    let setA0 = await channelSet(env, keyA)
+    for (let i = 0; i < 25 && setA0.state === 'loading'; i++) {
+      await sleep(2000)
+      setA0 = await channelSet(env, keyA)
+    }
     info(`${keyA} before: ${JSON.stringify(setA0)}`)
     if (setA0.state !== 'set' || !setA0.n) return bad(`${keyA} had no emote set before the outage`, setA0)
 

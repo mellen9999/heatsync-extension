@@ -178,7 +178,9 @@ export async function s2Youtube() {
 
 export async function s2Kick() {
   scenario('s2 kick chain')
-  const [a] = await liveChannels('kick', 1)
+  const busy = await liveChannels('kick', 12).catch(() => liveChannels('kick', 1))
+  const [a] = busy
+  const seen: string[] = []
   const env = await launch()
   const errs: string[] = []
   try {
@@ -212,11 +214,16 @@ export async function s2Kick() {
               !/^\/(browse|categories|following|search|login|signup|terms|privacy|dmca)/.test(h),
           ),
       )
-      const target = cards[round + 1] || cards[0]
+      // a card from the busiest live channels when browse shows one, so 45s of silence is never a
+      // quiet channel (a 196-viewer card went 45s without a line, 11-16)
+      const here = new URL(p.url()).pathname.slice(1).toLowerCase()
+      const fresh = [...new Set(cards)].filter((h) => ![a, here, ...seen].includes(h.slice(1).toLowerCase()))
+      const target = fresh.find((h) => busy.includes(h.slice(1).toLowerCase())) || fresh[0] || cards[0]
       if (!target) {
         bad(`round ${round}: no channel card on kick browse`)
         break
       }
+      seen.push(target.slice(1).toLowerCase())
       t0 = Date.now()
       await p.click(`a[href="${target}"]`, { timeout: 10_000 }).catch(() => {})
       await sleep(4000)

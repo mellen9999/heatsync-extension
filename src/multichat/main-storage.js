@@ -1560,12 +1560,7 @@ function detectOfflineState() {
       // ends, or the page resolved to a VOD) and WE hid/collapsed native
       // chat, give it back.
       // data-hs-hidden: a frame the panel's mount hid, which this flag never knew about
-      if (
-        !showYtChat &&
-        frameEl &&
-        (_hsHidNativeYt || frameEl.dataset.hsHidden) &&
-        frameEl.style.display === 'none'
-      ) {
+      if (!showYtChat && frameEl && (_hsHidNativeYt || frameEl.dataset.hsHidden) && frameEl.style.display === 'none') {
         if (frameEl.dataset.hsPrevDisplay) frameEl.style.display = frameEl.dataset.hsPrevDisplay
         else frameEl.style.removeProperty('display')
         delete frameEl.dataset.hsHidden

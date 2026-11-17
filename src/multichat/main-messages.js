@@ -866,7 +866,8 @@ function buildMessageDiv(m, tabId) {
   // paint as their own messages. Twitch carries reply-parent-user-id; Kick
   // (no parent id) falls back to the name→uid map. data-uid lets
   // updateCosmeticsInPlace repaint it once the cosmetic batch lands.
-  const replyUid = (m.replyTo && (m.replyTo.userId || knownUserIds.get(userKey(replyLower, m.platform || 'twitch')))) || ''
+  const replyUid =
+    (m.replyTo && (m.replyTo.userId || knownUserIds.get(userKey(replyLower, m.platform || 'twitch')))) || ''
   // HeatSync paint wins over 7TV here too — same precedence rule as the
   // sender username above.
   const replyHsPaint = replyUid ? hsPaintRender(replyUid, `@${m.replyTo?.user || ''}`) : null

@@ -32,7 +32,11 @@ describe('youtube keeps its own chat where our panel is down', () => {
     const s = storage.indexOf('      // data-hs-hidden: a frame the panel')
     const body = storage.slice(s, storage.indexOf('\n      }\n', s) + 9)
     const run = (frameEl, showYtChat, hid = false) =>
-      new Function('frameEl', 'showYtChat', '_hsHidNativeYt', `${body}; return _hsHidNativeYt`)(frameEl, showYtChat, hid)
+      new Function('frameEl', 'showYtChat', '_hsHidNativeYt', `${body}; return _hsHidNativeYt`)(
+        frameEl,
+        showYtChat,
+        hid,
+      )
     const frame = (display, ds) => {
       const style = { display, removeProperty: () => (style.display = '') }
       return { style, dataset: { ...ds } }

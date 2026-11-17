@@ -3105,6 +3105,10 @@ function mcQuoteToInput(text) {
   input.dispatchEvent(new Event('input', { bubbles: true }))
 }
 
+// What sits in a row beside the message and is never part of its text. The row's own buttons
+// belong here: the thread button was missing and every copied message ended in " »".
+const MC_ROW_FURNITURE =
+  '.hs-mc-platform-badge, .hs-mc-badge, .hs-mc-time, .hs-mc-reply-ctx, .hs-mod-toolbar, .hs-mc-stack-collapse, .hs-mc-stack-block-all, .hs-mc-thread-btn'
 function _extractMcMsgText(msg) {
   // Walk siblings after the username link, gathering text nodes + emote alts.
   // textContent on the whole row leaks badge/timestamp/username junk; this
@@ -3124,16 +3128,7 @@ function _extractMcMsgText(msg) {
     }
     if (node.nodeType !== 1) return
     const cls = node.classList
-    if (
-      cls?.contains('hs-mc-platform-badge') ||
-      cls?.contains('hs-mc-badge') ||
-      cls?.contains('hs-mc-time') ||
-      cls?.contains('hs-mc-reply-ctx') ||
-      cls?.contains('hs-mod-toolbar') ||
-      cls?.contains('hs-mc-stack-collapse') ||
-      cls?.contains('hs-mc-stack-block-all')
-    )
-      return
+    if (node.matches(MC_ROW_FURNITURE)) return
     if (node.tagName === 'IMG') {
       if (node.alt) parts.push(node.alt)
       return

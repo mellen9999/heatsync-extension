@@ -1823,6 +1823,9 @@
     }
     function _onStorageChanged(changes, area) {
       if (area === 'sync' && changes.ui_settings?.newValue) mirrorUiSettings(changes.ui_settings.newValue)
+      // another tab's pick: adopt it, or this tab's next pick writes its stale list over it
+      if (area === 'local' && Array.isArray(changes.recent_emotes?.newValue))
+        recentEmotes = changes.recent_emotes.newValue
     }
     chrome.storage.onChanged.addListener(_onStorageChanged)
     btnSignal.addEventListener('abort', () => {

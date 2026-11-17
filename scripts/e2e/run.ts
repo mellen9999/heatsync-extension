@@ -27,7 +27,7 @@ import { s14FirefoxSettings } from './s14-firefox-settings'
 import { s15SettingsUi } from './s15-settings-ui'
 import { s16Channels } from './s16-channels'
 import { s17MuteBlock } from './s17-mute-block'
-import { s18Kick, s18Twitch } from './s18-composer'
+import { s18Kick, s18Twitch, s18Youtube } from './s18-composer'
 
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
@@ -51,6 +51,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s17-mute-block', s17MuteBlock],
   ['s18-twitch', s18Twitch],
   ['s18-kick', s18Kick],
+  ['s18-youtube', s18Youtube],
 ]
 
 const args = process.argv.slice(2)

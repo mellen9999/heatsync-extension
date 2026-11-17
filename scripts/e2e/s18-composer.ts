@@ -3,26 +3,40 @@
  * the local slash commands, with the stream open in a second tab. Nothing is ever sent: Enter
  * is only pressed on a slash command that stays in this browser, and the profile is signed out.
  *
- *   bun scripts/e2e/run.ts --only s18          (s18-twitch, s18-kick)
+ *   bun scripts/e2e/run.ts --only s18          (s18-twitch, s18-kick, s18-youtube)
  *
- * Two pages on one busy twitch or kick channel (its saved tab), then page 2 on a second channel (the
- * live tab, nothing saved):
+ * Two pages on one busy stream (a fresh install saves the first twitch/kick stream it opens as
+ * a tab; youtube stays on the live tab), then page 2 on a second stream (the live tab):
  *   - an emote on screen, its name typed and Tab: becomes that emote
  *   - "@" and the start of a chatter on screen, Tab: a chatter's full name with that start
  *   - "/lcl" and Tab: "/lclear"
  *   - /hide a chatter on page 1: their rows gone there, still on page 2; /unhide: back
  *   - an emote picked from the picker's search on page 1: in the input, and first in the
  *     picker's recents on page 1 and on page 2
- *   - /lclear on the saved tab: its rows gone, none of them back, new chat keeps coming, page 2
+ *   - /lclear on page 1's tab: its rows gone, none of them back, new chat keeps coming, page 2
  *     untouched; and on the live tab of page 2's second channel the same
  *   - nothing threw on the page, the console, or the add-on's error log
  */
-import { bad, extStorage, info, launch, liveChannels, ok, panel, rowsFlow, scenario, shot, sleep, waitPanel, watchErrors } from './lib'
+import { bad, extStorage, info, launch, liveChannels, liveYtVideo, ok, panel, rowsFlow, scenario, shot, sleep, waitPanel, watchErrors } from './lib'
 
 const SETTLE_MS = 800
 
-type Plat = 'twitch' | 'kick'
-const url = (plat: Plat, ch: string) => (plat === 'kick' ? `https://kick.com/${ch}` : `https://www.twitch.tv/${ch}`)
+type Plat = 'twitch' | 'kick' | 'youtube'
+const url = (plat: Plat, ch: string) =>
+  plat === 'kick' ? `https://kick.com/${ch}` : plat === 'youtube' ? `https://www.youtube.com/watch?v=${ch}` : `https://www.twitch.tv/${ch}`
+// a row's data-platform; youtube rows say yt
+const rowPlat = (plat: Plat) => (plat === 'youtube' ? 'yt' : plat)
+// a name /hide and Tab can take: one word (youtube handles carry @ . -)
+const NAME = /^@?[a-z0-9_.-]+$/
+
+/** Two live streams on the platform: channel logins, or youtube video ids. */
+async function twoLive(plat: Plat): Promise<string[] | null> {
+  if (plat !== 'youtube') return liveChannels(plat, 2)
+  const a = await liveYtVideo()
+  if (!a) return null
+  const b = await liveYtVideo(['chillhopmusic', 'SpaceVideosHD', 'LofiGirl', 'lofigirl'].filter((h) => h.toLowerCase() !== a.handle.toLowerCase()))
+  return b && b.id !== a.id ? [a.id, b.id] : null
+}
 
 /** The input as a person reads it: text, and each emote chip by its name. */
 function inputText(p: any): Promise<string> {
@@ -75,7 +89,7 @@ function screen(p: any, plat: Plat) {
       if (u && u !== 'anonymous' && a?.dataset.platform === plat) by[u] = (by[u] || 0) + 1
     }
     return { keys, by }
-  }, plat) as Promise<{ keys: string[]; by: Record<string, number> }>
+  }, rowPlat(plat)) as Promise<{ keys: string[]; by: Record<string, number> }>
 }
 
 /** A third-party emote drawn in chat right now, with a plain name. */
@@ -117,7 +131,9 @@ async function channelEmote(p: any): Promise<string | null> {
 
 async function s18Composer(plat: Plat) {
   scenario(`s18 the composer on ${plat}: tab-complete, picker, local slash commands, two tabs`)
-  const [ch, other] = await liveChannels(plat, 2)
+  const two = await twoLive(plat)
+  if (!two) return info(`skipped: two live ${plat} streams not found`)
+  const [ch, other] = two
   const env = await launch()
   const errs: string[] = []
   const cons: string[] = []
@@ -172,11 +188,11 @@ async function s18Composer(plat: Plat) {
       })
 
     const { by } = await screen(p, plat)
-    const chatter = Object.keys(by).find((u) => u.length >= 6 && /^[a-z0-9_]+$/.test(u))
+    const chatter = Object.keys(by).find((u) => u.replace(/^@/, '').length >= 6 && NAME.test(u))
     if (!chatter) info(`${ch}: no chatter on screen with a 6+ letter name`)
     else
-      await step(`"@${chatter.slice(0, 4)}" and Tab: a chatter's full name`, async () => {
-        await type(p, `@${chatter.slice(0, 4)}`)
+      await step(`"@${chatter.replace(/^@/, '').slice(0, 4)}" and Tab: a chatter's full name`, async () => {
+        await type(p, `@${chatter.replace(/^@/, '').slice(0, 4)}`)
         await p.keyboard.press('Tab')
         await sleep(SETTLE_MS)
         const txt = await inputText(p)
@@ -184,8 +200,8 @@ async function s18Composer(plat: Plat) {
         const name = txt.replace(/^@/, '').trim().toLowerCase()
         info(`input after Tab: "${txt}"`)
         // any chatter the panel has heard counts, not only the rows still drawn
-        if (!name.startsWith(chatter.slice(0, 4)) || !/^@/.test(txt)) return [`input reads "${txt}"`]
-        if (!by[name]) info(`"${name}" is a chatter no longer on screen`)
+        if (!name.startsWith(chatter.replace(/^@/, '').slice(0, 4)) || !/^@/.test(txt)) return [`input reads "${txt}"`]
+        if (!by[name] && !by[`@${name}`]) info(`"${name}" is a chatter no longer on screen`)
         return []
       })
 
@@ -200,7 +216,7 @@ async function s18Composer(plat: Plat) {
 
     // ── /hide is this tab only ──
     const hideWho = Object.entries((await screen(p, plat)).by)
-      .filter(([u]) => /^[a-z0-9_]+$/.test(u))
+      .filter(([u]) => NAME.test(u))
       .sort((a, b) => b[1] - a[1])[0]?.[0]
     if (hideWho) {
       const count = async (pg: any) => (await screen(pg, plat)).by[hideWho] || 0
@@ -285,7 +301,8 @@ async function s18Composer(plat: Plat) {
         return why
       }, other ? [pg, other] : [pg])
     }
-    await lclear(p, `${ch}'s saved tab (page 1)`, p2)
+    // a fresh install saves the first twitch/kick stream it opens (that tab); youtube stays on live
+    await lclear(p, `${ch}'s ${(await panel(p)).activeTab === 'live' ? 'live' : 'saved'} tab (page 1)`, p2)
     await p2.goto(url(plat, other), { waitUntil: 'domcontentloaded' })
     if (!(await waitPanel(p2)) || !(await rowsFlow(p2, 45_000))) bad(`page 2: chat never flowed on ${other}`, await panel(p2))
     else {
@@ -301,3 +318,4 @@ async function s18Composer(plat: Plat) {
 
 export const s18Twitch = () => s18Composer('twitch')
 export const s18Kick = () => s18Composer('kick')
+export const s18Youtube = () => s18Composer('youtube')

@@ -18,7 +18,7 @@ import { readFileSync } from 'node:fs'
 const SRC = readFileSync(new URL('../src/content/early-layout.js', import.meta.url), 'utf8')
 
 /** Minimal DOM + window good enough for early-layout's document_start work. */
-function makeEnv({ path = '/xqc', panelWidth = null } = {}) {
+function makeEnv({ path = '/xqc', panelWidth = null, hidden = false } = {}) {
   const listeners = []
   const classes = new Set()
   const styles = new Map()
@@ -46,7 +46,7 @@ function makeEnv({ path = '/xqc', panelWidth = null } = {}) {
   const document = {
     documentElement,
     head: { appendChild: (node) => styles.set(node.id, node) },
-    body: { classList: { add() {} } },
+    body: { classList: { add() {}, contains: (c) => hidden && c === 'hs-chat-hidden' } },
     createElement: (tag) => el(tag),
     getElementById: (id) => {
       if (id === 'hs-mc-container') return panelWidth === null ? null : el(id)
@@ -119,6 +119,17 @@ describe('early-layout SPA re-arm', () => {
 
   test('does NOT arm when a real panel is already on screen', () => {
     const env = makeEnv({ path: '/xqc', panelWidth: 375 })
+    env.document.documentElement.classList.remove('hs-prepaint-active')
+    env.styles.delete('hs-early-layout')
+
+    env.fire({ type: 'heatsync-nav', url: 'https://www.twitch.tv/xqc' })
+
+    expect(env.classes.has('hs-prepaint-active')).toBe(false)
+    expect(env.styles.has('hs-early-layout')).toBe(false)
+  })
+
+  test('does NOT arm in a tab whose chat is hidden: there is no column to hold', () => {
+    const env = makeEnv({ path: '/xqc', panelWidth: 0, hidden: true })
     env.document.documentElement.classList.remove('hs-prepaint-active')
     env.styles.delete('hs-early-layout')
 

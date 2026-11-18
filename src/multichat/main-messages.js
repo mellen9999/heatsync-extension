@@ -2647,8 +2647,13 @@ function _reconcileMsgKeyIndex(msgsEl) {
     } catch (_) {}
   }
   if (_noHeal()) return
+  // The three indices describe the same rows, so they are rebuilt together, from the rows.
+  // Rebuilding the keys alone left the uid and mention indices holding rows long gone and
+  // missing rows on screen: a paint or a mod action after a heal skipped those.
   _msgKeyIndex.clear()
-  for (const k of dom) _msgKeyIndex.add(k)
+  _uidIndex.clear()
+  _mentionIndex.clear()
+  for (const rows of [held, msgsEl.children]) for (const el of rows) _indexMessageDiv(el, el.dataset?.msgKey)
   scheduleRenderMessages()
 }
 function renderStallCheck() {

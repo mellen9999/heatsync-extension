@@ -84,6 +84,24 @@ test('a row taken out the old way is what the watchdog repainted the pane for', 
   expect(r.renders.length).toBe(1)
 })
 
+test('the watchdog heals all three indices from the rows, not the keys alone', () => {
+  const r = rig()
+  const gone = r.rows[1]
+  gone.remove()
+  // and a row that reached the pane without being indexed
+  const stray = r.rows[0].cloneNode(true)
+  stray.dataset.msgKey = 'k9'
+  stray.dataset.uid = 'u-dave'
+  r.msgsEl.appendChild(stray)
+  r._reconcileMsgKeyIndex(r.msgsEl)
+  expect([...r._msgKeyIndex].sort()).toEqual(['k0', 'k2', 'k3', 'k9'])
+  expect([...r._uidIndex.get('u-bob')]).toEqual([r.rows[3]])
+  expect([...r._uidIndex.get('u-dave')]).toEqual([stray])
+  const mentions = [...r._mentionIndex.get('u-carol')]
+  expect(mentions.length).toBe(4)
+  expect(mentions.every((m) => m.isConnected)).toBe(true)
+})
+
 test('removeRow takes the key, the row ref and the mention refs with the row', () => {
   const r = rig()
   r.removeRow(r.rows[1])

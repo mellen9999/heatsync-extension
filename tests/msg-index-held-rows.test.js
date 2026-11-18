@@ -13,6 +13,10 @@ import { Window } from 'happy-dom'
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main-messages.js'), 'utf8')
 const s = SRC.indexOf('function _reconcileMsgKeyIndex(')
 const BODY = SRC.slice(s, SRC.indexOf('\n}\n', s) + 3)
+// the heal rebuilds every index through the real indexer
+const STATE = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main-state.js'), 'utf8')
+const i = STATE.indexOf('function _indexMessageDiv(')
+const INDEXER = STATE.slice(i, STATE.indexOf('\n}\n', i) + 3)
 
 let win
 afterEach(() => win?.happyDOM.close())
@@ -34,7 +38,7 @@ function setup({ mounted, held, indexed }) {
     'window',
     '_noHeal',
     'scheduleRenderMessages',
-    `let _desyncLoggedAt = 0\n${BODY}\nreturn _reconcileMsgKeyIndex`,
+    `let _desyncLoggedAt = 0\nconst _uidIndex = new Map(), _mentionIndex = new Map()\n${INDEXER}\n${BODY}\nreturn _reconcileMsgKeyIndex`,
   )(
     index,
     held.length ? { id: 'kripp', frag } : null,

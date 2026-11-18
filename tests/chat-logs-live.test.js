@@ -86,13 +86,30 @@ describe('chatLogsLive', () => {
     expect(st.rows).toHaveLength(1)
   })
 
-  test('yt maps to youtube and the row count stays capped', () => {
+  test('yt maps to youtube', () => {
     const st = { ...base(), platform: 'youtube' }
-    st.rows = Array.from({ length: 500 }, (_, i) => ({ message: `m${i}` }))
     const t = make(st)
     t.fn(msg({ platform: 'yt' }))
-    expect(st.rows).toHaveLength(500)
     expect(st.rows[0].platform).toBe('youtube')
+  })
+
+  // Making room took the oldest row, and the next page starts after that row: every line added
+  // to a full list left a hole in the archive further down.
+  test('a full list takes no new line: it is marked as not starting at the newest, and keeps every row', () => {
+    const st = base()
+    st.rows = Array.from({ length: 500 }, (_, i) => ({ message: `m${i}` }))
+    const t = make(st)
+    t.fn(msg())
+    expect(st.rows).toHaveLength(500)
+    expect(st.rows[0].message).toBe('m0')
+    expect(st.rows.at(-1).message).toBe('m499')
+    expect(st.cut).toBe(true)
+    expect(t.renders()).toBe(1)
+    expect(t.rendered).toHaveLength(0)
+    // and from then on a new line changes nothing
+    t.fn(msg({ text: 'again' }))
+    expect(st.rows).toHaveLength(500)
+    expect(t.renders()).toBe(1)
   })
 
   test('nothing open means nothing happens', () => {

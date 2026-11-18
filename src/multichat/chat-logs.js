@@ -210,6 +210,8 @@ async function fetchChatLogsPage() {
   if (state.channel) params.set('channel', state.channel)
   params.set('limit', String(HS_CL_PAGE))
   if (state.cursor) params.set('cursor', state.cursor)
+  // the first page again (a refresh, another channel, a cleared search): the list starts whole
+  else state.cut = false
   const path = `/api/archive/user/${encodeURIComponent(state.platform)}/${encodeURIComponent(state.username)}/messages?${params.toString()}`
   let resp
   try {
@@ -231,8 +233,13 @@ async function fetchChatLogsPage() {
   const incoming = resp.data.results || []
   // results are newest-first; append to bottom of list since we're loading older
   state.rows.push(...incoming)
-  // Cap accumulated rows so full-repaint cost stays bounded (matches DOM_RENDER_CAP elsewhere)
-  if (state.rows.length > 500) state.rows.splice(0, state.rows.length - 500)
+  // Cap accumulated rows so full-repaint cost stays bounded (matches DOM_RENDER_CAP elsewhere).
+  // The reader is at the bottom asking for older lines, so the newest ones go, and the list
+  // says so at its top (renderChatLogsView): it no longer starts at the newest line.
+  if (state.rows.length > 500) {
+    state.rows.splice(0, state.rows.length - 500)
+    state.cut = true
+  }
   state.cursor = resp.data.next_cursor || null
   if (!state.cursor || incoming.length === 0) state.exhausted = true
   // Server kicked off ivr.fi historical backfill — flag so the UI shows a
@@ -334,8 +341,16 @@ function chatLogsServerRemoved(d) {
 function clInsertLive(r) {
   const st = activeChatLogs
   if (!st) return
+  // A list cut at its top does not show the newest lines: a new one has no place in it. A full
+  // list has no room either: making room took the oldest row, which the next page starts after,
+  // so a line went missing from the middle of the archive for each one added. It is cut instead.
+  if (st.cut) return
+  if (st.rows.length >= 500) {
+    st.cut = true
+    renderChatLogsView()
+    return
+  }
   st.rows.unshift(r)
-  if (st.rows.length > 500) st.rows.pop()
 
   const list = document.querySelector('#hs-mc-subpane .hs-cl-list')
   if (!list || list.querySelector('.hs-cl-empty')) {
@@ -398,6 +413,7 @@ async function searchChatLogs(query) {
   }
   state.loadError = false
   state.rows = resp.data.results || []
+  state.cut = false
   state.cursor = null
   state.exhausted = true
   renderChatLogsView()
@@ -588,6 +604,15 @@ function renderChatLogsView() {
     }
     list.appendChild(empty)
   } else {
+    // The newest lines were let go to keep the list short: say so where they were, and one
+    // press starts the list from the newest line again.
+    if (activeChatLogs.cut) {
+      const newer = document.createElement('div')
+      newer.className = 'hs-cl-loader hs-cl-retry hs-cl-newer'
+      newer.textContent = `\u2191 ${t('mc_logs_refresh')}`
+      newer.addEventListener('click', refreshChatLogs)
+      list.appendChild(newer)
+    }
     // Render newest-at-top (matches Twitch viewer card mental model)
     for (const r of rows) list.appendChild(clRow(r))
   }

@@ -2115,6 +2115,7 @@ async function init() {
  */
 function tryHookReact() {
   let done = false
+  let giveUp = false
   const tryHook = () => {
     if (done || mcSignal?.aborted) return false
     // Non-channel twitch pages (/directory, /settings, /videos, /search…)
@@ -2125,19 +2126,24 @@ function tryHookReact() {
     const onChannel = !!document.querySelector('.channel-root, [class*="channel-root"]')
     const isPopout = document.body.classList.contains('hs-popout')
     if (!onChannel && !isPopout) {
+      // a page twitch has not drawn yet has no channel either: that is not an answer (twitchDrawn)
+      if (!giveUp && !twitchDrawn()) return false
       done = true
       log('Twitch non-channel page — body-mount overlay')
+      rereadTwitchPage()
       _runOverlayMountPass('twitch non-channel body-mount', () => {
         ensureUIElements()
         bootSwitch()
         startLayoutWatcher()
       })
+      watchTwitchLateChannel()
       return true
     }
     const chatRoom = findChatRoomComponent()
     if (chatRoom) {
       done = true
       log('Found chat room component')
+      rereadTwitchPage()
       _runOverlayMountPass('twitch react hook', () => {
         patchChatRoomRender(chatRoom)
         ensureUIElements()
@@ -2155,6 +2161,7 @@ function tryHookReact() {
     if (chatContainer) {
       done = true
       log('Using fallback DOM injection')
+      rereadTwitchPage()
       _runOverlayMountPass('twitch fallback dom injection', () => {
         ensureUIElements()
         bootSwitch()
@@ -2175,6 +2182,10 @@ function tryHookReact() {
   // after 15s to free the observer.
   cleanup.setTimeout(() => {
     if (done) return
+    // nothing of twitch's own to wait for any longer: a page with no channel on it gets the
+    // overlay it always got, one that has a channel and no chat stays as it is
+    giveUp = true
+    if (tryHook()) return obs.disconnect()
     done = true
     obs.disconnect()
     log('Failed to find chat components after 15s')

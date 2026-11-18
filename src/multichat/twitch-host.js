@@ -217,6 +217,39 @@ function scheduleTwitchChatRefit() {
   }, 80)
 }
 
+// A hard load can reach us before twitch has drawn anything: no top nav, no .channel-root, no
+// chat shell (2 of 28 fresh loads, e2e 11-18). What is read off that blank page is not the
+// page: the nav measured 0px with no observer on it, and a channel page read as "no channel",
+// which pinned the panel over the full height with its tab bar under twitch's top bar, the
+// page squeezed beside it, until a reload.
+const twitchDrawn = () =>
+  !!document.querySelector('[data-a-target="top-nav-container"], .top-nav, .channel-root, .chat-shell')
+
+// Boot read the navs and the page kind as soon as it could; the mount reads them again, off
+// the page twitch has drawn by then. All three are safe to run twice.
+function rereadTwitchPage() {
+  if (hostPlatform !== 'twitch') return
+  setupTwitchSideNavObserver()
+  setupTwitchTopNavObserver()
+  updateTwitchNoChannelClass()
+}
+
+// The shell of the page can be drawn before the channel in it. A page mounted as "no channel"
+// that grows a .channel-root with no navigation is the channel arriving late, and gets what a
+// navigation onto it gets. Asked a few times a second for the first seconds, then never again.
+const TWITCH_LATE_CHANNEL_MS = 15000
+function watchTwitchLateChannel() {
+  const until = Date.now() + TWITCH_LATE_CHANNEL_MS
+  const path = location.pathname
+  const tick = () => {
+    if (mcSignal?.aborted || Date.now() > until || location.pathname !== path) return
+    if (!document.body.classList.contains('hs-twitch-no-channel')) return
+    if (!document.querySelector('.channel-root, [class*="channel-root"]')) return cleanup.setTimeout(tick, 250)
+    softTwitchNav(null)
+  }
+  cleanup.setTimeout(tick, 250)
+}
+
 let _twitchTopNavObs = null
 // Twitch's top nav (.top-nav) is 50px tall and lives in a sibling DOM tree
 // that paints above HS's chat container — even though HS has z-index 9999,

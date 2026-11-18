@@ -1461,6 +1461,8 @@ function renderTooltipFallback(tooltip, username, platform, color, gen, msgChann
 // NOTE: innerHTML usage is XSS-safe — all user content goes through escapeHtml() in renderProfileCard
 // (escapeHtml converts &, <, >, ", ' to HTML entities before any innerHTML assignment)
 async function showUserTooltip(targetEl, username, color, platform) {
+  // not under an open menu: the card takes clicks, and the menu's items are what is being aimed at
+  if (typeof hsCtxOpen !== 'undefined' && hsCtxOpen) return
   hsTipStats.userShow++
   const tooltip = ensureUserTooltip()
   // Re-append only when it isn't already last — see hsAppendLastIfNeeded.
@@ -1654,6 +1656,19 @@ function hideUserTooltip() {
   if (userTooltip) {
     userTooltip.classList.remove('visible')
   }
+}
+
+// Every hover tip and card, gone now. A menu opening under the pointer calls this (ctx-menu.js):
+// the pointer never left the name, so its hover card stayed up, drawn above everything and taking
+// clicks, right over the menu's items.
+function hideHoverTips() {
+  if (emoteTooltip?.classList.contains('visible')) {
+    hideEmoteTooltip()
+    hsClearEmoteHighlights()
+  }
+  hideBadgeTooltip()
+  hideLinkTooltip()
+  hideUserTooltip()
 }
 
 function setupUserTooltipHandlers() {

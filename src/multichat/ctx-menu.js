@@ -88,6 +88,8 @@ function showHsCtxMenu(x, y, header, items, opts = {}) {
     el.setAttribute('aria-keyshortcuts', String(i + 1))
   }
 
+  // whatever hover card or tip is up for the thing just right-clicked would sit over the menu
+  if (typeof hideHoverTips === 'function') hideHoverTips()
   document.body.appendChild(menu)
   menu.style.visibility = 'hidden'
   menu.style.left = '0px'

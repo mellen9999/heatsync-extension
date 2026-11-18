@@ -1016,7 +1016,7 @@ async function init() {
           const msgsEl = document.getElementById('hs-mc-messages')
           const safe = CSS.escape ? CSS.escape(claim.synthId) : claim.synthId.replace(/"/g, '\\"')
           const row = msgsEl?.querySelector(`.hs-mc-msg[data-msg-id="${safe}"]`)
-          if (row) row.remove()
+          removeRow(row)
         } catch (_) {}
       }
     }
@@ -1031,7 +1031,7 @@ async function init() {
       const msgsEl = document.getElementById('hs-mc-messages')
       for (const id of msg.resolvedHolds) {
         const safe = CSS.escape ? CSS.escape(id) : id.replace(/"/g, '\\"')
-        msgsEl?.querySelector(`.hs-mc-msg[data-msg-id="${safe}"]`)?.remove()
+        removeRow(msgsEl?.querySelector(`.hs-mc-msg[data-msg-id="${safe}"]`))
       }
     }
     // Track sub tenure from IRC badge-info

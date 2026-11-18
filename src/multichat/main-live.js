@@ -457,8 +457,7 @@ function _renderMessagesImpl(id, opts) {
       zebraGap = true
       zebraGapBelow = c.nextElementSibling
     }
-    _unindexMessageDiv(c)
-    c.remove()
+    removeRow(c)
   }
   // Walk the LIVE HTMLCollection in place instead of materializing
   // [...msgsEl.children] (up to DOM_RENDER_CAP+scrollback nodes, every

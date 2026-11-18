@@ -69,13 +69,13 @@ describe('dim-timeouts coverage', () => {
     expect(at).toBeGreaterThan(-1)
     const fn = MAIN.slice(at, at + 500)
     expect(fn).toContain('if (!dimTimeouts) {')
-    expect(fn).toContain('row.remove()')
+    expect(fn).toContain('removeRow(row)')
     expect(fn).toContain("row.classList.add('hs-mc-msg-cleared')")
     // The hide branch must RETURN. Ordering alone is not enough: drop the
     // return and the row is removed AND handed the dim class, which the
     // position check above happily allows. (Caught by mutating the return away.)
-    expect(fn).toMatch(/row\.remove\(\)\s*\n\s*return\b/)
-    expect(fn.indexOf('row.remove()')).toBeLessThan(fn.indexOf("classList.add('hs-mc-msg-cleared')"))
+    expect(fn).toMatch(/removeRow\(row\)\s*\n\s*return\b/)
+    expect(fn.indexOf('removeRow(row)')).toBeLessThan(fn.indexOf("classList.add('hs-mc-msg-cleared')"))
   })
 
   test('youtube uses it too — it is the path that ignored the setting', () => {

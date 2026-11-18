@@ -831,6 +831,17 @@ function _unindexMessageDiv(div) {
   }
 }
 
+// The one way a single row leaves the pane: what indexes it goes with it. Five removals took the
+// row and left its key behind (a deleted or cleared row with dimming off, a resolved or dismissed
+// held message, a share notice its real twin replaced, the rows an unmute rebuilds). A stray key
+// says "already on screen": the index watchdog found it within seconds, logged index_desync and
+// repainted the whole pane, once for every such removal.
+function removeRow(row) {
+  if (!row) return
+  _unindexMessageDiv(row)
+  row.remove()
+}
+
 function _clearMessageIndices() {
   _heldOlder = null // held rows are indexed by the maps being cleared
   _msgKeyIndex.clear()
@@ -1006,8 +1017,7 @@ function dropRestoredFiltered(msgsEl, lines, desiredSet) {
   const rows = _heldOlder ? [..._heldOlder.frag.children, ...msgsEl.children] : [...msgsEl.children]
   for (const row of rows) {
     if (!gone.has(row.dataset?.msgKey)) continue
-    _unindexMessageDiv(row)
-    row.remove()
+    removeRow(row)
   }
 }
 

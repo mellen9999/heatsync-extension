@@ -24,7 +24,15 @@ function pane(keys, held = null) {
   }
   const el = fill({ children: [] }, keys)
   const frag = held && fill({ children: [] }, held)
-  const drop = new Function('msgKeyOf', '_unindexMessageDiv', '_heldOlder', `${FN}\nreturn dropRestoredFiltered`)(
+  // the real removeRow (unindex, then remove) around a recording unindex
+  const rm = SRC.indexOf('function removeRow(row) {')
+  const RM = SRC.slice(rm, SRC.indexOf('\n}\n', rm) + 3)
+  const drop = new Function(
+    'msgKeyOf',
+    '_unindexMessageDiv',
+    '_heldOlder',
+    `${RM}\n${FN}\nreturn dropRestoredFiltered`,
+  )(
     (m) => m.k,
     (row) => unindexed.push(row.dataset.msgKey),
     frag && { id: 't', frag },

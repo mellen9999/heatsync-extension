@@ -164,7 +164,7 @@ function device({ kind, host }) {
     document: globalThis.document,
     hostPlatform: host || 'twitch',
     hsMarkBadgeHeatsync: origins.hsMarkBadgeHeatsync,
-    _unindexMessageDiv() {},
+    removeRow: (div) => div?.remove(),
     selfNamesFor: (p) => (self ? SELF[p] || [] : []),
     platformMark,
   })

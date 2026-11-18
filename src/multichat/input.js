@@ -287,10 +287,7 @@ function retroFoldOwnEchoes() {
     if (leg === survivor && leg.m.sentHost === 'heatsync') continue
     // Every non-survivor leg is the dual-send duplicate.
     leg.m.hidden = true
-    try {
-      _unindexMessageDiv(leg.div)
-    } catch (_) {}
-    leg.div.remove()
+    removeRow(leg.div)
   }
 }
 
@@ -2351,7 +2348,7 @@ function initInput() {
         const row = x.closest('.hs-mc-msg')
         const held = irc?.getMessages(row?.dataset.msgChannel).find((m) => m.id === row.dataset.msgId)
         if (held) held.resolved = true
-        row?.remove()
+        removeRow(row)
       },
       { signal: mcSignal },
     )
@@ -3323,7 +3320,7 @@ function restoreMcUnmutedDom(username) {
   document.querySelectorAll('.hs-mc-msg.hs-mc-muted').forEach((msg) => {
     const userEl = msg.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')
     const u = userEl?.textContent?.trim()?.toLowerCase()
-    if (!target || u === target) msg.remove()
+    if (!target || u === target) removeRow(msg)
   })
 }
 function stripMcMutedMessage(msg) {

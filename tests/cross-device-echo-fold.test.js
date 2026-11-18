@@ -49,8 +49,7 @@ describe('live retro-fold', () => {
     expect(FOLD).toContain("m.sentHost = 'heatsync'")
     expect(FOLD).toContain('hsMarkBadgeHeatsync(pb)')
     expect(FOLD).toContain('leg.m.hidden = true')
-    expect(FOLD).toContain('leg.div.remove()')
-    expect(FOLD).toContain('_unindexMessageDiv(leg.div)')
+    expect(FOLD).toContain('removeRow(leg.div)')
   })
 
   test('claims are per-platform and never re-claim [H]/system rows', () => {

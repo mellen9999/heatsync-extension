@@ -1695,7 +1695,7 @@ function markClearedRow(row, title) {
   if (!row) return
   if (!dimTimeouts) {
     // Exactly what the next render pass would do — isMsgFiltered drops it.
-    row.remove()
+    removeRow(row)
     return
   }
   row.classList.add('hs-mc-msg-cleared')

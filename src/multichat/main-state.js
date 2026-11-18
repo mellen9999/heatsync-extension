@@ -1001,6 +1001,9 @@ let _paneHold = null // { row, dy, top: the scroll position this left the list a
 let _paneHoldFrame = null
 /** a scroll came to rest: a paused reader's first row in view is the one to keep */
 function armPaneHold(msgsEl) {
+  // the hold's own scroll coming to rest: the row it holds stays the one, wherever the rows
+  // above have pushed it since (taking it as the new place kept a row 396px low, e2e s20 11-18)
+  if (_paneHold && Math.abs(msgsEl.scrollTop - _paneHold.top) <= 1) return holdPanePlace(msgsEl)
   _paneHold = null
   if (!isScrolledUp || hoverHeld) return
   const top = msgsEl.getBoundingClientRect().top

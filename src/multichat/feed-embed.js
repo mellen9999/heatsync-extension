@@ -917,6 +917,9 @@ function resolvePendingFeedEmbeds(root) {
         _swapPlaceholder(ph, _buildFeedResolveFailedHtml(ph), 'hs-feed-embed-resolve-failed')
       }
       attachFeedFallbacks(ph)
+      // the card is not the height its placeholder was, and no picture event says so: the
+      // list it sits in is told, and keeps its reader's place (main-overlay.js)
+      ph.dispatchEvent(new Event('hs-row-settled', { bubbles: true }))
     })
   }
 }

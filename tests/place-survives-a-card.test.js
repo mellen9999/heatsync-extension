@@ -221,6 +221,25 @@ test('rows above the reader grow after the card closed: their row is put back be
   expect(r.hold()).not.toBe(null)
 })
 
+// The scroll that put the reader back comes to rest a moment later. Link cards above them had
+// filled in by then (no picture event says so), and that rest was read as the reader stopping
+// there: the pushed-down place became the one kept, 396px low on a kick channel (e2e s20, 11-18).
+test('the scroll that put the reader back comes to rest after rows above grew: their row is put back, not the new place kept', () => {
+  const { r, was } = backFromCard()
+  for (const k of ['k120', 'k180', 'k240']) r.tall.add(k)
+  expect(r.firstInView()).not.toEqual(was)
+  r.paneHoldScrolled(r.pane) // the scroll event of the put-back: the list is where the hold left it
+  r.armPaneHold(r.pane) // and its scrollend
+  r.frame()
+  r.paneHoldScrolled(r.pane)
+  expect(r.firstInView()).toEqual(was)
+  // more rows settle after it
+  r.tall.add('k60')
+  r.holdPanePlace(r.pane)
+  r.frame()
+  expect(r.firstInView()).toEqual(was)
+})
+
 test('a picture that lands below the reader moves nothing', () => {
   const { r, was } = backFromCard()
   const top = r.pane.scrollTop
@@ -339,4 +358,61 @@ test('the list tells the hold about every picture and every scroll', () => {
   // and of where every scroll comes to rest
   const end = ov.slice(ov.indexOf("'scrollend',"))
   expect(end.slice(0, end.indexOf('{ signal: mcSignal }'))).toContain('if (listIsChat()) armPaneHold(msgsEl)')
+  // and of rows that take their height with no picture event
+  expect(ov).toMatch(/msgsEl\.addEventListener\('hs-row-settled', onImgLoadOrError,/)
+  expect(ov).toMatch(/msgsEl\.addEventListener\('loadedmetadata', onImgLoadOrError, \{ capture: true,/)
+})
+
+// A link in chat draws a placeholder and is filled in when the server answers: the card is
+// taller than the placeholder was. Runs the real resolvePendingFeedEmbeds on a real page.
+test('a link card that fills in tells the list it sits in, whether it resolved or failed', async () => {
+  const { Window } = await import('happy-dom')
+  const EMBED = readFileSync(join(MC, 'feed-embed.js'), 'utf8')
+  const a = EMBED.indexOf('function _swapPlaceholder(')
+  const b = EMBED.indexOf('// Wire load-fail fallbacks', a)
+  const window = new Window()
+  const document = window.document
+  const answers = { 'https://a.example/x': { type: 'link', title: 'x' }, 'https://b.example/y': { error: 'gone' } }
+  const { resolvePendingFeedEmbeds } = new Function(
+    'document',
+    'Event',
+    '_fetchFeedResolve',
+    '_buildFeedResolvedHtml',
+    '_buildFeedResolveFailedHtml',
+    'attachFeedFallbacks',
+    `${EMBED.slice(a, b)}\nreturn { resolvePendingFeedEmbeds }`,
+  )(
+    document,
+    window.Event,
+    (url) => Promise.resolve(answers[url]),
+    () => '<a class="card">card</a>',
+    () => '<span class="failed">link</span>',
+    () => {},
+  )
+  const list = document.createElement('div')
+  list.id = 'hs-mc-messages'
+  document.body.appendChild(list)
+  const told = []
+  list.addEventListener('hs-row-settled', (e) => told.push(e.target.dataset.resolveUrl))
+  for (const url of Object.keys(answers)) {
+    const row = document.createElement('div')
+    const ph = document.createElement('div')
+    ph.className = 'hs-feed-embed-pending'
+    ph.dataset.resolveUrl = url
+    row.appendChild(ph)
+    list.appendChild(row)
+  }
+  // a row that left the list while the answer was on its way says nothing
+  const gone = document.createElement('div')
+  gone.className = 'hs-feed-embed-pending'
+  gone.dataset.resolveUrl = 'https://a.example/x'
+  const goneRow = document.createElement('div')
+  goneRow.appendChild(gone)
+  list.appendChild(goneRow)
+  resolvePendingFeedEmbeds(list)
+  goneRow.remove()
+  await new Promise((r) => setTimeout(r, 0))
+  expect(told).toEqual(['https://a.example/x', 'https://b.example/y'])
+  expect(list.querySelector('.card')).toBeTruthy()
+  expect(list.querySelector('.failed')).toBeTruthy()
 })

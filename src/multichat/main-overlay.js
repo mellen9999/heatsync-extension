@@ -1508,6 +1508,10 @@ function createOverlay() {
     }
     msgsEl.addEventListener('load', onImgLoadOrError, { capture: true, passive: true, signal: mcSignal })
     msgsEl.addEventListener('error', onImgLoadOrError, { capture: true, passive: true, signal: mcSignal })
+    // rows that take their height with no picture event: a video when its metadata lands, a
+    // link card when its placeholder is filled in (feed-embed.js)
+    msgsEl.addEventListener('loadedmetadata', onImgLoadOrError, { capture: true, passive: true, signal: mcSignal })
+    msgsEl.addEventListener('hs-row-settled', onImgLoadOrError, { passive: true, signal: mcSignal })
 
     // Hover-to-animate (animateEmotes: 'hover') — rows render static srcs;
     // pointing at a message swaps all its emotes to the original animated

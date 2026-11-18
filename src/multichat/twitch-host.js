@@ -243,7 +243,10 @@ function watchTwitchLateChannel() {
   const path = location.pathname
   const tick = () => {
     if (mcSignal?.aborted || Date.now() > until || location.pathname !== path) return
-    if (!document.body.classList.contains('hs-twitch-no-channel')) return
+    // where the panel is, not the class: a theatre flip re-reads the page kind by itself and
+    // would clear the class with the panel still parked on body
+    const c = document.getElementById('hs-mc-container')
+    if (!c || c.parentElement !== document.body) return
     if (!document.querySelector('.channel-root, [class*="channel-root"]')) return cleanup.setTimeout(tick, 250)
     softTwitchNav(null)
   }

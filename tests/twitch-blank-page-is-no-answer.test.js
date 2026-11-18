@@ -48,11 +48,13 @@ function page(pathname = '/somechannel') {
     location: { pathname },
     document: {
       querySelector: find,
+      getElementById: () => scope.panel,
       documentElement: {
         style: { vars: {}, setProperty: (k, v) => (scope.document.documentElement.style.vars[k] = v) },
       },
       body: { classList: { contains: (c) => bodyClasses.has(c) } },
     },
+    panel: null,
     hsQuery: (_k, sel) => find(sel),
     getComputedStyle: () => ({ display: 'block' }),
     ResizeObserver: class {
@@ -89,15 +91,18 @@ function page(pathname = '/somechannel') {
     bootSwitch() {},
     startLayoutWatcher() {},
     mounts: [],
+    // the body mount parks the panel on body; the others put it in twitch's chat column
     _runOverlayMountPass: (label, fn) => {
       scope.calls.push('mount')
       scope.mounts.push(label)
+      scope.panel = { parentElement: label.includes('body-mount') ? scope.document.body : {} }
       fn()
     },
     softNavs: 0,
     softTwitchNav: () => {
       scope.softNavs++
       bodyClasses.delete('hs-twitch-no-channel')
+      scope.panel = { parentElement: {} }
     },
   }
   const api = new Function(
@@ -181,6 +186,29 @@ test('the shell drawn first and the channel after it: the channel arriving is ha
   p.pass(20_000)
   expect(p.scope.softNavs).toBe(1)
   expect(p.scope.mounts.length).toBe(1)
+})
+
+test('the class is not what says the panel is still parked: another re-read clearing it does not end the watch', () => {
+  const p = page()
+  p.tryHookReact()
+  p.draw('top-nav', 'side-nav')
+  p.draw('channel-root', 'chat-shell')
+  // a theatre flip re-read the page kind before the watch looked
+  p.scope.updateTwitchNoChannelClass()
+  expect(p.bodyClasses.has('hs-twitch-no-channel')).toBe(false)
+  p.pass(1000)
+  expect(p.scope.softNavs).toBe(1)
+})
+
+test('a panel something else already moved off body is left where it is', () => {
+  const p = page()
+  p.tryHookReact()
+  p.draw('top-nav', 'side-nav')
+  p.scope.panel = { parentElement: {} }
+  p.draw('channel-root', 'chat-shell')
+  p.pass(20_000)
+  expect(p.scope.softNavs).toBe(0)
+  expect(p.timers.length).toBe(0)
 })
 
 test("a real navigation in that window is the navigation handler's: the late watch stands down", () => {

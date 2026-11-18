@@ -1212,6 +1212,7 @@ function switchTab(id, sub, subOpts) {
 
   // Reset scroll state BEFORE rendering - always start at bottom when switching tabs
   isScrolledUp = false
+  _paneHold = null // the row a paused reader was kept on belongs to the tab being left
   newMessageCount = 0
   const newBtn = document.getElementById('hs-mc-new-msgs')
   if (newBtn) newBtn.style.display = 'none'

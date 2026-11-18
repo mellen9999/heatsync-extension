@@ -363,6 +363,12 @@ test('the list tells the hold about every picture and every scroll', () => {
   expect(ov).toMatch(/msgsEl\.addEventListener\('loadedmetadata', onImgLoadOrError, \{ capture: true,/)
 })
 
+test('the row kept for a paused reader is let go when they change tabs', () => {
+  const tabs = readFileSync(join(MC, 'main-tabs.js'), 'utf8')
+  const sw = tabs.slice(tabs.indexOf('function switchTab('))
+  expect(sw).toMatch(/isScrolledUp = false\n\s+_paneHold = null/)
+})
+
 // A link in chat draws a placeholder and is filled in when the server answers: the card is
 // taller than the placeholder was. Runs the real resolvePendingFeedEmbeds on a real page.
 test('a link card that fills in tells the list it sits in, whether it resolved or failed', async () => {

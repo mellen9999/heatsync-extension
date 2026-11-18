@@ -1223,6 +1223,8 @@ function createOverlay() {
         // touch-end / wheel-coast finished — clear input flag so subsequent
         // passive scroll events don't accidentally count as user-driven.
         _userInputScroll = false
+        // where a paused reader stopped is where they are kept while the rows above settle
+        if (listIsChat()) armPaneHold(msgsEl)
       },
       { signal: mcSignal },
     )
@@ -1427,7 +1429,7 @@ function createOverlay() {
     // Coalescing lives in scheduleScrollPin (shared with every other pin
     // trigger) so a 100-image burst still does one layout per frame.
     const onImgLoadOrError = (e) => {
-      holdPanePlace(msgsEl) // a reader just back from a card keeps their row while pictures land
+      holdPanePlace(msgsEl) // a reader who scrolled up keeps their row while pictures land
       // A cosmetic badge img failed (e.g. 7TV CDN QUIC drop under request
       // burst). The URL is valid, so retry before giving up — only hide after
       // 2 failed retries — so we never render a permanent broken-image icon.

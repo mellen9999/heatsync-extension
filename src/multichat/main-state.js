@@ -986,24 +986,36 @@ function paneReturn() {
     cleanup.raf(() => {
       isProgrammaticScroll = false
     })
-    _paneHold = { row, dy: kept.dy, top: msgsEl.scrollTop, until: Date.now() + PANE_HOLD_MS }
+    _paneHold = { row, dy: kept.dy, top: msgsEl.scrollTop }
     return
   }
 }
 
-// The rows above the reader go on settling after that redraw: a picture whose width was not
-// known yet wraps its line, a badge lands. The list has no scroll anchoring of its own
-// (overflow-anchor is off), so each one pushed the row being read further down, 154px on a kick
-// channel (e2e s20, 11-18). For a moment after the view closes the row is put back each time a
-// picture in the list lands. The reader's own scroll ends it: the list is then somewhere this
-// did not put it.
-const PANE_HOLD_MS = 3000
-let _paneHold = null // { row, dy, top: the scroll position this left the list at, until }
+// The rows above a reader who scrolled up go on settling: a picture whose width was not known
+// yet wraps its line, a badge lands. The list has no scroll anchoring of its own (overflow-anchor
+// is off), so each one pushed the row being read further down: 154px after a card closed on a
+// kick channel, a line at a time for a reader who had only paused (e2e s20, 11-18). The row is
+// put back each time a picture in the list lands, for as long as the reader stays where they
+// stopped. Their own scroll ends it, and where that scroll stops is held next (armPaneHold).
+let _paneHold = null // { row, dy, top: the scroll position this left the list at }
 let _paneHoldFrame = null
+/** a scroll came to rest: a paused reader's first row in view is the one to keep */
+function armPaneHold(msgsEl) {
+  _paneHold = null
+  if (!isScrolledUp || hoverHeld) return
+  const top = msgsEl.getBoundingClientRect().top
+  for (const row of msgsEl.children) {
+    if (!row._hsMsg) continue
+    const b = row.getBoundingClientRect()
+    if (b.bottom <= top) continue
+    _paneHold = { row, dy: b.top - top, top: msgsEl.scrollTop }
+    return
+  }
+}
 function holdPanePlace(msgsEl) {
   const h = _paneHold
   if (!h) return
-  if (!isScrolledUp || Date.now() > h.until || !h.row.isConnected) {
+  if (!isScrolledUp || !h.row.isConnected) {
     _paneHold = null
     return
   }

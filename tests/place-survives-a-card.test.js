@@ -82,7 +82,7 @@ function room({ lines = 600 } = {}) {
   }
   const api = new Function(
     'scope',
-    `with (scope) { ${CODE}\n return { takePane, paneReturn, renderAsOf, resetScrollback, holdPanePlace, paneHoldScrolled, kept: () => _paneKept, hold: () => _paneHold } }`,
+    `with (scope) { ${CODE}\n return { takePane, paneReturn, renderAsOf, resetScrollback, holdPanePlace, paneHoldScrolled, armPaneHold, kept: () => _paneKept, hold: () => _paneHold } }`,
   )(scope)
   scope.renderMessages()
   const say = (n) => {
@@ -243,22 +243,85 @@ test("the reader's own scroll ends it: a picture landing after that moves nothin
   expect(r.pane.scrollTop).toBe(top)
 })
 
-test('it ends by itself: after a few seconds, and when the reader is back at the tail', () => {
+test('it ends by itself when the reader is back at the tail, and time alone does not end it', () => {
   const late = backFromCard().r
   const now = Date.now
   try {
-    Date.now = () => now() + 3500
+    Date.now = () => now() + 60_000
+    late.tall.add('k120')
     late.holdPanePlace(late.pane)
+    late.frame()
   } finally {
     Date.now = now
   }
-  expect(late.hold()).toBe(null)
-  expect(late.scope.frames.length).toBe(0)
+  expect(late.hold()).not.toBe(null)
+  expect(late.firstInView().key).toBe('k251')
 
   const tail = backFromCard().r
   tail.scope.isScrolledUp = false
   tail.holdPanePlace(tail.pane)
   expect(tail.hold()).toBe(null)
+})
+
+// No card at all: a reader wheels up, stops, and reads. A picture above them lands a moment
+// later and their row went down a line (real twitch, e2e s20, 11-18: 15px to 36px).
+const paused = (at = 3007) => {
+  const r = room()
+  r.scope.isScrolledUp = true
+  r.pane.scrollTop = at
+  r.armPaneHold(r.pane) // the scroll came to rest
+  return r
+}
+
+test('a reader who only scrolled up keeps their row when a picture above it lands', () => {
+  const r = paused()
+  const was = r.firstInView()
+  expect(was).toEqual({ key: 'k251', dy: -7 })
+  r.tall.add('k200')
+  expect(r.firstInView()).not.toEqual(was)
+  r.holdPanePlace(r.pane)
+  r.frame()
+  r.paneHoldScrolled(r.pane)
+  expect(r.firstInView()).toEqual(was)
+})
+
+test('they scroll on: where that scroll stops is the place kept next', () => {
+  const r = paused()
+  r.pane.scrollTop -= 400
+  r.paneHoldScrolled(r.pane)
+  expect(r.hold()).toBe(null) // mid-scroll nothing is put back
+  r.tall.add('k100')
+  r.holdPanePlace(r.pane)
+  expect(r.scope.frames.length).toBe(0)
+  r.armPaneHold(r.pane)
+  const was = r.firstInView()
+  r.tall.add('k150')
+  r.holdPanePlace(r.pane)
+  r.frame()
+  expect(r.firstInView()).toEqual(was)
+})
+
+test('a list at its tail, and one held by a hover, keep no place', () => {
+  const tail = room()
+  tail.armPaneHold(tail.pane)
+  expect(tail.hold()).toBe(null)
+  const hover = room()
+  hover.scope.isScrolledUp = true
+  hover.scope.hoverHeld = true
+  hover.pane.scrollTop = 3000
+  hover.armPaneHold(hover.pane)
+  expect(hover.hold()).toBe(null)
+})
+
+test('the row being kept leaves the list: the hold is over, nothing is moved', () => {
+  const r = paused()
+  r.hold().row.isConnected = false
+  const top = r.pane.scrollTop
+  r.tall.add('k200')
+  r.holdPanePlace(r.pane)
+  r.frame()
+  expect(r.hold()).toBe(null)
+  expect(r.pane.scrollTop).toBe(top)
 })
 
 test('a reader who was at the tail gets no hold at all', () => {
@@ -273,4 +336,7 @@ test('the list tells the hold about every picture and every scroll', () => {
   const h = ov.slice(ov.indexOf('const onImgLoadOrError = (e) => {'))
   expect(h.indexOf('holdPanePlace(msgsEl)')).toBeLessThan(h.indexOf("if (e?.type === 'error')"))
   expect(ov).toMatch(/'scroll',\s+\(\) => \{\s+paneHoldScrolled\(msgsEl\)/)
+  // and of where every scroll comes to rest
+  const end = ov.slice(ov.indexOf("'scrollend',"))
+  expect(end.slice(0, end.indexOf('{ signal: mcSignal }'))).toContain('if (listIsChat()) armPaneHold(msgsEl)')
 })

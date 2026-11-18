@@ -905,8 +905,9 @@ async function _importAllSettings() {
           left += fitLocal.left
           if (Object.keys(fitLocal.out).length) writes.push(browser.storage.local.set(fitLocal.out))
         }
-        // nothing in the file could be used: say so, change nothing, stay on the page
-        if (!writes.length) {
+        // nothing in the file could be used: say so, change nothing, stay on the page.
+        // (an export of an untouched profile holds nothing at all, and is a good file)
+        if (!writes.length && left) {
           showToast(t('mc_settingsui_not_heatsync_file'), 'error')
           resolve(false)
           return

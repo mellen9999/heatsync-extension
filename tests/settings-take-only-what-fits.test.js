@@ -79,7 +79,9 @@ describe('an imported value has to fit its setting', () => {
     const src = fnOf(read('src', 'multichat', 'settings-ui.js'), '_importAllSettings')
     expect(src).toMatch(/_importFit\(ui, true\)/)
     expect(src).toMatch(/_importFit\(safeLocal, false\)/)
-    expect(src).toMatch(/if \(!writes\.length\) \{\s*showToast\(t\('mc_settingsui_not_heatsync_file'\), 'error'\)/)
+    expect(src).toMatch(
+      /if \(!writes\.length && left\) \{\s*showToast\(t\('mc_settingsui_not_heatsync_file'\), 'error'\)/,
+    )
     expect(src).toMatch(/left \? t\('mc_settingsui_import_partial', \[String\(left\)\]\)/)
   })
 })

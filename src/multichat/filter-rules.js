@@ -16,6 +16,13 @@ function _frIsDangerous(p) {
 // digits and the underscore, in any script.
 const _FR_WORD = '[\\p{L}\\p{M}\\p{N}_]'
 const _FR_WORD_CH = /^[\p{L}\p{M}\p{N}_]/u
+// How much of a line a user's own regex is run on. Every site's longest message fits (twitch
+// and kick 500 characters, youtube 200), so a real message is read whole; the cap only bounds
+// what a slow pattern can be made to chew through. A keyword and a `contains` are plain scans
+// and read all of it. All three stopped at 256: a word late in a long line, the spam a hide
+// rule is written for, got past the rule (kick and twitch, e2e 11-18).
+const _FR_REGEX_TEXT_MAX = 512
+const _frRegexText = (s) => (s.length > _FR_REGEX_TEXT_MAX ? s.slice(0, _FR_REGEX_TEXT_MAX) : s)
 function _frEscapeLiteral(p) {
   return p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
@@ -292,16 +299,10 @@ function _frEvalNode(node, m) {
       if (node.v === 'reply') return !!m.replyTo?.user
       if (node.v === 'cheer') return !!(m.bits && Number(m.bits) > 0)
       return false
-    case 'contains': {
-      if (typeof m.text !== 'string') return false
-      const t = m.text.length > 256 ? m.text.slice(0, 256) : m.text
-      return t.toLowerCase().includes(node.v)
-    }
-    case 'regex': {
-      if (typeof m.text !== 'string') return false
-      const t = m.text.length > 256 ? m.text.slice(0, 256) : m.text
-      return node.re.test(t)
-    }
+    case 'contains':
+      return typeof m.text === 'string' && m.text.toLowerCase().includes(node.v)
+    case 'regex':
+      return typeof m.text === 'string' && node.re.test(_frRegexText(m.text))
     case 'bits': {
       const b = Number(m.bits) || 0
       if (node.cmp === '>') return b > node.n
@@ -498,11 +499,9 @@ function _frVerdict(hide, highlight, rule, notify) {
 function _frTest(rule, m) {
   switch (rule.matchType) {
     case 'keyword':
-    case 'regex': {
-      if (!rule.re || typeof m.text !== 'string') return false
-      const t = m.text.length > 256 ? m.text.slice(0, 256) : m.text
-      return rule.re.test(t)
-    }
+      return !!rule.re && typeof m.text === 'string' && rule.re.test(m.text)
+    case 'regex':
+      return !!rule.re && typeof m.text === 'string' && rule.re.test(_frRegexText(m.text))
     case 'expr':
       return rule.ast ? _frEvalNode(rule.ast, m) : false
     case 'user': {

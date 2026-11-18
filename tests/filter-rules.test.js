@@ -511,3 +511,45 @@ test('badge rule matches youtube list badges (owner / moderator / mod alias)', (
   expect(evaluateFilterRules(yt([{ type: 'moderator' }]), null).highlight).toBeNull()
   expect(evaluateFilterRules(yt([{ type: 'owner' }]), null).highlight).toBe('#ff0000')
 })
+
+// ── the whole line is read ──────────────────────────────────────────────────
+
+// Rules read the first 256 characters only. A word late in a long line, the pasted spam a hide
+// rule is written for, got past it: 13 times "pon cocoteo en la radio" with no gap, where the
+// only whole word "radio" is the last one, stayed on screen under a hide rule for "radio"
+// (kick), and a twitch line with the emote name at character 280 did too (e2e s25 + s26, 11-18).
+const SPAM = 'pon cocoteo en la radio'.repeat(13)
+
+test('keyword: a word past character 256 of a long line is still found', () => {
+  expect(SPAM.length).toBeGreaterThan(256)
+  expect(SPAM.lastIndexOf('radio')).toBeGreaterThan(256)
+  compileFilterRules([rule({ match: { type: 'keyword', value: 'radio' }, action: 'hide' })])
+  expect(evaluateFilterRules(makeMsg({ text: SPAM })).hide).toBe(true)
+  // the glued ones are another word and stay one
+  expect(evaluateFilterRules(makeMsg({ text: SPAM.slice(0, -5) })).hide).toBe(false)
+  const late = `${'заводи бурмалду '.repeat(30)}honeymad`
+  compileFilterRules([rule({ match: { type: 'keyword', value: 'honeymad' }, action: 'highlight' })])
+  expect(evaluateFilterRules(makeMsg({ text: late })).highlight).toBe('#ff0000')
+})
+
+test('regex: a full-length message is read to its end (500 characters on twitch and kick)', () => {
+  const text = `${'x '.repeat(247)}badone`
+  expect(text.length).toBe(500)
+  compileFilterRules([rule({ match: { type: 'regex', value: 'bad(one|two)$' }, action: 'hide' })])
+  expect(evaluateFilterRules(makeMsg({ text })).hide).toBe(true)
+})
+
+test('regex: text longer than any real message is cut where the cap says, a keyword reads on', () => {
+  const text = `${'x '.repeat(400)}badone`
+  compileFilterRules([rule({ match: { type: 'regex', value: 'badone' }, action: 'hide' })])
+  expect(evaluateFilterRules(makeMsg({ text })).hide).toBe(false)
+  compileFilterRules([rule({ match: { type: 'keyword', value: 'badone' }, action: 'hide' })])
+  expect(evaluateFilterRules(makeMsg({ text })).hide).toBe(true)
+})
+
+test('expr: contains and regex read the whole line too', () => {
+  const text = `${'x '.repeat(200)}late word`
+  expect(text.indexOf('late')).toBeGreaterThan(256)
+  expect(hides('contains:"late word"', makeMsg({ text }))).toBe(true)
+  expect(hides('regex:"late.word"', makeMsg({ text }))).toBe(true)
+})

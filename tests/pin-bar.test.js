@@ -113,8 +113,8 @@ const row = (id = 'm1', ch = 'somechan', plat = '') => {
   win.document.getElementById('hs-mc-messages').append(r)
   return r
 }
-const keyOn = (k, target) => {
-  const ev = new win.KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true })
+const keyOn = (k, target, init = {}) => {
+  const ev = new win.KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true, ...init })
   target.dispatchEvent(ev)
   return ev
 }
@@ -230,6 +230,29 @@ describe('pin bar', () => {
       Date.now = now
     }
     expect(sent[0]).toMatchObject({ type: 'pin', op: 'clear', platform: 'twitch', channel: 'somechan' })
+  })
+
+  test('mod x: Enter held down never answers, and never reaches the button under it', async () => {
+    const p = mount({ mods: ['twitch/somechan'] })
+    await p.pinSync('chan')
+    sent.length = 0
+    const now = Date.now
+    try {
+      const t0 = now()
+      Date.now = () => t0
+      bar().querySelector('.hs-mc-pin-x').click()
+      // the key repeats for as long as it is down: half a second in, two seconds in
+      for (const ms of [500, 2000]) {
+        Date.now = () => t0 + ms
+        const ev = keyOn('Enter', bar(), { repeat: true })
+        expect(ev.defaultPrevented).toBe(true)
+      }
+      await flush()
+    } finally {
+      Date.now = now
+    }
+    expect(bar().dataset.confirm).toBe('1')
+    expect(sent).toEqual([])
   })
 
   test('mod x: Enter answers once the ask has been up', async () => {

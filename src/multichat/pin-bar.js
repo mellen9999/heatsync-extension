@@ -278,7 +278,8 @@ function pinOnKey(e) {
   } else if (n.dataset.confirm && (e.key === 'y' || e.key === 'Enter')) {
     e.preventDefault()
     e.stopPropagation()
-    if (pinState.cur && (e.key === 'y' || pinAskSeen())) pinUnpin(pinState.cur.room)
+    // a key still down from the press that asked is not an answer, however long it is held
+    if (pinState.cur && !e.repeat && (e.key === 'y' || pinAskSeen())) pinUnpin(pinState.cur.room)
   }
 }
 

@@ -8,7 +8,7 @@ import { describe, expect, test } from 'bun:test'
 import { mainSource } from './main-src.js'
 
 const SRC = mainSource()
-const passA = SRC.slice(SRC.indexOf('// PASS A: index existing DOM'), SRC.indexOf('// PASS B: walk desired list'))
+const passA = SRC.slice(SRC.indexOf('function sweepPaneRows('), SRC.indexOf('\nfunction _renderMessagesImpl('))
 
 describe('render reconcile and the video player', () => {
   test('PASS A leaves #hs-mc-embed-player alone', () => {

@@ -2,6 +2,60 @@
 // one scope with the other main-*.js parts and main.js at bundle time (build.js MAIN_PARTS, in list order).
 // no wrapper here: the IIFE is the bundle's.
 
+// PASS A of the render: the rows on screen, by key. A second copy of a key goes, a yt-status pin
+// of this tab is detached to be pinned again at the end, and a row the render no longer wants
+// goes. Returns whether a removal left the rows under it out of stripe phase, and from where.
+function sweepPaneRows(msgsEl, id, desiredSet, existingByKey, detachedExtras) {
+  // a row removed below another leaves the rows under it a beat out of phase;
+  // the lowest such gap is where the upward restripe starts
+  let zebraGap = false
+  let zebraGapBelow = null
+  const dropRow = (c) => {
+    if (c.previousElementSibling) {
+      zebraGap = true
+      zebraGapBelow = c.nextElementSibling
+    }
+    removeRow(c)
+  }
+  // Walk the LIVE HTMLCollection in place instead of materializing
+  // [...msgsEl.children] (up to DOM_RENDER_CAP+scrollback nodes, every
+  // render). Safe because we only ever advance `i` when the current child
+  // is KEPT: removing children[i] slides the next child into that same
+  // index, so re-checking index i next iteration is correct — nothing is
+  // skipped, and nothing here reorders a kept node.
+  for (let i = 0; i < msgsEl.children.length; ) {
+    const c = msgsEl.children[i]
+    if (c.dataset?.hsYtStatus && c.dataset?.hsYtStatusTab === String(id)) {
+      detachedExtras.push(c)
+      c.remove() // yt-status pins aren't tracked in indices
+      continue
+    }
+    // the docked/filled video player lives in the scroller but is not a row —
+    // sweeping it here killed it on the next full render (popout: instantly)
+    if (c.id === 'hs-mc-embed-player') {
+      i++
+      continue
+    }
+    const k = c.dataset?.msgKey
+    if (k && desiredSet.has(k)) {
+      if (existingByKey.has(k)) {
+        dropRow(c) // pre-existing dupe — drop the second copy
+        // The kept copy carries the same key, and unindexing the dropped one took that key out
+        // of the index: the row on screen read as "not shown", so the next live line with that
+        // key was appended as a second copy again, and the index watchdog repainted the pane.
+        _msgKeyIndex.add(k)
+        continue
+      }
+      existingByKey.set(k, c)
+    } else {
+      dropRow(c)
+      continue
+    }
+    i++
+  }
+  return { zebraGap, zebraGapBelow }
+}
+
 function _renderMessagesImpl(id, opts) {
   if (editingChannel) return
   // The pinned bar follows the tab on screen (same rooms inside 30s: a repaint only)
@@ -448,49 +502,7 @@ function _renderMessagesImpl(id, opts) {
   const existingByKey = _rmExistingByKey
   existingByKey.clear()
   const detachedExtras = []
-  // a row removed below another leaves the rows under it a beat out of phase;
-  // the lowest such gap is where the upward restripe starts
-  let zebraGap = false
-  let zebraGapBelow = null
-  const dropRow = (c) => {
-    if (c.previousElementSibling) {
-      zebraGap = true
-      zebraGapBelow = c.nextElementSibling
-    }
-    removeRow(c)
-  }
-  // Walk the LIVE HTMLCollection in place instead of materializing
-  // [...msgsEl.children] (up to DOM_RENDER_CAP+scrollback nodes, every
-  // render). Safe because we only ever advance `i` when the current child
-  // is KEPT: removing children[i] slides the next child into that same
-  // index, so re-checking index i next iteration is correct — nothing is
-  // skipped, and nothing here reorders a kept node.
-  for (let i = 0; i < msgsEl.children.length; ) {
-    const c = msgsEl.children[i]
-    if (c.dataset?.hsYtStatus && c.dataset?.hsYtStatusTab === String(id)) {
-      detachedExtras.push(c)
-      c.remove() // yt-status pins aren't tracked in indices
-      continue
-    }
-    // the docked/filled video player lives in the scroller but is not a row —
-    // sweeping it here killed it on the next full render (popout: instantly)
-    if (c.id === 'hs-mc-embed-player') {
-      i++
-      continue
-    }
-    const k = c.dataset?.msgKey
-    if (k && desiredSet.has(k)) {
-      if (existingByKey.has(k)) {
-        dropRow(c) // pre-existing dupe — drop the second copy
-        continue
-      }
-      existingByKey.set(k, c)
-    } else {
-      dropRow(c)
-      continue
-    }
-    i++
-  }
+  const { zebraGap, zebraGapBelow } = sweepPaneRows(msgsEl, id, desiredSet, existingByKey, detachedExtras)
   if (zebraGap) zebraRepaintUp(msgsEl, zebraGapBelow?.isConnected ? zebraGapBelow : null)
 
   // Bulletproof sticky-bottom: if the user hasn't scrolled up via input,

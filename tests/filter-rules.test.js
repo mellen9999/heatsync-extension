@@ -532,17 +532,29 @@ test('keyword: a word past character 256 of a long line is still found', () => {
   expect(evaluateFilterRules(makeMsg({ text: late })).highlight).toBe('#ff0000')
 })
 
+// The clock a long line's regex is timed on: `step` ms pass between two reads of it.
+function withClock(step, fn) {
+  const real = performance.now
+  let t = 0
+  performance.now = () => (t += step)
+  try {
+    return fn()
+  } finally {
+    performance.now = real
+  }
+}
+
 test('regex: a full-length message is read to its end (500 characters on twitch and kick)', () => {
   const text = `${'x '.repeat(247)}badone`
   expect(text.length).toBe(500)
   compileFilterRules([rule({ match: { type: 'regex', value: 'bad(one|two)$' }, action: 'hide' })])
-  expect(evaluateFilterRules(makeMsg({ text })).hide).toBe(true)
+  expect(withClock(0, () => evaluateFilterRules(makeMsg({ text })).hide)).toBe(true)
 })
 
 test('regex: text longer than any real message is cut where the cap says, a keyword reads on', () => {
   const text = `${'x '.repeat(400)}badone`
   compileFilterRules([rule({ match: { type: 'regex', value: 'badone' }, action: 'hide' })])
-  expect(evaluateFilterRules(makeMsg({ text })).hide).toBe(false)
+  expect(withClock(0, () => evaluateFilterRules(makeMsg({ text })).hide)).toBe(false)
   compileFilterRules([rule({ match: { type: 'keyword', value: 'badone' }, action: 'hide' })])
   expect(evaluateFilterRules(makeMsg({ text })).hide).toBe(true)
 })
@@ -551,5 +563,43 @@ test('expr: contains and regex read the whole line too', () => {
   const text = `${'x '.repeat(200)}late word`
   expect(text.indexOf('late')).toBeGreaterThan(256)
   expect(hides('contains:"late word"', makeMsg({ text }))).toBe(true)
-  expect(hides('regex:"late.word"', makeMsg({ text }))).toBe(true)
+  expect(withClock(0, () => hides('regex:"late.word"', makeMsg({ text })))).toBe(true)
+})
+
+// A regex cannot be stopped once it runs. Reading 512 characters where 256 were read made a
+// pattern with three loops over the same characters 8-16 times slower on a line built for it
+// (0.1-0.25s to 2-4s, measured), so a long line is tried on its first 256 first.
+test('regex: a pattern that is slow on the first 256 characters is answered from those, and is not run on the rest', () => {
+  const late = `${'x '.repeat(200)}late word`
+  // slow: the answer is the first 256's
+  compileFilterRules([rule({ match: { type: 'regex', value: 'late.word' }, action: 'hide' })])
+  expect(withClock(5, () => evaluateFilterRules(makeMsg({ text: late })).hide)).toBe(false)
+  compileFilterRules([rule({ match: { type: 'regex', value: '^x x' }, action: 'hide' })])
+  expect(withClock(5, () => evaluateFilterRules(makeMsg({ text: late })).hide)).toBe(true)
+  expect(withClock(5, () => hides('regex:"late.word"', makeMsg({ text: late })))).toBe(false)
+  // a short line is not timed at all
+  compileFilterRules([rule({ match: { type: 'regex', value: 'late.word' }, action: 'hide' })])
+  expect(withClock(5, () => evaluateFilterRules(makeMsg({ text: late.slice(-200) })).hide)).toBe(true)
+})
+
+test('regex: three loops over the same characters, on the real clock: the line built for it costs what it always did', () => {
+  // gets past the compile guard (it is not exponential): 28 characters of it are quick
+  compileFilterRules([rule({ match: { type: 'regex', value: 'a*a*a*b' }, action: 'hide' })])
+  const text = 'a'.repeat(500)
+  const ran = []
+  const real = RegExp.prototype.test
+  RegExp.prototype.test = function (s) {
+    if (this.source === 'a*a*a*b') ran.push(String(s).length)
+    return real.call(this, s)
+  }
+  let hide
+  try {
+    hide = evaluateFilterRules(makeMsg({ text })).hide
+  } finally {
+    RegExp.prototype.test = real
+  }
+  expect(hide).toBe(false)
+  expect(ran).toEqual([256])
+  // and a line it matches at once is read whole
+  expect(evaluateFilterRules(makeMsg({ text: `${'x'.repeat(300)}aab` })).hide).toBe(true)
 })

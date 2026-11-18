@@ -17,12 +17,24 @@ function _frIsDangerous(p) {
 const _FR_WORD = '[\\p{L}\\p{M}\\p{N}_]'
 const _FR_WORD_CH = /^[\p{L}\p{M}\p{N}_]/u
 // How much of a line a user's own regex is run on. Every site's longest message fits (twitch
-// and kick 500 characters, youtube 200), so a real message is read whole; the cap only bounds
-// what a slow pattern can be made to chew through. A keyword and a `contains` are plain scans
-// and read all of it. All three stopped at 256: a word late in a long line, the spam a hide
-// rule is written for, got past the rule (kick and twitch, e2e 11-18).
+// and kick 500 characters, youtube 200), so a real message is read whole. A keyword and a
+// `contains` are plain scans and read all of it, whatever its length. All three stopped at 256:
+// a word late in a long line, the spam a hide rule is written for, got past the rule (kick and
+// twitch, e2e 11-18).
 const _FR_REGEX_TEXT_MAX = 512
-const _frRegexText = (s) => (s.length > _FR_REGEX_TEXT_MAX ? s.slice(0, _FR_REGEX_TEXT_MAX) : s)
+// A regex cannot be stopped once it runs, and one with three loops over the same characters
+// takes 0.1-0.25s on 256 of them and 2-4s on 512 (measured). So a long line is tried on its
+// first 256 first: a pattern slow on that much is answered from there, as every rule was
+// before, and only a quick one goes on to the whole line.
+const _FR_REGEX_HEAD = 256
+const _FR_REGEX_HEAD_MS = 4
+function _frRegexTest(re, s) {
+  if (s.length <= _FR_REGEX_HEAD) return re.test(s)
+  const start = performance.now()
+  const head = re.test(s.slice(0, _FR_REGEX_HEAD))
+  if (performance.now() - start > _FR_REGEX_HEAD_MS) return head
+  return re.test(s.length > _FR_REGEX_TEXT_MAX ? s.slice(0, _FR_REGEX_TEXT_MAX) : s)
+}
 function _frEscapeLiteral(p) {
   return p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
@@ -302,7 +314,7 @@ function _frEvalNode(node, m) {
     case 'contains':
       return typeof m.text === 'string' && m.text.toLowerCase().includes(node.v)
     case 'regex':
-      return typeof m.text === 'string' && node.re.test(_frRegexText(m.text))
+      return typeof m.text === 'string' && _frRegexTest(node.re, m.text)
     case 'bits': {
       const b = Number(m.bits) || 0
       if (node.cmp === '>') return b > node.n
@@ -501,7 +513,7 @@ function _frTest(rule, m) {
     case 'keyword':
       return !!rule.re && typeof m.text === 'string' && rule.re.test(m.text)
     case 'regex':
-      return !!rule.re && typeof m.text === 'string' && rule.re.test(_frRegexText(m.text))
+      return !!rule.re && typeof m.text === 'string' && _frRegexTest(rule.re, m.text)
     case 'expr':
       return rule.ast ? _frEvalNode(rule.ast, m) : false
     case 'user': {

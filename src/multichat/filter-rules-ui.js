@@ -51,11 +51,19 @@ function _saveFilterRules(rules) {
   }
   var json = JSON.stringify(rules)
   saveUiSetting('chatFilterRules', json)
-  var parsed = []
+  useFilterRules(json)
+}
+
+// New rules judge what is already on screen, not only what arrives next. A
+// highlight is a class on the row and a redraw reuses rows it has, so every row
+// is marked stale first. No stored value (the key was removed) means no rules.
+function useFilterRules(json) {
+  var rules = []
   try {
-    parsed = JSON.parse(json)
+    rules = JSON.parse(json || '[]')
   } catch {}
-  compileFilterRules(parsed)
+  compileFilterRules(Array.isArray(rules) ? rules : [])
+  bumpRenderEpoch()
   renderMessages(currentTab)
   if (currentTab === 'settings') renderSettingsTab()
 }

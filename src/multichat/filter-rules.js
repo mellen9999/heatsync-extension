@@ -466,6 +466,12 @@ function evaluateFilterRules(m, channelKey) {
   return _frVerdict(false, highlight, soundRule, notify)
 }
 
+// Any rule at all — the cheap question a redraw of 1500 rows asks before it
+// looks up each row's channel.
+function filterRulesOn() {
+  return _frAllRules.length > 0 || _frByChannel.size > 0
+}
+
 // One verdict shape everywhere, so callers read the same fields on every path.
 function _frVerdict(hide, highlight, rule, notify) {
   return {
@@ -540,4 +546,4 @@ function previewFilterRule(rule, msgs, limit = FR_PREVIEW_LIMIT) {
   return { ok: true, hits, total }
 }
 
-export { compileFilterRules, evaluateFilterRules, previewFilterRule }
+export { compileFilterRules, evaluateFilterRules, filterRulesOn, previewFilterRule }

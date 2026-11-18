@@ -41,6 +41,7 @@ function pane({ query = '', merged = false } = {}) {
     currentTab: 'room',
     _filterFlags: () => ({ dups: false }),
     isMsgFiltered: () => false,
+    ruleHides: () => false,
     lclearCutFor: () => 0,
     _lastMsgTextByTab: new Map(),
     liveSearchQuery: () => query,

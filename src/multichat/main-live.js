@@ -284,7 +284,9 @@ function _renderMessagesImpl(id, opts) {
   let toRender = msgs.filter((m) => !m?.hidden)
   if (mtSrcs) toRender = foldSimulcastLegs(toRender)
   const _cut = lclearCutFor(id)
-  toRender = toRender.filter((m) => !isMsgFiltered(m, _ff) && !isMsgUserDropped(m, id) && !(_cut && m.time <= _cut))
+  toRender = toRender.filter(
+    (m) => !isMsgFiltered(m, _ff) && !ruleHides(m, id) && !isMsgUserDropped(m, id) && !(_cut && m.time <= _cut),
+  )
   if (_ff.dups) {
     const out = []
     let prevText = null

@@ -1132,15 +1132,7 @@ function listenForSettingsChanges() {
     }
     if (changes.chat_filter_rules) {
       const v = changes.chat_filter_rules.newValue
-      if (typeof v === 'string') {
-        let rules = []
-        try {
-          rules = JSON.parse(v)
-        } catch {}
-        compileFilterRules(Array.isArray(rules) ? rules : [])
-        renderMessages(currentTab)
-        if (currentTab === 'settings') renderSettingsTab()
-      }
+      if (typeof v === 'string' || v === undefined) useFilterRules(v)
     }
 
     // Identity switch — compare the fields render decisions actually read, so

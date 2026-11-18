@@ -52,6 +52,7 @@ function boot() {
       store[k] = v
     },
     renderMessages: () => {},
+    bumpRenderEpoch: () => {},
     currentTab: 'settings',
     prevTab: 'live',
     config: { channels: [{ id: 'c1', twitch: 'somechan' }] },

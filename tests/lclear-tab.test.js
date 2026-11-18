@@ -55,7 +55,7 @@ describe('/lclear marks the tab, not the room', () => {
 })
 
 test('the render pass, the live append and the command all use the mark', () => {
-  expect(SRC).toContain('!isMsgUserDropped(m, id) && !(_cut && m.time <= _cut))')
+  expect(SRC).toContain('!isMsgUserDropped(m, id) && !(_cut && m.time <= _cut)')
   expect(SRC).toMatch(/const _cut = lclearCutFor\(tabId\)\n\s+if \(_cut && msg\.time <= _cut\) return true/)
   const input = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
   const cmd = input.slice(input.indexOf("if (cmd === 'lclear')"), input.indexOf("if (cmd === 'help')"))

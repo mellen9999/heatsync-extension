@@ -853,8 +853,8 @@ function buildMessageDiv(m, tabId) {
     div.classList.add('hs-mc-msg-cleared')
     if (m.clearedReason) div.dataset.clearedReason = m.clearedReason
   }
-  // Filter rule highlight — per-rule color accent (hide is handled before buffer insert)
-  const _frHL = evaluateFilterRules(m, tabId)
+  // Filter rule highlight — per-rule color accent (a hide never gets this far: ruleHides)
+  const _frHL = evaluateFilterRules(m, ruleScopeOf(m, tabId))
   if (_frHL.highlight) {
     div.classList.add('hs-mc-rule-highlight')
     div.style.setProperty('--hs-rule-hl', _frHL.highlight)
@@ -1704,6 +1704,23 @@ function markClearedRow(row, title) {
   row.classList.add('hs-mc-msg-cleared')
   if (title) row.dataset.clearedReason = title
 }
+// The saved channel whose rules judge a message: the one it came from, else
+// the tab it is drawn in. One reading for arrival and for every redraw.
+function ruleScopeOf(m, tabId) {
+  const look = getChannelLookup()
+  const from =
+    (m.platform !== 'kick' && look.twitch.get(m.channel)) || (m.platform !== 'twitch' && look.kick.get(m.channel))
+  return from?.id || (look.byId.has(tabId) ? tabId : null)
+}
+// A hide rule holds on every draw, not only on arrival. The arrival handlers
+// skip the append, but the line is already in its buffer (and in the worker's,
+// which is where a reload reads history from) — so any full redraw, the first
+// paint after a reload, and a rule written after the line all need the same answer here.
+function ruleHides(m, tabId) {
+  if (!filterRulesOn() || !m || m.type === 'stream-event' || m.type === 'automod-hold' || m.inlineNotifType)
+    return false
+  return !isSelf(m) && evaluateFilterRules(m, ruleScopeOf(m, tabId)).hide
+}
 function isMsgFiltered(m, f) {
   if (m?.type === 'notice' && m.resolved) return true // a held send that has since posted
   if (!m || m.type === 'stream-event' || m.type === 'automod-hold' || m.inlineNotifType) return false
@@ -1871,7 +1888,7 @@ function appendMessage(msg, tabId) {
 
   // Content filters — hidden at render, buffers keep the message
   const _ff = _filterFlags()
-  if (isMsgFiltered(msg, _ff)) return true
+  if (isMsgFiltered(msg, _ff) || ruleHides(msg, tabId)) return true
   const _cut = lclearCutFor(tabId)
   if (_cut && msg.time <= _cut) return true
   if (typeof msg.text === 'string' && _ff.dups) {

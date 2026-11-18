@@ -25,7 +25,7 @@ function list(rows, { loader = false, header = 0 } = {}) {
   const l = { scrollTop: 0, children: [] }
   const rect = (i) => ({ top: header + i * ROW - l.scrollTop, bottom: header + (i + 1) * ROW - l.scrollTop })
   l.getBoundingClientRect = () => ({ top: header, bottom: header + 100 })
-  rows.forEach((r, i) => l.children.push({ _hsRow: r, getBoundingClientRect: () => rect(i) }))
+  for (const [i, r] of rows.entries()) l.children.push({ _hsRow: r, getBoundingClientRect: () => rect(i) })
   if (loader) l.children.push({ getBoundingClientRect: () => rect(rows.length) })
   return l
 }

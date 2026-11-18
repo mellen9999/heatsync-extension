@@ -124,6 +124,10 @@ mcSignal.addEventListener('abort', () => {
 // page is instead evicted from bfcache, it's destroyed wholesale — nothing
 // leaks. Non-persisted pagehide (real navigation/unload) aborts as before.
 window.addEventListener('pagehide', (ev) => {
+  // before the teardown clears its timer: a setting changed a moment ago is still only in memory
+  try {
+    if (typeof flushUiSettings === 'function') flushUiSettings(true)
+  } catch (_) {}
   if (!ev.persisted) lifecycle.abort()
 })
 // On bfcache restore, the panel survived the freeze but BG SW state may have

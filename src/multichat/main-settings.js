@@ -159,57 +159,69 @@ function saveUiSetting(key, value) {
   _pendingSettings[key] = value
   if (_LAYOUT_MIRROR_KEYS.has(key)) _mirrorLayoutToLS(key, value)
   if (_settingsSaveTimer) cleanup.clearTimeout(_settingsSaveTimer)
-  _settingsSaveTimer = cleanup.setTimeout(() => {
-    const pending = _pendingSettings
-    _pendingSettings = null
-    _settingsSaveTimer = null
+  _settingsSaveTimer = cleanup.setTimeout(flushUiSettings, 100)
+}
 
-    // Split: blocklist keys go to chrome.storage.local (no quota cap).
-    // Everything else goes to chrome.storage.sync. The ws fanout patch is
-    // a third, overlapping view: syncPatch keys PLUS any blocklist key
-    // that's a real cross-device preference (not DEVICE_LOCAL_KEYS) and
-    // fits under LARGE_KEY_SYNC_MAX — chatFilterRules
-    // ride the server channel this way even though they never touch
-    // chrome.storage.sync directly (8KB ceiling).
-    const localPatch = {}
-    const syncPatch = {}
-    const wsPatch = {}
-    for (const k in pending) {
-      const v = pending[k]
-      if (UI_SYNC_BLOCKLIST.has(k)) {
-        const mirrorKey = OVERFLOW_MIRROR_KEYS[k]
-        if (mirrorKey) localPatch[mirrorKey] = v
-        if (isLargeKeySyncEligible(k, v)) {
-          // large free-text keys ride a SLOWER debounce (below) — the 100ms
-          // flush is tuned for toggles; a keystroke-by-keystroke textarea
-          // edit would otherwise fan a fresh up-to-32KB patch to every
-          // device several times per edit session
-          _pendingLargeWsPatch[k] = v
-        } else if (!DEVICE_LOCAL_KEYS.has(k)) {
-          warn(
-            'settings sync: skipping',
-            k,
-            '—',
-            estimateSettingSize(v),
-            'bytes exceeds',
-            LARGE_KEY_SYNC_MAX,
-            'cap, staying device-local',
-          )
-        }
-      } else {
-        syncPatch[k] = v
-        wsPatch[k] = v
+// What saveUiSetting collected, written out. `leaving` is the page going away (bootstrap.js,
+// pagehide): the teardown there clears every pending timer, so a setting changed in the last
+// 100ms was never saved, and a big text setting (filter rules) changed in the last 1.2s never
+// reached the other devices, whose older copy then came back over it. On the way out everything
+// pending is sent at once, with nothing awaited first.
+function flushUiSettings(leaving = false) {
+  if (_settingsSaveTimer) cleanup.clearTimeout(_settingsSaveTimer)
+  _settingsSaveTimer = null
+  const pending = _pendingSettings || {}
+  _pendingSettings = null
+
+  // Split: blocklist keys go to chrome.storage.local (no quota cap).
+  // Everything else goes to chrome.storage.sync. The ws fanout patch is
+  // a third, overlapping view: syncPatch keys PLUS any blocklist key
+  // that's a real cross-device preference (not DEVICE_LOCAL_KEYS) and
+  // fits under LARGE_KEY_SYNC_MAX — chatFilterRules
+  // ride the server channel this way even though they never touch
+  // chrome.storage.sync directly (8KB ceiling).
+  const localPatch = {}
+  const syncPatch = {}
+  const wsPatch = {}
+  for (const k in pending) {
+    const v = pending[k]
+    if (UI_SYNC_BLOCKLIST.has(k)) {
+      const mirrorKey = OVERFLOW_MIRROR_KEYS[k]
+      if (mirrorKey) localPatch[mirrorKey] = v
+      if (isLargeKeySyncEligible(k, v)) {
+        // large free-text keys ride a SLOWER debounce (below) — the 100ms
+        // flush is tuned for toggles; a keystroke-by-keystroke textarea
+        // edit would otherwise fan a fresh up-to-32KB patch to every
+        // device several times per edit session
+        _pendingLargeWsPatch[k] = v
+      } else if (!DEVICE_LOCAL_KEYS.has(k)) {
+        warn(
+          'settings sync: skipping',
+          k,
+          '—',
+          estimateSettingSize(v),
+          'bytes exceeds',
+          LARGE_KEY_SYNC_MAX,
+          'cap, staying device-local',
+        )
       }
+    } else {
+      syncPatch[k] = v
+      wsPatch[k] = v
     }
+  }
 
-    if (Object.keys(localPatch).length) {
-      invalidateUiOverflowCache()
-      browser.storage.local.set(localPatch).catch(() => {})
-    }
+  if (Object.keys(localPatch).length) {
+    invalidateUiOverflowCache()
+    browser.storage.local.set(localPatch).catch(() => {})
+  }
 
-    if (Object.keys(syncPatch).length) {
-      invalidateUiSettingsCache()
-      ;(async () => {
+  if (Object.keys(syncPatch).length) {
+    invalidateUiSettingsCache()
+    // leaving: the write goes out in this same turn. Anything behind an await may never run.
+    if (leaving) writeUiSettings(syncPatch)
+    else
+      (async () => {
         // Quota guard: chrome.storage.sync caps each key at 8192 bytes.
         // Check usage before writing — warn + toast if near the ceiling.
         try {
@@ -226,34 +238,36 @@ function saveUiSetting(key, value) {
           showToast(t('mc_main_settings_save_failed'), 'error')
         }
       })()
-    }
+  }
 
-    if (Object.keys(wsPatch).length) {
-      // Cross-surface insta-sync: server merges + fans out to every other
-      // client of this user (other tabs, ext on Twitch/Kick/YT, heatsync.org).
-      // chrome.storage.sync only syncs Chrome → Chrome with same Google
-      // account; server-backed covers Firefox + heatsync.org + signed-out
-      // Chrome profiles using the same heatsync login. Only DEVICE_LOCAL_KEYS
-      // (platformFilters) are omitted — genuinely per-device, not a pref.
+  if (Object.keys(wsPatch).length) {
+    // Cross-surface insta-sync: server merges + fans out to every other
+    // client of this user (other tabs, ext on Twitch/Kick/YT, heatsync.org).
+    // chrome.storage.sync only syncs Chrome → Chrome with same Google
+    // account; server-backed covers Firefox + heatsync.org + signed-out
+    // Chrome profiles using the same heatsync login. Only DEVICE_LOCAL_KEYS
+    // (platformFilters) are omitted — genuinely per-device, not a pref.
+    safeSendMessage({
+      type: 'ws_send',
+      data: { type: 'ui-state:sync', patch: wsPatch },
+    })
+  }
+
+  if (Object.keys(_pendingLargeWsPatch).length) {
+    if (_largeWsPatchTimer) cleanup.clearTimeout(_largeWsPatchTimer)
+    _largeWsPatchTimer = null
+    const sendLarge = () => {
+      _largeWsPatchTimer = null
+      const patch = _pendingLargeWsPatch
+      _pendingLargeWsPatch = {}
       safeSendMessage({
         type: 'ws_send',
-        data: { type: 'ui-state:sync', patch: wsPatch },
+        data: { type: 'ui-state:sync', patch },
       })
     }
-
-    if (Object.keys(_pendingLargeWsPatch).length) {
-      if (_largeWsPatchTimer) cleanup.clearTimeout(_largeWsPatchTimer)
-      _largeWsPatchTimer = cleanup.setTimeout(() => {
-        _largeWsPatchTimer = null
-        const patch = _pendingLargeWsPatch
-        _pendingLargeWsPatch = {}
-        safeSendMessage({
-          type: 'ws_send',
-          data: { type: 'ui-state:sync', patch },
-        })
-      }, 1200)
-    }
-  }, 100)
+    if (leaving) sendLarge()
+    else _largeWsPatchTimer = cleanup.setTimeout(sendLarge, 1200)
+  }
 }
 
 // large-key ws fanout buffer — see saveUiSetting's slow-debounce comment

@@ -43,7 +43,7 @@ function pane({ query = '', merged = false } = {}) {
     isMsgFiltered: () => false,
     ruleHides: () => false,
     lclearCutFor: () => 0,
-    _lastMsgTextByTab: new Map(),
+    lastDrawnText: () => null,
     liveSearchQuery: () => query,
     liveSearchMatcherFor,
     scheduleMergedRender: () => seen.renders++,

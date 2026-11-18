@@ -1740,7 +1740,19 @@ function isMsgFiltered(m, f) {
   if (f.cmds && m.text.charCodeAt(0) === 33) return true
   return false
 }
-const _lastMsgTextByTab = new Map()
+// "hide repeats": a line is a repeat when it says what the last line DRAWN says, the same rule
+// the full render applies to its list. Read off the rows themselves. A separate note of the
+// last appended text went stale every time the list was redrawn from the buffers (a tab
+// switch, a resume, a trim): the next line was then judged against a line no longer last, so
+// a repeat was drawn and taken away by the following redraw, or a new line was held back
+// until one.
+function lastDrawnText(msgsEl) {
+  for (let row = msgsEl?.lastElementChild; row; row = row.previousElementSibling) {
+    const txt = row._hsMsg?.text
+    if (typeof txt === 'string') return txt
+  }
+  return null
+}
 
 // Cached emote imgs are already `complete` when a row mounts, so their `load`
 // event never fires and the msgsEl load listener never snaps them — meaning
@@ -1891,9 +1903,8 @@ function appendMessage(msg, tabId) {
   if (isMsgFiltered(msg, _ff) || ruleHides(msg, tabId)) return true
   const _cut = lclearCutFor(tabId)
   if (_cut && msg.time <= _cut) return true
-  if (typeof msg.text === 'string' && _ff.dups) {
-    if (_lastMsgTextByTab.get(tabId) === msg.text) return true
-    _lastMsgTextByTab.set(tabId, msg.text)
+  if (_ff.dups && typeof msg.text === 'string') {
+    if (lastDrawnText(document.getElementById('hs-mc-messages')) === msg.text) return true
   }
 
   // A live filter is up: the render decides what is on screen, and counts the matches. A line

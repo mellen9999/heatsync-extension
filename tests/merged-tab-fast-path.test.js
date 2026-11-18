@@ -381,7 +381,11 @@ describe('wiring in main.js', () => {
   test('every merged render says what it left, and any render forgets the last', () => {
     expect(MAIN_SRC).toMatch(/mtNoteRender\(id, null\)/)
     expect(MAIN_SRC.match(/mtNoteRender\(id, mtSrcs\)/g)?.length).toBe(2) // the diff path and the cache-restore path
-    expect(MAIN_SRC).toMatch(/mtSrcs = mergedTabSources\(id, SCROLLBACK_MAX, true\)/)
+    // the sources come from the one resolver (the whole buffer when older rows are loaded: main-state.js)
+    expect(MAIN_SRC).toMatch(
+      /const srcs = mergedTabSources\(id, pinned \? Number\.POSITIVE_INFINITY : SCROLLBACK_MAX, true\)/,
+    )
+    expect(MAIN_SRC).toMatch(/mtSrcs = cutSourcesAsOf\(srcs, pinned \? _scrollbackAsOf : null\)/)
   })
   test('the render and the gate read their sources from the same resolver', () => {
     expect(MT_SRC).toMatch(/function mergedTabSources\(id, take, ensureJoined\)/)

@@ -1104,7 +1104,7 @@ function switchTab(id, sub, subOpts) {
   flushHeldOlder()
   snapshotTabState(currentTab)
   currentTab = id
-  _scrollbackWindow = 0 // new tab starts at the live tail, not prior scrollback depth
+  resetScrollback() // new tab starts at the live tail, not prior scrollback depth
   markTabSeen(id)
 
   // Update settings button icon: X when settings open, cog otherwise

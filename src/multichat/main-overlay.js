@@ -1163,7 +1163,7 @@ function createOverlay() {
         isScrolledUp = false
         newMessageCount = 0
         newBtn.style.display = 'none'
-        _scrollbackWindow = 0 // back at the live tail — drop scrollback DOM
+        resetScrollback() // back at the live tail — drop scrollback DOM
       }
     }
 
@@ -1294,7 +1294,7 @@ function createOverlay() {
       isScrolledUp = false
       newMessageCount = 0
       newBtn.style.display = 'none'
-      _scrollbackWindow = 0 // jumping to live tail — drop scrollback DOM
+      resetScrollback() // jumping to live tail — drop scrollback DOM
       if (isStaticTab()) {
         // Static tabs: re-render then scroll to top (newest content)
         renderMessages(currentTab)

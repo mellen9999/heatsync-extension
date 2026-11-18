@@ -2556,6 +2556,8 @@ function loadOlderScrollback() {
   // short. Instead: bump, render, and revert if nothing older was available.
   const before = msgsEl.children.length
   const prevWindow = _scrollbackWindow
+  // the first step pins the window to what is on screen now (main-state.js)
+  if (_scrollbackAsOf === null) _scrollbackAsOf = newestOrdOnScreen(msgsEl)
   const oldH = msgsEl.scrollHeight
   const oldTop = msgsEl.scrollTop
   _scrollbackWindow = Math.min(_scrollbackWindow + SCROLLBACK_STEP, SCROLLBACK_MAX - DOM_RENDER_CAP)
@@ -2569,6 +2571,7 @@ function loadOlderScrollback() {
     msgsEl.scrollTop = oldTop + (msgsEl.scrollHeight - oldH)
   } else {
     _scrollbackWindow = prevWindow // buffer exhausted — don't inflate uselessly
+    if (!prevWindow) _scrollbackAsOf = null
     _olderMissAt = Date.now()
   }
   cleanup.raf(() => {

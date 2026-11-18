@@ -331,7 +331,7 @@ function softTwitchNav(prevLiveCh) {
     // behind a "N new" pause indicator the user never asked for.
     isScrolledUp = false
     newMessageCount = 0
-    _scrollbackWindow = 0 // new channel starts at the live tail
+    resetScrollback() // new channel starts at the live tail
     // SPA nav changed the URL channel — re-join + repaint the live tab so the
     // new channel actually connects and renders. Without this the panel froze
     // on the previous channel until an unrelated render fired — a deadlock on

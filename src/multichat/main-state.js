@@ -587,6 +587,30 @@ const DOM_RENDER_CAP = 500
 // already buffered). Reset to 0 on tab switch / channel nav / jump-to-bottom
 // so the DOM never stays bloated past the live tail.
 let _scrollbackWindow = 0
+// While older rows are loaded: the ord of the newest row the reader had when they first asked.
+// The window is counted back from there, not from the live tail. Counted from the tail, every
+// line that arrived since the pause pushed it forward: on a fast chat "load older" drew the new
+// lines at the bottom, added nothing above, and past ~250 new lines took the very rows on
+// screen away (real kick, e2e s20, 11-17). The new lines stay held behind the "N new" pill.
+let _scrollbackAsOf = null
+/** Back to the live tail: no older rows, no pinned window. */
+function resetScrollback() {
+  _scrollbackWindow = 0
+  _scrollbackAsOf = null
+}
+/** Each source without the lines newer than what the reader had (no cut while none are loaded). */
+function cutSourcesAsOf(srcs, asOf) {
+  return asOf == null ? srcs : srcs.map((s) => s.filter((m) => ordOf(m) <= asOf))
+}
+/** The newest ord among the rows on screen, or null when no row carries a message. */
+function newestOrdOnScreen(msgsEl) {
+  let max = null
+  for (const row of msgsEl.children) {
+    const o = row._hsMsg ? ordOf(row._hsMsg) : 0
+    if (o && (max === null || o > max)) max = o
+  }
+  return max
+}
 const SCROLLBACK_STEP = 250
 const SCROLLBACK_MAX = 1500 // hard ceiling on rendered rows (3x the live cap)
 /** Rows the pane may hold right now: the live tail, plus what scrolling to the top has added. */

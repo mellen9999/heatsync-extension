@@ -387,7 +387,7 @@ function softKickNav(prevLiveCh) {
     } catch (_) {}
     isScrolledUp = false
     newMessageCount = 0
-    _scrollbackWindow = 0 // new channel starts at the live tail
+    resetScrollback() // new channel starts at the live tail
     // SPA nav changed the URL channel — re-join + repaint the live tab so the
     // new Kick channel connects and renders (otherwise the panel freezes on
     // the previous channel until an unrelated render fires).

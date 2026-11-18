@@ -201,7 +201,10 @@ function _renderMessagesImpl(id, opts) {
   } else {
     // live tab or channel tab: twitch + kick + youtube, merged fairly (see
     // merged-tab.js for where each source comes from)
-    mtSrcs = mergedTabSources(id, SCROLLBACK_MAX, true)
+    // older rows loaded: the whole buffer, cut at what the reader had (main-state.js)
+    const pinned = _scrollbackWindow > 0 && _scrollbackAsOf !== null
+    const srcs = mergedTabSources(id, pinned ? Number.POSITIVE_INFINITY : SCROLLBACK_MAX, true)
+    mtSrcs = cutSourcesAsOf(srcs, pinned ? _scrollbackAsOf : null)
     msgs = fairMerge(mtSrcs, renderRowCap())
   }
 
@@ -340,6 +343,8 @@ function _renderMessagesImpl(id, opts) {
     _cap = FIRST_PAINT_ROWS
     growFirstPaint(id)
   }
+  // …and nothing that joined the list on the way here (stream events, mentions) is newer either
+  if (_scrollbackWindow > 0 && _scrollbackAsOf !== null) toRender = toRender.filter((m) => ordOf(m) <= _scrollbackAsOf)
   toRender = toRender.slice(-_cap)
   isProgrammaticScroll = true
 

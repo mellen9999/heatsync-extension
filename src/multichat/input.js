@@ -8095,49 +8095,9 @@ async function handleSlashCommand(text, input) {
     return true
   }
 
-  // ── /set — change any registry setting from the composer ────────────────
-  // setSetting owns coercion + validation (returns false on unknown key or bad
-  // value — never corrupts the sync blob), so this is just key/alias resolution
-  // plus the one gap a raw string can't cross: bool, where coerceSettingValue
-  // does !!v and "off" would read as true.
+  // ── /set — change any registry setting from the composer (set-command.js) ──
   if (cmd === 'set') {
-    const m = rest.match(/^(\S+)\s+([\s\S]+)$/)
-    if (!m) {
-      showToast(t('mc_input_usage_set') || '/set <setting> <value>', 'error')
-      return true
-    }
-    const rawKey = m[1]
-    const lk = rawKey.toLowerCase()
-    const def =
-      typeof SETTINGS !== 'undefined' ? SETTINGS.find((d) => d.key.toLowerCase() === lk || d.alias === lk) : null
-    if (!def) {
-      showToast(t('mc_input_set_unknown', [rawKey]) || `unknown setting: ${rawKey}`, 'error')
-      return true
-    }
-    if (def.type === 'multiselect' || def.type === 'boolmap' || def.type === 'json') {
-      showToast(t('mc_input_set_complex') || 'change that one in the settings panel', 'error')
-      return true
-    }
-    let val = m[2].trim()
-    if (def.type === 'bool') {
-      const on = /^(on|true|1|yes|enabled?|show)$/i.test(val)
-      const off = /^(off|false|0|no|disabled?|hide)$/i.test(val)
-      if (!on && !off) {
-        showToast(t('mc_input_set_bool', [def.key]) || `use on/off for ${def.key}`, 'error')
-        return true
-      }
-      val = on
-    }
-    const ok = typeof setSetting === 'function' && setSetting(def.key, val)
-    if (ok) {
-      showToast(t('mc_input_set_done', [def.key, String(val)]) || `${def.key} = ${val}`, 'success')
-      clearInput(input)
-    } else {
-      let hint = ''
-      if (def.type === 'enum' && Array.isArray(def.options)) hint = ` · ${def.options.map((o) => o.value).join('/')}`
-      else if (def.type === 'range' && def.options) hint = ` · ${def.options.min}-${def.options.max}`
-      showToast(`${t('mc_input_set_invalid', [def.key]) || `invalid value for ${def.key}`}${hint}`, 'error')
-    }
+    runSetCommand(rest, input)
     return true
   }
 

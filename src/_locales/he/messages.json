@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "ההגדרות יובאו — טוען מחדש…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "ההגדרות יובאו, $COUNT$ ערכים לא תקינים הושמטו — טוען מחדש…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "ביטוי לא תקין"
   },

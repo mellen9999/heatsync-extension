@@ -2425,6 +2425,14 @@
   "mc_settingsui_import_ok": {
     "message": "settings imported — reloading…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "settings imported, $COUNT$ values that did not fit were left out — reloading…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "invalid expression"
   },

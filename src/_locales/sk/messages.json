@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "nastavenia importované — načítavam znova…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "nastavenia importované, $COUNT$ neplatných hodnôt vynechaných — načítavam znova…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "neplatný výraz"
   },

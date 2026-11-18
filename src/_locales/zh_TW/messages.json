@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "設定已匯入 — 正在重新載入…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "設定已匯入，已略過 $COUNT$ 個無效值 — 正在重新載入…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "運算式無效"
   },

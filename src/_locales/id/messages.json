@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "pengaturan diimpor — memuat ulang…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "pengaturan diimpor, $COUNT$ nilai tidak valid dilewati — memuat ulang…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "ekspresi tidak valid"
   },

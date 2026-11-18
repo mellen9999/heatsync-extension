@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "настройките са импортирани — презареждам…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "настройките са импортирани, $COUNT$ невалидни стойности са пропуснати — презареждам…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "невалиден израз"
   },

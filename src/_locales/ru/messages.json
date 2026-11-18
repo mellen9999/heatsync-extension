@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "настройки импортированы — перезагружаю…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "настройки импортированы, пропущено недопустимых значений: $COUNT$ — перезагружаю…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "неверное выражение"
   },

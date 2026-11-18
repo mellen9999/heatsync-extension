@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "innstillinger importert — laster på nytt…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "innstillinger importert, $COUNT$ ugyldige verdier utelatt — laster på nytt…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "ugyldig uttrykk"
   },

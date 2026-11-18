@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "einstellungen importiert — lädt neu…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "einstellungen importiert, $COUNT$ ungültige werte ausgelassen — lädt neu…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "ungültiger Ausdruck"
   },

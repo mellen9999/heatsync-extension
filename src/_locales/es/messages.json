@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "ajustes importados — recargando…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "ajustes importados, $COUNT$ valores no válidos omitidos — recargando…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "expresión inválida"
   },

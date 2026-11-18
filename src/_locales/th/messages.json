@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "นำเข้าการตั้งค่าแล้ว — กำลังโหลดใหม่…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "นำเข้าการตั้งค่าแล้ว ข้ามค่าที่ไม่ถูกต้อง $COUNT$ รายการ — กำลังโหลดใหม่…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "นิพจน์ไม่ถูกต้อง"
   },

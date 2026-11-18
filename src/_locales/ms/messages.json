@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "tetapan diimport — memuat semula…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "tetapan diimport, $COUNT$ nilai tidak sah ditinggalkan — memuat semula…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "ungkapan tak sah"
   },

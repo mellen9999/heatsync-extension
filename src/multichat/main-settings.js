@@ -1087,7 +1087,7 @@ async function retireSettings() {
 
 // Registry-derived reset — every entry returns to its default through the
 // normal setSetting path (storage write + bridge + applier). noReset
-// entries (server-coupled content-warning prefs) are left untouched.
+// entries (session state, lists the user built) are left untouched.
 // Sync writes coalesce into one debounced ui_settings patch.
 // Optional `cat` scopes the reset to one settings page (per-page default
 // button); no arg = everything (system page's all-settings button).

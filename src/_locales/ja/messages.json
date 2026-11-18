@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "設定をインポートした — リロード中…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "設定をインポートした、無効な値 $COUNT$ 件は除外 — リロード中…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "無効な式"
   },

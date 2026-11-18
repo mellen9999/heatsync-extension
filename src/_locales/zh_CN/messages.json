@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "设置已导入 — 正在重新加载…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "设置已导入，已跳过 $COUNT$ 个无效值 — 正在重新加载…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "表达式无效"
   },

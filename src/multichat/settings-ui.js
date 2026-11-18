@@ -823,6 +823,34 @@ async function _exportAllSettings() {
   }
 }
 
+// A value a file carries for a setting has to be one that setting can hold. Reading falls
+// back to the default for anything else, so a wrong one never showed: it sat in storage,
+// synced to every device, and the import said it had worked. Keys the registry does not
+// know (tab order, panel sizes) pass through to the store's own sanitizer as before.
+// `sync` = the ui_settings bag, else the local one (a mirrored setting lives under its mirror key).
+function _importFit(bag, sync) {
+  var out = {}
+  var left = 0
+  Object.keys(bag).forEach((k) => {
+    var def = SETTINGS.find((d) =>
+      sync ? d.key === k && d.scope !== 'local' : d.scope === 'local' ? d.key === k : d.mirrorKey === k,
+    )
+    if (!def) {
+      out[k] = bag[k]
+      return
+    }
+    var v = coerceSettingValue(def, bag[k])
+    // a switch takes true or false: coercion alone would read any text as "on"
+    var fits =
+      v !== undefined &&
+      validateSettingValue(def, v) &&
+      (def.type !== 'bool' || typeof bag[k] === 'boolean' || !!def.coerce)
+    if (fits) out[k] = v
+    else left++
+  })
+  return { out, left }
+}
+
 async function _importAllSettings() {
   return new Promise((resolve) => {
     var input = document.createElement('input')
@@ -850,17 +878,22 @@ async function _importAllSettings() {
           return
         }
         var writes = []
-        if (data.sync?.ui_settings && typeof data.sync.ui_settings === 'object') {
+        var left = 0
+        var ui = data.sync?.ui_settings
+        if (ui && typeof ui === 'object' && !Array.isArray(ui)) {
+          var fitUi = _importFit(ui, true)
+          left += fitUi.left
           // Merge — preserve any keys absent from the import. The SW's serialized
           // rmw chain owns the write (and sanitizes it, so corrupt fields don't
           // leak in); a local get→merge→set would race concurrent writes.
-          writes.push(
-            writeUiSettings(data.sync.ui_settings).then((ok) => {
-              if (!ok) throw new Error('ui_settings write failed')
-            }),
-          )
+          if (Object.keys(fitUi.out).length)
+            writes.push(
+              writeUiSettings(fitUi.out).then((ok) => {
+                if (!ok) throw new Error('ui_settings write failed')
+              }),
+            )
         }
-        if (data.local && typeof data.local === 'object') {
+        if (data.local && typeof data.local === 'object' && !Array.isArray(data.local)) {
           var safeLocal = {}
           Object.keys(data.local).forEach((k) => {
             if (k.length < 1 || k.length > 128) return
@@ -868,10 +901,18 @@ async function _importAllSettings() {
             if (_SETTINGS_PRIVATE_KEY_RE.test(k)) return
             safeLocal[k] = data.local[k]
           })
-          if (Object.keys(safeLocal).length) writes.push(browser.storage.local.set(safeLocal))
+          var fitLocal = _importFit(safeLocal, false)
+          left += fitLocal.left
+          if (Object.keys(fitLocal.out).length) writes.push(browser.storage.local.set(fitLocal.out))
+        }
+        // nothing in the file could be used: say so, change nothing, stay on the page
+        if (!writes.length) {
+          showToast(t('mc_settingsui_not_heatsync_file'), 'error')
+          resolve(false)
+          return
         }
         await Promise.all(writes)
-        showToast(t('mc_settingsui_import_ok'), 'info')
+        showToast(left ? t('mc_settingsui_import_partial', [String(left)]) : t('mc_settingsui_import_ok'), 'info')
         setTimeout(() => {
           try {
             location.reload()

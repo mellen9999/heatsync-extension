@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "설정 가져옴 — 새로고침 중…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "설정 가져옴, 잘못된 값 $COUNT$개 제외 — 새로고침 중…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "잘못된 식"
   },

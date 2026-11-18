@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "setări importate — se reîncarcă…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "setări importate, $COUNT$ valori nevalide omise — se reîncarcă…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "expresie invalidă"
   },

@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "ayarlar içe aktarıldı — yeniden yükleniyor…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "ayarlar içe aktarıldı, $COUNT$ geçersiz değer atlandı — yeniden yükleniyor…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "geçersiz ifade"
   },

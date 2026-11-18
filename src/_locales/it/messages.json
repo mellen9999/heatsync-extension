@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "impostazioni importate — ricarico…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "impostazioni importate, $COUNT$ valori non validi esclusi — ricarico…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "espressione non valida"
   },

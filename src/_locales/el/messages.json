@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "οι ρυθμίσεις εισήχθησαν — επαναφόρτωση…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "οι ρυθμίσεις εισήχθησαν, $COUNT$ μη έγκυρες τιμές παραλείφθηκαν — επαναφόρτωση…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "άκυρη έκφραση"
   },

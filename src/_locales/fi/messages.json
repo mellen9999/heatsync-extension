@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "asetukset tuotu — ladataan uudelleen…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "asetukset tuotu, $COUNT$ virheellistä arvoa jätettiin pois — ladataan uudelleen…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "virheellinen lauseke"
   },

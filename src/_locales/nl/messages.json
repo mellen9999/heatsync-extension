@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "instellingen geïmporteerd — herladen…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "instellingen geïmporteerd, $COUNT$ ongeldige waarden overgeslagen — herladen…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "ongeldige expressie"
   },

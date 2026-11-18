@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "beállítások importálva — újratöltés…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "beállítások importálva, $COUNT$ érvénytelen érték kihagyva — újratöltés…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "érvénytelen kifejezés"
   },

@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "تم استيراد الإعدادات — جارٍ إعادة التحميل…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "تم استيراد الإعدادات، وتُركت $COUNT$ قيم غير صالحة — جارٍ إعادة التحميل…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "تعبير غير صالح"
   },

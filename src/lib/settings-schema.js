@@ -61,7 +61,8 @@ import { namePaintsOn } from './utils.js'
 //   displayScale  range only: UI shows value × scale (storage stays raw)
 //   tweak      true → twitch-ui-noise CSS-hide flag; content.js
 //              applyUiSettings() owns the actual hide rules
-//   noReset    excluded from resetSettingsToDefaults (server-coupled prefs)
+//   noReset    excluded from resetSettingsToDefaults: session state and lists the
+//              user built (open tabs, hide/highlight rules), not preferences
 //   reloadApply  value fully applies only after a page reload — renderer
 //              shows a [reload] chip when current differs from boot
 //   hosts      ['twitch'|'kick'|'youtube'] — the sites the row affects; the
@@ -1505,6 +1506,8 @@ const SETTINGS = [
     apply: 'filterRules',
     applyOnLoad: true,
     maxLen: 524288,
+    // a list the user built, like mutes and blocks: "reset to defaults" keeps it
+    noReset: true,
   },
 
   {

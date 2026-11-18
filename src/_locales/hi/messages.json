@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "सेटिंग इम्पोर्ट हुईं — रीलोड हो रहा है…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "सेटिंग इम्पोर्ट हुईं, $COUNT$ अमान्य मान छोड़ दिए गए — रीलोड हो रहा है…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "गलत एक्सप्रेशन"
   },

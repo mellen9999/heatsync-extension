@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "configurações importadas — recarregando…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "configurações importadas, $COUNT$ valores inválidos ignorados — recarregando…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "expressão inválida"
   },

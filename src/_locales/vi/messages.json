@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "đã nhập cài đặt — đang tải lại…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "đã nhập cài đặt, bỏ qua $COUNT$ giá trị không hợp lệ — đang tải lại…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "biểu thức không hợp lệ"
   },

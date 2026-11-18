@@ -934,6 +934,7 @@ const MULTICHAT_MODULES = [
   'sent-history.js',
   'composer-attrs.js',
   'ctx-menu.js',
+  'set-command.js',
   'input.js',
   'tab-list.js',
   'profile-card.js',

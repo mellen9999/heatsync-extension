@@ -2424,6 +2424,14 @@
   "mc_settingsui_import_ok": {
     "message": "na-import ang settings — nagre-reload…"
   },
+  "mc_settingsui_import_partial": {
+    "message": "na-import ang settings, $COUNT$ di-wastong value ang nilaktawan — nagre-reload…",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_settingsui_invalid_expression": {
     "message": "di-wastong expression"
   },

@@ -41,6 +41,7 @@ const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages
 const NEW_RE = new RegExp(`^▼?\\s*${String(EN.mc_new_messages.message).replace('$COUNT$', '(\\d+)')}$`)
 const ROW_CAP = 1500 // SCROLLBACK_MAX: the most rows the list ever holds
 const LIVE_CAP = 500 // DOM_RENDER_CAP: the most at the live tail
+const TRIM_SLACK = 50 // appends run past the cap by a few rows before the next trim
 
 type View = {
   rows: number
@@ -76,7 +77,8 @@ const view = (p: any): Promise<View> =>
     }
   })
 
-const pillCount = (v: View) => (v.pillShown ? Number(v.pillText.match(NEW_RE)?.[1] ?? NaN) : 0)
+// a pause with nothing new yet reads "resume": zero
+const pillCount = (v: View) => (v.pillShown ? Number(v.pillText.match(NEW_RE)?.[1] ?? 0) : 0)
 const dupes = (keys: string[]) => keys.length - new Set(keys).size
 
 async function aimAtList(p: any) {
@@ -269,6 +271,7 @@ async function leg(env: any, name: string, url: string, errs: string[], cons: st
       'scrolled to the top, older rows load above',
       [
         ...(olderExist && after.rows <= before ? [`no older rows came, the buffer holds ${held}`] : []),
+        ...(olderExist && before >= LIVE_CAP - 20 && after.rows <= LIVE_CAP ? [`still ${after.rows} rows, never past ${LIVE_CAP}`] : []),
         ...(dupes(after.keys) ? [`${dupes(after.keys)} rows twice`] : []),
         ...(after.rows <= ROW_CAP ? [] : [`${after.rows} rows, cap is ${ROW_CAP}`]),
       ],
@@ -287,7 +290,7 @@ async function leg(env: any, name: string, url: string, errs: string[], cons: st
     const back = await atTailSoon(p)
     check(
       'back at the bottom, the extra rows are dropped and chat flows',
-      [...(back.atTail && !back.pillShown ? [] : ['not at the tail']), ...(back.rows <= ROW_CAP ? [] : [`${back.rows} rows`])],
+      [...(back.atTail && !back.pillShown ? [] : ['not at the tail']), ...(back.rows <= LIVE_CAP + TRIM_SLACK ? [] : [`${back.rows} rows, the live tail holds at most ${LIVE_CAP}`])],
       back,
     )
 

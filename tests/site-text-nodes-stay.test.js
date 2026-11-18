@@ -103,6 +103,21 @@ test('content.js never swaps a kick text node out: both ways into a message go t
   expect(src).toContain("if (isKick || textElement.querySelector('img')) {")
   // names are coloured inside our spans, never by swapping the site's node
   expect(src).toMatch(/const textFragments = isKick\s+\? messageElement\.querySelectorAll\('\.hs-textfrag'\)/)
+  // an emote broadcast for a row already on screen is put into our spans, never into kick's node
+  expect(src).toContain(
+    "const hosts = isKick ? Array.from(textElement.querySelectorAll('.hs-textfrag')) : [textElement]",
+  )
+  // and kick's span is never removed as "empty": one holding only a parked text node matches :empty
+  expect(src).toContain("const emptyContainers = isKick ? [] : messageElement.querySelectorAll('.text-fragment:empty')")
+  expect(src).not.toContain('span.font-normal:empty')
   // and the build embeds the module
   expect(readFileSync(join(import.meta.dir, '..', 'build.js'), 'utf8')).toContain("'content/site-nodes.js',")
+})
+
+test('a span holding only an emptied text node matches :empty — why the empty-span cleanup skips kick', () => {
+  win = new Window()
+  win.document.body.innerHTML = '<span class="font-normal">hi</span>'
+  const span = win.document.querySelector('span')
+  span.firstChild.nodeValue = ''
+  expect(span.matches(':empty')).toBe(true)
 })

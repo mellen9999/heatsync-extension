@@ -1477,8 +1477,14 @@ function createOverlay() {
           t instanceof HTMLImageElement &&
           t.src === src0 &&
           (t.classList.contains('hs-mc-emote') || t.closest('.hs-card-log-body'))
-        )
-          hsEmoteAsName(t)
+        ) {
+          // the animated twin failed under a hover: the still that was showing comes back
+          const still = t.dataset.hsStaticSrc
+          if (still && still !== src0) {
+            delete t.dataset.hsStaticSrc
+            t.src = still
+          } else hsEmoteAsName(t)
+        }
       }
       // Snap the emote box to an integer width so the text after it stays on
       // the pixel grid (see hsSnapEmoteBox — fixes blurry post-emote text).

@@ -88,6 +88,28 @@ describe('the list hands a failed emote over only when no retry took it', () => 
     expect(last).not.toMatch(/badge|avatar/)
   })
 
+  // hover-to-animate swaps in the animated twin and keeps the still's address: a twin that
+  // fails gives the still back, it does not turn a picture that was fine into text
+  test('an animated twin that fails under a hover puts the still back', () => {
+    const last = handler.slice(handler.indexOf('// no other address left to try'))
+    const run = (stash) => {
+      const t = { dataset: stash ? { hsStaticSrc: stash } : {}, src: 'https://cdn/anim.webp' }
+      const named = []
+      const body = last.slice(
+        last.indexOf('const still ='),
+        last.indexOf('} else hsEmoteAsName(t)') + '} else hsEmoteAsName(t)'.length,
+      )
+      new Function('t', 'src0', 'hsEmoteAsName', body)(t, 'https://cdn/anim.webp', (x) => named.push(x))
+      return { t, named }
+    }
+    const held = run('https://cdn/still.webp')
+    expect(held.t.src).toBe('https://cdn/still.webp')
+    expect(held.t.dataset.hsStaticSrc).toBeUndefined()
+    expect(held.named).toEqual([])
+    const bare = run(null)
+    expect(bare.named.length).toBe(1)
+  })
+
   // the server draws a card's history lines itself: a kick gif its mirror refused sat there as
   // four broken icons while the same emote in the list read as its name (real kick, e2e s23)
   test("a card's history line and a logs line get the same stand-in", () => {

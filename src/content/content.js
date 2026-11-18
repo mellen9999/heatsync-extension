@@ -5951,8 +5951,9 @@
       }
     }
 
-    // Clean up empty containers left by emote replacement (only heatsync-created ones)
-    const emptyContainers = messageElement.querySelectorAll('.text-fragment:empty, span.font-normal:empty')
+    // Clean up empty containers left by emote replacement. Never on kick: the span is kick's own
+    // node, and one holding only a parked (emptied) text node counts as :empty (site-nodes.js).
+    const emptyContainers = isKick ? [] : messageElement.querySelectorAll('.text-fragment:empty')
     emptyContainers.forEach((el) => {
       if (!el.closest('.heatsync-emote-stack') && !el.classList.contains('heatsync-emote-stack')) {
         el.remove()
@@ -7623,22 +7624,26 @@
       const alreadyReplaced = textElement.querySelector(`img[data-emote-hash="${emoteData.hash}"]`)
       if (alreadyReplaced) return
 
-      // Get text-only content (avoid matching alt text in existing imgs)
-      const textContent = Array.from(textElement.childNodes)
-        .filter((node) => node.nodeType === Node.TEXT_NODE)
-        .map((node) => node.textContent)
-        .join('')
-
+      // On kick the words sit in our own spans and kick's text nodes are never swapped out
+      // (site-nodes.js). A kick row not drawn yet has none: processMessage draws it with this
+      // broadcast in hand.
+      const hosts = isKick ? Array.from(textElement.querySelectorAll('.hs-textfrag')) : [textElement]
       const regex = createEmoteRegex(emoteName)
-
-      if (textContent.match(regex)) {
+      for (const host of hosts) {
+        // Get text-only content (avoid matching alt text in existing imgs)
+        const textContent = Array.from(host.childNodes)
+          .filter((node) => node.nodeType === Node.TEXT_NODE)
+          .map((node) => node.textContent)
+          .join('')
+        regex.lastIndex = 0
+        if (!textContent.match(regex)) continue
         log(' ✅ RETROACTIVE REPLACE:', {
           username,
           emoteName,
           messageText: textElement.textContent.substring(0, 50),
         })
 
-        replaceEmoteInText(textElement, {
+        replaceEmoteInText(host, {
           name: emoteName,
           url: emoteData.url.startsWith('http') ? emoteData.url : `${API_URL}${emoteData.url}`,
           hash: emoteData.hash,

@@ -14,8 +14,9 @@ run typecheck "bun run typecheck"
 run version   "bun tests/check-versions.js"
 run bundle    "bun run build.js chrome --minify && bun run build.js firefox --minify && bun scripts/check-bundle-budget.ts"
 # what chrome/ still tracks (manifest, _locales) is built from src: a src edit pushed without
-# its rebuild reddened ci once (a merged pr that added strings)
-run tracked   "git diff --exit-code -- chrome/"
+# its rebuild reddened ci once (a merged pr that added strings). status, not diff: a
+# rebuild that is staged but not committed, or a new file nobody added, is still not pushed
+run tracked   'test -z "$(git status --porcelain -- chrome/)"'
 run crashclass "node scripts/type-signal.mjs"
 run test      "bun test --coverage --coverage-reporter=lcov"
 run coverage  "bun scripts/coverage-floor.ts"

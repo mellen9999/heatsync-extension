@@ -168,8 +168,8 @@ test('every view hands the pane back through the one door, and scrolling inside 
     expect(s.slice(at, s.indexOf('\n}\n', at))).toContain('paneReturn()')
   }
   expect(SRC).toContain('const listIsChat = () => !isStaticTab() && !hsPaneTaken()')
-  // wheel, touch, the scroll keys and the ask for older rows; the resume asks the pane itself
-  expect(SRC.match(/if \(!listIsChat\(\)\) return/g)?.length).toBe(3)
+  // wheel, touch, the ask for older rows and the hover hold's release; the resume asks the pane itself
+  expect(SRC.match(/if \(!listIsChat\(\)\) return/g)?.length).toBe(4)
   expect(SRC).toContain('if (move === null || !listIsChat()) return')
   expect(SRC).toContain('if (isProgrammaticScroll || hsPaneTaken()) return')
 })

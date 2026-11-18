@@ -27,6 +27,8 @@ function pane() {
       <span class="hs-mc-emote-wrapper"><img class="hs-mc-emote" id="emote"></span></div></div>
     <div id="new"></div>`
   const renders = []
+  const pins = []
+  const taken = { now: false }
   const api = new Function(
     'msgsEl',
     'newBtn',
@@ -36,6 +38,7 @@ function pane() {
     'renderMessages',
     'scrollMsgsToBottom',
     'Element',
+    'listIsChat',
     `let hoverHeld = false, isScrolledUp = false, newMessageCount = 0, _holdMissedRender = false, _hoverRelease = null
      const isStaticTab = () => false
      let currentTab = 'live'
@@ -51,12 +54,13 @@ function pane() {
     { setTimeout: (f) => f(), clearTimeout: () => {} },
     undefined,
     (tab) => renders.push(tab),
-    () => {},
+    (el) => pins.push(el.id),
     win.Element,
+    () => !taken.now,
   )
   const fire = (id, type, x, y) =>
     document.getElementById(id).dispatchEvent(new win.MouseEvent(type, { bubbles: true, clientX: x, clientY: y }))
-  return { api, fire, renders, document }
+  return { api, fire, renders, pins, taken, document }
 }
 
 test('moving the pointer onto an emote holds the feed', () => {
@@ -96,4 +100,30 @@ test('leaving the window forgets the pointer and lets go, showing what was held 
   // back on the workspace with the pointer still on the emote: no hold
   p.fire('emote', 'mousemove', 130, 50)
   expect(p.api.held()).toBe(false)
+})
+
+// Under a hold every re-pin is skipped. The composer comes back after a card or the logs close and
+// the list gets 39px shorter: if that lands while the pointer rests on a name, the release was the
+// only chance to pin, and it only pinned when a line had been missed (real twitch + kick, e2e s23).
+test('letting go pins the list to its end even when no line was missed', () => {
+  const p = pane()
+  p.fire('text', 'mousemove', 100, 50)
+  p.fire('emote', 'mousemove', 130, 50)
+  expect(p.api.held()).toBe(true)
+  p.fire('text', 'mouseover', 100, 50)
+  expect(p.api.held()).toBe(false)
+  expect(p.renders).toEqual([]) // nothing was missed: no redraw
+  expect(p.pins).toEqual(['msgs'])
+})
+
+test('letting go over a card that took the pane neither redraws nor scrolls it', () => {
+  const p = pane()
+  p.fire('text', 'mousemove', 100, 50)
+  p.fire('emote', 'mousemove', 130, 50)
+  p.api.missRender()
+  p.taken.now = true // the name was clicked: its card is in the pane now
+  p.fire('text', 'mouseover', 100, 50)
+  expect(p.api.held()).toBe(false)
+  expect(p.renders).toEqual([])
+  expect(p.pins).toEqual([])
 })

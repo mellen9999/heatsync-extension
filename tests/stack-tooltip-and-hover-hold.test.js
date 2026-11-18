@@ -29,8 +29,7 @@ describe('hover hold and the "N new" button', () => {
     const at = src.indexOf('const releaseHold = () =>')
     const block = src.slice(at, src.indexOf('msgsEl.addEventListener', at))
     expect(block).toContain('const missed = _holdMissedRender')
-    expect(block).toContain('if (!missed) return')
-    expect(block.indexOf('if (!missed) return')).toBeLessThan(block.indexOf('renderMessages(currentTab)'))
+    expect(block).toContain('if (missed) renderMessages(currentTab)')
   })
 
   test('the hold flag is shared, not private to the scroll wiring', () => {

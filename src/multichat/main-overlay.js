@@ -1338,11 +1338,15 @@ function createOverlay() {
       isScrolledUp = false
       newMessageCount = 0
       newBtn.style.display = 'none'
-      if (isStaticTab()) return
+      // a card took the pane while the pointer held: nothing of the chat to pin, its close draws the tail
+      if (!listIsChat()) return
       const missed = _holdMissedRender
       _holdMissedRender = false
-      if (!missed) return
-      renderMessages(currentTab)
+      if (missed) renderMessages(currentTab)
+      // Pinned even when no line was missed. Every re-pin is skipped under a hold, so a list whose
+      // box changed meanwhile (the composer coming back after a card or the logs, a late picture)
+      // sat one composer short of its end: not paused, no "new" pill, and never caught up (real
+      // twitch and kick, e2e s23, 11-18).
       scrollMsgsToBottom(msgsEl)
     }
     msgsEl.addEventListener(

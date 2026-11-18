@@ -926,6 +926,14 @@ function pcAuthorSync() {
   }
 }
 
+// Blocked on the account, or in this browser: signed out a block lives only in the
+// block set (pcToggleBlock), and the card that read the account alone kept offering
+// "block" for someone already blocked.
+function pcIsBlocked(rel, username, platform) {
+  if (rel?.isBlocked ?? rel?.youBlock) return true
+  return typeof isUserBlocked === 'function' && isUserBlocked(username, platform)
+}
+
 function renderProfileCardView() {
   pcAuthorSync()
   if (!activeProfileCard) return
@@ -959,7 +967,7 @@ function renderProfileCardView() {
   // — adapting host data to the shared contract, never the other way round.
   const rel = data.relationship || {}
   const isFollowing = !!(rel.isFollowing ?? rel.youFollow)
-  const isBlocked = !!(rel.isBlocked ?? rel.youBlock)
+  const isBlocked = pcIsBlocked(rel, username, platform)
   const normalizedProfile =
     rel.isFollowing === isFollowing && rel.isBlocked === isBlocked
       ? data
@@ -1535,13 +1543,15 @@ async function pcToggleBlock(profileId, username, currentlyBlocked, platform = a
     // signed out: no account to keep the block on, so it stays in this browser,
     // like a chatter who isn't on heatsync (the mute works the same way)
     if (resp?.status === 401 && typeof _toggleMcBlock === 'function') {
+      // no account, so no account block either way; the card is drawn once the
+      // block set has changed, which is where its block word now comes from
       if (activeProfileCard?.data?.relationship) {
-        activeProfileCard.data.relationship.youBlock = currentlyBlocked
-        activeProfileCard.data.relationship.isBlocked = currentlyBlocked
-        renderProfileCardView()
+        activeProfileCard.data.relationship.youBlock = false
+        activeProfileCard.data.relationship.isBlocked = false
       }
-      _patchProfileCacheRel(username, { youBlock: currentlyBlocked, isBlocked: currentlyBlocked })
+      _patchProfileCacheRel(username, { youBlock: false, isBlocked: false })
       await _toggleMcBlock(username, platform)
+      renderProfileCardView()
       return
     }
     if (!resp?.ok) {
@@ -1777,7 +1787,7 @@ function pcHandleCardAction(actionKey, btn) {
       pcToggleMute(username)
       break
     case 'block':
-      pcToggleBlock(profileId, username, !!(rel.isBlocked ?? rel.youBlock))
+      pcToggleBlock(profileId, username, pcIsBlocked(rel, username, platform))
       break
     case 'addchannel':
       pcAddAsChannel(username)

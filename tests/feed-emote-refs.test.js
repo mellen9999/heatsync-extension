@@ -26,7 +26,7 @@ function carve(src, a, b) {
   return src.slice(s, e)
 }
 
-const feedSrc = carve(SOCIAL, '// ── feed emote vouching ──', '\nfunction startDiscoverPolling() {')
+const feedSrc = carve(SOCIAL, '// ── feed emote vouching ──', '\nlet discoverTags = []')
 const quickSrc = carve(INPUT, 'async function _quickOpToFeed(', 'async function _openWhisperFor(')
 
 const FFZ = 'https://cdn.frankerfacez.com/emote/123456/1'

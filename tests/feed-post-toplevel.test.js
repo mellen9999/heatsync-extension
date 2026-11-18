@@ -35,7 +35,7 @@ function sliceBetween(src, startMarker, endMarker) {
 const fnSrc = sliceBetween(
   SOCIAL_SRC,
   'async function postFeedMessage(text, { topLevel = false, replyTo = null } = {}) {',
-  '\nfunction startDiscoverPolling() {',
+  '\nlet discoverTags = []',
 )
 
 /** Build a fresh postFeedMessage with stubbed environment; returns the fn

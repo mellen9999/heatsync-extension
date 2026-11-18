@@ -43,6 +43,12 @@ function closePredView() {
   if (typeof renderMessages === 'function') renderMessages(currentTab, { bypassScrollPause: true })
 }
 
+// A tab switch tears the view down without touching the pane: the switch repaints it for the
+// new tab itself (and puts the composer back where that tab has one).
+function predViewDrop() {
+  activePredView = null
+}
+
 function predViewOpen() {
   return !!activePredView
 }

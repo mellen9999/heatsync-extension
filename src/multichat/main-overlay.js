@@ -2161,6 +2161,7 @@ function createOverlay() {
 }
 
 function renderSearchResults(msgsEl, results, query) {
+  if (hsPaneTaken()) return // a card opened while the search was in flight keeps the pane
   _clearMessageIndices()
   msgsEl.textContent = ''
   if (!results.length) {

@@ -142,7 +142,7 @@ const document = {
 const localStorage = { setItem: (k, v) => env.writes.push([k, v]) }
 // stand-ins for what fullSpaReinit's teardown touches besides the tap
 let columnObserver, _hsCalloutCloseObs, mcCosmeticsTimer, _persistTabSeenTimer
-let liveStatusInterval, _tabCounterTimer, discoverPollTimer, pinnedPollTimer
+let liveStatusInterval, _tabCounterTimer
 let mcInitialized
 const _persistMentionsState = { timer: null }
 const _persistYtTimers = new Map()

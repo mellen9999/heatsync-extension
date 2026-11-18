@@ -280,13 +280,11 @@ function fullSpaReinit() {
   _persistMentionsState.timer = null
   _persistTabSeenTimer = null
   // Same for the timers whose work is the panel itself (the tab bar's live
-  // dots, the heat ticker on its tabs, the discover and pinned views' refresh):
+  // dots, the heat ticker on its tabs):
   // the drain cleared them, init() builds a new panel, and its "already
   // running" guard has to read false for that panel to start them again.
   liveStatusInterval = null
   _tabCounterTimer = null
-  discoverPollTimer = null
-  pinnedPollTimer = null
   // The native-chat tap's observer was disconnected with the rest above, but
   // twitch can hand back the very same chat node, and _tapBind skips "this
   // container and an observer" — a dead observer read as a live one, and the

@@ -53,6 +53,18 @@ function hsTakeoverCloser() {
   return null
 }
 
+/** Is something other than the tab's own content in the pane: a confirm panel, a card, the
+ *  prediction view, a full-size picture, or the edit-channel form? A tab's renderer that runs
+ *  late (a fetch answer, a refresh timer, a setting echoed back from storage) asks first:
+ *  painting would wipe that surface and leave its state open with nothing on screen. */
+function hsPaneTaken() {
+  if (hsPanePanelOpen()) return true
+  if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return true
+  if (typeof predViewOpen === 'function' && predViewOpen()) return true
+  if (typeof imgViewOpen === 'function' && imgViewOpen()) return true
+  return typeof editingChannel !== 'undefined' && !!editingChannel
+}
+
 function hsTakeoverSync() {
   document.documentElement.classList.toggle('hs-mc-fill-on', !!hsTakeoverCloser())
 }

@@ -1053,8 +1053,12 @@ function switchTab(id, sub, subOpts) {
   } catch {}
   // …and a full-size picture: the switch repaints the pane itself
   if (typeof imgViewDrop === 'function') imgViewDrop()
-  // Tab switch closes profile card without re-rendering (we'll render the tab below)
-  if (typeof activeProfileCard !== 'undefined' && activeProfileCard) {
+  // Tab switch closes the profile card and the prediction view without re-rendering (we'll
+  // render the tab below). The prediction view used to stay: the bar moved to the new tab and
+  // the pane kept showing predictions, whichever tab was clicked.
+  const _predWasOpen = typeof predViewOpen === 'function' && predViewOpen()
+  if (_predWasOpen) predViewDrop()
+  if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || _predWasOpen) {
     activeProfileCard = null
     pcAuthorSync()
     // the card's DOM must not be snapshotted as the outgoing tab's rows: it

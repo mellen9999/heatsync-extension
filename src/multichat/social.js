@@ -666,13 +666,8 @@ async function loadHsAuth() {
           feedLoaded = false
           feedMessages = []
           feedBookmarks.clear()
-          discoverLoaded = false
-          discoverLoading = false
-          discoverTags = []
-          discoverProfiles = []
-          pinnedLoaded = false
-          pinnedLoading = false
-          pinnedMessages = []
+          discoverList.reset()
+          pinnedList.reset()
           if (currentTab === 'feed') {
             renderMessages(currentTab)
           }
@@ -1875,7 +1870,7 @@ async function fetchFeed(append = false) {
     } else {
       console.error('[heatsync-mc] Feed fetch failed — full resp:', JSON.stringify(resp))
     }
-    if (currentTab === 'feed') {
+    if (currentTab === 'feed' && !hsPaneTaken()) {
       const msgsEl = document.getElementById('hs-mc-messages')
       if (msgsEl && feedMessages.length === 0) {
         msgsEl.innerHTML = `<div class="hs-mc-empty">${resp.status === 401 ? t('mc_social_failed_feed_auth') : t('mc_social_failed_feed')}</div>`
@@ -2087,8 +2082,7 @@ function _feedVirtualTeardown(msgsEl) {
 
 function renderFeed() {
   if (currentTab !== 'feed') return // a late answer (saved edit, thread fetch) must not paint over another tab
-  if (typeof imgViewOpen === 'function' && imgViewOpen()) return // a full-size picture owns the pane
-  if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
+  if (hsPaneTaken()) return // a card, a panel, a picture or a form owns the pane
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
 
@@ -3118,87 +3112,49 @@ async function postFeedMessage(text, { topLevel = false, replyTo = null } = {}) 
 // DISCOVER TAB (trending tags + profiles)
 // ============================================
 
-let discoverLoaded = false
-let discoverLoading = false
-let discoverPollTimer = null
-function startDiscoverPolling() {
-  if (discoverPollTimer) return
-  // Auto-refresh while user is viewing the discover tab
-  discoverPollTimer = cleanup.setIntervalIfVisible(() => {
-    if (currentTab === 'discover' && !discoverLoading) {
-      discoverLoaded = false
-      fetchDiscover()
-    } else if (currentTab !== 'discover') {
-      cleanup.clearInterval(discoverPollTimer)
-      discoverPollTimer = null
-    }
-  }, 20000)
-}
 let discoverTags = []
 let discoverProfiles = []
 let discoverPosts = []
 let discoverPlatformFilter = 'all' // 'all' | 't' | 'k' | 'yt'
 
-function _discoverSetLoading(msgsEl) {
-  msgsEl.textContent = ''
-  const el = document.createElement('div')
-  el.className = 'hs-mc-empty'
-  el.textContent = t('common_loading')
-  msgsEl.appendChild(el)
-}
-
+// Fills the three lists; a failed answer leaves the ones on screen as they were (polled-tab.js)
 async function fetchDiscover() {
-  if (discoverLoading) return
-  discoverLoading = true
+  const [tagsResp, profilesResp, postsResp] = await Promise.all([
+    apiFetch('/api/tags/trending'),
+    apiFetch('/api/profiles/trending'),
+    apiFetch('/api/messages?sort=time&limit=40').catch(() => null),
+  ])
+  if (!tagsResp.ok && !profilesResp.ok) return false
 
-  const msgsEl = document.getElementById('hs-mc-messages')
-  if (msgsEl && currentTab === 'discover') _discoverSetLoading(msgsEl)
+  // Server shape: { tags: [...] } and { profiles: [...] }.
+  // api_fetch proxy wraps as { ok: true, data: {...} }, so unwrap one more level.
+  const tagsData = tagsResp.ok ? tagsResp.data || tagsResp : {}
+  const profilesData = profilesResp.ok ? profilesResp.data || profilesResp : {}
+  discoverTags = Array.isArray(tagsData) ? tagsData : tagsData.tags || []
+  discoverProfiles = Array.isArray(profilesData) ? profilesData : profilesData.profiles || []
 
-  // Snapshot the tab user was on when fetch started — if they switched away and
-  // back during the await, the .finally still re-renders correctly. If they
-  // switched away and stayed, render is skipped (no clobbering other tab DOM).
-  const tabAtFetch = currentTab
-  try {
-    const [tagsResp, profilesResp, postsResp] = await Promise.all([
-      apiFetch('/api/tags/trending'),
-      apiFetch('/api/profiles/trending'),
-      apiFetch('/api/messages?sort=time&limit=40').catch(() => null),
-    ])
-
-    // Server shape: { tags: [...] } and { profiles: [...] }.
-    // api_fetch proxy wraps as { ok: true, data: {...} }, so unwrap one more level.
-    const tagsData = tagsResp.ok ? tagsResp.data || tagsResp : {}
-    const profilesData = profilesResp.ok ? profilesResp.data || profilesResp : {}
-    discoverTags = Array.isArray(tagsData) ? tagsData : tagsData.tags || []
-    discoverProfiles = Array.isArray(profilesData) ? profilesData : profilesData.profiles || []
-
-    // Posts: rank by heat, but never render the section empty while real posts exist.
-    // Heat only accrues from a logged-in, non-self actor and halves every 12h, so at
-    // current traffic it is 0 on every row — this gate emptied Discover completely
-    // while 40 real posts sat in the response. Same rule as the server's
-    // lib/cold-start.ts: rank first, fall back to newest rather than show nothing.
-    // rawPosts arrives newest-first (sort=time), so the fallback keeps recency order.
-    const rawPosts = postsResp?.ok ? postsResp.data?.messages || [] : []
-    const eligiblePosts = rawPosts.filter((m) => m?.username && m.username !== 'Anonymous')
-    const hotPosts = eligiblePosts.filter((m) => (m.heat || 0) > 0).sort((a, b) => (b.heat || 0) - (a.heat || 0))
-    discoverPosts = (hotPosts.length ? hotPosts : eligiblePosts).slice(0, 8)
-
-    // Latch ONLY when a fetch actually succeeded. Setting this on failure made
-    // an outage indistinguishable from a genuinely empty Discover AND blocked
-    // any retry for the rest of the session — a launch-day user on a cold
-    // service worker saw a dead, empty product with no way back.
-    discoverLoaded = tagsResp.ok || profilesResp.ok
-  } catch (_) {
+  // Posts: rank by heat, but never render the section empty while real posts exist.
+  // Heat only accrues from a logged-in, non-self actor and halves every 12h, so at
+  // current traffic it is 0 on every row — this gate emptied Discover completely
+  // while 40 real posts sat in the response. Same rule as the server's
+  // lib/cold-start.ts: rank first, fall back to newest rather than show nothing.
+  // rawPosts arrives newest-first (sort=time), so the fallback keeps recency order.
+  const rawPosts = postsResp?.ok ? postsResp.data?.messages || [] : []
+  const eligiblePosts = rawPosts.filter((m) => m?.username && m.username !== 'Anonymous')
+  const hotPosts = eligiblePosts.filter((m) => (m.heat || 0) > 0).sort((a, b) => (b.heat || 0) - (a.heat || 0))
+  discoverPosts = (hotPosts.length ? hotPosts : eligiblePosts).slice(0, 8)
+  return true
+}
+const discoverList = hsPolledTab({
+  tab: 'discover',
+  fetch: fetchDiscover,
+  render: () => renderDiscoverTab(),
+  clear() {
     discoverTags = []
     discoverProfiles = []
     discoverPosts = []
-    discoverLoaded = false
-  } finally {
-    discoverLoading = false
-    if (currentTab === 'discover') renderDiscoverTab()
-    void tabAtFetch
-  }
-}
+  },
+})
 
 // Compact number: 12345 -> "12.3k", 1200000 -> "1.2m"
 function formatDiscoverCount(n) {
@@ -3593,20 +3549,13 @@ function makeDiscoverSection(titleText, subtitleText, metaText, extraClass) {
 
 function renderDiscoverTab() {
   if (currentTab !== 'discover') return // nor the redraw 1.5s after a follow sync
-  if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
+  if (hsPaneTaken()) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
 
-  startDiscoverPolling()
-
-  if (!discoverLoaded && !discoverLoading) {
-    fetchDiscover()
-    return
-  }
-  if (discoverLoading) {
-    _discoverSetLoading(msgsEl)
-    return
-  }
+  discoverList.poll()
+  const waitD = discoverList.placeholder()
+  if (waitD) return hsPolledNote(msgsEl, waitD)
 
   msgsEl.textContent = ''
 
@@ -3779,72 +3728,35 @@ function renderDiscoverTab() {
 }
 
 // Pinned messages tab
-let pinnedLoaded = false
-let pinnedLoading = false
-let pinnedPollTimer = null
-function startPinnedPolling() {
-  if (pinnedPollTimer) return
-  pinnedPollTimer = cleanup.setIntervalIfVisible(() => {
-    if (currentTab === 'pinned' && !pinnedLoading) {
-      pinnedLoaded = false
-      fetchPinned()
-    } else if (currentTab !== 'pinned') {
-      cleanup.clearInterval(pinnedPollTimer)
-      pinnedPollTimer = null
-    }
-  }, 20000)
-}
 let pinnedMessages = []
 
-function _pinnedSetLoading(msgsEl) {
-  msgsEl.textContent = ''
-  const el = document.createElement('div')
-  el.className = 'hs-mc-empty'
-  el.textContent = t('common_loading')
-  msgsEl.appendChild(el)
-}
-
 async function fetchPinned() {
-  if (pinnedLoading) return
-  pinnedLoading = true
-
-  const msgsEl = document.getElementById('hs-mc-messages')
-  if (msgsEl && currentTab === 'pinned') _pinnedSetLoading(msgsEl)
-
-  try {
-    const resp = await apiFetch('/api/messages/pinned')
-    // Server returns { messages: [...] }; api_fetch proxy wraps as { ok, data: { messages } }
-    const data = resp.ok ? resp.data || resp : {}
-    pinnedMessages = Array.isArray(data) ? data : data.messages || []
-    // Only latch on success — a failed fetch used to render the literal "no
-    // pinned messages" and never retry.
-    pinnedLoaded = resp.ok
-  } catch (_) {
-    pinnedMessages = []
-    pinnedLoaded = false
-  } finally {
-    pinnedLoading = false
-    if (currentTab === 'pinned') renderPinnedTab()
-  }
+  const resp = await apiFetch('/api/messages/pinned')
+  if (!resp.ok) return false
+  // Server returns { messages: [...] }; api_fetch proxy wraps as { ok, data: { messages } }
+  const data = resp.data || resp
+  pinnedMessages = Array.isArray(data) ? data : data.messages || []
+  return true
 }
+const pinnedList = hsPolledTab({
+  tab: 'pinned',
+  fetch: fetchPinned,
+  render: () => renderPinnedTab(),
+  clear() {
+    pinnedMessages = []
+  },
+})
 
 function renderPinnedTab() {
   if (currentTab !== 'pinned') return // same rule as the feed: only the tab on screen draws
-  if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
+  if (hsPaneTaken()) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
 
   // Auto-refresh while viewing — no manual refresh button.
-  startPinnedPolling()
-
-  if (!pinnedLoaded && !pinnedLoading) {
-    fetchPinned()
-    return
-  }
-  if (pinnedLoading) {
-    _pinnedSetLoading(msgsEl)
-    return
-  }
+  pinnedList.poll()
+  const waitP = pinnedList.placeholder()
+  if (waitP) return hsPolledNote(msgsEl, waitP)
 
   msgsEl.textContent = ''
   const frag = document.createDocumentFragment()

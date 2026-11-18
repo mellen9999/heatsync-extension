@@ -1204,6 +1204,8 @@ function _bindSettingsKeyboard() {
 }
 
 function renderSettingsTab() {
+  // a setting echoed back from storage redraws this tab: not over a confirm it opened itself
+  if (hsPaneTaken()) return
   var msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
 

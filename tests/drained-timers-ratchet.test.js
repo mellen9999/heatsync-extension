@@ -145,7 +145,7 @@ describe('drained timers: a start-once guard never sits on a handle the channel 
     expect(get('liveStatusInterval')).toBe('nulled')
     expect(get('mcCosmeticsTimer')).toBe('nulled')
     expect(by('page')).toBeGreaterThan(15)
-    expect(by('nulled')).toBeGreaterThan(5)
+    expect(by('nulled')).toBeGreaterThan(3) // discover + pinned refresh became page timers (polled-tab.js)
   })
 
   test('the allowlist holds no stale entries', () => {

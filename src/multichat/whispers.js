@@ -696,7 +696,7 @@ function whisperThreadMessages(data) {
 }
 
 function renderWhispersTab() {
-  if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
+  if (hsPaneTaken()) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
   resolveSelfColor()

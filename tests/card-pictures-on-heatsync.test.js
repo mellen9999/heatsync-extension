@@ -49,6 +49,8 @@ test('only root paths move: full urls, protocol-relative urls and text are left 
     '<img src="https://a.b/c.png"><img src="//cdn.x/y.png">',
   )
   expect(cardAbsAssets('<a href="/u/alice">src=&quot;/x&quot;</a>')).toBe('<a href="/u/alice">src=&quot;/x&quot;</a>')
+  // only the two attributes the renderer writes pictures into, never one that merely ends in "src"
+  expect(cardAbsAssets('<i data-hs-src="/x" data-src="/y"></i>')).toBe('<i data-hs-src="/x" data-src="/y"></i>')
   expect(cardAbsAssets('<img src="/a.webp" data-imgerr-src="/anon.webp">')).toBe(
     '<img src="https://heatsync.org/a.webp" data-imgerr-src="https://heatsync.org/anon.webp">',
   )

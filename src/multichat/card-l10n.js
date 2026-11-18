@@ -118,7 +118,7 @@ function cardL10nHtml(html) {
 // image there. Rewritten in the markup, before it is ever parsed, so the host is never asked.
 const CARD_ASSET_ORIGIN = 'https://heatsync.org'
 function cardAbsAssets(html) {
-  return html.replace(/\b(src|data-imgerr-src)="\/(?!\/)/g, `$1="${CARD_ASSET_ORIGIN}/`)
+  return html.replace(/(?<![\w-])(src|data-imgerr-src)="\/(?!\/)/g, `$1="${CARD_ASSET_ORIGIN}/`)
 }
 
 /** A card picture that fails to load falls back, once, to the one the renderer named for it. */

@@ -557,8 +557,9 @@ function _renderMessagesImpl(id, opts) {
   // their stripes under the reader's eyes (~1 in 4 lines on a busy two-
   // platform tab). It goes just under the screen's last row instead, so a
   // live line only ever appends and a shown row never moves or changes
-  // stripe. History (no ord) still weaves to its real place. The cost is a
-  // line up to LIVE_WEAVE_SKEW_MS out of timestamp order, by design.
+  // stripe. History (no ord) still weaves to its real place, and so does a
+  // line older than the weave window (isLateLiveLine). The cost is a line up
+  // to LIVE_WEAVE_SKEW_MS out of timestamp order, by design.
   let settledEnd = null
   for (let el = msgsEl.lastElementChild; el; el = el.previousElementSibling) {
     if (el._hsAt !== undefined) {
@@ -566,6 +567,7 @@ function _renderMessagesImpl(id, opts) {
       break
     }
   }
+  const newestShown = settledEnd ? newestOrdOnScreen(msgsEl) : null
   for (let j = 0; j < toRender.length; j++) {
     const key = desiredKeys[j]
     if (insertedKeys.has(key)) continue
@@ -637,20 +639,7 @@ function _renderMessagesImpl(id, opts) {
     div.dataset.msgKey = key
     div.dataset.hsEpoch = String(_renderEpoch)
     let after
-    if (prevNode) after = prevNode.nextSibling
-    else {
-      after = msgsEl.firstElementChild
-      if (after?.id === 'hs-mc-embed-player') after = after.nextElementSibling // the player is not a row
-    }
-    if (
-      settledEnd &&
-      m.ord != null &&
-      after &&
-      (after === settledEnd || after.compareDocumentPosition(settledEnd) & Node.DOCUMENT_POSITION_FOLLOWING)
-    ) {
-      prevNode = settledEnd
-      after = settledEnd.nextSibling
-    }
+    ;[prevNode, after] = newRowSlot(msgsEl, prevNode, settledEnd, newestShown, m)
     stampZebra(div, m, prevNode)
     msgsEl.insertBefore(div, after)
     if (after) {

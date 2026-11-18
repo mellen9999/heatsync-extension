@@ -630,6 +630,37 @@ function newestOrdOnScreen(msgsEl) {
   }
   return max
 }
+// A live line that reached the list a beat late (the kick copy of a conversation, a relay
+// catching up) sits within the weave window of the newest row on screen, and goes under the
+// last row so nothing shown moves. Further back than that it is not late, it is OLD: a row
+// the list is being given back (older rows loaded at the top, a cold list filling in steps,
+// a closed card, a lifted hide rule or mute), and it goes to its own place. Without the
+// second half every such row carrying an ord landed at the bottom: scroll to the top on a
+// tab open for a few minutes and the 250 older lines appeared under the newest one; close a
+// card and the list read newest hundred first, the older four hundred after (real twitch,
+// e2e s20, 11-17). Twice the window, since a render can trail the arrival by a moment.
+function isLateLiveLine(m, newestOnScreen) {
+  return m.ord != null && newestOnScreen !== null && newestOnScreen - m.ord <= 2 * LIVE_WEAVE_SKEW_MS
+}
+/** Where a row not on screen yet goes: [the row it follows, the row it lands before]. After the
+ *  lowest row placed so far (the top of the list when none is), unless it is a late live line
+ *  that would land above a row already shown: that one goes under the last row. */
+function newRowSlot(msgsEl, prevNode, settledEnd, newestShown, m) {
+  let after
+  if (prevNode) after = prevNode.nextSibling
+  else {
+    after = msgsEl.firstElementChild
+    if (after?.id === 'hs-mc-embed-player') after = after.nextElementSibling // the player is not a row
+  }
+  if (
+    settledEnd &&
+    isLateLiveLine(m, newestShown) &&
+    after &&
+    (after === settledEnd || after.compareDocumentPosition(settledEnd) & Node.DOCUMENT_POSITION_FOLLOWING)
+  )
+    return [settledEnd, settledEnd.nextSibling]
+  return [prevNode, after]
+}
 const SCROLLBACK_STEP = 250
 const SCROLLBACK_MAX = 1500 // hard ceiling on rendered rows (3x the live cap)
 /** Rows the pane may hold right now: the live tail, plus what scrolling to the top has added. */

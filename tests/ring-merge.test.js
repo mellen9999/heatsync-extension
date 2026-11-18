@@ -174,7 +174,7 @@ test('a new row anchors on the lowest placed row, never on a shared cursor', () 
 test('a live line never lands above a row already on screen', () => {
   const src = mainSource()
   expect(src).toMatch(/div\._hsAt = 1/)
-  expect(src).toMatch(/settledEnd &&\s*m\.ord != null/)
+  expect(src).toMatch(/settledEnd &&\s*isLateLiveLine\(m, newestShown\)/)
 })
 
 // Real shape: mellen's reply sent from another client. The live row that got

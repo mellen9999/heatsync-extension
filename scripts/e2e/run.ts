@@ -32,6 +32,7 @@ import { s19FirstRun } from './s19-first-run'
 import { s20Scroll } from './s20-scroll'
 import { s21Hide } from './s21-hide'
 import { s22Keys } from './s22-keys'
+import { s24Native } from './s24-native'
 
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
@@ -60,6 +61,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s21-hide', s21Hide],
   ['s20-scroll', s20Scroll],
   ['s22-keys', s22Keys],
+  ['s24-native', s24Native],
 ]
 
 const args = process.argv.slice(2)

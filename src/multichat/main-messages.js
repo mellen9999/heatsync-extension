@@ -893,6 +893,9 @@ function buildMessageDiv(m, tabId) {
   // context bar when someone else replies to them. Show a neutral marker
   // with no name, no text, no profile link.
   const replyBlocked = m.replyTo?.user && isUserBlocked(m.replyTo.user, m.platform || 'twitch')
+  // The quoted line is plain text, and kick sends its emotes as [emote:<id>:<name>]: by name,
+  // like every other emote in a quoted line (the raw token showed, real kick e2e s25, 11-17).
+  const replyText = _unkickEmotes(m.replyTo?.text || '')
   const replyBar = replyBlocked
     ? `<span class="hs-mc-reply-ctx hs-reply-ctx">&#8618;${t('mc_reply_blocked')}</span> `
     : m.replyTo?.user
@@ -902,7 +905,7 @@ function buildMessageDiv(m, tabId) {
         // already knew. The trailing caret is the affordance, aria-expanded is
         // the state, and both the universal hover invert and keyboard
         // activation come free once it is a button.
-        `<span class="hs-mc-reply-ctx hs-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(m.replyTo.text || '')}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}" data-platform="${escapeHtml(m.platform || 'twitch')}"${replyUidAttr}${replyUserSplitAttr} style="${escapeHtml(replyStyle)}">${replyUserHtml}</a>${replyPlusHtml}${m.replyTo.text ? `<span class="hs-mc-reply-snippet">: ${escapeHtml(m.replyTo.text)}</span>` : ''}</span> `
+        `<span class="hs-mc-reply-ctx hs-reply-ctx" role="button" tabindex="0" aria-expanded="false" title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(replyText)}">&#8618;<a href="https://heatsync.org/user/${encodeURIComponent(m.replyTo.user)}" target="_blank" rel="noopener noreferrer" class="${replyUserCls}" data-username="${escapeHtml(replyLower)}" data-platform="${escapeHtml(m.platform || 'twitch')}"${replyUidAttr}${replyUserSplitAttr} style="${escapeHtml(replyStyle)}">${replyUserHtml}</a>${replyPlusHtml}${replyText ? `<span class="hs-mc-reply-snippet">: ${escapeHtml(replyText)}</span>` : ''}</span> `
       : ''
   // Redeem label — look up reward title from Hermes cache
   let redeemLabel = ''

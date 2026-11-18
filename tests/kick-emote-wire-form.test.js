@@ -125,6 +125,16 @@ describe('echo matching survives the rewrite', () => {
     expect(_echoTextMatches({ text: 'hi KEKW', reply: true }, '@someone hi [emote:37226:KEKW]')).toBe(true)
   })
 
+  test('the quoted line of a reply shows a kick emote by its name, in the row and in its hover title', () => {
+    const { _unkickEmotes } = mk()
+    expect(_unkickEmotes('lol [emote:37226:KEKW] true [emote:1:OMEGALUL]')).toBe('lol KEKW true OMEGALUL')
+    const MSGS = readFileSync(join(ROOT, 'src', 'multichat', 'main-messages.js'), 'utf8')
+    expect(MSGS).toContain("const replyText = _unkickEmotes(m.replyTo?.text || '')")
+    expect(MSGS).toContain('<span class="hs-mc-reply-snippet">: ${escapeHtml(replyText)}</span>')
+    expect(MSGS).toContain('title="${escapeHtml(m.replyTo.user)}: ${escapeHtml(replyText)}"')
+    expect(MSGS).not.toContain('escapeHtml(m.replyTo.text')
+  })
+
   test('token-free strings are returned untouched', () => {
     const { _unkickEmotes } = mk()
     expect(_unkickEmotes('nothing here')).toBe('nothing here')

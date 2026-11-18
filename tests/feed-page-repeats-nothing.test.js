@@ -13,7 +13,7 @@ const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'social
 const from = SRC.indexOf('async function fetchFeed(')
 const FETCH = SRC.slice(from, SRC.indexOf('\n}\n', from) + 3)
 
-function feed(count) {
+function feed(count, { saysMore = true } = {}) {
   const post = (n) => ({ base36_id: `p${n}`, username: 'someone', created_at: new Date(1e12 + n * 1000).toISOString() })
   // newest first, as the server sorts them
   const server = Array.from({ length: count }, (_, i) => post(count - i))
@@ -42,7 +42,10 @@ function feed(count) {
       const limit = Number(q.get('limit'))
       const at = (Number(q.get('page')) - 1) * limit
       const messages = server.slice(at, at + limit)
-      return { ok: true, data: { messages, pagination: { hasMore: at + limit < server.length } } }
+      return {
+        ok: true,
+        data: saysMore ? { messages, pagination: { hasMore: at + limit < server.length } } : { messages },
+      }
     },
   }
   const fetchFeed = new Function('scope', `with (scope) { ${FETCH}\n return fetchFeed }`)(scope)
@@ -73,4 +76,16 @@ test('with nothing new in between, a page is taken whole', async () => {
   await f.fetchFeed(true)
   expect(f.scope.feedMessages.map((m) => m.base36_id)).toEqual(f.server.slice(0, 60).map((m) => m.base36_id))
   expect(f.asked.map((p) => new URLSearchParams(p.split('?')[1]).get('page'))).toEqual(['1', '2'])
+})
+
+// A server that does not say whether there is more is read by the size of the page it sent. The
+// rows dropped as repeats are still rows it sent: a full page with two repeats in it is a full page.
+test('a full page with repeats in it still means there is more, when the server does not say', async () => {
+  const f = feed(100, { saysMore: false })
+  await f.fetchFeed()
+  f.arrive(101)
+  f.arrive(102)
+  await f.fetchFeed(true)
+  expect(f.scope.feedMessages.length).toBe(58)
+  expect(f.scope.feedHasMore).toBe(true)
 })

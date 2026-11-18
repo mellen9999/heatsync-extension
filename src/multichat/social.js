@@ -1926,8 +1926,7 @@ async function fetchFeed(append = false) {
   if (append) {
     // pages count from the newest post: one that arrived since shifts them, and a page repeats rows
     const held = new Set(feedMessages.map((m) => m.base36_id))
-    msgs = msgs.filter((m) => !held.has(m.base36_id))
-    feedMessages.push(...msgs)
+    feedMessages.push(...msgs.filter((m) => !held.has(m.base36_id)))
     feedPage = page
   } else {
     if (preIds) {

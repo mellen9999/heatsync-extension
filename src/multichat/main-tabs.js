@@ -762,6 +762,9 @@ function ensureUIElements() {
       log('Reclaimed existing overlay')
     } else {
       overlayElement = createOverlay()
+      // a new pane holds no rows. Rebuilt after the host swapped our container away, the index of
+      // the old pane still claimed every row it held was on screen (index_desync, then a repaint)
+      _clearMessageIndices()
       log('Created overlay')
     }
   }

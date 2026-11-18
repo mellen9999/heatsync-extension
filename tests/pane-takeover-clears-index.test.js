@@ -91,3 +91,7 @@ test('the card, the prediction view and the picture view all take the pane that 
   expect(img.slice(img.indexOf('function openImgView(src) {'))).toContain('takePane(msgsEl)')
   for (const s of [card, pred, img]) expect(s).not.toContain("msgsEl.textContent = ''")
 })
+
+test('a pane rebuilt after the host swapped our container away starts with an empty index', () => {
+  expect(MAIN).toMatch(/overlayElement = createOverlay\(\)\n(?:\s*\/\/.*\n)*\s*_clearMessageIndices\(\)/)
+})

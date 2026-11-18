@@ -4,4 +4,4 @@
 5310 src/multichat/emotes.js  # baseline
 5132 src/content/heatsync-button.js  # 2026-11-08: moved from chrome/ (was unscanned there); ceiling = size at the move; +1 native upload form mount (logic in native-emote-upload.js); +5 kick button waits for hydration; +3 recents adopt another tab's pick
 4757 src/multichat/twitch-api.js  # baseline
-4242 src/multichat/social.js  # baseline; +5 youtube replay alert gate, +22 youtube mod notice ingest, +3 youtube own echo recorded before the dual-send drop, kept as the youtube leg when retagged, +1 youtube emote joins beside a page never book its tab, +1 crowd throttle merges other tabs' stamps
+4245 src/multichat/social.js  # baseline; +5 youtube replay alert gate, +22 youtube mod notice ingest, +3 youtube own echo recorded before the dual-send drop, kept as the youtube leg when retagged, +1 youtube emote joins beside a page never book its tab, +1 crowd throttle merges other tabs' stamps, +3 feed/discover/pinned draw only on their own tab

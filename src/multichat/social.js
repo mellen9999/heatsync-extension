@@ -2086,6 +2086,7 @@ function _feedVirtualTeardown(msgsEl) {
 }
 
 function renderFeed() {
+  if (currentTab !== 'feed') return // a late answer (saved edit, thread fetch) must not paint over another tab
   if (typeof imgViewOpen === 'function' && imgViewOpen()) return // a full-size picture owns the pane
   if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   const msgsEl = document.getElementById('hs-mc-messages')
@@ -3591,6 +3592,7 @@ function makeDiscoverSection(titleText, subtitleText, metaText, extraClass) {
 }
 
 function renderDiscoverTab() {
+  if (currentTab !== 'discover') return // nor the redraw 1.5s after a follow sync
   if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
@@ -3827,6 +3829,7 @@ async function fetchPinned() {
 }
 
 function renderPinnedTab() {
+  if (currentTab !== 'pinned') return // same rule as the feed: only the tab on screen draws
   if ((typeof activeProfileCard !== 'undefined' && activeProfileCard) || hsPanePanelOpen()) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return

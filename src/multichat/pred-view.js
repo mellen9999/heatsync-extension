@@ -58,6 +58,8 @@ function predViewOpen() {
 // every pubsub update — one hook rather than a second polling loop.
 function refreshPredViewIfOpen() {
   if (!activePredView) return
+  // a card, a confirm or a picture opened over this view has the pane: its close repaints this
+  if (hsPanePanelOpen() || (typeof activeProfileCard !== 'undefined' && activeProfileCard) || imgViewOpen()) return
   renderPredView()
 }
 

@@ -17,20 +17,20 @@
  *     untouched; and on the live tab of page 2's second channel the same
  *   - nothing threw on the page, the console, or the add-on's error log
  */
-import { bad, extStorage, info, launch, liveChannels, liveYtVideo, ok, panel, rowsFlow, scenario, shot, sleep, waitPanel, watchErrors } from './lib'
+import { bad, extStorage, info, launch, liveChannels, liveYtVideo, ok, panel, ringSince, rowsFlow, scenario, shot, sleep, waitPanel, watchErrors } from './lib'
 
-const SETTLE_MS = 800
+export const SETTLE_MS = 800
 
-type Plat = 'twitch' | 'kick' | 'youtube'
-const url = (plat: Plat, ch: string) =>
+export type Plat = 'twitch' | 'kick' | 'youtube'
+export const url = (plat: Plat, ch: string) =>
   plat === 'kick' ? `https://kick.com/${ch}` : plat === 'youtube' ? `https://www.youtube.com/watch?v=${ch}` : `https://www.twitch.tv/${ch}`
 // a row's data-platform; youtube rows say yt
 const rowPlat = (plat: Plat) => (plat === 'youtube' ? 'yt' : plat)
 // a name /hide and Tab can take: one word (youtube handles carry @ . -)
-const NAME = /^@?[a-z0-9_.-]+$/
+export const NAME = /^@?[a-z0-9_.-]+$/
 
 /** Two live streams on the platform: channel logins, or youtube video ids. */
-async function twoLive(plat: Plat): Promise<string[] | null> {
+export async function twoLive(plat: Plat): Promise<string[] | null> {
   if (plat !== 'youtube') return liveChannels(plat, 2)
   const a = await liveYtVideo()
   if (!a) return null
@@ -39,7 +39,7 @@ async function twoLive(plat: Plat): Promise<string[] | null> {
 }
 
 /** The input as a person reads it: text, and each emote chip by its name. */
-function inputText(p: any): Promise<string> {
+export function inputText(p: any): Promise<string> {
   return p.evaluate(() => {
     const el = document.getElementById('hs-mc-input')
     if (!el) return ''
@@ -78,7 +78,7 @@ const toasts = (p: any): Promise<string[]> =>
   p.$$eval('[class*="toast"]', (e: Element[]) => e.map((x) => (x.textContent || '').trim()).filter(Boolean))
 
 /** Row keys on screen, and the authors of plain rows. */
-function screen(p: any, plat: Plat) {
+export function screen(p: any, plat: Plat) {
   return p.evaluate((plat: string) => {
     const keys: string[] = []
     const by: Record<string, number> = {}
@@ -95,7 +95,7 @@ function screen(p: any, plat: Plat) {
 }
 
 /** A third-party emote drawn in chat right now, with a plain name. */
-function emoteOnScreen(p: any): Promise<string | null> {
+export function emoteOnScreen(p: any): Promise<string | null> {
   return p.evaluate(() => {
     const seen = new Map<string, number>()
     for (const i of document.querySelectorAll('#hs-mc-messages img.hs-mc-emote') as any) {
@@ -137,6 +137,7 @@ async function s18Composer(plat: Plat) {
   if (!two) return info(`skipped: two live ${plat} streams not found`)
   const [ch, other] = two
   const env = await launch()
+  const t0 = Date.now()
   const errs: string[] = []
   const cons: string[] = []
   // @ts-ignore — extension page
@@ -287,7 +288,12 @@ async function s18Composer(plat: Plat) {
     const lclear = async (pg: any, where: string, other?: any) => {
       await step(`/lclear on ${where}: its rows gone and they stay gone, chat keeps coming`, async () => {
         const why: string[] = []
+        // is this chat saying anything at all? a stream whose rows are all the history it loaded
+        // with cannot prove "chat keeps coming" (youtube's second video, twice, 11-17)
+        const k0 = new Set((await screen(pg, plat)).keys)
+        await sleep(12_000)
         const old = new Set((await screen(pg, plat)).keys)
+        const flowing = [...old].some((k) => !k0.has(k))
         const otherBefore = other ? (await screen(other, plat)).keys.length : 0
         await type(pg, '/lclear')
         await pg.keyboard.press('Enter')
@@ -303,10 +309,16 @@ async function s18Composer(plat: Plat) {
         info(`${where}: ${old.size} rows before, ${right} of them right after; toast [${said.join(' | ')}]`)
         if (right) why.push(`${right} of ${old.size} rows still there right after`)
         await sleep(15_000)
-        const later = (await screen(pg, plat)).keys
+        let later = (await screen(pg, plat)).keys
         const back = later.filter((k) => old.has(k)).length
         if (back && !right) why.push(`${back} cleared rows came back`)
-        if (!later.length) why.push('no new chat in 15s')
+        // a slow chat (youtube polls every few seconds) can go 15s with nothing to say
+        for (let i = 0; i < 9 && !later.length; i++) {
+          await sleep(5000)
+          later = (await screen(pg, plat)).keys
+        }
+        if (!later.length && flowing) why.push('no new chat in 60s')
+        else if (!later.length) info(`${where}: no row in the 12s before /lclear either, too quiet to judge "chat keeps coming"`)
         if (other) {
           const o = (await screen(other, plat)).keys.length
           info(`the other page: ${otherBefore} rows before, ${o} after`)
@@ -325,6 +337,10 @@ async function s18Composer(plat: Plat) {
       info(`page 2 on ${other}: the panel is on ${tab}`)
       await lclear(p2, `${other}'s live tab (page 2)`)
     }
+    // /hide, /lclear and their undo drop and rebuild rows in bulk: where a row index would drift
+    const ring = await ringSince(p, t0)
+    if (ring.bad.length) bad(`${plat}: overlay watchdogs fired`, ring.bad.slice(0, 6))
+    else ok(`${plat}: the watchdog ring stayed quiet`)
   } finally {
     await env.close()
   }

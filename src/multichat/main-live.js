@@ -296,7 +296,7 @@ function _renderMessagesImpl(id, opts) {
   // Live-tab local filter: matcher compiled ONCE per query (not per message)
   // so /regex/ patterns, ReDoS guards, and @user/text modes are all O(1) setup.
   const _liveQ = liveSearchQuery(id)
-  const _liveMatcher = _liveQ ? buildLiveSearchMatcher(_liveQ) : null
+  const _liveMatcher = _liveQ ? liveSearchMatcherFor(_liveQ) : null
   const _liveCountEl = document.getElementById('hs-mc-search-count')
   if (_liveMatcher) {
     toRender = toRender.filter((m) => _liveMatcher.test(m))

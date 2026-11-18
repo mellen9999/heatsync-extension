@@ -106,4 +106,15 @@ function buildLiveSearchMatcher(rawQuery) {
   }
 }
 
-export { buildLiveSearchMatcher }
+// The matcher for the query on screen, compiled once: the append path asks per arriving line.
+let _lsMemoQuery = null
+let _lsMemo = null
+function liveSearchMatcherFor(rawQuery) {
+  if (rawQuery !== _lsMemoQuery) {
+    _lsMemo = buildLiveSearchMatcher(rawQuery)
+    _lsMemoQuery = rawQuery
+  }
+  return _lsMemo
+}
+
+export { buildLiveSearchMatcher, liveSearchMatcherFor }

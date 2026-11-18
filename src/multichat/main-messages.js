@@ -1876,6 +1876,16 @@ function appendMessage(msg, tabId) {
     _lastMsgTextByTab.set(tabId, msg.text)
   }
 
+  // A live filter is up: the render decides what is on screen, and counts the matches. A line
+  // the filter hides draws nothing; one it keeps goes to the render, a frame's worth at a time.
+  // Only merged tabs used to ask: on a single channel every arriving line was drawn under the
+  // filter, and a search for one name filled with everybody's rows (real twitch, 11-17).
+  const _liveQ = liveSearchQuery(tabId)
+  if (_liveQ) {
+    if (liveSearchMatcherFor(_liveQ).test(msg)) scheduleMergedRender()
+    return true
+  }
+
   // Merged tabs: a plain live line is appended below like on any tab, but
   // never trimmed by it (trimChildren is platform-blind and lets the fastest
   // source push the others out): the trim is the real render's, fair per

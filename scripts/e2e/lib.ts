@@ -21,6 +21,7 @@ import { CHROME_BIN, loadChromium } from '../lib/chromium'
 
 export const ROOT = join(import.meta.dir, '..', '..')
 export const EXT = process.env.E2E_EXT || join(ROOT, 'dist', 'chrome')
+const EXT_DEFAULT = EXT
 export const OUT = process.env.E2E_OUT || join(tmpdir(), `hs-e2e-${Date.now()}`)
 export const UA =
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
@@ -59,11 +60,16 @@ export async function launch(
     keepWelcome?: boolean
     /** called for every page the browser opens, from the first moment: listeners attached here miss nothing */
     onPage?: (pg: any) => void
+    /** reuse this profile dir (kept on close) instead of making a throwaway one */
+    profile?: string
+    /** load the extension from this dir instead of EXT */
+    ext?: string
   } = {},
 ) {
+  const EXT = opts.ext ?? EXT_DEFAULT
   if (!existsSync(join(EXT, 'manifest.json'))) throw new Error(`no built extension at ${EXT}`)
   const chromium = await loadChromium()
-  const profile = mkdtempSync(join(tmpdir(), 'hs-e2e-prof-'))
+  const profile = opts.profile ?? mkdtempSync(join(tmpdir(), 'hs-e2e-prof-'))
   const ctx = await chromium.launchPersistentContext(profile, {
     executablePath: CHROME_BIN,
     headless: false,
@@ -104,7 +110,7 @@ export async function launch(
   const welcome = opts.keepWelcome ? ctx.pages().find((pg: any) => pg.url().includes('welcome')) : undefined
   const close = async () => {
     await ctx.close().catch(() => {})
-    rmSync(profile, { recursive: true, force: true })
+    if (!opts.profile) rmSync(profile, { recursive: true, force: true })
   }
   return { ctx, extId, profile, close, welcome, worker: () => ctx.serviceWorkers()[0] || sw }
 }

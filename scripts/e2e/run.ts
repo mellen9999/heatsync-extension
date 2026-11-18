@@ -36,6 +36,7 @@ import { s23RowMenu } from './s23-row-menu'
 import { s24Native } from './s24-native'
 
 import { s25Rows } from './s25-rows'
+import { s26Upgrade } from './s26-upgrade'
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
   ['s2-twitch', s2Twitch],
@@ -65,9 +66,10 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s22-keys', s22Keys],
   ['s23-row-menu', s23RowMenu],
   ['s24-native', s24Native],
+  ['s25-rows', s25Rows],
+  ['s26-upgrade', s26Upgrade],
 ]
 
-  ['s25-rows', s25Rows],
 const args = process.argv.slice(2)
 const only = args.includes('--only') ? args[args.indexOf('--only') + 1] : ''
 // a family by its number: s2 is s2-twitch, s2-youtube and s2-kick; s1 is s1-tabs, never s10 or s11

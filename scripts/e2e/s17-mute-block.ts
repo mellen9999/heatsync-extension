@@ -20,7 +20,14 @@ import { bad, extStorage, info, launch, liveChannels, ok, panel, ROOT, rowsFlow,
 
 const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages.json'), 'utf8'))
 const L = (k: string) => EN[k].message as string
-const FOLLOW_MS = 4000
+// A mute or block is applied after a round trip to heatsync (the name is resolved to its linked
+// accounts first), and reaches the other tab as a message after that: how long both take is the
+// network's to say. A single read at a fixed 4s went red twice on a hosted runner over a build
+// that passes here every time (2026-11-18). So a step is read until it holds, and has to still
+// hold a moment later, or is reported as it stands at the deadline.
+const FOLLOW_MAX_MS = 20_000
+const HOLD_MS = 1000
+const MENU_TRIES = 3
 
 type Rows = { theirs: number; mutedTheirs: number; mutedOthers: string[]; replies: number }
 
@@ -107,64 +114,99 @@ export async function s17MuteBlock() {
         await shot(p2, `s17-${what.replace(/\W+/g, '-')}-p2`)
       } else ok(what)
     }
-    // their newest name on screen, right-clicked, then the menu's item by its label
+    // their newest name on screen, right-clicked, then the menu's item by its label. A busy chat
+    // moves the row under the pointer, and a row that never holds still for two frames times the
+    // click out: the name is found again and tried again. Nothing is chosen until the last click
+    // lands, so a retry cannot choose twice.
     const menu = async (pg: any, label: string) => {
-      const name = pg.locator(`#hs-mc-messages .hs-mc-msg .hs-mc-user:not(.hs-mc-reply-user)[data-username="${who}"]`).last()
-      await name.scrollIntoViewIfNeeded({ timeout: 5000 })
-      await name.click({ button: 'right', timeout: 5000 })
       const esc = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      await pg.locator('[role="menuitem"] .hs-mc-em-label', { hasText: new RegExp(`^${esc}$`) }).first().click({ timeout: 5000 })
-      await sleep(FOLLOW_MS)
+      for (let n = 1; ; n++) {
+        try {
+          const name = pg.locator(`#hs-mc-messages .hs-mc-msg .hs-mc-user:not(.hs-mc-reply-user)[data-username="${who}"]`).last()
+          await name.scrollIntoViewIfNeeded({ timeout: 5000 })
+          await name.click({ button: 'right', timeout: 5000 })
+          await pg.locator('[role="menuitem"] .hs-mc-em-label', { hasText: new RegExp(`^${esc}$`) }).first().click({ timeout: 5000 })
+          return
+        } catch (e) {
+          if (n >= MENU_TRIES) throw e
+          info(`"${label}" on ${who}: try ${n} missed (${String((e as Error)?.message || e).split('\n')[0].slice(0, 80)})`)
+          await pg.keyboard.press('Escape').catch(() => {})
+        }
+      }
     }
     const saved = async (key: 'muted_users' | 'blocked_users') => {
       const v = (await stored())[key] || []
       return (v as any[]).some((e) => String(e?.username ?? e).toLowerCase().replace(/^twitch:/, '') === who)
     }
-    const both = async (check: (r: Rows, n: number) => string[]) => {
-      const why: string[] = []
-      for (const [pg, n] of [[p, 1], [p2, 2]] as const) {
-        const r = await rows(pg, who)
-        info(`page ${n}: ${who} has ${r.theirs} rows (${r.mutedTheirs} blanked), ${r.mutedOthers.length} others blanked, ${r.replies} replies on screen`)
-        why.push(...check(r, n))
+    // both pages read until `check` (and `also`, what storage has to say) finds nothing wrong and
+    // still finds nothing HOLD_MS later; at the deadline, whatever is still wrong is the answer
+    const both = async (check: (r: Rows, n: number) => string[], also: () => Promise<string[]> = async () => []) => {
+      const read = async () => {
+        const why: string[] = []
+        const seen: string[] = []
+        for (const [pg, n] of [[p, 1], [p2, 2]] as const) {
+          const r = await rows(pg, who)
+          seen.push(`page ${n}: ${who} has ${r.theirs} rows (${r.mutedTheirs} blanked), ${r.mutedOthers.length} others blanked, ${r.replies} replies on screen`)
+          why.push(...check(r, n))
+        }
+        why.push(...(await also()))
+        return { why, seen }
       }
-      return why
+      const t0 = Date.now()
+      for (;;) {
+        let got = await read()
+        if (!got.why.length) {
+          await sleep(HOLD_MS)
+          got = await read()
+        }
+        if (!got.why.length || Date.now() - t0 >= FOLLOW_MAX_MS) {
+          for (const line of got.seen) info(line)
+          info(`${got.why.length ? 'still wrong' : 'held'} after ${((Date.now() - t0) / 1000).toFixed(1)}s`)
+          return got.why
+        }
+        await sleep(500)
+      }
     }
 
     await step(`${who} muted on page 1: blanked on both pages, no one else`, async () => {
       await menu(p, L('mc_input_mute_24h'))
-      const why = await both((r, n) => [
-        ...(r.theirs && r.mutedTheirs < r.theirs ? [`page ${n}: ${r.theirs - r.mutedTheirs} of their rows still readable`] : []),
-        ...(r.mutedOthers.length ? [`page ${n}: others blanked: ${[...new Set(r.mutedOthers)].slice(0, 4).join(', ')}`] : []),
-      ])
-      if (!(await saved('muted_users'))) why.push('the mute was not saved')
-      return why
+      return both(
+        (r, n) => [
+          ...(r.theirs && r.mutedTheirs < r.theirs ? [`page ${n}: ${r.theirs - r.mutedTheirs} of their rows still readable`] : []),
+          ...(r.mutedOthers.length ? [`page ${n}: others blanked: ${[...new Set(r.mutedOthers)].slice(0, 4).join(', ')}`] : []),
+        ],
+        async () => ((await saved('muted_users')) ? [] : ['the mute was not saved']),
+      )
     })
     await step(`${who} unmuted on page 2: readable on both pages`, async () => {
       await menu(p2, L('mc_settings_unmute'))
-      const why = await both((r, n) => [
-        ...(r.mutedTheirs ? [`page ${n}: ${r.mutedTheirs} of their rows still blank`] : []),
-        ...(r.mutedOthers.length ? [`page ${n}: others blank: ${[...new Set(r.mutedOthers)].slice(0, 4).join(', ')}`] : []),
-      ])
-      if (await saved('muted_users')) why.push('the mute is still saved')
-      return why
+      return both(
+        (r, n) => [
+          ...(r.mutedTheirs ? [`page ${n}: ${r.mutedTheirs} of their rows still blank`] : []),
+          ...(r.mutedOthers.length ? [`page ${n}: others blank: ${[...new Set(r.mutedOthers)].slice(0, 4).join(', ')}`] : []),
+        ],
+        async () => ((await saved('muted_users')) ? ['the mute is still saved'] : []),
+      )
     })
 
     const before = { 1: (await rows(p, who)).theirs, 2: (await rows(p2, who)).theirs } as Record<number, number>
     await step(`${who} blocked on page 1: gone from both pages`, async () => {
       await menu(p, L('content_card_block'))
-      const why = await both((r, n) => (r.theirs ? [`page ${n}: ${r.theirs} of their rows still on screen`] : []))
-      if (!(await saved('blocked_users'))) why.push('the block was not saved (a heatsync account block lives on the server: see the info lines)')
-      return why
+      return both(
+        (r, n) => (r.theirs ? [`page ${n}: ${r.theirs} of their rows still on screen`] : []),
+        async () =>
+          (await saved('blocked_users')) ? [] : ['the block was not saved (a heatsync account block lives on the server: see the info lines)'],
+      )
     })
     // their rows are gone, so there is no name left to right-click: /block toggles it back
     await step(`${who} unblocked on page 2 with /block: back on both pages`, async () => {
       await p2.click('#hs-mc-input', { timeout: 5000 })
       await p2.keyboard.type(`/block ${who}`)
       await p2.keyboard.press('Enter')
-      await sleep(FOLLOW_MS)
-      const why = await both((r, n) => (before[n] && !r.theirs ? [`page ${n}: none of their ${before[n]} rows came back`] : []))
-      if (await saved('blocked_users')) why.push('the block is still saved')
-      return why
+      return both(
+        (r, n) => (before[n] && !r.theirs ? [`page ${n}: none of their ${before[n]} rows came back`] : []),
+        async () => ((await saved('blocked_users')) ? ['the block is still saved'] : []),
+      )
     })
 
     if (!(await rowsFlow(p, 20_000)) || !(await rowsFlow(p2, 20_000))) bad(`${ch}: chat stopped after the mute and block`)

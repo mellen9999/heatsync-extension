@@ -1143,6 +1143,12 @@ function createOverlay() {
       }
     }
 
+    // A list with nothing to scroll has no "up" to read. One wheel notch on a new tab's five
+    // lines paused it, and every line after that waited behind the pill.
+    const pauseByScroll = (el) => {
+      if (el.scrollHeight > el.clientHeight) setPaused(true)
+    }
+
     // BULLETPROOF AUTO-SCROLL RULE:
     // isScrolledUp is set TRUE only by explicit user input — wheel-up,
     // touchmove going up, PageUp/Home/ArrowUp keys, mousedown on scrollbar
@@ -1243,7 +1249,7 @@ function createOverlay() {
           if (e.deltaY > 0 && !e.ctrlKey && isScrolledUp && !hoverHeld && checkAtBottom()) jumpToTail()
           return
         }
-        setPaused(true)
+        pauseByScroll(msgsEl)
         // Already at the top, this wheel moves nothing and no scroll event follows it: ask here.
         if (msgsEl.scrollTop <= SCROLLBACK_TRIGGER_PX) maybeLoadOlder()
       },
@@ -1267,7 +1273,7 @@ function createOverlay() {
       (e) => {
         if (!listIsChat()) return
         const y = e.touches[0]?.clientY || 0
-        if (y > _touchStartY + 4) setPaused(true)
+        if (y > _touchStartY + 4) pauseByScroll(msgsEl)
         _touchStartY = y
       },
       { passive: true, signal: mcSignal },
@@ -1702,7 +1708,7 @@ function createOverlay() {
       if (!liveMsgsEl) return
       ev.preventDefault()
       _userInputScroll = true
-      if (ev.deltaY < 0) setPaused(true)
+      if (ev.deltaY < 0) pauseByScroll(liveMsgsEl)
       // scrollBy honors deltaMode (lines/pages/pixels) so high-DPI mice and
       // line-mode wheels feel native. The += assignment treated everything
       // as pixels.

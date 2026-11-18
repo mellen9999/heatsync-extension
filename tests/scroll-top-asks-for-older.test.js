@@ -14,12 +14,17 @@ const s = MAIN.indexOf('    // Near the top while paused → paint the next chun
 const e = MAIN.indexOf('    // Touch: track touchmove direction.', s)
 if (s < 0 || e < 0) throw new Error('carve: the list scroll listeners moved')
 const WIRING = MAIN.slice(s, e)
+// old source has no pauseByScroll: the wheel listener calls setPaused itself, and the test fails on what it checks
+const ps = MAIN.indexOf('    const pauseByScroll = (el) => {')
+const PAUSE = ps < 0 ? '' : MAIN.slice(ps, MAIN.indexOf('\n    }\n', ps) + 7)
 
-function rig({ paused = true, top = 0, atBottom = false, hover = false } = {}) {
+function rig({ paused = true, top = 0, atBottom = false, hover = false, short = false } = {}) {
   const win = new Window()
   const msgsEl = win.document.createElement('div')
   win.document.body.appendChild(msgsEl)
   let scrollTop = top
+  Object.defineProperty(msgsEl, 'scrollHeight', { get: () => (short ? 205 : 20000) })
+  Object.defineProperty(msgsEl, 'clientHeight', { get: () => 445 })
   Object.defineProperty(msgsEl, 'scrollTop', { get: () => scrollTop, set: (v) => (scrollTop = v) })
   const frames = []
   const st = new Function(
@@ -36,6 +41,7 @@ function rig({ paused = true, top = 0, atBottom = false, hover = false } = {}) {
      const isStaticTab = () => false
      const listIsChat = () => true
      const setPaused = (p) => { isScrolledUp = p; calls.paused.push(p) }
+     ${PAUSE}
      const onScrollMaybeResume = () => calls.resume++
      const loadOlderScrollback = () => calls.older++
      const paneHoldScrolled = () => {}
@@ -133,4 +139,15 @@ test('a list that is not paused, one held by the pointer, and a zoom wheel are l
   const zoom = rig({ top: 17023, atBottom: true })
   zoom.fire('wheel', { deltaY: 100, ctrlKey: true })
   expect(zoom.calls.tail).toBe(0)
+})
+
+// A list with nothing to scroll: a new tab's first five lines. One wheel notch up paused it and
+// every later line waited behind the pill (the site had the same; found there first, 11-18).
+test('a wheel up on a list too short to scroll pauses nothing', () => {
+  const r = rig({ paused: false, short: true })
+  r.fire('wheel', { deltaY: -100 })
+  expect(r.calls.paused).toEqual([])
+  const long = rig({ paused: false, top: 4000 })
+  long.fire('wheel', { deltaY: -100 })
+  expect(long.calls.paused).toEqual([true])
 })

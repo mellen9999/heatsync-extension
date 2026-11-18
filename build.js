@@ -815,7 +815,8 @@ const LIB_EXTRAS = {
 //     was undefined — 56 ReferenceErrors no typeof guard on an entry point can see.
 //   content.js runs the chat filter rules on native twitch/kick rows (highlight
 //     words with the overlay off) and folds the old text filters into them
-//     (content/native-filter-rules.js is the content-side half).
+//     (content/native-filter-rules.js is the content-side half), and leaves the site's own
+//     text nodes in place on kick (content/site-nodes.js).
 //   content.js + youtube-content.js pick your own emote's size rung (multichat/emote-rungs.js);
 //   heatsync-button.js's upload form runs the overlay's upload rules (multichat/emote-upload-core.js).
 //   content.js + heatsync-button.js draw their close × with the overlay's one
@@ -832,6 +833,7 @@ const ENTRY_MODULES = {
     'multichat/filter-rules.js',
     'multichat/filter-rules-legacy.js',
     'content/native-filter-rules.js',
+    'content/site-nodes.js',
     'multichat/x-glyph.js',
     'multichat/emote-rungs.js',
   ],

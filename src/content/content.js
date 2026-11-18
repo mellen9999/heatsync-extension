@@ -4985,9 +4985,12 @@
   function colorUsernameMentions(messageElement, preQueriedFragments, emotes) {
     if (!knownChatters.size) return
     // Use pre-queried fragments when available (avoids redundant DOM query from processMessage)
-    const textFragments =
-      preQueriedFragments ||
-      messageElement.querySelectorAll('.text-fragment, [data-a-target="chat-message-text"], span.font-normal')
+    // On kick the words live in our own spans (site-nodes.js): a name is coloured there, and the
+    // site's own text node is never swapped for ours.
+    const textFragments = isKick
+      ? messageElement.querySelectorAll('.hs-textfrag')
+      : preQueriedFragments ||
+        messageElement.querySelectorAll('.text-fragment, [data-a-target="chat-message-text"], span.font-normal')
 
     for (const fragment of textFragments) {
       // Skip if already has our colored spans (check for our marker class)
@@ -5438,16 +5441,19 @@
   // hs-textfrag spans from the first pass and re-runs the machinery on the
   // still-unresolved ones — spans that already hold a wrapper are skipped
   // (same guard the pure-leaf path uses), so nothing double-wraps.
+  const siteText = createSiteText({
+    MutationObserver,
+    track: (o) => cleanup.trackObserver(o),
+    // drawn again from the site's words on the next pass, if it is still a message
+    onRedrawn: (leaf) => leaf.closest('[data-index]')?.removeAttribute('data-heatsync-generation'),
+  })
   function replaceEmotesPreservingImgs(leaf, allEmotes) {
-    // Snapshot — replaceWith mutates the live childNodes list mid-iteration.
+    // Snapshot — parking a node adds a span to the live childNodes list mid-iteration.
     for (const node of Array.from(leaf.childNodes)) {
       if (node.nodeType === 3) {
         if (!node.nodeValue?.trim()) continue
-        const span = document.createElement('span')
-        span.className = 'hs-textfrag'
-        span.textContent = node.nodeValue
-        node.replaceWith(span)
-        replaceEmotesWithStacking(span, allEmotes)
+        // the site's node stays where it is (site-nodes.js): swapped out, kick's chat died on a delete
+        replaceEmotesWithStacking(siteText.park(node), allEmotes)
       } else if (node.nodeType === 1 && node.classList.contains('hs-textfrag')) {
         // Retro-upgrade: text was wrapped on a prior pass but its emotes
         // hadn't resolved yet (kick sender sets arrive after first render).
@@ -5682,7 +5688,9 @@
       // Mixed leaf (native platform emote <img> inline with text, e.g. Kick) —
       // replace per text-node so native <img> survive. Pure-text leaves take the
       // fast path. querySelector('img') is the cheap discriminator.
-      if (textElement.querySelector('img')) {
+      // Every kick leaf goes this way, pictures or not: the other path swaps the site's own text
+      // node out, and kick's renderer comes back for it.
+      if (isKick || textElement.querySelector('img')) {
         replaceEmotesPreservingImgs(textElement, allEmotes)
       } else {
         replaceEmotesWithStacking(textElement, allEmotes)
@@ -5824,6 +5832,7 @@
       // Wrap current element if it's a native emote (not already a heatsync wrapper)
       let currentWrapper = currentElement
       if (!currentElement.classList.contains('heatsync-emote-wrapper')) {
+        if (isKick) continue // wrapping moves it, and it is kick's node (site-nodes.js)
         currentWrapper = document.createElement('span')
         // Native emotes get emote-overlay-global (gray) since they're platform emotes
         currentWrapper.className = 'heatsync-emote-wrapper heatsync-overlay emote-overlay-global'
@@ -5865,6 +5874,7 @@
         // Wrap base element if it's a native emote
         let baseWrapper = baseElement
         if (!baseElement.classList.contains('heatsync-emote-wrapper')) {
+          if (isKick) continue // the same: kick's own emote stays where kick drew it
           baseWrapper = document.createElement('span')
           // Native emotes get emote-overlay-global (gray) since they're platform emotes
           baseWrapper.className = 'heatsync-emote-wrapper emote-overlay-global'

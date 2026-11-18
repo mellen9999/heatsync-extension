@@ -52,6 +52,18 @@ function channelAddError(twitchVal, kickVal, ytVal, self = null) {
 // [a-z0-9_], kick adds '-'): a typo or a half-parsed URL would be a silent dead tab.
 const MC_TWITCH_LOGIN = /^[a-z0-9_]{1,25}$/
 const MC_KICK_SLUG = /^[a-z0-9_-]{1,25}$/
+// Site pages that sit where a channel's name does: a pasted twitch.tv/directory or
+// kick.com/browse link reads as a channel called "directory". The site's own list
+// (client/utils/stream-link.js RESERVED), plus the link prefixes the parsers step over.
+const MC_SITE_PATHS = new Set(
+  (
+    'directory settings p downloads jobs turbo subscriptions inventory wallet drops friends messages search ' +
+    'videos video clip clips categories category browse dashboard terms privacy community-guidelines ' +
+    'popout embed moderator u'
+  ).split(' '),
+)
+const mcTwitchNameOk = (v) => MC_TWITCH_LOGIN.test(v) && !MC_SITE_PATHS.has(v)
+const mcKickNameOk = (v) => MC_KICK_SLUG.test(v) && !MC_SITE_PATHS.has(v)
 
 /**
  * What the add and edit forms save: each field reduced to a clean name (a pasted
@@ -64,8 +76,7 @@ function mcChannelInputs(twitchRaw, kickRaw, ytRaw, self = null) {
   const ytVal = (ytRaw || '').trim() ? normalizeYtUrl(ytRaw.trim()) : ''
   let err = null
   if (!twitchVal && !kickVal && !ytVal) err = 'mc_enter_platform'
-  else if ((twitchVal && !MC_TWITCH_LOGIN.test(twitchVal)) || (kickVal && !MC_KICK_SLUG.test(kickVal)))
-    err = 'mc_invalid_name'
+  else if ((twitchVal && !mcTwitchNameOk(twitchVal)) || (kickVal && !mcKickNameOk(kickVal))) err = 'mc_invalid_name'
   else err = channelAddError(twitchVal, kickVal, ytVal, self)
   return { twitchVal, kickVal, ytVal, err }
 }
@@ -406,12 +417,12 @@ function renderPasteListForm(msgsEl) {
     const entries = []
     for (const raw of splitLines(twitchTa.value)) {
       const v = parseTwitchLoginValue(raw)
-      if (!MC_TWITCH_LOGIN.test(v)) bad.push(raw)
+      if (!mcTwitchNameOk(v)) bad.push(raw)
       else entries.push({ twitch: v })
     }
     for (const raw of splitLines(kickTa.value)) {
       const v = parseKickSlugValue(raw)
-      if (!MC_KICK_SLUG.test(v)) bad.push(raw)
+      if (!mcKickNameOk(v)) bad.push(raw)
       else entries.push({ kick: v })
     }
     for (const raw of splitLines(ytTa.value)) {
@@ -441,15 +452,22 @@ function renderPasteListForm(msgsEl) {
 
 // Module-scope copies of the two parsers the add form defines inline, so the
 // paste list and the picker can reuse them without reaching into a closure.
+// A link gives the name in it. The links people have are not all the channel page: a
+// popped-out chat (twitch.tv/popout/name/chat, kick.com/popout/name/chat), an embed, the
+// mod view, the dashboard (dashboard.twitch.tv/u/name/...), the bare player
+// (player.twitch.tv/?channel=name). The word before the name is stepped over; kick's
+// popout link used to save a channel called "popout".
 function parseTwitchLoginValue(raw) {
   let v = (raw || '').trim().replace(/^@/, '')
-  const m = v.match(/twitch\.tv\/(?:popout\/|moderator\/)?([^/?#\s]+)/i)
+  const m =
+    v.match(/player\.twitch\.tv\/?\?(?:[^#\s]*&)?channel=([^&#\s]+)/i) ||
+    v.match(/twitch\.tv\/(?:(?:popout|embed|moderator|u)\/)?([^/?#\s]+)/i)
   if (m) v = m[1]
   return v.toLowerCase()
 }
 function parseKickSlugValue(raw) {
   let v = (raw || '').trim().replace(/^@/, '')
-  const m = v.match(/kick\.com\/([^/?#\s]+)/i)
+  const m = v.match(/kick\.com\/(?:(?:popout|embed)\/)?([^/?#\s]+)/i)
   if (m) v = m[1]
   return v.toLowerCase()
 }
@@ -851,7 +869,7 @@ function renderLivePlatformsPane(pane) {
     const tw = parseTwitchLoginValue(twitch.input.value)
     const ki = parseKickSlugValue(kick.input.value)
     const ytVal = yt.input.value.trim() ? normalizeYtUrl(yt.input.value.trim()) : ''
-    if ((tw && !MC_TWITCH_LOGIN.test(tw)) || (ki && !MC_KICK_SLUG.test(ki))) {
+    if ((tw && !mcTwitchNameOk(tw)) || (ki && !mcKickNameOk(ki))) {
       errEl.textContent = t('mc_invalid_name')
       errEl.style.display = 'block'
       return

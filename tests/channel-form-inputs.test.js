@@ -32,6 +32,40 @@ test('a pasted link saves the name in it', () => {
   expect(ci('@Shroud', '', '').twitchVal).toBe('shroud')
 })
 
+test('a link that is not the channel page still gives its channel', () => {
+  const ci = forms([])
+  // kick's popped-out chat saved a channel called "popout"
+  expect(ci('', 'https://kick.com/popout/Sxb/chat', '')).toMatchObject({ kickVal: 'sxb', err: null })
+  expect(ci('', 'kick.com/sxb/chatroom', '').kickVal).toBe('sxb')
+  expect(ci('', 'https://player.kick.com/sxb', '').kickVal).toBe('sxb')
+  expect(ci('https://www.twitch.tv/popout/xQc/chat?popout=', '', '')).toMatchObject({ twitchVal: 'xqc', err: null })
+  expect(ci('https://www.twitch.tv/embed/xqc/chat?parent=x', '', '').twitchVal).toBe('xqc')
+  expect(ci('https://www.twitch.tv/moderator/xqc', '', '').twitchVal).toBe('xqc')
+  expect(ci('https://dashboard.twitch.tv/u/xqc/stream-manager', '', '').twitchVal).toBe('xqc')
+  expect(ci('https://player.twitch.tv/?channel=xQc&parent=example.com', '', '')).toMatchObject({
+    twitchVal: 'xqc',
+    err: null,
+  })
+  expect(ci('player.twitch.tv/?parent=example.com&channel=xqc', '', '').twitchVal).toBe('xqc')
+})
+
+test('a link to a site page is refused, not saved as a channel of that name', () => {
+  const ci = forms([])
+  for (const link of [
+    'https://www.twitch.tv/directory',
+    'twitch.tv/videos/2301234567',
+    'https://www.twitch.tv/popout',
+    'https://www.twitch.tv/settings/profile',
+  ])
+    expect(ci(link, '', '').err, link).toBe('mc_invalid_name')
+  for (const link of ['https://kick.com/browse', 'kick.com/category/just-chatting', 'https://kick.com/popout'])
+    expect(ci('', link, '').err, link).toBe('mc_invalid_name')
+  // typed bare, the same
+  expect(ci('directory', '', '').err).toBe('mc_invalid_name')
+  // a real name next to one of those words is its own name
+  expect(ci('videosgames', 'clipsy', '')).toMatchObject({ twitchVal: 'videosgames', kickVal: 'clipsy', err: null })
+})
+
 test('a name no platform allows is refused', () => {
   const ci = forms([])
   expect(ci('not a name', '', '').err).toBe('mc_invalid_name')
@@ -57,6 +91,8 @@ test('every form saves parsed names: add, edit, the live tab’s platforms', () 
   expect(src.match(/mcChannelInputs\(twitch\.input\.value, kick\.input\.value, yt\.input\.value/g)?.length).toBe(2)
   const live = piece('function renderLivePlatformsPane(', '\n// One T/K/Y')
   expect(live).toContain('parseTwitchLoginValue(twitch.input.value)')
-  expect(live).toContain('MC_KICK_SLUG.test(ki)')
+  expect(live).toContain('mcKickNameOk(ki)')
+  // the paste list too: no form tests a name against the charset alone
+  expect(src.match(/MC_(TWITCH_LOGIN|KICK_SLUG)\.test\(/g)?.length).toBe(2)
   expect(src).not.toContain('twitch.input.value.trim().toLowerCase()')
 })

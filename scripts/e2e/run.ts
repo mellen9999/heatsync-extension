@@ -37,6 +37,7 @@ import { s24Native } from './s24-native'
 
 import { s25Rows } from './s25-rows'
 import { s26Upgrade } from './s26-upgrade'
+import { s28SettingsRest } from './s28-settings-rest'
 import { s27Locale } from './s27-locale'
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
@@ -69,6 +70,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s24-native', s24Native],
   ['s25-rows', s25Rows],
   ['s26-upgrade', s26Upgrade],
+  ['s28-settings-rest', s28SettingsRest],
   ['s27-locale', s27Locale],
 ]
 

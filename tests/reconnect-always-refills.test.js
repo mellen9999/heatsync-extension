@@ -34,7 +34,7 @@ function worker() {
     'clearTimeout',
     'bgIrcPersistRobottyTs',
     'fetched',
-    `const ROBOTTY_COOLDOWN_MS = ${COOLDOWN}\n${head}  fetched.push([ch, Date.now()])\n}\n${fn('bgIrcRefillGap')}\nreturn { bgIrcRefillGap, bgIrcFetchRobotty }`,
+    `const ROBOTTY_COOLDOWN_MS = ${COOLDOWN}\n${head}  fetched.push([ch, Date.now()])\n  return Promise.resolve(BG_IRC.failing ? false : undefined)\n}\n${fn('bgIrcRefillGap')}\nreturn { bgIrcRefillGap, bgIrcFetchRobotty }`,
   )(
     BG_IRC,
     { now: () => now },
@@ -93,6 +93,48 @@ describe('the refill a reconnect owes', () => {
     w.BG_IRC.channels.delete('xqc')
     w.advance(COOLDOWN)
     expect(w.fetched.length).toBe(1)
+  })
+
+  test('a timer that fires a hair early waits again, it never drops the refill', () => {
+    const w = worker()
+    w.bgIrcFetchRobotty('xqc')
+    w.advance(20_000)
+    w.bgIrcRefillGap('xqc')
+    const t = w.timers.splice(0)[0]
+    w.advance(COOLDOWN - 20_000 - 3) // 3ms short of the cooldown
+    t.f()
+    expect(w.fetched.length).toBe(1)
+    expect(w.timers.length).toBe(1) // armed again for the rest
+    w.advance(3)
+    expect(w.fetched.length).toBe(2)
+  })
+
+  test('a refill that fails is still owed: twice more, a cooldown apart, then it gives up', async () => {
+    const w = worker()
+    w.BG_IRC.failing = true
+    w.bgIrcRefillGap('xqc')
+    for (let i = 0; i < 6; i++) {
+      await Promise.resolve()
+      w.advance(COOLDOWN)
+    }
+    await Promise.resolve()
+    expect(w.fetched.length).toBe(3)
+    expect(w.fetched[1][1] - w.fetched[0][1]).toBe(COOLDOWN)
+    expect(w.timers.length).toBe(0)
+  })
+
+  test('a refill that worked is not asked for again', async () => {
+    const w = worker()
+    w.bgIrcRefillGap('xqc')
+    await Promise.resolve()
+    w.advance(COOLDOWN * 3)
+    expect(w.fetched.length).toBe(1)
+  })
+
+  test('the fetch says when it failed: a bad answer and a thrown fetch both read false', () => {
+    const body = fn('bgIrcFetchRobotty')
+    expect(body).toContain('if (!resp.ok) return false')
+    expect(body).toMatch(/catch \(e\) \{[^}]*return false/)
   })
 
   test('the reconnect path asks for it for every joined channel, with no cooldown of its own', () => {

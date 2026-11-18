@@ -1008,11 +1008,14 @@ function bgIrcReconcileCleared(buf) {
 // One refill per reconnect, always. Inside the fetch cooldown it waits for the
 // cooldown's end instead of being dropped: a fetch from before the socket came
 // back cannot hold the lines of the gap, so a blip soon after a join (or after
-// a fetch that failed offline) used to lose them for good.
-function bgIrcRefillGap(ch) {
+// a fetch that failed offline) used to lose them for good. A refill that fails
+// (server restarting, network half up) is still owed: twice more, a cooldown apart.
+function bgIrcRefillGap(ch, tries = 3) {
   const wait = (BG_IRC.lastRobottyAt.get(ch) || 0) + ROBOTTY_COOLDOWN_MS - Date.now()
   if (wait <= 0) {
-    bgIrcFetchRobotty(ch)
+    bgIrcFetchRobotty(ch).then((ok) => {
+      if (ok === false && tries > 1 && BG_IRC.channels.has(ch)) bgIrcRefillGap(ch, tries - 1)
+    })
     return
   }
   if (BG_IRC.refillTimers.has(ch)) return
@@ -1020,7 +1023,8 @@ function bgIrcRefillGap(ch) {
     ch,
     setTimeout(() => {
       BG_IRC.refillTimers.delete(ch)
-      if (BG_IRC.channels.has(ch)) bgIrcFetchRobotty(ch)
+      // back through the gate: a timer a hair early waits again, it never drops the refill
+      if (BG_IRC.channels.has(ch)) bgIrcRefillGap(ch, tries)
     }, wait),
   )
 }
@@ -1044,7 +1048,7 @@ function bgIrcFetchRobotty(ch) {
         { signal: ctrl.signal, credentials: 'omit' },
       )
       clearTimeout(timer)
-      if (!resp.ok) return
+      if (!resp.ok) return false
       const data = await resp.json()
       if (!data.messages?.length) return
       const buf = BG_IRC.channels.get(ch)
@@ -1081,6 +1085,7 @@ function bgIrcFetchRobotty(ch) {
       log('BG IRC robotty merged', toAdd.length, 'msgs for', ch)
     } catch (e) {
       log('BG IRC robotty fetch failed for', ch, ':', e.message)
+      return false
     } finally {
       BG_IRC.historyInFlight.delete(ch)
     }

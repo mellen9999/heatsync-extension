@@ -777,6 +777,7 @@ function buildMessageDiv(m, tabId) {
   // Skip text-less rows (system/usernotice with only a systemMsg) — they
   // render via ${systemLine}, never ${processedText}, so computing would just
   // cache a spurious '' (and pointlessly queue a sender-emote fetch).
+  const keptHtml = m._renderedHtml != null // drawn before: its html predates what has been learned since
   const processedText = m.text ? computeMessageText(m) : ''
 
   // Sticker for super stickers
@@ -962,6 +963,7 @@ function buildMessageDiv(m, tabId) {
           ? `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${filledRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan} <span class="hs-mc-text" style="color:${sanitizeColor(m.color || '#fff')}">${processedText}</span>${stickerHtml}`
           : `${tsHtml}${systemLine}${platformBadge}${scBadge}${bitsBadge}${badges}${marksHtml}${avatarHtml}${filledRow ? `<span class="hs-name-cut">${userLink}</span>` : userLink}${hsPlusHtml}${channelSpan}: <span class="hs-mc-text">${processedText}</span>${stickerHtml}`
   div.innerHTML = `${replyBar}${msgBody}`
+  if (keptHtml && processedText.includes('hs-mc-emote-wrapper')) hsReserveEmoteBoxes(div)
   // Correct emote states based on current inventory + blocked (cached HTML
   // may have stale states). String-includes gate skips the querySelectorAll
   // walk on the >95% of msgs that don't contain heatsync emotes — the gate

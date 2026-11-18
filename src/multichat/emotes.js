@@ -4136,6 +4136,25 @@ async function hydrateEmoteBoxWidths() {
   } catch (_) {}
 }
 
+// A row's text html is kept from its first render, so an old line keeps the emotes it was
+// sent with. An emote that had never loaded at that moment (its first sighting) has no box
+// width in that html: the row redrawn from it later (a closed card, older rows loaded, a
+// cold tab) was laid out with the emote at width 0, then re-wrapped a beat later when the
+// picture landed, and a reader scrolled up watched their place slide down by a line for
+// every such row above it (real twitch: 184px, e2e s20, 11-17). The widths learned since
+// go on here, by the same rule a fresh render follows: a plain wrapper only (a stack sizes
+// itself from its members, a modifier and a kick crop carry their own box).
+function hsReserveEmoteBoxes(root) {
+  if (!_hsEmoteBoxW.size) return
+  for (const w of root.querySelectorAll('.hs-mc-emote-wrapper[data-emote-url]')) {
+    if (w.style.width || w.dataset.hsModSx) continue
+    if (w.classList.contains('hs-kick-crop') || w.classList.contains('hs-mc-emote-cw')) continue
+    if (w.closest('.hs-mc-emote-stack')) continue
+    const px = _hsEmoteBoxW.get(w.dataset.emoteUrl)
+    if (px) w.style.width = `${px}px`
+  }
+}
+
 // Kick serves every emote on a square canvas, so a wide one (…KEKWIDE) arrives
 // as a strip of art in the middle of transparent padding and drew at a third of
 // the size of any other wide emote. Measure where the art actually is (one

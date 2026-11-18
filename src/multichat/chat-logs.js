@@ -736,6 +736,8 @@ function clEmoteImg(host, src, alt) {
   img.src = src
   img.alt = alt
   img.loading = 'lazy'
+  // one address, no retry: a picture that cannot be had reads as its name, not a broken icon
+  img.addEventListener('error', () => hsEmoteAsName(img), { once: true })
   host.appendChild(img)
 }
 

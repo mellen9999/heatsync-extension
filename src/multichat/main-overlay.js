@@ -1472,8 +1472,13 @@ function createOverlay() {
           t.dataset.hsAvifFell = '1'
           t.src = t.src.replace(/\.avif$/, '.webp')
         }
-        // no other address left to try
-        if (t instanceof HTMLImageElement && t.classList.contains('hs-mc-emote') && t.src === src0) hsEmoteAsName(t)
+        // no other address left to try; a line the server drew (a card's history) only ever had one
+        if (
+          t instanceof HTMLImageElement &&
+          t.src === src0 &&
+          (t.classList.contains('hs-mc-emote') || t.closest('.hs-card-log-body'))
+        )
+          hsEmoteAsName(t)
       }
       // Snap the emote box to an integer width so the text after it stays on
       // the pixel grid (see hsSnapEmoteBox — fixes blurry post-emote text).

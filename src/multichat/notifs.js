@@ -216,17 +216,20 @@ const HsNotifs = (() => {
     } catch (_) {}
     if (notif.type.timeout) {
       // Pause-on-hover. Errors are easy to miss if they vanish mid-read.
+      // A mouse only: a finger's tap enters and never leaves, and a tapped toast stayed for good.
       let remaining = notif.type.timeout
       let startedAt = Date.now()
       notif._timer = cleanup.setPageTimeout(() => dismiss(notif.id), remaining)
-      wrapper.addEventListener('mouseenter', () => {
+      wrapper.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse') return
         if (notif._timer) {
           cleanup.clearTimeout(notif._timer)
           notif._timer = null
           remaining = Math.max(0, remaining - (Date.now() - startedAt))
         }
       })
-      wrapper.addEventListener('mouseleave', () => {
+      wrapper.addEventListener('pointerleave', (e) => {
+        if (e.pointerType !== 'mouse') return
         if (!notif._timer && remaining > 0) {
           startedAt = Date.now()
           notif._timer = cleanup.setPageTimeout(() => dismiss(notif.id), remaining)

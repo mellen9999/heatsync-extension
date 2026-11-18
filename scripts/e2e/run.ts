@@ -39,6 +39,7 @@ import { s25Rows } from './s25-rows'
 import { s26Upgrade } from './s26-upgrade'
 import { s28SettingsRest } from './s28-settings-rest'
 import { s27Locale } from './s27-locale'
+import { s29Network } from './s29-network'
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
   ['s2-twitch', s2Twitch],
@@ -72,6 +73,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s26-upgrade', s26Upgrade],
   ['s28-settings-rest', s28SettingsRest],
   ['s27-locale', s27Locale],
+  ['s29-network', s29Network],
 ]
 
 const args = process.argv.slice(2)

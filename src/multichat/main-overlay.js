@@ -1149,6 +1149,16 @@ function createOverlay() {
       if (el.scrollHeight > el.clientHeight) setPaused(true)
     }
 
+    // Already at the bottom of the rows drawn, a wheel down moves nothing and no scroll event
+    // follows it. A paused reader gets there when the rows under them shrink (a mod clears
+    // someone): they wheeled down and stayed paused, the pill counting up (e2e s20, 11-18). A
+    // feed held by the pointer sits at the bottom on purpose and stays held.
+    const tailByWheel = (e) => {
+      if (!(e.deltaY > 0 && !e.ctrlKey && isScrolledUp && !hoverHeld && checkAtBottom())) return false
+      jumpToTail()
+      return true
+    }
+
     // BULLETPROOF AUTO-SCROLL RULE:
     // isScrolledUp is set TRUE only by explicit user input — wheel-up,
     // touchmove going up, PageUp/Home/ArrowUp keys, mousedown on scrollbar
@@ -1242,11 +1252,7 @@ function createOverlay() {
         if (!listIsChat()) return
         _userInputScroll = true
         if (e.deltaY >= 0) {
-          // Already at the bottom of the rows drawn, a wheel down moves nothing and no scroll
-          // event follows it. A paused reader gets there when the rows under them shrink (a mod
-          // clears someone): they wheeled down and stayed paused, the pill counting up (e2e s20,
-          // 11-18). A feed held by the pointer sits at the bottom on purpose and stays held.
-          if (e.deltaY > 0 && !e.ctrlKey && isScrolledUp && !hoverHeld && checkAtBottom()) jumpToTail()
+          tailByWheel(e)
           return
         }
         pauseByScroll(msgsEl)
@@ -1709,6 +1715,8 @@ function createOverlay() {
       ev.preventDefault()
       _userInputScroll = true
       if (ev.deltaY < 0) pauseByScroll(liveMsgsEl)
+      // the same wheel, over a reply stack drawn on top of the list
+      else if (listIsChat() && tailByWheel(ev)) return
       // scrollBy honors deltaMode (lines/pages/pixels) so high-DPI mice and
       // line-mode wheels feel native. The += assignment treated everything
       // as pixels.

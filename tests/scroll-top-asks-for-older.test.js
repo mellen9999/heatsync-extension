@@ -16,7 +16,15 @@ if (s < 0 || e < 0) throw new Error('carve: the list scroll listeners moved')
 const WIRING = MAIN.slice(s, e)
 // old source has no pauseByScroll: the wheel listener calls setPaused itself, and the test fails on what it checks
 const ps = MAIN.indexOf('    const pauseByScroll = (el) => {')
-const PAUSE = ps < 0 ? '' : MAIN.slice(ps, MAIN.indexOf('\n    }\n', ps) + 7)
+const ts = MAIN.indexOf('    const tailByWheel = (e) => {')
+const PAUSE =
+  (ps < 0 ? '' : MAIN.slice(ps, MAIN.indexOf('\n    }\n', ps) + 7)) +
+  (ts < 0 ? '' : MAIN.slice(ts, MAIN.indexOf('\n    }\n', ts) + 7))
+// the wheel over a reply stack, which sits on top of the list and hands its wheel on
+const fs = MAIN.indexOf('    const forwardWheelToMsgs = (ev) => {')
+const fe = MAIN.indexOf('\n    }\n', fs)
+if (fs < 0 || fe < 0) throw new Error('carve: forwardWheelToMsgs')
+const FORWARD = MAIN.slice(fs, fe + 7)
 
 function rig({ paused = true, top = 0, atBottom = false, hover = false, short = false } = {}) {
   const win = new Window()
@@ -32,6 +40,7 @@ function rig({ paused = true, top = 0, atBottom = false, hover = false, short = 
     'requestAnimationFrame',
     'cancelAnimationFrame',
     'mcSignal',
+    'document',
     `let _scrollFrame = null, isProgrammaticScroll = false, _userInputScroll = false, isScrolledUp = ${paused}
      const calls = { older: 0, resume: 0, paused: [], tail: 0 }
      const hoverHeld = ${hover}
@@ -46,12 +55,14 @@ function rig({ paused = true, top = 0, atBottom = false, hover = false, short = 
      const loadOlderScrollback = () => calls.older++
      const paneHoldScrolled = () => {}
      ${WIRING}
-     return { calls, flag: () => _userInputScroll, programmatic: (v) => (isProgrammaticScroll = v) }`,
+     ${FORWARD}
+     return { calls, forwardWheelToMsgs, flag: () => _userInputScroll, programmatic: (v) => (isProgrammaticScroll = v) }`,
   )(
     msgsEl,
     (fn) => frames.push(fn),
     (id) => frames.splice(id - 1, 1, null),
     undefined,
+    win.document,
   )
   const fire = (type, init = {}) => {
     const ev = new win.Event(type)
@@ -139,6 +150,21 @@ test('a list that is not paused, one held by the pointer, and a zoom wheel are l
   const zoom = rig({ top: 17023, atBottom: true })
   zoom.fire('wheel', { deltaY: 100, ctrlKey: true })
   expect(zoom.calls.tail).toBe(0)
+})
+
+test('the same wheel over a reply stack on top of the list returns to the tail too', () => {
+  const wheel = (init) => ({ deltaY: 100, deltaMode: 0, currentTarget: { dataset: {} }, preventDefault() {}, ...init })
+  const r = rig({ top: 17023, atBottom: true })
+  r.forwardWheelToMsgs(wheel())
+  expect(r.calls.tail).toBe(1)
+  // rows left to scroll through: the wheel is handed to the list as before
+  const mid = rig({ top: 4000, atBottom: false })
+  mid.forwardWheelToMsgs(wheel())
+  expect(mid.calls.tail).toBe(0)
+  // an expanded stack scrolls inside itself
+  const open = rig({ top: 17023, atBottom: true })
+  open.forwardWheelToMsgs(wheel({ currentTarget: { dataset: { expanded: '1' } } }))
+  expect(open.calls.tail).toBe(0)
 })
 
 // A list with nothing to scroll: a new tab's first five lines. One wheel notch up paused it and

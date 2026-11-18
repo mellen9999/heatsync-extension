@@ -2524,6 +2524,7 @@ function cycleLiveSearchMatch(dir) {
 // render window and re-running the SAME diff renderer — so indexing, zebra,
 // mutes, cosmetics and epoch-keying all stay correct by construction. Anchors
 // scroll so the viewport doesn't jump when rows prepend above it.
+let _olderMissAt = 0
 function loadOlderScrollback() {
   if (!isScrolledUp) return // only while the user is paused (scrolled up)
   if (
@@ -2535,6 +2536,8 @@ function loadOlderScrollback() {
   )
     return
   if (_scrollbackWindow >= SCROLLBACK_MAX - DOM_RENDER_CAP) return // at the depth ceiling
+  // Nothing older a moment ago: a wheel held at the top asks on every tick, each a full render
+  if (Date.now() - _olderMissAt < 1000) return
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
   // Try to grow the window, then check whether older rows actually appeared.
@@ -2556,6 +2559,7 @@ function loadOlderScrollback() {
     msgsEl.scrollTop = oldTop + (msgsEl.scrollHeight - oldH)
   } else {
     _scrollbackWindow = prevWindow // buffer exhausted — don't inflate uselessly
+    _olderMissAt = Date.now()
   }
   cleanup.raf(() => {
     isProgrammaticScroll = false

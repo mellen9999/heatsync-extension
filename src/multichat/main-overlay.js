@@ -1194,6 +1194,10 @@ function createOverlay() {
           _scrollFrame = null
         }
         onScrollMaybeResume()
+        // The frame cancelled above was also the one that asks for older rows. A scroll that
+        // reached the top and ended inside one frame never asked, and at the top no further
+        // scroll event comes: the list sat there with a full buffer above it (e2e s20, 11-17).
+        maybeLoadOlder()
         // touch-end / wheel-coast finished — clear input flag so subsequent
         // passive scroll events don't accidentally count as user-driven.
         _userInputScroll = false
@@ -1207,7 +1211,10 @@ function createOverlay() {
       (e) => {
         if (isStaticTab()) return
         _userInputScroll = true
-        if (e.deltaY < 0) setPaused(true)
+        if (e.deltaY >= 0) return
+        setPaused(true)
+        // Already at the top, this wheel moves nothing and no scroll event follows it: ask here.
+        if (msgsEl.scrollTop <= SCROLLBACK_TRIGGER_PX) maybeLoadOlder()
       },
       { passive: true, signal: mcSignal },
     )

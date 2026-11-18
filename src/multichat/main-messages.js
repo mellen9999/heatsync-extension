@@ -1449,10 +1449,14 @@ function highlightThreadRefsInHtml(html) {
 // Scroll helper — reused by both renderMessages and appendMessage
 let _pinRanAt = 0 // last time a pin put the view on the tail (unpinnedCheck)
 function scrollMsgsToBottom(msgsEl) {
+  // A paused reader is not pinned, and the pill with its count is how they get back. This used
+  // to hide the pill and zero the count first and only then see the pause: any pin asked for
+  // while paused (a tour card closing, a badge landing, the pin bar, a resize) left a list
+  // that stood still with nothing saying so until the next line came (e2e s20, 11-18).
+  if (isScrolledUp) return
   const newBtn = document.getElementById('hs-mc-new-msgs')
   newMessageCount = 0
   if (newBtn) newBtn.style.display = 'none'
-  if (isScrolledUp) return
   _pinRanAt = Date.now()
   // Single sync write — reading scrollHeight forces layout flush so the
   // new content's height is reflected before we set scrollTop. The +rAF

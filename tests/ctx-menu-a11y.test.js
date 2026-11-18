@@ -260,6 +260,33 @@ describe('mouse still works', () => {
   })
 })
 
+// A menu of 13 rows is 480px. On a window shorter than that its last rows ran off the bottom
+// with no way to reach them (the site's phone sweep, 11-18; same menu here).
+describe('a window shorter than the menu', () => {
+  test('the menu is capped to the window and scrolls', () => {
+    const css = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'styles', '09-tooltips-menus.css'), 'utf8')
+    const a = css.indexOf('.hs-mc-ctx {\n      position: fixed;')
+    const box = css.slice(a, css.indexOf('}', a))
+    expect(box).toMatch(/max-height:\s*calc\(100vh - 8px\)/)
+    expect(box).toMatch(/overflow-y:\s*auto/)
+  })
+
+  test('the row the keys move to is brought into view', async () => {
+    const seen = []
+    win.HTMLElement.prototype.scrollIntoView = function (o) {
+      seen.push([this.querySelector('.hs-mc-em-label')?.textContent, o?.block])
+    }
+    await open({ keyboard: true })
+    press('ArrowDown')
+    press('End')
+    expect(seen).toEqual([
+      ['reply', 'nearest'],
+      ['copy', 'nearest'],
+      ['nope', 'nearest'],
+    ])
+  })
+})
+
 describe('keys the menu takes never reach the page', () => {
   test('Space picks the item, and its keyup is eaten too (youtube toggles play on keyup)', async () => {
     await open({ keyboard: true })

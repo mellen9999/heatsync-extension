@@ -19,6 +19,9 @@
       background: #000; color: #fff;
       border: 1px solid #fff;
       padding: 0; min-width: 220px; max-width: 280px;
+      /* a window shorter than the menu: its last rows stay reachable (ctx-menu.js keeps the
+         focused one in view) */
+      max-height: calc(100vh - 8px); overflow-y: auto;
       user-select: none;
     }
     .hs-mc-ctx.hs-mc-em-flip-x { transform-origin: top right; }

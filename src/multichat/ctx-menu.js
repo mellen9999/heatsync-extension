@@ -112,6 +112,8 @@ function showHsCtxMenu(x, y, header, items, opts = {}) {
     cur = ((i % entries.length) + entries.length) % entries.length
     try {
       entries[cur].el.focus({ preventScroll: true })
+      // the menu scrolls when the window is shorter than it is (its css caps the height)
+      entries[cur].el.scrollIntoView({ block: 'nearest' })
     } catch {}
   }
   function use(entry) {

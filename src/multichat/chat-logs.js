@@ -594,26 +594,35 @@ function renderChatLogsView() {
 
   // Load-more sentinel at the bottom (scroll-down to load older)
   if (!exhausted) {
+    const failed = !!activeChatLogs.loadError
     const sentinel = document.createElement('div')
     sentinel.className = 'hs-cl-loader'
-    sentinel.textContent = loading ? t('content_card_loading') : t('mc_logs_scroll_older')
+    // an empty list already says the load failed, right above: the loader is then the way to try again
+    const failedText = rows.length ? t('mc_logs_load_failed') : t('common_retry')
+    sentinel.textContent = loading ? t('content_card_loading') : failed ? failedText : t('mc_logs_scroll_older')
+    sentinel.classList.toggle('hs-cl-retry', failed && !loading)
     list.appendChild(sentinel)
+    const more = () => {
+      if (_clLoadMoreObs) {
+        cleanup.untrackObserver(_clLoadMoreObs)
+        _clLoadMoreObs = null
+      }
+      // said here: the list is only redrawn when the page answers, and a slow one read as nothing happening
+      sentinel.textContent = t('content_card_loading')
+      fetchChatLogsPage()
+    }
+    if (failed && !loading) sentinel.addEventListener('click', more)
     // IntersectionObserver auto-fires when sentinel scrolls into view
     if (!loading && 'IntersectionObserver' in window) {
       if (_clLoadMoreObs) {
         cleanup.untrackObserver(_clLoadMoreObs)
         _clLoadMoreObs = null
       }
+      const st = { armed: !failed }
       _clLoadMoreObs = cleanup.trackObserver(
         new IntersectionObserver(
           (entries) => {
-            if (entries.some((e) => e.isIntersecting)) {
-              if (_clLoadMoreObs) {
-                cleanup.untrackObserver(_clLoadMoreObs)
-                _clLoadMoreObs = null
-              }
-              fetchChatLogsPage()
-            }
+            if (clLoaderAsks(entries, st)) more()
           },
           { root: list, rootMargin: '200px' },
         ),
@@ -625,6 +634,18 @@ function renderChatLogsView() {
   wrap.appendChild(list)
   msgsEl.appendChild(wrap)
   clRestorePlace(list, place)
+}
+
+// Does the loader ask for the next page? In view = yes. But after a failed page it is still in
+// view, and asking again at once was a request loop for as long as the api stayed down: no
+// pause between tries, and no word on screen (the failure was only said on an empty list). Then
+// it has to leave the view and come back ("scroll again", as its text says), or be clicked.
+function clLoaderAsks(entries, st) {
+  for (const e of entries) {
+    if (!e.isIntersecting) st.armed = true
+    else if (st.armed) return true
+  }
+  return false
 }
 
 // A row's element, tagged with the line it shows so the reader's place can be found again.

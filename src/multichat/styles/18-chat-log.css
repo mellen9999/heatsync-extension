@@ -99,6 +99,9 @@
     .hs-cl-loader {
       color: var(--hs-muted); text-align: center; padding: 12px 8px;
     }
+    /* a page that failed to load: the loader is a button until it works again */
+    .hs-cl-loader.hs-cl-retry { color: #fff; text-decoration: underline; cursor: pointer; }
+    .hs-cl-loader.hs-cl-retry:hover { background: #fff; color: #000; }
     .hs-cl-public-archive {
       color: #fff; text-decoration: none;
       font-size: 13px; padding: 1px 6px;

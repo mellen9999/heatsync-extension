@@ -567,7 +567,7 @@ function _renderMessagesImpl(id, opts) {
       break
     }
   }
-  const newestShown = settledEnd ? newestOrdOnScreen(msgsEl) : null
+  const shownSpan = settledEnd ? ordSpanOnScreen(msgsEl) : null
   for (let j = 0; j < toRender.length; j++) {
     const key = desiredKeys[j]
     if (insertedKeys.has(key)) continue
@@ -639,7 +639,7 @@ function _renderMessagesImpl(id, opts) {
     div.dataset.msgKey = key
     div.dataset.hsEpoch = String(_renderEpoch)
     let after
-    ;[prevNode, after] = newRowSlot(msgsEl, prevNode, settledEnd, newestShown, m)
+    ;[prevNode, after] = newRowSlot(msgsEl, prevNode, settledEnd, shownSpan, m)
     stampZebra(div, m, prevNode)
     msgsEl.insertBefore(div, after)
     if (after) {

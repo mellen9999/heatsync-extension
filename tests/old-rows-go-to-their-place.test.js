@@ -8,7 +8,7 @@
  * (the list refills newest hundred first) and the older four hundred followed the newest
  * (real twitch, e2e s20, 11-17: the newest row sat at index 506 of 750).
  *
- * Runs the real newRowSlot / isLateLiveLine / newestOrdOnScreen over a pane model, walked the
+ * Runs the real newRowSlot / isLateLiveLine / ordSpanOnScreen over a pane model, walked the
  * way the renderer walks it: existing rows never move, a new row takes its slot.
  */
 import { describe, expect, test } from 'bun:test'
@@ -23,11 +23,11 @@ const fn = (name) => {
   return SRC.slice(a, b + 3)
 }
 const Node = { DOCUMENT_POSITION_PRECEDING: 2, DOCUMENT_POSITION_FOLLOWING: 4 }
-const { newRowSlot, isLateLiveLine, newestOrdOnScreen } = new Function(
+const { newRowSlot, isLateLiveLine, ordSpanOnScreen } = new Function(
   'ordOf',
   'LIVE_WEAVE_SKEW_MS',
   'Node',
-  `${fn('newestOrdOnScreen')}\n${fn('isLateLiveLine')}\n${fn('newRowSlot')}\nreturn { newRowSlot, isLateLiveLine, newestOrdOnScreen }`,
+  `${fn('ordSpanOnScreen')}\n${fn('isLateLiveLine')}\n${fn('newRowSlot')}\nreturn { newRowSlot, isLateLiveLine, ordSpanOnScreen }`,
 )(ordOf, LIVE_WEAVE_SKEW_MS, Node)
 
 function pane(msgs) {
@@ -66,7 +66,7 @@ function pane(msgs) {
   const draw = (wanted) => {
     const shown = new Map(rows.map((r) => [r._hsMsg, r]))
     const settledEnd = el.lastElementChild
-    const newestShown = settledEnd ? newestOrdOnScreen(el) : null
+    const shownSpan = settledEnd ? ordSpanOnScreen(el) : null
     let prevNode = null
     for (const m of wanted) {
       const had = shown.get(m)
@@ -80,7 +80,7 @@ function pane(msgs) {
         continue
       }
       let after
-      ;[prevNode, after] = newRowSlot(el, prevNode, settledEnd, newestShown, m)
+      ;[prevNode, after] = newRowSlot(el, prevNode, settledEnd, shownSpan, m)
       const div = row(m)
       el.insertBefore(div, after)
       prevNode = div
@@ -111,6 +111,14 @@ describe('rows the list is given back go to their own place', () => {
     expect(p.draw(all)).toEqual(ids(all))
   })
 
+  test('a very fast chat: the first hundred rows span two seconds, the next hundred still land above them', () => {
+    // 50 lines a second: every row handed in is inside the "late" window of the newest row
+    const all = Array.from({ length: 300 }, (_, i) => ({ id: i, time: T0 + i * 20, ord: T0 + i * 20 }))
+    const p = pane(all.slice(200))
+    p.draw(all.slice(100))
+    expect(p.draw(all)).toEqual(ids(all))
+  })
+
   test('a line a hide rule had taken out comes back where it was', () => {
     const all = live(60)
     const p = pane(all.filter((m) => m.id !== 20))
@@ -138,17 +146,21 @@ describe('a late live line still never moves a shown row', () => {
     expect(p.draw(wanted)).toEqual([...ids(all), 'late'])
   })
 
-  test('late means inside twice the weave window of the newest row on screen', () => {
+  test('late means newer than the oldest row shown and inside twice the weave window of the newest', () => {
     const newest = T0 + 60_000
-    expect(isLateLiveLine({ ord: newest - 2 * LIVE_WEAVE_SKEW_MS }, newest)).toBe(true)
-    expect(isLateLiveLine({ ord: newest - 2 * LIVE_WEAVE_SKEW_MS - 1 }, newest)).toBe(false)
-    expect(isLateLiveLine({ time: newest - 10 }, newest)).toBe(false) // no ord: history
+    const span = [T0, newest]
+    expect(isLateLiveLine({ ord: newest - 2 * LIVE_WEAVE_SKEW_MS }, span)).toBe(true)
+    expect(isLateLiveLine({ ord: newest - 2 * LIVE_WEAVE_SKEW_MS - 1 }, span)).toBe(false)
+    expect(isLateLiveLine({ time: newest - 10 }, span)).toBe(false) // no ord: history
     expect(isLateLiveLine({ ord: newest - 10 }, null)).toBe(false) // an empty list has nothing to protect
+    // older than everything shown is above it all, however close in time
+    expect(isLateLiveLine({ ord: newest - 500 }, [newest - 400, newest])).toBe(false)
+    expect(isLateLiveLine({ ord: newest - 400 }, [newest - 400, newest])).toBe(false) // a tie sorts above too
   })
 
   test('the renderer asks newRowSlot, and nothing else decides a slot', () => {
     const impl = SRC.slice(SRC.indexOf('function _renderMessagesImpl('))
-    expect(impl).toMatch(/\[prevNode, after\] = newRowSlot\(msgsEl, prevNode, settledEnd, newestShown, m\)/)
+    expect(impl).toMatch(/\[prevNode, after\] = newRowSlot\(msgsEl, prevNode, settledEnd, shownSpan, m\)/)
     expect(impl.slice(0, impl.indexOf('\n}\n'))).not.toMatch(/m\.ord != null/)
   })
 })

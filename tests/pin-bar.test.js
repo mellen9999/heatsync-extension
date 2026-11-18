@@ -205,6 +205,51 @@ describe('pin bar', () => {
     expect(bar().hidden).toBe(true)
   })
 
+  // The second click of a double click, and Enter held on the x, answered the ask the first
+  // press had only just put up: unpinned for the room, unread. The site's bar had the same.
+  test('mod x: a double click only asks; a click once the ask has been up does it', async () => {
+    const p = mount({ mods: ['twitch/somechan'] })
+    await p.pinSync('chan')
+    sent.length = 0
+    const x = bar().querySelector('.hs-mc-pin-x')
+    const now = Date.now
+    try {
+      const t0 = now()
+      Date.now = () => t0
+      x.click()
+      Date.now = () => t0 + 120
+      x.click()
+      keyOn('Enter', bar())
+      await flush()
+      expect(bar().dataset.confirm).toBe('1')
+      expect(sent).toEqual([])
+      Date.now = () => t0 + 450
+      x.click()
+      await flush()
+    } finally {
+      Date.now = now
+    }
+    expect(sent[0]).toMatchObject({ type: 'pin', op: 'clear', platform: 'twitch', channel: 'somechan' })
+  })
+
+  test('mod x: Enter answers once the ask has been up', async () => {
+    const p = mount({ mods: ['twitch/somechan'] })
+    await p.pinSync('chan')
+    sent.length = 0
+    const now = Date.now
+    try {
+      const t0 = now()
+      Date.now = () => t0
+      bar().querySelector('.hs-mc-pin-x').click()
+      Date.now = () => t0 + 450
+      keyOn('Enter', bar())
+      await flush()
+    } finally {
+      Date.now = now
+    }
+    expect(sent[0]).toMatchObject({ type: 'pin', op: 'clear' })
+  })
+
   test('mod x: esc backs out, nothing is sent', async () => {
     const p = mount({ mods: ['twitch/somechan'] })
     await p.pinSync('chan')

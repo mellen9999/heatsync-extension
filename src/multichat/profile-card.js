@@ -1431,6 +1431,13 @@ function _patchProfileCacheRel(username, patch) {
   }
 }
 
+/** `?kickUsername=<name>` for a kick_<id> account, else ''. The server cannot turn a kick id into
+ *  a profile by itself (app-token API limit), so a follow or a block of a kick chatter who never
+ *  signed up needs the name from the row; the server checks the pair. */
+function pcKickNameHint(profileId, username) {
+  return username && /^kick_\d+$/.test(String(profileId)) ? `?kickUsername=${encodeURIComponent(username)}` : ''
+}
+
 async function pcToggleFollow(profileId, username, currentlyFollowing) {
   if (!profileId) {
     if (typeof showToast === 'function') showToast(t('mc_profile_not_registered'), 'error')
@@ -1445,12 +1452,7 @@ async function pcToggleFollow(profileId, username, currentlyFollowing) {
   }
   _patchProfileCacheRel(username, { youFollow: targetFollowing, isFollowing: targetFollowing })
   try {
-    // kick_ ids need the username hint — the server can't resolve a kick id
-    // to a profile on its own (app-token API limitation); it verifies the pair.
-    const hint =
-      method === 'POST' && username && /^kick_\d+$/.test(String(profileId))
-        ? `?kickUsername=${encodeURIComponent(username)}`
-        : ''
+    const hint = method === 'POST' ? pcKickNameHint(profileId, username) : ''
     const resp = await apiFetch(`/api/follow/${encodeURIComponent(profileId)}${hint}`, { method, auth: true })
     if (!resp?.ok) {
       const msg = String(resp?.error || '').toLowerCase()
@@ -1541,7 +1543,7 @@ async function pcToggleBlock(profileId, username, currentlyBlocked, platform = a
   try {
     const path = `/api/user/block/${encodeURIComponent(profileId)}`
     const resp = targetBlocked
-      ? await apiFetch(path, { method: 'POST', auth: true, body: {} })
+      ? await apiFetch(path + pcKickNameHint(profileId, username), { method: 'POST', auth: true, body: {} })
       : await apiFetch(`${path}?sync_twitch=0`, { method: 'DELETE', auth: true })
     // signed out: no account to keep the block on, so it stays in this browser,
     // like a chatter who isn't on heatsync (the mute works the same way)

@@ -10,7 +10,9 @@ import { join } from 'node:path'
  */
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'profile-card.js'), 'utf8')
 const s = SRC.indexOf('async function pcToggleBlock(')
-const BODY = SRC.slice(s, SRC.indexOf('\nfunction pcDoWhisper', s))
+const h = SRC.indexOf('function pcKickNameHint(')
+const HINT = SRC.slice(h, SRC.indexOf('\n}\n', h) + 3) // the name a kick account's block carries
+const BODY = HINT + SRC.slice(s, SRC.indexOf('\nfunction pcDoWhisper', s))
 
 function harness(resp, card = null) {
   const calls = { local: [], toasts: [], sent: [], order: [] }

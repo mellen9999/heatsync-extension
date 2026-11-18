@@ -37,7 +37,8 @@ function cards() {
 
 test('a follow that fails undoes itself on its own card', async () => {
   const d = cards()
-  const a = (d.scope.activeProfileCard = d.card({ youFollow: false }))
+  const a = d.card({ youFollow: false })
+  d.scope.activeProfileCard = a
   const p = d.pcToggleFollow('1', 'alice', false)
   expect(a.data.relationship.youFollow).toBe(true) // shown at once
   d.answer({ ok: false, error: 'boom' })
@@ -49,7 +50,8 @@ test('a follow that fails after another card was opened leaves that card alone',
   const d = cards()
   d.scope.activeProfileCard = d.card({ youFollow: false })
   const p = d.pcToggleFollow('1', 'alice', false)
-  const b = (d.scope.activeProfileCard = d.card({ youFollow: true }))
+  const b = d.card({ youFollow: true })
+  d.scope.activeProfileCard = b
   const draws = d.draws
   d.answer({ ok: false, error: 'boom' })
   await p
@@ -61,7 +63,8 @@ test('a block that fails after another card was opened leaves that card alone', 
   const d = cards()
   d.scope.activeProfileCard = d.card({ youBlock: false, isBlocked: false, youFollow: true })
   const p = d.pcToggleBlock('1', 'alice', false, 'twitch')
-  const b = (d.scope.activeProfileCard = d.card({ youBlock: true, isBlocked: true }))
+  const b = d.card({ youBlock: true, isBlocked: true })
+  d.scope.activeProfileCard = b
   d.answer({ ok: false, error: 'boom' })
   await p
   expect(b.data.relationship).toEqual({ youBlock: true, isBlocked: true })

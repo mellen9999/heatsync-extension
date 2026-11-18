@@ -142,7 +142,7 @@ describe('kick idle animation', () => {
 describe('hover hold', () => {
   const main = src('main.js')
   test('the feed stops sliding while the pointer is on an emote, name or badge, and lets go after a beat', () => {
-    expect(main).toContain("el.closest('.hs-mc-emote-wrapper, .hs-mc-user, .hs-mc-badge-img')")
+    expect(main).toContain("el.closest('.hs-mc-emote-wrapper, .hs-mc-user, .hs-mc-badge-img, .hs-mc-link')")
     expect(main).toContain('_hoverRelease = cleanup.setTimeout(releaseHold, 120)')
     expect(main).toContain("msgsEl.addEventListener('mouseleave', leave")
   })

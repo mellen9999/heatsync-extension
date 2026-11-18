@@ -1326,12 +1326,14 @@ function createOverlay() {
     }
     newBtn.addEventListener('click', jumpToTail, { signal: mcSignal })
 
-    // Hover hold: while the pointer rests on an emote, name or badge the feed
-    // stops sliding, so the thing under the cursor stays under it (a new
+    // Hover hold: while the pointer rests on an emote, name, badge or link the
+    // feed stops sliding, so the thing under the cursor stays under it (a new
     // message every second moved it away and the cursor fell back to an
     // arrow) and its tooltip stays on what you are pointing at. Messages keep
     // arriving into the buffer and show up the moment the pointer leaves.
-    const holdTarget = (el) => el.closest('.hs-mc-emote-wrapper, .hs-mc-user, .hs-mc-badge-img')
+    // A link is the one of these a reader means to click: in a fast kick chat it
+    // slid off the pointer before its tooltip could show (e2e s23, 11-18).
+    const holdTarget = (el) => el.closest('.hs-mc-emote-wrapper, .hs-mc-user, .hs-mc-badge-img, .hs-mc-link')
     const releaseHold = () => {
       _hoverRelease = null
       if (!hoverHeld) return

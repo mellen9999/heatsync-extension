@@ -24,7 +24,8 @@ function pane() {
   const document = win.document
   document.body.innerHTML = `<div id="msgs">
     <div class="hs-mc-msg"><span class="hs-mc-user">someone</span>: <span id="text">hello</span>
-      <span class="hs-mc-emote-wrapper"><img class="hs-mc-emote" id="emote"></span></div></div>
+      <span class="hs-mc-emote-wrapper"><img class="hs-mc-emote" id="emote"></span>
+      <a class="hs-mc-link" id="link" href="https://example.org/">example.org</a></div></div>
     <div id="new"></div>`
   const renders = []
   const pins = []
@@ -126,4 +127,15 @@ test('letting go over a card that took the pane neither redraws nor scrolls it',
   expect(p.api.held()).toBe(false)
   expect(p.renders).toEqual([])
   expect(p.pins).toEqual([])
+})
+
+// the one thing in a row a reader means to click: in a fast chat it slid off the pointer before
+// its tooltip could show (real kick, e2e s23)
+test('moving the pointer onto a link holds the feed too', () => {
+  const p = pane()
+  p.fire('text', 'mousemove', 100, 50)
+  p.fire('link', 'mousemove', 160, 50)
+  expect(p.api.held()).toBe(true)
+  p.fire('text', 'mouseover', 100, 50)
+  expect(p.api.held()).toBe(false)
 })

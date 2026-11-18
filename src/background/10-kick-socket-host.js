@@ -51,11 +51,16 @@ function _kpHostWait() {
   })
 }
 
+let _kpHostClosing = null
+
 // The frame, made if it is missing. A frame left over from an earlier worker has lost its port
 // and is made again rather than waited on.
 async function _kpHostFrame(fresh) {
   const off = globalThis.chrome?.offscreen
   if (off) {
+    // a release still closing the last document: chrome holds one at a time, and a
+    // join that raced it had its document refused and its socket closed before it opened
+    await _kpHostClosing
     if (await off.hasDocument?.()) {
       if (!fresh) return
       await off.closeDocument().catch(() => {})
@@ -99,7 +104,8 @@ function _kpHostRelease() {
   try {
     port?.disconnect()
   } catch {}
-  globalThis.chrome?.offscreen?.closeDocument?.().catch(() => {})
+  const closing = globalThis.chrome?.offscreen?.closeDocument?.().catch(() => {})
+  if (closing) _kpHostClosing = closing
   if (typeof document !== 'undefined') document.getElementById('hs-kick-socket-host')?.remove()
 }
 

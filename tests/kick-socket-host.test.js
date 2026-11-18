@@ -65,13 +65,18 @@ function fakeSockets() {
   return { WS, all }
 }
 
-function world({ sender = { id: RUNTIME_ID, url: 'https://web.kick.com/robots.txt' }, frameLoads = true } = {}) {
+function world({
+  sender = { id: RUNTIME_ID, url: 'https://web.kick.com/robots.txt' },
+  frameLoads = true,
+  slowClose = false,
+} = {}) {
   const listeners = []
   const frames = []
   const timers = []
   const sockets = fakeSockets()
   let made = 0
   let hasDoc = false
+  let closing = 0
   // the frame: a content script with its own runtime.connect
   const loadFrame = () => {
     const { api, a, b } = portPair()
@@ -86,8 +91,14 @@ function world({ sender = { id: RUNTIME_ID, url: 'https://web.kick.com/robots.tx
     hasDocument: async () => hasDoc,
     closeDocument: async () => {
       hasDoc = false
+      if (!slowClose) return
+      // chrome: the document is gone to hasDocument at once and its slot a moment later
+      closing++
+      await new Promise((r) => setTimeout(r, 0))
+      closing--
     },
     createDocument: async () => {
+      if (closing) throw new Error('Only a single offscreen document may be created.')
       hasDoc = true
       made++
       if (frameLoads) queueMicrotask(loadFrame)
@@ -214,6 +225,18 @@ describe('the tap socket, opened in a kick.com frame', () => {
     await tick()
     expect(w.sockets.all).toEqual([])
     expect(ev).toEqual(['close:1008'])
+  })
+
+  test('a join right after the frame was let go waits for it to close', async () => {
+    const w = world({ slowClose: true })
+    w.host._kpOpenSocket('wss://a.platform.kick.com/x')
+    await tick()
+    w.host._kpHostRelease()
+    const ev = watch(w.host._kpOpenSocket('wss://a.platform.kick.com/y'))
+    await tick()
+    expect(w.made()).toBe(2)
+    expect(ev).toEqual([])
+    expect(w.sockets.all.at(-1).url).toBe('wss://a.platform.kick.com/y')
   })
 
   test('idle: the frame goes', async () => {

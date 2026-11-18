@@ -202,6 +202,9 @@ async function openProfileCard(username, platform, opts = {}) {
   }
   hsTakeoverSync()
   renderProfileCardView()
+  // This card, not "a card for this name": the same name is a different person on another
+  // platform, and an answer for the twitch one used to fill the kick card opened right after.
+  const open = activeProfileCard
 
   try {
     // Fire kick enrichment in parallel for kick-platform users — Kick API is
@@ -215,7 +218,7 @@ async function openProfileCard(username, platform, opts = {}) {
     // 60s LRU + in-flight dedupe (fetchCardPayload, tooltips.js) means a hover
     // right before this click reuses the same payload instead of a 2nd request.
     const payload = await fetchCardPayload(platform || 'twitch', username, channelLogin)
-    if (!activeProfileCard || activeProfileCard.username !== username) return
+    if (activeProfileCard !== open) return
     let profile = payload.profile
     // Cross-platform probe — kick chatters often share their handle on twitch;
     // a same-name twitch hit lands a full profile when the kick lookup misses.
@@ -225,11 +228,11 @@ async function openProfileCard(username, platform, opts = {}) {
     if (!profile && platform === 'kick') {
       const twChannel = typeof getTooltipChannelContext === 'function' ? getTooltipChannelContext('twitch') : null
       const twPayload = await fetchCardPayload('twitch', username, twChannel)
-      if (!activeProfileCard || activeProfileCard.username !== username) return
+      if (activeProfileCard !== open) return
       if (twPayload.profile) profile = twPayload.profile
     }
     const kickEnrich = await kickEnrichP
-    if (!activeProfileCard || activeProfileCard.username !== username) return
+    if (activeProfileCard !== open) return
     activeProfileCard.corpus = payload.corpus || null
     activeProfileCard.recentServer = payload.recent || null
     activeProfileCard.note = payload.note || ''
@@ -254,7 +257,7 @@ async function openProfileCard(username, platform, opts = {}) {
     }
     renderProfileCardView()
   } catch {
-    if (!activeProfileCard) return
+    if (activeProfileCard !== open) return
     // A THROW is a transport failure (network blip, timeout, 5xx) — not proof
     // the person has no heatsync account. Both used to collapse to the same
     // {error:true}, so a registered user hit by a hiccup was shown the
@@ -1439,6 +1442,7 @@ function pcKickNameHint(profileId, username) {
 }
 
 async function pcToggleFollow(profileId, username, currentlyFollowing) {
+  const card = activeProfileCard // the answer is for this card: another one may be open by then
   if (!profileId) {
     if (typeof showToast === 'function') showToast(t('mc_profile_not_registered'), 'error')
     return
@@ -1458,7 +1462,7 @@ async function pcToggleFollow(profileId, username, currentlyFollowing) {
       const msg = String(resp?.error || '').toLowerCase()
       if (!msg.includes('already following') && !msg.includes('not following')) {
         // Real failure — revert optimistic state
-        if (activeProfileCard?.data?.relationship) {
+        if (activeProfileCard === card && card?.data?.relationship) {
           activeProfileCard.data.relationship.youFollow = currentlyFollowing
           renderProfileCardView()
         }
@@ -1501,7 +1505,7 @@ async function pcToggleFollow(profileId, username, currentlyFollowing) {
         .catch(() => {})
     }
   } catch (e) {
-    if (activeProfileCard?.data?.relationship) {
+    if (activeProfileCard === card && card?.data?.relationship) {
       activeProfileCard.data.relationship.youFollow = currentlyFollowing
       renderProfileCardView()
     }
@@ -1516,6 +1520,7 @@ async function pcToggleFollow(profileId, username, currentlyFollowing) {
 // as success. After block, profile auto-unfollows server-side, so we mirror
 // that in the relationship object.
 async function pcToggleBlock(profileId, username, currentlyBlocked, platform = activeProfileCard?.platform) {
+  const card = activeProfileCard // the answer is for this card: another one may be open by then
   if (!profileId) {
     if (typeof showToast === 'function') showToast(t('mc_profile_not_registered'), 'error')
     return
@@ -1550,7 +1555,7 @@ async function pcToggleBlock(profileId, username, currentlyBlocked, platform = a
     if (resp?.status === 401 && typeof _toggleMcBlock === 'function') {
       // no account, so no account block either way; the card is drawn once the
       // block set has changed, which is where its block word now comes from
-      if (activeProfileCard?.data?.relationship) {
+      if (activeProfileCard === card && card?.data?.relationship) {
         activeProfileCard.data.relationship.youBlock = false
         activeProfileCard.data.relationship.isBlocked = false
       }
@@ -1563,7 +1568,7 @@ async function pcToggleBlock(profileId, username, currentlyBlocked, platform = a
       const msg = String(resp?.error || '').toLowerCase()
       if (!msg.includes('already blocked') && !msg.includes('not blocked')) {
         // Real failure — revert optimistic state
-        if (activeProfileCard?.data?.relationship) {
+        if (activeProfileCard === card && card?.data?.relationship) {
           activeProfileCard.data.relationship.youBlock = currentlyBlocked
           activeProfileCard.data.relationship.isBlocked = currentlyBlocked
           renderProfileCardView()
@@ -1607,7 +1612,7 @@ async function pcToggleBlock(profileId, username, currentlyBlocked, platform = a
       }
     }
   } catch (e) {
-    if (activeProfileCard?.data?.relationship) {
+    if (activeProfileCard === card && card?.data?.relationship) {
       activeProfileCard.data.relationship.youBlock = currentlyBlocked
       activeProfileCard.data.relationship.isBlocked = currentlyBlocked
       renderProfileCardView()

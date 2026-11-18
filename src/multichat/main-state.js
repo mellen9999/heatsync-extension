@@ -621,7 +621,11 @@ function renderWindow(asOf, searching) {
   const all = Number.POSITIVE_INFINITY
   return { take: asOf === null && !searching ? SCROLLBACK_MAX : all, keep: searching ? all : renderRowCap() }
 }
-/** The oldest and newest ord among the rows on screen, or null when no row carries a message. */
+/** The newest ord among the rows on screen, or null when no row carries a message. */
+function newestOrdOnScreen(msgsEl) {
+  return ordSpanOnScreen(msgsEl)?.[1] ?? null
+}
+/** The oldest and newest of them, as [oldest, newest]. */
 function ordSpanOnScreen(msgsEl) {
   let min = null
   let max = null
@@ -632,9 +636,6 @@ function ordSpanOnScreen(msgsEl) {
     if (min === null || o < min) min = o
   }
   return max === null ? null : [min, max]
-}
-function newestOrdOnScreen(msgsEl) {
-  return ordSpanOnScreen(msgsEl)?.[1] ?? null
 }
 // A live line that reached the list a beat late (the kick copy of a conversation, a relay
 // catching up) sits within the weave window of the newest row on screen, and goes under the

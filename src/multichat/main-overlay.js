@@ -1028,6 +1028,17 @@ function hideInputBar() {
   _updateMcLayout?.()
 }
 
+// An emote picture that failed with no other address left draws as its name, the way a host's
+// own chat shows a picture it cannot load: a word, never the browser's broken-picture icon
+// (a 3.7 MB kick gif the mirror refused sat as that icon on every row and card, 11-18).
+// The row's kept html still holds the picture, so the next redraw tries it again.
+function hsEmoteAsName(img) {
+  const wrap = img.closest('.hs-mc-emote-wrapper')
+  const name = wrap?.dataset.emoteName || img.alt
+  if (!name) return
+  ;(wrap || img).replaceWith(document.createTextNode(name))
+}
+
 function createOverlay() {
   const overlay = document.createElement('div')
   overlay.id = 'hs-mc-overlay'
@@ -1414,6 +1425,7 @@ function createOverlay() {
       // 2 failed retries — so we never render a permanent broken-image icon.
       if (e?.type === 'error') {
         const t = e.target
+        const src0 = t instanceof HTMLImageElement ? t.src : ''
         if (t instanceof HTMLImageElement && t.classList.contains('hs-mc-badge-img')) retryOrHideBadgeImg(t)
         if (t instanceof HTMLImageElement && t.classList.contains('hs-mc-avatar')) t.style.display = 'none'
         // static-emote proxy failure (heatsync.org unreachable / 429) —
@@ -1456,6 +1468,8 @@ function createOverlay() {
           t.dataset.hsAvifFell = '1'
           t.src = t.src.replace(/\.avif$/, '.webp')
         }
+        // no other address left to try
+        if (t instanceof HTMLImageElement && t.classList.contains('hs-mc-emote') && t.src === src0) hsEmoteAsName(t)
       }
       // Snap the emote box to an integer width so the text after it stays on
       // the pixel grid (see hsSnapEmoteBox — fixes blurry post-emote text).

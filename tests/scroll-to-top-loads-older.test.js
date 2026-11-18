@@ -66,7 +66,9 @@ test('one platform long quiet (not live together): the cap still grows the pane'
 
 test('the render hands the merge the same cap it trims to', () => {
   const live = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main-live.js'), 'utf8')
-  expect(live).toContain('msgs = fairMerge(mtSrcs, renderRowCap())')
+  // the merge keeps renderWindow's count: the cap, unless a filter is reading everything held
+  expect(live).toContain('msgs = fairMerge(mtSrcs, win.keep)')
+  expect(MAIN).toContain('keep: searching ? all : renderRowCap() }')
   expect(live).toContain('let _cap = renderRowCap()')
   expect(MAIN).toContain('const renderRowCap = () => Math.min(DOM_RENDER_CAP + _scrollbackWindow, SCROLLBACK_MAX)')
 })

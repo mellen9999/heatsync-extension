@@ -602,6 +602,22 @@ function resetScrollback() {
 function cutSourcesAsOf(srcs, asOf) {
   return asOf == null ? srcs : srcs.map((s) => s.filter((m) => ordOf(m) <= asOf))
 }
+/** The newest ord a render may draw, or null for the live tail. With older rows loaded: the pin
+ *  set when the first ones were. Otherwise, while the reader is paused, the newest row they
+ *  have: a redraw then (a mute, a block, a closed confirm) redrew the live tail, and the rows
+ *  being read slid away by however many lines had arrived since the pause. */
+function renderAsOf(msgsEl) {
+  if (_scrollbackWindow > 0 && _scrollbackAsOf !== null) return _scrollbackAsOf
+  return isScrolledUp ? newestOrdOnScreen(msgsEl) : null
+}
+// How far back a render reads: `take` rows of each buffer, `keep` merged rows before
+// the filters. A plain tail needs only the newest. A paused reader needs all of it,
+// to count back from where they are. So does a filter: on a fast chat the newest
+// screenful is a few seconds long, and the name being looked for is older than that.
+function renderWindow(asOf, searching) {
+  const all = Number.POSITIVE_INFINITY
+  return { take: asOf === null && !searching ? SCROLLBACK_MAX : all, keep: searching ? all : renderRowCap() }
+}
 /** The newest ord among the rows on screen, or null when no row carries a message. */
 function newestOrdOnScreen(msgsEl) {
   let max = null

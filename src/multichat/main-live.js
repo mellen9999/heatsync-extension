@@ -189,6 +189,7 @@ function _renderMessagesImpl(id, opts) {
 
   let msgs = []
   let mtSrcs = null // the merged tab's sources, for mtNoteRender below
+  const asOf = renderAsOf(msgsEl)
   if (id === 'mentions') {
     msgs = mentionsBuffer
   } else if (id === 'add') {
@@ -201,11 +202,11 @@ function _renderMessagesImpl(id, opts) {
   } else {
     // live tab or channel tab: twitch + kick + youtube, merged fairly (see
     // merged-tab.js for where each source comes from)
-    // older rows loaded: the whole buffer, cut at what the reader had (main-state.js)
-    const pinned = _scrollbackWindow > 0 && _scrollbackAsOf !== null
-    const srcs = mergedTabSources(id, pinned ? Number.POSITIVE_INFINITY : SCROLLBACK_MAX, true)
-    mtSrcs = cutSourcesAsOf(srcs, pinned ? _scrollbackAsOf : null)
-    msgs = fairMerge(mtSrcs, renderRowCap())
+    // a paused reader: the whole buffer, cut at the newest row they have (main-state.js)
+    const win = renderWindow(asOf, !!liveSearchQuery(id))
+    const srcs = mergedTabSources(id, win.take, true)
+    mtSrcs = cutSourcesAsOf(srcs, asOf)
+    msgs = fairMerge(mtSrcs, win.keep)
   }
 
   // Merge follow stream events into channel + live tabs (went live,
@@ -346,7 +347,7 @@ function _renderMessagesImpl(id, opts) {
     growFirstPaint(id)
   }
   // …and nothing that joined the list on the way here (stream events, mentions) is newer either
-  if (_scrollbackWindow > 0 && _scrollbackAsOf !== null) toRender = toRender.filter((m) => ordOf(m) <= _scrollbackAsOf)
+  if (asOf !== null) toRender = toRender.filter((m) => ordOf(m) <= asOf)
   toRender = toRender.slice(-_cap)
   isProgrammaticScroll = true
 

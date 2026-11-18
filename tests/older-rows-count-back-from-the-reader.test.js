@@ -54,16 +54,16 @@ function room({ total, tailAtPause }) {
       // the render, as main-live.js does it for a channel tab
       function renderMessages() {
         renders++
-        const pinned = _scrollbackWindow > 0 && _scrollbackAsOf !== null
-        const srcs = [pinned ? buf.slice() : buf.slice(-SCROLLBACK_MAX)]
-        let rows = fairMerge(cutSourcesAsOf(srcs, pinned ? _scrollbackAsOf : null), renderRowCap())
-        if (pinned) rows = rows.filter((m) => ordOf(m) <= _scrollbackAsOf)
+        const asOf = renderAsOf(pane)
+        const srcs = [asOf === null ? buf.slice(-SCROLLBACK_MAX) : buf.slice()]
+        let rows = fairMerge(cutSourcesAsOf(srcs, asOf), renderRowCap())
+        if (asOf !== null) rows = rows.filter((m) => ordOf(m) <= asOf)
         pane.children = rows.slice(-renderRowCap()).map((m) => ({ _hsMsg: m }))
         pane.scrollHeight = pane.children.length * 20
       }
       ${OLDER}
       return {
-        loadOlderScrollback, resetScrollback, newestOrdOnScreen, cutSourcesAsOf, renderMessages,
+        loadOlderScrollback, resetScrollback, newestOrdOnScreen, cutSourcesAsOf, renderMessages, renderAsOf,
         state: () => ({ window: _scrollbackWindow, asOf: _scrollbackAsOf }),
       }
     }`.replace('with (scope) {', 'const buf = scope.buf; with (scope) {'),
@@ -111,10 +111,19 @@ test('nothing older in the buffer: the window and the pin go back to where they 
   expect(r.ords().length).toBe(500)
 })
 
+test('paused with no older rows loaded: a redraw (a mute, a block) still ends at the newest row the reader has', () => {
+  const r = room({ total: 1400, tailAtPause: 1000 })
+  r.renderMessages()
+  const o = r.ords()
+  expect([o[0], o.at(-1), o.length]).toEqual([501, 1000, 500]) // not 901..1400: their rows stay
+  expect(r.state()).toEqual({ window: 0, asOf: null }) // nothing was pinned for later: read off the rows each time
+})
+
 test('back at the tail the pin is gone and the next render is the live tail again', () => {
   const r = room({ total: 1400, tailAtPause: 1000 })
   r.loadOlderScrollback()
   r.resetScrollback()
+  r.scope.isScrolledUp = false
   expect(r.state()).toEqual({ window: 0, asOf: null })
   r.renderMessages()
   const o = r.ords()
@@ -136,11 +145,11 @@ test('the cut leaves sources alone while nothing older is loaded', () => {
 })
 
 test('the render cuts before the fair merge and again before the cap; every way back to the tail clears the pin', () => {
-  const cut = SRC.indexOf('mtSrcs = cutSourcesAsOf(srcs, pinned ? _scrollbackAsOf : null)')
-  const merge = SRC.indexOf('msgs = fairMerge(mtSrcs, renderRowCap())', cut)
+  const cut = SRC.indexOf('mtSrcs = cutSourcesAsOf(srcs, asOf)')
+  const merge = SRC.indexOf('msgs = fairMerge(mtSrcs, win.keep)', cut)
   expect(cut).toBeGreaterThan(-1)
   expect(merge - cut).toBeLessThan(120)
-  const filter = SRC.indexOf('toRender = toRender.filter((m) => ordOf(m) <= _scrollbackAsOf)')
+  const filter = SRC.indexOf('toRender = toRender.filter((m) => ordOf(m) <= asOf)')
   const slice = SRC.indexOf('toRender = toRender.slice(-_cap)', filter)
   expect(filter).toBeGreaterThan(-1)
   expect(slice - filter).toBeLessThan(120)

@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "ยกเลิก"
   },
+  "mc_ch_reset": {
+    "message": "รีเซ็ต"
+  },
   "mc_mr_pattern_ph": {
     "message": "รูปแบบ..."
   },

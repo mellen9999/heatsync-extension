@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "hủy"
   },
+  "mc_ch_reset": {
+    "message": "đặt lại"
+  },
   "mc_mr_pattern_ph": {
     "message": "mẫu..."
   },

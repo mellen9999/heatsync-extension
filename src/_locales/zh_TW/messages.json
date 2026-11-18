@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "取消"
   },
+  "mc_ch_reset": {
+    "message": "重設"
+  },
   "mc_mr_pattern_ph": {
     "message": "比對模式..."
   },

@@ -1201,10 +1201,10 @@ const SETTINGS = [
     // the first four are the built-in presets (SFX_PRESETS in multichat/sounds.js,
     // pinned by tests/chat-sounds.test.js); 'custom' plays the file picked on this device
     options: [
-      { value: 'ping', label: 'ping' },
-      { value: 'blip', label: 'blip' },
-      { value: 'knock', label: 'knock' },
-      { value: 'chime', label: 'chime' },
+      { value: 'ping', label: 'ping', labelKey: 'mc_set_snd_ping' },
+      { value: 'blip', label: 'blip', labelKey: 'mc_set_snd_blip' },
+      { value: 'knock', label: 'knock', labelKey: 'mc_set_snd_knock' },
+      { value: 'chime', label: 'chime', labelKey: 'mc_set_snd_chime' },
       { value: 'custom', label: 'my file', labelKey: 'mc_sfx_opt_file' },
     ],
   },

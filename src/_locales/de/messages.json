@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "abbrechen"
   },
+  "mc_ch_reset": {
+    "message": "zurücksetzen"
+  },
   "mc_mr_pattern_ph": {
     "message": "muster..."
   },

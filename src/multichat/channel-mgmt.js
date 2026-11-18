@@ -327,7 +327,7 @@ async function renderFollowImportPicker(msgsEl) {
   btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
   const addBtn = makeMcBtn(t('mc_add_selected'), true)
   const allLiveBtn = makeMcBtn(t('mc_select_all_live'), false)
-  const cancelBtn = makeMcBtn('cancel', false)
+  const cancelBtn = makeMcBtn(t('mc_mr_cancel'), false)
   btnRow.appendChild(addBtn)
   btnRow.appendChild(allLiveBtn)
   btnRow.appendChild(cancelBtn)
@@ -390,8 +390,8 @@ function renderPasteListForm(msgsEl) {
 
   const btnRow = document.createElement('div')
   btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
-  const addBtn = makeMcBtn('add', true)
-  const cancelBtn = makeMcBtn('cancel', false)
+  const addBtn = makeMcBtn(t('mc_bt_add'), true)
+  const cancelBtn = makeMcBtn(t('mc_mr_cancel'), false)
   btnRow.appendChild(addBtn)
   btnRow.appendChild(cancelBtn)
   wrapper.appendChild(btnRow)
@@ -527,8 +527,8 @@ function renderAddChannelForm(msgsEl) {
   const btnRow = document.createElement('div')
   btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
 
-  const addBtn = makeMcBtn('add', true)
-  const cancelBtn = makeMcBtn('cancel', false)
+  const addBtn = makeMcBtn(t('mc_bt_add'), true)
+  const cancelBtn = makeMcBtn(t('mc_mr_cancel'), false)
 
   btnRow.appendChild(addBtn)
   btnRow.appendChild(cancelBtn)
@@ -840,9 +840,9 @@ function renderLivePlatformsPane(pane) {
   const btnRow = document.createElement('div')
   btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
 
-  const saveBtn = makeMcBtn('save', true)
-  const cancelBtn = makeMcBtn('cancel', false)
-  const resetBtn = makeMcBtn('reset', false)
+  const saveBtn = makeMcBtn(t('mc_mr_save'), true)
+  const cancelBtn = makeMcBtn(t('mc_mr_cancel'), false)
+  const resetBtn = makeMcBtn(t('mc_ch_reset'), false)
   btnRow.appendChild(saveBtn)
   btnRow.appendChild(cancelBtn)
   btnRow.appendChild(resetBtn)
@@ -1041,8 +1041,8 @@ function showEditChannelForm(tabId) {
   const btnRow = document.createElement('div')
   btnRow.style.cssText = 'display:flex;gap:8px;margin-top:4px;'
 
-  const saveBtn = makeMcBtn('save', true)
-  const cancelBtn = makeMcBtn('cancel', false)
+  const saveBtn = makeMcBtn(t('mc_mr_save'), true)
+  const cancelBtn = makeMcBtn(t('mc_mr_cancel'), false)
   btnRow.appendChild(saveBtn)
   btnRow.appendChild(cancelBtn)
   wrapper.appendChild(btnRow)

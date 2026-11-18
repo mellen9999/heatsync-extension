@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "キャンセル"
   },
+  "mc_ch_reset": {
+    "message": "リセット"
+  },
   "mc_mr_pattern_ph": {
     "message": "パターン..."
   },

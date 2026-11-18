@@ -61,6 +61,7 @@
   "mc_card_l_staff": ["cs", "da", "de", "el", "es", "fi", "fr", "hu", "it", "nl", "no", "pl", "pt_BR", "pt_PT", "ro", "sk", "sv", "tl", "tr"],
   "mc_card_l_sub_tier": ["cs", "da", "el", "fi", "hi", "hu", "id", "ms", "nl", "no", "pl", "sk", "tl", "tr", "vi"],
   "mc_card_l_type": ["da", "fr", "nl", "no"],
+  "mc_ch_reset": ["id"],
   "mc_chat_hype_level": ["nl", "tl"],
   "mc_chat_hype_train": ["cs", "da", "el", "es", "fi", "fr", "he", "hu", "id", "it", "ms", "nl", "no", "pl", "pt_BR", "pt_PT", "ro", "sk", "sv", "tl", "tr", "vi"],
   "mc_cm_min": ["cs", "da", "de", "es", "fi", "fr", "it", "ms", "nl", "no", "pl", "pt_BR", "pt_PT", "ro", "sk", "sv", "tl"],

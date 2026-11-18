@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "zrušiť"
   },
+  "mc_ch_reset": {
+    "message": "obnoviť"
+  },
   "mc_mr_pattern_ph": {
     "message": "vzor..."
   },

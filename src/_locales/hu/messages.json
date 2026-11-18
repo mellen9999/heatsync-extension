@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "mégse"
   },
+  "mc_ch_reset": {
+    "message": "visszaállítás"
+  },
   "mc_mr_pattern_ph": {
     "message": "minta..."
   },

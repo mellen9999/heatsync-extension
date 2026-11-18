@@ -172,7 +172,8 @@ function sfxMentionRow(def) {
       '<span class="hs-mc-set-child-glyph">└ </span>' +
       `<span class="hs-mc-setting-label">${escapeHtml(label)}</span>` +
       '<div style="display:flex;align-items:center;gap:4px;min-width:0">' +
-      `<span class="hs-mc-set-range-val" style="min-width:0;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(name || t('mc_sfx_none'))}</span>` +
+      // a file name can be any length and is cut to fit; "no file yet" is ours and never is
+      `<span class="hs-mc-set-range-val" style="min-width:0;${name ? 'max-width:110px;' : ''}overflow:hidden;text-overflow:ellipsis;white-space:nowrap"${name ? ` title="${escapeHtml(name)}"` : ''}>${escapeHtml(name || t('mc_sfx_none'))}</span>` +
       `<button data-sfx-action="pick" style="${FR_BTN}">${escapeHtml(t('mc_sfx_pick'))}</button>` +
       `<button data-sfx-action="play" style="${FR_BTN};padding:1px 4px" title="${escapeHtml(t('mc_sfx_play'))}">▶</button>` +
       (name

@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "annulla"
   },
+  "mc_ch_reset": {
+    "message": "reimposta"
+  },
   "mc_mr_pattern_ph": {
     "message": "schema..."
   },

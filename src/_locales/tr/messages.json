@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "iptal"
   },
+  "mc_ch_reset": {
+    "message": "sıfırla"
+  },
   "mc_mr_pattern_ph": {
     "message": "kalıp..."
   },

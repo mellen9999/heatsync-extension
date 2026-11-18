@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "anulează"
   },
+  "mc_ch_reset": {
+    "message": "resetează"
+  },
   "mc_mr_pattern_ph": {
     "message": "tipar..."
   },

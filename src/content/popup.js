@@ -94,6 +94,8 @@ const browser = globalThis.browser || chrome
   // strings (errors/detected) use t() with the same || english guard below.
   const i18n = typeof browser !== 'undefined' && browser.i18n ? browser.i18n : chrome.i18n
   const t = (k, subs) => (i18n?.getMessage ? i18n.getMessage(k, subs) : '') || ''
+  // arabic and hebrew read right to left: the welcome page and the panel mirror, so does this
+  document.documentElement.dir = t('@@bidi_dir') === 'rtl' ? 'rtl' : 'ltr'
   for (const el of document.querySelectorAll('[data-i18n]')) {
     const m = t(el.dataset.i18n)
     if (m) el.textContent = m

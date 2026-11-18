@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "скасувати"
   },
+  "mc_ch_reset": {
+    "message": "скинути"
+  },
   "mc_mr_pattern_ph": {
     "message": "шаблон..."
   },

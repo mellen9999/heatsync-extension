@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "batal"
   },
+  "mc_ch_reset": {
+    "message": "reset"
+  },
   "mc_mr_pattern_ph": {
     "message": "pola..."
   },

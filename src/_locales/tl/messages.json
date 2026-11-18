@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "kanselahin"
   },
+  "mc_ch_reset": {
+    "message": "i-reset"
+  },
   "mc_mr_pattern_ph": {
     "message": "pattern..."
   },

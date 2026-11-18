@@ -3207,6 +3207,9 @@
   "mc_mr_cancel": {
     "message": "cancel"
   },
+  "mc_ch_reset": {
+    "message": "reset"
+  },
   "mc_mr_pattern_ph": {
     "message": "pattern..."
   },

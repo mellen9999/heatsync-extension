@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "रद्द करें"
   },
+  "mc_ch_reset": {
+    "message": "रीसेट"
+  },
   "mc_mr_pattern_ph": {
     "message": "पैटर्न..."
   },

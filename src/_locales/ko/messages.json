@@ -3204,6 +3204,9 @@
   "mc_mr_cancel": {
     "message": "취소"
   },
+  "mc_ch_reset": {
+    "message": "초기화"
+  },
   "mc_mr_pattern_ph": {
     "message": "패턴..."
   },

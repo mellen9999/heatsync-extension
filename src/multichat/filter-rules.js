@@ -12,6 +12,10 @@ function _frIsDangerous(p) {
   if (/\{\s*\d{2,}/.test(p)) return true
   return false
 }
+// What a word is made of, for a keyword's edges: letters (with their combining marks),
+// digits and the underscore, in any script.
+const _FR_WORD = '[\\p{L}\\p{M}\\p{N}_]'
+const _FR_WORD_CH = /^[\p{L}\p{M}\p{N}_]/u
 function _frEscapeLiteral(p) {
   return p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
@@ -358,12 +362,19 @@ function _frCompileOne(rule) {
 
   switch (m.type) {
     case 'keyword': {
-      // Word-boundary–ish: allow leading/trailing whitespace or line boundary,
-      // but don't require \b so emoji/Unicode words also match. Case-insensitive
-      // by default. RegExp compiled once; never touches user-supplied raw regex.
+      // A whole word, by letters and digits in any script: on a side where the keyword is
+      // itself a letter or a digit, it may not run on into another. "here" is found in
+      // "here🥹", "(here)" and "here-ish", and not in "there" or "hereby". Only a space and
+      // a few marks used to count as an edge, so a word with an emoji stuck to it (how
+      // youtube chat writes) or in brackets got past a hide rule. A keyword that starts or
+      // ends with a mark or an emoji needs no edge on that side. Case-insensitive by
+      // default. Compiled once; never touches user-supplied raw regex.
       const esc = _frEscapeLiteral(val)
+      const chars = [...val]
+      const pre = _FR_WORD_CH.test(chars[0]) ? `(?<!${_FR_WORD})` : ''
+      const post = _FR_WORD_CH.test(chars[chars.length - 1]) ? `(?!${_FR_WORD})` : ''
       try {
-        c.re = new RegExp(`(?:^|[\\s,!?.:;'"])${esc}(?=$|[\\s,!?.:;'"])`, flags)
+        c.re = new RegExp(`${pre}${esc}${post}`, `${flags}u`)
       } catch {
         c.re = null
       }

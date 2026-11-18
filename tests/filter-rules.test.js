@@ -88,6 +88,42 @@ test('keyword: case-sensitive when set', () => {
   expect(res.highlight).toBe(null)
 })
 
+// a hide rule for "here" let "I was here🥹" through on real youtube (e2e s25, 11-17): only a
+// space and a few marks counted as the edge of a word
+test('keyword: a word ends where letters and digits end, whatever comes next', () => {
+  compileFilterRules([rule({ match: { type: 'keyword', value: 'here' } })])
+  const hit = (text) => evaluateFilterRules(makeMsg({ text }), null).highlight === '#ff0000'
+  for (const text of [
+    'I was here🥹',
+    '🥹here',
+    '(here)',
+    'here-ish',
+    'here/there',
+    '«here»',
+    'here…',
+    'HERE!!',
+    'here',
+  ])
+    expect([text, hit(text)]).toEqual([text, true])
+  for (const text of ['there', 'hereby', 'here2', 'here_now', 'whereabouts', 'herè', 'ここhereです'])
+    expect([text, hit(text)]).toEqual([text, false])
+})
+
+test('keyword: a keyword that starts or ends with a mark or an emoji needs no edge on that side', () => {
+  const hit = (value, text) => {
+    compileFilterRules([rule({ match: { type: 'keyword', value } })])
+    return evaluateFilterRules(makeMsg({ text }), null).highlight === '#ff0000'
+  }
+  expect(hit('🥹', 'here🥹🥹')).toBe(true)
+  expect(hit('!drop', 'type!drop now')).toBe(true)
+  expect(hit('!drop', '!dropped')).toBe(false) // the far end is a letter: it still has to end there
+  expect(hit('c++', 'c++ is fine')).toBe(true)
+  expect(hit('c++', 'abc++')).toBe(false)
+  expect(hit('привет', 'ну привет!')).toBe(true)
+  expect(hit('привет', 'приветик')).toBe(false)
+  expect(hit('a.b', 'axb')).toBe(false) // the keyword is text, never a pattern
+})
+
 test('keyword: no match on unrelated text', () => {
   compileFilterRules([rule({ match: { type: 'keyword', value: 'goodbye' } })])
   const res = evaluateFilterRules(makeMsg({ text: 'hello world' }), null)

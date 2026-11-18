@@ -362,6 +362,7 @@ const BG_IRC = {
   // reconnects asked for by a tab that saw lines this reader missed (bg_irc_reader_missed)
   missed: { at: 0, gap: 12e4 },
   releaseTimers: new Map(), // ch -> timeout (bgIrcScheduleRelease)
+  refillTimers: new Map(), // ch -> timeout (bgIrcRefillGap: a refill waiting out the fetch cooldown)
   joining: new Map(), // ch -> Promise (bg_irc_join reading the persisted ring)
   storageRestored: false,
   // Tabs that have requested live broadcasts. Empty initially — we don't
@@ -472,6 +473,7 @@ function pruneMap(map, max) {
   const it = map.keys()
   for (let i = 0; i < excess; i++) map.delete(it.next().value)
 }
+const ROBOTTY_COOLDOWN_MS = 30_000
 let _robottyPersistTimer = null
 function bgIrcPersistRobottyTs() {
   if (_robottyPersistTimer) return
@@ -568,6 +570,8 @@ function bgIrcReleaseChannel(ch) {
   const msgs = buf.getAll()
   if (msgs.length) bgIrcRingPut(ch, { msgs, ts: Date.now() })
   BG_IRC.lastPutAt.delete(ch)
+  clearTimeout(BG_IRC.refillTimers.get(ch))
+  BG_IRC.refillTimers.delete(ch)
   BG_IRC.channels.delete(ch)
   BG_IRC.chanLastSeen.delete(ch)
   BG_IRC.chanRejoinAttempts.delete(ch)
@@ -652,17 +656,9 @@ function bgIrcConnect() {
       BG_IRC.ws.send(`JOIN #${ch}\r\n`)
     }
     bgIrcStartHeartbeat()
-    // Gap-fill: SW eviction + WS dropout can lose minutes of chat. On every
-    // (re)connect, refetch robotty for each channel to backfill the gap.
-    // 60s per-channel cooldown keeps us polite during flappy reconnects;
-    // historyInFlight prevents concurrent fetches when ensureChannel races.
-    const reconnectGapMs = 60_000
-    const now2 = Date.now()
-    for (const ch of BG_IRC.channels.keys()) {
-      const last = BG_IRC.lastRobottyAt.get(ch) || 0
-      if (now2 - last < reconnectGapMs) continue
-      bgIrcFetchRobotty(ch)
-    }
+    // Gap-fill: SW eviction + WS dropout can lose minutes of chat, and the lines
+    // sent while the socket was down exist only on the server.
+    for (const ch of BG_IRC.channels.keys()) bgIrcRefillGap(ch)
   }
   BG_IRC.ws.onmessage = (e) => bgIrcOnData(e.data)
   BG_IRC.ws.onerror = () => {
@@ -1009,14 +1005,34 @@ function bgIrcReconcileCleared(buf) {
   }
 }
 
+// One refill per reconnect, always. Inside the fetch cooldown it waits for the
+// cooldown's end instead of being dropped: a fetch from before the socket came
+// back cannot hold the lines of the gap, so a blip soon after a join (or after
+// a fetch that failed offline) used to lose them for good.
+function bgIrcRefillGap(ch) {
+  const wait = (BG_IRC.lastRobottyAt.get(ch) || 0) + ROBOTTY_COOLDOWN_MS - Date.now()
+  if (wait <= 0) {
+    bgIrcFetchRobotty(ch)
+    return
+  }
+  if (BG_IRC.refillTimers.has(ch)) return
+  BG_IRC.refillTimers.set(
+    ch,
+    setTimeout(() => {
+      BG_IRC.refillTimers.delete(ch)
+      if (BG_IRC.channels.has(ch)) bgIrcFetchRobotty(ch)
+    }, wait),
+  )
+}
+
 function bgIrcFetchRobotty(ch) {
   if (BG_IRC.historyInFlight.has(ch)) return BG_IRC.historyInFlight.get(ch)
-  // 30s per-channel cooldown — protects robotty + our SW from thrash on
+  // per-channel cooldown — protects robotty + our SW from thrash on
   // rapid page reloads / channel switches. Survives SW eviction via
   // chrome.storage.session (bgIrcPersistRobottyTs). At 100k users, SW-eviction
   // waves used to refetch robotty for every joined channel — this kills that.
   const lastAt = BG_IRC.lastRobottyAt.get(ch) || 0
-  if (Date.now() - lastAt < 30_000) return Promise.resolve()
+  if (Date.now() - lastAt < ROBOTTY_COOLDOWN_MS) return Promise.resolve()
   BG_IRC.lastRobottyAt.set(ch, Date.now())
   bgIrcPersistRobottyTs()
   const p = (async () => {

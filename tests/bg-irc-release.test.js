@@ -53,6 +53,7 @@ function harness() {
     persistTimers: new Map(),
     lastPutAt: new Map(),
     releaseTimers: new Map(),
+    refillTimers: new Map(),
   }
   const ring = (n) => ({ getAll: () => Array.from({ length: n }, (_, i) => ({ id: String(i) })) })
   const api = new Function(

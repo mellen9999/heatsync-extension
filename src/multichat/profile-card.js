@@ -497,7 +497,7 @@ function closeProfileCard() {
   // that never learned about modlog.)
   hsTakeoverSync()
   showInputBar()
-  renderMessages(currentTab, { bypassScrollPause: true })
+  paneReturn()
   renderSubRow() // the 2nd row gets its own cells back
 }
 

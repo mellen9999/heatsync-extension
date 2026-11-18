@@ -56,8 +56,18 @@ describe('← back survives a tab-bar repaint mid-click', () => {
 })
 
 describe('closing a takeover repaints even when scrolled up', () => {
-  test.each(['profile-card.js', 'pane-panel.js', 'pred-view.js'])('%s bypasses the scroll pause', (f) => {
-    const s = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
-    expect(s).toContain('renderMessages(currentTab, { bypassScrollPause: true })')
+  const read = (f) => readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
+  // the views that wiped the rows hand the pane back through paneReturn (main-state.js), which
+  // draws past the pause and puts a paused reader back; a confirm leaves the rows in place
+  test.each(['profile-card.js', 'pred-view.js', 'img-view.js'])('%s hands the pane back', (f) => {
+    expect(read(f)).toContain('paneReturn()')
+  })
+  test('the hand-back and the confirm both draw past the scroll pause', () => {
+    const state = read('main-state.js')
+    const at = state.indexOf('function paneReturn() {')
+    expect(state.slice(at, state.indexOf('\n}\n', at))).toContain(
+      'renderMessages(currentTab, { bypassScrollPause: true })',
+    )
+    expect(read('pane-panel.js')).toContain('renderMessages(currentTab, { bypassScrollPause: true })')
   })
 })

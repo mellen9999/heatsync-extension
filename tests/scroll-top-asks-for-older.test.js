@@ -30,6 +30,7 @@ function rig({ paused = true, top = 0 } = {}) {
     `let _scrollFrame = null, isProgrammaticScroll = false, _userInputScroll = false, isScrolledUp = ${paused}
      const calls = { older: 0, resume: 0, paused: [] }
      const isStaticTab = () => false
+     const listIsChat = () => true
      const setPaused = (p) => { isScrolledUp = p; calls.paused.push(p) }
      const onScrollMaybeResume = () => calls.resume++
      const loadOlderScrollback = () => calls.older++

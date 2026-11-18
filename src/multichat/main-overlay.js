@@ -1097,6 +1097,11 @@ function createOverlay() {
       currentTab === 'pinned' ||
       currentTab === 'modlog'
 
+    // The list holds the chat's own rows: not a top-anchored tab, and not a card, a prediction
+    // or a picture over the pane. Scrolling inside one of those says nothing about the chat
+    // under it: a wheel-up in a card paused the chat, and its close left a stale "N new".
+    const listIsChat = () => !isStaticTab() && !hsPaneTaken()
+
     // Bulletproof scroll-pause: ANY upward movement pauses chat sticky.
     // Resumes ONLY when user lands within 2px of true bottom OR clicks "new" button.
     // Prior 50px slop let small wheels/drags re-trigger auto-scroll, breaking pause.
@@ -1155,7 +1160,7 @@ function createOverlay() {
     // isScrolledUp=true mid-build, then yellow "N new" accumulates without
     // ever auto-scrolling.
     const onScrollMaybeResume = () => {
-      if (isProgrammaticScroll) return
+      if (isProgrammaticScroll || hsPaneTaken()) return
       if (!_userInputScroll) return
       if (!isScrolledUp) return
       if (checkAtBottom()) {
@@ -1173,7 +1178,7 @@ function createOverlay() {
       if (isProgrammaticScroll) return
       if (!_userInputScroll) return
       if (!isScrolledUp) return
-      if (isStaticTab()) return
+      if (!listIsChat()) return
       if (msgsEl.scrollTop > SCROLLBACK_TRIGGER_PX) return
       loadOlderScrollback()
     }
@@ -1214,7 +1219,7 @@ function createOverlay() {
     msgsEl.addEventListener(
       'wheel',
       (e) => {
-        if (isStaticTab()) return
+        if (!listIsChat()) return
         _userInputScroll = true
         if (e.deltaY >= 0) return
         setPaused(true)
@@ -1239,7 +1244,7 @@ function createOverlay() {
     msgsEl.addEventListener(
       'touchmove',
       (e) => {
-        if (isStaticTab()) return
+        if (!listIsChat()) return
         const y = e.touches[0]?.clientY || 0
         if (y > _touchStartY + 4) setPaused(true)
         _touchStartY = y
@@ -1257,7 +1262,7 @@ function createOverlay() {
       (e) => {
         if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return
         const move = listKeyMove(e.key, msgsEl.clientHeight)
-        if (move === null || isStaticTab()) return
+        if (move === null || !listIsChat()) return
         const panel = document.getElementById('hs-mc-container')
         const composerEmpty = typeof getInputText === 'function' && !getInputText().trim()
         if (!listKeyWanted(document.activeElement, msgsEl, panel, msgsEl.matches(':hover'), e.key, composerEmpty))

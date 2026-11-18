@@ -34,7 +34,8 @@ function rig() {
   const api = new Function(
     'window',
     'scheduleRenderMessages',
-    `let _heldOlder = null, currentTab = 'live', _desyncLoggedAt = 0
+    `let _heldOlder = null, currentTab = 'live', _desyncLoggedAt = 0, _paneKept = null
+     const isScrolledUp = false, hoverHeld = false, newestOrdOnScreen = () => null
      const _msgKeyIndex = new Set(), _uidIndex = new Map(), _mentionIndex = new Map()
      const _noHeal = () => false
      ${src}

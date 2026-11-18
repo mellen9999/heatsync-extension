@@ -40,7 +40,7 @@ function closePredView() {
   activePredView = null
   hsTakeoverSync()
   showInputBar()
-  if (typeof renderMessages === 'function') renderMessages(currentTab, { bypassScrollPause: true })
+  paneReturn()
 }
 
 // A tab switch tears the view down without touching the pane: the switch repaints it for the

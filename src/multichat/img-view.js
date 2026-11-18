@@ -37,7 +37,7 @@ function closeImgView() {
   activeImgView = null
   hsTakeoverSync()
   showInputBar()
-  if (typeof renderMessages === 'function') renderMessages(currentTab, { bypassScrollPause: true })
+  paneReturn()
 }
 
 document.addEventListener(

@@ -597,6 +597,7 @@ let _scrollbackAsOf = null
 function resetScrollback() {
   _scrollbackWindow = 0
   _scrollbackAsOf = null
+  _paneKept = null
 }
 /** Each source without the lines newer than what the reader had (no cut while none are loaded). */
 function cutSourcesAsOf(srcs, asOf) {
@@ -608,7 +609,9 @@ function cutSourcesAsOf(srcs, asOf) {
  *  being read slid away by however many lines had arrived since the pause. */
 function renderAsOf(msgsEl) {
   if (_scrollbackWindow > 0 && _scrollbackAsOf !== null) return _scrollbackAsOf
-  return isScrolledUp ? newestOrdOnScreen(msgsEl) : null
+  if (!isScrolledUp) return null
+  // no row on screen: a view had the pane and is handing it back (paneReturn)
+  return newestOrdOnScreen(msgsEl) ?? (_paneBack?.tab === currentTab ? _paneBack.asOf : null)
 }
 // How far back a render reads: `take` rows of each buffer, `keep` merged rows before
 // the filters. A plain tail needs only the newest. A paused reader needs all of it,
@@ -650,7 +653,9 @@ function growFirstPaint(id) {
     const h0 = el.scrollHeight
     const top0 = el.scrollTop
     _paintCap += FIRST_PAINT_STEP
-    renderMessages(id)
+    // the list's own older rows, not new chat: a reader who scrolled up while it filled got no
+    // more of them, and a "N new" count for lines that were never new
+    renderMessages(id, { bypassScrollPause: true })
     // overflow-anchor is off on the list: older rows landing above a scrolled-up viewer would move it
     if (isScrolledUp) el.scrollTop = top0 + (el.scrollHeight - h0)
     if (_paintCap >= renderRowCap()) _paintFor = null
@@ -662,7 +667,7 @@ function finishFirstPaint() {
   if (_paintFor === null) return
   const id = _paintFor
   _paintCap = SCROLLBACK_MAX
-  if (currentTab === id) renderMessages(id)
+  if (currentTab === id) renderMessages(id, { bypassScrollPause: true })
   _paintFor = null
 }
 
@@ -894,8 +899,54 @@ function _clearMessageIndices() {
 // that as drift (index_desync, dom 0 / idx 400), "healed" it with a render, and that render
 // redrew the open card under the reader. The view's close repaints the tab from its buffers.
 function takePane(msgsEl) {
+  // rows on screen = a view is opening over the chat (one redrawing itself finds none, and what
+  // was kept at its opening stands)
+  if (newestOrdOnScreen(msgsEl) !== null) _paneKept = isScrolledUp && !hoverHeld ? readPanePlace(msgsEl) : null
   _clearMessageIndices()
   msgsEl.textContent = ''
+}
+
+// A reader who had scrolled up and then opened a card, a prediction or a picture gets their
+// place back when it closes. The view takes the whole pane, so the rows being read are gone
+// while it is open; the close redrew the live tail and left the list wherever it fell, still
+// paused, under a "N new" count (real kick and twitch, e2e s23, 11-17). Kept: the first row in
+// view, how far under the top edge it sat, and the newest row the reader had (renderAsOf).
+// Not paused = nothing kept, and the close draws the live tail as before.
+let _paneKept = null
+let _paneBack = null // the kept place, for the one redraw that puts it back
+function readPanePlace(msgsEl) {
+  const top = msgsEl.getBoundingClientRect().top
+  const asOf = newestOrdOnScreen(msgsEl)
+  for (const row of msgsEl.children) {
+    if (!row._hsMsg || !row.dataset?.msgKey) continue
+    const b = row.getBoundingClientRect()
+    if (b.bottom > top) return { tab: currentTab, key: row.dataset.msgKey, dy: b.top - top, asOf }
+  }
+  return null
+}
+/** A closed view hands the pane back: the tab is redrawn, and a paused reader is put back. */
+function paneReturn() {
+  const kept = _paneKept
+  _paneKept = null
+  _paneBack = kept
+  try {
+    renderMessages(currentTab, { bypassScrollPause: true })
+    // a cold list fills in steps (growFirstPaint); the row being read is past the first one
+    if (kept) finishFirstPaint()
+  } finally {
+    _paneBack = null
+  }
+  const msgsEl = document.getElementById('hs-mc-messages')
+  if (!kept || !msgsEl || !isScrolledUp || kept.tab !== currentTab) return
+  for (const row of msgsEl.children) {
+    if (row.dataset?.msgKey !== kept.key) continue
+    isProgrammaticScroll = true
+    msgsEl.scrollTop += row.getBoundingClientRect().top - msgsEl.getBoundingClientRect().top - kept.dy
+    cleanup.raf(() => {
+      isProgrammaticScroll = false
+    })
+    return
+  }
 }
 
 // Trim variant that maintains the indices. Use anywhere we trim

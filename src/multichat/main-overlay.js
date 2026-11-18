@@ -1235,7 +1235,14 @@ function createOverlay() {
       (e) => {
         if (!listIsChat()) return
         _userInputScroll = true
-        if (e.deltaY >= 0) return
+        if (e.deltaY >= 0) {
+          // Already at the bottom of the rows drawn, a wheel down moves nothing and no scroll
+          // event follows it. A paused reader gets there when the rows under them shrink (a mod
+          // clears someone): they wheeled down and stayed paused, the pill counting up (e2e s20,
+          // 11-18). A feed held by the pointer sits at the bottom on purpose and stays held.
+          if (e.deltaY > 0 && !e.ctrlKey && isScrolledUp && !hoverHeld && checkAtBottom()) jumpToTail()
+          return
+        }
         setPaused(true)
         // Already at the top, this wheel moves nothing and no scroll event follows it: ask here.
         if (msgsEl.scrollTop <= SCROLLBACK_TRIGGER_PX) maybeLoadOlder()

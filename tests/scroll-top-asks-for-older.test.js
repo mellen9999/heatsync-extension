@@ -15,7 +15,7 @@ const e = MAIN.indexOf('    // Touch: track touchmove direction.', s)
 if (s < 0 || e < 0) throw new Error('carve: the list scroll listeners moved')
 const WIRING = MAIN.slice(s, e)
 
-function rig({ paused = true, top = 0 } = {}) {
+function rig({ paused = true, top = 0, atBottom = false, hover = false } = {}) {
   const win = new Window()
   const msgsEl = win.document.createElement('div')
   win.document.body.appendChild(msgsEl)
@@ -28,7 +28,11 @@ function rig({ paused = true, top = 0 } = {}) {
     'cancelAnimationFrame',
     'mcSignal',
     `let _scrollFrame = null, isProgrammaticScroll = false, _userInputScroll = false, isScrolledUp = ${paused}
-     const calls = { older: 0, resume: 0, paused: [] }
+     const calls = { older: 0, resume: 0, paused: [], tail: 0 }
+     const hoverHeld = ${hover}
+     const checkAtBottom = () => ${atBottom}
+     const jumpToTail = () => { calls.tail++; isScrolledUp = false }
+     const armPaneHold = () => {}
      const isStaticTab = () => false
      const listIsChat = () => true
      const setPaused = (p) => { isScrolledUp = p; calls.paused.push(p) }
@@ -100,4 +104,33 @@ test("our own scrolling never asks: a render's scroll, or one with no gesture be
   r.programmatic(true)
   r.fire('wheel', { deltaY: -120 })
   expect(r.calls.older).toBe(0)
+})
+
+// The mirror at the other end. A paused reader can end up at the bottom of the rows drawn with
+// no scroll of their own: the rows under them shrink (a mod clears someone) and the browser
+// clamps the list. A wheel down there moves nothing, no scroll event follows it, and they stayed
+// paused with the pill counting up (real twitch, e2e s20, 11-18: 1 in 34 pauses on a fast chat).
+test('paused at the bottom of the rows drawn, a wheel down moves nothing and still returns to the tail', () => {
+  const r = rig({ top: 17023, atBottom: true })
+  r.fire('wheel', { deltaY: 100 })
+  expect(r.calls.tail).toBe(1)
+  expect(r.calls.paused).toEqual([])
+})
+
+test('a wheel down that has rows to scroll through is left to the scroll', () => {
+  const r = rig({ top: 4000, atBottom: false })
+  r.fire('wheel', { deltaY: 100 })
+  expect(r.calls.tail).toBe(0)
+})
+
+test('a list that is not paused, one held by the pointer, and a zoom wheel are left alone', () => {
+  const live = rig({ paused: false, top: 17023, atBottom: true })
+  live.fire('wheel', { deltaY: 100 })
+  expect(live.calls.tail).toBe(0)
+  const held = rig({ top: 17023, atBottom: true, hover: true })
+  held.fire('wheel', { deltaY: 100 })
+  expect(held.calls.tail).toBe(0)
+  const zoom = rig({ top: 17023, atBottom: true })
+  zoom.fire('wheel', { deltaY: 100, ctrlKey: true })
+  expect(zoom.calls.tail).toBe(0)
 })

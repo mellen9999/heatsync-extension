@@ -34,6 +34,7 @@ import { s21Hide } from './s21-hide'
 import { s22Keys } from './s22-keys'
 import { s24Native } from './s24-native'
 
+import { s25Rows } from './s25-rows'
 const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s1-tabs', s1Tabs],
   ['s2-twitch', s2Twitch],
@@ -64,6 +65,7 @@ const SCENARIOS: [string, () => Promise<unknown>][] = [
   ['s24-native', s24Native],
 ]
 
+  ['s25-rows', s25Rows],
 const args = process.argv.slice(2)
 const only = args.includes('--only') ? args[args.indexOf('--only') + 1] : ''
 // a family by its number: s2 is s2-twitch, s2-youtube and s2-kick; s1 is s1-tabs, never s10 or s11

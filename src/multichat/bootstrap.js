@@ -220,6 +220,15 @@ function _hsBuildDbg() {
         : 'no config.channels',
     kickResolved: kickResolvedSample,
     kickPendingLookups: kickPending,
+    // where the reader is in the list: the e2e scroll scenario reads the state, not just the pill
+    reader: {
+      paused: typeof isScrolledUp !== 'undefined' && isScrolledUp,
+      hover: typeof hoverHeld !== 'undefined' && hoverHeld,
+      older: typeof _scrollbackWindow !== 'undefined' ? _scrollbackWindow : null,
+      asOf: typeof _scrollbackAsOf !== 'undefined' ? _scrollbackAsOf : null,
+      kept: typeof _paneKept !== 'undefined' ? _paneKept : null,
+      taken: typeof hsPaneTaken === 'function' && hsPaneTaken(),
+    },
   }
 }
 // hs-dbg-* diagnostics — DEV BUILDS ONLY. These CustomEvent listeners are

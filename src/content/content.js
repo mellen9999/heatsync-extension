@@ -5488,6 +5488,11 @@
       }
     }
 
+    // Before the "no text" way out below: a line that is only emotes has no text element, and a
+    // blocked emote in one drew unblocked in every row that came after the block (real twitch,
+    // e2e s24, 11-18).
+    markBlockedNativeEmotes(messageElement)
+
     const textElements = messageElement.querySelectorAll('.text-fragment, span.font-normal')
     if (textElements.length === 0) return
 
@@ -5710,15 +5715,13 @@
     // Color all @username mentions (Chatterino-style) - AFTER emote replacement
     // so replaceChildren() doesn't wipe out the colored spans
     colorUsernameMentions(messageElement, textElements, allEmotes)
+  }
 
-    // Apply local name-blocks to native Twitch/Kick emotes in this message
-    if (localBlockedEmoteNames.size > 0) {
-      const imgs = messageElement.querySelectorAll(NATIVE_EMOTE_IMG)
-      for (const im of imgs) {
-        if (im.alt && localBlockedEmoteNames.has(im.alt)) {
-          im.setAttribute('data-hs-name-blocked', '1')
-        }
-      }
+  /** the site's own emotes in this row that the viewer blocked by name */
+  function markBlockedNativeEmotes(messageElement) {
+    if (localBlockedEmoteNames.size === 0) return
+    for (const im of messageElement.querySelectorAll(NATIVE_EMOTE_IMG)) {
+      if (im.alt && localBlockedEmoteNames.has(im.alt)) im.setAttribute('data-hs-name-blocked', '1')
     }
   }
 

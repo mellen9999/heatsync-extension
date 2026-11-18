@@ -1488,6 +1488,7 @@ function listenForSocialEvents() {
       if (!id) return
       const idx = feedMessages.findIndex((m) => m.base36_id === id)
       if (idx >= 0) feedMessages.splice(idx, 1)
+      dropInlinePost(id)
       if (activeThread) {
         if (activeThread.op?.base36_id === id) {
           activeThread = null

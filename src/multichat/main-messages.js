@@ -202,7 +202,7 @@ function buildMessageDiv(m, tabId) {
       if (feedSince === undefined) queuePlusTenureLookup(feedUid)
       else feedPlusHtml = hsNameMarksHtml(feedSince, getHsBadgeId(feedUid))
     }
-    const content = renderFeedContent(m.text, m.emote_refs)
+    const content = m.gone ? escapeHtml(t('mc_profile_deleted_message')) : renderFeedContent(m.text, m.emote_refs)
     // Canonical heat: formatHeat + ° suffix (≥10) + tier color/glow/breathe via heatSpanHtml. Hidden at the baseline 1 — every fresh post starts there and this row never updates, so "name 1:" read as noise.
     const heatHtml = (m.heat || 0) > 1 ? ` ${heatSpanHtml(m.heat)}` : ''
     // All values sanitized — safe innerHTML (heat is numeric, emoji/color are hardcoded)

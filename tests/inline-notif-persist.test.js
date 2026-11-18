@@ -1,4 +1,6 @@
 import { describe, expect, test } from 'bun:test'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { mainSource } from './main-src.js'
 
 /**
@@ -48,10 +50,15 @@ function load({ toggles = { op: true, re: true, mop: true } } = {}) {
     irc: { channels: new Map([['kripp', twitch]]) },
     kickChat: null,
     channelYtMessages: new Map(),
+    t: (k) => k,
+    drops: { n: 0 },
+    _dropAllTabCaches: () => g.drops.n++,
+    onScreen: [],
+    document: { querySelectorAll: () => g.onScreen },
   }
   const api = new Function(
     ...Object.keys(g),
-    `${BLOCK}\nreturn { saveInlineNotif, restoreInlineNotifs, getQueue: () => saveQueue }`,
+    `${BLOCK}\nreturn { saveInlineNotif, restoreInlineNotifs, dropInlinePost, getQueue: () => saveQueue }`,
   )
   const out = api(...Object.values(g))
   return { ...out, store, twitch, g }
@@ -85,5 +92,70 @@ describe('inline notif persistence', () => {
     expect(await restoreInlineNotifs()).toBe(0)
     expect(twitch.items.length).toBe(0)
     expect(store.hs_inline_notifs_v1.map((r) => r.msg.base36_id)).toEqual(['00001b'])
+  })
+})
+
+// The author deleted the post. Its row in chat was a copy the delete never reached: it stayed
+// readable in every channel tab, and the saved copy drew it again on each reload for a week.
+describe('a deleted post leaves chat', () => {
+  const row = (id) => {
+    const body = { textContent: 'the post' }
+    const tag = { removed: false, remove: () => (tag.removed = true) }
+    return { dataset: { msgId: id }, body, tag, querySelector: (sel) => (sel === '.hs-feed-body' ? body : tag) }
+  }
+
+  test('every copy is emptied where it stands, the saved one is dropped, and a reload draws nothing', async () => {
+    const { saveInlineNotif, dropInlinePost, store, twitch, g } = load()
+    g.channelYtMessages.set('c1', [])
+    const live = { ...post('00003q', Date.now() - 5000), mediaTag: 'img', mediaSrc: 'https://x/y.png', emote_refs: [1] }
+    const other = post('00003r', Date.now() - 4000)
+    for (const m of [live, other]) {
+      saveInlineNotif('op', m)
+      twitch.insertOrdered(m)
+      g.channelYtMessages.get('c1').push({ ...m })
+    }
+    await new Promise((r) => setTimeout(r, 5))
+    const mine = row('00003q')
+    const theirs = row('00003r')
+    g.onScreen.push(mine, theirs)
+
+    await dropInlinePost('00003q')
+    // the buffers keep the row (rows never move), with nothing of the post left in it
+    expect(twitch.items.map((m) => m.base36_id)).toEqual(['00003q', '00003r'])
+    for (const m of [twitch.items[0], g.channelYtMessages.get('c1')[0]]) {
+      expect(m.gone).toBe(true)
+      expect(m.text).toBe('')
+      expect([m.mediaTag, m.mediaSrc, m.emote_refs]).toEqual([null, null, null])
+    }
+    expect(twitch.items[1].text).toBe('t')
+    expect(twitch.items[1].gone).toBeUndefined()
+    // on screen, and in tabs drawn earlier
+    expect(mine.body.textContent).toBe('mc_profile_deleted_message')
+    expect(mine.tag.removed).toBe(true)
+    expect(theirs.body.textContent).toBe('the post')
+    expect(theirs.tag.removed).toBe(false)
+    expect(g.drops.n).toBe(1)
+    // and it is not saved any more
+    expect(store.hs_inline_notifs_v1.map((r) => r.msg.base36_id)).toEqual(['00003r'])
+    const fresh = load()
+    Object.assign(fresh.store, store)
+    expect(await fresh.restoreInlineNotifs()).toBe(1)
+    expect(fresh.twitch.items.map((m) => m.base36_id)).toEqual(['00003r'])
+  })
+
+  test('a save still in flight when the delete arrives does not bring it back', async () => {
+    const { saveInlineNotif, dropInlinePost, store } = load()
+    saveInlineNotif('op', post('00003q', Date.now()))
+    await dropInlinePost('00003q')
+    expect(store.hs_inline_notifs_v1 || []).toEqual([])
+  })
+
+  test('the row builder draws an emptied post as deleted, never its text', () => {
+    expect(SRC).toContain(
+      "const content = m.gone ? escapeHtml(t('mc_profile_deleted_message')) : renderFeedContent(m.text, m.emote_refs)",
+    )
+    const social = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'social.js'), 'utf8')
+    const del = social.slice(social.indexOf("if (msg.type === 'message-deleted' && msg.data) {"))
+    expect(del.slice(0, 400)).toContain('dropInlinePost(id)')
   })
 })

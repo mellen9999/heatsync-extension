@@ -1479,6 +1479,40 @@ async function restoreInlineNotifs() {
   }
 }
 
+// A post its author deleted. Its row in chat was a copy nothing reached: it stayed readable in
+// every channel tab, and the saved copy drew it again on each reload for a week. Every copy is
+// emptied where it stands (a row in chat never moves) and the saved one is dropped.
+function dropInlinePost(id) {
+  if (!id) return
+  const gone = t('mc_profile_deleted_message')
+  const empty = (m) => {
+    if (m?.type !== 'feed-post' || m.base36_id !== id) return
+    m.gone = true
+    m.text = ''
+    m.emote_refs = m.mediaTag = m.mediaSrc = m.mediaCats = null
+  }
+  for (const buf of [...(irc?.channels?.values() || []), ...(kickChat?.channels?.values() || [])])
+    buf.getAll().forEach(empty)
+  for (const list of channelYtMessages.values()) list.forEach(empty)
+  // a tab drawn earlier and kept aside is rebuilt from the buffers; the one on screen is fixed here
+  _dropAllTabCaches()
+  for (const row of document.querySelectorAll('.hs-mc-feed-inline')) {
+    if (row.dataset.msgId !== id) continue
+    const body = row.querySelector('.hs-feed-body')
+    if (body) body.textContent = gone
+    row.querySelector('.hs-feed-media-tag')?.remove()
+  }
+  saveQueue = saveQueue.then(async () => {
+    try {
+      const data = await api.storage.local.get(INLINE_NOTIF_KEY)
+      const rows = Array.isArray(data[INLINE_NOTIF_KEY]) ? data[INLINE_NOTIF_KEY] : []
+      const kept = rows.filter((r) => r?.msg?.base36_id !== id)
+      if (kept.length < rows.length) await api.storage.local.set({ [INLINE_NOTIF_KEY]: kept })
+    } catch {}
+  })
+  return saveQueue
+}
+
 // Dedup: track recent server-sourced YouTube messages to skip content-script duplicates
 
 // Normalize YouTube URL — accepts full URLs or bare username

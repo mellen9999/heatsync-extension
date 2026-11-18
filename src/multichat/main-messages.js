@@ -1693,6 +1693,15 @@ function _filterFlags() {
     dim: dimTimeouts,
   }
 }
+/** A line the list will not draw as things stand: hidden, filtered, taken out by a rule, a
+ *  mute or a block, behind /lclear, or a repeat of the last row with "hide repeats" on. */
+function lineNeverDraws(m, tabId, msgsEl) {
+  const ff = _filterFlags()
+  if (m?.hidden || isMsgFiltered(m, ff) || ruleHides(m, tabId) || isMsgUserDropped(m, tabId)) return true
+  const cut = lclearCutFor(tabId)
+  if (cut && m.time <= cut) return true
+  return !!ff.dups && typeof m.text === 'string' && lastDrawnText(msgsEl) === m.text
+}
 // The live-DOM half of the same decision, for rows already on screen when a
 // mod acts. The render filter above is the durable answer; this makes it
 // immediate instead of "next time anyone says anything".
@@ -2716,6 +2725,11 @@ function renderStallCheck() {
   if (!m || m.isHistory || Date.now() - (m.time || 0) < 4000) return
   if (Date.now() - (m.time || 0) > 120000) return // quiet channel, nothing newer to show
   if (_msgKeyIndex.has(msgKeyOf(m))) return
+  // Not on screen because it is not meant to be: a line a hide rule, a mute or a filter takes
+  // out, or one a search does not match. On a slow chat that line stays the newest for a while,
+  // and each check read it as a stall: a false report in the ring and a full redraw every 2.5s
+  // (real kick with a hide rule, e2e s25, 11-18).
+  if (liveSearchQuery(currentTab) || lineNeverDraws(m, currentTab, msgsEl)) return
   const blockers = {
     editing: !!editingChannel,
     panel: !!hsPanePanelOpen(),

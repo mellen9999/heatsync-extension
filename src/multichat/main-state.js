@@ -986,8 +986,41 @@ function paneReturn() {
     cleanup.raf(() => {
       isProgrammaticScroll = false
     })
+    _paneHold = { row, dy: kept.dy, top: msgsEl.scrollTop, until: Date.now() + PANE_HOLD_MS }
     return
   }
+}
+
+// The rows above the reader go on settling after that redraw: a picture whose width was not
+// known yet wraps its line, a badge lands. The list has no scroll anchoring of its own
+// (overflow-anchor is off), so each one pushed the row being read further down, 154px on a kick
+// channel (e2e s20, 11-18). For a moment after the view closes the row is put back each time a
+// picture in the list lands. The reader's own scroll ends it: the list is then somewhere this
+// did not put it.
+const PANE_HOLD_MS = 3000
+let _paneHold = null // { row, dy, top: the scroll position this left the list at, until }
+let _paneHoldFrame = null
+function holdPanePlace(msgsEl) {
+  const h = _paneHold
+  if (!h) return
+  if (!isScrolledUp || Date.now() > h.until || !h.row.isConnected) {
+    _paneHold = null
+    return
+  }
+  if (_paneHoldFrame) return
+  // one read and one write a frame, before it is painted: the shift is never seen
+  _paneHoldFrame = rafOrTimeout(() => {
+    _paneHoldFrame = null
+    if (_paneHold !== h || !isScrolledUp || !h.row.isConnected) return
+    const d = h.row.getBoundingClientRect().top - msgsEl.getBoundingClientRect().top - h.dy
+    if (Math.abs(d) < 1) return
+    msgsEl.scrollTop += d
+    h.top = msgsEl.scrollTop
+  })
+}
+/** the list scrolled: to where the hold put it, or the reader moved it and the hold is over */
+function paneHoldScrolled(msgsEl) {
+  if (_paneHold && Math.abs(msgsEl.scrollTop - _paneHold.top) > 1) _paneHold = null
 }
 
 // Trim variant that maintains the indices. Use anywhere we trim

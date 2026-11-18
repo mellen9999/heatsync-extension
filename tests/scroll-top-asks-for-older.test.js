@@ -34,6 +34,7 @@ function rig({ paused = true, top = 0 } = {}) {
      const setPaused = (p) => { isScrolledUp = p; calls.paused.push(p) }
      const onScrollMaybeResume = () => calls.resume++
      const loadOlderScrollback = () => calls.older++
+     const paneHoldScrolled = () => {}
      ${WIRING}
      return { calls, flag: () => _userInputScroll, programmatic: (v) => (isProgrammaticScroll = v) }`,
   )(

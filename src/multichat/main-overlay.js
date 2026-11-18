@@ -1197,6 +1197,7 @@ function createOverlay() {
     msgsEl.addEventListener(
       'scroll',
       () => {
+        paneHoldScrolled(msgsEl)
         if (_scrollFrame) return
         _scrollFrame = requestAnimationFrame(() => {
           _scrollFrame = null
@@ -1424,6 +1425,7 @@ function createOverlay() {
     // Coalescing lives in scheduleScrollPin (shared with every other pin
     // trigger) so a 100-image burst still does one layout per frame.
     const onImgLoadOrError = (e) => {
+      holdPanePlace(msgsEl) // a reader just back from a card keeps their row while pictures land
       // A cosmetic badge img failed (e.g. 7TV CDN QUIC drop under request
       // burst). The URL is valid, so retry before giving up — only hide after
       // 2 failed retries — so we never render a permanent broken-image icon.

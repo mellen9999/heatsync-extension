@@ -84,3 +84,25 @@ function initOwnedKeyups(signal) {
   // a keyup that never arrives (focus left the window mid-press) must not eat a later one
   window.addEventListener('blur', () => _ownedKeyups.clear(), { signal })
 }
+
+// n / N walk a filter's matches with nothing focused. Taken on the root element in the capture
+// phase: after type-to-focus (same node, set up first, so a letter the composer takes is typed
+// and never walked) and before every listener the host has. It used to sit on document in the
+// bubble phase, behind the host's: youtube's shift+n is "next video", and the press that stepped
+// a match back also changed the video (e2e s22, 11-18).
+function initSearchWalkKeys(signal, walk) {
+  document.documentElement.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.key !== 'n' && e.key !== 'N') return
+      if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return
+      const t = e.target
+      if (t && (t.isContentEditable || t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return
+      if (!walk(e.key === 'n' ? 1 : -1)) return
+      e.preventDefault()
+      e.stopImmediatePropagation()
+      ownKeyup(e)
+    },
+    { capture: true, signal },
+  )
+}

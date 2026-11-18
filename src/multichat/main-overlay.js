@@ -2400,17 +2400,7 @@ document.addEventListener(
   },
   { signal: mcSignal },
 )
-document.addEventListener(
-  'keydown',
-  (e) => {
-    if (e.key !== 'n' && e.key !== 'N') return
-    if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return
-    const t = e.target
-    if (t && (t.isContentEditable || ['INPUT', 'TEXTAREA'].includes(t.tagName))) return
-    if (cycleLiveSearch(e.key === 'n' ? 1 : -1)) e.preventDefault()
-  },
-  { signal: mcSignal },
-)
+initSearchWalkKeys(mcSignal, cycleLiveSearch)
 
 // alt+1..9 jump to the Nth content tab, alt+] / alt+[ cycle next/prev, alt+r
 // is row mode (row-mode.js) — the way in for people who don't run vi mode, whose

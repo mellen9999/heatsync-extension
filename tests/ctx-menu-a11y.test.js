@@ -285,6 +285,17 @@ describe('a window shorter than the menu', () => {
       ['nope', 'nearest'],
     ])
   })
+
+  test('a pointer over a row lights it and scrolls nothing: the menu must not run on by itself', async () => {
+    const seen = []
+    win.HTMLElement.prototype.scrollIntoView = function () {
+      seen.push(this.textContent)
+    }
+    await open({})
+    rows()[2].dispatchEvent(new win.MouseEvent('mouseenter'))
+    expect(doc.activeElement).toBe(rows()[2])
+    expect(seen).toEqual([])
+  })
 })
 
 describe('keys the menu takes never reach the page', () => {

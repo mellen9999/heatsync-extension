@@ -72,7 +72,7 @@ function showHsCtxMenu(x, y, header, items, opts = {}) {
       usable.push(entry)
       it.addEventListener('click', () => use(entry))
     }
-    it.addEventListener('mouseenter', () => focusAt(entries.indexOf(entry)))
+    it.addEventListener('mouseenter', () => focusAt(entries.indexOf(entry), false))
     menu.appendChild(it)
   }
   // Number top-down (key 1 is the first usable item, ascending downward). The
@@ -107,13 +107,15 @@ function showHsCtxMenu(x, y, header, items, opts = {}) {
   menu.style.visibility = ''
 
   let cur = -1 // index into entries of the focused item
-  function focusAt(i) {
+  function focusAt(i, byKey = true) {
     if (!entries.length) return
     cur = ((i % entries.length) + entries.length) % entries.length
     try {
       entries[cur].el.focus({ preventScroll: true })
-      // the menu scrolls when the window is shorter than it is (its css caps the height)
-      entries[cur].el.scrollIntoView({ block: 'nearest' })
+      // The menu scrolls when the window is shorter than it is (its css caps the height). A key
+      // brings its row into view; a pointer does not, or the row cut by the edge would scroll in,
+      // put the next cut row under the pointer, and the menu would run to its end by itself.
+      if (byKey) entries[cur].el.scrollIntoView({ block: 'nearest' })
     } catch {}
   }
   function use(entry) {

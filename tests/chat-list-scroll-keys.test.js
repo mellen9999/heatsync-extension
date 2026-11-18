@@ -67,9 +67,24 @@ test('pointer elsewhere: the page keeps its keys', () => {
   expect(listKeyWanted(p.tab, p.list, p.panel, false)).toBe(false)
 })
 
-test('a field taking text, ours or the host’s, and the host’s focused player keep their keys', () => {
+test('our composer shares: the page keys always, End and Home while it is empty, the arrows never', () => {
   const p = page()
-  expect(listKeyWanted(p.composer, p.list, p.panel, true)).toBe(false)
+  const from = (key, empty, hovered = false) => listKeyWanted(p.composer, p.list, p.panel, hovered, key, empty)
+  for (const empty of [true, false]) {
+    expect([empty, from('PageUp', empty), from('PageDown', empty)]).toEqual([empty, true, true])
+    expect([empty, from('ArrowUp', empty, true), from('ArrowDown', empty, true)]).toEqual([empty, false, false])
+  }
+  expect([from('End', true), from('Home', true)]).toEqual([true, true])
+  // text in it: End and Home move its caret, pointer on the list or not
+  expect([from('End', false, true), from('Home', false, true)]).toEqual([false, false])
+})
+
+test('any other field taking text and the host’s focused player keep their keys', () => {
+  const p = page()
+  const filter = p.doc.createElement('input')
+  p.panel.appendChild(filter)
+  for (const key of ['End', 'PageUp'])
+    expect([key, listKeyWanted(filter, p.list, p.panel, true, key, true)]).toEqual([key, false])
   expect(listKeyWanted(p.hostField, p.list, p.panel, true)).toBe(false)
   expect(listKeyWanted(p.player, p.list, p.panel, true)).toBe(false)
 })
@@ -81,6 +96,8 @@ test('the keys are heard on the root element, before the host, and End is the pi
   expect(head).toContain('if (e.defaultPrevented')
   const body = SRC.slice(at, SRC.indexOf('// Mousedown on scrollbar thumb', at))
   expect(body).toContain('e.stopImmediatePropagation()')
+  expect(body).toContain("msgsEl.matches(':hover'), e.key, composerEmpty)")
+  expect(body).toContain('!getInputText().trim()')
   expect(body).toContain('{ signal: mcSignal, capture: true }')
   expect(body).toContain('jumpToTail()')
   expect(SRC).toContain("newBtn.addEventListener('click', jumpToTail, { signal: mcSignal })")

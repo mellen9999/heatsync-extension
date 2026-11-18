@@ -73,8 +73,13 @@ function listKeyMove(key, pageHeight) {
 
 /** Is a scroll key meant for the chat list? Focus inside the list always is. Otherwise the pointer
  *  has to be on the list and focus on nothing (a click on a row leaves it on the page body) or on
- *  some other part of our panel: a focused player or field of the host keeps its own keys. */
-function listKeyWanted(active, listEl, panelEl, hovered) {
+ *  some other part of our panel: a focused player or field of the host keeps its own keys.
+ *  Our own composer shares: the page keys never move its caret, and End and Home have no caret
+ *  to move while it is empty. Its arrows stay its own (they walk the sent messages). */
+function listKeyWanted(active, listEl, panelEl, hovered, key, composerEmpty) {
+  if (active?.id === 'hs-mc-input') {
+    return key === 'PageUp' || key === 'PageDown' || (!!composerEmpty && (key === 'End' || key === 'Home'))
+  }
   if (active && (active.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(active.tagName))) return false
   if (active && listEl.contains(active)) return true
   if (!hovered) return false
@@ -1254,7 +1259,9 @@ function createOverlay() {
         const move = listKeyMove(e.key, msgsEl.clientHeight)
         if (move === null || isStaticTab()) return
         const panel = document.getElementById('hs-mc-container')
-        if (!listKeyWanted(document.activeElement, msgsEl, panel, msgsEl.matches(':hover'))) return
+        const composerEmpty = typeof getInputText === 'function' && !getInputText().trim()
+        if (!listKeyWanted(document.activeElement, msgsEl, panel, msgsEl.matches(':hover'), e.key, composerEmpty))
+          return
         e.preventDefault()
         e.stopImmediatePropagation()
         if (move === 'tail') {

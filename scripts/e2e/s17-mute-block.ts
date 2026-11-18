@@ -32,7 +32,7 @@ const MENU_TRIES = 3
 type Rows = { theirs: number; mutedTheirs: number; mutedOthers: string[]; replies: number }
 
 /** The pane's rows, by author (never the reply bar's @name). */
-function rows(p: any, who: string): Promise<Rows> {
+export function rows(p: any, who: string): Promise<Rows> {
   return p.evaluate((who: string) => {
     const out = { theirs: 0, mutedTheirs: 0, mutedOthers: [] as string[], replies: 0 }
     for (const r of document.querySelectorAll('#hs-mc-messages .hs-mc-msg')) {
@@ -51,7 +51,7 @@ function rows(p: any, who: string): Promise<Rows> {
 }
 
 /** An author with a few plain rows on screen in both pages, newest first. */
-async function pickChatter(p: any, p2: any) {
+export async function pickChatter(p: any, p2: any) {
   const counts = (pg: any) =>
     pg.evaluate(() => {
       const m: Record<string, number> = {}

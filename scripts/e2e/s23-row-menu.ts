@@ -61,7 +61,22 @@ const recordClicks = (p: any) =>
   p.evaluate(() => {
     const w = window as any
     if (w.__s23) return
-    w.__s23 = { ctx: null, click: null }
+    w.__s23 = { ctx: null, click: null, trail: [] as string[] }
+    // what the page saw around a menu: the inputs that could close one, and the menu coming and going
+    const note = (what: string) => {
+      const tr = w.__s23.trail as string[]
+      tr.push(`${Math.round(performance.now())}ms ${what}`)
+      if (tr.length > 14) tr.shift()
+    }
+    for (const type of ['mousedown', 'contextmenu', 'keydown']) {
+      window.addEventListener(type, (e) => note(`${type}${(e as KeyboardEvent).key ? ` ${(e as KeyboardEvent).key}` : ''} on ${((e.target as HTMLElement)?.className || (e.target as HTMLElement)?.tagName || '').toString().slice(0, 30)}`), true)
+    }
+    new MutationObserver((muts) => {
+      for (const m of muts) {
+        for (const n of m.addedNodes) if ((n as HTMLElement).classList?.contains('hs-mc-ctx')) note('menu added')
+        for (const n of m.removedNodes) if ((n as HTMLElement).classList?.contains('hs-mc-ctx')) note('menu removed')
+      }
+    }).observe(document.body, { childList: true })
     window.addEventListener(
       'click',
       (e) => {
@@ -80,6 +95,7 @@ const recordClicks = (p: any) =>
         w.__s23.ctx = {
           user: (a?.dataset.username || a?.textContent || '').replace(/^@/, '').trim().toLowerCase(),
           key: row?.dataset.msgKey || '',
+          platform: row?.dataset.msgPlatform || '',
           text: (row?.querySelector('.hs-mc-text')?.textContent || '').replace(/\s+/g, ' ').trim(),
         }
       },
@@ -180,6 +196,9 @@ async function rest(p: any) {
   })
   if (b) await p.mouse.move(b.x, b.y)
 }
+
+/** The ring's findings minus a render_stall logged while the profile card held the pane: drawing waits on purpose then. */
+const ringBad = (bad: any[]) => bad.filter((e) => !(e.e === 'render_stall' && e.card))
 
 const menuLook = (p: any): Promise<Look> =>
   p.evaluate(() => {
@@ -323,9 +342,20 @@ async function site(env: any, name: string, url: string, errs: string[], second?
     await p.mouse.move(h.x, h.y)
     await p.mouse.click(h.x, h.y, { button: 'right' })
     await sleep(MENU_MS)
+    if (!(await p.evaluate(() => !!document.querySelector('.hs-mc-ctx')))) {
+      // say what the pointer was over and what the page heard, so "no menu" can be told apart from "a menu that closed"
+      const seen = await p.evaluate(
+        ([x, y]: [number, number]) => {
+          const at = document.elementFromPoint(x, y) as HTMLElement | null
+          return `${at?.className || at?.tagName} in row ${(at?.closest('.hs-mc-msg') as HTMLElement | null)?.dataset.msgPlatform || '?'}; page saw: ${((window as any).__s23.trail as string[]).join(' | ')}`
+        },
+        [h.x, h.y],
+      )
+      info(`${name}: a right-click on ${kind} (${h.user}) opened no menu: pointer over ${seen}`)
+    }
     return h
   }
-  const clicked = (): Promise<{ user: string; key: string; text: string }> => p.evaluate(() => (window as any).__s23.ctx)
+  const clicked = (): Promise<{ user: string; key: string; text: string; platform: string }> => p.evaluate(() => (window as any).__s23.ctx)
   const toTail = async () => {
     await rest(p)
     if ((await paneNow(p)).pill) await p.click('#hs-mc-new-msgs', { timeout: 3000 }).catch(() => {})
@@ -347,7 +377,8 @@ async function site(env: any, name: string, url: string, errs: string[], second?
         const at = document.elementFromPoint(r.left + r.width / 2, r.top + r.height - 12)
         return m.contains(at) ? '' : `${at?.id || at?.className || at?.tagName}`.slice(0, 60)
       })
-      info(`${name}: "${label}" could not be clicked, covered by "${over}"`)
+      const trail = await p.evaluate(() => ((window as any).__s23.trail as string[]).join(' | '))
+      info(`${name}: "${label}" could not be clicked, covered by "${over}"; page saw: ${trail}`)
       await item.evaluate((el: HTMLElement) => el.click(), undefined, { timeout: 2000 })
     })
   }
@@ -392,7 +423,9 @@ async function site(env: any, name: string, url: string, errs: string[], second?
   ]
   const NEVER = ['mc_input_delete_msg', 'mc_input_timeout', 'mc_input_timeout_10m', 'content_card_ban', 'content_card_unban', 'mc_input_warn'].map(L)
   const gift = L('mc_input_report_gift_sub')
-  const menuFails = (m: Look, user: string) => {
+  // `platform`: what the clicked row is. A twitch page's tab can hold a linked kick channel's rows, and a kick row has no gift-sub report.
+  const menuFails = (m: Look, user: string, platform = '') => {
+    const site = platform || name
     const f: string[] = []
     if (m.count !== 1) f.push(`${m.count} menus open`)
     if (m.header !== user) f.push(`header says "${m.header}", clicked on "${user}"`)
@@ -403,8 +436,8 @@ async function site(env: any, name: string, url: string, errs: string[], second?
     if (missing.length) f.push(`missing: ${missing.join(', ')}`)
     const mods = m.items.filter((i) => NEVER.includes(i))
     if (mods.length) f.push(`mod items for a signed-out viewer: ${mods.join(', ')}`)
-    if (name === 'twitch' && !m.items.includes(gift)) f.push(`twitch menu lacks "${gift}"`)
-    if (name !== 'twitch' && m.items.includes(gift)) f.push(`"${gift}" is a twitch item, shown on ${name}`)
+    if (site === 'twitch' && !m.items.includes(gift)) f.push(`twitch menu lacks "${gift}"`)
+    if (site !== 'twitch' && m.items.includes(gift)) f.push(`"${gift}" is a twitch item, shown on a ${site} row`)
     const junk = m.items.filter((i) => !i || RAW_KEY.test(i) || EMPTY_WORD.test(i))
     if (junk.length) f.push(`bad item text: ${junk.join(' | ')}`)
     return f
@@ -415,7 +448,7 @@ async function site(env: any, name: string, url: string, errs: string[], second?
     const c = await clicked()
     const m = await menuLook(p)
     const over = await covered()
-    return [...menuFails(m, c.user), ...(over ? [`"${over}" is drawn over the menu`] : [])]
+    return [...menuFails(m, c.user, c.platform), ...(over ? [`"${over}" is drawn over the menu`] : [])]
   }, async () => menuLook(p))
   await step('Escape closes the menu', async () => {
     await p.keyboard.press('Escape')
@@ -425,7 +458,7 @@ async function site(env: any, name: string, url: string, errs: string[], second?
     const h = await rightClick('name')
     if (!h) return ['no name to click on']
     const c = await clicked()
-    const why = menuFails(await menuLook(p), c.user)
+    const why = menuFails(await menuLook(p), c.user, c.platform)
     const over = await covered()
     if (over) why.push(`"${over}" is drawn over the menu`)
     const out = await aim(p, 'row')
@@ -444,7 +477,7 @@ async function site(env: any, name: string, url: string, errs: string[], second?
     const c = await clicked()
     const m = await menuLook(p)
     const first = await p.evaluate(() => ((window as any).__s23first as HTMLElement).isConnected)
-    return [...menuFails(m, c.user), ...(first ? ['the first menu is still on the page'] : [])]
+    return [...menuFails(m, c.user, c.platform), ...(first ? ['the first menu is still on the page'] : [])]
   }, async () => menuLook(p))
   await step('a wheel over the chat leaves the menu alone (the code has no wheel close for it)', async () => {
     const before = await menuLook(p)
@@ -577,6 +610,19 @@ async function site(env: any, name: string, url: string, errs: string[], second?
       p.evaluate((u: string) => [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg .hs-mc-user:not(.hs-mc-reply-user)')].filter((a) => ((a as HTMLElement).dataset.username || '').replace(/^@/, '').toLowerCase() === u).length, u)
     const before = await count(c.user)
     if (!before) return [`no row of ${c.user} on screen to hide`]
+    // how far from the bottom the chatter's newest row sits, and how fast the chat is moving: on a
+    // chat doing many lines a second the row is gone from the (capped) list by the time /unhide runs
+    const depth = await p.evaluate((u: string) => {
+      const rows = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg[data-msg-key]')]
+      let at = -1
+      rows.forEach((r, i) => {
+        const a = r.querySelector('.hs-mc-user:not(.hs-mc-reply-user)') as HTMLElement | null
+        if (a && (a.dataset.username || '').replace(/^@/, '').toLowerCase() === u) at = i
+      })
+      return at < 0 ? -1 : rows.length - 1 - at
+    }, c.user)
+    const grew0 = await bufferCount(p, chan)
+    const t0Hide = Date.now()
     await menuItem(L('mc_input_hide_in_tab'))
     await sleep(300)
     const seen = await p.evaluate(() => ({ menus: document.querySelectorAll('.hs-mc-ctx').length, toasts: [...document.querySelectorAll('[class*="toast"]')].map((t) => (t.textContent || '').slice(0, 40)).filter(Boolean) }))
@@ -589,7 +635,16 @@ async function site(env: any, name: string, url: string, errs: string[], second?
     await p.click('#hs-mc-input', { timeout: 5000 })
     await p.keyboard.type(`/unhide ${c.user}`)
     await p.keyboard.press('Enter')
-    if (!(await gone(async () => (await count(c.user)) > 0, 10_000))) f.push(`${c.user} did not come back 10s after /unhide (had ${before} rows)`)
+    if (!(await gone(async () => (await count(c.user)) > 0, 10_000))) {
+      const listRows = (await paneNow(p)).rows
+      const grew = (await bufferCount(p, chan)) - grew0
+      // the chat added more lines than the row had room above it in the list: it is gone because it aged out, not because unhide failed
+      if (depth >= 0 && grew > 0 && depth + grew >= listRows - 5) {
+        info(`${name}: too fast a chat for this step: ${c.user}'s row was ${depth} from the bottom and ${grew} lines came in over ${Math.round((Date.now() - t0Hide) / 1000)}s (list of ${listRows}): /unhide not proven`)
+        return f.length ? f : null
+      }
+      f.push(`${c.user} did not come back 10s after /unhide (had ${before} rows, ${depth} from the bottom, ${grew} lines came in, list of ${listRows})`)
+    }
     return f
   }, async () => ({
     input: await p.evaluate(() => document.getElementById('hs-mc-input')?.textContent),
@@ -674,7 +729,16 @@ async function site(env: any, name: string, url: string, errs: string[], second?
         return v.atTail && !v.pill
       }, 6000)
       const a = await paneNow(p, knownKeys)
-      if (!a.atTail || a.pill) f.push(`not at the tail and following: atTail=${a.atTail} pill="${a.pillText}"`)
+      if (!a.atTail || a.pill) {
+        // say where the reader is and what sits over the list: a held feed, a paused one and a card that changed the height read alike from the outside
+        const g = await p.evaluate(() => {
+          const l = document.getElementById('hs-mc-messages') as HTMLElement
+          const tour = document.getElementById('hs-mc-tour') as HTMLElement | null
+          return { list: `${Math.round(l.scrollTop)}+${l.clientHeight}/${l.scrollHeight}`, tour: tour && !tour.hidden ? tour.offsetHeight : 0, hovered: (document.querySelector('#hs-mc-messages :hover:last-child') as HTMLElement | null)?.className || '' }
+        })
+        const rd = (await dbg(p)).reader
+        f.push(`not at the tail and following: atTail=${a.atTail} pill=${a.pill ? `"${a.pillText}"` : 'hidden'} list ${g.list} tour ${g.tour}px reader ${JSON.stringify(rd)} hover ${g.hovered || '-'}`)
+      }
       if (!a.composer && before.composer) f.push('the composer bar did not come back')
       if (a.subCells < Math.min(before.subCells, 1)) f.push('the 2nd row has no cells')
       if (a.subCells !== before.subCells) f.push(`the 2nd row has ${a.subCells} cells, was ${before.subCells}`)
@@ -691,7 +755,7 @@ async function site(env: any, name: string, url: string, errs: string[], second?
       const dz = ring.recent.filter((e) => e.e === 'index_desync').length
       desync += dz
       if (dz) f.push(`index_desync logged ${dz}x around the card`)
-      if (ring.bad.length) f.push(`watchdog ring: ${ring.bad.map((e) => e.e).join(', ')}`)
+      if (ringBad(ring.bad).length) f.push(`watchdog ring: ${ringBad(ring.bad).map((e) => e.e).join(', ')}`)
       return f
     }, async () => ({ pane: await paneNow(p), close: await readClose(p) }))
   }
@@ -756,7 +820,7 @@ async function site(env: any, name: string, url: string, errs: string[], second?
             const ld = document.querySelector('#hs-mc-subpane .hs-cl-loader') as HTMLElement
             const r = l.getBoundingClientRect()
             const at = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)
-            return `pointer on ${at?.className || at?.tagName}, list ${Math.round(l.scrollTop)}+${l.clientHeight}/${l.scrollHeight}, loader ${ld ? `at ${Math.round(ld.getBoundingClientRect().top - r.top)}` : 'gone'}`
+            return `pointer on ${at?.className || at?.tagName}, list ${Math.round(l.scrollTop)}+${l.clientHeight}/${l.scrollHeight}, loader ${ld ? `at ${Math.round(ld.getBoundingClientRect().top - r.top)} saying "${(ld.textContent || '').trim()}"${ld.classList.contains('hs-cl-retry') ? ' (retry)' : ''}` : 'gone'}`
           })
           f.push(`older rows never loaded and the loader stayed (${n0} rows; ${sc})`)
         }
@@ -771,7 +835,16 @@ async function site(env: any, name: string, url: string, errs: string[], second?
       if (await p.evaluate(() => !!document.querySelector('#hs-mc-subpane .hs-cl-wrap'))) f.push('the logs view is still on the page')
       await toTail()
       const a = await paneNow(p)
-      if (!a.atTail || a.pill) f.push(`not at the tail and following: atTail=${a.atTail} pill="${a.pillText}"`)
+      if (!a.atTail || a.pill) {
+        // say where the reader is and what sits over the list: a held feed, a paused one and a card that changed the height read alike from the outside
+        const g = await p.evaluate(() => {
+          const l = document.getElementById('hs-mc-messages') as HTMLElement
+          const tour = document.getElementById('hs-mc-tour') as HTMLElement | null
+          return { list: `${Math.round(l.scrollTop)}+${l.clientHeight}/${l.scrollHeight}`, tour: tour && !tour.hidden ? tour.offsetHeight : 0, hovered: (document.querySelector('#hs-mc-messages :hover:last-child') as HTMLElement | null)?.className || '' }
+        })
+        const rd = (await dbg(p)).reader
+        f.push(`not at the tail and following: atTail=${a.atTail} pill=${a.pill ? `"${a.pillText}"` : 'hidden'} list ${g.list} tour ${g.tour}px reader ${JSON.stringify(rd)} hover ${g.hovered || '-'}`)
+      }
       if (!a.composer && before.composer) f.push('the composer bar did not come back')
       return f
     })
@@ -845,7 +918,7 @@ async function site(env: any, name: string, url: string, errs: string[], second?
 
   // ── 3 the ring, over everything above ──
   const ring = await ringSince(p, t0)
-  if (ring.bad.length) bad(`${name}: watchdogs fired during the whole run`, ring.bad.slice(0, 6))
+  if (ringBad(ring.bad).length) bad(`${name}: watchdogs fired during the whole run`, ringBad(ring.bad).slice(0, 6))
   else ok(`${name}: the watchdog ring stayed quiet (${(BAD_RING as readonly string[]).length} kinds watched)`)
   await p.close()
 }

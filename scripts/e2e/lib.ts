@@ -64,6 +64,8 @@ export async function launch(
     profile?: string
     /** load the extension from this dir instead of EXT */
     ext?: string
+    /** browser ui language (chrome's own, what chrome.i18n follows), e.g. 'de'; default en-US */
+    lang?: string
   } = {},
 ) {
   const EXT = opts.ext ?? EXT_DEFAULT
@@ -75,9 +77,12 @@ export async function launch(
     headless: false,
     viewport: { width: opts.width ?? 1600, height: opts.height ?? 900 },
     deviceScaleFactor: opts.scale ?? 1,
-    locale: 'en-US',
+    locale: opts.lang ?? 'en-US',
     userAgent: UA,
+    // chrome on linux reads its ui language from LANGUAGE, --lang alone is not always enough
+    ...(opts.lang ? { env: { ...process.env, LANGUAGE: opts.lang } } : {}),
     args: [
+      ...(opts.lang ? [`--lang=${opts.lang}`] : []),
       `--disable-extensions-except=${EXT}`,
       `--load-extension=${EXT}`,
       '--headless=new',

@@ -344,7 +344,7 @@ function clInsertLive(r) {
   }
   // Keep the reader's place: at the top, new lines just appear; scrolled down
   // into older lines, the view must not slide under them.
-  const row = renderChatLogRow(r)
+  const row = clRow(r)
   const atTop = list.scrollTop < 4
   list.insertBefore(row, list.firstChild)
   if (!atTop) list.scrollTop += row.offsetHeight
@@ -436,9 +436,34 @@ function exportChatLogs(format) {
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
+// The reader's place in the logs list: the first row in view, and how far under the list's top
+// edge it sits. Every change redraws the whole view, and a redraw starts at the top: an older
+// page arrived and the reader, who had scrolled to the bottom to ask for it, was back at the
+// newest line, with every page (kick, e2e s23, 11-17). Read before the redraw, put back after.
+function clReadPlace(list) {
+  if (!list) return null
+  const top = list.getBoundingClientRect().top
+  for (const el of list.children) {
+    if (!el._hsRow) continue
+    const b = el.getBoundingClientRect()
+    if (b.bottom > top) return { row: el._hsRow, dy: b.top - top }
+  }
+  return null
+}
+// A row that is gone (another search, another channel) leaves the list at the top.
+function clRestorePlace(list, place) {
+  if (!place) return
+  for (const el of list.children) {
+    if (el._hsRow !== place.row) continue
+    list.scrollTop += el.getBoundingClientRect().top - list.getBoundingClientRect().top - place.dy
+    return
+  }
+}
+
 function renderChatLogsView() {
   const msgsEl = document.getElementById('hs-mc-subpane')
   if (!msgsEl || !activeChatLogs) return
+  const place = clReadPlace(msgsEl.querySelector('.hs-cl-list'))
   msgsEl.textContent = ''
 
   const { username, channel, rows, loading, exhausted, query, scope } = activeChatLogs
@@ -564,7 +589,7 @@ function renderChatLogsView() {
     list.appendChild(empty)
   } else {
     // Render newest-at-top (matches Twitch viewer card mental model)
-    for (const r of rows) list.appendChild(renderChatLogRow(r))
+    for (const r of rows) list.appendChild(clRow(r))
   }
 
   // Load-more sentinel at the bottom (scroll-down to load older)
@@ -599,6 +624,14 @@ function renderChatLogsView() {
 
   wrap.appendChild(list)
   msgsEl.appendChild(wrap)
+  clRestorePlace(list, place)
+}
+
+// A row's element, tagged with the line it shows so the reader's place can be found again.
+function clRow(r) {
+  const el = renderChatLogRow(r)
+  el._hsRow = r
+  return el
 }
 
 function renderChatLogRow(r) {

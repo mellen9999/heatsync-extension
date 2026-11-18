@@ -29,7 +29,8 @@ function make(state) {
     'document',
     'renderChatLogRow',
     'renderChatLogsView',
-    `${BODY}\nreturn chatLogsLive`,
+    // clRow rides along: the live insert tags its row like every other (chat-logs-keep-place.test.js)
+    `${SRC.slice(SRC.indexOf('function clRow(r)'), SRC.indexOf('\n}\n', SRC.indexOf('function clRow(r)')) + 3)}\n${BODY}\nreturn chatLogsLive`,
   )(
     state,
     doc,

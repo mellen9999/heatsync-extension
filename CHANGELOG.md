@@ -1,5 +1,12 @@
 # changelog
 
+## [1.7.138] — 2026-11-19
+
+### fixed
+- **a pasted multi-line pasta** sends as one line with a space where each line broke, on every platform. before, the lines ran together into one word.
+- **youtube** — your own line is yours whether youtube shows your @handle or your account name, for mentions and replies too.
+- **copy link** on a notice drawn in this tab gives the day's chat log page instead of a dead link.
+
 ## [1.7.137] — 2026-11-18
 
 ### added

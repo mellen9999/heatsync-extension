@@ -86,7 +86,9 @@
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good { color: var(--hs-ok); }
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good:hover,
     .hs-mc-ctx .hs-mc-em-item.hs-mc-em-good:focus { background: #fff; color: #000; }
-    .hs-mc-ctx .hs-mc-em-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* a label longer than the menu is wide wraps onto a second line: a translated one, or any one at
+       a larger chat font, was cut with … and nothing showed the rest */
+    .hs-mc-ctx .hs-mc-em-label { flex: 1; min-width: 0; overflow-wrap: anywhere; }
     .hs-mc-ctx .hs-mc-em-kbd {
       display: inline-block; min-width: 14px; padding: 0 4px;
       border: 1px solid #ffffff; background: #000000; color: #ffffff;

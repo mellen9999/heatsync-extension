@@ -82,6 +82,10 @@ function sfxFormSoundOptions(current) {
   )
 }
 
+// the pick button is as wide as its text up to this many characters: every locale's "pick file" fits
+// whole (the longest is 20 with the note), a long file name is cut with … (the row's ♪ names it in full)
+const SFX_PICK_CH = 24
+
 // the file name shown on the pick button: the one just picked, else the one an edited rule already carries
 function sfxPickLabel(keptName) {
   return `♪ ${sfxPending ? sfxPending.n : keptName || t('mc_sfx_pick')}`
@@ -95,7 +99,7 @@ function sfxRuleFormHtml(vol, keptName) {
   return (
     `<input type="range" class="hs-mc-set-range" data-fr-field="vol" min="0" max="100" step="5" value="${shown}" style="width:70px" title="${escapeHtml(t('mc_sfx_volume'))}">` +
     `<span class="hs-mc-set-range-val">${shown}</span>` +
-    `<button data-fr-action="pick" style="${FR_BTN};max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(t('mc_sfx_note'))}">${escapeHtml(sfxPickLabel(keptName))}</button>` +
+    `<button data-fr-action="pick" style="${FR_BTN};max-width:${SFX_PICK_CH}ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(t('mc_sfx_note'))}">${escapeHtml(sfxPickLabel(keptName))}</button>` +
     `<button data-fr-action="preview" style="${FR_BTN};padding:1px 4px" title="${escapeHtml(t('mc_sfx_play'))}">▶</button>`
   )
 }

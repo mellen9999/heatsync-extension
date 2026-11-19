@@ -29,7 +29,8 @@ name: nightly-heap
 #                   Read-only, no login, nothing is ever sent. The worker-stop,
 #                   cache-cap and hour-long soak scenarios stay manual runs, and so do
 #                   s23 (row menu, cards, logs), s24 (overlay off) and s30 (the panel
-#                   in firefox) until each has three clean runs in a row.
+#                   in firefox) until each has three clean runs in a row. The reader
+#                   shard is on trial: its red shows on the job, not on the night.
 # Twice a day so the sentinel's 26h staleness window survives GitHub dropping
 # one cron fire (2026-10-19 did).
 on:
@@ -186,6 +187,9 @@ jobs:
     name: e2e-live (${{ matrix.shard }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # a shard on trial shows its own red and does not fail the night: its first runs on this runner
+    # are the measurement. the flag comes off after three clean runs in a row
+    continue-on-error: ${{ matrix.trial == true }}
     strategy:
       # one shard's red must not cancel the other: each is its own answer
       fail-fast: false
@@ -199,8 +203,11 @@ jobs:
             only: s16,s17,s18
           - shard: fresh
             only: s19,s21
+          # trial since 11-18: on kick's busiest channel this runner's page stopped answering a click
+          # for 30s (s20) and the player paused by itself (s22); neither has happened on a desk
           - shard: reader
             only: s20,s22
+            trial: true
           - shard: oracle
             only: s25,s29
           - shard: words

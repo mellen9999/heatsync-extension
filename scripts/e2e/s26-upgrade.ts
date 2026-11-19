@@ -112,6 +112,25 @@ const writeSync = (env: Env, obj: Record<string, unknown>) =>
   // @ts-ignore — extension page
   extStorage(env, async (o: Record<string, unknown>) => chrome.storage.sync.set(o), obj)
 
+/**
+ * MIGRATION: the first boot of a build with the kick rings in IndexedDB moves every old
+ * hs_kick_<ch> ring out of storage.local and drops the key, once, then sets hs_kick_idb_v1
+ * (background/10-kick-yt.js bgKickRestoreFromStorage). A ring of a channel the old build
+ * merged on its own (a twitch tab's same-name kick) is one the test never named. Only that
+ * move: a ring-shaped value, gone, the flag absent before and set after.
+ */
+function kickRingMoved(k: string, v: any, a: Snap, b: Snap) {
+  return (
+    k.startsWith('hs_kick_') &&
+    !k.startsWith('hs_kick_sync_') &&
+    k !== 'hs_kick_followed_synced' &&
+    Array.isArray(v?.msgs) &&
+    !(k in b.local) &&
+    !a.local.hs_kick_idb_v1 &&
+    b.local.hs_kick_idb_v1 === true
+  )
+}
+
 /** keys of `a` that are gone from `b` or hold another value, minus the volatile ones */
 function lost(a: Snap, b: Snap) {
   const out: { key: string; before: string; after: string }[] = []
@@ -120,6 +139,7 @@ function lost(a: Snap, b: Snap) {
       // the add-on's error log is asserted on its own (it may only grow, and growth is a finding)
       if (`${area}.${k}` in VOLATILE || `${area}.${k}` === 'local.hs_errors') continue
       if (area === 'local' && KEEPS[`local.${k}`]?.(v, b[area][k])) continue
+      if (area === 'local' && kickRingMoved(k, v, a, b)) continue
       if (!(k in b[area])) out.push({ key: `${area}.${k}`, before: show(k, v), after: '(gone)' })
       else if (stable(v) !== stable(b[area][k])) out.push({ key: `${area}.${k}`, before: show(k, v), after: show(k, b[area][k]) })
     }

@@ -31,6 +31,21 @@ if command -v gh >/dev/null 2>&1; then
   esac
 fi
 
+# the site vendors these byte for byte (heatsync scripts/sync-ext-copies.sh) and its ci
+# fails the moment ours lands without its twin: 2026-11-18 filter-rules.js landed here at
+# 00:59Z, the site copy sat on an unlanded branch, main went red. ext lands first, so this
+# cannot block — it names the twin to land right after. hooks export GIT_DIR, which
+# outranks -C, so it is unset for the site read.
+site="${HS_SITE_DIR:-$(dirname "$root")/heatsync}"
+[ -d "$site/client/chat" ] || site=/home/mellen/projects/heatsync
+if [ -d "$site/client/chat" ]; then
+  for f in slash-registry filter-rules name-marks filter-rules-legacy; do
+    theirs="$(env -u GIT_DIR -u GIT_INDEX_FILE -u GIT_WORK_TREE git -C "$site" show "origin/main:client/chat/$f.js" 2>/dev/null || true)"
+    [ "$(git show "HEAD:src/multichat/$f.js" 2>/dev/null || true)" = "$theirs" ] ||
+      echo "  !! src/multichat/$f.js differs from the site's main — run scripts/sync-ext-copies.sh in heatsync and land it right after this, or site ci goes red"
+  done
+fi
+
 if [ "$fail" -ne 0 ]; then
   echo "push blocked — fix above (or 'git push --no-verify' to override)."
   exit 1

@@ -166,6 +166,19 @@ async function muteBlockLeg(s: Session) {
   })
 
   const before = { 1: (await rows(p, who)).theirs, 2: (await rows(p2, who)).theirs } as Record<number, number>
+  // The row above their newest one. A busy chat pushes their rows out of the list while they are
+  // blocked, and rows that are gone cannot come back: while this older neighbour is still drawn,
+  // theirs would be too.
+  const above = (pg: Tab) =>
+    pg.evaluate((w: string) => {
+      const mine = [...document.querySelectorAll(`#hs-mc-messages .hs-mc-msg .hs-mc-user:not(.hs-mc-reply-user)[data-username="${w}"]`)].at(-1)?.closest('.hs-mc-msg')
+      let r = (mine?.previousElementSibling || null) as HTMLElement | null
+      while (r && !r.dataset?.msgKey) r = r.previousElementSibling as HTMLElement | null
+      return r?.dataset.msgKey || null
+    }, who)
+  const near = { 1: await above(p), 2: await above(p2) } as Record<number, string | null>
+  const drawn = (pg: Tab, key: string | null) =>
+    key ? pg.evaluate((k: string) => [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].some((r) => (r as HTMLElement).dataset.msgKey === k), key) : Promise.resolve(false)
   await step(`${who} blocked on page 1: gone from both pages`, async () => {
     await menu(p, L('content_card_block'))
     const why = await both((r, n) => (r.theirs ? [`page ${n}: ${r.theirs} of their rows still on screen`] : []))
@@ -184,7 +197,13 @@ async function muteBlockLeg(s: Session) {
   await step(`${who} unblocked on page 2 with /block: back on both pages`, async () => {
     await p2.keys('#hs-mc-input', `/block ${who}${KEY.enter}`)
     await sleep(FOLLOW_MS)
-    const why = await both((r, n) => (before[n] && !r.theirs ? [`page ${n}: none of their ${before[n]} rows came back`] : []))
+    const inList = { 1: await drawn(p, near[1]), 2: await drawn(p2, near[2]) } as Record<number, boolean>
+    const why = await both((r, n) => {
+      if (!before[n] || r.theirs) return []
+      if (inList[n]) return [`page ${n}: none of their ${before[n]} rows came back`]
+      info(`page ${n}: their ${before[n]} rows had left the list by the time the block was lifted: nothing to come back`)
+      return []
+    })
     if (await saved('blocked_users')) why.push('the block is still saved')
     return why
   })

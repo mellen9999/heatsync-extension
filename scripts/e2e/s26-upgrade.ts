@@ -35,6 +35,7 @@ type Snap = { local: Record<string, unknown>; sync: Record<string, unknown> }
  */
 const VOLATILE: Record<string, string> = {
   'local.bttv_room_ids': 'cache of channel → bttv room; gains an entry per channel visited, evicts with the emote cache (background/04-emotes.js:322-334)',
+  'local.global_emotes': 'cache of the global emote list, written again in the order each fetch returns (background/05-ws.js:562, 04-emotes.js:701)',
   'local.channel_emotes_map': 'MIGRATION: the old whole-map key moves into IndexedDB then is removed, once (background/08-diag-push.js:86-102)',
   'local.channel_emotes_fetched_at': 'MIGRATION: goes with channel_emotes_map above (background/08-diag-push.js:100-102)',
   'local.hs_badge_art_v1': 'cache of badge art titles, re-stamped `at` on every refetch (multichat/twitch-api.js:2438)',
@@ -62,6 +63,16 @@ function addHistoryKeys(chs: { tw: string[]; kk: string[] }) {
  * the user had is still there", not "nothing moved".
  */
 const KEEPS: Record<string, (before: any, after: any) => boolean> = {
+  // the mod log takes every mod action the open channels see, newest MOD_LOG_PER_CHANNEL (500)
+  // per channel, oldest dropped first (multichat/mod-log.js:17-18): it grows while the test
+  // watches a busy channel. What was logged stays, unless its channel filled up since.
+  'local.hs_modlog_v1': (a, b) => {
+    const now: any[] = b?.entries || []
+    const ids = new Set(now.map((e) => e.id))
+    const perCh: Record<string, number> = {}
+    for (const e of now) perCh[e.channel] = (perCh[e.channel] || 0) + 1
+    return (a?.entries || []).every((e: any) => ids.has(e.id) || perCh[e.channel] >= 500)
+  },
   // a visit backfills a platform a saved channel left empty (multichat/main-live.js:1371-1383):
   // same channels, same order, no filled field changed, only empty ones may fill, new top-level defaults allowed
   'local.heatsync_multichat': (a, b) => {
@@ -77,7 +88,13 @@ const KEEPS: Record<string, (before: any, after: any) => boolean> = {
 }
 
 const MASK = /token|secret|auth/i
-const show = (key: string, v: unknown) => (MASK.test(key) ? '[masked]' : (JSON.stringify(v) ?? 'undefined').slice(0, 200))
+/** a value for a finding: a list says how many it holds and its last item, so a diff of two long lists reads */
+const show = (key: string, v: unknown) => {
+  if (MASK.test(key)) return '[masked]'
+  const list = Array.isArray(v) ? v : v && typeof v === 'object' ? Object.values(v as object).find(Array.isArray) : null
+  const tail = list?.length ? ` · ${list.length} items, last ${JSON.stringify(list.at(-1)).slice(0, 160)}` : ''
+  return (JSON.stringify(v) ?? 'undefined').slice(0, 200) + tail
+}
 const stable = (v: unknown): string =>
   JSON.stringify(v, (_k, x) =>
     x && typeof x === 'object' && !Array.isArray(x)
@@ -230,12 +247,41 @@ async function leg(oldDir: string, tw: string[], kk: string[]) {
     rmSync(extDir, { recursive: true, force: true })
     mkdirSync(extDir)
     cpSync(EXT, extDir, { recursive: true })
+    // An unpacked extension swapped on disk keeps its old worker: chrome holds a worker's script
+    // in the profile and went on running the OLD build's worker against the new build's pages
+    // (both legs, 11-18), which then wrote the old build's keys. A store update never does that:
+    // it installs the new version and registers its worker again. Dropping the profile's worker
+    // cache is the same thing for an unpacked one; storage lives elsewhere and is not touched.
+    // (chrome.runtime.reload() is not a way out: launched like this, the extension does not come back.)
+    rmSync(join(profile, 'Default', 'Service Worker'), { recursive: true, force: true })
 
     // ── the current build, same profile ──
     const t0 = Date.now()
     env = await launch({ profile, ext: extDir })
     if (env.extId !== extId) return bad(`${name}: the extension id changed across the swap (${extId} → ${env.extId}): the profile's storage is orphaned`)
     ok(`${name}: same extension id after the swap, the worker started`)
+    // is the worker running the file that is on disk now? chrome keeps a worker's script in the
+    // profile, and a worker of the OLD build left running would write the old build's keys
+    const readStale = () =>
+      env
+        .worker()
+        .evaluate(async () => {
+          // @ts-ignore — service worker globals
+          const disk = await (await fetch(chrome.runtime.getURL('background.js'))).text()
+          // @ts-ignore
+          const fns = Object.keys(self).filter((k) => /^bg[A-Z]/.test(k) && typeof self[k] === 'function')
+          // @ts-ignore
+          return { n: fns.length, stale: fns.filter((k) => !disk.includes(self[k].toString())).slice(0, 8) }
+        })
+        .catch((e: any) => ({ n: -1, stale: [String(e?.message || e).slice(0, 80)] }))
+    let staleFns = await readStale()
+    // the worker may still be starting: one that is not there yet is not a stale one
+    for (let i = 0; i < 10 && staleFns.n <= 0; i++) {
+      await sleep(1000)
+      staleFns = await readStale()
+    }
+    if (staleFns.stale.length) bad(`${name}: the worker is not running the build on disk (${staleFns.stale.length}+ of ${staleFns.n} functions differ)`, staleFns.stale)
+    else info(`${name}: the worker runs the build on disk (${staleFns.n} functions compared)`)
     const errs: string[] = []
     const cons: string[] = []
     let loads = 0
@@ -268,10 +314,13 @@ async function leg(oldDir: string, tw: string[], kk: string[]) {
     await q.evaluate(() => document.querySelectorAll('#hs-mc-messages .hs-mc-msg').forEach((r) => ((r as HTMLElement).dataset.e2eOld = '1')))
     if (!(await rowsFlow(q, 45_000))) bad(`${name}: after the upgrade chat rows never flowed`, await panel(q))
     else ok(`${name}: the panel mounted and chat rows flow on the new build`)
-    const loadsAtSettle = loads
+    // a mark on the page's own window: it is gone only if the page was loaded again. (The count of
+    // load events is not that: twitch's first load event can land after the rows already flow.)
+    await q.evaluate(() => ((window as any).__e2eSame = 1))
     await sleep(30_000)
-    if (loads !== loadsAtSettle) bad(`${name}: the page reloaded itself ${loads - loadsAtSettle}x in 30s (reload loop)`)
-    else ok(`${name}: no reload loop (${loads} page load over the wait)`)
+    const same = await q.evaluate(() => (window as any).__e2eSame === 1).catch(() => false)
+    if (!same) bad(`${name}: the page reloaded itself within 30s of the upgrade (${loads} load events)`)
+    else ok(`${name}: the page did not reload itself (${loads} load event(s) over the wait)`)
     const B = await readStorage(env)
 
     // 1 nothing threw
@@ -306,12 +355,15 @@ async function leg(oldDir: string, tw: string[], kk: string[]) {
     const blockedRows = rows.filter((r) => r.who === who.blocked)
     if (blockedRows.length) bad(`${name}: the blocked chatter has ${blockedRows.length} rows on screen`)
     else ok(`${name}: the blocked chatter has no rows on screen`)
-    const re = new RegExp(`\\b${who.word}\\b`)
+    // a whole word the way the rule engine reads one: letters and digits of any script on either
+    // side make it another word (filter-rules.js _FR_WORD); \b knows only latin and called a row
+    // where the word ran on into cyrillic a leak
+    const re = new RegExp(`(?<![\\p{L}\\p{M}\\p{N}_])${who.word}(?![\\p{L}\\p{M}\\p{N}_])`, 'u')
     const said = rows.filter((r) => re.test(r.body))
     const hidden = said.filter((r) => !r.old)
     // rows redrawn from saved history at load are not what a hide rule was saved for here: counted, not judged
     if (said.length > hidden.length) info(`${name}: ${said.length - hidden.length} rows saying "${who.word}" were redrawn from history at load (not judged)`)
-    if (hidden.length) bad(`${name}: the hide rule for "${who.word}" lets ${hidden.length} live rows through`, hidden.slice(0, 2).map((r) => r.body.slice(0, 80)))
+    if (hidden.length) bad(`${name}: the hide rule for "${who.word}" lets ${hidden.length} live rows through`, hidden.slice(0, 2).map((r) => { const at = r.body.search(re); return `…${r.body.slice(Math.max(0, at - 30), at + 40)}… (${r.body.length} long, word at ${at})` }))
     else ok(`${name}: the hide rule still hides "${who.word}" on live rows (${rows.filter((r) => !r.old).length} live of ${rows.length} on screen)`)
     if (!rows.length || !rows.some((r) => r.ts)) bad(`${name}: the timestamps setting did not take (${rows.filter((r) => r.ts).length}/${rows.length} rows show one)`)
     else ok(`${name}: the settings read back (timestamps on, ${rows.filter((r) => r.ts).length}/${rows.length} rows)`)

@@ -26,7 +26,7 @@
  *
  * Not covered: Escape out of real fullscreen (the browser owns that key, no page can see it).
  */
-import { bad, extStorage, info, launch, liveChannels, liveYtVideo, ok, panel, ringSince, scenario, setUiSetting, sleep, saveChannels, shot, waitPanel, watchErrors } from './lib'
+import { bad, extStorage, info, launch, liveChannels, liveYtVideo, ok, panel, ringSince, scenario, setUiSetting, sleep, tailFollows, saveChannels, shot, waitPanel, watchErrors } from './lib'
 
 const SETTLE_MS = 12_000
 const KEYS = ['k', 'f', 't', 'm', ' ', 'j', 'l', 'c', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -107,6 +107,20 @@ async function away(p: any) {
   await sleep(200)
 }
 
+/**
+ * Wait for the player to be playing again. kick's resume is not instant: `paused` stays true
+ * while the stream rebuffers, and a key pressed in that window reads as "the host did not hear
+ * it" (the player toggled, the flag did not move). Probed on real kick, 11-17.
+ */
+async function playing(p: any, ms = 10_000) {
+  const t0 = Date.now()
+  while (Date.now() - t0 < ms) {
+    if (!(await snap(p)).paused) return true
+    await sleep(400)
+  }
+  return false
+}
+
 /** Pointer on the chat rows, nothing focused. */
 async function overPanel(p: any) {
   await p.bringToFront()
@@ -176,6 +190,7 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
   const live: Record<string, boolean> = {}
   for (const k of [...KEYS, ...ARROWS]) {
     await away(p)
+    await playing(p)
     const a = await snap(p)
     await p.keyboard.press(press(k))
     await sleep(500)
@@ -234,17 +249,32 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
 
   // ── 2 type-to-focus: the pointer decides ──
   step = 'type-to-focus'
-  if (!(await overPanel(p))) bad(`${name}: no chat rows to hover`)
-  const h0 = await snap(p)
-  await p.keyboard.press('k')
-  await sleep(500)
-  const h1 = await snap(p)
+  // kick's player moves by itself now and then (a rebuffer reads as paused, a late resume as
+  // un-paused): a key the host really hears is heard every time, so one that moved the player
+  // is asked a second time before it is a finding
+  let hd: string[] = []
   const overFails: string[] = []
-  if ((await activeId(p)) !== 'hs-mc-input') overFails.push('the composer did not take focus')
-  if ((await composerText(p)) !== 'k') overFails.push(`composer reads "${await composerText(p)}"`)
-  const hd = diff(h0, h1, rate)
-  if (hd.length) overFails.push(`the player heard it: ${hd.join('/')}`)
-  check('type-to-focus: a letter with the pointer over the chat lands in the composer, the player keeps still', overFails, { host: hd, composer: await composerText(p) })
+  const tries: unknown[] = []
+  for (let attempt = 0; attempt < 2; attempt++) {
+    overFails.length = 0
+    const was = await playing(p)
+    if (!(await overPanel(p))) bad(`${name}: no chat rows to hover`)
+    const h0 = await snap(p)
+    await p.keyboard.press('k')
+    await sleep(500)
+    const h1 = await snap(p)
+    if ((await activeId(p)) !== 'hs-mc-input') overFails.push('the composer did not take focus')
+    if ((await composerText(p)) !== 'k') overFails.push(`composer reads "${await composerText(p)}"`)
+    hd = diff(h0, h1, rate)
+    tries.push({ playingBefore: was, paused: [h0.paused, h1.paused], heard: hd })
+    if (hd.length) overFails.push(`the player heard it: ${hd.join('/')}`)
+    if (!hd.length || attempt) break
+    info(`${name}: the player moved with the first letter (${hd.join('/')}), asking once more`)
+    await clearComposer(p)
+    await p.evaluate(() => (document.activeElement as HTMLElement | null)?.blur?.())
+    await sleep(1500)
+  }
+  check('type-to-focus: a letter with the pointer over the chat lands in the composer, the player keeps still', overFails, { host: hd, composer: await composerText(p), tries })
   if (hd.includes('paused')) {
     await away(p)
     await p.keyboard.press('k')
@@ -253,9 +283,10 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
   await clearComposer(p)
 
   await away(p)
+  await playing(p)
   const w0 = await snap(p)
   await p.keyboard.press('k')
-  await sleep(500)
+  await sleep(700)
   const w1 = await snap(p)
   const awayFails: string[] = []
   if (await composerText(p)) awayFails.push('the letter was typed into the composer')
@@ -326,7 +357,22 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
     c1 = await tabCount(p, C)
   }
   const unreadFails: string[] = []
-  if (!(b1 > 0 && c1 > 0)) unreadFails.push(`no unread count after 40s (${B}=${b1}, ${C}=${c1})`)
+  // a count of 0 is a finding only when lines did arrive: a channel that went quiet (or offline)
+  // mid-run has nothing to count. Opened to look, it shows whether its newest row is from this window.
+  const quiet: string[] = []
+  for (const [id, n] of [[B, b1], [C, c1]] as [string, number][]) {
+    if (n > 0) continue
+    await p.keyboard.press(`Alt+Digit${ids.indexOf(id) + 1}`)
+    await sleep(1500)
+    const newest = await p.evaluate(() =>
+      Math.max(0, ...([...document.querySelectorAll('#hs-mc-messages .hs-mc-msg[data-msg-key]')] as HTMLElement[]).slice(-20).map((r) => Number(r.dataset.msgTime || 0))),
+    )
+    if (newest < t1) quiet.push(id)
+    await p.keyboard.press(`Alt+Digit${home + 1}`)
+    await sleep(800)
+  }
+  if (quiet.length) info(`${name}: unread step skipped: no line arrived in ${quiet.join(', ')} for 40s`)
+  else if (!(b1 > 0 && c1 > 0)) unreadFails.push(`no unread count after 40s though lines arrived (${B}=${b1}, ${C}=${c1})`)
   else {
     await sleep(10_000)
     const b2 = await tabCount(p, B)
@@ -356,17 +402,48 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
     const rows = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg[data-msg-key]')] as HTMLElement[]
     const by: Record<string, number> = {}
     for (const r of rows) {
-      const n = (r.querySelector('.hs-mc-user')?.textContent || '').trim().toLowerCase()
+      // youtube writes a handle as @name: the word itself is what a reader types into the filter
+      const n = (r.querySelector('.hs-mc-user')?.textContent || '').trim().toLowerCase().replace(/^@/, '')
       if (/^[a-z0-9_]{3,}$/.test(n)) by[n] = (by[n] || 0) + 1
     }
-    const top = Object.entries(by).sort((a, b) => b[1] - a[1])[0]
-    return { n: rows.length, keys: rows.slice(-30).map((r) => r.dataset.msgKey), q: top?.[0] || '', hits: top?.[1] || 0 }
+    // not the loudest name: on a busy chat that is the spammer a mod clears mid-step, and their
+    // rows leaving looked like "rows did not come back" (kick, 11-17). The quietest name with
+    // a few rows gives n/N something to walk.
+    const few = Object.entries(by)
+      .filter((e) => e[1] >= 2)
+      .sort((a, b) => a[1] - b[1])[0]
+    const top = few || Object.entries(by).sort((a, b) => b[1] - a[1])[0]
+    const last = rows.slice(-30)
+    const who = (r: HTMLElement) => (r.querySelector('.hs-mc-user')?.textContent || '').trim().toLowerCase()
+    // every row with what kind it is: when the list comes back shorter, which rows went says why
+    const all = rows.map((r) => [r.dataset.msgKey || '', r.className.replace(/hs-mc-msg|hs-row-seen|hs-mc-zebra|hs-zebra/g, '').trim().split(/\s+/)[0] || 'chat'])
+    return { n: rows.length, all, keys: last.map((r) => r.dataset.msgKey), by: last.map(who), q: top?.[0] || '', hits: top?.[1] || 0 }
   })
-  if (!rowsBefore.q) searchFails.push('no plain chatter name on screen to search for')
+  // a stream nobody is chatting in has no name to look for: that is the stream, not the filter
+  if (!rowsBefore.q && rowsBefore.n < 30) info(`${name}: search step skipped: ${rowsBefore.n} rows on screen, no name to look for`)
+  else if (!rowsBefore.q) searchFails.push('no plain chatter name on screen to search for')
   else {
-    await p.keyboard.press('/')
-    await sleep(400)
-    if ((await activeId(p)) !== 'hs-mc-search-input') searchFails.push(`/ did not focus the filter (focus: ${(searchSeen.slash = await activeWho(p))})`)
+    // youtube binds / to its own search box and claims the key before any of our listeners see
+    // it; ours stands down on a claimed key. Whether ours should win there is an owner call, so
+    // on youtube the filter is focused directly and the rest of the step still runs.
+    const toFilter = async () => {
+      await p.keyboard.press('/')
+      await sleep(400)
+      if ((await activeId(p)) === 'hs-mc-search-input') return ''
+      const who = await activeWho(p)
+      if (name !== 'youtube' || !/ytSearchbox/i.test(who)) return who
+      await p.keyboard.press('Escape')
+      await p.evaluate(() => {
+        const i = document.getElementById('hs-mc-search-input') as HTMLInputElement | null
+        i?.focus()
+        i?.select()
+      })
+      return 'youtube'
+    }
+    const slash = await toFilter()
+    searchSeen.slash = slash
+    if (slash === 'youtube') info(`${name}: / goes to youtube's own search box (youtube claims it first): the filter is focused directly`)
+    else if (slash) searchFails.push(`/ did not focus the filter (focus: ${slash})`)
     await p.keyboard.type(rowsBefore.q, { delay: 40 })
     await sleep(1500)
     const f = await p.evaluate((q: string) => {
@@ -403,11 +480,14 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
     if (f.n > 1) {
       const n2 = await walk('n')
       if (!n2.at || n2.idx === n1.idx || !/^\d+\/\d+$/.test(n2.count)) searchFails.push(`the second n did not move on: row ${n1.idx} → ${n2.idx}, reads "${n2.count}"`)
+      // youtube's own shift+n is "next video": the press that steps a match back must not reach it
+      const urlWas = p.url()
       const n3 = await walk('Shift+N')
-      if (!n3.at || n3.idx === n2.idx || (n2.idx > 0 && n3.idx > n2.idx)) searchFails.push(`N did not step back: row ${n2.idx} → ${n3.idx}, reads "${n3.count}"`)
+      await sleep(1500)
+      if (p.url() !== urlWas) searchFails.push(`N reached the host: the page went from ${urlWas} to ${p.url()}`)
+      else if (!n3.at || n3.idx === n2.idx || (n2.idx > 0 && n3.idx > n2.idx)) searchFails.push(`N did not step back: row ${n2.idx} → ${n3.idx}, reads "${n3.count}"`)
     }
-    await p.keyboard.press('/')
-    await sleep(300)
+    await toFilter()
     await p.keyboard.press('Escape')
     await sleep(2000)
     const r = await p.evaluate((keys: string[]) => {
@@ -416,6 +496,7 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
       return {
         n: have.size,
         missing: keys.filter((k) => !have.has(k)).length,
+        missingAt: keys.map((k, i) => (have.has(k) ? -1 : i)).filter((i) => i >= 0),
         input: (document.getElementById('hs-mc-search-input') as HTMLInputElement | null)?.value,
         mark: !!document.querySelector('.hs-mc-search-current'),
         gap: m.scrollHeight - m.scrollTop - m.clientHeight,
@@ -425,11 +506,45 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
     if (r.input) searchFails.push(`Escape left "${r.input}" in the filter`)
     if (r.mark) searchFails.push('the current-match mark stayed after Escape')
     if (r.focus === 'hs-mc-search-input') searchFails.push('the filter kept focus after Escape')
-    if (r.n < rowsBefore.n * 0.9) searchFails.push(`the list came back shorter (${rowsBefore.n} → ${r.n})`)
-    if (r.missing) searchFails.push(`${r.missing} of the last 30 rows did not come back`)
+    if (r.n < rowsBefore.n * 0.9) {
+      const gone = await p.evaluate((all: string[][]) => {
+        const have = new Set([...document.querySelectorAll('#hs-mc-messages .hs-mc-msg[data-msg-key]')].map((x) => (x as HTMLElement).dataset.msgKey))
+        const at: number[] = []
+        const kinds: Record<string, number> = {}
+        all.forEach(([k, kind], i) => {
+          if (have.has(k)) return
+          at.push(i)
+          kinds[kind] = (kinds[kind] || 0) + 1
+        })
+        return { n: at.length, first: at[0], last: at.at(-1), oldestKept: all.findIndex(([k]) => have.has(k)), kinds }
+      }, rowsBefore.all)
+      searchSeen.gone = gone
+      // a list that came back empty is a page that changed under it (a tab emptied and read
+      // "no channel" once, youtube 11-18): say where the page is and what the panel thinks
+      searchSeen.page = await p.evaluate(() => ({
+        url: location.href,
+        composer: document.getElementById('hs-mc-input')?.getAttribute('data-placeholder'),
+        tab: document.querySelector('.hs-mc-tab.active')?.textContent,
+        video: [...document.querySelectorAll('video')].map((v) => `${Math.round(v.getBoundingClientRect().width)}x${Math.round(v.getBoundingClientRect().height)}${v.paused ? ' paused' : ''}`),
+        title: document.title,
+      }))
+      // the oldest rows leaving is the list's cap at work; rows missing from the middle are lost rows
+      searchFails.push(`the list came back shorter (${rowsBefore.n} → ${r.n}): ${gone.n} rows of before are gone, positions ${gone.first}..${gone.last} of ${rowsBefore.n}, the oldest one kept was at ${gone.oldestKept}`)
+    }
+    // one chatter's rows all gone is a mod clearing that chatter, not the filter losing rows
+    const lostBy = [...new Set((r.missingAt as number[]).map((i) => rowsBefore.by[i]))]
+    searchSeen.lostBy = lostBy
+    if (r.missing && lostBy.length === 1 && lostBy[0]) info(`${name}: ${r.missing} rows of "${lostBy[0]}" left while the filter was up (cleared by a mod), not counted`)
+    else if (r.missing) searchFails.push(`${r.missing} of the last 30 rows did not come back (from ${lostBy.length} chatters)`)
     searchSeen.gapAfter2s = r.gap
     await sleep(6000)
-    const gap = await tailGap(p)
+    // a row is appended in one frame and pinned in the next: one look can land between the two
+    let gap = await tailGap(p)
+    if (gap > 60) {
+      const tf = await tailFollows(p)
+      searchSeen.follows = tf
+      if (tf.ok) gap = tf.min
+    }
     searchSeen.gapAfter8s = gap
     if (gap > 60) searchFails.push(`the tail does not follow after Escape (${Math.round(gap)}px from the bottom)`)
   }

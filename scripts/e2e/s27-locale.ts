@@ -27,22 +27,7 @@
  */
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import {
-  bad,
-  info,
-  launch,
-  liveChannels,
-  ok,
-  panel,
-  ROOT,
-  ringSince,
-  rowsFlow,
-  scenario,
-  shot,
-  sleep,
-  waitPanel,
-  watchErrors,
-} from './lib'
+import { bad, info, launch, liveChannels, ok, panel, ringSince, ROOT, rowsFlow, scenario, shot, sleep, tabBarHit, waitPanel, watchErrors } from './lib'
 
 const LOCALES_DIR = join(ROOT, 'src', '_locales')
 const load = (l: string): Record<string, { message: string }> =>
@@ -422,6 +407,9 @@ async function oneLocale(lang: string, tw: string) {
       await sleep(600)
     }
 
+    // a fresh install per language: each is one more first load, and the bar must be reachable on every one
+    const hit = await tabBarHit(p)
+    if (hit) bad(`${tag}: the tab bar cannot be reached on a first load`, hit)
     // the panel itself: tab bar, second row, composer (chat rows are other people's words)
     await look(p, 'panel tab bar, second row, composer', '#hs-mc-tabbar, #hs-mc-subrow, #hs-mc-inputbar')
 

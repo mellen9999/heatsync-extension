@@ -255,32 +255,66 @@ async function site(env: Env, plat: Plat, url: string, errs: string[], known: Se
   await setGate(env, gate, false)
   const p = await env.ctx.newPage()
   watchErrors(p, name, errs)
+  // what the page itself complained about: a site chat that dies behind its own "something went
+  // wrong" says why only on the console (the site catches the error), and whether our scripts
+  // are in the stack is the whole question
+  const said: string[] = []
+  p.on('console', (m: any) => m.type() === 'error' && said.length < 40 && said.push(String(m.text()).slice(0, 300)))
+  p.on('pageerror', (e: any) => said.length < 40 && said.push(`uncaught: ${String(e?.stack || e?.message || e).slice(0, 400)}`))
   let b: any = null
   try {
     await p.goto(url, { waitUntil: 'domcontentloaded' })
-    const root = await chatRoot(p, plat)
+    let root = await chatRoot(p, plat)
     await sleep(15_000)
 
     // ── 1 overlay off, the site's own chat flows ──
+    let r1 = root ? await rowsLook(root, plat) : { all: 0, shown: 0, last: '' }
+    // A load the network cut short leaves the site on its own spinner, with no chat for anyone
+    // (twitch 11-18: the page skeleton, forty failed requests on the console). That is not a
+    // look at native mode: the page is loaded once more and judged then.
+    const netFails = said.filter((t) => /net::ERR_/.test(t)).length
+    if (r1.shown === 0 && netFails >= 5) {
+      await shot(p, `s24-${name}-cut-load`)
+      info(`${name}: the first load never drew a chat and ${netFails} requests failed (net::ERR): loading once more`)
+      said.length = 0
+      await p.reload({ waitUntil: 'domcontentloaded' })
+      root = await chatRoot(p, plat).catch(() => null)
+      await sleep(15_000)
+      r1 = root ? await rowsLook(root, plat) : { all: 0, shown: 0, last: '' }
+    }
     const panelOn = await p.evaluate(() => !!document.getElementById('hs-mc-container'))
-    const r1 = root ? await rowsLook(root, plat) : { all: 0, shown: 0, last: '' }
     let r2 = r1
-    for (let i = 0; i < 15 && r1.shown > 0 && r2.last === r1.last && r2.all === r1.all; i++) {
+    // youtube's stand-in stream (a 24/7 radio) can go a minute and more without a line at night:
+    // it gets longer, and a chat that still said nothing is reported, not failed. It is the
+    // site's own chat: nothing else here could tell "broken" from "nobody is talking".
+    const still = () => r1.shown > 0 && r2.last === r1.last && r2.all === r1.all
+    for (let i = 0; i < (plat === 'youtube' ? 45 : 15) && still(); i++) {
       await sleep(2000)
       r2 = await rowsLook(root, plat)
     }
+    if (still() && plat === 'youtube') info(`${plat}: the site chat said nothing for 90s: too quiet to tell that it keeps flowing`)
     check(
       'overlay off: no panel, the site chat shows and keeps flowing',
       [
         ...(panelOn ? ['our panel #hs-mc-container is mounted'] : []),
         ...(root ? [] : ['no chat frame']),
         ...(r1.shown === 0 ? ['no native row on screen'] : []),
-        ...(r1.shown > 0 && r1.last === r2.last && r1.all === r2.all ? ['no new row in 30s'] : []),
+        ...(still() && plat !== 'youtube' ? ['no new row in 30s'] : []),
       ],
       { panelOn, r1, r2 },
     )
     if (!root || r1.shown === 0) {
       await shot(p, `s24-${name}-nochat`)
+      const sorry = root ? await root.evaluate(() => /[^.\n]*(went wrong|try again|error)[^\n]*/i.exec(document.body?.innerText || '')?.[0]?.slice(0, 160) || '').catch(() => '') : ''
+      info(`${name}: the site's own words for it: "${sorry}"`)
+      info(`${name}: the page's console errors (${said.length}): ${JSON.stringify(said.filter((t) => !/favicon|ERR_BLOCKED_BY_CLIENT|net::ERR_/.test(t)).slice(0, 8))}`)
+      // once more on a fresh load, same mode: a chat that comes back is the site's own stumble
+      // (or a race of ours at load); one that stays dead with us in native mode is ours to explain
+      await p.reload({ waitUntil: 'domcontentloaded' })
+      const root2 = await chatRoot(p, plat).catch(() => null)
+      await sleep(15_000)
+      const again = root2 ? await rowsLook(root2, plat) : { all: 0, shown: 0, last: '' }
+      info(`${name}: after a reload the site chat shows ${again.shown} rows`)
       return
     }
 
@@ -347,19 +381,30 @@ async function site(env: Env, plat: Plat, url: string, errs: string[], known: Se
           await sleep(2000)
           words = await commonWords(p, plat)
         }
-        if (words.length < 2) bad(`${name}: chat held no two plain words, cannot pick rule words`, words.slice(0, 5))
+        // a chat in a script the word picker does not read (arabic, emote-only) has nothing to make a rule of
+        if (words.length < 2) info(`${name}: chat held no two plain words in 30s, the filter rules are not judged here`)
         else {
-          const [hideWord, hlWord] = words
+          // the word the chat says most goes to the highlight rule: that is the check; hide is only reported
+          let [hlWord, hideWord] = words
           const rule = (id: string, action: string, value: string) => ({ id, enabled: true, action, color: '#ffff00', scope: 'all', match: { type: 'keyword', value } })
-          await writeLocal(env, 'chat_filter_rules', JSON.stringify([rule('e2e-hide', 'hide', hideWord), rule('e2e-hl', 'highlight', hlWord)]))
-          // rows must carry the word: wait for it to be on screen after the rules landed
           let hl: { marked: boolean; gone: boolean; text: string; why?: string }[] = []
           let hd: { marked: boolean; gone: boolean; text: string; why?: string }[] = []
-          for (let i = 0; i < 15; i++) {
-            await sleep(2000)
-            hl = await rowsWith(p, plat, hlWord)
-            hd = await rowsWith(p, plat, hideWord)
-            if (hl.length && hd.length && hl.every((x) => x.marked)) break
+          // a fast chat stops saying a word as quickly as it started: when nobody says it for 30s, pick again
+          for (let attempt = 0; attempt < 3 && !hl.length; attempt++) {
+            if (attempt) {
+              const again = await commonWords(p, plat)
+              if (again.length < 2) break
+              info(`${name}: nobody said "${hlWord}" for 30s: picking the words again`)
+              ;[hlWord, hideWord] = again
+            }
+            await writeLocal(env, 'chat_filter_rules', JSON.stringify([rule('e2e-hide', 'hide', hideWord), rule('e2e-hl', 'highlight', hlWord)]))
+            // rows must carry the word: wait for it to be on screen after the rules landed
+            for (let i = 0; i < 15; i++) {
+              await sleep(2000)
+              hl = await rowsWith(p, plat, hlWord)
+              hd = await rowsWith(p, plat, hideWord)
+              if (hl.length && hd.length && hl.every((x) => x.marked)) break
+            }
           }
           // a row that also says the hide word is hide's: the engine answers hide first and native chat never
           // hides, so it stays plain — the check is on rows that say the highlight word alone
@@ -377,14 +422,15 @@ async function site(env: Env, plat: Plat, url: string, errs: string[], known: Se
           }
           const stillUnmarked = hl.filter((x) => !x.marked).length
           const afterRepaint = await nudge()
-          check(
-            `a highlight rule ("${hlWord}") marks the native rows that say it`,
-            [
-              ...(hl.length ? [] : ['no row on screen says it']),
-              ...(stillUnmarked ? [`${stillUnmarked}/${hl.length} rows unmarked (a forced repaint then left ${afterRepaint})`] : []),
-            ],
-            { unmarked: hl.filter((x) => !x.marked).slice(0, 2).map((x) => x.why), of: hl.length },
-          )
+          // the word was picked from rows that have since scrolled off a chat that does not say it
+          // often (an arabic chat, 11-18): nothing to look at is not a rule that failed
+          if (!hl.length) info(`${name}: no row on screen said "${hlWord}" at the check: highlight rule not observable`)
+          else
+            check(
+              `a highlight rule ("${hlWord}") marks the native rows that say it`,
+              stillUnmarked ? [`${stillUnmarked}/${hl.length} rows unmarked (a forced repaint then left ${afterRepaint})`] : [],
+              { unmarked: hl.filter((x) => !x.marked).slice(0, 2).map((x) => x.why), of: hl.length },
+            )
           if (!hd.length) info(`${name}: no row on screen said "${hideWord}" at the check: hide rule not observable`)
           else if (hd.every((x) => x.gone)) ok(`${name}: a hide rule ("${hideWord}") hides the native rows that say it`)
           else
@@ -432,13 +478,15 @@ async function site(env: Env, plat: Plat, url: string, errs: string[], known: Se
           const stored1 = (await readLocal(env, 'local_blocked_emote_names')) || []
           const onA = await blockedOnScreen(p, plat, X)
           const onB = await blockedOnScreen(b, plat, X)
+          // tab B's list is its own window on the same chat: the emote can be off it. Storage and
+          // tab A are judged either way; the new-row check below still watches B.
+          if (onB.n === 0) info(`${name}: tab B had no "${X}" on screen at the block: what it holds is not looked at`)
           check(
             `right-click blocks "${X}" in tab A and tab B follows with no reload`,
             [
               ...(stored1.includes(X) ? [] : [`storage holds ${JSON.stringify(stored1)}`]),
               ...(onA.n && onA.blocked === 0 ? ['tab A did not mark it'] : []),
               ...(onB.n && onB.blocked < onB.n ? [`tab B marks ${onB.blocked}/${onB.n} of its pictures`] : []),
-              ...(onB.n === 0 ? [`tab B had no "${X}" on screen to look at`] : []),
             ],
             { how, onA, onB, stored1 },
           )
@@ -473,10 +521,14 @@ async function site(env: Env, plat: Plat, url: string, errs: string[], known: Se
           const aY = await blockedOnScreen(p, plat, Y2)
           const aX = await blockedOnScreen(p, plat, X)
           const bX = await blockedOnScreen(b, plat, X)
+          // nothing in tab B to right-click (a quiet chat drew no second emote): the second block
+          // never happened, so only the first name is asked about
+          const noSecond = how2 === 'no such emote in a row any more'
+          if (noSecond) info(`${name}: tab B shows no second emote to block: the two-tab write is not judged here`)
           check(
-            `"${Y2}" blocked from tab B leaves both names in storage and both tabs`,
+            noSecond ? `"${X}" is still blocked in storage and both tabs` : `"${Y2}" blocked from tab B leaves both names in storage and both tabs`,
             [
-              ...(stored2.includes(X) && stored2.includes(Y2) ? [] : [`storage holds ${JSON.stringify(stored2)}`]),
+              ...(stored2.includes(X) && (noSecond || stored2.includes(Y2)) ? [] : [`storage holds ${JSON.stringify(stored2)}`]),
               ...(aY.n && aY.blocked < aY.n ? [`tab A shows ${aY.blocked}/${aY.n} "${Y2}" blocked`] : []),
               ...(aX.n && aX.blocked < aX.n ? [`tab A lost "${X}": ${aX.blocked}/${aX.n}`] : []),
               ...(bX.n && bX.blocked < bX.n ? [`tab B lost "${X}": ${bX.blocked}/${bX.n}`] : []),
@@ -489,6 +541,20 @@ async function site(env: Env, plat: Plat, url: string, errs: string[], known: Se
         await b?.close().catch(() => {})
         b = null
       }
+    }
+
+    // ── the site's own chat is still up after minutes of us in it ──
+    // Kick's renderer came back for a text node we had swapped out (a mod deleting a message)
+    // and its error screen replaced the whole chat, 20 to 90s in on a moderated channel (11-18).
+    // Step 1 is too early to see that; this is the end of the native-mode minutes.
+    if (plat !== 'youtube') {
+      const end = await rowsLook(root, plat)
+      const sorry = await p.evaluate(() => /[^.\n]*(something went wrong)[^\n]*/i.exec(document.body?.innerText || '')?.[0]?.slice(0, 160) || '').catch(() => '')
+      check(
+        `the site chat is still up after ${Math.round((Date.now() - t0) / 1000)}s of native mode`,
+        [...(end.shown === 0 ? ['no native row on screen'] : []), ...(sorry ? [`the site says "${sorry}"`] : [])],
+        { end, said: said.filter((t) => !/favicon|ERR_BLOCKED_BY_CLIENT|net::ERR_|SpadeClient/.test(t)).slice(0, 6) },
+      )
     }
 
     // ── 6 overlay back on ──

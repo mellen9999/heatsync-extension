@@ -40,7 +40,7 @@ import {
   shot,
   sleep,
   waitPanel,
-  watchErrors,
+  watchErrors, tailFollows,
 } from './lib'
 
 const EN = JSON.parse(readFileSync(join(ROOT, 'src', '_locales', 'en', 'messages.json'), 'utf8'))
@@ -89,6 +89,12 @@ const recordClicks = (p: any) =>
       'contextmenu',
       (e) => {
         const t = e.target as HTMLElement
+        const said = (n: Node | null | undefined): string => {
+          if (!n) return ''
+          if (n.nodeType === 3) return n.textContent || ''
+          if ((n as Element).tagName === 'IMG') return ` ${(n as HTMLImageElement).alt} `
+          return [...n.childNodes].map(said).join('')
+        }
         const u = t.closest?.('.hs-mc-user') as HTMLElement | null
         const row = t.closest?.('.hs-mc-msg') as HTMLElement | null
         const a = (u || row?.querySelector('.hs-mc-user:not(.hs-mc-reply-user)')) as HTMLElement | null
@@ -96,7 +102,9 @@ const recordClicks = (p: any) =>
           user: (a?.dataset.username || a?.textContent || '').replace(/^@/, '').trim().toLowerCase(),
           key: row?.dataset.msgKey || '',
           platform: row?.dataset.msgPlatform || '',
-          text: (row?.querySelector('.hs-mc-text')?.textContent || '').replace(/\s+/g, ' ').trim(),
+          // as a reader sees it: a picture reads as its name (a word can turn into its emote
+          // between aiming at a plain row and the click landing, twitch 11-18)
+          text: said(row?.querySelector('.hs-mc-text')).replace(/\s+/g, ' ').trim(),
         }
       },
       true,
@@ -138,7 +146,7 @@ const aim = (p: any, kind: Kind, notUser = '', skip = 0): Promise<(Hit & { label
             const px = rb.left + rb.width * f
             const py = rb.top + rb.height / 2
             const at = document.elementFromPoint(px, py)
-            if (at && at.closest('.hs-mc-msg') === row && !at.closest('a, img, button, .hs-mc-user, .hs-mc-emote-wrapper, .hs-mc-link, .hs-mc-reply-ctx')) {
+            if (at && at.closest('.hs-mc-msg') === row && !at.closest('a, img, button, .hs-mc-user, .hs-mc-emote-wrapper, .hs-mc-emoji, .hs-mc-link, .hs-mc-reply-ctx')) {
               x = px
               y = py
               found = true
@@ -461,14 +469,48 @@ async function site(env: any, name: string, url: string, errs: string[], second?
     const why = menuFails(await menuLook(p), c.user, c.platform)
     const over = await covered()
     if (over) why.push(`"${over}" is drawn over the menu`)
-    const out = await aim(p, 'row')
-    if (!out) return [...why, 'no spot outside the menu to click']
+    // a bare spot of a row; in a chat of tall spam rows the menu covers every one of those, so
+    // then any point of the list that is not the menu and not something a click acts on
+    const out =
+      (await aim(p, 'row')) ||
+      (await p.evaluate(() => {
+        const b = (document.getElementById('hs-mc-messages') as HTMLElement).getBoundingClientRect()
+        for (let y = b.bottom - 12; y > b.top + 8; y -= 14)
+          for (let x = b.left + 6; x < b.right - 6; x += 12) {
+            const at = document.elementFromPoint(x, y) as HTMLElement | null
+            if (!at || !at.closest('#hs-mc-messages') || at.closest('.hs-mc-ctx, a, img, button, .hs-mc-user, .hs-mc-emote-wrapper')) continue
+            return { x, y }
+          }
+        return null
+      }))
+    if (!out) {
+      // nothing to click: the step did not run. The menu must not outlive it and cover the next ones
+      await p.keyboard.press('Escape')
+      info(`${name}: the name menu covers every clickable spot of the list: click-outside not proven here`)
+      return why
+    }
     await p.mouse.click(out.x, out.y)
-    if (!(await gone(async () => (await menuLook(p)).count === 0, 1000))) why.push('a click outside left the menu open')
+    if (!(await gone(async () => (await menuLook(p)).count === 0, 1000))) {
+      why.push('a click outside left the menu open')
+      await p.keyboard.press('Escape')
+    }
     return why
   }, async () => menuLook(p))
+  // A busy chat moves its rows between the aim and the press, and the press lands on an emote or
+  // an emoji (their own menu) or opens nothing: the row's menu is the one with "copy message" in
+  // it, and anything else is shut and aimed again.
+  const rowMenu = async (kind: Kind, notUser = '') => {
+    const want = L('mc_input_copy_message')
+    for (let i = 0; i < 4; i++) {
+      const h = await rightClick(kind, notUser)
+      if (h && (await p.evaluate((w: string) => [...document.querySelectorAll('.hs-mc-ctx [role="menuitem"] .hs-mc-em-label')].some((e) => e.textContent === w), want))) return h
+      await p.keyboard.press('Escape')
+      await sleep(h ? 600 : 2000)
+    }
+    return null
+  }
   await step('a second right-click replaces the menu, never two', async () => {
-    const a = await rightClick('row')
+    const a = await rowMenu('row')
     if (!a) return ['no row to click on']
     await p.evaluate(() => ((window as any).__s23first = document.querySelector('.hs-mc-ctx')))
     // the first menu covers most names: the second right-click goes on a bare spot of another row beside it
@@ -539,42 +581,69 @@ async function site(env: any, name: string, url: string, errs: string[], second?
     await p.mouse.move(h.x, h.y, { steps: 3 })
     return h
   }
-  await step('hovering an emote names it and its source, then lets go', async () => {
-    const h = await hover('emote', 20)
+  // A row can slide off the pointer between aiming and landing, and on a chat of twenty lines a
+  // second it does so every time: aim again a few times. A chat that fast with no tooltip in
+  // five tries is not judged (the same hover is judged on the other sites); a slow one is.
+  const hoverTip = async (kind: Kind, sel: string, waitS: number) => {
+    let h = await hover(kind, waitS)
     if (!h) return null
+    for (let i = 0; ; i++) {
+      if (await gone(async () => !!(await tip(sel)), 1500)) return h
+      if (i === 4) break
+      h = await hover(kind, 4)
+      if (!h) return null
+    }
+    const rate = await p.evaluate(
+      () =>
+        new Promise<number>((res) => {
+          const l = document.getElementById('hs-mc-messages') as HTMLElement
+          let n = 0
+          const mo = new MutationObserver((recs) => {
+            for (const r of recs) n += r.addedNodes.length
+          })
+          mo.observe(l, { childList: true })
+          setTimeout(() => {
+            mo.disconnect()
+            res(n)
+          }, 2000)
+        }),
+    )
+    if (rate < 12) return 'none' as const
+    info(`${name}: no ${kind} stayed under the pointer long enough for its tooltip in 5 tries (${rate / 2} rows a second): not judged here`)
+    return null
+  }
+  await step('hovering an emote names it and its source, then lets go', async () => {
+    const h = await hoverTip('emote', '#hs-emote-tooltip', 20)
+    if (!h) return null
+    if (h === 'none') return ['no tooltip appeared']
     return tipFails('#hs-emote-tooltip', '', /7tv|bttv|ffz|twitch|kick|heatsync|youtube|sub|blocked|hidden|in set/i, 1500)
   })
   await step('a wheel scroll takes the emote tooltip away', async () => {
-    const h = await hover('emote', 20)
+    const h = await hoverTip('emote', '#hs-emote-tooltip', 20)
     if (!h) return null
-    if (!(await gone(async () => !!(await tip('#hs-emote-tooltip')), 2000))) return ['no tooltip appeared']
+    if (h === 'none') return ['no tooltip appeared']
     await p.mouse.wheel(0, 120)
     return (await gone(async () => !(await tip('#hs-emote-tooltip')), 1500)) ? [] : ['the tooltip stayed after a scroll']
   })
   await toTail()
   await step('hovering a badge names it, then lets go', async () => {
-    const h = await hover('badge', 20)
+    const h = await hoverTip('badge', '#hs-badge-tooltip', 20)
     if (!h) return null
+    if (h === 'none') return ['no tooltip appeared']
     return tipFails('#hs-badge-tooltip', '', null, 1500)
   })
   await step('hovering a link shows where it goes, then lets go', async () => {
-    const h = await hover('link', 24)
+    const h = await hoverTip('link', '#hs-link-tooltip', 24)
     if (!h) return null
-    const f = await tipFails('#hs-link-tooltip', h.label, null, 3500)
-    // the row can slide off the pointer between aiming and landing: one more try before calling it
-    if (f[0] !== 'no tooltip appeared') return f
-    const again = await hover('link', 4)
-    return again ? tipFails('#hs-link-tooltip', again.label, null, 3500) : null
+    if (h === 'none') return ['no tooltip appeared']
+    return tipFails('#hs-link-tooltip', h.label, null, 3500)
   })
   await toTail()
 
   // ── 7 local actions ──
   await step('copy message and copy name reach the clipboard', async () => {
-    let h = await rightClick('plain-row')
-    for (let i = 0; !h && i < 10; i++) {
-      await sleep(2000)
-      h = await rightClick('plain-row')
-    }
+    let h = await rowMenu('plain-row')
+    for (let i = 0; !h && i < 3; i++) h = await rowMenu('plain-row')
     if (!h) return null
     const c = await clicked()
     await menuItem(L('mc_input_copy_message'))
@@ -589,7 +658,11 @@ async function site(env: any, name: string, url: string, errs: string[], second?
       return null
     }
     if (/»\s*$/.test(got)) return [`the copied message ends with the thread button's "»": "${got.slice(-30)}"`]
-    const f = !c.text || got.replace(/\s+/g, ' ').trim() === c.text ? [] : [`copied "${got.slice(0, 60)}", the row said "${c.text.slice(0, 60)}"`]
+    const flat = got.replace(/\s+/g, ' ').trim()
+    // where the two part ways: a long link reads the same for its first 60 characters
+    let at = 0
+    while (at < flat.length && at < c.text.length && flat[at] === c.text[at]) at++
+    const f = !c.text || flat === c.text ? [] : [`copied (${flat.length}) and the row (${c.text.length}) part ways at ${at}: copied "…${flat.slice(Math.max(0, at - 20), at + 40)}", the row said "…${c.text.slice(Math.max(0, at - 20), at + 40)}"`]
     await rightClick('name')
     const c2 = await clicked()
     await menuItem(L('content_card_copy_name'))
@@ -663,7 +736,12 @@ async function site(env: any, name: string, url: string, errs: string[], second?
     await step(`profile card ${i} of 5, closed with ${how === 'escape' ? 'Escape' : 'the ← back tab'}`, async () => {
       await toTail()
       const before = await paneNow(p)
-      const h0 = await aim(p, 'chatter')
+      // one look at a chat of twenty lines a second can find every name mid-move: look a few times
+      let h0 = await aim(p, 'chatter')
+      for (let n = 0; !h0 && n < 5; n++) {
+        await sleep(300)
+        h0 = await aim(p, 'chatter')
+      }
       if (!h0) return ['no name to click on']
       const tOpen = Date.now()
       const knownKeys: string[] = await p.evaluate(() => [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg[data-msg-key]')].map((r) => (r as HTMLElement).dataset.msgKey || ''))
@@ -705,8 +783,23 @@ async function site(env: any, name: string, url: string, errs: string[], second?
       if (card.error) info(`${name}: card for ${h.user} is the no-profile one: platform not shown`)
       if (RAW_KEY.test(card.text)) f.push(`raw text key on the card: ${card.text.match(RAW_KEY)?.[0]}`)
       if (EMPTY_WORD.test(card.text)) f.push(`"${card.text.match(EMPTY_WORD)?.[0]}" on the card`)
-      if (card.avatar && !(card.avatar.src.startsWith('https://') && card.avatar.ok))
-        f.push(`the card's avatar is not a loaded https picture: ${card.avatar.src.slice(0, 50)}`)
+      if (card.avatar && !card.avatar.src.startsWith('https://')) f.push(`the card's avatar is not an https picture: ${card.avatar.src.slice(0, 50)}`)
+      else if (card.avatar && !card.avatar.ok) {
+        // 3s in and not drawn: a slow picture, or one that cannot load. Asked for once more by itself.
+        const loads = await p.evaluate(
+          (src: string) =>
+            new Promise<boolean>((res) => {
+              const i = new Image()
+              i.onload = () => res(i.naturalWidth > 0)
+              i.onerror = () => res(false)
+              setTimeout(() => res(false), 8000)
+              i.src = src
+            }),
+          card.avatar.src,
+        )
+        if (loads) info(`${name}: card ${i}: the avatar was still loading 3s in, and loads: ${card.avatar.src.slice(0, 60)}`)
+        else f.push(`the card's avatar does not load: ${card.avatar.src.slice(0, 80)}`)
+      }
       if (card.broken.length) f.push(`broken picture(s): ${card.broken.join(', ')}`)
       if (!card.takeover) f.push('the active tab does not read ← back while the card is open')
       const mid = await paneNow(p)
@@ -728,7 +821,15 @@ async function site(env: any, name: string, url: string, errs: string[], second?
         const v = await paneNow(p)
         return v.atTail && !v.pill
       }, 6000)
-      const a = await paneNow(p, knownKeys)
+      // On a chat of twenty lines a second a row is added every third frame and pinned in the
+      // frame after: one look can land between the two (41px short, twitch 11-18). A list that
+      // follows is at its tail in one of a few looks; one that stopped is in none of them.
+      let a = await paneNow(p, knownKeys)
+      let tf = null as Awaited<ReturnType<typeof tailFollows>> | null
+      if (!a.atTail || a.pill) {
+        tf = await tailFollows(p)
+        a = { ...(await paneNow(p, knownKeys)), atTail: tf.ok }
+      }
       if (!a.atTail || a.pill) {
         // say where the reader is and what sits over the list: a held feed, a paused one and a card that changed the height read alike from the outside
         const g = await p.evaluate(() => {
@@ -737,7 +838,7 @@ async function site(env: any, name: string, url: string, errs: string[], second?
           return { list: `${Math.round(l.scrollTop)}+${l.clientHeight}/${l.scrollHeight}`, tour: tour && !tour.hidden ? tour.offsetHeight : 0, hovered: (document.querySelector('#hs-mc-messages :hover:last-child') as HTMLElement | null)?.className || '' }
         })
         const rd = (await dbg(p)).reader
-        f.push(`not at the tail and following: atTail=${a.atTail} pill=${a.pill ? `"${a.pillText}"` : 'hidden'} list ${g.list} tour ${g.tour}px reader ${JSON.stringify(rd)} hover ${g.hovered || '-'}`)
+        f.push(`not at the tail and following: pill=${a.pill ? `"${a.pillText}"` : 'hidden'} list ${g.list} over 2.5s ${JSON.stringify(tf)} tour ${g.tour}px reader ${JSON.stringify(rd)} hover ${g.hovered || '-'}`)
       }
       if (!a.composer && before.composer) f.push('the composer bar did not come back')
       if (a.subCells < Math.min(before.subCells, 1)) f.push('the 2nd row has no cells')
@@ -834,7 +935,12 @@ async function site(env: any, name: string, url: string, errs: string[], second?
       if (cl.rowsAt < 0 || cl.rowsAt > BACK_BUDGET_MS) f.push(`chat rows were back after ${cl.rowsAt}ms (budget ${BACK_BUDGET_MS}ms)`)
       if (await p.evaluate(() => !!document.querySelector('#hs-mc-subpane .hs-cl-wrap'))) f.push('the logs view is still on the page')
       await toTail()
-      const a = await paneNow(p)
+      let a = await paneNow(p)
+      let tf = null as Awaited<ReturnType<typeof tailFollows>> | null
+      if (!a.atTail || a.pill) {
+        tf = await tailFollows(p)
+        a = { ...(await paneNow(p)), atTail: tf.ok }
+      }
       if (!a.atTail || a.pill) {
         // say where the reader is and what sits over the list: a held feed, a paused one and a card that changed the height read alike from the outside
         const g = await p.evaluate(() => {
@@ -843,7 +949,7 @@ async function site(env: any, name: string, url: string, errs: string[], second?
           return { list: `${Math.round(l.scrollTop)}+${l.clientHeight}/${l.scrollHeight}`, tour: tour && !tour.hidden ? tour.offsetHeight : 0, hovered: (document.querySelector('#hs-mc-messages :hover:last-child') as HTMLElement | null)?.className || '' }
         })
         const rd = (await dbg(p)).reader
-        f.push(`not at the tail and following: atTail=${a.atTail} pill=${a.pill ? `"${a.pillText}"` : 'hidden'} list ${g.list} tour ${g.tour}px reader ${JSON.stringify(rd)} hover ${g.hovered || '-'}`)
+        f.push(`not at the tail and following: pill=${a.pill ? `"${a.pillText}"` : 'hidden'} list ${g.list} over 2.5s ${JSON.stringify(tf)} tour ${g.tour}px reader ${JSON.stringify(rd)} hover ${g.hovered || '-'}`)
       }
       if (!a.composer && before.composer) f.push('the composer bar did not come back')
       return f

@@ -69,6 +69,12 @@ const scanRows = (p: any, markCls: string): Promise<{ rows: number; keys: number
       const rows = [...document.querySelectorAll(sel)] as HTMLElement[]
       const seen = new Map<string, number>()
       const clip = (s: string) => s.replace(/\s+/g, ' ').trim().slice(0, 120)
+      // the page's own channel(s), read off the rows of its own platform. A twitch or kick page
+      // also shows the same-named channel on the other of the two (the live tab's default,
+      // merged-tab.js): its rows are at home here, any other foreign row is not
+      const ownChans = new Set(
+        rows.filter((r) => (r.dataset.msgPlatform || 'twitch') === mark).map((r) => (r.dataset.msgChannel || '').toLowerCase()).filter(Boolean),
+      )
       for (const r of rows) {
         const key = r.dataset.msgKey || ''
         const text = r.textContent || ''
@@ -93,7 +99,8 @@ const scanRows = (p: any, markCls: string): Promise<{ rows: number; keys: number
         if (nameEl && !(nameEl.textContent || '').trim()) hit('identity', id, { why: 'empty name', row: sample })
         for (const pb of r.querySelectorAll('.hs-mc-platform-badge')) {
           const m = [...pb.classList].find((c) => c.startsWith('hs-mc-pb-'))?.slice(9)
-          if (m !== mark && m !== 'heatsync') hit('identity', id, { why: `mark [${pb.textContent}] (${m}) on a ${mark} pane`, row: sample })
+          const twin = mark !== 'youtube' && (m === 'twitch' || m === 'kick') && ownChans.has((r.dataset.msgChannel || '').toLowerCase())
+          if (m !== mark && m !== 'heatsync' && !twin) hit('identity', id, { why: `mark [${pb.textContent}] (${m}) on a ${mark} pane`, row: sample })
         }
 
         // 4 links
@@ -182,7 +189,8 @@ const chatRows = (p: any): Promise<CRow[]> =>
       }),
   )
 
-const wordRe = (w: string) => new RegExp(`(?:^|[\\s,!?.:;'"])${w}(?=$|[\\s,!?.:;'"])`, 'i')
+// the rule engine's own idea of a whole word (filter-rules.js): letters and digits in any script
+const wordRe = (w: string) => new RegExp(`(?<![\\p{L}\\p{M}\\p{N}_])${w}(?![\\p{L}\\p{M}\\p{N}_])`, 'iu')
 
 /** the two commonest plain words in the rows on screen, never a chatter's name */
 function pickWords(rows: { user: string; body: string }[], skip: Set<string>): { word: string; n: number }[] {
@@ -250,6 +258,31 @@ async function site(env: Env, plat: Plat, url: string, errs: string[]): Promise<
     const fails = (c: string) => [...byCheck[c].values()].map((d: any) => `${d.why} — ${JSON.stringify(d.row ?? d.href ?? d.el ?? '').slice(0, 90)}`)
     const detail = (c: string) => [...byCheck[c].values()].slice(0, 4)
     check('text hygiene', fails('text'), detail('text'))
+    // a picture asked for while the network hiccuped is not a broken picture: each one that did
+    // not load is asked for once more, and only what fails twice is counted
+    if (total.broken.length) {
+      const again: string[] = await p.evaluate(
+        (srcs: string[]) =>
+          Promise.all(
+            srcs.map(
+              (src) =>
+                new Promise<string>((done) => {
+                  const im = new Image()
+                  const end = (ok: boolean) => done(ok ? src : '')
+                  im.onload = () => end(im.naturalWidth > 0)
+                  im.onerror = () => end(false)
+                  setTimeout(() => end(false), 8000)
+                  im.src = src
+                }),
+            ),
+          ).then((r) => r.filter(Boolean)),
+        total.broken.map((b) => b.src),
+      )
+      if (again.length) {
+        info(`${name}: ${again.length}/${total.broken.length} pictures that had not loaded load when asked again (a network hiccup, not the picture)`)
+        total.broken = total.broken.filter((b) => !again.includes(b.src))
+      }
+    }
     // pictures: a handful from one third-party host is their CDN; ours, or >5%, is a finding
     const ours = total.broken.filter((b) => FIRST_PARTY.test(b.host))
     const hosts = [...new Set(total.broken.map((b) => b.host || '(none)'))]
@@ -269,18 +302,23 @@ async function site(env: Env, plat: Plat, url: string, errs: string[]): Promise<
     // ── 6 filter rules: hide one common word, highlight another ──
     // Applied live: storage onChanged → recompile → renderMessages (main-storage.js). Rows are judged in
     // two groups: rows that arrived after the rule (ingest decides: hide drops, highlight paints) and
-    // rows already drawn (a repaint may or may not restyle them — reported on its own).
+    // rows already drawn: the rules judge those too (useFilterRules marks every row stale).
     // an emote's name is not a word a chatter typed: kick keeps emotes as [emote:id:name] tokens in the text a rule reads
     const emoteNames = new Set<string>(
       await p.evaluate(() => [...document.querySelectorAll('#hs-mc-messages img')].map((i) => ((i as HTMLImageElement).alt || (i as HTMLImageElement).title || '').toLowerCase().replace(/^:|:$/g, ''))),
     )
     const words = pickWords(await chatRows(p), emoteNames)
     if (words.length < 2) {
-      bad(`${name}: chat held no two plain words, filter rules not run`, words)
+      info(`${name}: chat held no two plain words (${JSON.stringify(words)}): filter rules not run on this one`)
     } else {
       const [hideW, hlW] = [words[0], words[1]]
       const rule = (id: string, action: string, value: string) => ({ id, enabled: true, action, color: '#ffff00', scope: 'all', match: { type: 'keyword', value } })
       const hideRe = wordRe(hideW.word)
+      // where in the line the word sits: a rule that stops reading part-way shows up as a late position (the 256 cap, 11-18)
+      const where = (body: string) => {
+        const at = body.search(hideRe)
+        return `"…${body.slice(Math.max(0, at - 30), at + 30)}…" (line ${body.length} long, word at ${at})`
+      }
       const hlRe = wordRe(hlW.word)
       const say = (rs: CRow[]) => rs.filter((r) => hlRe.test(r.body) && !hideRe.test(r.body))
       info(`${name}: hide "${hideW.word}" (${hideW.n} rows), highlight "${hlW.word}" (${hlW.n} rows)`)
@@ -302,7 +340,7 @@ async function site(env: Env, plat: Plat, url: string, errs: string[]): Promise<
         const hiddenOld = rs.filter((r) => before.has(r.key) && hideRe.test(r.body))
         check(
           `hide rule "${hideW.word}": no row that arrived after it says it`,
-          hiddenNew.length ? [`${hiddenNew.length}/${fresh.length} new rows say it: ${JSON.stringify(hiddenNew[0].body.slice(0, 80))}`] : [],
+          hiddenNew.length ? [`${hiddenNew.length}/${fresh.length} new rows say it: ${where(hiddenNew[0].body)}`] : [],
           hiddenNew.slice(0, 3),
         )
         if (hiddenNew.length) {
@@ -311,7 +349,11 @@ async function site(env: Env, plat: Plat, url: string, errs: string[]): Promise<
         }
         const rate = (hideW.n / Math.max(1, before.size)) * fresh.length
         info(`${name}: ${fresh.length} rows arrived under the rules; ~${rate.toFixed(1)} would have said "${hideW.word}" at the pre-rule rate, ${hiddenNew.length} did`)
-        if (hiddenOld.length) info(`${name}: ${hiddenOld.length} rows drawn before the rule still say "${hideW.word}": hide acts at ingest, earlier rows stay (main.js:1114, social.js:1281)`)
+        check(
+          `hide rule "${hideW.word}": rows drawn before it that say it are taken off the screen too`,
+          hiddenOld.length ? [`${hiddenOld.length} earlier rows still say it: ${where(hiddenOld[0].body)}`] : [],
+          hiddenOld.slice(0, 3),
+        )
         const hlNew = say(fresh)
         const unmarked = hlNew.filter((r) => !r.hl)
         const wrongBg = hlNew.filter((r) => r.hl && !/rgb\(128, 128, 0\)/.test(r.bg))
@@ -323,7 +365,7 @@ async function site(env: Env, plat: Plat, url: string, errs: string[]): Promise<
             { unmarked: unmarked.slice(0, 3), wrongBg: wrongBg.slice(0, 2) },
           )
       } finally {
-        // an emptied list, the way the settings form saves it (main-storage.js only recompiles on a string)
+        // an emptied list, the way the settings form saves it
         await writeLocal(env, 'chat_filter_rules', '[]')
       }
       // rules gone: rows drawn under them lose the treatment, and the word is let through again

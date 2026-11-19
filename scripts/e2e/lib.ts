@@ -138,7 +138,8 @@ export function watchErrors(p: any, label: string, sink: string[]) {
       .find((l) => /^\s+at /.test(l))
       ?.trim()
     // a twitch panel extension's iframe (*.ext-twitch.tv) is a third party's code, not ours
-    if (/\.ext-twitch\.tv\//.test(at || '')) return
+    // so is the ad player the site loads from google (kick, 11-18: ima3.js threw inside itself)
+    if (/\.ext-twitch\.tv\/|\/\/imasdk\.googleapis\.com\//.test(at || '')) return
     if (!HOST_OWN.some((re) => re.test(msg)))
       sink.push(`${label} pageerror: ${msg.slice(0, 300)}${at ? ` (${at.slice(0, 160)})` : ''}`)
   })
@@ -245,16 +246,57 @@ export async function ringSince(p: any, t0: number) {
   // the worker holding newer lines than the tab = delivery died (ours); not = nothing was
   // said upstream either (a chat that paused). With no probe, only a 10s+ gap counts (the
   // overlay's own outage line).
+  // And one hitch under 10s is a hitch: a loaded machine holds a tab's timers that long once
+  // (a 4s one on a ci runner's first twitch load, nightly 11-18). The overlay itself only acts
+  // at 10s. A second one on the same channel, or one of 10s, is a finding.
+  const gaps = recent.filter((x) => x.e === 'ingest_gap')
   const delivered = (e: any) => {
     if (e.e !== 'ingest_gap') return true
+    if (e.gapS >= 10) return true
     const probe = recent.find((x) => x.e === 'ingest_gap_probe' && x.ch === e.ch && x.t >= e.t && x.t - e.t < 5000)
-    return probe ? probe.bgAheadS >= 2 : e.gapS >= 10
+    return !!probe && probe.bgAheadS >= 2 && gaps.filter((x) => x.ch === e.ch).length > 1
   }
-  const bad = recent.filter((e) => (BAD_RING as readonly string[]).includes(e.e) && delivered(e))
+  // render_stall says why the newest line is not drawn when something of the reader's is in the
+  // way (a card over the list, a form, a reader scrolled up): that one is the list doing as told.
+  const blocked = (e: any) => e.e === 'render_stall' && (e.editing || e.panel || e.card || e.scrolledUp)
+  const bad = recent.filter((e) => (BAD_RING as readonly string[]).includes(e.e) && delivered(e) && !blocked(e))
   return { recent, counts, bad }
 }
 
 /** dev-build probe: buffers per channel, currentTab, saved channels. */
+/**
+ * Is the chat list at its tail and following? Looked at from inside the page every 10ms: a look
+ * from outside can land between a row's append and its pin a frame later, and a window nobody
+ * can see (covered, unfocused) pins in lumps up to a second apart. A list that follows is at its
+ * tail at some look in the second half of the window; one that stopped is behind in all of them.
+ */
+export function tailFollows(p: any, ms = 2500, within = 24): Promise<{ ok: boolean; min: number; max: number; looks: number; top: [number, number] }> {
+  return p.evaluate(
+    ({ ms, within }: { ms: number; within: number }) =>
+      new Promise((res) => {
+        const l = document.getElementById('hs-mc-messages') as HTMLElement
+        const t0 = performance.now()
+        const top0 = l.scrollTop
+        let min = Number.POSITIVE_INFINITY
+        let max = 0
+        let looks = 0
+        let okAt = -1
+        const id = setInterval(() => {
+          const g = l.scrollHeight - l.scrollTop - l.clientHeight
+          const at = performance.now() - t0
+          looks++
+          min = Math.min(min, g)
+          max = Math.max(max, g)
+          if (g <= within) okAt = at
+          if (at < ms) return
+          clearInterval(id)
+          res({ ok: okAt >= ms / 2, min: Math.round(min), max: Math.round(max), looks, top: [Math.round(top0), Math.round(l.scrollTop)] })
+        }, 10)
+      }),
+    { ms, within },
+  )
+}
+
 export async function dbg(p: any): Promise<any> {
   return p
     .evaluate(() => {
@@ -314,6 +356,29 @@ export async function waitPanel(p: any, ms = 30_000) {
     .waitForSelector('#hs-mc-container', { timeout: ms, state: 'attached' })
     .then(() => true)
     .catch(() => false)
+}
+
+/** Null when a pointer can reach the panel's tab bar; else what sits over it and how the page is laid out.
+ *  (Twitch read as "no channel" off a page not drawn yet put the bar under twitch's own top bar, 11-18.) */
+export async function tabBarHit(p: any): Promise<null | Record<string, unknown>> {
+  return p.evaluate(() => {
+    const t = document.querySelector('#hs-mc-tabbar .hs-mc-tab.active, #hs-mc-tabbar .hs-mc-tab') as HTMLElement | null
+    const lay = () => {
+      const c = document.getElementById('hs-mc-container')
+      const cr = c?.getBoundingClientRect()
+      return {
+        body: document.body.className.split(/\s+/).filter((x) => x.startsWith('hs-')).join(' '),
+        container: cr ? [cr.left, cr.top, cr.width, cr.height].map(Math.round) : null,
+        parent: c?.parentElement ? `${c.parentElement.tagName.toLowerCase()}.${String(c.parentElement.className).split(/\s+/).slice(-2).join('.')}` : null,
+        navVar: document.documentElement.style.getPropertyValue('--hs-twitch-topnav-h') || document.documentElement.style.getPropertyValue('--hs-kick-topnav-h'),
+      }
+    }
+    if (!t) return { why: 'no tab in the bar', ...lay() }
+    const r = t.getBoundingClientRect()
+    const at = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) as HTMLElement | null
+    if (at && t.contains(at)) return null
+    return { why: 'covered', over: at ? `${at.tagName.toLowerCase()}#${at.id}.${String(at.className).slice(0, 50)}` : 'nothing (off screen)', tab: [r.left, r.top, r.width, r.height].map(Math.round), ...lay() }
+  })
 }
 
 /** Listener + node counts on the page's document/window through CDP (leak signal across navigations). */

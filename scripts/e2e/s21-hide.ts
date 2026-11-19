@@ -34,9 +34,15 @@ const look = (p: any): Promise<Look> =>
       const r = (el as HTMLElement).getBoundingClientRect()
       return [r.left, r.top, r.width, r.height].map(Math.round)
     }
-    const v = [...document.querySelectorAll('video')].find(
-      (x) => x.getClientRects().length && !x.closest('#hs-mc-container'),
-    )
+    // the biggest one: while an ad plays twitch keeps the stream in a small second video beside
+    // it, and the first video in the page was that one (it "shrank" under a hide, nightly 11-18)
+    const area = (x: Element) => {
+      const r = x.getBoundingClientRect()
+      return r.width * r.height
+    }
+    const v = [...document.querySelectorAll('video')]
+      .filter((x) => x.getClientRects().length && !x.closest('#hs-mc-container'))
+      .sort((a, b) => area(b) - area(a))[0]
     return {
       hidden: document.body.classList.contains('hs-chat-hidden'),
       panel: box(document.getElementById('hs-mc-container')) || [0, 0, 0, 0],

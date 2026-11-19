@@ -170,10 +170,13 @@ export async function s2Twitch() {
       counts.push(await domCounters(env.ctx, p))
     }
     info(`dom counters: start ${JSON.stringify(base)} rounds ${JSON.stringify(counts)}`)
-    // same kind of page each round: listeners must not climb round over round
-    const growth = counts[2].listeners - counts[0].listeners
-    if (growth > 400) bad('listeners climb with every channel → directory → channel round', { base, counts })
-    else ok(`listeners flat across rounds (Δ${growth})`)
+    // same kind of page each round: listeners must not climb round over round. A leak adds its
+    // share every round; one round landing on a chat full of link cards adds a few hundred once
+    // (+46 then +475 with 7,600 more nodes on the page, 11-18) and is that chat, not a leak.
+    const steps = [counts[1].listeners - counts[0].listeners, counts[2].listeners - counts[1].listeners]
+    const growth = steps[0] + steps[1]
+    if (steps.every((d) => d > 150) || growth > 1200) bad('listeners climb with every channel → directory → channel round', { base, counts })
+    else ok(`listeners do not climb round over round (Δ${steps.join(', Δ')})`)
     const d = await dbg(p)
     if (d.err) info(`dbg: ${d.err}`)
     else info(`irc buffers: ${JSON.stringify(d.irc).slice(0, 200)}`)

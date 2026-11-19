@@ -96,9 +96,17 @@ const ceiling = setTimeout(
   Number(process.env.E2E_CEILING_MIN || 120) * 60_000,
 )
 
+// A network interface coming or going on the machine (a container network, a vpn) fails every
+// request in flight with ERR_NETWORK_CHANGED. That is the machine, not the page: the scenario
+// is run once more.
+const netChanged = (e: unknown) => /ERR_NETWORK_CHANGED|ERR_INTERNET_DISCONNECTED/.test(String((e as Error)?.message || e))
 for (const [id, run] of picked) {
   try {
-    await run()
+    await run().catch(async (e: unknown) => {
+      if (!netChanged(e)) throw e
+      console.log(`    · ${id}: the machine's network changed mid-run, running it once more`)
+      await run()
+    })
   } catch (e) {
     findings.push({ scenario: id, what: `scenario crashed: ${String((e as Error)?.message || e).slice(0, 300)}` })
     console.log(`  ✗ ${id} crashed: ${String((e as Error)?.message || e).slice(0, 300)}`)

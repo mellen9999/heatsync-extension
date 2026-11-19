@@ -331,7 +331,9 @@ async function outageLeg(
         const winEnd = Math.max(...seenBoth.map((l) => l.ts))
         // the list holds only so many rows: a window older than its oldest row cannot be judged
         const oldest = Math.min(...after.filter((r) => r.time).map((r) => r.time))
-        const from = Math.max(winStart, oldest)
+        // rows are in arrival order, so a line stamped a moment after the oldest row may have sat
+        // above it and left with the trim: the window starts a late-line's width inside the list
+        const from = Math.max(winStart, oldest + 4000)
         const inWin = feed.lines.filter((l) => l.ts >= from && l.ts <= winEnd)
         const missing = inWin.filter((l) => !byId.has(l.id) && !feed.gone(l))
         const goneN = inWin.filter((l) => feed.gone(l)).length
@@ -339,6 +341,8 @@ async function outageLeg(
         check(
           'nothing the feed saw is missing from the list, from 20s after recovery',
           inWin.length < 3 ? ['the window held too few lines to judge'] : missing.length ? [`${missing.length} of ${inWin.length} missing (${missing.slice(0, 3).map((l) => l.id.slice(0, 8)).join(' ')})`] : [],
+          // where in the window each missing line sits: at its very start is the trim, anywhere else is a lost line
+          missing.slice(0, 6).map((l) => ({ id: l.id.slice(0, 8), msAfterStart: l.ts - from, msBeforeEnd: winEnd - l.ts })),
         )
       }
       check(

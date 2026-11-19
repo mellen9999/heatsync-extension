@@ -456,7 +456,8 @@ export async function s28SettingsRest() {
     const sets: [string, string, RegExp, (v: unknown) => boolean][] = [
       ['a switch off', '/set timestamps off', /timestamps = false/, (v) => v === false],
       ['a switch on, with a yes word', '/set timestamps yes', /timestamps = true/, (v) => v === true],
-      ['a number', '/set mentionSoundVolume 0.55', /mentionSoundVolume = 0\.55/, (v) => v === 0.55],
+      // a slider's own number: the page shows volume 0–100 and stores 0–1
+      ['a number', '/set mentionSoundVolume 55', /mentionSoundVolume = 55/, (v) => v === 0.55],
       ['a text', '/set modBanReasons spam, bots', /modBanReasons = spam, bots/, (v) => v === 'spam, bots'],
       ['a choice', '/set timestampFormat 24h', /timestampFormat = 24h/, (v) => v === '24h'],
     ]
@@ -489,18 +490,17 @@ export async function s28SettingsRest() {
         if (!left) why.push('the text left the box though the command failed')
         return why
       })
-    // a number typed outside the range: the slider shows 0–100, /set takes 0–1 (its own hint says so)
-    await step('/set mentionSoundVolume 40 (the slider\'s number) says what was stored', async () => {
-      const { said } = await cmd(p, '/set mentionSoundVolume 40')
+    // off the slider: refused, with the slider's range, and nothing stored (it used to clamp to full volume)
+    await step('/set mentionSoundVolume 140 (off the slider) is refused and nothing changes', async () => {
+      const before = await val('mentionSoundVolume')
+      const { said } = await cmd(p, '/set mentionSoundVolume 140')
       const got = await val('mentionSoundVolume')
       const why: string[] = []
-      if (typeof got !== 'number' || got < 0 || got > 1) why.push(`stored ${JSON.stringify(got)}`)
-      // the toast must not claim a value that was not stored
-      const claim = said.join(' ').match(/mentionSoundVolume = ([\d.]+)/)?.[1]
-      if (claim !== undefined && Number(claim) !== got) why.push(`toast says ${claim}, stored ${got}`)
+      if (!same(got, before)) why.push(`stored ${JSON.stringify(got)}, was ${JSON.stringify(before)}`)
+      if (!says(said, /invalid value for mentionSoundVolume.*0-100/)) why.push(`toasts [${said.join(' | ')}]`)
       return why
     })
-    await cmd(p, '/set mentionSoundVolume 0.4')
+    await cmd(p, '/set mentionSoundVolume 40')
     // the mix values back (the export below starts from them)
     for (const c of ['/set timestampFormat 12h', '/set timestamps on', '/set modBanReasons e2e one two']) await cmd(p, c)
 
@@ -642,8 +642,7 @@ export async function s28SettingsRest() {
       if (!same(s.local.blocked_users, NOT_SETTINGS.blocked_users)) why.push('blocks changed')
       return why
     })
-    // chatFilterRules is a registry setting with no noReset: the code resets it. The hide rules are what
-    // a person wrote, like the hidden-paint-users list that got noReset for exactly that reason.
+    // the hide rules are what a person wrote, like mutes and blocks: the registry marks them noReset
     await step('reset all keeps the hide rules a person wrote', async () => {
       const s = await readAll()
       return same(s.local.chat_filter_rules, NOT_SETTINGS.chat_filter_rules) ? [] : [`chat_filter_rules is now ${JSON.stringify(s.local.chat_filter_rules)} (had 1 rule)`]
@@ -770,10 +769,10 @@ export async function s28SettingsRest() {
           }, pg)
         await closeSettings(pg)
         await step(`${host}: /set from the composer`, async () => {
-          const { said } = await cmd(pg, '/set mentionSoundVolume 0.35')
+          const { said } = await cmd(pg, '/set mentionSoundVolume 35')
           const got = await val('mentionSoundVolume')
-          await cmd(pg, '/set mentionSoundVolume 0.4')
-          return got === 0.35 && says(said, /mentionSoundVolume = 0\.35/) ? [] : [`stored ${JSON.stringify(got)}, toasts [${said.join(' | ')}]`]
+          await cmd(pg, '/set mentionSoundVolume 40')
+          return got === 0.35 && says(said, /mentionSoundVolume = 35/) ? [] : [`stored ${JSON.stringify(got)}, toasts [${said.join(' | ')}]`]
         }, pg)
       } finally {
         await pg.close().catch(() => {})

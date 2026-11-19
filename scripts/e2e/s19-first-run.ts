@@ -35,6 +35,7 @@ import {
   scenario,
   shot,
   sleep,
+  tabBarHit,
   waitPanel,
   watchErrors,
 } from './lib'
@@ -181,7 +182,10 @@ export async function s19FirstRun() {
     await sleep(1500)
     if ((await stored(env, 'auth_token_encrypted')).auth_token_encrypted !== undefined) bad('the test token is still in storage (something rewrote it)')
     if ((await errCount()) > e0) bad('a token appearing and going logged add-on errors', (await stored(env, 'hs_errors')).hs_errors?.slice(-3))
-    await w.click('#hs-close-btn')
+    // the click closes the tab it is on: the driver can lose the page before it reports the click done
+    await w.click('#hs-close-btn').catch((e: unknown) => {
+      if (!w.isClosed()) throw e
+    })
     if (await until(async () => w.isClosed(), 3000)) ok('welcome close button closes the tab')
     else bad('welcome close button did not close the tab', extErrs.get(w))
 
@@ -311,6 +315,8 @@ export async function s19FirstRun() {
     if (left.hs_tour_step !== undefined) bad('tour: the saved step is still there after finishing', left)
     if (await p1.$('#hs-mc-tour:not([hidden])')) bad('tour: the card is still up after finishing')
     if (await p1.$('#hs-mc-tour-arrow')) bad('tour: the arrow is still up after finishing')
+    const hit = await tabBarHit(p1)
+    if (hit) bad('twitch: the tab bar cannot be reached on the first load of a fresh install', hit)
     // once per device
     await p1.reload({ waitUntil: 'domcontentloaded' })
     await waitPanel(p1)

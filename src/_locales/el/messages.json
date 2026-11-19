@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "σύνδεση"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "η αντιγραφή απέτυχε"
+  "common_clipboard_blocked": {
+    "message": "το πρόχειρο αποκλείστηκε"
   },
   "mc_common_unknown": {
     "message": "άγνωστο"

@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "belépés"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "a másolás nem sikerült"
+  "common_clipboard_blocked": {
+    "message": "vágólap letiltva"
   },
   "mc_common_unknown": {
     "message": "ismeretlen"

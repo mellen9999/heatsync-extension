@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "تسجيل الدخول"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "فشل النسخ"
+  "common_clipboard_blocked": {
+    "message": "الحافظة محظورة"
   },
   "mc_common_unknown": {
     "message": "غير معروف"

@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "вход"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "копирането не успя"
+  "common_clipboard_blocked": {
+    "message": "клипбордът е блокиран"
   },
   "mc_common_unknown": {
     "message": "непознато"

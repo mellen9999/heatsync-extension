@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "התחברות"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "ההעתקה נכשלה"
+  "common_clipboard_blocked": {
+    "message": "הלוח חסום"
   },
   "mc_common_unknown": {
     "message": "לא ידוע"

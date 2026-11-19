@@ -3057,38 +3057,14 @@ function _formatMcChainLine(m) {
   return `${user}: ${text}`
 }
 
-// Robust clipboard copy: navigator.clipboard silently rejects in a content
-// script when the doc isn't focused (the exact "why can't i copy" case), so
-// fall back to a temp-textarea execCommand and always toast either way.
-function mcCopyFallback(text) {
+// Every menu copy says what happened: "copied" when it landed, "clipboard blocked" when it didn't.
+async function mcCopyToClipboard(text, okMsg = t('mc_input_copied')) {
+  if (!text) return false
+  const ok = await window.HS.copyText(text)
   try {
-    const ta = document.createElement('textarea')
-    ta.value = text
-    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0'
-    document.body.appendChild(ta)
-    ta.focus()
-    ta.select()
-    const ok = document.execCommand('copy')
-    ta.remove()
-    return ok
-  } catch {
-    return false
-  }
-}
-function mcCopyToClipboard(text, okMsg = t('mc_input_copied')) {
-  if (!text) return
-  const done = () => {
-    try {
-      showToast(okMsg, 'success')
-    } catch {}
-  }
-  try {
-    navigator.clipboard.writeText(text).then(done, () => {
-      if (mcCopyFallback(text)) done()
-    })
-  } catch {
-    if (mcCopyFallback(text)) done()
-  }
+    showToast(ok ? okMsg : t('common_clipboard_blocked'), ok ? 'success' : 'error')
+  } catch {}
+  return ok
 }
 // Drop a message's text into the input box (quote/reply-by-paste).
 function mcQuoteToInput(text) {
@@ -8859,13 +8835,7 @@ async function sendQuoteThread(words) {
   settleComposerAfterSend(document.getElementById('hs-mc-input'))
   const id = posted === true ? null : posted.base36_id
   const link = id ? buildPostPermalink(id) : null
-  let copied = false
-  if (link) {
-    try {
-      await navigator.clipboard.writeText(link)
-      copied = true
-    } catch {}
-  }
+  const copied = link ? await window.HS.copyText(link) : false
   showToast(copied ? t('mc_msg_quote_posted_copied') : t('mc_msg_quote_posted'), 'success')
 }
 

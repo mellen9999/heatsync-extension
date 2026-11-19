@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "iniciar sesión"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "no se pudo copiar"
+  "common_clipboard_blocked": {
+    "message": "portapapeles bloqueado"
   },
   "mc_common_unknown": {
     "message": "desconocido"

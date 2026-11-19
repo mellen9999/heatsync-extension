@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "giriş yap"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "kopyalanamadı"
+  "common_clipboard_blocked": {
+    "message": "pano engellendi"
   },
   "mc_common_unknown": {
     "message": "bilinmiyor"

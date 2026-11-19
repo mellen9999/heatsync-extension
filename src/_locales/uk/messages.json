@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "увійти"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "не вдалося копіювати"
+  "common_clipboard_blocked": {
+    "message": "буфер обміну заблоковано"
   },
   "mc_common_unknown": {
     "message": "невідомо"

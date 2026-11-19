@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "entrar"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "falha ao copiar"
+  "common_clipboard_blocked": {
+    "message": "área de transferência bloqueada"
   },
   "mc_common_unknown": {
     "message": "desconhecido"

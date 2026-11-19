@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "लॉग इन"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "कॉपी नहीं हुआ"
+  "common_clipboard_blocked": {
+    "message": "क्लिपबोर्ड अवरुद्ध"
   },
   "mc_common_unknown": {
     "message": "अज्ञात"

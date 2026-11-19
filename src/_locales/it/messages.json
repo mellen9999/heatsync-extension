@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "accedi"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "copia non riuscita"
+  "common_clipboard_blocked": {
+    "message": "appunti bloccati"
   },
   "mc_common_unknown": {
     "message": "sconosciuto"

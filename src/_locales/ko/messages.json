@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "로그인"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "복사 실패"
+  "common_clipboard_blocked": {
+    "message": "클립보드가 차단됨"
   },
   "mc_common_unknown": {
     "message": "알 수 없음"

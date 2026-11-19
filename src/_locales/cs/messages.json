@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "přihlásit"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "kopírování selhalo"
+  "common_clipboard_blocked": {
+    "message": "schránka zablokována"
   },
   "mc_common_unknown": {
     "message": "neznámé"

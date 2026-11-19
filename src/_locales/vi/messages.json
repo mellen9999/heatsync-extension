@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "đăng nhập"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "sao chép thất bại"
+  "common_clipboard_blocked": {
+    "message": "bộ nhớ tạm bị chặn"
   },
   "mc_common_unknown": {
     "message": "không rõ"

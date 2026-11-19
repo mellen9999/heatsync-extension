@@ -279,6 +279,40 @@
     }
   }
 
+  // The one clipboard write: resolves true only when the text really is on the clipboard, so every
+  // copy can say "copied" or "clipboard blocked" and never claims a copy that didn't happen. The
+  // async api refuses when the page isn't focused or the site's permissions policy says no, so a
+  // refusal gets one go through a hidden textarea + execCommand, handing focus back after.
+  function copyViaSelection(text) {
+    const prev = document.activeElement
+    const ta = document.createElement('textarea')
+    try {
+      ta.value = text
+      ta.setAttribute('readonly', '')
+      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0'
+      document.body.appendChild(ta)
+      ta.select()
+      return document.execCommand('copy') === true
+    } catch {
+      return false
+    } finally {
+      ta.remove()
+      try {
+        prev?.focus?.({ preventScroll: true })
+      } catch {}
+    }
+  }
+
+  async function copyText(text) {
+    if (typeof text !== 'string' || !text) return false
+    try {
+      await navigator.clipboard.writeText(text)
+      return true
+    } catch {
+      return copyViaSelection(text)
+    }
+  }
+
   // ── MAIN-world nonce ──────────────────────────────────────────────
   // Generates a random per-session nonce and sends it to early-inject-main.js
   // (MAIN world) so that subsequent GQL/Helix/Apollo messages can be verified.
@@ -397,6 +431,7 @@
     safeSend,
     apiFetch,
     showToast,
+    copyText,
     uploadMediaFiles,
     mountEmoteStrip,
     initMainWorldNonce,

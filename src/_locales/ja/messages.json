@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "ログイン"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "コピー失敗"
+  "common_clipboard_blocked": {
+    "message": "クリップボードがブロックされました"
   },
   "mc_common_unknown": {
     "message": "不明"

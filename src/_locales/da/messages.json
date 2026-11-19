@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "log ind"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "kopiering mislykkedes"
+  "common_clipboard_blocked": {
+    "message": "udklipsholder blokeret"
   },
   "mc_common_unknown": {
     "message": "ukendt"

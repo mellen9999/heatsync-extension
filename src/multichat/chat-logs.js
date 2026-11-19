@@ -115,16 +115,10 @@ function buildRowPermalink(row) {
 async function copyChatLogPermalink(btn, r) {
   const url = buildChatLogPermalink(r)
   if (!url) return
-  let ok = false
-  try {
-    await navigator.clipboard.writeText(url)
-    ok = true
-  } catch {
-    ok = typeof mcCopyFallback === 'function' && mcCopyFallback(url)
-  }
+  const ok = await window.HS.copyText(url)
   if (!ok) {
     try {
-      showToast(t('mc_chatlogs_copy_failed'), 'error')
+      showToast(t('common_clipboard_blocked'), 'error')
     } catch {}
   }
   const time = btn.querySelector('time')

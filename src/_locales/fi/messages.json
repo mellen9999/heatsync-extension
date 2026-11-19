@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "kirjaudu"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "kopiointi epäonnistui"
+  "common_clipboard_blocked": {
+    "message": "leikepöytä estetty"
   },
   "mc_common_unknown": {
     "message": "tuntematon"

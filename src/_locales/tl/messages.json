@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "mag-log in"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "hindi nakopya"
+  "common_clipboard_blocked": {
+    "message": "naka-block ang clipboard"
   },
   "mc_common_unknown": {
     "message": "hindi alam"

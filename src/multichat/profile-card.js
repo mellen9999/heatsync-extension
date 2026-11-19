@@ -1868,12 +1868,8 @@ function pcGiftChannel() {
 async function pcDoGift(username) {
   const ch = pcGiftChannel()
   if (!ch || !username) return
-  try {
-    await navigator.clipboard.writeText(username)
-    showToast(t('mc_card_gift_copied', [username]), 'success')
-  } catch (e) {
-    showToast(t('mc_card_gift_copy_failed', [username]), 'error')
-  }
+  if (await window.HS.copyText(username)) showToast(t('mc_card_gift_copied', [username]), 'success')
+  else showToast(t('mc_card_gift_copy_failed', [username]), 'error')
   window.open(`https://www.twitch.tv/subs/${encodeURIComponent(ch)}`, '_blank', 'noopener')
 }
 
@@ -1894,12 +1890,9 @@ async function pcDoClip(username, platform, btn) {
     const editUrl = resp.data?.edit_url || resp.data?.editUrl || null
     const clipUrl = resp.data?.clip_url || resp.data?.clipUrl || null
     if (editUrl) btn.dataset.editUrl = editUrl
-    if (clipUrl) {
-      try {
-        await navigator.clipboard.writeText(clipUrl)
-      } catch {}
-    }
-    pcSetLabel(btn, clipUrl ? t('mc_pcard_url_copied') : editUrl ? t('mc_pcard_clip_created') : 'clip')
+    const copied = clipUrl ? await window.HS.copyText(clipUrl) : false
+    pcSetLabel(btn, copied ? t('mc_pcard_url_copied') : editUrl || clipUrl ? t('mc_pcard_clip_created') : 'clip')
+    if (clipUrl && !copied && typeof showToast === 'function') showToast(t('common_clipboard_blocked'), 'error')
     btn.disabled = false
   } catch (err) {
     pcSetLabel(btn, 'clip')

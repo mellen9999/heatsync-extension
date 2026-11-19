@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "log masuk"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "gagal menyalin"
+  "common_clipboard_blocked": {
+    "message": "papan keratan disekat"
   },
   "mc_common_unknown": {
     "message": "tidak diketahui"

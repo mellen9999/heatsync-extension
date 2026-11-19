@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "登入"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "複製失敗"
+  "common_clipboard_blocked": {
+    "message": "剪貼簿被封鎖"
   },
   "mc_common_unknown": {
     "message": "未知"

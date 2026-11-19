@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "conectare"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "copierea a eșuat"
+  "common_clipboard_blocked": {
+    "message": "clipboard blocat"
   },
   "mc_common_unknown": {
     "message": "necunoscut"

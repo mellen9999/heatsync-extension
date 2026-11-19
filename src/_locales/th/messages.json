@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "เข้าสู่ระบบ"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "คัดลอกไม่สำเร็จ"
+  "common_clipboard_blocked": {
+    "message": "คลิปบอร์ดถูกบล็อก"
   },
   "mc_common_unknown": {
     "message": "ไม่ทราบ"

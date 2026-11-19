@@ -1350,8 +1350,8 @@
   "mc_signed_out_action": {
     "message": "inloggen"
   },
-  "mc_chatlogs_copy_failed": {
-    "message": "kopiëren mislukt"
+  "common_clipboard_blocked": {
+    "message": "klembord geblokkeerd"
   },
   "mc_common_unknown": {
     "message": "onbekend"

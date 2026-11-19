@@ -293,7 +293,7 @@ describe('renderProfileCardView runs through the shared card pipeline (source in
     expect(fn).toContain(
       "apiFetch('/api/twitch/clip', { method: 'POST', auth: true, body: { channel: channelLogin } })",
     )
-    expect(fn).toContain('navigator.clipboard.writeText(clipUrl)')
+    expect(fn).toContain('window.HS.copyText(clipUrl)')
   })
 })
 

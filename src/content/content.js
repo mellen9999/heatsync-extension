@@ -4218,6 +4218,12 @@
   // native Twitch messages, and inserts missing ones at the top of the chat container.
   let _backfillWait = null
   async function backfillChatHistory() {
+    // The history is twitch's, and so is the shape of the rows. A kick pop-out's address matches
+    // the pop-out pattern below, so the twitch channel of the same name was fetched and its lines
+    // put into kick's own list: another channel's chat for anyone reading kick's chat, and on a
+    // slow line they landed before kick's React had hydrated the list (React #418, the page
+    // redrawn client-side). restoreMsgCache has refused kick for the same reason all along.
+    if (isKick) return
     const chatContainer = findChatContainer()
     if (!chatContainer) return
     if (chatContainer.dataset.heatsyncBackfilled) return

@@ -45,6 +45,30 @@ describe('isSelf is keyed by platform', () => {
     s.setSelfHsNames({ youtube_username: 'YtGuy' })
     expect(s.isSelf({ user: 'ytguy', platform: 'yt' })).toBe(true)
   })
+  test('a youtube line names its sender @handle and the account stores it bare: still me', () => {
+    // the site's youtube sweep found it there first (11-18); here the same two spellings met
+    const s = loadSelf({ currentUsername: null, authState: undefined })
+    s.setSelfHsNames({ youtube_username: 'YtGuy' })
+    expect(s.isSelf({ user: '@YtGuy', platform: 'youtube' })).toBe(true)
+    expect(s.isSelf({ user: '@ytguy' }, 'yt')).toBe(true)
+    expect(s.isSelf({ user: '@someoneelse', platform: 'youtube' })).toBe(false)
+    expect(s.isSelf({ user: '@', platform: 'youtube' })).toBe(false)
+    // an account stored with its @ meets a line written without one
+    s.setSelfHsNames({ youtube_username: '@YtGuy' })
+    expect(s.isSelf({ user: 'ytguy', platform: 'youtube' })).toBe(true)
+    expect(s.selfNamesFor('youtube')).toEqual(['ytguy'])
+  })
+  test("the chip beside youtube's input says @handle too, and a row without the @ is the same person", () => {
+    const s = loadSelf({ currentUsername: null, authState: undefined, ytSelfName: () => '@ChipGuy' })
+    expect(s.isSelf({ user: 'chipguy', platform: 'youtube' })).toBe(true)
+    expect(s.isSelf({ user: '@ChipGuy', platform: 'youtube' })).toBe(true)
+  })
+  test("the @ is youtube's alone: a twitch or kick name is compared as written", () => {
+    const s = loadSelf({ currentUsername: 'mellen', authState: undefined })
+    s.setSelfKickName('kickguy')
+    expect(s.isSelf({ user: '@mellen' })).toBe(false)
+    expect(s.isSelf({ user: '@kickguy', platform: 'kick' })).toBe(false)
+  })
   test('no handler decides self from the bare twitch string any more', () => {
     for (const f of ['main.js', 'social.js', 'mod-toolbar.js', 'pin-bar.js']) {
       expect(mc(f)).not.toMatch(/user\??\.toLowerCase\(\) === currentUsername\??\.toLowerCase\(\)/)

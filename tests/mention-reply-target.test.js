@@ -70,6 +70,13 @@ describe('isMention — reply targeting', () => {
     expect(isMention({ user: 'someone', text: 'ok', replyTo: { user: 'MELLEN' } })).toBe(true)
   })
 
+  test('a youtube line names people @handle: a reply to @you counts, your own line never pings you', () => {
+    const yt = makeMatcher({ username: '', aliases: ['ythandle'] })
+    expect(yt({ user: '@other', text: 'ok', platform: 'youtube', replyTo: { user: '@YtHandle' } })).toBe(true)
+    expect(yt({ user: '@YtHandle', text: 'ythandle here', platform: 'youtube' })).toBe(false)
+    expect(yt({ user: '@other', text: 'hi @ythandle', platform: 'youtube' })).toBe(true)
+  })
+
   test('a reply to somebody else is not a mention', () => {
     expect(isMention({ user: 'someone', text: 'yeah agreed', replyTo: { user: 'thirdparty' } })).toBe(false)
   })

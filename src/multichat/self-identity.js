@@ -36,6 +36,11 @@ function _selfYtChip() {
   return _ytChip.name
 }
 
+// youtube writes a handle with its @ on a chat line and on the chip beside its input; the
+// heatsync account stores the same handle bare. Compared as written, your own youtube line was
+// somebody else's: no filter exemption, no echo witness, the mod toolbar on your own row.
+const selfBare = (platform, name) => (platform === 'youtube' ? name.replace(/^@/, '') : name)
+
 function selfNamesFor(platform) {
   const raw =
     platform === 'kick'
@@ -47,16 +52,16 @@ function selfNamesFor(platform) {
             typeof authState !== 'undefined' && authState?.nick ? authState.nick : '',
             selfHsNames.twitch,
           ]
-  return raw.map((n) => (n ? String(n).toLowerCase() : '')).filter(Boolean)
+  return raw.map((n) => (n ? selfBare(platform, String(n).toLowerCase()) : '')).filter(Boolean)
 }
 
 // platform: explicit when the caller knows the transport (an IRC handler); else
 // the row's own platform (irc rows leave both unset = twitch)
 function isSelf(msg, platform) {
-  const u = msg?.user ? String(msg.user).toLowerCase() : ''
-  if (!u) return false
-  let p = platform || msg.platform || 'twitch'
+  let p = platform || msg?.platform || 'twitch'
   if (p === 'yt') p = 'youtube'
+  const u = msg?.user ? selfBare(p, String(msg.user).toLowerCase()) : ''
+  if (!u) return false
   return selfNamesFor(p).includes(u)
 }
 

@@ -20,7 +20,8 @@ function setMentionAliases(ui) {
   mentionAliases = new Set()
   if (ui?.username) mentionAliases.add(ui.username.toLowerCase())
   if (ui?.kick_username) mentionAliases.add(ui.kick_username.toLowerCase())
-  if (ui?.youtube_username) mentionAliases.add(ui.youtube_username.toLowerCase())
+  // bare: a target is looked for as `@target` and as a word, and a row's sender is compared bare
+  if (ui?.youtube_username) mentionAliases.add(ui.youtube_username.toLowerCase().replace(/^@/, ''))
   if (ui?.twitch_username) mentionAliases.add(ui.twitch_username.toLowerCase())
   setSelfHsNames(ui)
 }
@@ -49,7 +50,9 @@ function isMention(msg) {
   if (!isEnabled('mentions')) return false // live subsystem gate
   const targets = getMentionTargets()
   if (!targets.length) return false
-  const sender = msg.user?.toLowerCase()
+  // a youtube line names its sender `@handle`; the targets are bare
+  const bare = (n) => n?.toLowerCase().replace(/^@/, '')
+  const sender = bare(msg.user)
   if (sender && targets.includes(sender)) return false
   // Blocked users can't ping you — gating here kills the notification, sound,
   // title-flash, mentions buffer AND the tab indicator in one place (every
@@ -62,7 +65,7 @@ function isMention(msg) {
   // badge — while the row visibly rendered "↳ replying to you". Only YouTube
   // worked, and only because it has no reply API so the @name gets prepended
   // into the text by hand. Structural check, so every platform behaves alike.
-  const repliedTo = msg.replyTo?.user?.toLowerCase()
+  const repliedTo = bare(msg.replyTo?.user)
   if (repliedTo && targets.includes(repliedTo)) return true
 
   const text = msg.text.toLowerCase()

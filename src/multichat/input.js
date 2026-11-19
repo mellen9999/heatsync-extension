@@ -1256,6 +1256,7 @@ function createInputBar() {
   return bar
 }
 
+const BLOCK_TAGS = new Set(['DIV', 'P', 'LI'])
 // Get text from input (handles both input and contenteditable)
 function getInputText() {
   const input = document.getElementById('hs-mc-input')
@@ -1327,12 +1328,17 @@ function getInputText() {
         const emjMods = node.dataset.hsWords
         if (emjMods) for (const w of emjMods.split(/\s+/).filter(Boolean)) text += ` ${w}`
         _lastWasChip = true
+      } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+        text += '\n'
       } else if (node.nodeType === Node.ELEMENT_NODE) {
-        text += node.textContent || ''
+        // a pasted or shift+enter line lands as <div>/<p> (<br> above): each
+        // starts a new word, and chips inside it still serialize
+        if (BLOCK_TAGS.has(node.tagName) && text && !/\s$/.test(text)) text += '\n'
+        for (const child of node.childNodes) extractNode(child)
       }
     }
     for (const node of input.childNodes) extractNode(node)
-    return text.replace(/\u00A0/g, ' ')
+    return oneLine(text.replace(/\u00A0/g, ' '))
   }
   return input.value || ''
 }

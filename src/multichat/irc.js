@@ -440,6 +440,13 @@ function stripDupBypass(text) {
   return cut.endsWith(' ') ? cut.slice(0, -1) : cut
 }
 
+// chat lines are one line on every platform: twitch posts only the first line
+// of a multi-line PRIVMSG, so a break that reached the wire would post a
+// fragment whose echo matches no row. One space per break, its padding eaten.
+function oneLine(text) {
+  return String(text ?? '').replace(/\s*[\r\n]+\s*/g, ' ')
+}
+
 // ============================================
 // CIRCULAR BUFFER FOR CHANNEL MESSAGES
 // ============================================

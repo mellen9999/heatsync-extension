@@ -30,7 +30,7 @@ const TWITCH_SEND_REJECT_NOTICES = new Map([
 // last WIRE text this client sent per twitch channel (see dupBypassWire)
 const lastWireByChannel = new Map()
 function twitchWireText(channel, text) {
-  return dupBypassWire(lastWireByChannel.get(channel), String(text).replace(/[\r\n]/g, ' '))
+  return dupBypassWire(lastWireByChannel.get(channel), oneLine(text))
 }
 
 function parseNoticeMsgId(line) {

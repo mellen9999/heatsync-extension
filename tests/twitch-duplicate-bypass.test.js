@@ -24,6 +24,7 @@ const lib = new Function(
 const DUP_BYPASS_SUFFIX = \` \${DUP_BYPASS_CHAR}\`
 ${fn(IRC, 'dupBypassWire')}
 ${fn(IRC, 'stripDupBypass')}
+${fn(IRC, 'oneLine')}
 const lastWireByChannel = new Map()
 ${fn(AUTH, 'twitchWireText')}
 const _unkickEmotes = (s) => String(s ?? '')
@@ -62,6 +63,10 @@ describe('per-channel wire memory', () => {
     lib.lastWireByChannel.clear()
     expect(send('a', 'x\ny')).toBe('x y')
     expect(send('a', 'x\ny')).toBe(`x y ${T}`)
+  })
+  test('a crlf break and its padding become one space', () => {
+    lib.lastWireByChannel.clear()
+    expect(send('a', 'x \r\n  y')).toBe('x y')
   })
 })
 

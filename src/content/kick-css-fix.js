@@ -37,13 +37,37 @@
     return -1
   }
 
-  /** start of the compound just before `at`, when it opens its selector; -1 when it does not */
+  /** index of the '(' that opens the ')' at `close`, or -1 */
+  const openOf = (css, close) => {
+    let depth = 1
+    for (let j = close - 1; j >= 0; j--) {
+      if (escaped(css, j)) continue
+      const c = css[j]
+      if (c === '"' || c === "'") {
+        j = css.lastIndexOf(c, j - 1)
+        if (j === -1) return -1
+      } else if (c === ')') depth++
+      else if (c === '(' && --depth === 0) return j
+    }
+    return -1
+  }
+
+  /**
+   * start of the compound just before `at`, when it opens its selector; -1 when it does not.
+   * A pseudo-class with an argument is part of the compound, whatever is inside it: kick's
+   * themed utilities are `.x:where([data-theme=next],[data-theme=next] *):is(...)`.
+   */
   const compoundStart = (css, at) => {
     for (let k = at - 1; k >= 0; k--) {
       if (escaped(css, k)) continue
       const c = css[k]
       if (c === ',' || c === '{' || c === '}' || c === ';') return k + 1
-      if (c === '(' || c === ')' || c === '>' || c === '+' || c === '~' || /\s/.test(c)) return -1
+      if (c === ')') {
+        k = openOf(css, k)
+        if (k === -1) return -1
+        continue
+      }
+      if (c === '(' || c === '>' || c === '+' || c === '~' || /\s/.test(c)) return -1
     }
     return 0
   }

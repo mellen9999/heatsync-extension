@@ -99,13 +99,21 @@ async function site(env: any, name: string, url: string, popout: string, errs: s
     return p.close()
   }
   await backslash(p)
-  const h = await look(p)
+  let h = await look(p)
+  // twitch frames an ad around a shrunk stream (530x300 where 1360x765 was due, nightly 11-19):
+  // the room is the player's, the picture in it is twitch's for the length of the ad
+  const smaller = (l: Look) => !isYt && !!base.video && !!l.video && l.video[2] <= base.video[2]
+  for (let i = 0; i < 9 && gone(h) && smaller(h); i++) {
+    await sleep(5000)
+    h = await look(p)
+    if (!smaller(h)) info(`${name}: the player grew ${(i + 1) * 5}s after the hide (an ad frame held the picture small)`)
+  }
   check(
     '\\ hides the panel, the pill shows, the player takes the room back',
     [
       ...(gone(h) ? [] : ['the panel is still on screen']),
       ...(h.pill ? [] : ['no edge pill']),
-      ...(!isYt && base.video && h.video && h.video[2] <= base.video[2] ? ['the player did not grow'] : []),
+      ...(smaller(h) ? ['the player did not grow'] : []),
       ...(isYt && (!h.ytChat || h.ytChat[2] < 100) ? ["youtube's own chat did not come back"] : []),
     ],
     { base, hidden: h },

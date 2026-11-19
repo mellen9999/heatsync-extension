@@ -260,7 +260,27 @@ async function leg(env: any, name: string, url: string, errs: string[], cons: st
     )
 
     // ── 3a click the pill ──
-    await p.click('#hs-mc-new-msgs')
+    // a click that cannot land says why: is the pill there, is the page answering (github's runner,
+    // 11-18: 30s with the pill never found, right after it was read as showing)
+    await p.click('#hs-mc-new-msgs', { timeout: 15_000 }).catch(async (e: unknown) => {
+      const st = await Promise.race([
+        p.evaluate(() => {
+          const b = document.getElementById('hs-mc-new-msgs') as HTMLElement | null
+          const r = b?.getBoundingClientRect()
+          const top = r ? document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) : null
+          return {
+            pill: b ? { display: getComputedStyle(b).display, text: b.textContent, box: r && [Math.round(r.left), Math.round(r.top), Math.round(r.width), Math.round(r.height)] } : null,
+            onTop: top ? `${top.tagName.toLowerCase()}#${top.id}.${String(top.className).slice(0, 60)}` : null,
+            panel: !!document.getElementById('hs-mc-container'),
+            url: location.href,
+            hidden: document.hidden,
+          }
+        }),
+        sleep(8000).then(() => 'the page did not answer in 8s'),
+      ]).catch((x: unknown) => `evaluate threw: ${String(x).slice(0, 120)}`)
+      info(`${name}: the pill click failed; the page says ${JSON.stringify(st).slice(0, 600)}`)
+      throw e
+    })
     const c = await atTailSoon(p)
     const paused = c.keys.includes(a.newest as string)
     const arrived = c.keys.length - (c.keys.indexOf(a.newest as string) + 1)

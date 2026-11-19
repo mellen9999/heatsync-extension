@@ -24,11 +24,14 @@ import {
   shot,
   sleep,
   waitPanel,
+  minusHostOwn,
   watchErrors,
 } from './lib'
 
 const W = 400
 const H = 600
+// kick's pop-out hydration error: ours only if a browser with no extension does not throw it too
+const HYDRATION = /Minified React error #418/
 
 export async function s12Popout() {
   scenario('s12 chat pop-outs')
@@ -74,8 +77,9 @@ export async function s12Popout() {
       else if (look.inputH < 20 || look.input > H + 1) bad(`${name} pop-out: the input bar is not on screen`, look)
       else if (look.native) bad(`${name} pop-out: the native chat shows beside the panel`)
       else ok(`${name} pop-out: fills the window, chat flows, input on screen`)
-      if (errs.length) {
-        bad(`${name} pop-out: page errors`, errs.slice(0, 4))
+      const ours = await minusHostOwn(errs, HYDRATION, url, `${name} pop-out`, { width: W, height: H })
+      if (ours.length) {
+        bad(`${name} pop-out: page errors`, ours.slice(0, 4))
         await shot(p, `s12-${name}`)
       }
       if (ring.bad.length) bad(`${name} pop-out: overlay watchdogs fired`, ring.bad.slice(0, 6))

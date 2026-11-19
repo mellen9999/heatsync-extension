@@ -126,7 +126,12 @@ export type Env = Awaited<ReturnType<typeof launch>>
  * twitch's keyboard-layout read from a cross-origin frame. youtube's "Unsafe attempt to
  * load URL" flood is console, not pageerror, so it never reaches here.
  */
-const HOST_OWN = [/getLayoutMap\(\) must be called from a top-level browsing context/]
+const HOST_OWN = [
+  /getLayoutMap\(\) must be called from a top-level browsing context/,
+  // kick's own rpc client, a request cut by a reload or a dropped line: the rejection is thrown
+  // from kick's chunk and nobody there catches it (s21 on github's runner, 11-18)
+  /ConnectError: \[unknown\] Failed to fetch/,
+]
 
 /** Watch a page's own errors, minus the ones the site throws without us. */
 export function watchErrors(p: any, label: string, sink: string[]) {
@@ -143,6 +148,64 @@ export function watchErrors(p: any, label: string, sink: string[]) {
     if (!HOST_OWN.some((re) => re.test(msg)))
       sink.push(`${label} pageerror: ${msg.slice(0, 300)}${at ? ` (${at.slice(0, 160)})` : ''}`)
   })
+}
+
+/**
+ * Errors a page threw with the extension loaded that the page may throw by itself: the same url
+ * is loaded in a browser with no extension, and what it throws there too is taken out of `errs`
+ * and said as a note. What only shows with the extension stays, as ours.
+ *
+ * Kick's pop-out throws react's hydration error #418 on github's runner in every run and never
+ * on a desk (0 of 12 loads, cpu 6x slower, 11-18). We broke that hydration once (b8ff6c3a), so
+ * it is not waved through by name: the bare browser on the same machine is the judge.
+ */
+export async function minusHostOwn(
+  errs: string[],
+  re: RegExp,
+  url: string,
+  what: string,
+  view = { width: 1600, height: 900 },
+  loads = 3,
+): Promise<string[]> {
+  const mine = errs.filter((e) => re.test(e))
+  if (!mine.length) return errs
+  const chromium = await loadChromium()
+  const profile = mkdtempSync(join(tmpdir(), 'hs-e2e-bare-'))
+  let alone = 0
+  let ran = 0
+  try {
+    const bare = await chromium.launchPersistentContext(profile, {
+      executablePath: CHROME_BIN,
+      headless: false,
+      viewport: view,
+      userAgent: UA,
+      args: ['--headless=new', '--no-sandbox', '--mute-audio', '--autoplay-policy=no-user-gesture-required'],
+    })
+    try {
+      for (; ran < loads && !alone; ran++) {
+        const p = await bare.newPage()
+        p.on('pageerror', (e: unknown) => {
+          if (re.test(String(e))) alone++
+        })
+        await p.goto(url, { waitUntil: 'domcontentloaded' }).catch(() => {})
+        await sleep(20_000)
+        await p.close().catch(() => {})
+      }
+    } finally {
+      await bare.close().catch(() => {})
+    }
+  } catch (e) {
+    info(`${what}: the no-extension control could not run (${String(e).slice(0, 100)}): the error stays ours`)
+    return errs
+  } finally {
+    rmSync(profile, { recursive: true, force: true })
+  }
+  if (!alone) {
+    info(`${what}: ${ran} loads with no extension threw nothing like it: the error is ours`)
+    return errs
+  }
+  info(`${what}: the page throws it with no extension too (load ${ran} of the control): not ours, ${mine.length} dropped — ${mine[0].slice(0, 110)}`)
+  return errs.filter((e) => !re.test(e))
 }
 
 /** Write chrome.storage from an extension page — the way the popup/settings do it. */

@@ -242,8 +242,22 @@ async function site(env: Env, plat: Plat, url: string, errs: string[]): Promise<
     const total = { rows: 0, pics: 0, broken: [] as { src: string; host: string; row: string }[] }
     const seenBroken = new Set<string>()
     let badgeless = 0
+    // the cost of a row: how much of the main thread goes to working out styles while chat flows.
+    // a row added to the list should re-style that row. kick's sheet has rules that make chrome
+    // re-style the whole page instead (kick-css-fix.js rewrites them); a new shape of that rule got
+    // past the rewrite and took 27% of a desk's main thread, all of a slower one (11-18)
+    const cdp = await env.ctx.newCDPSession(p)
+    await cdp.send('Performance.enable')
+    const styleS = async () => ((await cdp.send('Performance.getMetrics')) as any).metrics.find((x: any) => x.name === 'RecalcStyleDuration')?.value || 0
     for (const pass of [1, 2]) {
-      if (pass === 2) await sleep(60_000)
+      if (pass === 2) {
+        const [s0, n0] = [await styleS(), (await chatRows(p)).length]
+        const w0 = Date.now()
+        await sleep(60_000)
+        const share = (await styleS() - s0) / ((Date.now() - w0) / 1000)
+        info(`${name}: styles took ${(share * 100).toFixed(1)}% of the main thread over a minute of chat (${n0} rows on screen)`)
+        check('working out styles takes under 25% of the main thread while chat flows', share < 0.25 ? [] : [`${(share * 100).toFixed(0)}%`])
+      }
       const s = await scanRows(p, MARK[plat])
       keep(s.hits)
       total.rows = Math.max(total.rows, s.rows)
@@ -374,9 +388,13 @@ async function site(env: Env, plat: Plat, url: string, errs: string[]): Promise<
       let after = await chatRows(p)
       const stuck = after.filter((r) => r.hl && drawnUnder.has(r.key))
       const seenAgain = after.filter((r) => hideRe.test(r.body)).length
+      // a chat fast enough to have pushed every row from before the rules off the list has pushed the
+      // rows that said the word off with them: nothing is left to come back (kick, 13 rows a second)
+      const turnedOver = !after.some((r) => before.has(r.key))
+      if (!seenAgain && turnedOver) info(`${name}: every row from before the rules has left the list: "${hideW.word}" coming back is not observable`)
       check(
         'rules removed: rows drawn under the highlight lose it, rows saying the word are on screen',
-        [...(stuck.length ? [`${stuck.length}/${drawnUnder.size} rows keep the rule highlight: ${JSON.stringify(stuck[0].body.slice(0, 80))}`] : []), ...(seenAgain ? [] : [`no row says "${hideW.word}"`])],
+        [...(stuck.length ? [`${stuck.length}/${drawnUnder.size} rows keep the rule highlight: ${JSON.stringify(stuck[0].body.slice(0, 80))}`] : []), ...(seenAgain || turnedOver ? [] : [`no row says "${hideW.word}"`])],
         { stuck: stuck.slice(0, 2), seenAgain },
       )
       // new rows after removal must not take the highlight

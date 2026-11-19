@@ -13,7 +13,7 @@
  * position over the tab's own flag), the nav re-arm painted the black bar in hidden tabs,
  * and youtube's chat stayed hidden under a hidden panel until one toggle.
  */
-import { bad, info, launch, liveChannels, liveYtVideo, ok, scenario, setUiSetting, sleep, watchErrors } from './lib'
+import { bad, info, launch, liveChannels, liveYtVideo, minusHostOwn, ok, scenario, setUiSetting, sleep, watchErrors } from './lib'
 
 type Look = {
   hidden: boolean
@@ -218,7 +218,9 @@ export async function s21Hide() {
         errs,
       )
     else info('youtube leg not run: no live video')
-    if (errs.length) bad('page errors', errs.slice(0, 5))
+    // kick's pop-out hydration error: ours only if a browser with no extension does not throw it too
+    const ours = await minusHostOwn(errs, /Minified React error #418/, `https://kick.com/popout/${kk}/chat`, 'kick pop-out', { width: 400, height: 600 })
+    if (ours.length) bad('page errors', ours.slice(0, 5))
   } finally {
     await setUiSetting(env, 'startChatHidden', false).catch(() => {})
     await env.close()

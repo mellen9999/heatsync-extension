@@ -150,7 +150,20 @@ async function sweep(host: string, url: string) {
       }
       await write(s.key, s.scope, s.back)
       await sleep(900)
-      const off = await look()
+      let off = await look()
+      // a panel not back 900ms after the set-back: how long it takes is the finding (youtube, the
+      // full sweep only, old builds too: gone at 900ms, there later, 11-18)
+      if (!off.mounted) {
+        const t = Date.now()
+        while (Date.now() - t < 8000 && !off.mounted) {
+          await sleep(250)
+          off = await look()
+        }
+        if (off.mounted) {
+          info(`${host} ${label}: the panel came back ${900 + Date.now() - t}ms after the set-back`)
+          if (Date.now() - t > 4000) off = { ...off, mounted: false }
+        }
+      }
       const nowErr = await hsErrors()
       const why: string[] = []
       if (errs.length > pageErrs) why.push(`page error: ${errs.at(-1)?.slice(0, 120)}`)

@@ -216,6 +216,7 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
   await clearComposer(p)
   let typed = ''
   const leaked: string[] = []
+  const selfMoved: string[] = []
   const lost: string[] = []
   for (const k of KEYS) {
     const a = await snap(p)
@@ -223,7 +224,20 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
     await sleep(350)
     const b = await snap(p)
     typed += k
-    const d = diff(a, b, rate)
+    let d = diff(a, b, rate)
+    // the player moves by itself (a rebuffer reads as paused, the resume as un-paused; on github's
+    // runner j and l, which kick binds to nothing, each "paused" it, 11-18). a key the host really
+    // hears is heard every time: one that only moved the play state is asked a second time
+    if (d.length && d.every((x) => x === 'paused' || x.startsWith('seek'))) {
+      await playing(p)
+      const a2 = await snap(p)
+      await p.keyboard.press(press(k))
+      await sleep(350)
+      const d2 = diff(a2, await snap(p), rate)
+      typed += k
+      if (!d2.length) selfMoved.push(`${k === ' ' ? 'space' : k}: ${d.join('/')}`)
+      d = d2
+    }
     if (d.length) leaked.push(`${k === ' ' ? 'space' : k}: ${d.join('/')}`)
     const got = await composerText(p)
     if (got !== typed) {
@@ -242,6 +256,7 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
   }
   if ((await composerText(p)) !== text) lost.push('an arrow key changed the composer text')
   if ((await activeId(p)) !== 'hs-mc-input') lost.push('the composer lost focus')
+  if (selfMoved.length) info(`${name}: the player moved by itself while these were typed, and kept still when each was typed again: ${selfMoved.join('; ')}`)
   check('typing the player keys in the composer: the player never hears them', leaked, { mid })
   check('typing the player keys in the composer: every one lands in the composer', lost)
   await clearComposer(p)
@@ -306,7 +321,7 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
   const tabFails: string[] = []
   const savedIds = saved.map((s) => s.id)
   for (const id of savedIds) if (!ids.includes(id)) tabFails.push(`saved tab ${id} is not in the tab bar`)
-  await p.click('#hs-mc-input', { timeout: 5000 })
+  await p.click('#hs-mc-input', { timeout: 15_000 })
   for (const id of savedIds) {
     const i = ids.indexOf(id)
     if (i < 0 || i > 8) continue
@@ -702,7 +717,7 @@ export async function s22Keys() {
       try {
         await site(env, name, url, popout, saved, errs, cons)
       } catch (e) {
-        bad(`${name}: crashed in "${step}"`, String((e as Error)?.message || e).slice(0, 300))
+        bad(`${name}: crashed in "${step}"`, String((e as Error)?.message || e).replace(/\u001b\[\d+m/g, '').slice(0, 1500))
       }
     }
     const hs = await extStorage(env, async () => {

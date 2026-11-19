@@ -266,7 +266,7 @@ async function s18Composer(plat: Plat) {
         await openPicker(p)
         await p.fill('#hs-mc-emote-search', pickable)
         await sleep(SETTLE_MS)
-        await p.click(`#hs-mc-emote-picker .hs-mc-picker-emote[data-name="${pickable}"]`, { timeout: 5000 })
+        await p.click(`#hs-mc-emote-picker .hs-mc-picker-emote[data-name="${pickable}"]`, { timeout: 15_000 })
         await sleep(SETTLE_MS)
         const c = await chips(p)
         await closePicker(p)

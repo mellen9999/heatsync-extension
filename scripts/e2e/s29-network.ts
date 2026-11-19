@@ -359,7 +359,12 @@ async function outageLeg(
     const ring = await ringSince(p, t0)
     check('no page error, a quiet watchdog ring', [
       ...errs.slice(errs0, errs0 + 2),
-      ...ring.bad.slice(0, 3).map((e: any) => `${e.e} ${JSON.stringify(e).slice(0, 120)}`),
+      // the outage is the scenario's own: the watchdog saying "nothing came in for as long as the network
+      // was off" is the watchdog being right (github's runner, 11-18: gapS 25 at the second it returned)
+      ...ring.bad
+        .filter((e: any) => !(e.e === 'ingest_gap' && e.t >= offAt && e.t <= backAt + 15_000))
+        .slice(0, 3)
+        .map((e: any) => `${e.e} ${JSON.stringify(e).slice(0, 120)}`),
     ])
     return 'done'
   } finally {

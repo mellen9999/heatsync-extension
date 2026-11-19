@@ -13,16 +13,23 @@ name: nightly-heap
 #                   side alone (no push here) turns this red within a day.
 #   supply-chain    bun audit and gitleaks over the whole history.
 #   e2e-live        the extension on live twitch, kick and youtube (scripts/e2e),
-#                   four runners side by side. sites: three sites in three tabs,
+#                   one runner per shard, side by side. sites: three sites in three tabs,
 #                   single-page navigation chains, every emote provider down then
 #                   back, host themes / sizes / zoom, firefox, merged channels,
 #                   pop-outs. settings: every setting flipped on each site and in
 #                   firefox, the settings page clicked through. panel: saved
 #                   channels, mute and block, the composer. fresh: a new install's
 #                   first minutes (welcome, tour, feed tabs, popup), chat hidden and
-#                   shown per tab, start hidden. Read-only, no login,
-#                   nothing is ever sent. The worker-stop, cache-cap and hour-long
-#                   soak scenarios stay manual runs.
+#                   shown per tab, start hidden. reader: scroll, pause, the new pill,
+#                   older rows, reload; hotkeys and unread counts. oracle: what a row
+#                   may never show, on busy channels; offline and back, a slow start.
+#                   words: five languages; every non-switch setting, export and
+#                   import, /set. upgrade: 1.7.126 and 1.7.136 built from their tags,
+#                   run, then swapped for this build in place.
+#                   Read-only, no login, nothing is ever sent. The worker-stop,
+#                   cache-cap and hour-long soak scenarios stay manual runs, and so do
+#                   s23 (row menu, cards, logs), s24 (overlay off) and s30 (the panel
+#                   in firefox) until each has three clean runs in a row.
 # Twice a day so the sentinel's 26h staleness window survives GitHub dropping
 # one cron fire (2026-10-19 did).
 on:
@@ -192,6 +199,15 @@ jobs:
             only: s16,s17,s18
           - shard: fresh
             only: s19,s21
+          - shard: reader
+            only: s20,s22
+          - shard: oracle
+            only: s25,s29
+          - shard: words
+            only: s27,s28
+          - shard: upgrade
+            only: s26
+            old: v1.7.126 v1.7.136
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
@@ -213,6 +229,20 @@ jobs:
         run: |
           bun run build.js chrome --no-test
           bun run build.js firefox --no-test
+
+      # the upgrade shard starts from what users have installed: each old release built from
+      # its own tag, with its own lockfile, outside this checkout
+      - name: build the old releases
+        if: ${{ matrix.old }}
+        run: |
+          dirs=""
+          for v in ${{ matrix.old }}; do
+            git fetch --depth 1 origin "refs/tags/$v:refs/tags/$v"
+            git worktree add --detach "$RUNNER_TEMP/old-$v" "$v"
+            (cd "$RUNNER_TEMP/old-$v" && bun install --frozen-lockfile && bun run build.js chrome --no-test)
+            dirs="${dirs:+$dirs,}$RUNNER_TEMP/old-$v/dist/chrome"
+          done
+          echo "E2E_OLD_EXT=$dirs" >> "$GITHUB_ENV"
 
       - name: real-site scenarios
         timeout-minutes: 35

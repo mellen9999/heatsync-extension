@@ -1075,6 +1075,7 @@ function createOverlay() {
     if (!msgsEl || !newBtn) return
     wireModToolbarHover(msgsEl)
     watchPaneTaken(msgsEl)
+    watchFillTouch(msgsEl)
 
     // Retry broken emote imgs — 7TV/BTTV/FFZ CDNs occasionally 503 and
     // surface as broken (naturalWidth=0). Capture phase since 'error' doesn't

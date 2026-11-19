@@ -948,6 +948,7 @@ const MULTICHAT_MODULES = [
   'badges.js',
   'name-style.js',
   'fill-family.js',
+  'fill-touch.js',
   'stream-line-ids.js',
   'name-marks.js',
   'name-marks-data.js',

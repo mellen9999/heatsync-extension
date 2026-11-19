@@ -8,7 +8,10 @@
      hs-row-label         the label text of a filled row (colour = the fill's label colour)
      hs-name-cut          the sender's name on a plain black cutout, so it reads as in chat
    Tokens: brand-tokens.css (generated from shared/brand/tokens.json). A surface that must
-   differ sets ONE token (--brand-row-pad-x, …) with a comment saying why. */
+   differ sets ONE token (--brand-row-pad-x, …) with a comment saying why.
+   The 1px gap between two touching filled rows is each surface's own rule (site: a sibling
+   selector; extension: a stamped class, a sibling selector on chat rows makes a host page's
+   css re-style the whole list). */
 .hs-filled {
     border-left: 0;
     padding: var(--brand-row-pad-y) var(--brand-row-pad-x);
@@ -18,7 +21,6 @@
 .hs-row-mention { color: #ffffff; }
 /* a label that is its own line above the message: the row's size, the label's line */
 .hs-filled .hs-row-label { font-size: inherit; line-height: var(--brand-label-line); }
-.hs-filled + .hs-filled { border-top: var(--brand-row-gap) solid #000000; }
 .hs-fill-olive  { background: var(--brand-fill-olive);  --hs-label: var(--brand-label-olive); }
 .hs-fill-purple { background: var(--brand-fill-purple); --hs-label: var(--brand-label-purple); }
 .hs-fill-navy   { background: var(--brand-fill-navy);   --hs-label: var(--brand-label-navy); }

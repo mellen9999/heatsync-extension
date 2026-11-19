@@ -1,0 +1,7 @@
+/* The 1px gap between two touching filled rows. The site says it with `.hs-filled + .hs-filled`
+   (its live-chat.css); in the list the row itself says it (fill-touch.js): a + or ~ that reaches a
+   chat row lets the host page's css re-style the whole list for one row removed. */
+.hs-filled.hs-fill-touch { border-top: var(--brand-row-gap) solid #000000; }
+/* the reply-chain popups: a handful of rows that are not rows of the list (the subject names them,
+   so a list row never gets as far as the +) */
+.hs-filled + .hs-filled.hs-mc-reply-stack-row { border-top: var(--brand-row-gap) solid #000000; }

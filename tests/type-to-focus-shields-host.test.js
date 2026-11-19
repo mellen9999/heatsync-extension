@@ -102,3 +102,69 @@ test('shortcuts, named keys and a field that is already taking text are left alo
   expect(p.composer.value).toBe('')
   expect(p.heard).toEqual(['document:k', 'document:Escape', 'document:k'])
 })
+
+// A control of ours with the focus handles its own keys, below the root on the event's path
+// (tour.js tourOnKey, pin-bar.js pinOnKey, the reply pill). Taking the key on the root first
+// typed a space into the composer and the focused tour switch never flipped (render check, 11-18).
+function panelWith(p) {
+  const panel = p.document.createElement('div')
+  panel.id = 'hs-mc-container'
+  const control = p.document.createElement('button')
+  panel.appendChild(control)
+  p.document.body.appendChild(panel)
+  return { panel, control }
+}
+
+test('a focused control of ours that claims the key gets it: nothing is typed, the host hears nothing', () => {
+  const p = page()
+  const { control } = panelWith(p)
+  let flipped = 0
+  control.addEventListener('keydown', (e) => {
+    if (e.key !== ' ') return
+    e.preventDefault()
+    flipped++
+  })
+  p.document.body.addEventListener('keydown', p.host('body'))
+  p.document.addEventListener('keydown', p.host('document'))
+  p.window.addEventListener('keydown', p.host('window'))
+  p.start()
+  control.focus()
+  p.press(' ', control)
+  expect(flipped).toBe(1)
+  expect(p.composer.value).toBe('')
+  expect(p.document.activeElement).toBe(control)
+  expect(p.heard).toEqual([])
+})
+
+test('a focused control of ours that does not want the key: it is typed, and the host hears nothing', () => {
+  const p = page()
+  const { control } = panelWith(p)
+  control.addEventListener('keydown', (e) => e.key === ' ' && e.preventDefault())
+  p.document.body.addEventListener('keydown', p.host('body'))
+  p.document.addEventListener('keydown', p.host('document'))
+  p.start()
+  control.focus()
+  const e = p.press('k', control)
+  expect(p.composer.value).toBe('k')
+  expect(p.document.activeElement).toBe(p.composer)
+  expect(e.defaultPrevented).toBe(true)
+  expect(p.heard).toEqual([])
+})
+
+test('a control that ends the key itself leaves nothing behind for the next key', () => {
+  const p = page()
+  const { control } = panelWith(p)
+  control.addEventListener('keydown', (e) => {
+    if (e.key !== 'y') return
+    e.preventDefault()
+    e.stopPropagation()
+  })
+  p.start()
+  control.focus()
+  p.press('y', control)
+  expect(p.composer.value).toBe('')
+  // the next key, from the page body, is typed once
+  control.blur()
+  p.press('a')
+  expect(p.composer.value).toBe('a')
+})

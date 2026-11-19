@@ -83,6 +83,28 @@ function insertChar(el, ch) {
 }
 
 export function initTypeToFocus(signal) {
+  // type it, and end it here: the host does not ALSO act on the key we just consumed
+  const type = (input, e) => {
+    input.focus()
+    insertChar(input, e.key)
+    e.preventDefault()
+  }
+  // A control of ours has the focus (a tour switch, the pin's ask, a reply pill) and handles
+  // keys itself, below us on the event's path. It keeps the first refusal it had when this
+  // listened on document: the key goes down to it, and is picked up again on the panel on the
+  // way back. Claimed there, nothing is typed; not claimed, it is typed as any other. Either
+  // way it stops at the panel, still ahead of the host's listeners on body, document and
+  // window. Without this, space on a focused tour switch typed a space and flipped nothing
+  // (render check, 11-18).
+  let handedDown = null
+  const wired = new WeakSet()
+  const onPanelKey = (e) => {
+    if (e !== handedDown) return
+    handedDown = null
+    const input = e.defaultPrevented ? null : findComposer()
+    if (input) type(input, e)
+    e.stopPropagation()
+  }
   document.documentElement.addEventListener(
     'keydown',
     (e) => {
@@ -100,11 +122,17 @@ export function initTypeToFocus(signal) {
       const input = findComposer()
       if (!input) return
 
-      input.focus()
-      insertChar(input, e.key)
-      // Claim it and end it here, so the host does not ALSO act on the key we
-      // just consumed (its listeners are all still ahead on the event's path).
-      e.preventDefault()
+      const panel = document.getElementById('hs-mc-container')
+      if (panel && a && a !== panel && panel.contains(a)) {
+        if (!wired.has(panel)) {
+          wired.add(panel)
+          panel.addEventListener('keydown', onPanelKey, { signal })
+        }
+        handedDown = e
+        return
+      }
+      // Claim it and end it here (the host's listeners are all still ahead on the event's path).
+      type(input, e)
       e.stopImmediatePropagation()
     },
     { signal, capture: true },

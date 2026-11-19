@@ -30,6 +30,34 @@ function hsPaneMountRow(items, onClose) {
 
 let activePanePanel = null // { el, finish }
 
+// A card or a pane panel over the list: the overlay says so with a class, and the filter input and
+// the banner strips step aside on it. This was `#hs-mc-overlay:has(> #hs-mc-messages > …)`. A
+// :has() on an ancestor of the list is re-checked for every row added, and what that costs is
+// set by the host page's own css: on kick one rule of theirs turned each new row into a re-style
+// of every row on screen (40 of 60 cpu-seconds on a slow cpu, 5 frames a second, 11-18). No
+// ancestor of the list is the anchor of a :has() (tests/list-ancestors-carry-no-has.test.js).
+function watchPaneTaken(msgsEl) {
+  const overlay = msgsEl.parentElement
+  if (!overlay) return
+  const takes = (n) =>
+    n.nodeType === 1 && (n.classList.contains('hs-card-panel') || n.classList.contains('hs-pane-panel'))
+  const sync = () => {
+    let on = false
+    for (let c = msgsEl.firstElementChild; c && !on; c = c.nextElementSibling) on = takes(c)
+    overlay.classList.toggle('hs-pane-taken', on)
+  }
+  const obs = cleanup.trackObserver(
+    new MutationObserver((ms) => {
+      for (const m of ms) {
+        for (const n of m.addedNodes) if (takes(n)) return sync()
+        for (const n of m.removedNodes) if (takes(n)) return sync()
+      }
+    }),
+  )
+  obs.observe(msgsEl, { childList: true })
+  sync()
+}
+
 function hsPanePanelOpen() {
   return !!activePanePanel
 }

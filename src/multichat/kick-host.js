@@ -99,6 +99,7 @@ function setupKickResizeHandle() {
       overlay.id = 'hs-resize-overlay'
       overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;cursor:col-resize'
       document.body.appendChild(overlay)
+      handle.classList.add('hs-resizing') // lit for the whole drag (the pointer leaves it)
       e.preventDefault()
     },
     { signal: mcSignal },
@@ -135,6 +136,7 @@ function setupKickResizeHandle() {
       overlay.remove()
       overlay = null
     }
+    handle.classList.remove('hs-resizing')
     // Force Kick's video.js player + any preroll/midroll ad layer to
     // re-measure so the ad video stops overlapping chat.
     try {

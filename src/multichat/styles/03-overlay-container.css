@@ -38,7 +38,7 @@
     #hs-mc-resize-handle:hover, #hs-mc-resize-handle:active,
     #hs-yt-resize-handle:hover, #hs-yt-resize-handle:active,
     #hs-kick-resize-handle:hover, #hs-kick-resize-handle:active,
-    body:has(#hs-resize-overlay) #hs-kick-resize-handle {
+    #hs-kick-resize-handle.hs-resizing {
       opacity: 1;
     }
     #hs-mc-resize-handle {

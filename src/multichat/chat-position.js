@@ -400,7 +400,20 @@ function detectTheatreMode() {
   return next
 }
 
+// Something under <body> is fullscreen: the body says so with a class, and the layout rules that
+// give the player the whole screen key on it. They read `body:has(:fullscreen)` before. A :has()
+// on <body> is re-checked for every node added anywhere on the page, a chat row included, and
+// the host's own css decides what each re-check costs (see watchPaneTaken in pane-panel.js).
+// `:has()` only sees descendants, so the page itself going fullscreen does not count here either.
+function syncFullscreenClass() {
+  const el = document.fullscreenElement
+  document.body.classList.toggle('hs-fs', !!el && el !== document.documentElement && el !== document.body)
+}
+
 function setupTheatreObserver() {
+  // the same function every call: the browser keeps one listener
+  document.addEventListener('fullscreenchange', syncFullscreenClass, { signal: mcSignal })
+  syncFullscreenClass()
   if (_theatreObserver) {
     try {
       _theatreObserver.disconnect()

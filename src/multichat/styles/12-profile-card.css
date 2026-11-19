@@ -52,9 +52,9 @@
     }
     /* While the card is open it covers everything below the 2nd row: the
      * pane's filter input and banner strips step aside (back on close). */
-    #hs-mc-overlay:has(> #hs-mc-messages > :is(.hs-card-panel, .hs-pane-panel)) > #hs-mc-search-bar,
-    #hs-mc-overlay:has(> #hs-mc-messages > :is(.hs-card-panel, .hs-pane-panel)) > #hs-mc-statusbar,
-    #hs-mc-overlay:has(> #hs-mc-messages > :is(.hs-card-panel, .hs-pane-panel)) > #hs-mc-multistream-banner { display: none !important; }
+    #hs-mc-overlay.hs-pane-taken > #hs-mc-search-bar,
+    #hs-mc-overlay.hs-pane-taken > #hs-mc-statusbar,
+    #hs-mc-overlay.hs-pane-taken > #hs-mc-multistream-banner { display: none !important; }
     #hs-mc-messages > .hs-card-panel .hs-card-actions { margin-top: auto; }
 
     /* The panel's address row (#hs-mc-subrow while a card is open): the card's

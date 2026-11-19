@@ -112,13 +112,13 @@
        document keeps rendering normal body content — so our position:fixed panel
        sat on top of the fullscreen video. Key off YT's own attribute rather than
        :fullscreen: when YT fullscreens the document element, that element is an
-       ANCESTOR of body, so body:has(:fullscreen) would never match it. Hiding the
+       ANCESTOR of body, and hs-fs is only set for a descendant of body. Hiding the
        container covers the tab bar, overlay, inputbar and emote picker (all its
        children); the resize handle is a sibling, so it's listed too. */
     body:not(.hs-player-safe).hs-platform-yt:has(ytd-watch-flexy[fullscreen]) #hs-mc-container,
     body:not(.hs-player-safe).hs-platform-yt:has(ytd-watch-flexy[fullscreen]) #hs-yt-resize-handle,
-    body.hs-platform-yt:has(:fullscreen) #hs-mc-container,
-    body.hs-platform-yt:has(:fullscreen) #hs-yt-resize-handle {
+    body.hs-platform-yt.hs-fs #hs-mc-container,
+    body.hs-platform-yt.hs-fs #hs-yt-resize-handle {
       display: none !important;
     }
 
@@ -958,25 +958,25 @@
        fills the screen, but the theatre/dock rules above keep .persistent-player
        inset by the chat-panel width (--hs-panel-w) — so the video stops short
        of the right edge and Twitch's dark fallback fills the gap. In fullscreen
-       chat is hidden, so the player must fill the whole viewport. :has(:fullscreen)
-       matches whenever any descendant is the fullscreen element. Every selector
+       chat is hidden, so the player must fill the whole viewport. hs-fs is on the
+       body whenever any descendant is the fullscreen element (chat-position.js). Every selector
        carries a dock class so specificity equals the theatre rules above (0,4,1)
        and source-order seals the win — a dock-less selector would fall to 0,3,1
        and lose to the theatre rule it must override. video-player--theatre /
        persistent-player--theatre are Twitch's own fullscreen-layout classes —
        clear them too. */
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:has(:fullscreen) .persistent-player,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:has(:fullscreen) .persistent-player,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:has(:fullscreen) .persistent-player,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:has(:fullscreen) .persistent-player,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:has(:fullscreen) .persistent-player--theatre,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:has(:fullscreen) .persistent-player--theatre,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:has(:fullscreen) .persistent-player--theatre,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:has(:fullscreen) .persistent-player--theatre,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right:has(:fullscreen) .video-player--theatre,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left:has(:fullscreen) .video-player--theatre,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top:has(:fullscreen) .video-player--theatre,
-    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom:has(:fullscreen) .video-player--theatre {
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right.hs-fs .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left.hs-fs .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top.hs-fs .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom.hs-fs .persistent-player,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right.hs-fs .persistent-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left.hs-fs .persistent-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top.hs-fs .persistent-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom.hs-fs .persistent-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-right.hs-fs .video-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-left.hs-fs .video-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-top.hs-fs .video-player--theatre,
+    body:not(.hs-player-safe).hs-platform-twitch.hs-chat-bottom.hs-fs .video-player--theatre {
       inset: 0 !important;
       top: 0 !important;
       right: 0 !important;
@@ -1112,17 +1112,17 @@
        fullscreen, and hide the body-mounted panel for the ancestor-fullscreen
        case (element-level fullscreen never paints it anyway). Dock classes
        keep specificity level with the theatre rules above; source order wins. */
-    body.hs-platform-kick.hs-chat-right:has(:fullscreen) main,
-    body.hs-platform-kick.hs-chat-left:has(:fullscreen) main,
-    body.hs-platform-kick.hs-chat-top:has(:fullscreen) main,
-    body.hs-platform-kick.hs-chat-bottom:has(:fullscreen) main {
+    body.hs-platform-kick.hs-chat-right.hs-fs main,
+    body.hs-platform-kick.hs-chat-left.hs-fs main,
+    body.hs-platform-kick.hs-chat-top.hs-fs main,
+    body.hs-platform-kick.hs-chat-bottom.hs-fs main {
       margin: 0 !important;
       padding: 0 !important;
     }
-    body.hs-platform-kick.hs-chat-right:has(:fullscreen) .z-controls.w-full,
-    body.hs-platform-kick.hs-chat-left:has(:fullscreen) .z-controls.w-full,
-    body.hs-platform-kick.hs-chat-top:has(:fullscreen) .z-controls.w-full,
-    body.hs-platform-kick.hs-chat-bottom:has(:fullscreen) .z-controls.w-full {
+    body.hs-platform-kick.hs-chat-right.hs-fs .z-controls.w-full,
+    body.hs-platform-kick.hs-chat-left.hs-fs .z-controls.w-full,
+    body.hs-platform-kick.hs-chat-top.hs-fs .z-controls.w-full,
+    body.hs-platform-kick.hs-chat-bottom.hs-fs .z-controls.w-full {
       left: 0 !important;
       right: 0 !important;
       bottom: 0 !important;
@@ -1133,7 +1133,7 @@
     body.hs-platform-kick .animate-pulse {
       animation: none !important;
     }
-    body.hs-platform-kick:has(:fullscreen) #hs-mc-container {
+    body.hs-platform-kick.hs-fs #hs-mc-container {
       display: none !important;
     }
 

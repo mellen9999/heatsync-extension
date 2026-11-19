@@ -71,6 +71,37 @@ describe('kick css rewrite', () => {
     for (const css of plain) expect(rewrite(css)).toBe(css)
   })
 
+  test('"every child that is not a B, while there is a B child" is said by siblings', () => {
+    // kick's sheet on 11-18: with this rule in play every row added to chat re-styled the page
+    const css =
+      '[data-slot=text-link]:has(>[data-slot=text-link-adornment])>:not([data-slot=text-link-adornment]){text-decoration:underline}'
+    const want =
+      '[data-slot=text-link]>[data-slot=text-link-adornment]~:where([data-slot=text-link]>*):not([data-slot=text-link-adornment]),' +
+      '[data-slot=text-link]>:where([data-slot=text-link]>*):not([data-slot=text-link-adornment]):has(~[data-slot=text-link-adornment]){text-decoration:underline}'
+    expect(rewrite(css)).toBe(want)
+    expect(rewrite(want)).toBe(want)
+    // the subject names its parent before it asks about a sibling: an element anywhere else on the
+    // page fails there, and its own parent is never marked as depending on neighbours
+    for (const branch of want.slice(0, want.indexOf('{')).split(/,(?=\[data-slot=text-link\]>)/))
+      expect(branch).toMatch(/[~>]:where\(\[data-slot=text-link\]>\*\):not\(/)
+    // spaced, quoted, in a list, inside an at-rule
+    expect(rewrite('@media (hover:hover){.q,.a:has(> [d="x y"]) > :not([d="x y"]),.z{c:d}}')).toBe(
+      '@media (hover:hover){.q,.a>[d="x y"]~:where(.a>*):not([d="x y"]),.a>:where(.a>*):not([d="x y"]):has(~[d="x y"]),.z{c:d}}',
+    )
+  })
+
+  test('shapes near it that do not mean the same are left alone', () => {
+    const plain = [
+      '.a:has(>.b)>:not(.c){x:y}', // another thing excluded than the one required
+      '.a:has(>.b .c)>:not(.b .c){x:y}', // the child is not one compound
+      '.a:has(.b)>:not(.b){x:y}', // any descendant, not a child
+      '.a:has(>.b)>:not(.b) .d{x:y}', // the subject is further on
+      '.p .a:has(>.b)>:not(.b){x:y}', // the parent does not open the selector
+      '.a:has(>.b){x:y}', // the parent itself is the subject: already cheap
+    ]
+    for (const css of plain) expect(rewrite(css)).toBe(css)
+  })
+
   test('is idempotent and returns the same string when nothing matches', () => {
     const css = '.x:is(:where(.group\\/g):has(:hover) *){a:b}.y{c:d}'
     const once = rewrite(css)

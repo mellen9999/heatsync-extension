@@ -87,7 +87,59 @@
       out += `${css.slice(from, start)}${inner.slice(0, -2)} ${css.slice(start, i)}`
       from = close + 1
     }
-    return { text: from === 0 ? css : out + css.slice(from), heavy }
+    return { text: rewriteChildNot(from === 0 ? css : out + css.slice(from)), heavy }
+  }
+
+  /** one compound: nothing that joins two of them outside brackets, parens and quotes */
+  const oneCompound = (sel) => {
+    let depth = 0
+    for (let j = 0; j < sel.length; j++) {
+      const c = sel[j]
+      if (c === '\\') j++
+      else if (c === '"' || c === "'") {
+        j = sel.indexOf(c, j + 1)
+        if (j === -1) return false
+      } else if (c === '(' || c === '[') depth++
+      else if (c === ')' || c === ']') depth--
+      else if (depth === 0 && (c === ',' || c === '>' || c === '+' || c === '~' || /\s/.test(c))) return false
+    }
+    return sel.length > 0 && depth === 0
+  }
+
+  /**
+   * `A:has(>B)>:not(B)`: every child of A that is not a B, while A has a B child. The subject has
+   * nothing to look it up by, and for a :has() before a combinator chrome then re-styles the whole
+   * subtree of anything whose :has() is re-checked — on kick that is <body> (their scroll lock is
+   * `body:has(..)`), on every element added. Said by siblings instead it matches the same elements
+   * at the same specificity: after a B, or before one. The subject says first that it is a child
+   * of an A (`:where(A>*)`, no weight): without that every element on the page is asked about
+   * its siblings whenever something above it shares A's attribute name, and a list so asked is
+   * re-styled whole for each row that leaves it.
+   */
+  const TAIL = /\s*>\s*:not\(/y
+  function rewriteChildNot(css) {
+    const HAS = ':has('
+    let out = ''
+    let from = 0
+    for (let i = css.indexOf(HAS); i !== -1; i = css.indexOf(HAS, i + HAS.length)) {
+      const close = closeOf(css, i + HAS.length - 1)
+      if (close === -1) continue
+      const arg = css.slice(i + HAS.length, close).trim()
+      TAIL.lastIndex = close + 1
+      const tail = TAIL.exec(css)
+      if (!arg.startsWith('>') || !tail) continue
+      const b = arg.slice(1).trim()
+      const notOpen = close + tail[0].length
+      const notClose = closeOf(css, notOpen)
+      const start = compoundStart(css, i)
+      if (notClose === -1 || start < from || start === i || css.slice(notOpen + 1, notClose).trim() !== b) continue
+      if (!oneCompound(b) || !/^\s*[,{]/.test(css.slice(notClose + 1, notClose + 4))) continue
+      const a = css.slice(start, i)
+      const child = `:where(${a}>*)`
+      out += `${css.slice(from, start)}${a}>${b}~${child}:not(${b}),${a}>${child}:not(${b}):has(~${b})`
+      from = notClose + 1
+    }
+    return from === 0 ? css : out + css.slice(from)
   }
 
   const rewrite = (css) => rewriteChunk(css).text

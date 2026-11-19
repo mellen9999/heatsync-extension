@@ -126,6 +126,12 @@ export async function s17MuteBlock() {
           const name = pg.locator(`#hs-mc-messages .hs-mc-msg .hs-mc-user:not(.hs-mc-reply-user)[data-username="${who}"]`).last()
           await name.scrollIntoViewIfNeeded({ timeout: 5000 })
           await name.click({ button: 'right', timeout: 5000 })
+          // the row can move between finding the name and pressing it, and the press lands on the
+          // chatter above or below: their menu, their mute (nightly 11-18). The menu says whose it
+          // is ("filter to <name>"); another's is shut and the press is tried again
+          await sleep(150)
+          const theirs = await pg.evaluate((w: string) => [...document.querySelectorAll('[role="menuitem"] .hs-mc-em-label')].some((e) => (e.textContent || '').toLowerCase() === `filter to ${w}`), who)
+          if (!theirs) throw new Error("the menu that opened was another chatter's")
           await pg.locator('[role="menuitem"] .hs-mc-em-label', { hasText: new RegExp(`^${esc}$`) }).first().click({ timeout: 5000 })
           return
         } catch (e) {
@@ -191,6 +197,19 @@ export async function s17MuteBlock() {
     })
 
     const before = { 1: (await rows(p, who)).theirs, 2: (await rows(p2, who)).theirs } as Record<number, number>
+    // The row above their newest one. A busy chat pushes their rows out of the list while they are
+    // blocked, and rows that are gone cannot come back (nightly 11-18): while this older neighbour
+    // is still drawn, theirs would be too.
+    const above = (pg: any): Promise<string | null> =>
+      pg.evaluate((w: string) => {
+        const mine = [...document.querySelectorAll(`#hs-mc-messages .hs-mc-msg .hs-mc-user:not(.hs-mc-reply-user)[data-username="${w}"]`)].at(-1)?.closest('.hs-mc-msg')
+        let r = (mine?.previousElementSibling || null) as HTMLElement | null
+        while (r && !r.dataset?.msgKey) r = r.previousElementSibling as HTMLElement | null
+        return r?.dataset.msgKey || null
+      }, who)
+    const near = { 1: await above(p), 2: await above(p2) } as Record<number, string | null>
+    const drawn = (pg: any, key: string | null): Promise<boolean> =>
+      key ? pg.evaluate((k: string) => [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].some((r) => (r as HTMLElement).dataset.msgKey === k), key) : Promise.resolve(false)
     await step(`${who} blocked on page 1: gone from both pages`, async () => {
       await menu(p, L('content_card_block'))
       return both(
@@ -212,10 +231,17 @@ export async function s17MuteBlock() {
       await p2.click('#hs-mc-input', { timeout: 5000 })
       await p2.keyboard.type(`/block ${who}`)
       await p2.keyboard.press('Enter')
-      return both(
+      const why = await both(
         (r, n) => (before[n] && !r.theirs ? [`page ${n}: none of their ${before[n]} rows came back`] : []),
         async () => ((await saved('blocked_users')) ? ['the block is still saved'] : []),
       )
+      const out: string[] = []
+      for (const w of why) {
+        const n = Number(w.match(/^page (\d): none of their/)?.[1] || 0)
+        if (n && !(await drawn(n === 1 ? p : p2, near[n]))) info(`page ${n}: their ${before[n]} rows had left the list by the time the block was lifted: nothing to come back`)
+        else out.push(w)
+      }
+      return out
     })
 
     if (!(await rowsFlow(p, 20_000)) || !(await rowsFlow(p2, 20_000))) bad(`${ch}: chat stopped after the mute and block`)

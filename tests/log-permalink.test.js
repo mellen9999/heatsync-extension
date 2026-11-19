@@ -141,7 +141,7 @@ describe('logPermalinkParts', () => {
  */
 const rowBuilder = sliceBetween(
   SRC('chat-logs.js'),
-  'function buildRowPermalink(',
+  SRC('chat-logs.js').includes('const HS_LOCAL_MSG_ID_RE') ? 'const HS_LOCAL_MSG_ID_RE' : 'function buildRowPermalink(',
   '\nasync function copyChatLogPermalink',
 )
 
@@ -171,6 +171,17 @@ describe('buildRowPermalink', () => {
       row({ msgPlatform: 'youtube', msgChannel: 'somechan', msgId: 'y1', msgTime: '1786906443358' }),
     )
     expect(url).toContain('/search/logs/youtube/somechan/')
+  })
+
+  test('a row whose id was made up here (a local mod notice, a share callout): its link is the day page', () => {
+    const at = { msgPlatform: '', msgChannel: 'nl_kripp', msgTime: '1786906443358' }
+    const day = 'https://heatsync.org/search/logs/twitch/nl_kripp/2026-08-16'
+    expect(buildRowPermalink(row({ ...at, msgId: 'hs-pend-mb1x2c-9zq' }))).toBe(day)
+    expect(buildRowPermalink(row({ ...at, msgId: 'hs-synth-mod-timeout-nl_kripp-x-1786906443358' }))).toBe(day)
+    // once the platform's copy has landed the row carries the real id
+    expect(buildRowPermalink(row({ ...at, msgId: MSG.messageId }))).toBe(`${day}?m=${MSG.messageId}`)
+    // an id that merely starts like ours is the platform's
+    expect(buildRowPermalink(row({ ...at, msgId: 'hs-pending' }))).toBe(`${day}?m=hs-pending`)
   })
 
   test('a row with no send time yields nothing rather than a wrong day', () => {

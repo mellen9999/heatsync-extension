@@ -96,12 +96,18 @@ function buildChatLogPermalink(r) {
 // fell back to a retyped quote on all but the handful of rows peekSentHost had
 // retagged. The fallback is safe in the direction that matters: a kick or
 // youtube row always carries its own value and can never land here.
+//
+// An id made up here names nothing in the archive: a mod notice or a share callout drawn locally
+// carries one (hs-synth-…), and a send being tracked has one too (hs-pend-…, on no row today). The
+// link of such a row is the day page, as on the site, never `?m=hs-synth-…`.
+const HS_LOCAL_MSG_ID_RE = /^hs-(?:pend|synth)-/
 function buildRowPermalink(row) {
   if (!row) return null
+  const id = row.dataset.msgId
   return buildLogPermalink({
     platform: row.dataset.msgPlatform || 'twitch',
     channel: row.dataset.msgChannel,
-    messageId: row.dataset.msgId,
+    messageId: HS_LOCAL_MSG_ID_RE.test(id || '') ? '' : id,
     time: Number(row.dataset.msgTime) || 0,
   })
 }

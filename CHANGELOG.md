@@ -1,5 +1,33 @@
 # changelog
 
+## [1.7.137] — 2026-11-18
+
+### added
+- **start with chat hidden** (settings → display, off by default) — every new tab opens with the panel hidden and `\` shows it. thanks ennortix.
+- **the feed holds still under a link you point at**, the way it already did for an emote, a name or a badge.
+
+### fixed
+- **scrolling back in chat** — reaching the top loads older messages every time. a reader who scrolled up keeps their row while pictures and link cards above fill in, through a redraw, and after closing a card. end, home, page up, page down and the arrows scroll the list, from the composer too. a wheel down at the bottom of a paused list goes back to live, a chat too short to scroll is no longer paused by one wheel notch, and the "new messages" pill keeps its count.
+- **typing over chat never reaches the player** — a letter typed with the pointer over chat no longer pauses, mutes or fullscreens the stream on twitch and kick, and shift+n while a chat filter is up no longer skips to the next youtube video.
+- **kick** — the chat connection works again after kick began refusing it. the panel follows the page you are on after moving around kick, offline channels read offline, pop-outs no longer break kick's page or pull in a twitch channel's old chat, and with the overlay off kick's own chat no longer dies behind "something went wrong" when a mod deletes a message.
+- **twitch** — a page twitch was slow to draw no longer leaves the panel in the wrong place until a reload. pin shows on twitch rows for mods. after a reconnect the gap in chat is always refilled.
+- **youtube** — a past stream keeps its chat replay.
+- **emotes** — history drawn before a channel's emotes arrived picks them up, the page keeps the emote sets of every channel it shows, and an emote whose picture cannot load shows its name instead of a broken box.
+- **several tabs open at once** — a channel removed, a banner dismissed, a note deleted, an emote name blocked, an emote picked or a tab's platforms saved in one tab is no longer undone by another.
+- **mute, block, hide** — signed out, a block stays in this browser and the card says unblock. a blocked chatter's rows leave every open tab and stay out. a mute blanks the author of a reply, not the person replied to. hide and highlight rules hold on every redraw, read the whole line, and a keyword ends where the word does.
+- **the + channel form** keeps what you typed while other tabs save, and a pasted popout, embed or player link saves its channel.
+- **cards, logs and menus** — an answer for one profile card never lands on another. an older page of chat logs no longer throws you back to the top, and a page that failed says so. a right-click menu taller than the window scrolls and is no longer covered by the name's hover card. copy message no longer ends in "»".
+- **pins** — a double click or a held enter on a pin's × only asks.
+- **settings** — a setting changed just before the page closes is saved, a setting takes only a value that fits it, "reset all" keeps your hide and highlight rules, and an export of an untouched profile imports. `/lclear` clears the tab you are on, and a command typed in full runs on the first enter.
+- **feed** — an older page never repeats a post, and a post its author deleted leaves chat too.
+- **languages** — tab names, the composer, form buttons and sound names follow your language everywhere, the popup mirrors in arabic, and a long right-click menu label wraps instead of being cut.
+- **a tab hidden with `\`** stays hidden through a reload, with no black bar where the panel was.
+- **firefox** — two errors at start-up are gone.
+
+### changed
+- **busy kick chats stay smooth** — on a slow machine a fast kick chat dropped the page to a few frames a second. it now keeps close to kick's own speed.
+- **lighter in the background** — a hidden tab no longer redraws a merged channel twice a second, and the feed, discover and pinned views draw only while their tab is up.
+
 ## [1.7.136] — 2026-11-15
 
 ### fixed

@@ -256,7 +256,11 @@ async function site(env: Env, plat: Plat, url: string, errs: string[]): Promise<
         await sleep(60_000)
         const share = (await styleS() - s0) / ((Date.now() - w0) / 1000)
         info(`${name}: styles took ${(share * 100).toFixed(1)}% of the main thread over a minute of chat (${n0} rows on screen)`)
-        check('working out styles takes under 25% of the main thread while chat flows', share < 0.25 ? [] : [`${(share * 100).toFixed(0)}%`])
+        // a red here was one run in four on kick (11-20, 73%) with nothing to tell our list from the
+        // page's own: what each restyle touched says which. a row restyling the whole page is
+        // kick's sheet reaching our list (kick-css-fix.js); many small ones are the page animating
+        const why = share < 0.25 ? null : await styleTrace(cdp, p)
+        check('working out styles takes under 25% of the main thread while chat flows', share < 0.25 ? [] : [`${(share * 100).toFixed(0)}%`], why)
       }
       const s = await scanRows(p, MARK[plat])
       keep(s.hits)
@@ -425,6 +429,39 @@ async function ytCandidates(): Promise<string[]> {
   const lofi = await liveYtVideo().catch(() => null)
   if (lofi) ids.push(lofi.id)
   return [...new Set(ids)]
+}
+
+/** Five seconds of the style work: how often, how many elements each, against the page's size. */
+async function styleTrace(cdp: any, p: any) {
+  const events: any[] = []
+  const onData = (d: any) => events.push(...d.value.filter((e: any) => e.name === 'UpdateLayoutTree' || e.name === 'Animation'))
+  cdp.on('Tracing.dataCollected', onData)
+  try {
+    await cdp.send('Tracing.start', { categories: 'devtools.timeline', transferMode: 'ReportEvents' })
+    await sleep(5000)
+    const done = new Promise((r) => cdp.once('Tracing.tracingComplete', r))
+    await cdp.send('Tracing.end')
+    await done
+  } catch (e) {
+    return { url: p.url(), traceFailed: String(e).slice(0, 200) }
+  } finally {
+    cdp.off('Tracing.dataCollected', onData)
+  }
+  const recalcs = events.filter((e) => e.name === 'UpdateLayoutTree' && e.ph === 'X')
+  const counts = recalcs.map((e) => e.args?.elementCount || 0).sort((a, b) => a - b)
+  const page = await p.evaluate(() => ({
+    elements: document.getElementsByTagName('*').length,
+    ours: document.querySelectorAll('#hs-mc-messages *').length,
+    animations: document.getAnimations().length,
+  }))
+  return {
+    url: p.url(),
+    ...page,
+    recalcsPerS: +(recalcs.length / 5).toFixed(1),
+    msPerS: +(recalcs.reduce((n, e) => n + (e.dur || 0), 0) / 5000).toFixed(1),
+    elementCount: { median: counts[counts.length >> 1] || 0, max: counts.at(-1) || 0 },
+    wholePage: recalcs.filter((e) => (e.args?.elementCount || 0) > page.elements / 2).length,
+  }
 }
 
 export async function s25Rows() {

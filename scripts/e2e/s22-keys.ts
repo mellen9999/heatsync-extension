@@ -543,8 +543,14 @@ async function site(env: any, name: string, url: string, popout: string, saved: 
         video: [...document.querySelectorAll('video')].map((v) => `${Math.round(v.getBoundingClientRect().width)}x${Math.round(v.getBoundingClientRect().height)}${v.paused ? ' paused' : ''}`),
         title: document.title,
       }))
-      // the oldest rows leaving is the list's cap at work; rows missing from the middle are lost rows
-      searchFails.push(`the list came back shorter (${rowsBefore.n} → ${r.n}): ${gone.n} rows of before are gone, positions ${gone.first}..${gone.last} of ${rowsBefore.n}, the oldest one kept was at ${gone.oldestKept}`)
+      // the oldest rows leaving is the list's cap at work: a redraw takes the newest 500 lines
+      // before the filters, so a chat with many filtered lines comes back a little short (caseoh_,
+      // 11-20: 510 → 441, the oldest 105). rows missing from the middle, or a list that came back
+      // mostly empty, are lost rows
+      const what = `the list came back shorter (${rowsBefore.n} → ${r.n}): ${gone.n} rows of before are gone, positions ${gone.first}..${gone.last} of ${rowsBefore.n}, the oldest one kept was at ${gone.oldestKept}`
+      const oldestOnly = gone.first === 0 && gone.last === gone.n - 1 && gone.oldestKept === gone.n
+      if (oldestOnly && r.n >= rowsBefore.n / 2) info(`${name}: ${what}: the oldest only, the cap at work`)
+      else searchFails.push(what)
     }
     // one chatter's rows all gone is a mod clearing that chatter, not the filter losing rows
     const lostBy = [...new Set((r.missingAt as number[]).map((i) => rowsBefore.by[i]))]

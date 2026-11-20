@@ -223,7 +223,29 @@ async function s18Composer(plat: Plat) {
       .sort((a, b) => b[1] - a[1])[0]?.[0]
     if (hideWho) {
       const count = async (pg: any) => (await screen(pg, plat)).by[hideWho] || 0
-      const before2 = await count(p2)
+      // page 2 has no hide, so it is the control: their row keys there, in screen order
+      const keysOf = (pg: any): Promise<string[]> =>
+        pg.evaluate((who: string) =>
+          [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg:not(.hs-mc-system)')]
+            .filter((r) => (r.querySelector('.hs-mc-user:not(.hs-mc-reply-user)') as HTMLElement | null)?.dataset.username?.toLowerCase() === who)
+            .map((r) => (r as HTMLElement).dataset.msgKey || ''),
+          hideWho)
+      const snap2 = (await screen(p2, plat)).keys
+      const theirs2 = await keysOf(p2)
+      const before2 = theirs2.length
+      // a busy chat or a mod takes their rows off page 2 with no hide there: nothing a hide did
+      const leftWithoutUs = async () => {
+        const now2 = new Set((await screen(p2, plat)).keys)
+        const last = Math.max(...theirs2.map((k) => snap2.indexOf(k)))
+        if (last >= 0 && snap2.slice(0, last + 1).every((k) => !now2.has(k))) return 'the chat moved past them'
+        const modded = await p2.evaluate(
+          (who: string) =>
+            [...document.querySelectorAll('#hs-mc-messages .hs-mc-system')].some((r) => (r.textContent || '').toLowerCase().includes(who)),
+          hideWho,
+        )
+        return modded ? 'a mod notice names them' : ''
+      }
+      let goneFromPage2 = ''
       await step(`/hide ${hideWho} on page 1: gone there, still on page 2`, async () => {
         await type(p, `/hide ${hideWho}`)
         await p.keyboard.press('Enter')
@@ -239,17 +261,25 @@ async function s18Composer(plat: Plat) {
                 .map((r) => ({ ...(r as HTMLElement).dataset, cls: r.className.slice(0, 80), t: (r.textContent || '').slice(0, 40) })),
             hideWho)
           : []
+        if (before2 && !b) {
+          goneFromPage2 = await leftWithoutUs()
+          if (goneFromPage2) info(`page 2 lost them with no hide there (${goneFromPage2}): not the hide, page 2 not judged`)
+        }
         return [
           ...(a ? [`page 1 still shows ${a} of their rows: ${JSON.stringify(left).slice(0, 900)}`] : []),
-          ...(before2 && !b ? ['page 2 lost them too'] : []),
+          ...(before2 && !b && !goneFromPage2 ? ['page 2 lost them too'] : []),
         ]
       })
       await step(`/unhide ${hideWho} on page 1: back`, async () => {
         await type(p, `/unhide ${hideWho}`)
         await p.keyboard.press('Enter')
         await sleep(SETTLE_MS * 2)
-        const a = await count(p)
-        info(`${hideWho}: page 1 ${a} rows`)
+        const [a, c] = [await count(p), await count(p2)]
+        info(`${hideWho}: page 1 ${a} rows, page 2 ${c}`)
+        if (!a && !c && goneFromPage2) {
+          info('page 2 has none of their rows left either: nothing to bring back, not judged')
+          return []
+        }
         return a ? [] : ['none of their rows came back on page 1']
       })
     }

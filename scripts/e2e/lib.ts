@@ -313,16 +313,20 @@ export async function ringSince(p: any, t0: number) {
   // (a 4s one on a ci runner's first twitch load, nightly 11-18). The overlay itself only acts
   // at 10s. A second one on the same channel, or one of 10s, is a finding.
   const gaps = recent.filter((x) => x.e === 'ingest_gap')
+  const probeOf = (e: any) => recent.find((x) => x.e === 'ingest_gap_probe' && x.ch === e.ch && x.t >= e.t && x.t - e.t < 5000)
   const delivered = (e: any) => {
     if (e.e !== 'ingest_gap') return true
     if (e.gapS >= 10) return true
-    const probe = recent.find((x) => x.e === 'ingest_gap_probe' && x.ch === e.ch && x.t >= e.t && x.t - e.t < 5000)
+    const probe = probeOf(e)
     return !!probe && probe.bgAheadS >= 2 && gaps.filter((x) => x.ch === e.ch).length > 1
   }
   // render_stall says why the newest line is not drawn when something of the reader's is in the
   // way (a card over the list, a form, a reader scrolled up): that one is the list doing as told.
   const blocked = (e: any) => e.e === 'render_stall' && (e.editing || e.panel || e.card || e.scrolledUp)
-  const bad = recent.filter((e) => (BAD_RING as readonly string[]).includes(e.e) && delivered(e) && !blocked(e))
+  // a gap carries its probe: the worker ahead of the tab is our delivery, both quiet is the chat
+  const bad = recent
+    .filter((e) => (BAD_RING as readonly string[]).includes(e.e) && delivered(e) && !blocked(e))
+    .map((e) => (e.e === 'ingest_gap' ? { ...e, probe: probeOf(e) || 'none' } : e))
   return { recent, counts, bad }
 }
 

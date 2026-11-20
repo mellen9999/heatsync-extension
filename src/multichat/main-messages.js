@@ -593,6 +593,9 @@ function buildMessageDiv(m, tabId) {
     // only sets m.sentHost, the tag), so badge URLs resolve in the right namespace.
     badges = renderBadges(m.badges, m.channel, m.platform)
   }
+  // one send folded into this row from another platform: its badges when this copy has none
+  const lent = typeof legBadgesOf === 'function' ? legBadgesOf(m) : null
+  if (lent && !badges) badges = renderBadges(lent.badges, lent.channel, lent.platform)
   // YT messages don't carry a Twitch ID — resolve via heatsync profile
   // lookup keyed by the YT @handle. If cached, hoist into m.userId so the
   // existing badge + cosmetics pipeline applies; if not, queue a lookup

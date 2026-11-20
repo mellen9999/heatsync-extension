@@ -284,6 +284,7 @@ function _renderMessagesImpl(id, opts) {
   // removed leg that stood for the line must not leave another leg standing in.
   let toRender = msgs.filter((m) => !m?.hidden)
   if (mtSrcs) toRender = foldSimulcastLegs(toRender)
+  else if (typeof clearLegBadges === 'function') clearLegBadges()
   const _cut = lclearCutFor(id)
   toRender = toRender.filter(
     (m) => !isMsgFiltered(m, _ff) && !ruleHides(m, id) && !isMsgUserDropped(m, id) && !(_cut && m.time <= _cut),
@@ -587,7 +588,11 @@ function _renderMessagesImpl(id, opts) {
       // scroll geometry all survive. This replaces the old "epoch re-keys
       // everything → teardown + fresh-sort rebuild" path that flashed and
       // reordered the visible list.
-      if (existing.dataset.hsEpoch !== String(_renderEpoch)) {
+      // …or a leg folded into it since it was drawn lent it badges (merged-tab.js)
+      if (
+        existing.dataset.hsEpoch !== String(_renderEpoch) ||
+        (typeof legBadgesChanged === 'function' && legBadgesChanged(_rm))
+      ) {
         const nd = buildMessageDiv(_rm, id)
         if (nd) {
           nd.dataset.msgKey = key

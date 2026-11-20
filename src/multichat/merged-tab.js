@@ -233,6 +233,29 @@ function isSimulcastLeg(row, m, legs) {
   g.self ||= self
   return true
 }
+// The kept leg is the earliest, and kick's copy (it relays through this extension) usually is:
+// your own line from the site then showed kick's badges, none, and lost its twitch mod and sub
+// badges (11-20). A row with none borrows a folded leg's, with the platform they resolve in. Per
+// render, never on the buffer's object: a kick-only view draws kick's copy as kick sent it.
+let _legBadges = new WeakMap()
+let _legBadgesFresh = new Set()
+const hasBadges = (m) => (Array.isArray(m.badges) ? m.badges.length > 0 : !!m.badges)
+function lendBadges(row, m, lent, prev) {
+  if (lent.has(row) || hasBadges(row) || !hasBadges(m) || legPlatform(m) === 'youtube') return
+  lent.set(row, { badges: m.badges, channel: m.channel, platform: legPlatform(m) })
+  if (!prev.has(row)) _legBadgesFresh.add(row)
+}
+function legBadgesOf(m) {
+  return _legBadges.get(m) || null
+}
+// true once, for the render that first lends a row badges: its drawn div predates them
+function legBadgesChanged(m) {
+  return _legBadgesFresh.delete(m)
+}
+function clearLegBadges() {
+  _legBadges = new WeakMap()
+  _legBadgesFresh = new Set()
+}
 // A moderator removes ONE platform's copy, and the copy may be a leg that folded into
 // another platform's row: that row is the line too, so it carries the removal.
 function carryCleared(row, m) {
@@ -245,6 +268,9 @@ function foldSimulcastLegs(msgs) {
   const out = []
   const legs = new Map()
   const bySend = new Map() // send id -> the row standing for it
+  const prev = _legBadges
+  const lent = new WeakMap()
+  _legBadgesFresh = new Set()
   for (const m of msgs) {
     if (!m || m.type || typeof m.text !== 'string' || !m.time) {
       out.push(m)
@@ -255,6 +281,7 @@ function foldSimulcastLegs(msgs) {
     const standing = m.hsSendId ? bySend.get(m.hsSendId) : null
     if (standing && isSimulcastLeg(standing, m, legs)) {
       carryCleared(standing, m)
+      lendBadges(standing, m, lent, prev)
       continue
     }
     for (let j = out.length - 1, n = 0; j >= 0 && n < 80; j--, n++) {
@@ -262,6 +289,7 @@ function foldSimulcastLegs(msgs) {
       if (row?.time && m.time - row.time > LEG_WINDOW_MS) break
       if (isSimulcastLeg(row, m, legs)) {
         carryCleared(row, m)
+        lendBadges(row, m, lent, prev)
         folded = true
         break
       }
@@ -271,6 +299,7 @@ function foldSimulcastLegs(msgs) {
       if (m.hsSendId) bySend.set(m.hsSendId, m)
     }
   }
+  _legBadges = lent
   return out
 }
 // A removal reached a buffer but may have hit a leg folded into another platform's
@@ -306,8 +335,11 @@ function mayBeSimulcastLeg(m, rowEls) {
 }
 
 export {
+  clearLegBadges,
   foldSimulcastLegs,
   LEG_WINDOW_MS,
+  legBadgesChanged,
+  legBadgesOf,
   MT_OVERSHOOT,
   MT_RECONCILE_MS,
   mayBeSimulcastLeg,

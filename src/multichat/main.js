@@ -1082,7 +1082,9 @@ async function init() {
     // explicitly — IRC msgs leave m.platform unset so the host-platform
     // preference in isSentEcho can compare against it. msg lets a stranger's
     // identical line through instead of eating the credit of our own echo.
-    if (isSentEcho(msg.text, 'twitch', msg)) return
+    // the buffer keeps the dropped copy: a render folds it into the row on screen, which takes its
+    // badges when it has none (merged-tab.js). A quiet chat has no render coming, so ask for one
+    if (isSentEcho(msg.text, 'twitch', msg)) return scheduleMergedRender()
     // Own-message badge: only override when the echo matches a message we
     // tracked as sent FROM the extension input bar. That way echoes
     // originating from elsewhere (e.g. heatsync.org website) keep
@@ -1205,7 +1207,7 @@ async function init() {
     if (isSelf(msg, 'kick')) hsWitnessOwnEcho('kick', msg.channel, msg.id, peekSentId(msg.text))
     // Suppress echo of own sent messages (dedup dual-send) — pass 'kick'
     // so host-platform preference can favor this echo when on kick.com.
-    if (isSentEcho(msg.text, 'kick', msg)) return
+    if (isSentEcho(msg.text, 'kick', msg)) return scheduleMergedRender()
     // Own-message badge: only override for ext-tracked sends (matches
     // IRC handler comment above). Untracked echoes keep msg.platform='kick'
     // which already renders as [K]. Gated on peekSentHost alone — same

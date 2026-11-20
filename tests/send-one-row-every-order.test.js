@@ -540,7 +540,9 @@ describe('the duplicate paths, named', () => {
       plats: ['twitch', 'youtube'],
       events: ['echo:youtube', 'echo:twitch', 'origin:twitch', 'origin:youtube'],
     })
-    expect(rows(b)).toEqual(['@mellen_yt:[H]'])
+    // the dropped twitch echo asks for the render that folds it: the earliest leg (twitch's,
+    // sent 800ms before youtube's) stands, one row, [H], with its twitch badges
+    expect(rows(b)).toEqual(['mellen:[H]'])
     expect(b.healed).toHaveLength(1)
   })
 

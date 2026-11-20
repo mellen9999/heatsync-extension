@@ -554,7 +554,13 @@ export function slashHelpText(surface, tr = {}) {
     const width = Math.min(34, Math.max(...rows.map((c) => usage(c).length)) + 2)
     if (lines.length) lines.push('')
     lines.push(`── ${tr.title ? tr.title(sec) : sec.title}`)
-    for (const c of rows) lines.push(`${usage(c).padEnd(width)}${tr.desc ? tr.desc(c) : c.desc}`)
+    for (const c of rows) {
+      const u = usage(c)
+      const d = tr.desc ? tr.desc(c) : c.desc
+      // a usage wider than the column (/poll, /prediction) ran into its words: they go under it
+      if (u.length + 2 > width) lines.push(u, `${' '.repeat(width)}${d}`)
+      else lines.push(`${u.padEnd(width)}${d}`)
+    }
   }
   return lines.join('\n')
 }

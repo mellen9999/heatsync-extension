@@ -11,6 +11,24 @@ const EN = JSON.parse(readFileSync(new URL('../src/_locales/en/messages.json', i
 const SETTINGS_UI = readFileSync(new URL('../src/multichat/settings-ui.js', import.meta.url), 'utf8')
 
 describe('slashHelpText', () => {
+  test('every usage stands apart from its words: two spaces, or the words on the next line', () => {
+    for (const surface of ['ext', 'site']) {
+      const usages = slashCommandsFor(surface).map((c) => `/${c.cmd}${c.args ? ` ${c.args}` : ''}`)
+      const lines = slashHelpText(surface).split('\n')
+      let wrapped = 0
+      for (const u of usages) {
+        const at = lines.findIndex((l) => l.startsWith(`${u} `) || l === u)
+        expect(at).toBeGreaterThanOrEqual(0)
+        if (lines[at] === u) {
+          wrapped++
+          expect(lines[at + 1]).toMatch(/^ {3,}\S/) // the words, under the column
+        } else expect(lines[at].slice(u.length)).toMatch(/^ {2,}\S/)
+      }
+      // /prediction's signature is past the column: the case this guards is real
+      expect(wrapped).toBeGreaterThan(0)
+    }
+  })
+
   test('without a translator it is the registry text, as before', () => {
     const out = slashHelpText('ext')
     for (const sec of SLASH_SECTIONS) expect(out).toContain(`── ${sec.title}`)

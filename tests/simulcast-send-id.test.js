@@ -99,3 +99,17 @@ test('a removed line stays apart from a different send of the same words', () =>
   expect(lib.foldSimulcastLegs([tw, kick])).toHaveLength(2)
   expect(tw.cleared).toBeUndefined()
 })
+
+test('a folded row knows each copy it stands for, so a delete can reach them all', () => {
+  const tw = { ...row('twitch', 'a', 'gm all', 0, 'send_legs'), channel: 'Room' }
+  const kk = { ...row('kick', 'a', 'gm all', 400, 'send_legs'), channel: 'room_k' }
+  const out = lib.foldSimulcastLegs([tw, kk])
+  expect(out).toEqual([tw])
+  expect(lib.foldedLegsOf(tw)).toEqual([{ platform: 'kick', id: kk.id, channel: 'room_k' }])
+  // a row nothing folded into has no other copies
+  expect(lib.foldedLegsOf(row('twitch', 'z', 'solo', 900_000))).toEqual([])
+  expect(lib.foldedLegsOf(undefined)).toEqual([])
+  // each render folds afresh: a row shown alone later has no stale legs
+  lib.foldSimulcastLegs([tw])
+  expect(lib.foldedLegsOf(tw)).toEqual([])
+})

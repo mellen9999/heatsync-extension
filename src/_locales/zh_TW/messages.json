@@ -2237,6 +2237,14 @@
   "mc_mod_label_deleted": {
     "message": "已刪除"
   },
+  "mc_mod_deleted_only": {
+    "message": "僅在 $PLATFORMS$ 上刪除",
+    "placeholders": {
+      "platforms": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_mod_label_timed_out": {
     "message": "已禁言 $SEC$ 秒",
     "placeholders": {

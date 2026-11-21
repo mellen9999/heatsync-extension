@@ -2237,6 +2237,14 @@
   "mc_mod_label_deleted": {
     "message": "삭제됨"
   },
+  "mc_mod_deleted_only": {
+    "message": "$PLATFORMS$에서만 삭제됨",
+    "placeholders": {
+      "platforms": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_mod_label_timed_out": {
     "message": "timeout $SEC$초",
     "placeholders": {

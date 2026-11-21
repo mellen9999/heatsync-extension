@@ -2237,6 +2237,14 @@
   "mc_mod_label_deleted": {
     "message": "डिलीट"
   },
+  "mc_mod_deleted_only": {
+    "message": "केवल $PLATFORMS$ पर हटाया गया",
+    "placeholders": {
+      "platforms": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_mod_label_timed_out": {
     "message": "timeout $SEC$s",
     "placeholders": {

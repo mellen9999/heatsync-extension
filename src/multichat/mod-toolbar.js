@@ -762,7 +762,34 @@ async function runModAction(id) {
     msgId,
   }).catch((e) => ({ anyOk: false, tResp: { error: e?.message || 'error' } }))
   if (row) row.style.opacity = wasOp || ''
-  if (r?.anyOk && def.action === 'delete' && row) markClearedRow(row, t('mc_mod_label_deleted'))
+  if (def.action === 'delete' && r?.anyOk) {
+    // a folded send is one row for several platforms' copies: each copy on a leg
+    // this viewer moderates goes too, and the row is struck only when all of them did
+    const done = [platform]
+    let all = true
+    for (const leg of typeof foldedLegsOf === 'function' ? foldedLegsOf(row?._hsMsg) : []) {
+      const modded =
+        leg.platform === 'kick' ? isKickModForSync(leg.channel) : leg.platform === 'twitch' && isModForSync(leg.channel)
+      if (!leg.id || !leg.channel || !modded) {
+        all = false
+        continue
+      }
+      const lr = await dispatchModAction({
+        channel: leg.channel,
+        platform: leg.platform,
+        action: 'delete',
+        msgId: leg.id,
+      }).catch(() => null)
+      if (lr?.anyOk) done.push(leg.platform)
+      else all = false
+    }
+    if (all && row) markClearedRow(row, t('mc_mod_label_deleted'))
+    else if (!all) {
+      showToast(t('mc_mod_deleted_only', [done.join(', ')]), 'warn')
+      detachModToolbar()
+      return
+    }
+  }
   const label =
     def.action === 'timeout'
       ? isYtPlatform(platform)

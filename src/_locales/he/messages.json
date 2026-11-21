@@ -2237,6 +2237,14 @@
   "mc_mod_label_deleted": {
     "message": "נמחקה"
   },
+  "mc_mod_deleted_only": {
+    "message": "נמחק רק ב-$PLATFORMS$",
+    "placeholders": {
+      "platforms": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_mod_label_timed_out": {
     "message": "timeout $SEC$s",
     "placeholders": {

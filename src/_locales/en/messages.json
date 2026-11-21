@@ -2238,6 +2238,14 @@
   "mc_mod_label_deleted": {
     "message": "deleted"
   },
+  "mc_mod_deleted_only": {
+    "message": "deleted on $PLATFORMS$ only",
+    "placeholders": {
+      "platforms": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_mod_label_timed_out": {
     "message": "timed out $SEC$s",
     "placeholders": {

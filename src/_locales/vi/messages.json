@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "chưa có thao tác mod"
   },
+  "mc_modlog_connect": {
+    "message": "hiện mod nào đã làm từng việc — kết nối twitch"
+  },
   "mc_social_platform": {
     "message": "nền tảng"
   },

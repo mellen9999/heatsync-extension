@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "zatiaľ žiadne akcie moderátorov"
   },
+  "mc_modlog_connect": {
+    "message": "ukázať, ktorý moderátor čo urobil — prepojiť twitch"
+  },
   "mc_social_platform": {
     "message": "platforma"
   },

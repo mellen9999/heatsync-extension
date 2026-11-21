@@ -3843,6 +3843,8 @@ function renderModLogTab() {
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
   msgsEl.textContent = ''
+  const connect = typeof modlogConnectRow === 'function' ? modlogConnectRow() : null
+  if (connect) msgsEl.appendChild(connect)
   const log = typeof modActionLog !== 'undefined' ? modActionLog : []
   if (!log.length) {
     const empty = document.createElement('div')

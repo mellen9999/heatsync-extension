@@ -2315,6 +2315,29 @@ function handleWSMessage(msg) {
         break
       }
 
+      // Which twitch mod did a ban/timeout/unban/untimeout/delete in a channel
+      // this user moderates — only for a mod who granted the modlog pack, to
+      // their own sockets only (mod-log.js names the entry). Coerced, never trusted.
+      case 'modlog:action': {
+        const action = String(msg.action || '')
+        if (!['ban', 'timeout', 'unban', 'untimeout', 'delete'].includes(action)) break
+        broadcastToTabs({
+          type: 'modlog_action',
+          broadcasterLogin: String(msg.broadcasterLogin || '')
+            .toLowerCase()
+            .slice(0, 64),
+          action,
+          target: String(msg.target || '')
+            .toLowerCase()
+            .slice(0, 64),
+          actor: String(msg.actor || '')
+            .toLowerCase()
+            .slice(0, 64),
+          at: Number(msg.at) || Date.now(),
+        })
+        break
+      }
+
       // Resolution update for a held message — approved/denied/expired, by
       // this mod or any other. Ext matches it to a rendered row by msgId.
       case 'automod:update': {

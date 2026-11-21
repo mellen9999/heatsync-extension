@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "尚無管理操作"
   },
+  "mc_modlog_connect": {
+    "message": "顯示每項操作是哪位管理員做的 — 連結 twitch"
+  },
   "mc_social_platform": {
     "message": "平台"
   },

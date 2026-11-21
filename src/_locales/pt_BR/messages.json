@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "nenhuma ação de mod ainda"
   },
+  "mc_modlog_connect": {
+    "message": "mostrar qual mod fez cada ação — conectar twitch"
+  },
   "mc_social_platform": {
     "message": "plataforma"
   },

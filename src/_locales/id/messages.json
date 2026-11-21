@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "belum ada aksi mod"
   },
+  "mc_modlog_connect": {
+    "message": "tampilkan mod mana yang melakukan tiap tindakan — hubungkan twitch"
+  },
   "mc_social_platform": {
     "message": "platform"
   },

@@ -954,6 +954,7 @@ const MULTICHAT_MODULES = [
   'name-marks-data.js',
   'mod-toolbar.js',
   'automod-queue.js',
+  'mod-log-watch.js',
   'blocked-terms.js',
   'mod-suite-calls.js',
   'mod-suite.js',

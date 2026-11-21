@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "ще немає дій mod"
   },
+  "mc_modlog_connect": {
+    "message": "показувати, який модератор що зробив — під’єднати twitch"
+  },
   "mc_social_platform": {
     "message": "платформа"
   },

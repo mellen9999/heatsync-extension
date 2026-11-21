@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "ei vielä modin toimia"
   },
+  "mc_modlog_connect": {
+    "message": "näytä kuka modi teki minkäkin — yhdistä twitch"
+  },
   "mc_social_platform": {
     "message": "alusta"
   },

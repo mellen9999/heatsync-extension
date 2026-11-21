@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "még nincs mod művelet"
   },
+  "mc_modlog_connect": {
+    "message": "mutasd, melyik mod mit csinált — twitch összekapcsolása"
+  },
   "mc_social_platform": {
     "message": "platform"
   },

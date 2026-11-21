@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "още няма mod действия"
   },
+  "mc_modlog_connect": {
+    "message": "покажи кой модератор е направил всяко — свържи twitch"
+  },
   "mc_social_platform": {
     "message": "платформа"
   },

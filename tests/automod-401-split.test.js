@@ -76,8 +76,13 @@ function cookieGuardBlocks() {
     if (!/const authToken = await getAuthCookie\(\)/.test(line)) return
     const text = lines.slice(i, i + 8).join('\n')
     // Only the automod handlers — other features have their own conventions.
-    const context = lines.slice(Math.max(0, i - 40), i).join('\n')
-    if (!/automod_watch|automod_action/.test(context)) return
+    // the nearest handler above the guard, so a sibling handler placed
+    // after the automod ones is never counted as one of them
+    const handler = lines
+      .slice(Math.max(0, i - 40), i)
+      .reverse()
+      .find((l) => /message\.type === '/.test(l))
+    if (!/automod_watch|automod_action/.test(handler || '')) return
     blocks.push({ line: i + 1, text })
   })
   return blocks

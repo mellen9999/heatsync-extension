@@ -105,12 +105,18 @@ function pushModLogEntry(log, entry, max = MOD_LOG_PER_CHANNEL) {
 // stored copy and the in-memory one are merged this way both ways, so neither
 // a reload nor a second tab can lose entries.
 function mergeModLogs(a, b, max = MOD_LOG_PER_CHANNEL) {
-  const seen = new Set()
+  const at = new Map()
   const all = []
   for (const e of [...a, ...b]) {
-    if (!e || seen.has(e.id)) continue
-    seen.add(e.id)
-    all.push(e)
+    if (!e) continue
+    const i = at.get(e.id)
+    if (i === undefined) {
+      at.set(e.id, all.length)
+      all.push(e)
+    } else if (!all[i].actor && e.actor) {
+      // one tab learned who did it after the other wrote the entry
+      all[i] = e
+    }
   }
   all.sort((x, y) => (x.time || 0) - (y.time || 0))
   return capModLogPerChannel(all, max)
@@ -142,11 +148,86 @@ function sanitizeStoredModLog(raw) {
   return out
 }
 
+// ── twitch's record of who did it ────────────────────────────────────────────
+// A mod who granted heatsync's `modlog` pack gets twitch's own record of each
+// action in a channel they moderate (the server's modlog:action, relayed as
+// modlog_action by background.js). It names the mod on the entry chat already
+// made, or waits for that echo; unbans and untimeouts, which chat never shows,
+// become entries of their own.
+const FRAME_WINDOW_MS = 15000
+const FRAME_ACTIONS = new Set(['ban', 'timeout', 'delete', 'unban', 'untimeout'])
+/** frames whose echo has not arrived yet */
+const _heardFrames = []
+
+const _sameAction = (e, f) =>
+  (e.platform || 'twitch') === 'twitch' && e.channel === f.channel && e.action === f.action && e.target === f.target
+
+function _frameFields(raw) {
+  const channel = String(raw?.broadcasterLogin || '')
+    .toLowerCase()
+    .slice(0, 64)
+  const actor = String(raw?.actor || '')
+    .toLowerCase()
+    .slice(0, 64)
+  const action = String(raw?.action || '')
+  if (!channel || !actor || !FRAME_ACTIONS.has(action)) return null
+  return {
+    channel,
+    actor,
+    action,
+    target: String(raw.target || '')
+      .toLowerCase()
+      .slice(0, 64),
+    at: Number(raw.at) || Date.now(),
+  }
+}
+
+/**
+ * One modlog_action against the log. Pure apart from the held-frame queue.
+ * @returns {{ entry: object|null, named: object|null }}
+ */
+function applyModLogFrame(log, raw) {
+  const none = { entry: null, named: null }
+  const f = _frameFields(raw)
+  if (!f) return none
+  for (let i = log.length - 1; i >= 0; i--) {
+    const e = log[i]
+    if (Math.abs((e.time || 0) - f.at) > FRAME_WINDOW_MS || !_sameAction(e, f)) continue
+    if (e.actor) return none // an action taken here already says who
+    e.actor = f.actor
+    return { entry: null, named: e }
+  }
+  if (f.action === 'unban' || f.action === 'untimeout') {
+    const entry = {
+      id: `${f.action}:${f.channel}:${f.target}:${f.at}`,
+      action: f.action,
+      target: f.target,
+      actor: f.actor,
+      durationSec: 0,
+      channel: f.channel,
+      platform: 'twitch',
+      text: '',
+      time: f.at,
+    }
+    return { entry, named: null }
+  }
+  while (_heardFrames.length && Date.now() - _heardFrames[0].heard > FRAME_WINDOW_MS) _heardFrames.shift()
+  _heardFrames.push({ ...f, heard: Date.now() })
+  return none
+}
+
+/** The mod a frame that came before this entry's echo named ('' when none). Consumed. */
+function claimHeardActor(entry) {
+  const i = _heardFrames.findIndex((f) => Date.now() - f.heard <= FRAME_WINDOW_MS && _sameAction(entry, f))
+  return i === -1 ? '' : _heardFrames.splice(i, 1)[0].actor
+}
+
 /**
  * The persistence half. `log` is the live in-memory array (modActionLog); it is
  * only ever changed in place, because the tab renders straight from it.
  *
  *   record(msg)  log a mod notice (no-op for anything else) and schedule a write
+ *   applyFrame(f) twitch's record of who did it: name an entry, or add an unban
  *   load()       merge what storage holds into the log — once, at boot
  *   absorb(raw)  merge a stored value another tab just wrote
  *   flush()      write now (pagehide)
@@ -184,19 +265,32 @@ function createModLogStore({ log, storage, setTimer, clearTimer, debounceMs = 15
     return queue
   }
 
+  const schedule = () => {
+    if (!timer) {
+      timer = setTimer(() => {
+        timer = null
+        flush()
+      }, debounceMs)
+    }
+  }
+
   return {
     record(msg) {
       const entry = modLogEntryFromNotice(msg)
       if (!entry) return null
       if (log.some((e) => e.id === entry.id)) return null // a duplicate: nothing new to keep
+      if (!entry.actor) entry.actor = claimHeardActor(entry)
       pushModLogEntry(log, entry, max)
-      if (!timer) {
-        timer = setTimer(() => {
-          timer = null
-          flush()
-        }, debounceMs)
-      }
+      schedule()
       return entry
+    },
+    /** twitch's record of an action (modlog_action): true when the log changed */
+    applyFrame(frame) {
+      const { entry, named } = applyModLogFrame(log, frame)
+      if (entry && !log.some((e) => e.id === entry.id)) pushModLogEntry(log, entry, max)
+      else if (!named) return false
+      schedule()
+      return true
     },
     async load() {
       const area = storage()
@@ -260,6 +354,7 @@ function filterModLog(log, opts = {}) {
 }
 
 export {
+  applyModLogFrame,
   capModLogPerChannel,
   createModLogStore,
   filterModLog,

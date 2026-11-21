@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "mod 操作はまだない"
   },
+  "mc_modlog_connect": {
+    "message": "どのモデレーターが行ったかを表示 — twitch を連携"
+  },
   "mc_social_platform": {
     "message": "プラットフォーム"
   },

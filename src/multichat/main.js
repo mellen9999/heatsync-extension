@@ -601,6 +601,7 @@ async function init() {
       if (typeof __HS_DEV_BUILD__ !== 'undefined' && __HS_DEV_BUILD__)
         document.documentElement.dataset.hsAutomodInit = 'reached'
       if (typeof initAutomodQueue === 'function') initAutomodQueue()
+      if (typeof initModLogWatch === 'function') initModLogWatch()
       if (typeof initPinBar === 'function') initPinBar()
       if (typeof __HS_DEV_BUILD__ !== 'undefined' && __HS_DEV_BUILD__)
         document.documentElement.dataset.hsAutomodInit = 'done'

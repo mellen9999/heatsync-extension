@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "아직 mod 활동 없음"
   },
+  "mc_modlog_connect": {
+    "message": "어떤 모더가 했는지 표시 — twitch 연결"
+  },
   "mc_social_platform": {
     "message": "플랫폼"
   },

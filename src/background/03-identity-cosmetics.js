@@ -535,6 +535,8 @@ const kickUsernameToIdCache = new Map()
 // bump is the real keepalive signal, not the HTTP call cadence).
 const AUTOMOD_WATCH_THROTTLE_MS = 30 * 60 * 1000
 const _automodWatchThrottle = new Map() // broadcasterId -> last-sent ts
+// the mod-log watch (modlog_watch) keeps alive on the same window
+const _modlogWatchThrottle = new Map() // broadcasterId -> last-sent ts
 // One shape for a held message, whichever door it came through: the live
 // websocket push, or the pending backfill the watch call hands back. Two
 // copies of this coercion would drift the way every duplicated message

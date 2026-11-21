@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "henüz mod işlemi yok"
   },
+  "mc_modlog_connect": {
+    "message": "hangi modun ne yaptığını göster — twitch bağla"
+  },
   "mc_social_platform": {
     "message": "platform"
   },

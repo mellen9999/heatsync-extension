@@ -705,6 +705,41 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })()
     return true
   }
+  if (message.type === 'modlog_watch') {
+    // Keep the server's mod-log sub alive for one channel this user moderates
+    // (mod-log-watch.js sweeps). The server answers 401 {scope_pack:'modlog'}
+    // until the mod turns the pack on; that is the page's cue to offer it.
+    ;(async () => {
+      try {
+        const broadcasterId = String(message.broadcasterId || '').replace(/[^0-9]/g, '')
+        if (!broadcasterId) return sendResponse({ ok: false, error: 'missing broadcasterId' })
+        const now = Date.now()
+        if (now - (_modlogWatchThrottle.get(broadcasterId) || 0) < AUTOMOD_WATCH_THROTTLE_MS) {
+          return sendResponse({ ok: true, throttled: true })
+        }
+        const authToken = await getAuthCookie()
+        if (!authToken) return sendResponse({ ok: false, error: 'auth_required' })
+        _modlogWatchThrottle.set(broadcasterId, now)
+        if (_modlogWatchThrottle.size > 500) _modlogWatchThrottle.delete(_modlogWatchThrottle.keys().next().value)
+        const res = await fetchWithTimeout(`${API_URL}/api/mod/log-watch`, {
+          method: 'POST',
+          credentials: 'omit', // Bearer-only → CSRF-exempt
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+          body: JSON.stringify({ broadcaster_id: broadcasterId }),
+        })
+        if (res.ok) return sendResponse({ ok: true })
+        const data = await res.json().catch(() => null)
+        // a bare 401 is our own session gone, not the twitch grant
+        if (res.status === 401)
+          return sendResponse({ ok: false, error: data?.scope_pack === 'modlog' ? 'needs_pack' : 'auth_required' })
+        sendResponse({ ok: false, error: data?.error === 'not_moderator' ? 'not_moderator' : 'subscribe_failed' })
+      } catch (e) {
+        log(' modlog_watch error:', e?.message)
+        sendResponse({ ok: false, error: 'network error' })
+      }
+    })()
+    return true
+  }
   if (message.type === 'automod_action') {
     // Resolve a held message — allow/deny. automod-queue.js shows the
     // optimistic 'resolving…' state; the confirming automod:update broadcast

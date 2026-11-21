@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "wala pang mod action"
   },
+  "mc_modlog_connect": {
+    "message": "ipakita kung aling mod ang gumawa ng bawat isa — ikonekta ang twitch"
+  },
   "mc_social_platform": {
     "message": "platform"
   },

@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "अभी कोई मॉड एक्शन नहीं"
   },
+  "mc_modlog_connect": {
+    "message": "दिखाएँ कि हर कार्रवाई किस मॉड ने की — twitch जोड़ें"
+  },
   "mc_social_platform": {
     "message": "प्लेटफ़ॉर्म"
   },

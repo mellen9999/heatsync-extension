@@ -4115,6 +4115,9 @@
   "mc_social_no_mod_actions": {
     "message": "ยังไม่มีการกระทำของม็อด"
   },
+  "mc_modlog_connect": {
+    "message": "แสดงว่าม็อดคนไหนทำแต่ละอย่าง — เชื่อมต่อ twitch"
+  },
   "mc_social_platform": {
     "message": "แพลตฟอร์ม"
   },

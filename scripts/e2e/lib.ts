@@ -41,7 +41,24 @@ export function ok(msg: string) {
   passes.push(`${_scenario}: ${msg}`)
   console.log(`  ✓ ${msg}`)
 }
+/**
+ * Scenarios whose browser youtube sent to google.com/sorry (its captcha wall for an ip it
+ * distrusts: the nightly's datacenter runner, 11-21 and 11-22). On CI a youtube finding in
+ * such a scenario is youtube refusing the runner, not the extension: it is said out loud
+ * and not counted. On a home line it still counts.
+ */
+const ytWalled = new Set<string>()
+const YT_WALL = /google\.com\/sorry/
+function excusedByYtWall(what: string, detail: unknown): boolean {
+  if (!process.env.CI || !ytWalled.has(_scenario)) return false
+  const text = `${_scenario} ${what} ${detail === undefined ? '' : JSON.stringify(detail)}`
+  return /youtube|google\.com\/sorry|solveSimpleChallenge/i.test(text)
+}
 export function bad(what: string, detail?: unknown) {
+  if (excusedByYtWall(what, detail)) {
+    info(`skipped: youtube walled this runner (google.com/sorry), not counted: ${what}`)
+    return
+  }
   findings.push({ scenario: _scenario, what, detail })
   console.log(`  ✗ ${what}${detail === undefined ? '' : `\n      ${JSON.stringify(detail).slice(0, 600)}`}`)
 }
@@ -92,6 +109,15 @@ export async function launch(
       ...(opts.args ?? []),
     ],
   })
+  const watchWall = (pg: any) =>
+    pg.on('framenavigated', (f: any) => {
+      if (f === pg.mainFrame() && YT_WALL.test(f.url()) && !ytWalled.has(_scenario)) {
+        ytWalled.add(_scenario)
+        info('youtube sent this browser to google.com/sorry (its captcha wall)')
+      }
+    })
+  ctx.on('page', watchWall)
+  for (const pg of ctx.pages()) watchWall(pg)
   if (opts.onPage) {
     ctx.on('page', opts.onPage)
     for (const pg of ctx.pages()) opts.onPage(pg)

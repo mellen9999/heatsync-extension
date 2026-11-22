@@ -181,7 +181,13 @@ export async function s15SettingsUi() {
         if (!(await act(want))) {
           why.push('control gone before the click')
         } else {
-          await sleep(800)
+          // a save lands when it lands (a slow runner took >800ms on 11-22): poll for it, and only
+          // then click back, or the back click toggles a pill that never moved
+          const settle = async (target: unknown) => {
+            for (let t = 0; t < 20 && String(await value(c.key)) !== String(target); t++) await sleep(200)
+          }
+          if (account) await sleep(800)
+          else await settle(want)
           const got = await value(c.key)
           if (account) {
             if (String(got) !== String(before)) why.push(`signed out, yet saved ${JSON.stringify(got)}`)
@@ -201,7 +207,8 @@ export async function s15SettingsUi() {
             // nothing to undo
           } else if (c.pill || c.tag === 'SELECT') await act(before)
           else await p.click(`[data-set-key="${c.key}"][data-set-value="${String(before)}"]`, { timeout: 5000 }).catch(() => {})
-          await sleep(700)
+          if (account) await sleep(700)
+          else await settle(before)
           const back = await value(c.key)
           if (String(back) !== String(before)) why.push(`changing it back saved ${JSON.stringify(back)}, not ${JSON.stringify(before)}`)
         }

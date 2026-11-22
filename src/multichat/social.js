@@ -2971,6 +2971,8 @@ function buildFeedEmoteRefs(text) {
   if (!text) return null
   const owned = new Map()
   const names = new Set()
+  const box = {} // this post's own: a name registered for an earlier post can never vouch this one
+  const reg = (e) => registerRemoteEmoteRef(e, box)
   for (const word of String(text).split(/\s+/)) {
     if (!word) continue
     names.add(word)
@@ -2979,7 +2981,7 @@ function buildFeedEmoteRefs(text) {
   for (const name of names) {
     const pick = typeof recentRemoteCompletions !== 'undefined' ? recentRemoteCompletions.get(name) : null
     if (pick?.url && /^https:/i.test(pick.url)) {
-      registerRemoteEmoteRef({ name, url: pick.url, provider: pick.source, zeroWidth: !!pick.zeroWidth })
+      reg({ name, url: pick.url, provider: pick.source, zeroWidth: !!pick.zeroWidth })
       continue
     }
     const e = typeof lookupEmoteRenderOrder === 'function' ? lookupEmoteRenderOrder(name) : null
@@ -2988,10 +2990,10 @@ function buildFeedEmoteRefs(text) {
     if (typeof e.hash === 'string' && FEED_REF_HASH_RE.test(e.hash)) {
       owned.set(name, { ...e, name, provider })
     } else {
-      registerRemoteEmoteRef({ name, url: e.url, provider, zeroWidth: !!e.zeroWidth, width: e.width, height: e.height })
+      reg({ name, url: e.url, provider, zeroWidth: !!e.zeroWidth, width: e.width, height: e.height })
     }
   }
-  const refs = buildEmoteRefs(text, owned)
+  const refs = buildEmoteRefs(text, owned, undefined, box)
   return Object.keys(refs).length ? refs : null
 }
 

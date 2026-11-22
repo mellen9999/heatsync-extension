@@ -1,5 +1,16 @@
 # changelog
 
+## [1.7.139] — 2026-11-21
+
+### added
+- **the mod log says which mod did it** — for twitch bans, timeouts and deletes, by any mod of the channel, with unbans and untimeouts listed too. it asks twitch once for read-only access; until then the mod log tab has a button for it.
+
+### fixed
+- **a delete on your line sent to twitch and kick** removes it everywhere you moderate. if one platform refuses, the row stays and says where it was deleted.
+- **your line sent to twitch and kick** keeps your twitch badges when kick's copy is the one shown.
+- **copy** always says copied, or clipboard blocked when the browser refused, never copied when nothing was.
+- **/help** — a long usage wraps onto the next line instead of running into its description.
+
 ## [1.7.138] — 2026-11-19
 
 ### fixed

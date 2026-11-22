@@ -1,0 +1,6 @@
+{
+  "note": "baseline = median of 8 nightly runs 11-19..11-21 on the github runner (task ms per message: 4.74 4.95 5.19 5.88 5.95 6.18 6.50 6.67). limit = baseline + headroom. a slower runner is not a regression: re-measure from fresh nightly logs before raising it",
+  "baseline": 6,
+  "headroom": 0.25,
+  "limit": 7.5
+}

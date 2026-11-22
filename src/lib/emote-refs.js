@@ -50,28 +50,49 @@ function getRegistered(registry, word) {
   return undefined
 }
 
-// Session registry of catalog emotes ("7tv search" Tab completions). They
-// live in NO map — not inventory, channel, or global — so the emotesMap
-// lookup below can never find them and the sent message degraded to plain
-// text for every viewer, sender included. A url-only ref (no hash) is fully
-// valid: the server gate (emote-refs-sanitize.ts) requires url + CDN
-// allowlist and treats hash as optional passthrough, and SSR
-// (applyEmoteTokens) renders from url alone. Keyed by exact name; capped FIFO so
-// a marathon session can't grow it unbounded.
-const remoteCompleted = new Map()
-const REMOTE_COMPLETED_MAX = 200
+// A pick belongs to the message it was made in (emote law, send rule 2), and a
+// message is written in one box. So picks are kept per box — keyed by its
+// input element — never per page: a send or a clear in one composer cannot
+// wipe, or borrow, what was picked in another. A box that goes away (an edit
+// textarea) takes its picks with it; nothing has to remember to clear them.
+//
+// A draft holds two lists, both keyed by the emote's exact name:
+//   picked — the exact record a Tab step, a picker tile or a chip chose. A name
+//            can mean several emotes at once (the room's, yours, a global);
+//            buildEmoteRefs honours the pick before any map.
+//   remote — catalog emotes ("7tv search") that live in NO map. A url-only ref
+//            (no hash) is fully valid: the server gate (emote-refs-sanitize.ts)
+//            requires url + CDN allowlist, and SSR renders from url alone.
+const drafts = new WeakMap()
+// away: picks whose word left the box, kept only so an undo that brings the word back brings its pick back
+const fresh = () => ({ picked: new Map(), remote: new Map(), away: new Map() })
+// callers with no box to name (the extension's copy, a bare lookup)
+let loose = fresh()
+
+/**
+ * The box's live draft. Hold it across a clear (see endDraftPicks) and it is
+ * still that message's picks; a held draft can be passed wherever a box can.
+ * @param {object} [owner] the box's input element, or a draft it once held
+ */
+export function draftPicks(owner) {
+  if (!owner) return loose
+  if (owner.picked) return owner
+  let d = drafts.get(owner)
+  if (!d) drafts.set(owner, d = fresh())
+  return d
+}
+
+const put = (map, key, val) => { if (val === undefined) map.delete(key); else map.set(key, val) }
 
 /**
  * @param {{name?:string,url?:string,provider?:string,id?:string,animated?:boolean,zeroWidth?:boolean,width?:number,height?:number}} emote
  *        a catalog search result the user completed via Tab or clicked in the picker
+ * @param {object} [owner] the box it was picked into
  */
-export function registerRemoteEmoteRef(emote) {
-  if (!emote?.name || !emote?.url) return
-  const key = emote.name
-  if (!remoteCompleted.has(key) && remoteCompleted.size >= REMOTE_COMPLETED_MAX) {
-    remoteCompleted.delete(remoteCompleted.keys().next().value)
-  }
-  remoteCompleted.set(key, {
+export function registerRemoteEmoteRef(emote, owner) {
+  // null is "there is no box" (the composer is not on the page): nothing to file
+  if (!emote?.name || !emote?.url || owner === null) return
+  draftPicks(owner).remote.set(emote.name, {
     name: emote.name,
     url: emote.url,
     provider: emote.provider,
@@ -86,33 +107,23 @@ export function registerRemoteEmoteRef(emote) {
   })
 }
 
-// Explicit picks. A name can mean several emotes at once (the channel's own,
-// an inventory one, a global); the composer chip shows the one the sender
-// chose, but a send rebuilt refs from the name alone and the owned entry won,
-// so the post carried a different emote than the preview. A chip insert pins
-// the exact record it drew; buildEmoteRefs honours the pin before any map.
-// Keyed by exact name, last pick wins, capped FIFO like remoteCompleted.
-const pickedEmotes = new Map()
-
 /**
  * @param {{name?:string,url?:string,hash?:string,provider?:string,id?:string,animated?:boolean,zeroWidth?:boolean,width?:number,height?:number}} emote
  *        the record a composer chip was drawn from (Tab, cycle or picker)
+ * @param {object} [owner] the box it was picked into
  */
-export function pinPickedEmote(emote) {
-  if (!emote?.name || !emote?.url) return
+export function pinPickedEmote(emote, owner) {
+  if (!emote?.name || !emote?.url || owner === null) return
   // a synthesized "name0" overlay variant resolves through its base word
   if (emote.zeroWidth && emote.name.length > 1 && emote.name.endsWith('0')) return
   const key = emote.name
-  // The pin is the final word on this name. A Tab cycle registers every
-  // catalog step it passes through, so an earlier same-named step (an FFZ
-  // "LICK" on the way to the room's 7tv one) would otherwise survive in the
-  // registry and the send's commit step would add THAT one to the inventory
-  // in place of the pick.
-  if (remoteCompleted.get(key)?.url !== emote.url) remoteCompleted.delete(key)
-  if (!pickedEmotes.has(key) && pickedEmotes.size >= REMOTE_COMPLETED_MAX) {
-    pickedEmotes.delete(pickedEmotes.keys().next().value)
-  }
-  pickedEmotes.set(key, {
+  const d = draftPicks(owner)
+  // The pin is the final word on this name. An earlier same-named catalog
+  // registration (an FFZ "LICK" picked before the room's 7tv one) would
+  // otherwise survive and the send's commit step would add THAT one to the
+  // inventory in place of the pick.
+  if (d.remote.get(key)?.url !== emote.url) d.remote.delete(key)
+  d.picked.set(key, {
     name: emote.name,
     url: emote.url,
     ...(emote.hash ? { hash: emote.hash } : {}),
@@ -125,34 +136,105 @@ export function pinPickedEmote(emote) {
 }
 
 /**
- * The message these picks were made in is gone (sent, or thrown away): they go
- * with it. A pick belongs to one message — a name typed by hand afterwards is
- * a hand-typed word, in whatever room it is typed (emote law, send rule 2).
+ * The message this box held is gone (sent, replaced, or thrown away): its picks
+ * go with it. A name typed by hand afterwards is a hand-typed word.
+ * @param {object} [owner]
+ * @returns {object} the ended draft — hand it to resumeDraftPicks if the same
+ *          message comes back into the box (a refused send)
  */
-export function endDraftPicks() {
-  pickedEmotes.clear()
-  remoteCompleted.clear()
+export function endDraftPicks(owner) {
+  const was = draftPicks(owner)
+  if (owner) drafts.delete(owner)
+  else loose = fresh()
+  return was
 }
 
 /**
- * A Tab cycle moved on from `emote`: it was looked at, not chosen. Whatever was
- * filed for it goes, unless a different emote has since taken the name.
- * @param {{name?:string,url?:string}} emote
+ * The message a draft belonged to is back in its box: so are its picks.
+ * @param {object|null|undefined} was what endDraftPicks / draftPicks returned
+ * @param {object} [owner]
  */
-export function dropPick(emote) {
+export function resumeDraftPicks(was, owner) {
+  if (!was?.picked) return
+  if (owner) drafts.set(owner, was)
+  else loose = was
+}
+
+/**
+ * The box's text changed: a pick whose word is no longer in it is over. This
+ * is what stops a chip you deleted from deciding what the same name sends when
+ * you type it by hand later in the same message — and an emptied box keeps none.
+ *
+ * An undo is the one way back: it restores the chip, so it restores the pick
+ * the chip was drawn from. Typing the name back by hand does not.
+ * @param {string|(() => string)} text the box's current text (a function is
+ *        only called when there is a pick to check)
+ * @param {object} [owner]
+ * @param {boolean} [undo] the change was an undo or a redo
+ */
+export function keepPicksIn(text, owner, undo) {
+  const d = draftPicks(owner)
+  if (!d.picked.size && !d.remote.size && !d.away.size) return
+  const fold = caseInsensitive() ? s => s.toLowerCase() : s => s
+  const words = new Set()
+  for (const w of String((typeof text === 'function' ? text() : text) || '').split(/\s+/)) {
+    words.add(fold(w))
+    // an overlay is typed as "name0" and filed under "name"
+    if (w.endsWith('0')) words.add(fold(w.slice(0, -1)))
+  }
+  for (const [key, held] of [...d.away]) {
+    if (!words.has(fold(key))) continue
+    d.away.delete(key)
+    if (undo && !d.picked.has(key) && !d.remote.has(key)) {
+      put(d.picked, key, held[0])
+      put(d.remote, key, held[1])
+    }
+  }
+  for (const key of new Set([...d.picked.keys(), ...d.remote.keys()])) {
+    if (words.has(fold(key))) continue
+    d.away.set(key, [d.picked.get(key), d.remote.get(key)])
+    d.picked.delete(key)
+    d.remote.delete(key)
+  }
+}
+
+/**
+ * What `name` holds in this draft right now. A Tab cycle takes this before it
+ * files a step, and puts it back when the cycle moves on to another name — so
+ * a step that was only looked at leaves the name exactly as it found it,
+ * including an earlier pick of that name the message still shows.
+ * @param {string} name
+ * @param {object} [owner]
+ * @returns {[object|undefined, object|undefined]}
+ */
+export function heldPick(name, owner) {
+  const d = draftPicks(owner)
+  return [d.picked.get(name), d.remote.get(name)]
+}
+
+/**
+ * @param {string} name
+ * @param {[object|undefined, object|undefined]} held from heldPick
+ * @param {object} [owner]
+ */
+export function putBackPick(name, held, owner) {
+  const d = draftPicks(owner)
+  put(d.picked, name, held[0])
+  put(d.remote, name, held[1])
+}
+
+/**
+ * Take back one pick, and only that one: whatever was filed for `emote` goes
+ * unless a different emote has since taken the name (a newer pick stays).
+ * @param {{name?:string,url?:string}} emote
+ * @param {object} [owner]
+ */
+export function dropPick(emote, owner) {
   const key = emote?.name
   if (!key) return
-  if (pickedEmotes.get(key)?.url === emote.url) pickedEmotes.delete(key)
-  if (remoteCompleted.get(key)?.url === emote.url) remoteCompleted.delete(key)
-}
-
-/**
- * Forget a catalog pick (a swap for it was refused, so the line must not keep
- * sending the one you didn't get).
- * @param {string} name
- */
-export function forgetRemoteEmoteRef(name) {
-  if (name) remoteCompleted.delete(name)
+  const d = draftPicks(owner)
+  if (d.picked.get(key)?.url === emote.url) d.picked.delete(key)
+  if (d.remote.get(key)?.url === emote.url) d.remote.delete(key)
 }
 
 /**
@@ -161,20 +243,24 @@ export function forgetRemoteEmoteRef(name) {
  * removed or swapped away: the word then resolves by the normal order (rule 8).
  * @param {string} name
  * @param {{hash?:string}} [opts]
+ * @param {object} [owner]
  */
-export function forgetPickedEmote(name, { hash } = {}) {
+export function forgetPickedEmote(name, { hash } = {}, owner) {
   if (!name) return
-  const pin = pickedEmotes.get(name)
-  if (pin && (!hash || pin.hash === hash)) pickedEmotes.delete(name)
+  const d = draftPicks(owner)
+  const pin = d.picked.get(name)
+  if (pin && (!hash || pin.hash === hash)) d.picked.delete(name)
 }
 
 /**
- * The record the sender last picked for exactly this word (Tab, picker or chip),
- * or undefined. The composer chip asks it so the chip draws what will send.
+ * The record the sender picked for exactly this word in this box (Tab, picker
+ * or chip), or undefined. The composer chip asks it so the chip draws what
+ * will send.
  * @param {string} word
+ * @param {object} [owner]
  */
-export function lookupPickedEmote(word) {
-  return word ? getRegistered(pickedEmotes, word) : undefined
+export function lookupPickedEmote(word, owner) {
+  return word ? getRegistered(draftPicks(owner).picked, word) : undefined
 }
 
 /**
@@ -223,11 +309,13 @@ export function matchEmoteWord(word, lookup) {
  * @param {Map<string, {url?:string,name?:string,provider?:string,zeroWidth?:boolean,id?:string,animated?:boolean,width?:number,height?:number}>} [channelMap]
  *        the room's own emotes (7tv/bttv/ffz/twitch). Last resort after the
  *        inventory and picks, so a name typed by heart ships its image too.
+ * @param {object} [owner] the box the message was written in — its picks apply
  * @returns {Object} emote_refs keyed by the emote's name (overlay suffix stripped)
  */
-export function buildEmoteRefs(content, emotesMap, channelMap) {
+export function buildEmoteRefs(content, emotesMap, channelMap, owner) {
   const emote_refs = {}
   if (!content) return emote_refs
+  const { picked, remote } = draftPicks(owner)
   // Split on whitespace (not \b\w+\b) so non-word emotes like ")))" or "<3" are
   // considered too.
   for (const word of String(content).split(/\s+/).filter(Boolean)) {
@@ -236,7 +324,7 @@ export function buildEmoteRefs(content, emotesMap, channelMap) {
     // the full word is NOT itself a real emote, so an emote literally named
     // "lerolero0" keeps its own ref and the renderer resolves it identically.
     // an explicit pick beats whatever the maps say the name means
-    const pick = getRegistered(pickedEmotes, word)
+    const pick = getRegistered(picked, word)
     if (pick) {
       // keyed by the word as typed — the renderer looks refs up by that
       emote_refs[word] = { ...pick }
@@ -280,11 +368,11 @@ export function buildEmoteRefs(content, emotesMap, channelMap) {
       continue
     }
     // Catalog fallback — same full-name-first / strip-0 order as above.
-    let r = getRegistered(remoteCompleted, word)
+    let r = getRegistered(remote, word)
     let rClean = word
     if (!r && word.endsWith('0') && word.length > 1) {
       rClean = word.slice(0, -1)
-      r = getRegistered(remoteCompleted, rClean)
+      r = getRegistered(remote, rClean)
     }
     if (r) {
       emote_refs[rClean] = {
@@ -332,13 +420,15 @@ export function buildEmoteRefs(content, emotesMap, channelMap) {
  * the same name" — buildEmoteRefs alone can't distinguish those once an owned
  * entry exists, because it stops looking the moment one does.
  * @param {string} word
+ * @param {object} [owner]
  * @returns {{name:string,url:string,provider?:string,zeroWidth?:boolean,width?:number,height?:number,id?:string,animated?:boolean}|undefined}
  */
-export function lookupRemoteEmoteRef(word) {
+export function lookupRemoteEmoteRef(word, owner) {
   if (!word) return undefined
-  let r = getRegistered(remoteCompleted, word)
+  const { remote } = draftPicks(owner)
+  let r = getRegistered(remote, word)
   if (!r && word.endsWith('0') && word.length > 1) {
-    r = getRegistered(remoteCompleted, word.slice(0, -1))
+    r = getRegistered(remote, word.slice(0, -1))
   }
   return r
 }

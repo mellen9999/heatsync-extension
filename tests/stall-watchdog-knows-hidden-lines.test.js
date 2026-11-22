@@ -53,6 +53,8 @@ function watchdog(over = {}) {
     'editingChannel',
     'hsPanePanelOpen',
     'isScrolledUp',
+    'hoverHeld',
+    'dropStaleHold',
     '_noHeal',
     'scheduleRenderMessages',
     '_filterFlags',
@@ -75,6 +77,8 @@ function watchdog(over = {}) {
     null,
     () => false,
     world.scrolledUp,
+    !!world.hover,
+    () => false,
     () => false,
     () => out.renders++,
     () => world.flags,
@@ -130,6 +134,12 @@ describe('the stall watchdog', () => {
   test('a reader who scrolled up: recorded with the reason, never fought', () => {
     const r = watchdog({ scrolledUp: true })
     expect(r.diag[0][1].scrolledUp).toBe(true)
+    expect(r.diag[0][1].hover).toBe(false)
     expect(r.renders).toBe(0)
+  })
+
+  test('held by the pointer: recorded as a hold, not as a scroll-up', () => {
+    const r = watchdog({ scrolledUp: true, hover: true })
+    expect([r.diag[0][1].hover, r.renders]).toEqual([true, 0])
   })
 })

@@ -18,7 +18,7 @@ describe('hover hold and the "N new" button', () => {
   const src = mainSource()
 
   test('a render while the pointer holds the feed does not count or show new messages', () => {
-    const at = src.indexOf('if (isScrolledUp && !opts?.bypassScrollPause)')
+    const at = src.indexOf('if (isScrolledUp && !opts?.bypassScrollPause) {')
     expect(at).toBeGreaterThan(0)
     const block = src.slice(at, src.indexOf('newMessageCount++', at))
     expect(block).toContain('if (hoverHeld) {')

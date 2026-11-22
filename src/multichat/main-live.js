@@ -170,8 +170,10 @@ function _renderMessagesImpl(id, opts) {
   // "N new" counter). loadOlderScrollback passes bypassScrollPause so it CAN
   // re-render while paused — to paint older rows — without yanking the view
   // (it anchors scroll itself afterward).
+  // A hold whose pointer is gone paints instead of waiting for a mouseleave that never came.
+  if (isScrolledUp && !opts?.bypassScrollPause) dropStaleHold()
   if (isScrolledUp && !opts?.bypassScrollPause) {
-    // Held by hover: nothing new is promised, the release re-renders and shows it all.
+    // Held by the pointer: nothing new is promised, the release re-renders and shows it all.
     if (hoverHeld) {
       _holdMissedRender = true
       return

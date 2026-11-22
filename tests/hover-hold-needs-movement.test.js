@@ -40,7 +40,9 @@ function pane() {
     'scrollMsgsToBottom',
     'Element',
     'listIsChat',
+    'document',
     `let hoverHeld = false, isScrolledUp = false, newMessageCount = 0, _holdMissedRender = false, _hoverRelease = null
+     let _hoverEl = null, _hoverReleaseNow = null
      const isStaticTab = () => false
      let currentTab = 'live'
      ${BLOCK}
@@ -58,6 +60,7 @@ function pane() {
     (el) => pins.push(el.id),
     win.Element,
     () => !taken.now,
+    { documentElement: document.documentElement, addEventListener: () => {}, hidden: false },
   )
   const fire = (id, type, x, y) =>
     document.getElementById(id).dispatchEvent(new win.MouseEvent(type, { bubbles: true, clientX: x, clientY: y }))

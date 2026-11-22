@@ -2737,11 +2737,14 @@ function renderStallCheck() {
   // and each check read it as a stall: a false report in the ring and a full redraw every 2.5s
   // (real kick with a hide rule, e2e s25, 11-18).
   if (liveSearchQuery(currentTab) || lineNeverDraws(m, currentTab, msgsEl)) return
+  // a hover hold whose pointer is gone is not a pause the reader asked for: let go so this paints
+  if (dropStaleHold()) return scheduleRenderMessages()
   const blockers = {
     editing: !!editingChannel,
     panel: !!hsPanePanelOpen(),
     card: typeof activeProfileCard !== 'undefined' && !!activeProfileCard,
     scrolledUp: !!isScrolledUp,
+    hover: !!hoverHeld,
   }
   const now = Date.now()
   if (now - _stallLoggedAt > 20000) {

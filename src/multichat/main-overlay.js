@@ -559,6 +559,26 @@ let isScrolledUp = false
 // Pointer resting on an emote/name/badge: the feed is frozen (isScrolledUp) but this is
 // not a reader's scroll-up, so renders during it never raise the "N new" button.
 let hoverHeld = false
+// The emote/name/badge/link the hold is on, and the closure that lets go of it. The hold is only
+// valid while the pointer is really over that element: a pointer that left without a mouseleave
+// (the row moved, the panel was reparented by a soft nav, the window lost it) would otherwise
+// freeze the pane until a tab switch.
+let _hoverEl = null
+let _hoverReleaseNow = null
+function holdStillOver() {
+  try {
+    return !!_hoverEl?.isConnected && _hoverEl.matches(':hover')
+  } catch (_) {
+    return false
+  }
+}
+/** Let go of a hold whose pointer is gone. True when it did. The caller paints. */
+function dropStaleHold() {
+  if (!hoverHeld || holdStillOver()) return false
+  _holdMissedRender = false
+  _hoverReleaseNow?.()
+  return true
+}
 // A render asked for while the pointer held the feed. Release only repaints if
 // one was: with nothing new the pane already shows everything, and the repaint
 // (a 500-row diff, then a pin that forces layout) is what made every unhover
@@ -1359,6 +1379,7 @@ function createOverlay() {
     const holdTarget = (el) => el.closest('.hs-mc-emote-wrapper, .hs-mc-user, .hs-mc-badge-img, .hs-mc-link')
     const releaseHold = () => {
       _hoverRelease = null
+      _hoverEl = null
       if (!hoverHeld) return
       hoverHeld = false
       isScrolledUp = false
@@ -1413,6 +1434,7 @@ function createOverlay() {
         if (hoverHeld && !isScrolledUp) hoverHeld = false // resumed by other means
         if (hoverHeld || isScrolledUp || isStaticTab()) return
         hoverHeld = true
+        _hoverEl = holdTarget(e.target)
         _holdMissedRender = false
         isScrolledUp = true
       },
@@ -1423,6 +1445,10 @@ function createOverlay() {
       releaseHold()
     }
     msgsEl.addEventListener('mouseleave', leave, { passive: true, signal: mcSignal })
+    msgsEl.addEventListener('pointercancel', leave, { passive: true, signal: mcSignal })
+    document.documentElement.addEventListener('mouseleave', leave, { passive: true, signal: mcSignal })
+    document.addEventListener('visibilitychange', () => document.hidden && leave(), { signal: mcSignal })
+    _hoverReleaseNow = releaseHold
     window.addEventListener('blur', leave, { passive: true, signal: mcSignal })
 
     // Bulletproof sticky-bottom: any change to msgsEl's box (panel resize,

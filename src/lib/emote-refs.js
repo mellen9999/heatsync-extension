@@ -125,6 +125,28 @@ export function pinPickedEmote(emote) {
 }
 
 /**
+ * The message these picks were made in is gone (sent, or thrown away): they go
+ * with it. A pick belongs to one message — a name typed by hand afterwards is
+ * a hand-typed word, in whatever room it is typed (emote law, send rule 2).
+ */
+export function endDraftPicks() {
+  pickedEmotes.clear()
+  remoteCompleted.clear()
+}
+
+/**
+ * A Tab cycle moved on from `emote`: it was looked at, not chosen. Whatever was
+ * filed for it goes, unless a different emote has since taken the name.
+ * @param {{name?:string,url?:string}} emote
+ */
+export function dropPick(emote) {
+  const key = emote?.name
+  if (!key) return
+  if (pickedEmotes.get(key)?.url === emote.url) pickedEmotes.delete(key)
+  if (remoteCompleted.get(key)?.url === emote.url) remoteCompleted.delete(key)
+}
+
+/**
  * Forget a catalog pick (a swap for it was refused, so the line must not keep
  * sending the one you didn't get).
  * @param {string} name
@@ -144,17 +166,6 @@ export function forgetPickedEmote(name, { hash } = {}) {
   if (!name) return
   const pin = pickedEmotes.get(name)
   if (pin && (!hash || pin.hash === hash)) pickedEmotes.delete(name)
-}
-
-/**
- * Drop every pin of an inventory emote that is no longer in your set — the
- * catch-all after a reload (another tab removed it, or a restore failed).
- * @param {(hash:string) => boolean} isOwned
- */
-export function prunePinsNotOwned(isOwned) {
-  for (const [key, pin] of pickedEmotes) {
-    if (pin.hash && pin.provider === 'inventory' && !isOwned(pin.hash)) pickedEmotes.delete(key)
-  }
 }
 
 /**

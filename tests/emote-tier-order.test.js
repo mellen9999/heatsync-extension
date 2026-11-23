@@ -85,3 +85,16 @@ test('native: your own line is your inventory pick, a block hits the exact hash 
   expect(src).toContain(':not([data-emote-hash])')
   expect(src).toContain('?.filter((v) => emote.inInventory || !v.inInventory)')
 })
+
+test('law: the streamer heatsync emote wins its name in the room; heatsync is last of the globals', () => {
+  const hs = { source: 'heatsync', hash: 'hs' }
+  expect(resolveEmoteProviderWinner(e('W', '7tv'), hs, EMOTE_TIER_ORDER.channel)).toBe(hs)
+  expect(resolveEmoteProviderWinner(hs, e('W', 'ffz'), EMOTE_TIER_ORDER.channel)).toBe(hs)
+  const g = e('W', 'ffz')
+  expect(resolveEmoteProviderWinner(g, hs, EMOTE_TIER_ORDER.global)).toBe(g)
+  expect(rankEmotePool([hs, e('W', 'twitch'), e('W', '7tv')], 'global').map((x) => x.source)).toEqual([
+    '7tv',
+    'twitch',
+    'heatsync',
+  ])
+})

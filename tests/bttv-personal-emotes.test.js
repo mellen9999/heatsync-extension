@@ -113,6 +113,7 @@ describe('capturing the lookup_user push', () => {
       hash: ID_A,
       animated: false,
       os: undefined,
+      personal: true,
     })
     expect(set.ZrehplaR.animated).toBe(true)
     expect(set.ZrehplaR.os).toBe(2) // 56px tall against the 28px baseline, capped at 2x

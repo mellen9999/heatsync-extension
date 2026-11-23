@@ -917,6 +917,7 @@ const MULTICHAT_MODULES = [
   'auth-irc.js',
   'kick-send.js',
   'emote-rungs.js',
+  'emote-law-read.js',
   'emotes.js',
   'emote-cache-evict.js',
   'emote-upload-core.js',

@@ -4571,47 +4571,25 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     if (entry.untilAt && msgTime >= entry.untilAt + EMOTE_ADDED_SKEW_MS) return null
     return entry
   }
-  const _sGet = (name) => (_invRender ? _sGate(senderEmotes?.get(name)) : null)
-  // Provenance-aware resolve: message ref > sender inventory > channel > native >
-  // global > removed-inventory fallback. `inv` marks hits that render BECAUSE of a
-  // heatsync inventory (the sender's, or the viewer's own) — the tooltip
-  // attributes those to the inventory instead of the emote's original
-  // provider, which the viewer may have no relationship with (same emote
-  // labeled "set" on own rows but "7TV" on the sender's).
+  // Which emote is this word: the law's READ order (emote-law-read.js), over the row's own room. A
+  // hit marks `inv` when it draws because of an inventory (the sender's, or a server name-match):
+  // the tooltip attributes those to the inventory instead of the emote's original provider.
+  // Past ownership and the removed-emote fallback come after: the law has no clock to ask.
+  const _lawCtx = lawReadCtx({
+    room: (channel && channelEmoteCaches[channel]) || null,
+    globals: emoteCache,
+    tags: extraCache,
+    refs: msgRefs,
+    sender: _invRender ? senderEmotes : null,
+    gate: _sGate,
+    unesc: unescapeHtml,
+  })
   const _lookup = (name) => {
-    // `name` is an HTML-escaped token: main.js runs escapeHtml(m.text) before
-    // processEmotes, so a name with HTML specials arrives escaped (`>:3` →
-    // `&gt;:3`, `<3` → `&lt;3`). The channel/sender/global/removed caches are
-    // keyed by RAW emote names, so we must unescape before those lookups or
-    // the emote renders as plain text. extraCache (twitchExtra) is keyed by
-    // the escaped name to match this token directly. escapeHtml is identity
-    // for names without specials, so raw === name on the hot path (no `&`).
+    const hit = lawReadWord(name, _lawCtx, unescapeHtml)
+    if (hit) return hit
+    // `name` is an HTML-escaped token; the removed/past-ownership stores are keyed by RAW names
     const raw = name.indexOf('&') === -1 ? name : unescapeHtml(name)
-    // Server-enriched per-message refs: the sender's inventory emote actually
-    // used in THIS message, resolved authoritatively server-side. First of all:
-    // many emotes share one name across providers (a channel's AYAYA, the kick
-    // AYAYA, the 7tv variant someone collected), and the one the sender
-    // picked is the only one that is not a guess. Ungated by _sGate — it's
-    // current by construction.
-    // A platform token (twitch IRC emotes= tag) is exact by position (rule 1): it is
-    // what the line literally carries, so nothing with the same name replaces it.
-    let e = extraCache?.get(name)
-    if (e) return { e, inv: false }
-    e = msgRefs?.get(name)
-    if (e) return { e, inv: true }
-    // The SENDER's own set next, before the channel: the ref above is just a
-    // precomputed lookup of this same inventory, so a line with no ref (the first
-    // one after an add or swap, a cold server cache, history) must still resolve
-    // to the emote they picked and not the room's same-name one. Only the sender's
-    // set ever fills this — never another user's — and _sGate keeps it to the
-    // window they actually owned the emote.
-    e = _sGet(raw)
-    if (e) return { e, inv: true }
-    e = channel ? channelEmoteCaches[channel]?.get(raw) : null
-    if (e) return { e, inv: false }
-    e = emoteCache.get(raw)
-    if (e) return { e, inv: false }
-    e = _rfGate(_rf?.get(raw)) || (_rf ? pastOwnershipAt(raw, msgTime) : null)
+    const e = _rfGate(_rf?.get(raw)) || (_rf ? pastOwnershipAt(raw, msgTime) : null)
     return e ? { e, inv: true } : null
   }
 
@@ -4882,6 +4860,11 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     if (_hit) {
       emote = _hit.e
       emoteFromInv = _hit.inv
+      // the law strips one trailing 0 when no emote is named so: the base, drawn as an overlay
+      if (_hit.stripped) {
+        isOverlayEmote = true
+        overlayBaseName = word.slice(0, -1)
+      }
     }
     // blockedEmoteFallback last, own messages only: resolves a blocked emote to
     // its real url+dims so it renders the dashed box at the emote's true
@@ -4905,8 +4888,10 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
       // trailing-0 heuristic. Own outgoing messages resolve via senderEmotes
       // (viewerPersonalEmotes), which lacks the 7TV flag — recover it from
       // channel/global caches so an overlay emote you own still stacks.
-      isOverlayEmote = !!emote.zeroWidth
-      if (!isOverlayEmote && zeroWidthFromAnyCache(word)) isOverlayEmote = true
+      if (!_hit?.stripped) {
+        isOverlayEmote = !!emote.zeroWidth
+        if (!isOverlayEmote && zeroWidthFromAnyCache(word)) isOverlayEmote = true
+      }
     } else if (endsWithZero) {
       // No literal "name0" emote — strip the 0 and overlay the base.
       const baseName = word.slice(0, -1)

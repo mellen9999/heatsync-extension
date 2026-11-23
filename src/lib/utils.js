@@ -737,8 +737,8 @@ function resolveEmoteProviderWinner(existing, incoming, preferred) {
  * @type {{channel: readonly string[], global: readonly string[]}}
  */
 const EMOTE_TIER_ORDER = {
-  channel: ['ffz', '7tv', 'bttv', 'twitch', 'kick'],
-  global: ['7tv', 'bttv', 'ffz', 'twitch'],
+  channel: ['heatsync', 'ffz', '7tv', 'bttv', 'twitch', 'kick'],
+  global: ['7tv', 'bttv', 'ffz', 'twitch', 'heatsync'],
 }
 
 /**

@@ -1583,6 +1583,8 @@ function computeMessageText(m) {
         // reader (emotes.js); the server sends cw_cats snake_case.
         cwCats: Array.isArray(r.cw_cats) && r.cw_cats.length ? r.cw_cats : null,
         nsfw: !!r.nsfw,
+        // the server matched this name to the sender's inventory: their emote below the room, not a pick
+        named: true,
       })
     }
   }

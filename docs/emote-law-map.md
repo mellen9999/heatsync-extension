@@ -22,11 +22,11 @@ law calls: read = `readWord` / `readLine`; send = `sendWord` / `sendLine` / `edi
 
 | id | where | job | order today | law call | a user would notice |
 |---|---|---|---|---|---|
-| R1 | `src/multichat/emotes.js:4527` `processEmotes` (`_lookup` 4581, name0 4880-4922, suffix peel 4928-4961) | read | exact case; row's own channel. 1 twitch tag cache, 2 `msgRefs` (server `hsEmotes` + own click refs), 3 the sender's whole merged set, 4 `channelEmoteCaches[channel]` (twitch+kick share one bare-name map), 5 global cache, 6 removed fallback / `pastOwnershipAt` (own rows) | `readLine(text, tokens, ctx)` with `ctx.room` = the row's room, `ctx.refs` = only what the sender's app shipped, `ctx.sender` = their 7tv personal (and heatsync on their own lines) | a streamer's own heatsync emote wins over a same-name 7tv one in their room; a kick row no longer draws the twitch channel's same-name emote; your own `W` no longer beats the room's `W` on your line unless you picked it |
-| R2 | `src/multichat/main-tabs.js:1499` `computeMessageText` | read (builds R1's inputs) | own row: sender set = `viewerPersonalEmotes`; others: `getSenderEmotes(key)`; `msgRefs` = server `hsEmotes` (1562-1588) + own `clickPastedRefs` (1593); `twitchExtra` = IRC tags | builds `ReadCtx` once per row: `room`, `refs` (shipped only; a server name-match is not a ref), `sender`, `globals`, `fold` | an emote the server only name-matched stops claiming to be the sender's pick |
-| R3 | `src/multichat/emotes.js:3632` `_buildChannelEmoteCache`, `:3841` global load, `src/lib/utils.js:722,739` `resolveEmoteProviderWinner` / `EMOTE_TIER_ORDER` | pool shaping | channel list ffz, 7tv, bttv, twitch, kick; globals 7tv, bttv, ffz, twitch; a source outside the list (`heatsync`) means "incoming overwrites", so array order decides | `buildRoom(platform, channel, { owner, third, native })` and `buildGlobals(list)` — they sort before they index | the streamer's heatsync set stops losing to a provider of the same name; a heatsync global stops beating 7tv/bttv/ffz (law: heatsync last) |
-| R4 | `src/background/07-handle-message.js:2457-2531` `get_sender_emotes`; `src/multichat/emotes.js:3177` `getSenderEmotes` | sender set build | one merged map per sender, later wins: bttv pro personal, 7tv personal, heatsync (wins same-name) | split: 7tv personal → `ReadCtx.sender.personal` (above the room); heatsync inventory → `sender.inventory` (below the room). bttv personal has no law tier | a sender's heatsync emote no longer outranks the room on their line; their 7tv personal still does |
-| R5 | `src/multichat/emotes.js:3387` `activeTabEmotePools`, `:3411` `activeTabChannelEmote` | pool pick (OPEN tab) | pools of the open tab: currentTab, its twitch, kick, yt handle, `getLiveChannel()`, `getCurrentChannel()`; first pool wins here, last wins in `_getMergedAcEmotes` | deleted as a resolver. callers hold a `Room` built from the row's / the send's room | same word, same emote whichever tab is open |
+| R1 ✓ closed | `src/multichat/emotes.js:4527` `processEmotes` (`_lookup` 4581, name0 4880-4922, suffix peel 4928-4961) | read | exact case; row's own channel. 1 twitch tag cache, 2 `msgRefs` (server `hsEmotes` + own click refs), 3 the sender's whole merged set, 4 `channelEmoteCaches[channel]` (twitch+kick share one bare-name map), 5 global cache, 6 removed fallback / `pastOwnershipAt` (own rows) | `readLine(text, tokens, ctx)` with `ctx.room` = the row's room, `ctx.refs` = only what the sender's app shipped, `ctx.sender` = their 7tv personal (and heatsync on their own lines) | a streamer's own heatsync emote wins over a same-name 7tv one in their room; a kick row no longer draws the twitch channel's same-name emote; your own `W` no longer beats the room's `W` on your line unless you picked it |
+| R2 ✓ closed | `src/multichat/main-tabs.js:1499` `computeMessageText` | read (builds R1's inputs) | own row: sender set = `viewerPersonalEmotes`; others: `getSenderEmotes(key)`; `msgRefs` = server `hsEmotes` (1562-1588) + own `clickPastedRefs` (1593); `twitchExtra` = IRC tags | builds `ReadCtx` once per row: `room`, `refs` (shipped only; a server name-match is not a ref), `sender`, `globals`, `fold` | an emote the server only name-matched stops claiming to be the sender's pick |
+| R3 ✓ closed | `src/multichat/emotes.js:3632` `_buildChannelEmoteCache`, `:3841` global load, `src/lib/utils.js:722,739` `resolveEmoteProviderWinner` / `EMOTE_TIER_ORDER` | pool shaping | channel list ffz, 7tv, bttv, twitch, kick; globals 7tv, bttv, ffz, twitch; a source outside the list (`heatsync`) means "incoming overwrites", so array order decides | `buildRoom(platform, channel, { owner, third, native })` and `buildGlobals(list)` — they sort before they index | the streamer's heatsync set stops losing to a provider of the same name; a heatsync global stops beating 7tv/bttv/ffz (law: heatsync last) |
+| R4 ✓ closed | `src/background/07-handle-message.js:2457-2531` `get_sender_emotes`; `src/multichat/emotes.js:3177` `getSenderEmotes` | sender set build | one merged map per sender, later wins: bttv pro personal, 7tv personal, heatsync (wins same-name) | split: 7tv personal → `ReadCtx.sender.personal` (above the room); heatsync inventory → `sender.inventory` (below the room). bttv personal has no law tier | a sender's heatsync emote no longer outranks the room on their line; their 7tv personal still does |
+| R5 ✓ closed for reads (row passes its own room; send/offer callers remain) | `src/multichat/emotes.js:3387` `activeTabEmotePools`, `:3411` `activeTabChannelEmote` | pool pick (OPEN tab) | pools of the open tab: currentTab, its twitch, kick, yt handle, `getLiveChannel()`, `getCurrentChannel()`; first pool wins here, last wins in `_getMergedAcEmotes` | deleted as a resolver. callers hold a `Room` built from the row's / the send's room | same word, same emote whichever tab is open |
 | R6 | `src/multichat/emotes.js:3420` `lookupEmote` | state / hover / block / add | yours, global, open-tab pools, removed fallback, blocked fallback | stays a lookup of *the thing a name is in my sets* for block/add/hover (not a resolve); its read/send uses go through R1/R7 | none for block/add; hover shows the emote the row drew |
 | R7 | `src/multichat/emotes.js:3468` `lookupEmoteRenderOrder`, `:3551` `lookupEmoteWithOverlay`, `:1962` `createInputEmoteImg` | send preview (composer chip) | yours, open-tab pools, globals, removed, blocked; literal name first, then `name0` as overlay base; `zeroWidthFromAnyCache` recovers the flag | `sendWord(word, ctx)` (chip = what ships; `sendLine().chips` for a whole draft) | the chip shows what will really send: the room's emote first, yours only where the room has none or you picked it |
 | R8 | `src/multichat/emotes.js:3461` `lookupOwnedEmote`; `src/multichat/input.js:4128` `handleInputChange` (4327, 4450) | send (type-then-space auto-chip) | yours only | `sendWord` — the auto-chip becomes the law's chip, so a typed word that the room owns no longer turns into *your* copy | typing a word the room has no longer silently chips your look-alike |
@@ -52,13 +52,13 @@ those bundles too (≈10KB each, minified) or a message to the overlay. that is 
 
 ## where today's answer differs from the law
 
-- **read: the sender's whole merged set beats the room** (R1 step 3 / R4). law: only their 7tv personal set is above the room; their heatsync set is tier 4, below it. on your own rows it is your entire inventory (`main-tabs.js:1541`).
-- **read: `hsEmotes` is used as a pick** (R2, `main-tabs.js:1562`). law: a server name-match is not a pick.
-- **read: a provider overwrites the streamer's heatsync set of the same name** (R3, `resolveEmoteProviderWinner`). law: owner heatsync first.
-- **read: a heatsync global overwrites 7tv/bttv/ffz** (R3). law: heatsync is last of the globals.
+- **read: the sender's whole merged set beats the room** (R1 step 3 / R4). law: only their 7tv personal set is above the room; their heatsync set is tier 4, below it. on your own rows it is your entire inventory (`main-tabs.js:1541`). — closed (READ): only `personal: true` entries (7tv/bttv personal sets) read above the room
+- **read: `hsEmotes` is used as a pick** (R2, `main-tabs.js:1562`). law: a server name-match is not a pick. — closed (READ): server name-matches carry `named: true` and read as the sender's inventory
+- **read: a provider overwrites the streamer's heatsync set of the same name** (R3, `resolveEmoteProviderWinner`). law: owner heatsync first. — closed (READ): `EMOTE_TIER_ORDER.channel` starts with heatsync
+- **read: a heatsync global overwrites 7tv/bttv/ffz** (R3). law: heatsync is last of the globals. — closed (READ): `EMOTE_TIER_ORDER.global` ends with heatsync
 - **read: native rows skip the streamer's set** (R17, `content.js:2738`).
-- **read: twitch+kick share one bare-name map** (`emotes.js:3642`): a kick row can draw the twitch channel's emote. law: the platform's own channel emotes.
-- **read: dms use `hsAnyChannelEmotes()`** (R1, `emotes.js:4511`) as if every loaded channel were a platform token. law: no room → no room rule (picks, sender, globals).
+- **read: twitch+kick share one bare-name map** (`emotes.js:3642`): a kick row can draw the twitch channel's emote. law: the platform's own channel emotes. — still open: the shared map is built per channel key; the adapter hardcodes `platform: 'twitch'`
+- **read: dms use `hsAnyChannelEmotes()`** (R1, `emotes.js:4511`) as if every loaded channel were a platform token. law: no room → no room rule (picks, sender, globals). — still open: dms/feed (R12) are outside multichat-core processEmotes
 - **read: youtube native rows and dms never draw the sender's own sets** (R21).
 - **read: the case setting is not wired** — exact case is the only mode. law: exact first, then a folded match for words nothing matched.
 - **send: the typed word is not the room's** (R7 yours > room > globals; R9 room > yours > globals; disagree with each other and with the law, which is room > yours).
@@ -97,6 +97,23 @@ the answer is drawn or whether it is allowed.
 - **auto-add-on-send mutates "yours"** (add, swap, optimistic seed, rollback) — `input.js:8633-8713`, `emotes.js:1604-1640`. the law's send is a pure resolve and never edits a set. this is the biggest behaviour question for the SEND step: keep it as a step *after* `sendLine`, driven by `Shipped.chips`.
 - click-pasted own-echo refs that survive a failed add — `emotes.js:2852`, `main-tabs.js:1593`.
 - server-rendered archive rows — `chat-logs.js:812-893`.
+
+## design note: one on-disk law copy for the content-script bundles (no code yet)
+
+R17-R22 would each need the law. inlining it per bundle costs ~10KB minified x5 and five drifting copies. instead:
+one file `lib/emote-law.js` (the law bundle as an iife defining `hsEmoteLaw`), listed in `web_accessible_resources`
+and loaded by each content script through `chrome.runtime.getURL` + a classic script tag, or declared once in the
+manifest `content_scripts[].js` list ahead of the bundle (preferred: no async, one copy on disk, ~10KB once, shared
+by every script of the same isolated world). gotchas: MV3 content scripts of one extension share an isolated world per
+frame, so a global defined by an earlier listed file is visible to later ones, but NOT to the page world or to the
+background service worker (that one imports its own copy via `importScripts`); firefox MV3 matches this but needs the
+file in `content_scripts` order, not dynamic injection, to stay synchronous; a `web_accessible_resources` entry is
+fingerprintable by pages, so prefer the manifest-list route (nothing exposed); the build must write the file once
+and pin its hash in the budget file so a stale copy cannot ship.
+
+## open calls
+
+- **auto-add-on-send stays as is** for now (`input.js:8633-8713`: a pick found in the sent text is added to your inventory). recommendation: it should never happen on a click. a send should be a pure resolve; adding to a set is its own explicit action, so a click on a picker emote never edits what you own as a side effect.
 
 ## order of work
 

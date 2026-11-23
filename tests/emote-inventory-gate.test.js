@@ -152,11 +152,29 @@ describe('inventory provenance stamp (data-inv)', () => {
     }
   })
 
-  test("the sender's own emote beats the channel's of the same name, and is stamped", async () => {
+  test("the room's emote beats the sender's inventory of the same name (law)", async () => {
     const { channelEmoteCaches } = await import('../src/multichat/emotes.js')
     channelEmoteCaches['chan-x'] = new Map([['AKDJvibe', { url: `${URL}?channel`, source: '7tv', state: 'channel' }]])
     try {
       const out = processEmotes('AKDJvibe', 'chan-x', null, sender({ addedAt: T }), T + 5000)
+      expect(out).toContain('?channel')
+      expect(out).not.toContain('data-inv')
+    } finally {
+      delete channelEmoteCaches['chan-x']
+    }
+  })
+
+  test("a sender's 7tv personal set beats the room's, and is stamped", async () => {
+    const { channelEmoteCaches } = await import('../src/multichat/emotes.js')
+    channelEmoteCaches['chan-x'] = new Map([['AKDJvibe', { url: `${URL}?channel`, source: '7tv', state: 'channel' }]])
+    try {
+      const out = processEmotes(
+        'AKDJvibe',
+        'chan-x',
+        null,
+        sender({ addedAt: T, source: '7tv', personal: true }),
+        T + 5000,
+      )
       expect(rendered(out)).toBe(true)
       expect(out).not.toContain('?channel')
       expect(out.match(/data-inv="1"/g)?.length).toBe(2)

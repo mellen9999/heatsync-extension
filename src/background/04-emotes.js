@@ -629,8 +629,8 @@ async function fetchKickChannelEmotes(channelName) {
 // can't import lib — tests/emote-tier-order.test.js pins the two together). Entries with no
 // `source` (the channel owner's heatsync set) stay in front.
 const EMOTE_TIER_ORDER = {
-  channel: ['ffz', '7tv', 'bttv', 'twitch', 'kick'],
-  global: ['7tv', 'bttv', 'ffz', 'twitch'],
+  channel: ['heatsync', 'ffz', '7tv', 'bttv', 'twitch', 'kick'],
+  global: ['7tv', 'bttv', 'ffz', 'twitch', 'heatsync'],
 }
 function rankEmotePool(list, tier) {
   const order = EMOTE_TIER_ORDER[tier] || EMOTE_TIER_ORDER.global
@@ -1066,6 +1066,7 @@ async function capture7TVPersonalEntitlement(body) {
         zeroWidth: !!(flags & 257),
         hash: e.id,
         animated: !!e.data?.animated,
+        personal: true,
       }
     }
     if (Object.keys(out).length) {
@@ -1465,6 +1466,7 @@ function captureBTTVPersonalSet(data) {
       hash: e.id,
       animated: e.animated === true,
       os: bttvOversize(e),
+      personal: true,
     }
   }
   // an announcement with no emotes is the user dropping their set

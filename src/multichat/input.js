@@ -1845,7 +1845,7 @@ function initInput() {
 
   function openEmoteCtxMenu(x, y, { emoteName, emoteUrl, state, source, targetEl, wrapper }) {
     const hi = getHighResUrl(emoteUrl)
-    const items = []
+    const items = hsFavMenuItems({ emoteName, emoteUrl, source, targetEl, wrapper })
     // Block/unblock + remove-from-set live here so the shift menu is the
     // complete per-emote surface. Plain right-click is the fast path: unblock a
     // blocked emote, remove an inventory one, block anything else — so for an

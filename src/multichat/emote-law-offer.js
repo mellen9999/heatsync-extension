@@ -31,6 +31,8 @@ function lawOfferCtx({ catalog, emoji } = {}) {
     globals: s.globals,
     catalog,
     emoji,
+    // your pinned pictures: a platform's own emote only where this room's platform hands it to you
+    favorites: lawFavorites([s.room?.names, s.own.inventory, s.room && s.own.native[s.room.platform], s.globals]),
     usage: (n) => frec.get(n) || 0,
     // an emote you blocked, or one hidden from you, is never offered (and the law lets no
     // look-alike of its name in from the catalog)

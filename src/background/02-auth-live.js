@@ -27,6 +27,9 @@ browser.cookies.onChanged.addListener((changeInfo) => {
       browser.storage.local
         .remove([
           'emote_inventory',
+          'emote_favorites',
+          'emote_favorites_unsent',
+          'emote_favorites_owner',
           'blocked_emotes',
           'auth_token_encrypted',
           'auth_token',

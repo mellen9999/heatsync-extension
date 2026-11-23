@@ -825,6 +825,8 @@ function groupEmotes(allEmotes) {
   }))
   const recent = buildRecentSection()
   if (recent) sections.unshift(recent)
+  const fav = hsFavSection([viewerPersonalEmotes, ...activeTabEmotePools(), emoteCache])
+  if (fav) sections.unshift(fav)
   return sections
 }
 
@@ -1435,7 +1437,7 @@ function showEmotePicker(tab = null) {
       // the background; on success the state is reconciled, on failure the
       // user still sees the emote (server sync re-evaluates next load).
       if (img.dataset.state === 'remote') {
-        const remote = mcRemoteEmoteIndex.get(img.dataset.variant ? `${name}#${img.dataset.variant}` : name)
+        const remote = hsRemoteTile(name, img.dataset.variant)
         // Race-guard rapid double-clicks: addEmoteToInventory tracks in-flight adds
         // in pendingEmoteOps, so skip the optimistic-add + POST if one is already
         // running for this name — otherwise a fast second click fires a second

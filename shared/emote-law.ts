@@ -88,7 +88,7 @@ export function cmpCp(a: string, b: string): number {
   return a.length < b.length ? -1 : 1
 }
 
-const CHANNEL_ORDER: readonly string[] = ['ffz', '7tv', 'bttv']
+export const CHANNEL_ORDER: readonly string[] = ['ffz', '7tv', 'bttv']
 const GLOBAL_ORDER: readonly string[] = ['7tv', 'bttv', 'ffz', 'twitch', 'hs']
 const rankIn = (order: readonly string[], p: string) => { const i = order.indexOf(p); return i === -1 ? order.length : i }
 
@@ -404,6 +404,8 @@ export interface OfferCtx {
   blocked?: ((key: EmoteKey) => boolean) | null
   /** false = the "suggest my emotes" setting is off */
   suggestOwn?: boolean
+  /** pictures the person pinned, in their order. whole records: a favorite goes where they go, loaded here or not */
+  favorites?: readonly Emote[] | null
 }
 
 export interface Candidate {
@@ -417,12 +419,18 @@ export interface Candidate {
 
 const TIER_RANK: Record<Tier, number> = { room: 0, own: 1, global: 2, catalog: 3, emoji: 4 }
 
-interface Cand extends Candidate { copy: number; use: number; pop: number }
+/** pin: place in the person's favorites, -1 none. hit: a search answered with this name (a catalog copy only) */
+interface Cand extends Candidate { copy: number; use: number; pop: number; pin: number; hit: boolean }
+const NOT_PINNED = 1e9
 
 function gather(ctx: OfferCtx): Cand[] {
   const seen = new Set<string>()
   const names = new Set<string>()
   const out: Cand[] = []
+  const pins = new Map<string, number>()
+  const favorites = ctx.favorites || []
+  favorites.forEach((e, i) => { if (e?.name && !pins.has(e.key)) pins.set(e.key, i) })
+  const hits = new Set<string>()
   const add = (idx: Iterable<Emote> | null | undefined, tier: Tier, copy: number, local: boolean) => {
     if (!idx) return
     for (const e of idx) {
@@ -431,7 +439,7 @@ function gather(ctx: OfferCtx): Cand[] {
       // a name you can reach here is held even when its emote is blocked: blocking hides, it never lets a search look-alike in
       if (local) names.add(e.name)
       if (ctx.blocked?.(e.key)) continue
-      out.push({ emote: e, tier, match: BUCKET_NONE, copy, use: 0, pop: 0 })
+      out.push({ emote: e, tier, match: BUCKET_NONE, copy, use: 0, pop: 0, pin: pins.get(e.key) ?? -1, hit: local || hits.has(e.name) })
     }
   }
   // copy order = send order, so the copy a hand-typed word would ship is the one a name keeps first
@@ -439,17 +447,26 @@ function gather(ctx: OfferCtx): Cand[] {
   add(ctx.own.personal.values(), 'own', 1, true)
   add(ctx.room?.names.values(), 'room', 2, true)
   if (ctx.suggestOwn !== false) add(ctx.own.inventory.values(), 'own', 3, true)
+  // not suggested is not gone: typing the name still sends yours, so no search look-alike may take it
+  else for (const e of ctx.own.inventory.values()) if (e?.name) names.add(e.name)
   add(ctx.globals.values(), 'global', 4, true)
-  if (ctx.catalog?.length) {
-    // one catalog copy per name (the most carried); a name already held locally keeps its local copy
-    const best = new Map<string, Emote>()
-    for (const e of ctx.catalog) {
-      if (!e?.name || names.has(e.name) || ctx.blocked?.(e.key)) continue
-      const p = best.get(e.name)
-      if (!p || (e.pop || 0) > (p.pop || 0) || ((e.pop || 0) === (p.pop || 0) && cmpCp(e.id, p.id) < 0)) best.set(e.name, e)
-    }
-    add(best.values(), 'catalog', 5, false)
+  // one catalog copy per name (the most carried); a name already held locally keeps its local copy
+  const best = new Map<string, Emote>()
+  for (const e of ctx.catalog || []) {
+    if (!e?.name || names.has(e.name) || ctx.blocked?.(e.key)) continue
+    hits.add(e.name)
+    const p = best.get(e.name)
+    if (!p || (e.pop || 0) > (p.pop || 0) || ((e.pop || 0) === (p.pop || 0) && cmpCp(e.id, p.id) < 0)) best.set(e.name, e)
   }
+  // a favorite nothing here holds is offered like a search answer, and is the copy its name gets
+  // (the first pinned, when two share a name). a name held here keeps its own: no look-alike
+  const pinnedName = new Set<string>()
+  for (const e of favorites) {
+    if (!e?.name || seen.has(e.key) || names.has(e.name) || pinnedName.has(e.name) || ctx.blocked?.(e.key)) continue
+    pinnedName.add(e.name)
+    best.set(e.name, e)
+  }
+  add(best.values(), 'catalog', 5, false)
   add(ctx.emoji, 'emoji', 6, false)
   return out
 }
@@ -457,7 +474,7 @@ function gather(ctx: OfferCtx): Cand[] {
 /**
  * Tab, the `:` list and picker search: one ranked list.
  *   the exact name (the spelling typed leads its case twin)
- *   names you use — only when the name starts with what you typed
+ *   your favorites, in your order, then names you use — only when the name starts with what you typed
  *   the room · yours · globals · not loaded yet · emoji
  * Inside a tier: starts-with, word-start, inside; then ones you use, more carried, shorter, a-z.
  * Copies of one name always sit in send order wherever they land.
@@ -468,7 +485,8 @@ export function offer(typed: string, ctx: OfferCtx, limit?: number): Candidate[]
   const pool: Cand[] = []
   for (const c of gather(ctx)) {
     c.match = matchBucket(c.emote.name, q)
-    if (c.match === BUCKET_NONE && c.tier !== 'catalog') continue
+    // a search may answer by tag, so its copy needs no name match; a favorite no search asked for does
+    if (c.match === BUCKET_NONE && !(c.tier === 'catalog' && c.hit)) continue
     c.use = Math.max(0, ctx.usage?.(c.emote.name) || 0)
     c.pop = Math.max(0, Math.floor(ctx.pop?.(c.emote.name.toLowerCase()) ?? c.emote.pop ?? 0))
     pool.push(c)
@@ -478,7 +496,7 @@ export function offer(typed: string, ctx: OfferCtx, limit?: number): Candidate[]
   const group = (c: Cand) =>
     c.match === BUCKET_EXACT ? 0
       : c.match === BUCKET_NONE ? 9
-        : c.use > 0 && c.match === BUCKET_PREFIX ? 1
+        : (c.use > 0 || c.pin >= 0) && c.match === BUCKET_PREFIX ? 1
           : 2 + TIER_RANK[c.tier]
   const tail = (a: Cand, b: Cand) => a.emote.name.length - b.emote.name.length || cmpCp(a.emote.name, b.emote.name) || a.copy - b.copy || cmpCp(a.emote.key, b.emote.key)
   pool.sort((a, b) => {
@@ -489,7 +507,7 @@ export function offer(typed: string, ctx: OfferCtx, limit?: number): Candidate[]
         || (bestCopy.get(a.emote.name) as number) - (bestCopy.get(b.emote.name) as number)
         || cmpCp(a.emote.name, b.emote.name) || a.copy - b.copy || cmpCp(a.emote.key, b.emote.key)
     }
-    if (ga === 1) return b.use - a.use || TIER_RANK[a.tier] - TIER_RANK[b.tier] || b.pop - a.pop || tail(a, b)
+    if (ga === 1) return (a.pin < 0 ? NOT_PINNED : a.pin) - (b.pin < 0 ? NOT_PINNED : b.pin) || b.use - a.use || TIER_RANK[a.tier] - TIER_RANK[b.tier] || b.pop - a.pop || tail(a, b)
     if (ga === 9) return b.pop - a.pop || tail(a, b)
     return a.match - b.match || b.use - a.use || b.pop - a.pop || tail(a, b)
   })
@@ -519,11 +537,15 @@ export function extendOffer(prev: readonly Candidate[], cursor: number, typed: s
   return limit && limit > 0 ? out.slice(0, limit) : out
 }
 
-export interface Browse { recent: Candidate[]; room: Candidate[]; own: Candidate[]; global: Candidate[] }
+export interface Browse { favorite: Candidate[]; recent: Candidate[]; room: Candidate[]; own: Candidate[]; global: Candidate[] }
 
-/** The picker with nothing typed. Recents are pictures, not names: one you can no longer reach here is simply absent. */
+/**
+ * The picker with nothing typed. Recents are pictures, not names: one you can no longer reach here is
+ * simply absent. A favorite is never absent: one nothing here holds is a `catalog` copy, picked like a
+ * search answer. A blocked one is hidden.
+ */
 export function browse(ctx: OfferCtx, recents: readonly EmoteKey[] = []): Browse {
-  const all = gather({ ...ctx, catalog: null, emoji: null })
+  const all = gather({ ...ctx, catalog: null, emoji: null, favorites: null })
   const byKey = new Map(all.map(c => [c.emote.key, c]))
   const order = (a: Cand, b: Cand) =>
     (ctx.usage?.(b.emote.name) || 0) - (ctx.usage?.(a.emote.name) || 0)
@@ -536,5 +558,13 @@ export function browse(ctx: OfferCtx, recents: readonly EmoteKey[] = []): Browse
     const c = byKey.get(k)
     if (c && !seen.has(k)) { seen.add(k); recent.push(plain(c)) }
   }
-  return { recent, room: of('room'), own: of('own'), global: of('global') }
+  const favorite: Candidate[] = []
+  const pinned = new Set<string>()
+  for (const e of ctx.favorites || []) {
+    if (!e?.name || pinned.has(e.key) || ctx.blocked?.(e.key)) continue
+    pinned.add(e.key)
+    const c = byKey.get(e.key)
+    favorite.push(c ? plain(c) : { emote: e, tier: 'catalog', match: BUCKET_NONE })
+  }
+  return { favorite, recent, room: of('room'), own: of('own'), global: of('global') }
 }

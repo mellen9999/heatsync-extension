@@ -1505,6 +1505,21 @@ function handleWSMessage(msg) {
         }
         break
 
+      case 'site-settings:patch': {
+        // The site's own settings, under the site's names: not the extension's, except the one
+        // list both keep, favorite emotes. A pin made on heatsync.org or another device lands in
+        // the overlay's store (it cleans what it reads, src/multichat/emote-favorites.js). A change
+        // this device has not sent yet is newer than the account's, and is left alone.
+        const favs = msg.patches?.emoteFavorites
+        if (Array.isArray(favs)) {
+          browser.storage.local
+            .get('emote_favorites_unsent')
+            .then((d) => (d.emote_favorites_unsent ? null : browser.storage.local.set({ emote_favorites: favs })))
+            .catch(() => {})
+        }
+        break
+      }
+
       case 'ui-state:update': {
         // Cross-surface UI prefs sync — server merged a patch from another
         // client and is fanning out the full state. Mirror into chrome.storage

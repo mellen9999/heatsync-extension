@@ -426,6 +426,7 @@ async function init() {
 
   // Load heatsync auth state
   loadHsAuth()
+  hsInitFavorites()
 
   // Probe bg for auth state so the login banner can show on tabs that opened
   // after the initial auth_changed broadcast already fired (cookies.onChanged

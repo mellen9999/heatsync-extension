@@ -30,13 +30,13 @@ const SHUFFLES = [1, 7, 1337, 90210, 424242]
 const KNOWN: Record<string, readonly string[]> = {
   read: ['kind', 'name', 'world', 'room', 'sender', 'text', 'tokens', 'refs', 'fold', 'expect'],
   session: ['kind', 'name', 'world', 'who', 'steps'],
-  offer: ['kind', 'name', 'world', 'room', 'who', 'typed', 'catalog', 'emoji', 'usage', 'pop', 'blocked', 'suggestOwn', 'limit', 'expect'],
+  offer: ['kind', 'name', 'world', 'room', 'who', 'typed', 'catalog', 'emoji', 'usage', 'pop', 'blocked', 'suggestOwn', 'favorites', 'limit', 'expect'],
   extend: ['kind', 'name', 'world', 'who', 'typed', 'cursor', 'prev', 'next', 'limit', 'expect'],
-  browse: ['kind', 'name', 'world', 'room', 'who', 'recents', 'usage', 'blocked', 'suggestOwn', 'expect'],
+  browse: ['kind', 'name', 'world', 'room', 'who', 'recents', 'usage', 'blocked', 'suggestOwn', 'favorites', 'expect'],
 }
 const STEP = ['room', 'legs', 'picks', 'stored', 'fold', 'text', 'textRepeat', 'expect']
 const STEP_EXPECT = ['from', 'refs', 'tokens', 'wire', 'wireIsText', 'chips']
-const OFFER_PART = ['room', 'catalog', 'emoji', 'usage', 'pop', 'blocked', 'suggestOwn']
+const OFFER_PART = ['room', 'catalog', 'emoji', 'usage', 'pop', 'blocked', 'suggestOwn', 'favorites']
 
 function known(obj: object, allowed: readonly string[], where: string) {
   for (const k of Object.keys(obj)) if (!allowed.includes(k)) throw new Error(`${where}: field "${k}" is not one this runner understands`)
@@ -71,6 +71,7 @@ function offerCtx(w: World, who: string | null, part: Case): OfferCtx {
     pop: pop ? lower => (Object.prototype.hasOwnProperty.call(pop, lower) ? pop[lower] : undefined) : null,
     blocked: key => blocked.has(key),
     suggestOwn: part.suggestOwn,
+    favorites: part.favorites ? part.favorites.map((a: string) => w.emote(a)) : null,
   }
 }
 
@@ -123,7 +124,9 @@ function run(c: Case, seed: number): unknown {
   // browse
   const b = browse(offerCtx(w, c.who, c), (c.recents as string[]).map(a => w.emote(a).key))
   const names = (l: typeof b.recent) => l.map(x => w.alias(x.emote))
-  return { recent: names(b.recent), room: names(b.room), own: names(b.own), global: names(b.global) }
+  // tiers travel with a favorite: one nothing here holds is a catalog copy (a pick that ships a ref)
+  const favorite = b.favorite.map(x => ({ emote: w.alias(x.emote), tier: x.tier }))
+  return { favorite, recent: names(b.recent), room: names(b.room), own: names(b.own), global: names(b.global) }
 }
 
 function expected(c: Case): unknown {

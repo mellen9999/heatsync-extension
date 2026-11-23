@@ -7,7 +7,7 @@
  * entries) on every autocomplete keystroke. addUsername — the sole writer of
  * usernameCache — now maintains that map incrementally instead, including on
  * LRU eviction. Carved out of main.js (same "don't depend on bundled output"
- * rationale as tab-complete-order.test.js's compareAcMatches).
+ * rationale as modifier-sweep-scope.test.js's carve).
  */
 
 import { describe, expect, test } from 'bun:test'

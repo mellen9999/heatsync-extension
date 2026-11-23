@@ -3377,6 +3377,9 @@
       }
     }
   },
+  "mc_cycle_wont_show": {
+    "message": "여기서는 보이지 않음"
+  },
   "mc_twapi_ql_subscribe": {
     "message": "구독"
   },

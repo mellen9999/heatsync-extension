@@ -3,7 +3,7 @@
  *
  * Regression anchor: cycling 20/20 wrapped back to 1/20 with the catalog
  * "searched". Page 1 of 7TV sorted by TOP_ALL_TIME is mostly emotes the user
- * already has loaded locally — the dedupe dropped every hit, add.length was 0,
+ * already has loaded locally — every hit was a name already held, nothing was added,
  * remoteDone flipped true, and the cycle wrapped as if the catalog had nothing
  * (967 real hits for "kap"). Fix: page through providers, chasing all-duplicate
  * pages a bounded number of times; remoteDone flips only when every provider is
@@ -16,34 +16,39 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { lawOfferRig } from './helpers/law-offer-rig.js'
 
 const INPUT_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 const start = INPUT_SRC.indexOf('let _acRemoteAbort = null')
 const end = INPUT_SRC.indexOf('// Colon-triggered dropdown state')
 if (start === -1 || end === -1 || end <= start) throw new Error('fetchRemoteEmoteMatches carve markers not found')
 
-// Build the carved module with stubbed collaborators. Providers are injected
-// per-test; ffz/bttv return [] (immediately exhausted) unless overridden.
-function build({ stv, ffz, bttv, matches = [], index = 0, search = 'kap' } = {}) {
+// Build the carved module over a real emote-law offer (law-offer-rig): `locals` are the room's
+// loaded emotes, the cycle starts as Tab's own list for `search`. Providers are injected per-test;
+// ffz/bttv return [] (immediately exhausted) unless overridden.
+function build({ stv, ffz, bttv, locals = [], index = 0, search = 'kap' } = {}) {
+  const rig = lawOfferRig({
+    channelEmoteCaches: {
+      'chan-a': new Map(locals.map((e) => [e.name, { url: e.url, source: '7tv', state: 'global' }])),
+    },
+  })
   const acState = {
     active: true,
-    matches,
+    matches: rig.findEmoteMatches(search),
     index,
     search,
     remoteDone: false,
     remotePending: false,
     _remotePage: 0,
     _remoteExhausted: null,
-    _aiSeq: 0,
+    _catalog: null,
   }
-  const recentRemoteCompletions = new Map()
-  // Remote-last, then fetch order — the shape compareAcMatches guarantees.
-  const compareAcMatches = (a, b) => (a.remote ? 1 : 0) - (b.remote ? 1 : 0) || (a._ai || 0) - (b._ai || 0)
   const fns = new Function(
     'hsModClassify',
     'recentRemoteCompletions',
     'REMOTE_COMPLETION_CAP',
-    'compareAcMatches',
+    'findEmoteMatches',
+    'lawCatalogEmote',
     'insertCompletionKeepOpen',
     'showCycleTooltip',
     'acState',
@@ -53,9 +58,10 @@ function build({ stv, ffz, bttv, matches = [], index = 0, search = 'kap' } = {})
     `${INPUT_SRC.slice(start, end)}; return { fetchRemoteEmoteMatches }`,
   )(
     () => ({ kind: 'word' }),
-    recentRemoteCompletions,
+    new Map(),
     300,
-    compareAcMatches,
+    rig.findEmoteMatches,
+    rig.lawCatalogEmote,
     () => {},
     () => {},
     acState,
@@ -66,21 +72,19 @@ function build({ stv, ffz, bttv, matches = [], index = 0, search = 'kap' } = {})
   return { acState, fetch: fns.fetchRemoteEmoteMatches }
 }
 
-const stvEmote = (name) => ({ name, url: `https://cdn.7tv.app/${name}/1x.avif`, provider: '7tv' })
+const stvEmote = (name) => ({ name, url: `https://cdn.7tv.app/${name}/1x.avif`, id: name, provider: '7tv' })
 const fullPage = (prefix, n = 60) => Array.from({ length: n }, (_, i) => stvEmote(`${prefix}${i}`))
-// A local that IS the catalog's emote shares its picture (url): dedupe is by picture, not name,
-// so a mirror must carry the hit's url. Defaults to a picture no catalog hit has.
-const local = (name, url = 'u') => ({ name, url, source: '7tv', type: 'emote' })
-const mirror = (e) => local(e.name, e.url)
+// a loaded emote: a catalog hit of a name something loaded answers to is never offered again
+const local = (name) => ({ name, url: `https://cdn.7tv.app/local-${name}/1x.avif` })
 
 describe('catalog pagination — the 20/20 dead-end', () => {
   test('all-duplicate page 1 chases to page 2 and appends its new hits', async () => {
-    // 60 locals that exactly mirror 7TV page 1 (the popular-prefix case): same name, same picture.
-    const locals = fullPage('kap').map(mirror)
+    // 60 locals that mirror 7TV page 1 (the popular-prefix case): every hit is a name already held.
+    const locals = fullPage('kap')
     const pages = { 1: fullPage('kap'), 2: fullPage('kapNew') }
     const calls = []
     const { acState, fetch } = build({
-      matches: [...locals],
+      locals,
       index: 59,
       stv: async (_q, _signal, opts) => {
         calls.push(opts.page)
@@ -97,7 +101,7 @@ describe('catalog pagination — the 20/20 dead-end', () => {
 
   test('short page exhausts the provider and flips remoteDone', async () => {
     const { acState, fetch } = build({
-      matches: [local('kappa')],
+      locals: [local('kappa')],
       stv: async () => [stvEmote('kapNew1'), stvEmote('kapNew2')], // 2 < 60 → drained
     })
     await fetch('kap')
@@ -108,7 +112,7 @@ describe('catalog pagination — the 20/20 dead-end', () => {
   test('chase gives up after its page budget but leaves the catalog resumable', async () => {
     let page = 0
     const { acState, fetch } = build({
-      matches: fullPage('kap').map(mirror),
+      locals: fullPage('kap'),
       stv: async (_q, _s, opts) => {
         page = opts.page
         return fullPage('kap') // every page full duplicates
@@ -136,7 +140,7 @@ describe('catalog pagination — the 20/20 dead-end', () => {
   test('cycle size cap flips remoteDone', async () => {
     const locals = Array.from({ length: 995 }, (_, i) => local(`kapLocal${i}`))
     const { acState, fetch } = build({
-      matches: locals,
+      locals,
       stv: async () => fullPage('kapMore'),
     })
     await fetch('kap')
@@ -147,10 +151,10 @@ describe('catalog pagination — the 20/20 dead-end', () => {
   test('page-2 merge keeps the cycling user pinned on their current chip', async () => {
     // 60 locals mirroring page 1 (all dups, full page → chase continues);
     // page 2 brings new hits. The user is mid-cycle on locals[1].
-    const locals = fullPage('kap').map(mirror)
+    const locals = fullPage('kap')
     const pages = { 1: fullPage('kap'), 2: [stvEmote('kapNew')] }
     const { acState, fetch } = build({
-      matches: [...locals],
+      locals,
       index: 1,
       stv: async (_q, _s, opts) => pages[opts.page] || [],
     })

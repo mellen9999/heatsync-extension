@@ -7,7 +7,7 @@ import { join } from 'node:path'
  *
  * The file has no import/export — it's concatenated into the multichat
  * bundle (see build.js MULTICHAT_MODULES) as plain global function
- * declarations, same rationale as sent-echo.test.js / tab-complete-order.test.js.
+ * declarations, same rationale as sent-echo.test.js / modifier-sweep-scope.test.js.
  * Loaded here via new Function so the test exercises the real source.
  *
  * youtubeSendErrorMessage calls the bundle-global `t()` (src/lib/browser-api.js

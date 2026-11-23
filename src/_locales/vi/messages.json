@@ -3377,6 +3377,9 @@
       }
     }
   },
+  "mc_cycle_wont_show": {
+    "message": "sẽ không hiển thị ở đây"
+  },
   "mc_twapi_ql_subscribe": {
     "message": "đăng ký"
   },

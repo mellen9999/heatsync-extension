@@ -8,13 +8,17 @@
  *    the last local hit — so with a handful of channel emotes matching, Tab
  *    never touched the catalog and the search looked broken.
  *
- * 2. Because it now fires on every first Tab, the auto-add-on-send registry
- *    must NOT swallow the whole fetched page. It used to register every emote
- *    the fetch returned, which meant any word in a sent message that happened
- *    to appear anywhere in a catalog search this session got silently added to
- *    the viewer's inventory. Only two things may register: what the user
- *    cycles onto (insertCompletionKeepOpen → trackCompletionForAutoAdd) and
- *    the emote whose name they literally typed.
+ * 2. Because it now fires on every first Tab, a fetched page must register
+ *    NOTHING for auto-add-on-send. It used to register every emote the fetch
+ *    returned, so any word in a sent message that appeared anywhere in a
+ *    catalog search this session was silently added to the viewer's inventory.
+ *    Only what the user lands on registers (insertCompletionKeepOpen →
+ *    trackCompletionForAutoAdd): a Tab step, or the first catalog hit when
+ *    nothing local matched (the exact typed name leads that list).
+ *
+ * 3. The catalog joins the cycle through the emote law's offer: one copy of a
+ *    name (the most carried), none of a name something loaded answers to. The
+ *    picker's search is where every upload of a name is shown.
  *
  * Carved out of the non-module content-script bundle and evaluated standalone
  * (same rationale as tab-cycle-pagination.test.js).
@@ -23,58 +27,69 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { pickRig } from './helpers/pick-rig.js'
+import { lawOfferRig } from './helpers/law-offer-rig.js'
 
 const INPUT_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 const start = INPUT_SRC.indexOf('let _acRemoteAbort = null')
 const end = INPUT_SRC.indexOf('// Colon-triggered dropdown state')
 if (start === -1 || end === -1 || end <= start) throw new Error('fetchRemoteEmoteMatches carve markers not found')
 
-function build({ stv, matches = [], search = 'kap' } = {}) {
+function build({ stv, locals = [], search = 'kap' } = {}) {
+  const rig = lawOfferRig({
+    channelEmoteCaches: {
+      'chan-a': new Map(locals.map((e) => [e.name, { url: e.url, source: '7tv', state: 'global' }])),
+    },
+  })
   const acState = {
     active: true,
-    matches,
+    matches: rig.findEmoteMatches(search),
     index: 0,
     search,
     remoteDone: false,
     remotePending: false,
     _remotePage: 0,
     _remoteExhausted: null,
-    _aiSeq: 0,
+    _catalog: null,
   }
   const recentRemoteCompletions = new Map()
-  const compareAcMatches = (a, b) => (a.remote ? 1 : 0) - (b.remote ? 1 : 0) || (a._ai || 0) - (b._ai || 0)
+  const inserted = []
   const fns = new Function(
     'hsModClassify',
     'recentRemoteCompletions',
     'REMOTE_COMPLETION_CAP',
-    'compareAcMatches',
+    'findEmoteMatches',
+    'lawCatalogEmote',
     'insertCompletionKeepOpen',
     'showCycleTooltip',
     'acState',
     'mcSearchFfzApi',
     'mcSearchBttvApi',
     'mcSearch7tvApi',
-    'lawPin',
     `${INPUT_SRC.slice(start, end)}; return { fetchRemoteEmoteMatches }`,
   )(
     () => ({ kind: 'word' }),
     recentRemoteCompletions,
     300,
-    compareAcMatches,
-    () => {},
+    rig.findEmoteMatches,
+    rig.lawCatalogEmote,
+    (m) => inserted.push(m),
     () => {},
     acState,
     async () => [],
     async () => [],
     stv || (async () => []),
-    pickRig().lawPin,
   )
-  return { acState, recentRemoteCompletions, fetch: fns.fetchRemoteEmoteMatches }
+  return { acState, recentRemoteCompletions, inserted, fetch: fns.fetchRemoteEmoteMatches }
 }
 
-const stvEmote = (name) => ({ name, url: `https://cdn.7tv.app/${name}/1x.avif`, provider: '7tv' })
-const local = (name) => ({ name, url: 'u', source: '7tv', type: 'emote' })
+const stvEmote = (name, more = {}) => ({
+  name,
+  url: `https://cdn.7tv.app/${name}/1x.avif`,
+  id: name,
+  provider: '7tv',
+  ...more,
+})
+const local = (name) => ({ name, url: `https://cdn.7tv.app/local-${name}/1x.avif` })
 
 describe('first Tab starts the catalog search', () => {
   const firstTabBlock = (() => {
@@ -102,45 +117,41 @@ describe('first Tab starts the catalog search', () => {
     expect(tipAt).toBeGreaterThan(fetchAt)
   })
 
-  test('catalog hits append AFTER the local matches, never reordering them', async () => {
-    const locals = [local('kappa'), local('kapChannel')]
+  test('catalog hits join AFTER the local matches, and the chip the user is on never moves', async () => {
     const { acState, fetch } = build({
-      matches: [...locals],
+      locals: [local('kappa'), local('kapChannel')],
       stv: async () => [stvEmote('kapRemote1'), stvEmote('kapRemote2')],
     })
+    const onChip = acState.matches[0]
     await fetch('kap')
     expect(acState.matches.map((m) => m.name)).toEqual(['kappa', 'kapChannel', 'kapRemote1', 'kapRemote2'])
-    expect(acState.matches.slice(0, 2).every((m) => !m.remote)).toBe(true)
+    expect(acState.matches[0]).toBe(onChip)
+    expect(acState.matches.map((m) => !!m.remote)).toEqual([false, false, true, true])
   })
 })
 
 describe('auto-add-on-send registry scope', () => {
-  test('a fetched page does not register emotes the user never landed on', async () => {
-    const { recentRemoteCompletions, fetch } = build({
-      matches: [local('kappa')],
+  test('a fetched page registers nothing and inserts nothing while a local hit holds the box', async () => {
+    const { recentRemoteCompletions, inserted, fetch } = build({
+      locals: [local('kappa')],
       stv: async () => [stvEmote('kapOne'), stvEmote('kapTwo'), stvEmote('kapThree')],
     })
     await fetch('kap')
     expect([...recentRemoteCompletions.keys()]).toEqual([])
+    expect(inserted).toEqual([])
   })
 
-  test('the exact typed name registers — it is the one the user can send untabbed', async () => {
-    const { recentRemoteCompletions, fetch } = build({
-      matches: [],
-      stv: async () => [stvEmote('kapOther'), stvEmote('kap')],
-    })
+  test('nothing local matched: the exact typed name is the hit that completes the word', async () => {
+    const { inserted, fetch } = build({ stv: async () => [stvEmote('kapOther'), stvEmote('kap')] })
     await fetch('kap')
-    expect([...recentRemoteCompletions.keys()]).toEqual(['kap'])
-    expect(recentRemoteCompletions.get('kap').source).toBe('7tv')
+    expect(inserted.map((m) => m.name)).toEqual(['kap'])
+    expect(inserted[0]).toMatchObject({ source: '7tv', remote: true, type: 'emote' })
   })
 
-  test('exact-name match is case-exact: a case twin is offered but not registered as typed (rule 5)', async () => {
-    const twin = build({ matches: [], search: 'sadge', stv: async () => [stvEmote('Sadge')] })
-    await twin.fetch('sadge')
-    expect([...twin.recentRemoteCompletions.keys()]).toEqual([])
-    const same = build({ matches: [], search: 'Sadge', stv: async () => [stvEmote('Sadge')] })
-    await same.fetch('Sadge')
-    expect([...same.recentRemoteCompletions.keys()]).toEqual(['Sadge'])
+  test('the spelling typed leads its case twin', async () => {
+    const { acState, fetch } = build({ search: 'sadge', stv: async () => [stvEmote('Sadge'), stvEmote('sadge')] })
+    await fetch('sadge')
+    expect(acState.matches.map((m) => m.name)).toEqual(['sadge', 'Sadge'])
   })
 })
 
@@ -172,32 +183,29 @@ describe('plain-text (wysiwyg off) still commits the emote at send', () => {
   })
 })
 
-describe('same-name uploads stay separate once the name is typed in full', () => {
+describe('same-name uploads in the cycle', () => {
   const id = (n) => `01GPTQQTDR0001F90QP9X30T5${n}`.slice(0, 26)
-  const up = (n) => ({ name: 'shrujj', url: `https://cdn.7tv.app/emote/${id(n)}/1x.avif`, provider: '7tv', id: id(n) })
-
-  test('exact name keeps every upload, top one first', async () => {
-    const { acState, fetch } = build({ search: 'shrujj', stv: async () => [up('A'), up('B'), up('C')] })
-    await fetch('shrujj')
-    expect(acState.matches.map((m) => m.id)).toEqual([id('A'), id('B'), id('C')])
+  const up = (n, uses = 0) => ({
+    name: 'shrujj',
+    url: `https://cdn.7tv.app/emote/${id(n)}/1x.avif`,
+    provider: '7tv',
+    id: id(n),
+    uses,
   })
 
-  test('only the top upload registers for auto-add-on-send', async () => {
-    const { recentRemoteCompletions, fetch } = build({ search: 'shrujj', stv: async () => [up('A'), up('B')] })
+  test('one upload of a name joins the cycle: the most carried', async () => {
+    const { acState, fetch } = build({ search: 'shrujj', stv: async () => [up('A', 3), up('B', 40), up('C', 7)] })
     await fetch('shrujj')
-    expect(recentRemoteCompletions.get('shrujj').url).toContain(id('A'))
+    expect(acState.matches.map((m) => m.id)).toEqual([id('B')])
   })
 
-  test('an upload already in the cycle is not listed twice', async () => {
-    const owned = { name: 'shrujj', url: up('B').url, source: '7tv', type: 'emote' }
-    const { acState, fetch } = build({ search: 'shrujj', matches: [owned], stv: async () => [up('A'), up('B')] })
+  test('a name something loaded answers to keeps the loaded one: the catalog adds no second copy', async () => {
+    const { acState, fetch } = build({
+      search: 'shrujj',
+      locals: [local('shrujj')],
+      stv: async () => [up('A'), up('B')],
+    })
     await fetch('shrujj')
-    expect(acState.matches.map((m) => m.url)).toEqual([owned.url, up('A').url])
-  })
-
-  test('a partial query still merges same-name uploads into one', async () => {
-    const { acState, fetch } = build({ search: 'shru', stv: async () => [up('A'), up('B')] })
-    await fetch('shru')
-    expect(acState.matches.length).toBe(1)
+    expect(acState.matches.map((m) => m.url)).toEqual([local('shrujj').url])
   })
 })

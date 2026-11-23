@@ -13,7 +13,7 @@ import { join } from 'node:path'
  *
  * isSentEcho lives in the non-module content-script bundle, so it's carved
  * out of the source and evaluated standalone (same rationale as
- * mod-dedup.test.js / tab-complete-order.test.js).
+ * mod-dedup.test.js / modifier-sweep-scope.test.js).
  */
 function carve(src, name) {
   const start = src.indexOf(`function ${name}`)

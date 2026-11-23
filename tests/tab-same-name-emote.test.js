@@ -5,13 +5,14 @@
  * Regression anchor (nl_kripp, 2026-11): the channel has a 7tv IDK; a heatsync user
  * tabbed through completion to use a DIFFERENT IDK from the catalog and everyone,
  * him included, kept seeing the channel's. Four holes, one per describe below:
- *   1. the Tab cycle dropped a catalog hit whose NAME matched a local candidate, so
- *      the other IDK was never offered. Dedupe is by PICTURE now (a twin is the same
- *      emote, not merely the same name).
+ *   1. which IDK the cycle offers. The emote law's offer answers it now (emote-law-offer.js):
+ *      a name something loaded answers to keeps its loaded copies (the room's, then yours,
+ *      then the global) and the catalog adds no other picture under it. Another IDK is
+ *      picked in the picker's search, which shows every upload of a name.
  *   2. cycling back onto the local IDK (or a native one) left the catalog pick
  *      registered, so the send added an emote the box no longer showed.
- *   3. typing the whole name registered the catalog's variant even though the
- *      channel's emote answers to that name.
+ *   3. a fetched catalog page registers nothing by itself: only the hit the box shows
+ *      (a Tab step, or the first hit when nothing loaded matched) is a pick.
  *   4. auto-add on send skipped any name you already own, so a different IDK never
  *      replaced yours; it now swaps (one add carrying replace) — but only for
  *      a deliberate catalog pick, never for tabbing onto the channel's own emote.
@@ -25,6 +26,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { heldPick, pinPickedEmote, putBackPick } from '../src/lib/emote-refs.js'
 import { bgSource } from './bg-src.js'
+import { lawOfferRig } from './helpers/law-offer-rig.js'
 import { pickRig } from './helpers/pick-rig.js'
 import { t } from './t-stub.js'
 
@@ -52,14 +54,16 @@ const OTHER = seven('01OTHERIDK000000000000000')
 const OTHER2 = seven('01OTHERIDK200000000000000')
 const OWNED = seven('01OWNEDIDK000000000000000')
 
-// the channel's IDK, as findEmoteMatches hands it to the cycle (tier 0)
-const channelIdk = () => ({ name: 'IDK', url: CHAN, source: '7tv', type: 'emote', tier: 0, priority: 0 })
+// the channel's IDK, as its cache holds it
+const channelIdk = () => ({ IDK: { url: CHAN, source: '7tv', state: 'global' } })
+// and as Tab's list hands it to the cycle (tier 0)
+const channelMatch = () => ({ name: 'IDK', url: CHAN, source: '7tv', type: 'emote', tier: 0, priority: 0 })
 const hit = (name, url, provider = '7tv') => ({ name, url, provider, id: url.split('/')[4] })
 
 // One scope holding the registry, the catalog fetch and the send-time commit, so a
 // pick travels the same path it does in the bundle: fetch -> track -> autoAdd.
 function rig({
-  matches = [],
+  room = {},
   search = 'idk',
   stv = [],
   inventory = [],
@@ -69,19 +73,26 @@ function rig({
   swapOk = true,
 } = {}) {
   const calls = { add: [], swap: [] }
+  // Tab's own list over the room's loaded emotes and the globals (the emote law's offer)
+  const offer = lawOfferRig({
+    emoteCache: cache || new Map(),
+    channelEmoteCaches: { 'chan-a': new Map(Object.entries(room)) },
+  })
   const acState = {
     active: true,
-    matches,
+    matches: offer.findEmoteMatches(search),
     index: 0,
     search,
     remoteDone: false,
     remotePending: false,
     _remotePage: 0,
     _remoteExhausted: null,
-    _aiSeq: 0,
+    _catalog: null,
   }
   const env = {
     ...pickRig(),
+    findEmoteMatches: offer.findEmoteMatches,
+    lawCatalogEmote: offer.lawCatalogEmote,
     putBackPick,
     acState,
     hsModClassify: () => ({ kind: 'word' }),
@@ -120,44 +131,21 @@ function rig({
   return { ...api, acState, calls, env }
 }
 
-describe('1. the cycle offers another emote under a name a local already has', () => {
-  test('a catalog IDK of a different picture joins the channel IDK (partial query)', async () => {
-    const r = rig({ search: 'id', matches: [channelIdk()], stv: [hit('IDK', OTHER)] })
+describe('1. the cycle and a name something loaded already answers to', () => {
+  test('a catalog IDK does not join the channel IDK: the name keeps its loaded copy', async () => {
+    const r = rig({ search: 'id', room: channelIdk(), stv: [hit('IDK', OTHER), hit('IDK', OTHER2)] })
     await r.fetchRemoteEmoteMatches('id')
-    expect(r.acState.matches.map((m) => [m.name, m.url, !!m.remote])).toEqual([
-      ['IDK', CHAN, false],
-      ['IDK', OTHER, true],
-    ])
+    expect(r.acState.matches.map((m) => [m.name, m.url, !!m.remote])).toEqual([['IDK', CHAN, false]])
   })
 
-  test('the channel IDK itself coming back from the catalog is a twin, in any size or format', async () => {
-    const r = rig({
-      search: 'id',
-      matches: [channelIdk()],
-      stv: [hit('IDK', seven('01CHANNELIDK00000000000000', '1x.avif')), hit('IDK', OTHER)],
-    })
-    await r.fetchRemoteEmoteMatches('id')
-    // the twin is dropped and does not shadow the real variant behind it
-    expect(r.acState.matches.map((m) => m.url)).toEqual([CHAN, OTHER])
-  })
-
-  test('typed in full: every other upload is its own entry, the twin is not', async () => {
-    const r = rig({
-      matches: [channelIdk()],
-      stv: [hit('IDK', CHAN), hit('IDK', OTHER), hit('IDK', OTHER2)],
-    })
+  test('typed in full it is the same: the room IDK, and no other picture under the name', async () => {
+    const r = rig({ room: channelIdk(), stv: [hit('IDK', CHAN), hit('IDK', OTHER), hit('IDK', OTHER2)] })
     await r.fetchRemoteEmoteMatches('idk')
-    expect(r.acState.matches.map((m) => m.url)).toEqual([CHAN, OTHER, OTHER2])
+    expect(r.acState.matches.map((m) => m.url)).toEqual([CHAN])
   })
 
-  test('a partial query still collapses the catalog own same-name uploads to one', async () => {
-    const r = rig({ search: 'id', matches: [channelIdk()], stv: [hit('IDK', OTHER), hit('IDK', OTHER2)] })
-    await r.fetchRemoteEmoteMatches('id')
-    expect(r.acState.matches.map((m) => m.url)).toEqual([CHAN, OTHER])
-  })
-
-  test('the same name in another case is another emote (dedupe is on the exact name)', async () => {
-    const r = rig({ search: 'id', matches: [channelIdk()], stv: [hit('idk', CHAN), hit('idk', OTHER)] })
+  test('the same name in another case is another emote (one copy of it joins)', async () => {
+    const r = rig({ search: 'id', room: channelIdk(), stv: [hit('idk', CHAN), hit('idk', OTHER)] })
     await r.fetchRemoteEmoteMatches('id')
     expect(r.acState.matches.map((m) => [m.name, m.url])).toEqual([
       ['IDK', CHAN],
@@ -166,45 +154,43 @@ describe('1. the cycle offers another emote under a name a local already has', (
   })
 
   test('a name the globals own is not offered a second emote (the server would refuse the add)', async () => {
-    const cache = new Map([['Kappa', { url: 'https://static-cdn.jtvnw.net/k', state: 'global' }]])
-    const r = rig({
-      search: 'ka',
-      cache,
-      matches: [{ name: 'Kappa', url: 'https://static-cdn.jtvnw.net/k', source: 'twitch', type: 'emote', tier: 2 }],
-      stv: [hit('Kappa', OTHER), hit('Kaplan', OTHER2)],
-    })
+    const cache = new Map([['Kappa', { url: 'https://static-cdn.jtvnw.net/k', source: 'twitch', state: 'global' }]])
+    const r = rig({ search: 'ka', cache, stv: [hit('Kappa', OTHER), hit('Kaplan', OTHER2)] })
     await r.fetchRemoteEmoteMatches('ka')
     expect(r.acState.matches.map((m) => m.name)).toEqual(['Kappa', 'Kaplan'])
   })
 
-  test('a local that is a different picture from the catalog hit of another name changes nothing', async () => {
-    const r = rig({ search: 'sad', matches: [channelIdk()], stv: [hit('SadgeX', OTHER)] })
-    await r.fetchRemoteEmoteMatches('sad')
-    expect(r.acState.matches.map((m) => m.name)).toEqual(['IDK', 'SadgeX'])
+  test('a catalog hit of another name joins after the loaded one', async () => {
+    const r = rig({ search: 'id', room: channelIdk(), stv: [hit('IDKwhat', OTHER)] })
+    await r.fetchRemoteEmoteMatches('id')
+    expect(r.acState.matches.map((m) => m.name)).toEqual(['IDK', 'IDKwhat'])
   })
 })
 
-describe('3. typing the whole name does not register a variant the channel already answers to', () => {
+describe('3. a fetched page registers nothing the box does not show', () => {
   test('channel IDK in the cycle: nothing registers, so sending "IDK" adds nothing', async () => {
-    const r = rig({ matches: [channelIdk()], stv: [hit('IDK', OTHER)] })
+    const r = rig({ room: channelIdk(), stv: [hit('IDK', OTHER)] })
     await r.fetchRemoteEmoteMatches('idk')
-    expect(r.acState.matches.length).toBe(2) // the other IDK is still on offer
+    expect(r.acState.matches.length).toBe(1)
     expect(r.recentRemoteCompletions.has('IDK')).toBe(false)
     r.autoAddInputEmotes('IDK')
     expect(r.calls.add).toEqual([])
     expect(r.calls.swap).toEqual([])
   })
 
-  test('with nothing local under that name the exact catalog hit still registers (as a variant)', async () => {
-    const r = rig({ matches: [], stv: [hit('IDK', OTHER)] })
+  test('with nothing loaded matching, the exact catalog hit completes the word and registers (as a variant)', async () => {
+    const r = rig({ stv: [hit('IDKother', OTHER2), hit('IDK', OTHER)] })
     await r.fetchRemoteEmoteMatches('idk')
+    expect(r.acState.matches[0]).toMatchObject({ name: 'IDK', url: OTHER })
     expect(r.recentRemoteCompletions.get('IDK')).toMatchObject({ url: OTHER, source: '7tv', variant: true })
+    expect(r.recentRemoteCompletions.has('IDKother')).toBe(false)
   })
 
-  test('a local of a DIFFERENT name does not count as answering', async () => {
-    const r = rig({ matches: [{ ...channelIdk(), name: 'IDKw' }], stv: [hit('idk', OTHER)], search: 'idk' })
+  test('a loaded emote of another name holds the box: the exact catalog name is one Tab away, not registered', async () => {
+    const r = rig({ room: { IDKw: { url: CHAN, source: '7tv', state: 'global' } }, stv: [hit('idk', OTHER)] })
     await r.fetchRemoteEmoteMatches('idk')
-    expect(r.recentRemoteCompletions.get('idk')?.url).toBe(OTHER)
+    expect(r.acState.matches.map((m) => m.name)).toEqual(['IDKw', 'idk'])
+    expect(r.recentRemoteCompletions.has('idk')).toBe(false)
   })
 })
 
@@ -220,7 +206,7 @@ describe('2. the box shows the pick; cycling back to the local one un-picks the 
   test('back onto the channel IDK: the registry holds the channel one, not a variant', () => {
     const r = rig()
     r.insertCompletionKeepOpen(variant)
-    r.insertCompletionKeepOpen(channelIdk())
+    r.insertCompletionKeepOpen(channelMatch())
     expect(r.recentRemoteCompletions.get('IDK')).toEqual({ url: CHAN, source: '7tv', zeroWidth: false })
   })
 
@@ -245,6 +231,13 @@ describe('2. the box shows the pick; cycling back to the local one un-picks the 
     expect(emoteCycleMeta({ type: 'emote', remote: true, source: '7tv' }).cat).toBe('catalog · 7tv')
     expect(emoteCycleMeta({ type: 'emote', remote: true, source: 'ffz' }).cat).toBe('catalog · ffz')
     expect(emoteCycleMeta({ type: 'emote', source: '7tv', tier: 0 }).cat).toBe('channel')
+  })
+
+  test("a copy the platform's own emote of that name will hide says so, and still says where it lives", () => {
+    const { emoteCycleMeta } = new Function('t', `${CYCLE_META}; return { emoteCycleMeta }`)(t)
+    const meta = emoteCycleMeta({ type: 'emote', source: '7tv', tier: 0, shadowed: true })
+    expect(meta.cat).toBe('channel')
+    expect(meta.vis).toEqual({ t: "won't show here", c: 'var(--hs-danger)' })
   })
 })
 
@@ -280,7 +273,7 @@ describe('2b. a step only looked at leaves its name as it found it', () => {
 
   test('two IDKs in a row within one cycle: the last one looked at is the pick', () => {
     const r = rig()
-    r.insertCompletionKeepOpen(channelIdk())
+    r.insertCompletionKeepOpen(channelMatch())
     r.insertCompletionKeepOpen(catalogIdk)
     expect(pick(r, 'IDK').url).toBe(OTHER)
   })
@@ -317,7 +310,7 @@ describe('4. sending a picked variant', () => {
 
   test('tabbing onto the channel own IDK never replaces the one you own', () => {
     const r = rig({ inventory: ['IDK'], personal: { IDK: { url: OWNED } } })
-    r.insertCompletionKeepOpen(channelIdk()) // a local pick: registered, but not a variant
+    r.insertCompletionKeepOpen(channelMatch()) // a local pick: registered, but not a variant
     r.autoAddInputEmotes('IDK')
     expect(r.calls.swap).toEqual([])
     expect(r.calls.add).toEqual([])

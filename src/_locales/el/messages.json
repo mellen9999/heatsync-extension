@@ -3377,6 +3377,9 @@
       }
     }
   },
+  "mc_cycle_wont_show": {
+    "message": "δεν θα εμφανιστεί εδώ"
+  },
   "mc_twapi_ql_subscribe": {
     "message": "συνδρομή"
   },

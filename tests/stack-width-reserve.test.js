@@ -11,7 +11,7 @@
  * (previously stacks were excluded from the width cache entirely).
  *
  * Carved from the content-script source (same rationale as
- * tab-complete-order.test.js).
+ * modifier-sweep-scope.test.js).
  */
 
 import { describe, expect, test } from 'bun:test'

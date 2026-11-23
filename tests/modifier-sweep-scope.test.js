@@ -15,7 +15,7 @@
  * the sweep entirely when the caret sits on a completable (>=2 char) word.
  *
  * The sweep is carved from the content-script source and driven with a
- * minimal fake DOM (same carve rationale as tab-complete-order.test.js).
+ * minimal fake DOM (a pure function inside a non-module content script).
  */
 
 import { describe, expect, test } from 'bun:test'
@@ -25,7 +25,7 @@ import { hsModClassify } from '../src/lib/modifiers.js'
 
 const INPUT_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 const start = INPUT_SRC.indexOf('function scanAndApplyModifiersInInput(')
-const end = INPUT_SRC.indexOf('// Shared tab-complete comparator')
+const end = INPUT_SRC.indexOf('// Block enforcement for tab-complete/mention candidates')
 if (start === -1 || end === -1 || end <= start) throw new Error('scanAndApplyModifiersInInput carve markers not found')
 const SWEEP_SRC = INPUT_SRC.slice(start, end)
 

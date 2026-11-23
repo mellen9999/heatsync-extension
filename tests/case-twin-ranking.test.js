@@ -1,38 +1,37 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { lawOfferRig } from './helpers/law-offer-rig.js'
 
 // Rule 5 in search + Tab: KEKW and kekw are two candidates, the twin spelled like the typed word
 // leads, dedupe is on the exact name, and only the prefix match stays case-insensitive.
 const read = (...p) => readFileSync(join(import.meta.dir, '..', ...p), 'utf8')
-const INPUT = read('src', 'multichat', 'input.js')
-const a = INPUT.indexOf('function compareAcMatches(')
-const b = INPUT.indexOf('function findEmoteMatches(')
-const compare = new Function(`${INPUT.slice(a, b)}; return compareAcMatches`)()
-const emote = (name, tier, extra = {}) => ({ name, tier, priority: 0, type: 'emote', ...extra })
-const rank = (items, typed) =>
-  [...items].sort((x, y) => compare(x, y, typed.toLowerCase(), new Map(), typed)).map((m) => m.name)
+const e = (id, source = '7tv') => ({ url: `https://cdn.test/${source}/${id}.webp`, source, id, state: 'global' })
+const rank = (room, globals, typed) =>
+  lawOfferRig({
+    emoteCache: new Map(Object.entries(globals)),
+    channelEmoteCaches: { 'chan-a': new Map(Object.entries(room)) },
+  })
+    .findEmoteMatches(typed)
+    .map((m) => m.name)
 
-describe('multichat comparator', () => {
+describe("multichat Tab (the emote law's offer)", () => {
   test('the twin spelled like the typed word leads, whatever the tier', () => {
-    expect(rank([emote('KEKW', 0), emote('kekw', 2)], 'kekw')).toEqual(['kekw', 'KEKW'])
-    expect(rank([emote('kekw', 0), emote('KEKW', 2)], 'KEKW')).toEqual(['KEKW', 'kekw'])
+    expect(rank({ KEKW: e('a') }, { kekw: e('b', 'bttv') }, 'kekw')).toEqual(['kekw', 'KEKW'])
+    expect(rank({ kekw: e('a') }, { KEKW: e('b', 'bttv') }, 'KEKW')).toEqual(['KEKW', 'kekw'])
   })
   test('neither spelled like it: both stay, channel leads', () => {
-    expect(rank([emote('kekw', 2), emote('KEKW', 0)], 'KeKw')).toEqual(['KEKW', 'kekw'])
+    expect(rank({ KEKW: e('a') }, { kekw: e('b', 'bttv') }, 'KeKw')).toEqual(['KEKW', 'kekw'])
   })
 })
 
-describe('multichat catalog dedupe is on the exact name', () => {
-  test('no lowercase key in the remote dedupe or the typed-name checks', () => {
-    const f = INPUT.slice(
-      INPUT.indexOf('const picsByName = new Map()'),
-      INPUT.indexOf('function _acMergeRemoteMatches'),
-    )
-    expect(f).toContain('const l = m.name')
-    expect(f).toContain('const lower = it.name')
-    expect(f).toContain("(m.name || '') === search")
-    expect(f).not.toContain('const lower = it.name.toLowerCase()')
+describe('multichat catalog keeps case twins apart', () => {
+  test('a catalog kekw joins a loaded KEKW: they are two names', () => {
+    const rig = lawOfferRig({ channelEmoteCaches: { 'chan-a': new Map([['KEKW', e('a')]]) } })
+    const before = rig.findEmoteMatches('kekw')
+    const cat = [rig.lawCatalogEmote({ name: 'kekw', url: 'https://cdn.test/7tv/c.webp', id: 'c', provider: '7tv' })]
+    const after = rig.findEmoteMatches('kekw', { catalog: cat, prev: before, cursor: 0 })
+    expect(after.map((m) => m.name)).toEqual(['KEKW', 'kekw'])
   })
 })
 

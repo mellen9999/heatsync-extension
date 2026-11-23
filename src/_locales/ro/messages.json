@@ -3377,6 +3377,9 @@
       }
     }
   },
+  "mc_cycle_wont_show": {
+    "message": "nu se va afișa aici"
+  },
   "mc_twapi_ql_subscribe": {
     "message": "abonează-te"
   },

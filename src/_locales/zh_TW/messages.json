@@ -3377,6 +3377,9 @@
       }
     }
   },
+  "mc_cycle_wont_show": {
+    "message": "在這裡不會顯示"
+  },
   "mc_twapi_ql_subscribe": {
     "message": "訂閱"
   },

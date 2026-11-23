@@ -942,7 +942,6 @@ async function fetchRemoteEmoteMatches(search) {
   // a short page is the exhaustion signal (no next page worth asking for).
   const sizes = typeof MC_PAGE_SIZE !== 'undefined' ? MC_PAGE_SIZE : { ffz: 200, bttv: 100 }
   const ex = acState._remoteExhausted || (acState._remoteExhausted = { ffz: false, bttv: false, stv: false })
-  const searchLower = search.toLowerCase()
   // Chase: an all-duplicate page (top catalog hits collide with loaded locals)
   // is not the end of the catalog — keep paging a bounded number of times
   // until something NEW appears or every provider runs dry.
@@ -993,107 +992,29 @@ async function fetchRemoteEmoteMatches(search) {
     const rf = drain(0, 'ffz', sizes.ffz || 200)
     const rb = drain(1, 'bttv', sizes.bttv || 100)
     const r7 = drain(2, 'stv', 60)
-    // FFZ's `uses` is real popularity — sort descending so the merged stream
-    // leads with highest-use FFZ emotes first.
-    rf.sort((a, b) => (b.uses || 0) - (a.uses || 0))
-    // Order follows the provider setting. 7TV led here for its relevance
-    // ranking ("pls" → the dancing XxxPls family), and the old FFZ-first combo
-    // felt dead because it was prefix-only; substring matching (below) fixed
-    // that, so the fast provider can lead again.
-    // emoteProviderPriority leads (ffz — fast and reliable);
-    // the other two keep their old relative order.
-    const byProvider = { '7tv': r7, bttv: rb, ffz: rf }
-    const order =
-      typeof emoteProviderOrder === 'function' && typeof emoteProviderPriority === 'string'
-        ? emoteProviderOrder(emoteProviderPriority)
-        : ['7tv', 'bttv', 'ffz']
-    const items = order.flatMap((k) => byProvider[k] || [])
-    // Twin check: the very same PICTURE under the same (case-insensitive) name,
-    // already in the cycle as a local or an earlier page. A different picture
-    // under a name something here already answers to is NOT a twin — that is the
-    // point: the 7tv IDK next to the channel's IDK, so you can pick the other one.
-    const picsByName = new Map()
-    // Names the CATALOG itself already put in the cycle. While the query is still
-    // partial, same-name uploads collapse to the first (10x "Sadge" is noise;
-    // first-seen wins so 7TV's top result holds). Typed in full, every upload
-    // stays its own entry (7TV has nine "shrujj": the art you meant may be any).
-    const catalogNames = new Set()
-    for (const m of acState.matches) {
-      if (m.type !== 'emote' || !m.name) continue
-      const l = m.name
-      if (!picsByName.has(l)) picsByName.set(l, new Set())
-      picsByName.get(l).add(_acPicKey(m.url))
-      if (m.remote) catalogNames.add(l)
+    // The catalog's answers so far, as the law's emotes. The law ranks them (the exact name, then
+    // starts-with, word-start, inside, more used, shorter, a-z), keeps one copy of a name and none
+    // of a name something loaded already answers to, so nothing here orders or dedupes.
+    const cat = acState._catalog || (acState._catalog = [])
+    for (const it of [...rf, ...rb, ...r7]) {
+      const e = lawCatalogEmote(it)
+      if (e) cat.push(e)
     }
-    // A local emote that answers to the name typed in full: sending that name
-    // means THAT one. A catalog variant is taken only by tabbing onto it.
-    const typedHasLocal = acState.matches.some((m) => m.type === 'emote' && !m.remote && (m.name || '') === search)
-    let exactRegistered = false
-    const add = []
-    for (const it of items) {
-      if (!it.name) continue
-      // dedupe on the EXACT name: KEKW and kekw are two emotes; only the prefix test is case-blind
-      const lower = it.name
-      const pic = _acPicKey(it.url)
-      if (pic && picsByName.get(lower)?.has(pic)) continue
-      // ("typed in full" is judged case-blind: idk + Tab still lists every IDK upload)
-      if (it.name.toLowerCase() !== searchLower && catalogNames.has(lower)) continue
-      // Substring is fine — the providers already relevance-matched the query;
-      // requiring a literal prefix dropped the suffix-named families users
-      // actually mean. Drop only fuzzy hits that don't contain the query.
-      if (!it.name.toLowerCase().includes(searchLower)) continue
-      // A blocked name must never surface from the remote catalog either —
-      // same leak as the local pool, just a different source.
-      if (typeof _hsAcEmoteBlocked === 'function' && _hsAcEmoteBlocked(it.name, null)) continue
-      // A name the globals already own can't take a second emote: the server
-      // refuses to add one (isGlobalTwin), so offering it would be a pick that
-      // can never be kept.
-      if (typeof emoteCache !== 'undefined' && emoteCache.get(it.name)?.state === 'global') continue
-      if (!picsByName.has(lower)) picsByName.set(lower, new Set())
-      picsByName.get(lower).add(pic)
-      catalogNames.add(lower)
-      const src = it.provider || '7tv'
-      add.push({
-        name: it.name,
-        url: it.url,
-        id: it.id,
-        source: src,
-        priority: 0,
-        type: 'emote',
-        remote: true,
-        zeroWidth: !!it.zeroWidth,
-        // Persistent sequence, NOT add.length — page 2's counter restarting
-        // at 0 would interleave it into page 1 on sort ties instead of after.
-        _ai: acState._aiSeq++,
-      })
-      // Auto-add-on-send registry: ONLY the emote whose name the user literally
-      // typed. Everything they cycle onto registers through
-      // insertCompletionKeepOpen → trackCompletionForAutoAdd, so this covers the
-      // one case that path can't: the full name typed out and sent without ever
-      // pressing Tab past the first hit.
-      //
-      // Registering the whole fetched page (what this used to do) meant every
-      // word in a sent message that happened to appear anywhere in a catalog
-      // search this session got silently added to the viewer's inventory —
-      // hundreds of names the user never saw, burning finite slots. Harmless
-      // while the fetch was lazy; not once it fires on the first Tab.
-      if (lower === search && !exactRegistered) {
-        exactRegistered = true
-        // ...unless something local already answers to that name (the channel's
-        // IDK): the box shows that one, so registering the catalog's IDK would
-        // silently add an emote nobody picked.
-        if (!typedHasLocal) {
-          lawPin(it.name, { url: it.url, source: src, id: it.id, zeroWidth: !!it.zeroWidth })
-          recentRemoteCompletions.delete(it.name)
-          recentRemoteCompletions.set(it.name, { url: it.url, source: src, zeroWidth: !!it.zeroWidth, variant: true })
-          while (recentRemoteCompletions.size > REMOTE_COMPLETION_CAP) {
-            recentRemoteCompletions.delete(recentRemoteCompletions.keys().next().value)
-          }
-        }
+    // Late arrivals join after the cursor; nothing up to it moves (law extendOffer), so the N/M
+    // the user has seen only ever grows forward.
+    const before = acState.matches
+    const merged = findEmoteMatches(search, {
+      catalog: cat,
+      prev: before,
+      cursor: before.length ? acState.index : -1,
+    }).slice(0, AC_REMOTE_MAX_MATCHES)
+    if (merged.length > before.length) {
+      acState.matches = merged
+      // nothing local matched when Tab was pressed: the first catalog hit completes the word now
+      if (!before.length) {
+        acState.index = 0
+        insertCompletionKeepOpen(merged[0])
       }
-    }
-    if (add.length) {
-      _acMergeRemoteMatches(add, searchLower, search)
       break // got new content; the next page fetches as the user nears the new end
     }
     // all duplicates — chase the next page
@@ -1110,32 +1031,6 @@ async function fetchRemoteEmoteMatches(search) {
   showCycleTooltip() // refresh the N/M denominator / clear the searching state
 }
 
-// Append freshly-fetched catalog hits into the live cycle WITHOUT re-sorting
-// what the user has already cycled through. A full-list re-sort let a remote
-// exact-name hit jump above the current position — the tooltip ran BACKWARDS
-// (4/4 → 2/70) and every ordinal the user had seen reshuffled under them.
-// Append-only: existing entries never move, so N/M only ever grows forward;
-// the new block is ordered internally (exact match first, then fetch order:
-// FFZ-by-uses → BTTV → 7TV, pages in sequence via the persistent _ai).
-function _acMergeRemoteMatches(add, searchLower, typed) {
-  const wasEmpty = acState.matches.length === 0
-  add.sort((a, b) => {
-    const ax = (a.name || '') === typed ? 0 : (a.name || '').toLowerCase() === searchLower ? 1 : 2
-    const bx = (b.name || '') === typed ? 0 : (b.name || '').toLowerCase() === searchLower ? 1 : 2
-    if (ax !== bx) return ax - bx
-    return (a._ai || 0) - (b._ai || 0)
-  })
-  acState.matches.push(...add.slice(0, Math.max(0, AC_REMOTE_MAX_MATCHES - acState.matches.length)))
-  // wasEmpty — no local match existed when Tab was pressed, so this remote
-  // fetch fired immediately; insert the first remote hit now. (The lazy case
-  // needs nothing: append-only means the user's chip and index are untouched.)
-  if (wasEmpty && acState.matches.length > 0) {
-    acState.index = 0
-    insertCompletionKeepOpen(acState.matches[0])
-  }
-  showCycleTooltip() // refresh the N/M denominator
-}
-
 // bareLowerName → original-cased username, for recent-chatter completion
 // (findEmoteMatches below). Maintained incrementally by main.js's
 // addUsername — the sole writer of usernameCache — instead of being rebuilt
@@ -1144,7 +1039,7 @@ const _ucDisplay = new Map()
 
 // Colon-triggered dropdown state (":kap" — emotes + emoji, chatterino parity).
 // matches holds findEmoteMatches() results (type 'emote' | 'emoji'), already
-// ranked by the shared compareAcMatches comparator — same ranking Tab-cycle
+// ranked by the emote law's offer (emote-law-offer.js) — same ranking Tab-cycle
 // uses, just rendered as a live list instead of one-at-a-time.
 const emojiAcState = {
   active: false,
@@ -3770,7 +3665,7 @@ function handleInputKeydownInner(e, input) {
         acState.remotePending = false
         acState._remotePage = 0
         acState._remoteExhausted = null
-        acState._aiSeq = 0
+        acState._catalog = null
 
         // Calculate positions for text input cycling (textarea only)
         if (!wysiwygEnabled && input.value !== undefined) captureAcWordBounds(input)
@@ -5030,75 +4925,6 @@ function scanAndApplyModifiersInInput(input) {
   return appliedAny
 }
 
-// Shared tab-complete comparator — the ONE ranking for both the local sort
-// (findEmoteMatches) and the remote-merge re-sort (fetchRemoteEmoteMatches).
-// They drifted apart once already (strong-exact existed only locally); keep
-// every ordering change here.
-//
-// Order (most-correct first):
-//   0. local > remote                       (channel / own / globals beat catalog)
-//   1. exact full-name match — UNCONDITIONAL. Typing the whole name is the
-//      intent: "nam" → NaM (global, maybe never used) before the channel's
-//      NAMarrive. Reverses the old "tier beats never-used exact" call —
-//      precision over channel culture when the user typed the entire name.
-//   2. used-before > never-used             (frecency; personal habit is the
-//      strongest non-exact signal: "kko" → your KKona, never the channel's
-//      untouched KKonaLand)
-//      within used:   prefix > substring, then frecency score, then tier
-//      within unused: tier, prefix > substring, sub emote > non-sub
-//   3. remote catalog order (_ai: FFZ-by-uses → BTTV → 7TV)
-//   4. recency for @user matches            (who just talked beats name length)
-//   5. shorter prefix-match > longer        (Kap → Kappa before KappaPride),
-//      then alpha
-function compareAcMatches(a, b, searchLower, frecency, typed) {
-  const an = a.name || '',
-    bn = b.name || ''
-  // Exact-name match wins over EVERYTHING — even above the local/remote split.
-  // A channel 7TV emote often surfaces as a remote search result (before/instead
-  // of the pre-loaded channel map); if exact ranked below local, a local
-  // different-name prefix match would beat the exact one the user actually
-  // typed. You typed the full name → you get that emote. Two exacts tie here and
-  // fall through to local-before-remote + tier, so a local exact still beats a
-  // remote exact.
-  const ae = an.toLowerCase() === searchLower ? 0 : 1
-  const be = bn.toLowerCase() === searchLower ? 0 : 1
-  if (ae !== be) return ae - be
-  // Two emotes that are both the typed word in different casing (kek / KEK):
-  // the channel's own is what everyone in this chat reads as that word, so it
-  // leads — a habit or a global lookalike of the same name must not outrank it.
-  // Case twins (KEKW / kekw) are two emotes and both stay candidates; the one spelled like
-  // the typed word leads (rule 5). Prefix matching stays case-insensitive.
-  if (ae === 0 && typed && (an === typed) !== (bn === typed)) return an === typed ? -1 : 1
-  if (ae === 0 && (a.tier === 0) !== (b.tier === 0)) return a.tier === 0 ? -1 : 1
-  const al = a.remote ? 1 : 0,
-    bl = b.remote ? 1 : 0
-  if (al !== bl) return al - bl
-  const at = a.tier ?? 9,
-    bt = b.tier ?? 9
-  const af = frecency.get(an) || 0,
-    bf = frecency.get(bn) || 0
-  if (af > 0 !== bf > 0) return af > 0 ? -1 : 1
-  if (af > 0) {
-    // both used — they typed a prefix, respect it; then habit strength
-    if (a.priority !== b.priority) return a.priority - b.priority
-    if (af !== bf) return bf - af
-    if (at !== bt) return at - bt
-  } else {
-    // neither used — channel culture leads
-    if (at !== bt) return at - bt
-    if (a.priority !== b.priority) return a.priority - b.priority
-    if (!!a.sub !== !!b.sub) return a.sub ? -1 : 1
-  }
-  if (a.remote && b.remote) return (a._ai || 0) - (b._ai || 0)
-  if (a.type === 'user' && b.type === 'user') {
-    const arr = a.recencyRank ?? Infinity,
-      brr = b.recencyRank ?? Infinity
-    if (arr !== brr) return arr - brr
-  }
-  if (a.priority === 0 && an.length !== bn.length) return an.length - bn.length
-  return an.localeCompare(bn)
-}
-
 // Block enforcement for tab-complete/mention candidates that have no platform
 // context: a namespaced block (twitch:alice) never matched isUserBlocked(name)
 // with platform=undefined, so a blocked user still surfaced as a completion.
@@ -5121,79 +4947,6 @@ function _isBlockedAnyPlat(name) {
   )
 }
 
-// Merged autocomplete emote source: channel pools (tier 0) over the viewer's
-// set (tier 1) over globals (tier 2) — channel written LAST so a name the channel
-// defines resolves to the channel image, except one you own under a different
-// picture (see keepOwn below: Tab shows what the sent line draws). findEmoteMatches runs
-// on EVERY debounced keystroke-word, and rebuilding this merge — allocating
-// two Maps across thousands of emotes each call — was the dominant typing-lag
-// cost on emote-heavy channels. Memoize it, keyed by a cheap signature: active
-// tab + the sizes of every source map. Any add/remove, tab switch, or pool
-// (re)hydration moves a size or the tab and busts the cache; the only miss is
-// a same-count in-place url swap, which leaves a stale thumbnail (never a
-// wrong insertion — names stay authoritative) until the next size change.
-// lowerByName rides along so the scan in findEmoteMatches reads a precomputed
-// lowercase name instead of calling .toLowerCase() twice per entry.
-let _acMergeCache = null // { sig, acEmotes, tierByName, lowerByName }
-function _getMergedAcEmotes() {
-  // activeTabEmotePools resolves the tab's twitch/kick slot names + yt handle —
-  // pools are keyed by fetched owner name, and the raw tab id is NOT a pool key
-  // on merged-identity/yt tabs (the kripparrian-vs-nl_kripp trap; see emotes.js).
-  const acPools =
-    typeof activeTabEmotePools === 'function'
-      ? activeTabEmotePools()
-      : [channelEmoteCaches[currentTab] || channelEmoteCaches[getCurrentChannel()]].filter(Boolean)
-  let poolsSig = ''
-  for (const p of acPools) poolsSig += `${p?.size || 0},`
-  // The toggle rides in the signature: flipping it has to invalidate the memo,
-  // otherwise suggestions keep serving the old pool until the next emote load.
-  const acInventory = getSetting('suggestInventoryEmotes') !== false
-  const sig = `${currentTab}|${emoteCache.size}|${viewerPersonalEmotes.size}|${poolsSig}|${acInventory ? 1 : 0}`
-  if (_acMergeCache && _acMergeCache.sig === sig) return _acMergeCache
-  const acEmotes = new Map()
-  const tierByName = new Map()
-  const lowerByName = new Map()
-  for (const [k, v] of emoteCache) {
-    acEmotes.set(k, v)
-    tierByName.set(k, 2)
-    lowerByName.set(k, k.toLowerCase())
-  }
-  // Off: names that exist ONLY in your inventory stop being offered. Names the
-  // channel or a global pool also defines still complete — those are real words
-  // in this chat regardless of what you collected. Your twitch sub emotes share
-  // viewerPersonalEmotes but are not inventory: twitch lets you type them in any
-  // chat, so they complete with the toggle off too (as in the app).
-  for (const [k, v] of viewerPersonalEmotes) {
-    if (!acInventory && !v.subscription) continue
-    acEmotes.set(k, v)
-    tierByName.set(k, 1)
-    lowerByName.set(k, k.toLowerCase())
-  }
-  // A name you own that the channel also defines: the one the SENT LINE draws
-  // is what Tab must show. A line draws the sender's own set before the
-  // channel's (emotes.js _lookup, the ref the server vouches is that same set),
-  // so yours stays under the name and the channel's different picture does not
-  // overwrite it — it used to, and the box showed the room's YESIDOTHINKSO while
-  // the sent row drew the one in your set. The channel's copy stays reachable
-  // through the catalog (fetchRemoteEmoteMatches' twin check keeps a different
-  // picture under the same name), and sending that swaps yours out.
-  // Same picture under both: the channel entry wins as before (the tier only
-  // labels it). Inventory renders off: rows draw the channel's, so Tab does too.
-  const keepOwn = acInventory && getSetting('renderInventoryEmotes') !== false && typeof _acPicKey === 'function'
-  for (const acChCache of acPools)
-    for (const [k, v] of acChCache) {
-      if (keepOwn && tierByName.get(k) === 1) {
-        const own = acEmotes.get(k)
-        if (own?.url && v?.url && _acPicKey(own.url) !== _acPicKey(v.url)) continue
-      }
-      acEmotes.set(k, v)
-      tierByName.set(k, 0)
-      lowerByName.set(k, k.toLowerCase())
-    }
-  _acMergeCache = { sig, acEmotes, tierByName, lowerByName }
-  return _acMergeCache
-}
-
 // Shared exclusion check for the autocomplete pool (dropdown + tab-cycle +
 // remote catalog) — a blocked OR viewer-hidden-nsfw emote must never paint
 // its real image in a suggestion, so it's filtered from the match POOL itself
@@ -5211,228 +4964,6 @@ function _hsAcEmoteBlocked(name, emote) {
   if (emoteIsBlocked(name, emote)) return true
   if (typeof unescapeHtml === 'function' && emoteIsBlocked(unescapeHtml(name), emote)) return true
   return false
-}
-
-function findEmoteMatches(search) {
-  const matches = []
-
-  // FFZ-style modifier tokens MUST NOT autocomplete — even if BTTV has an emote
-  // literally named "w!". Use shared classifier; if it's a modifier, return [].
-  if (hsModClassify(search, { allowPrefix: false }).kind === 'modifier') {
-    return matches
-  }
-
-  // Check if searching for username (starts with @)
-  const isUserSearch = search.startsWith('@')
-  // Colon-triggered dropdown search (":kap") — strip the leading ':' so the
-  // emote-name matching below sees the bare query, exactly like the bare-word
-  // Tab-cycle path sees "kap". Without this, ":kap" only ever matched unicode
-  // emoji shortcodes (see the dedicated ":prefix" block further down) because
-  // no emote name literally starts with ':'.
-  const isColonSearch = !isUserSearch && search.startsWith(':')
-  const searchTerm = isUserSearch || isColonSearch ? search.slice(1) : search
-  const searchLower = searchTerm.toLowerCase()
-
-  // Username completion ONLY when explicit @prefix. Bare words never surface
-  // usernames — they pollute emote results and the @ form is the supported way
-  // to mention someone. Recency map / color prefetch only run on @search.
-  if (isUserSearch) {
-    const recency = getRecencyMap()
-    const _hsPrefetchList = []
-    for (const username of usernameCache) {
-      if (!username) continue
-      const userLower = username.toLowerCase()
-      // YouTube usernames arrive as "@handle" — match and insert on the bare
-      // name or yt chatters can never @-complete (typed query has no leading
-      // @ after the trigger slice, and '@' + '@handle' would insert '@@').
-      const bare = userLower.startsWith('@') ? userLower.slice(1) : userLower
-      // Blocked users never surface as an @-completion suggestion (and don't
-      // trigger a color prefetch for them).
-      if (_isBlockedAnyPlat(bare)) continue
-      let color = (typeof knownColors !== 'undefined' && knownColors.get(userLower)) || null
-      if (!color && _hsUserColorCache.has(userLower)) color = _hsUserColorCache.get(userLower) || null
-      if (!color) _hsPrefetchList.push(bare)
-      const recencyRank = recency.get(bare)
-      if (bare.startsWith(searchLower)) {
-        matches.push({ name: `@${username.replace(/^@/, '')}`, url: null, priority: 0, type: 'user', recencyRank })
-      }
-    }
-    if (_hsPrefetchList.length) {
-      try {
-        hsPrefetchUserColors(_hsPrefetchList.slice(0, 30))
-      } catch {}
-    }
-  }
-
-  // Search emote cache (unless explicitly searching users with @).
-  // Three tiers, in order: 0 = current channel BTTV/FFZ/7TV, 1 = viewer's own set
-  // (heatsync inventory + native sub emotes), 2 = globals. Tier rides on each
-  // pushed match so the sort can rank "channel > own > global" without
-  // re-walking the source maps.
-  // Channel emotes are written into the merge map LAST so a name the channel
-  // defines resolves to the CHANNEL image — unless you own a different picture
-  // under that name, which is what your sent line draws (_getMergedAcEmotes).
-  if (!isUserSearch) {
-    const { acEmotes, tierByName, lowerByName } = _getMergedAcEmotes()
-    for (const [name, emote] of acEmotes) {
-      // Only tab-complete heatsync emotes you own (can't send emotes not in your set)
-      if (emote.source === 'heatsync' && emote.state !== 'owned') continue
-      // Blocked emotes never surface as an autocomplete suggestion — the
-      // dropdown/tab-cycle preview paints entry.url unguarded (showEmojiDropdown),
-      // so a blocked name/hash has to be excluded from the pool itself, not
-      // just at insert time. Hash catches the same asset under a re-listed alias.
-      if (_hsAcEmoteBlocked(name, emote)) continue
-      const sub = !!emote.subscription
-      const tier = tierByName.get(name) ?? 2
-      const nameLower = lowerByName.get(name) ?? name.toLowerCase()
-      if (nameLower.startsWith(searchLower)) {
-        matches.push({
-          name,
-          url: emote.url,
-          source: emote.source,
-          priority: 0,
-          tier,
-          type: 'emote',
-          sub,
-          zeroWidth: !!emote.zeroWidth,
-        })
-      } else if (nameLower.includes(searchLower)) {
-        matches.push({
-          name,
-          url: emote.url,
-          source: emote.source,
-          priority: 1,
-          tier,
-          type: 'emote',
-          sub,
-          zeroWidth: !!emote.zeroWidth,
-        })
-      }
-    }
-    // 7TV "name0" overlay convention: a trailing "0" turns an emote into a
-    // zero-width overlay (e.g. "centipede0"). The literal "centipede0" matches
-    // no emote name, so synthesize an overlay match from the base name. Without
-    // this, re-completing a "name0" word (complete emote → backspace auto-space
-    // → type 0 → Tab) finds nothing and the chip collapses back to plain text.
-    // The insert path resolves the overlay flag via lookupEmoteWithOverlay and
-    // stacks it onto the preceding emote.
-    // Skip synthesis entirely when the literal "name0" is itself a real emote —
-    // a channel emote actually named "lerolero0" is standalone and already
-    // surfaced as a direct hit above; the strip-0 overlay must not shadow it
-    // (and the prefix branch below would otherwise emit bogus "name00" doubles).
-    const _literalIsReal = matches.some((m) => m.type === 'emote' && m.name.toLowerCase() === searchLower)
-    if (!_literalIsReal && searchLower.length > 2 && searchLower.endsWith('0')) {
-      const baseLower = searchLower.slice(0, -1)
-      const seen = new Set(matches.filter((m) => m.type === 'emote').map((m) => m.name.toLowerCase()))
-      for (const [name, emote] of acEmotes) {
-        if (emote.source === 'heatsync' && emote.state !== 'owned') continue
-        // A block on the base name must hide the synthesized "name0" overlay too.
-        if (_hsAcEmoteBlocked(name, emote)) continue
-        const nl = name.toLowerCase()
-        const overlayName = `${name}0`
-        if (seen.has(overlayName.toLowerCase())) continue
-        const tier = tierByName.get(name) ?? 2
-        if (nl === baseLower) {
-          matches.push({
-            name: overlayName,
-            url: emote.url,
-            source: emote.source,
-            priority: 0,
-            tier,
-            type: 'emote',
-            sub: !!emote.subscription,
-            _synthOverlay: true,
-          })
-        } else if (nl.startsWith(baseLower)) {
-          matches.push({
-            name: overlayName,
-            url: emote.url,
-            source: emote.source,
-            priority: 1,
-            tier,
-            type: 'emote',
-            sub: !!emote.subscription,
-            _synthOverlay: true,
-          })
-        }
-      }
-    }
-  }
-
-  // Recent-chatter completion — bare word (no @ / :): a chatter who JUST talked
-  // and whose name PREFIX-matches outranks every emote. Typing a name prefix is
-  // almost always addressing that person, so these jump above emotes (e.g.
-  // "ashr" → ashrubberyboi over HahaShrugLeft), most-recent-first. Inserted as
-  // the PLAIN name (no @) — respect what the user typed; they didn't type @, so
-  // don't force a mention/ping (the @-search path keeps the @ the user typed).
-  // Collected separately and prepended after the emote sort so emote ordering
-  // stays untouched.
-  const recentChatters = []
-  if (!isUserSearch && !search.startsWith(':') && searchLower.length > 0 && typeof getRecencyMap === 'function') {
-    for (const [userLower, rank] of getRecencyMap()) {
-      if (!userLower.startsWith(searchLower)) continue
-      recentChatters.push({
-        name: _ucDisplay.get(userLower) || userLower,
-        url: null,
-        priority: 0,
-        type: 'user',
-        recencyRank: rank,
-      })
-    }
-    recentChatters.sort((a, b) => a.recencyRank - b.recencyRank)
-  }
-  const _recentSeen = new Set(recentChatters.map((m) => m.name.toLowerCase().replace(/^@/, '')))
-
-  // Bare-word username fallback — when nothing emote-y matched, scan
-  // usernameCache for everyone NOT already surfaced as a recent chatter. Only
-  // kicks in for searches that didn't start with @ / : so the explicit-@ path
-  // keeps its dedicated behavior (recency + color prefetch). Inserted WITHOUT
-  // the @ prefix so the user gets the same bare-name they typed (e.g. typing
-  // "lichen" + Tab → "licheness").
-  if (!isUserSearch && !search.startsWith(':') && matches.length === 0 && typeof usernameCache !== 'undefined') {
-    for (const username of usernameCache) {
-      if (!username) continue
-      // Bare-name matching — yt cache entries carry a leading '@'.
-      const userLower = username.toLowerCase().replace(/^@/, '')
-      if (_recentSeen.has(userLower)) continue
-      if (_isBlockedAnyPlat(userLower)) continue
-      if (userLower.startsWith(searchLower)) {
-        matches.push({ name: username, url: null, priority: 0, type: 'user' })
-      } else if (userLower.includes(searchLower)) {
-        matches.push({ name: username, url: null, priority: 1, type: 'user' })
-      }
-    }
-  }
-
-  // Emoji shortcodes when typing :prefix
-  if (search.startsWith(':') && typeof EMOJI_DATA !== 'undefined') {
-    const emojiPrefix = search.slice(1).toLowerCase()
-    if (emojiPrefix.length > 0) {
-      for (const entry of EMOJI_DATA) {
-        if (matches.length >= 50) break
-        const emojiMatch = {
-          name: `:${entry.name}:`,
-          url: null,
-          priority: entry.name.startsWith(emojiPrefix) ? 0 : 1,
-          type: 'emoji',
-          emoji: entry.emoji,
-        }
-        if (entry.name.startsWith(emojiPrefix)) {
-          matches.push(emojiMatch)
-        } else if (entry.name.includes(emojiPrefix)) {
-          emojiMatch.priority = 1
-          matches.push(emojiMatch)
-        }
-      }
-    }
-  }
-
-  const _frec = typeof loadEmoteFrecency === 'function' ? loadEmoteFrecency() : new Map()
-  matches.sort((a, b) => compareAcMatches(a, b, searchLower, _frec, search))
-
-  // Recent chatters (prefix, most-recent-first) lead the cycle, above all
-  // emotes — see comment at recentChatters above.
-  return recentChatters.length ? recentChatters.concat(matches) : matches
 }
 
 // A Tab step that was only looked at leaves its name as it found it: cycling past the catalog's
@@ -6176,6 +5707,11 @@ function placeCaretAfter(node, offset = 0) {
 // (heatsync only), so you can feel how deep / how niche the current pick is.
 function emoteCycleMeta(m) {
   if (!m) return { cat: '', vis: null }
+  // another emote of this name shows instead on the platform this line goes to (the law marks it)
+  if (m.shadowed) {
+    const cat = emoteCycleMeta({ ...m, shadowed: false }).cat
+    return { cat, vis: { t: t('mc_cycle_wont_show'), c: 'var(--hs-danger)' } }
+  }
   if (m.type === 'user' || m.type === 'user-bare')
     return { cat: t('mc_input_chatter'), vis: { t: t('mc_input_everyone'), c: 'var(--hs-ok)' } }
   if (m.type === 'emoji') return { cat: t('btn_tab_emoji'), vis: { t: t('mc_input_everyone'), c: 'var(--hs-ok)' } }
@@ -6265,7 +5801,7 @@ function hideAutocomplete() {
   acState.remotePending = false
   acState._remotePage = 0
   acState._remoteExhausted = null
-  acState._aiSeq = 0
+  acState._catalog = null
   _acRemoteToken++ // invalidate any in-flight 7TV fetch
   if (_acRemoteAbort) {
     try {
@@ -6438,9 +5974,8 @@ function checkEmojiAutocomplete() {
     return
   }
 
-  // Same match + rank logic Tab-cycle uses (findEmoteMatches + the shared
-  // compareAcMatches comparator) — own inventory, channel emotes, cached
-  // 7tv/bttv/ffz sets, and unicode emoji. Local-cache reads only, so this is
+  // The same list Tab cycles (findEmoteMatches, the emote law's offer): the room's
+  // emotes, yours, globals, and unicode emoji. Local-cache reads only, so this is
   // safe to run on every debounced keystroke (no network in the hot path).
   const matches = findEmoteMatches(`:${ctx.query}`).slice(0, EMOJI_DROPDOWN_MAX)
   if (matches.length === 0) {

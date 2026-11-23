@@ -3377,6 +3377,9 @@
       }
     }
   },
+  "mc_cycle_wont_show": {
+    "message": "няма да се покаже тук"
+  },
   "mc_twapi_ql_subscribe": {
     "message": "абонирай се"
   },

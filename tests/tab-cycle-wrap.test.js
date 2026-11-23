@@ -10,7 +10,7 @@
  * the hold-at-end check now agree on which searches remote can ever serve.
  *
  * Carved out of the non-module content-script bundle and evaluated standalone
- * (same rationale as tab-complete-order.test.js's compareAcMatches carve).
+ * (same rationale as modifier-sweep-scope.test.js's carve).
  */
 
 import { describe, expect, test } from 'bun:test'

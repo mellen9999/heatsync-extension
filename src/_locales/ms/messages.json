@@ -3377,6 +3377,9 @@
       }
     }
   },
+  "mc_cycle_wont_show": {
+    "message": "tidak akan dipaparkan di sini"
+  },
   "mc_twapi_ql_subscribe": {
     "message": "langgan"
   },

@@ -921,6 +921,7 @@ const MULTICHAT_MODULES = [
   'emote-rungs.js',
   'emote-law-read.js',
   'emote-law-send.js',
+  'emote-law-offer.js',
   'emotes.js',
   'emote-cache-evict.js',
   'emote-upload-core.js',

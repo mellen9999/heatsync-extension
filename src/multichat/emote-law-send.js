@@ -18,10 +18,47 @@ function lawEmote(name, e) {
 }
 
 const LAW_NO_NAMES = new Map()
+const LAW_ALL = new WeakMap()
+/**
+ * One of the overlay's maps as the law's emotes, for the walks an offer makes. Built once and kept
+ * until the map really changes: same size and every name still holding the very entry it held. A
+ * picture swapped under an old name is a change, and Tab pins the picture it shows, so a kept list
+ * that missed the swap would ship the old one.
+ */
+function lawAll(map) {
+  let c = LAW_ALL.get(map)
+  let same = c?.size === map.size
+  if (same) {
+    for (const e of c.list) {
+      if (map.get(e.name) !== e.raw) {
+        same = false
+        break
+      }
+    }
+  }
+  if (!same) {
+    const list = []
+    const byKey = new Map()
+    for (const [n, raw] of map) {
+      const e = lawEmote(n, raw)
+      e.name = n
+      // an offer's row is the word and the picture: one picture a second set files under another
+      // name is its own row, the same word and picture in two sets is one
+      e.key = `${e.key}\n${n}`
+      list.push(e)
+      byKey.set(e.key, e)
+    }
+    c = { size: map.size, list, byKey }
+    LAW_ALL.set(map, c)
+  }
+  return c
+}
+
 /**
  * A name -> law-emote view over one of the overlay's maps. Nothing is copied: a lookup reads the
  * live map, so a set that changed a moment ago (an add, a swap, a 7tv event) is already the answer,
- * and asking per typed word costs one `get`. The law only ever calls `get` and reads `size`.
+ * and asking per typed word costs one `get`. A send only calls `get` and reads `size`; an offer
+ * walks `values()` and asks `at(key)` for the entry behind a picture.
  */
 function lawView(map, only) {
   if (!map?.size) return LAW_NO_NAMES
@@ -31,6 +68,10 @@ function lawView(map, only) {
       const e = map.get(n)
       return e && (!only || only(e)) ? lawEmote(n, e) : undefined
     },
+    *values() {
+      for (const e of lawAll(map).list) if (!only || only(e.raw)) yield e
+    },
+    at: (key) => lawAll(map).byKey.get(key),
   }
 }
 

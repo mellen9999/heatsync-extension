@@ -11,7 +11,7 @@
  * which applies the overlay's own auto-add guards.
  *
  * Carved out of the non-module MAIN-world script and evaluated standalone
- * (same rationale as tab-complete-order.test.js's compareAcMatches carve).
+ * (same rationale as modifier-sweep-scope.test.js's carve).
  */
 
 import { beforeEach, describe, expect, test } from 'bun:test'

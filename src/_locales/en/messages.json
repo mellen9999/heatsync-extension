@@ -3393,6 +3393,10 @@
     },
     "description": "Tab-completion tooltip category for an emote found in a provider catalog search; PROVIDER is 7tv/bttv/ffz/heatsync"
   },
+  "mc_cycle_wont_show": {
+    "message": "won't show here",
+    "description": "Tab-completion tooltip: another emote of this name shows instead on the platform this message goes to"
+  },
   "mc_twapi_ql_subscribe": {
     "message": "subscribe"
   },

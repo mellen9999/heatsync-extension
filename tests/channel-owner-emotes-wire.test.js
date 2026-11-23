@@ -151,6 +151,17 @@ describe('what a channel owner emote keeps', () => {
     expect('width' in out[0]).toBe(false)
   })
 
+  test('an overlay emote stays an overlay; anything but a real true is a plain emote', async () => {
+    const out = await run([
+      { name: 'Over', url: '/uploads/a.webp', hash: 'a', provider: '7tv', zeroWidth: true },
+      { name: 'Plain', url: '/uploads/b.webp', hash: 'b', provider: '7tv', zeroWidth: 'true' },
+      { name: 'Off', url: '/uploads/c.webp', hash: 'c', provider: '7tv', zeroWidth: false },
+    ])
+    expect(out[0].zeroWidth).toBe(true)
+    expect('zeroWidth' in out[1]).toBe(false)
+    expect('zeroWidth' in out[2]).toBe(false)
+  })
+
   test('variants (object) and width/height are kept when present', async () => {
     const variants = {
       '1x': 'https://cdn.heatsync.org/uploads/abc-1x.webp',

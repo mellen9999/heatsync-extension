@@ -45,6 +45,8 @@ function mapChannelOwnerEmote(e) {
     out.width = w
     out.height = h
   }
+  // an overlay emote is an overlay under any name; only a real `true` counts
+  if (e.zeroWidth === true) out.zeroWidth = true
   return out
 }
 

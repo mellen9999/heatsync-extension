@@ -116,13 +116,15 @@ jobs:
         run: bun scripts/render-extension.ts
 
       # Same-name emote collisions (heatsync vs 7tv vs bttv vs ffz, overlay and
-      # native twitch + kick chat) against stand-in pages. `bun run test:emotes`
-      # locally; off CI these were the one browser suite nobody ran. ~40s.
-      - name: emote collisions (overlay, native twitch, native kick)
+      # native twitch + kick chat) against stand-in pages, then favorites (pin,
+      # unpin, the picker's section, Tab) in the same browser. `bun run
+      # test:emotes` locally; off CI these were the browser suites nobody ran.
+      - name: emote collisions + favorites (overlay, native twitch, native kick)
         run: |
           bun scripts/render-emote-collisions.ts
           bun scripts/render-emote-collisions-native.ts
           bun scripts/render-emote-collisions-kick.ts
+          bun scripts/render-emote-favorites.ts
 
   # Dependencies with a known high/critical advisory, and secrets in the commits
   # a push brings. The nightly runs the same two over the whole history.

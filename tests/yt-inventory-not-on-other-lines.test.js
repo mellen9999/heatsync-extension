@@ -40,9 +40,9 @@ test('owning W never hides the global W on other lines', () => {
   expect(emoteMap.get('W').url).toBe('mine')
 })
 
-test('feed fallback reads channel + globals, not the viewer inventory', () => {
+test('feed fallback reads globals, not the viewer inventory', () => {
   const social = readFileSync(join(root, 'src', 'multichat', 'social.js'), 'utf8')
-  expect(social).toContain('lookupPublicEmote(word)')
+  expect(social).toContain('emoteCache.get(word)')
   expect(social).not.toMatch(/=\s*lookupEmote\(word\)/)
 })
 

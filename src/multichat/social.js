@@ -2625,10 +2625,10 @@ function renderFeedContent(content, emoteRefs) {
     }
   }
 
-  // Local emote fallback: render 7TV/BTTV/FFZ/channel emotes the server can't
-  // resolve (not in emote_refs — site only knows heatsync emotes). The extension
-  // augments with the viewer's full local emote set, matching chat-tile rendering.
-  if (typeof lookupPublicEmote === 'function') {
+  // A word the post shipped no ref for. A post has no room (emote law: no room, no room rule), so
+  // it is a global or it is text: never the open chat tab's emote (the same post drew a different
+  // picture per tab), never yours (your emote on their post).
+  {
     const refNames = emoteRefs && typeof emoteRefs === 'object' ? new Set(Object.keys(emoteRefs)) : null
     const parts = html.split(/(<[^>]+>)/)
     html = parts
@@ -2641,9 +2641,7 @@ function renderFeedContent(content, emoteRefs) {
           // the bare form when the qualified token misses.
           const bare = word.replace(/\([^)\s]*\)$/, '')
           if (bare !== word && refNames?.has(bare)) return word // handled by emote_refs pass
-          // Another author's bare word: channel + globals only. lookupEmote leads with the
-          // viewer's own inventory, which would draw MY emote on THEIR post (rule 4).
-          const em = lookupPublicEmote(word) || (bare !== word ? lookupPublicEmote(bare) : null)
+          const em = emoteCache.get(word) || (bare !== word ? emoteCache.get(bare) : null)
           // A blocked emote the caches no longer hold is still boxed (don't leak the name). One
           // they do hold is judged by its own key in renderFeedEmote, so blocking one W never
           // boxes another.
@@ -2654,9 +2652,7 @@ function renderFeedContent(content, emoteRefs) {
           ) {
             return renderFeedEmote(word, '', 'heatsync', '')
           }
-          // Own-inventory cwCats gate (viewer_show_* toggles) — lookupEmote's
-          // first hit is viewerPersonalEmotes, which carries cwCats the same
-          // way processEmotes' hsOwnCwHiddenCat check does for chat.
+          // a global the viewer's own content toggles hide (cwCats) is boxed, as in chat
           if (em) {
             const cwCat = typeof hsOwnCwHiddenCat === 'function' ? hsOwnCwHiddenCat(em) : ''
             if (cwCat) return renderFeedEmote(word, '', em.source || 'heatsync', em.hash || '', cwCat)

@@ -32,7 +32,7 @@ const CHAN = U('01CHAN0000000000000000000B')
 const GLOB = U('01GLOB0000000000000000000C')
 const REF = U('01REFF0000000000000000000D')
 
-function render(text, refs, { blocked = [] } = {}) {
+function render(text, refs, { blocked = [], noGlobal = false } = {}) {
   globalThis.currentTab = 'chan-x'
   globalThis.getCurrentChannel = () => 'chan-x'
   globalThis.getLiveChannel = () => 'chan-x'
@@ -43,12 +43,12 @@ function render(text, refs, { blocked = [] } = {}) {
   em.inventoryEmotes.clear()
   em.viewerPersonalEmotes.set('W', { url: MINE, source: '7tv', state: 'owned', hash: 'mine' })
   em.inventoryEmotes.add('W')
-  em.emoteCache.set('W', { url: GLOB, source: '7tv', state: 'global', hash: 'glob' })
+  if (!noGlobal) em.emoteCache.set('W', { url: GLOB, source: '7tv', state: 'global', hash: 'glob' })
   em.channelEmoteCaches['chan-x'] = new Map([['W', { url: CHAN, source: 'ffz', state: 'channel', hash: 'chan' }]])
   const fn = new Function(
     'escapeHtml',
     'safeUrl',
-    'lookupPublicEmote',
+    'emoteCache',
     'emoteIsBlocked',
     'blockedEmoteNames',
     'getEmoteState',
@@ -58,7 +58,7 @@ function render(text, refs, { blocked = [] } = {}) {
   return fn(
     escapeHtml,
     safeUrl,
-    em.lookupPublicEmote,
+    em.emoteCache,
     (_name, e) => blocked.includes(e?.hash),
     new Set(),
     () => 'global',
@@ -66,30 +66,30 @@ function render(text, refs, { blocked = [] } = {}) {
   )(text, refs)
 }
 
-test("another author's bare W draws the channel W, never the viewer's own", () => {
+// a post has no room: the open chat tab's W used to draw here, so one post was a different
+// picture on every tab
+test("another author's bare W draws the global W: never the open tab's, never the viewer's own", () => {
   const out = render('hi W', null)
-  expect(out).toContain('01CHAN')
+  expect(out).toContain('01GLOB')
+  expect(out).not.toContain('01CHAN')
   expect(out).not.toContain('01MINE')
 })
 
-test("the post's own ref wins over the channel W (rule 2)", () => {
+test('a bare word only the open tab has is text in a post', () => {
+  const out = render('hi W', null, { noGlobal: true })
+  expect(out).toBe('hi W')
+})
+
+test("the post's own ref wins over the global W", () => {
   const out = render('hi W', { W: { url: REF, provider: '7tv', hash: 'ref' } })
   expect(out).toContain('01REFF')
-  expect(out).not.toContain('01CHAN')
+  expect(out).not.toContain('01GLOB')
 })
 
-test('with no channel W the global W draws, still not the inventory one', () => {
-  const out = (() => {
-    const r = render('hi W', null)
-    return r
-  })()
-  expect(out).not.toContain('01MINE')
-})
-
-test('blocking the channel W boxes that one, not a ref-carried W of another author', () => {
-  const blockedChan = render('hi W', null, { blocked: ['chan'] })
-  expect(blockedChan).toContain('hs-state-blocked')
-  const ref = render('hi W', { W: { url: REF, provider: '7tv', hash: 'ref' } }, { blocked: ['chan'] })
+test('blocking the global W boxes that one, not a ref-carried W of another author', () => {
+  const blockedGlob = render('hi W', null, { blocked: ['glob'] })
+  expect(blockedGlob).toContain('hs-state-blocked')
+  const ref = render('hi W', { W: { url: REF, provider: '7tv', hash: 'ref' } }, { blocked: ['glob'] })
   expect(ref).toContain('01REFF')
   expect(ref).not.toContain('hs-state-blocked')
 })

@@ -9125,6 +9125,8 @@ async function sendMessage(retry) {
     {
       twitch: sendToTwitch ? twitchName || targetChannel : '',
       kick: sendToKick ? kickSlug || targetChannel : '',
+      // a youtube-only line still has a room: the chip was judged against it (lawOpenLegs)
+      youtube: sendToYoutube ? (ytUrl ? lawYtKey(ytUrl) : targetChannel) : '',
     },
     input,
   )

@@ -17,9 +17,9 @@ const scope = {
   emoteCache: new Map(),
   channelEmoteCaches: {},
 }
-const { lawSendCtx, lawShip, lawStored } = new Function(
+const { lawSendCtx, lawShip, lawStored, lawYtKey } = new Function(
   ...Object.keys(scope),
-  `${SRC}\nreturn { lawSendCtx, lawShip, lawStored }`,
+  `${SRC}\nreturn { lawSendCtx, lawShip, lawStored, lawYtKey }`,
 )(...Object.values(scope))
 const law = globalThis.hsEmoteLaw
 
@@ -112,4 +112,21 @@ test('a pick of the very picture you own ships your copy; a same-name pick of an
   pinPickedEmote({ name: 'IDK', url: stv(ID.PICK).url, provider: '7tv' }, other)
   expect(lawStored(lawShip('IDK', { twitch: 'chan' }, other).refs)).toEqual({ IDK: { p: '7tv', id: ID.PICK } })
   scope.viewerPersonalEmotes.clear()
+})
+
+test('a youtube room is keyed by its handle, with the @ when that is how its set is filed', () => {
+  expect(lawYtKey('https://www.youtube.com/@SomeOne/live')).toBe('SomeOne')
+  scope.channelEmoteCaches['@SomeOne'] = new Map([['yay', stv(ID.ROOM)]])
+  expect(lawYtKey('https://www.youtube.com/@SomeOne/live')).toBe('@SomeOne')
+  expect(lawYtKey('https://www.youtube.com/watch?v=abc')).toBe('')
+  // and a youtube-only line reads that room, so what ships is what the chip showed
+  expect(lawShip('yay', { youtube: '@SomeOne' }, {}).refs.yay.url).toBe(stv(ID.ROOM).url)
+  delete scope.channelEmoteCaches['@SomeOne']
+})
+
+test('the send names the same youtube room the chip is judged against', () => {
+  const INPUT = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
+  expect(INPUT).toContain("youtube: sendToYoutube ? (ytUrl ? lawYtKey(ytUrl) : targetChannel) : '',")
+  expect(SRC).toContain("youtube: ch.youtube && st.youtube ? lawYtKey(ch.youtube) : '',")
+  expect(SRC).toContain("youtube: hostPlatform === 'yt' ? live : '',")
 })

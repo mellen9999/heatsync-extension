@@ -105,6 +105,7 @@ function rig({
     rememberOwnReply: () => {},
     lawShip: (text) => ({ wire: { kick: text }, refs: undefined }),
     lawStored: (refs) => refs,
+    lawYtKey: () => '',
     endComposerPicks: () => {},
     wysiwygEnabled: false,
     pendingMessage: '',

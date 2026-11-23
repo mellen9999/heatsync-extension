@@ -119,18 +119,9 @@ function lawYtKey(url) {
 function lawPin(name, e) {
   const box = lawBox()
   if (!box || !name || !e?.url) return
-  pinPickedEmote(
-    {
-      name,
-      url: e.url,
-      provider: e.provider || e.source,
-      zeroWidth: !!e.zeroWidth,
-      ...(e.hash ? { hash: e.hash } : null),
-      ...(typeof e.id === 'string' && e.id ? { id: e.id } : null),
-      ...(typeof e.animated === 'boolean' ? { animated: e.animated } : null),
-    },
-    box,
-  )
+  // refOf (inside the pin) keeps only what is really there: a hash, a string id, a boolean animated
+  const { url, zeroWidth, hash, id, animated } = e
+  pinPickedEmote({ name, url, provider: e.provider || e.source, zeroWidth, hash, id, animated }, box)
 }
 
 /** a pick as an overlay entry, for a picture no cache holds (a catalog hit) */

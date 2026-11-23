@@ -72,6 +72,7 @@ function rig(autoAdds) {
     hsTagTwitchSend: () => {},
     lawShip: (text) => ({ wire: { kick: text }, refs: undefined }),
     lawStored: (refs) => refs,
+    lawYtKey: () => '',
     endComposerPicks: () => {},
     hsSentHistoryRecord: () => {},
     replyState: null,

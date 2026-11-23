@@ -4,6 +4,10 @@
 // and getLivePlatformNames/save+loadLivePlatformMap (read by the render engine
 // and init, not just this UI) stay in main.js.
 
+// the centred column every add/edit form sits in: one string, three forms
+const MC_FORM_PANE_CSS =
+  'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
+
 // Shared dialog button (add/edit/live-platform forms). White border = primary
 // action, gray = secondary; hover snaps to white bg + black text, no motion.
 function makeMcBtn(text, primary) {
@@ -144,8 +148,7 @@ function makeAddViewShell(msgsEl, titleText, descText) {
   const wrapper = document.createElement('div')
   // the render pass reads this class: a view already up is left alone (main-live.js)
   wrapper.className = 'hs-mc-add-pane'
-  wrapper.style.cssText =
-    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
+  wrapper.style.cssText = MC_FORM_PANE_CSS
   const title = document.createElement('div')
   title.textContent = titleText
   title.style.cssText = 'font-size:17px;font-weight:700;color:#ffffff;letter-spacing:.5px;'
@@ -817,8 +820,7 @@ function renderLivePlatformsPane(pane) {
   const home = () => switchTab('live', 'chat')
 
   const wrapper = document.createElement('div')
-  wrapper.style.cssText =
-    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
+  wrapper.style.cssText = MC_FORM_PANE_CSS
 
   const title = document.createElement('div')
   title.textContent = t('mc_cmg_edit_live', [urlCh])
@@ -1012,8 +1014,7 @@ function showEditChannelForm(tabId) {
   msgsEl.textContent = ''
 
   const wrapper = document.createElement('div')
-  wrapper.style.cssText =
-    'display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#ffffff;font-size:13px;padding:20px;box-sizing:border-box;'
+  wrapper.style.cssText = MC_FORM_PANE_CSS
 
   const title = document.createElement('div')
   title.textContent = t('mc_edit_channel', [tabId])

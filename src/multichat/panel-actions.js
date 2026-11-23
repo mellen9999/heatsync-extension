@@ -246,6 +246,10 @@ function _insertPanelCallout(el) {
   if (container) container.insertBefore(el, container.firstChild)
 }
 
+// the white strip the panel's banners share (api down, sign in again): one string, three banners
+const MC_BANNER_CSS =
+  'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
+
 // Render a small banner inside the multichat panel when an upstream API is unreachable.
 // Auto-removes when state flips back to 'up'. Only renders when our panel is mounted.
 function showApiStatusBanner(source, state) {
@@ -261,8 +265,7 @@ function showApiStatusBanner(source, state) {
   const banner = document.createElement('div')
   banner.id = id
   banner.className = 'hs-mc-api-banner'
-  banner.style.cssText =
-    'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
+  banner.style.cssText = MC_BANNER_CSS
   const label = source === 'heatsync' ? t('mc_pa_heatsync_unreachable') : t('mc_pa_source_unreachable', [source])
   const text = document.createElement('span')
   text.textContent = label
@@ -292,8 +295,7 @@ function showAuthLoginBanner(loggedIn) {
   const banner = document.createElement('div')
   banner.id = id
   banner.className = 'hs-mc-auth-banner'
-  banner.style.cssText =
-    'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
+  banner.style.cssText = MC_BANNER_CSS
   const text = document.createElement('span')
   text.textContent = t('mc_pa_yt_needs_login')
   const link = document.createElement('a')
@@ -322,8 +324,7 @@ function showEmoteLoginNudge() {
   const banner = document.createElement('div')
   banner.id = id
   banner.className = 'hs-mc-auth-banner'
-  banner.style.cssText =
-    'background:#fff;color:#000;font:600 11px/1.4 monospace;padding:6px 10px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;'
+  banner.style.cssText = MC_BANNER_CSS
   const text = document.createElement('span')
   text.textContent = t('mc_pa_emote_login')
   const link = document.createElement('a')

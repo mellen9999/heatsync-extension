@@ -137,10 +137,11 @@ try {
     p.$$eval(`${PICKER} [data-section-key="favorite"] .hs-mc-picker-emote-wrap img`, (els: HTMLImageElement[]) =>
       els.map((x) => `${x.alt} ${(x.getAttribute('src') || '').split('/').pop()} ${x.dataset.state}`),
     )
-  const menu = () => p.$$eval('#hs-mc-msg-ctx [role="menuitem"]', (els: HTMLElement[]) => els.map((x) => (x.textContent || '').trim()))
+  // a row's name is its label: the digit beside it is a key hint for the eye
+  const menu = () => p.$$eval('#hs-mc-msg-ctx [role="menuitem"] .hs-mc-em-label', (els: HTMLElement[]) => els.map((x) => (x.textContent || '').trim()))
   const pickMenu = async (label: string) => {
     await until(p, async () => (await menu()).includes(label), 5000)
-    await p.click(`#hs-mc-msg-ctx [role="menuitem"]:text-is("${label}")`, { timeout: 5000 })
+    await p.click(`#hs-mc-msg-ctx [role="menuitem"] .hs-mc-em-label:text-is("${label}")`, { timeout: 5000 })
   }
 
   // a. the account's list leads the picker, and a picture this channel has never had is still there

@@ -394,8 +394,9 @@
       padding-left: 8px;
       background: #000000;
     }
-    /* a filled notice IS its label: the text runs inline in the row's own type and colour */
-    .hs-mc-system.hs-filled .hs-mc-system-text { display: inline; color: inherit; font-size: inherit; line-height: inherit; }
+    /* a filled notice IS its label: the text runs inline in the row's own type and colour. one with its
+       sender's line under it is not (no hs-row-label on the row): its event text is a label line of its own */
+    .hs-mc-system.hs-filled.hs-row-label .hs-mc-system-text { display: inline; color: inherit; font-size: inherit; line-height: inherit; }
     .hs-mc-system-text {
       color: #ffffff;
       font-size: 13px;

@@ -940,15 +940,20 @@ function buildMessageDiv(m, tabId) {
   const rowFillName = rowFill(div)
   const filledRow = !!rowFillName
   if (filledRow) div.classList.add('hs-filled', `hs-fill-${rowFillName}`)
-  // a notice's whole line is its label (as on the site); a chat row keeps a label line above its message
-  if (filledRow && div.classList.contains('hs-mc-system')) div.classList.add('hs-row-label')
+  // a notice's whole line is its label (as on the site); a chat row keeps a label line above its message.
+  // a notice that carries a line its sender typed (a resub message, a shared watch streak) is both: the
+  // event is the label line, their line sits under it as in chat. run together it read as one long line
+  const saidUnder = filledRow && !!m.systemMsg && !!m.text && m.type !== 'notice'
+  if (filledRow && !saidUnder && div.classList.contains('hs-mc-system')) div.classList.add('hs-row-label')
   let firstMsgLabel = ''
   if (m.isFirstMsg) {
     firstMsgLabel = `<span class="hs-mc-system-text hs-row-label hs-mc-first-label">\u25C7 ${t('mc_main_first_msg')}</span>`
   }
   // USERNOTICE system line (all values go through escapeHtml — same pattern as existing innerHTML above)
   const systemLine =
-    (m.systemMsg ? `<span class="hs-mc-system-text">${escapeHtml(m.systemMsg)}</span>` : '') +
+    (m.systemMsg
+      ? `<span class="hs-mc-system-text${saidUnder ? ' hs-row-label' : ''}">${escapeHtml(m.systemMsg)}</span>`
+      : '') +
     redeemLabel +
     firstMsgLabel
   // Skip the date-format work entirely when the timestamp won't render —
@@ -1912,8 +1917,8 @@ function appendMessage(msg, tabId) {
   if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return true
   if (hsPanePanelOpen()) return true // a confirm panel covers the pane; close repaints
   // Same for the predictions/polls view — it owns the chat area while open.
-  if (typeof predViewOpen === 'function' && predViewOpen()) return true
-  if (typeof imgViewOpen === 'function' && imgViewOpen()) return true // a picture owns the pane
+  if (predViewOpen()) return true
+  if (imgViewOpen()) return true // a picture owns the pane
   if (isScrolledUp || currentTab !== tabId) return false
 
   // Content filters — hidden at render, buffers keep the message
@@ -2841,8 +2846,8 @@ function dumpPaneState() {
     edit: !!editingChannel,
     card: typeof activeProfileCard !== 'undefined' && !!activeProfileCard,
     panel: !!hsPanePanelOpen(),
-    pred: typeof predViewOpen === 'function' && !!predViewOpen(),
-    img: typeof imgViewOpen === 'function' && !!imgViewOpen(),
+    pred: !!predViewOpen(),
+    img: !!imgViewOpen(),
     prog: !!isProgrammaticScroll,
     pin: !!_scrollPinRaf,
     epoch: _renderEpoch,
@@ -3026,8 +3031,7 @@ function domThrashCheck() {
   // instead of the rows, and a cleared pane would stay blank under them
   if (currentTab !== 'live' && !getChannelById(currentTab)) return
   if (editingChannel || hsPanePanelOpen() || (typeof activeProfileCard !== 'undefined' && activeProfileCard)) return
-  if ((typeof predViewOpen === 'function' && predViewOpen()) || (typeof imgViewOpen === 'function' && imgViewOpen()))
-    return
+  if (predViewOpen() || imgViewOpen()) return
   try {
     _dropAllTabCaches()
     msgsEl.textContent = ''

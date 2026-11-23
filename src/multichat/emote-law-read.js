@@ -46,9 +46,7 @@ function lawReadCtx({ room, platform, globals, tags, refs, sender, gate, unesc }
   }
   const s = lawSenderViews(sender, named, gate)
   return {
-    room: room
-      ? { platform: platform === 'yt' ? 'youtube' : platform || 'twitch', channel: '', loaded: true, names: room }
-      : null,
+    room: room ? { platform: channelLeg(platform) || 'twitch', channel: '', loaded: true, names: room } : null,
     refs: picks,
     sender: { inventory: s.inventory, personal: s.personal, native: {} },
     globals,

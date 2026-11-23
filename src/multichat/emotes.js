@@ -114,8 +114,8 @@ function mcRerenderSearch(query) {
   const typed = mcCurrentTyped.toLowerCase() === query ? mcCurrentTyped : query
   const entries = lawPickerSearch(typed, found, mcExactMatch).map((e) => {
     if (!e.remote) return { name: e.name, emote: e.raw }
-    // state='remote': an unowned result, the click handler adds it (and auto-add-on-send commits
-    // the slot). Every upload is its own tile, told apart by id.
+    // state='remote': an unowned result. A click picks it for this message; the send adds it to
+    // your set. Every upload is its own tile, told apart by id.
     const r = e.raw
     mcRemoteEmoteIndex.set(r.id ? `${e.name}#${r.id}` : e.name, {
       url: r.url,
@@ -1430,52 +1430,22 @@ function showEmotePicker(tab = null) {
       const input = document.getElementById('hs-mc-input')
       if (!input || !name) return
 
-      // Remote (provider search) result — not yet in user's local emotes.
-      // Optimistically register the emote in viewerPersonalEmotes so
-      // pasteEmoteToInput resolves immediately (avoid the dead-click feel
-      // from awaiting a network round-trip). The server-side add fires in
-      // the background; on success the state is reconciled, on failure the
-      // user still sees the emote (server sync re-evaluates next load).
+      // A search result, or a favorite this tab does not hold: this message's pick of its name.
+      // A click never changes what you own. The line that carries the pick adds it to your set
+      // as it leaves (autoAddInputEmotes), like a Tab-completed search result and like the site;
+      // a pick you delete from the box, or never send, adds nothing.
       if (img.dataset.state === 'remote') {
         const remote = hsRemoteTile(name, img.dataset.variant)
-        // Race-guard rapid double-clicks: addEmoteToInventory tracks in-flight adds
-        // in pendingEmoteOps, so skip the optimistic-add + POST if one is already
-        // running for this name — otherwise a fast second click fires a second
-        // concurrent add POST (this was the only add entry point missing the guard).
-        // The paste below still runs, so multi-click still inserts the emote each time.
-        const _addInFlight = typeof pendingEmoteOps !== 'undefined' && pendingEmoteOps.has(name)
-        // The tile clicked is this message's pick of its name: without the pin the word resolved
-        // like a hand-typed one, so another KEKW picked here shipped the room's KEKW.
         if (remote) {
-          lawPin(name, {
+          trackCompletionForAutoAdd({
+            type: 'emote',
+            name,
             url: remote.url,
             source: remote.provider || '7tv',
             id: remote.id,
-            zeroWidth: remote.zeroWidth,
+            zeroWidth: !!remote.zeroWidth,
+            remote: true,
           })
-        }
-        if (remote && !_addInFlight) {
-          const _optimistic = !viewerPersonalEmotes.has(name)
-          if (_optimistic) {
-            viewerPersonalEmotes.set(name, {
-              url: remote.url,
-              source: remote.provider || '7tv',
-              state: 'owned',
-              zeroWidth: !!remote.zeroWidth,
-              addedAt: Date.now(),
-            })
-          }
-          // Roll back the optimistic slot if the server add didn't take (e.g.
-          // logged out) — otherwise the picker shows a phantom "owned" emote
-          // with no real slot until the next reload (split-brain vs inventory).
-          const _rollback = () => {
-            if (_optimistic && !inventoryEmotes.has(name)) viewerPersonalEmotes.delete(name)
-          }
-          addEmoteToInventory(name, remote.url, remote.provider, img, !!remote.zeroWidth)
-            .then((ok) => {
-              if (!ok) _rollback()
-            })
-            .catch(_rollback)
         }
       }
 

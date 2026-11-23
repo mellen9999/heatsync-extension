@@ -35,7 +35,7 @@ function build({ senderSets = new Map(), renderOrder = () => null, sameAsset = (
     'zeroWidthForSameAsset',
     '_hsEmoteAssetId',
     'lawPin',
-    `${INPUT_SRC.slice(start, end)}; return { recentRemoteCompletions, registerClickPasteForAutoAdd }`,
+    `${INPUT_SRC.slice(start, end)}; return { recentRemoteCompletions, registerClickPasteForAutoAdd, trackCompletionForAutoAdd }`,
   )(renderOrder, senderSets, sameAsset, (url) => ASSET_ID_RE.exec(url || '')?.[1] || null, picks.lawPin)
   // what the composer's own draft holds for a name: the pick this message ships
   return { ...fns, picked: (name) => heldPick(name, picks.lawBox())[0] }
@@ -54,6 +54,27 @@ describe('click-paste registers for auto-add-on-send', () => {
     const { registerClickPasteForAutoAdd, picked } = build()
     registerClickPasteForAutoAdd('GODNO', URL_7TV, '7tv')
     expect(picked('GODNO')).toMatchObject({ name: 'GODNO', url: URL_7TV, provider: '7tv' })
+  })
+
+  test('a search result clicked in the picker is the pick, and is registered as a deliberate catalog pick with its overlay flag', () => {
+    const { recentRemoteCompletions, trackCompletionForAutoAdd, picked } = build()
+    trackCompletionForAutoAdd({
+      type: 'emote',
+      name: 'RainTime',
+      url: URL_7TV,
+      source: '7tv',
+      id: '01FY9WEBXR00077WTWSFD40R6K',
+      zeroWidth: true,
+      remote: true,
+    })
+    expect(picked('RainTime')).toMatchObject({ name: 'RainTime', url: URL_7TV, provider: '7tv' })
+    // variant: the one kind of pick the send may swap for a different emote you own under the name
+    expect(recentRemoteCompletions.get('RainTime')).toEqual({
+      url: URL_7TV,
+      source: '7tv',
+      zeroWidth: true,
+      variant: true,
+    })
   })
 
   test("another user's heatsync emote registers, so it survives a reload", () => {

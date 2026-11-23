@@ -264,7 +264,7 @@ describe("the picker's search", () => {
 })
 
 describe('a search result clicked in the picker', () => {
-  test("is pinned as this message's pick before it is pasted (it used to resolve like a hand-typed word)", async () => {
+  test("is this message's pick before it is pasted, and joins your set only when the line is sent", async () => {
     const { readFileSync } = await import('node:fs')
     const { join } = await import('node:path')
     const src = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'emotes.js'), 'utf8')
@@ -272,7 +272,13 @@ describe('a search result clicked in the picker', () => {
     const b = src.indexOf('pasteEmoteToInput(name)', a)
     expect(a).toBeGreaterThan(-1)
     expect(b).toBeGreaterThan(a)
-    expect(src.slice(a, b).replace(/\s+/g, ' ')).toContain('lawPin(name, { url: remote.url')
+    const click = src.slice(a, b)
+    // trackCompletionForAutoAdd pins the pick (lawPin) and registers it for the send's add
+    expect(click).toContain('trackCompletionForAutoAdd({')
+    expect(click).toContain('remote: true')
+    // a click used to add the emote to your set at once: a pick you deleted again had still changed what you own
+    expect(click).not.toContain('addEmoteToInventory(')
+    expect(click).not.toContain('viewerPersonalEmotes.set(')
   })
 
   test("the pin makes the chip that very picture, over the room's emote of the name", () => {

@@ -8,10 +8,15 @@ import { buildSync } from 'esbuild'
 
 export const LAW_GLOBAL = 'hsEmoteLaw'
 
-/** The law's bundled source, or '' when the copy is not there. */
+/**
+ * The law's bundled source. A missing copy is a failed build, never an empty string: every chat
+ * row calls the law, so a bundle without it throws on the first line drawn.
+ */
 export function emoteLawSource(root) {
   const entry = join(root, 'shared', 'emote-law.ts')
-  if (!existsSync(entry)) return ''
+  if (!existsSync(entry)) {
+    throw new Error(`${entry} is missing: run scripts/sync-site-copies.sh (the emote-law.ts copy is what every chat row reads)`)
+  }
   const out = buildSync({
     entryPoints: [entry],
     bundle: true,

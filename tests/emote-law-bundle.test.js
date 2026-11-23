@@ -22,3 +22,8 @@ test('the bundled source declares no top-level name but its own global', () => {
 test('lawIsUsed reads the multichat sources', () => {
   expect(typeof lawIsUsed(ROOT)).toBe('boolean')
 })
+
+test('a checkout without the law copy fails the build, it never ships a bundle that names a law it does not carry', () => {
+  // every chat row calls hsEmoteLaw: a bundle built from '' throws ReferenceError on the first line drawn
+  expect(() => emoteLawSource(join(ROOT, 'tests', 'no-such-root'))).toThrow(/emote-law\.ts/)
+})

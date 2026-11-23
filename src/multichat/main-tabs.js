@@ -1598,7 +1598,8 @@ function computeMessageText(m) {
     true,
     hsMsgRefs,
     null,
-    m.platform,
+    // twitch chat carries no platform: unnamed, the row would read every platform's list at once
+    m.platform || 'twitch',
   )
   if (m.emotes && m.emotes.length > 0) {
     processedText = processYtEmotes(processedText, m.emotes, true)

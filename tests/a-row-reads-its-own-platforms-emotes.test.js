@@ -8,6 +8,7 @@ import * as mods from '../src/lib/modifiers.js'
 import { EMOTE_TIER_ORDER, escapeHtml, resolveEmoteProviderWinner, unescapeHtml } from '../src/lib/utils.js'
 import './emote-rungs-globals.js'
 import { lawSendRig } from './helpers/law-send-rig.js'
+import { mainSource } from './main-src.js'
 
 globalThis.escapeHtml = escapeHtml
 globalThis.unescapeHtml = unescapeHtml
@@ -157,6 +158,20 @@ describe('the set', () => {
       channelRoomNames(channelEmoteCaches['@handle'], 'youtube'),
     )
     expect(processEmotes('KEKW', 'handle', null, null, 1, true, null, null, 'youtube')).toContain(TW)
+  })
+
+  test('a chat row names its platform, and a twitch row (which carries none) is twitch', () => {
+    // found in a real browser: the row renderer passed m.platform as it came, twitch rows carry
+    // none, and an unnamed row reads the whole set, so a twitch row drew a name only kick has
+    const flat = mainSource().replace(/\s+/g, ' ')
+    expect(flat).toContain(
+      "hsMsgRefs, null, // twitch chat carries no platform: unnamed, the row would read every platform's list at once m.platform || 'twitch', )",
+    )
+    build('chan', [stv('KEKW', TW)], 'twitch')
+    build('chan', [stv('KiOnly', KI)], 'kick')
+    expect(row('KiOnly', undefined)).toContain(KI)
+    expect(row('KiOnly', 'twitch')).not.toContain(KI)
+    expect(row('KiOnly', 'kick')).toContain(KI)
   })
 
   test("a platform's list is capped on its own", () => {

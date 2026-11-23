@@ -22,7 +22,7 @@ test('another tab picking an emote changes the key', () => {
     'emoteSize',
     'emoteCache',
     '_blockedRev',
-    'RECENT_KEY',
+    'LAW_RECENT_KEY',
     `${KEY}\nreturn pickerCacheKey`,
   )(
     { getItem: (k) => store.get(k) ?? null },

@@ -208,8 +208,9 @@ function lawChip(word, legs) {
  * A ref carries only what is true of the picture: the provider's own id (never the key the law made
  * up for an entry that holds none) and a hash only for a copy you own, since a hash is how the
  * server checks "the sender owns this". `picked` names the refs that are this message's picks: the
- * ones your own row cannot read back from the room or your set, so the echo is handed them.
- * @returns {{wire:object, refs:object|undefined, picked:string[]|undefined}}
+ * ones your own row cannot read back from the room or your set, so the echo is handed them. `used`
+ * is every emote the line carries, by name and picture: what a send counts as used (lawNoteSent).
+ * @returns {{wire:object, refs:object|undefined, picked:string[]|undefined, used:Array<{name:string,url:string}>}}
  */
 function lawShip(text, legs, box) {
   const ctx = lawSendCtx({
@@ -223,8 +224,10 @@ function lawShip(text, legs, box) {
   // a name can be anything, __proto__ included: file a ref by definition, never by `=`
   let refs
   let picked
+  const used = []
   for (const k in sent.refs) {
     const e = sent.refs[k]
+    if (e.url) used.push({ name: e.name, url: e.url })
     if (hsEmoteLaw.sendWord(k, ctx)?.from === 'pick') (picked ||= []).push(k)
     const yours = viewerPersonalEmotes.get(k)
     const hash = yours?.hash && yours.url === e.url ? yours.hash : undefined
@@ -237,7 +240,7 @@ function lawShip(text, legs, box) {
       configurable: true,
     })
   }
-  return { wire: sent.wire, refs, picked }
+  return { wire: sent.wire, refs, picked, used }
 }
 
 /** a line's refs in the shape the server stores ({p,id,a}); undefined when none of them can be stored */

@@ -65,6 +65,7 @@ for pair in \
   scripts/lib/strip-comments.mjs:tests/lib/strip-comments.mjs \
   shared/emote-law.ts:shared/emote-law.ts \
   shared/emote-rank.ts:shared/emote-rank.ts \
+  shared/emote-usage.ts:shared/emote-usage.ts \
   shared/emote-law.vectors.json:shared/emote-law.vectors.json \
   tests/helpers/emote-world.ts:tests/helpers/emote-world.ts
 do

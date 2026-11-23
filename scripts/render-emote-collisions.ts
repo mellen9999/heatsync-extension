@@ -15,6 +15,7 @@
  *   e. Wlol typed by hand                   -> the chip and the sent row are the channel's
  *   f. Wlol + Tab, Tab                      -> the second copy is theirs; it ships and their row draws it
  *   g. Wlol typed by hand in the next line  -> the channel's again: a pick dies with its message
+ *   h. the picker's recents                 -> both pictures of Wlol, as sent, the last one first
  * then right-click another chatter's W: it is blocked, the viewer's own W is NOT removed, and
  * only that exact emote hides.
  */
@@ -235,6 +236,22 @@ try {
   check(own3.src.includes('Wlol_room'), `g. and that row draws the channel's Wlol (got ${own3.src || 'nothing'})`)
   const own2Still = await imgOf('own2')
   check(own2Still.src.includes('Wlol_inv'), `g. the earlier row keeps the picture it was sent with (got ${own2Still.src || 'nothing'})`)
+
+  // the picker's recents are the pictures those three lines shipped, the last one first
+  await p.click('#hs-mc-emote-btn', { timeout: 5000 })
+  await p.waitForSelector('#hs-mc-emote-picker.visible', { timeout: 10_000 })
+  const recentPics = () =>
+    p.$$eval('#hs-mc-emote-picker [data-section-key="recent"] .hs-mc-picker-emote-wrap img', (els: HTMLImageElement[]) =>
+      els.map((x) => `${x.alt} ${x.getAttribute('src') || ''}`),
+    )
+  await until(p, async () => (await recentPics()).length >= 2, 5000)
+  const rec = await recentPics()
+  check(
+    rec.length === 2 && rec[0].includes('Wlol_room') && rec[1].includes('Wlol_inv'),
+    `h. recents hold both pictures of Wlol that were sent, the last sent first (got ${JSON.stringify(rec)})`,
+  )
+  await p.click('#hs-mc-emote-btn', { timeout: 5000 }).catch(() => {})
+  await p.keyboard.press('Escape').catch(() => {})
 
   // right-click alice's W: blocked, inventory untouched, other emotes unaffected
   await p.evaluate(() => {

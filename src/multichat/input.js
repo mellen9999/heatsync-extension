@@ -742,7 +742,6 @@ const acState = {
   active: false, // true when cycling through matches
   wordStart: 0, // Position where the completion word starts
   afterText: '', // Text after the completion
-  _frecBumped: null, // emote bumped this session — reverted if the user cycles past it
   _pinStep: null, // { name, held }: what the name held before this cycle's step pinned it
   search: '', // search term that produced these matches (remote-fetch guard)
   remoteDone: false, // 7tv fallback already merged for this search
@@ -4989,20 +4988,6 @@ function insertCompletionKeepOpen(match) {
 
   acPinStep(match, input)
   trackCompletionForAutoAdd(match)
-  if (match.type === 'emote' && match.name && typeof recordRecentEmote === 'function') {
-    // Usage must reflect where the user STOPS, not every candidate they cycle
-    // through — otherwise the #1-ranked emote gets a bump on every Tab press
-    // and entrenches itself (the KKonaLand loop: each "kko"+Tab attempt fed
-    // the wrong emote before the user ever reached KKona). Within a session,
-    // revert the previous candidate's bump before recording the new one; the
-    // one still standing when the session closes keeps the credit.
-    if (acState._frecBumped && acState._frecBumped !== match.name && typeof unbumpEmoteFrecency === 'function') {
-      unbumpEmoteFrecency(acState._frecBumped)
-    }
-    if (acState._frecBumped !== match.name) recordRecentEmote(match.name)
-    acState._frecBumped = match.name
-  }
-
   if (wysiwygEnabled) {
     insertCompletionWysiwyg(match)
     return
@@ -5795,7 +5780,6 @@ function hideAutocomplete() {
   acState.wordStart = 0
   acState.afterText = ''
   acState.search = ''
-  acState._frecBumped = null // session over — whatever was last bumped is the commit
   acState._pinStep = null // and whatever was last pinned is this message's pick
   acState.remoteDone = false
   acState.remotePending = false
@@ -5942,7 +5926,7 @@ function hideEmojiDropdown() {
 }
 
 // Route the pick through the exact insertion path Tab-cycle uses (chip vs
-// plain text, overlay stacking, frecency bump, blocked-emote outline) — see
+// plain text, overlay stacking, blocked-emote outline) — see
 // insertCompletionKeepOpen/insertCompletionWysiwyg — then hand off to
 // acState so further Tab presses keep cycling this same ranked list. A
 // dropdown pick becomes indistinguishable from typing the word + Tab once.
@@ -8665,6 +8649,8 @@ async function sendMessage(retry) {
     },
     input,
   )
+  // the line is leaving: its emotes are what you used (Tab's second tier, the picker's recents)
+  lawNoteSent(shipped.used)
 
   // Register pending-send tracker — echo confirmation is our ground truth
   // for "did the platform deliver?", separate from sendIrc/Kick's "did we

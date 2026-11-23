@@ -804,139 +804,11 @@ const SECTION_LABELS = {
   heatsync: 'Heatsync',
 }
 
-// Recently-used emotes — a local MRU list (most-recent first), captured on
-// every insert via the picker or tab-complete (see recordRecentEmote). There
-// is no server-side personal usage signal in the picker (the `uses` field on
-// search results is FFZ global popularity, not per-user), so this starts
-// empty on a fresh device and fills as the user inserts emotes. Rendered as
-// the first picker section; omitted entirely while empty (no dead header).
-const RECENT_KEY = 'hs-mc-recent-emotes'
-const RECENT_CAP = 24
-
-function loadRecentEmotes() {
-  try {
-    const r = JSON.parse(localStorage.getItem(RECENT_KEY))
-    return Array.isArray(r) ? r : []
-  } catch (_) {
-    return []
-  }
-}
-
-function recordRecentEmote(name) {
-  if (!name) return
-  let list = loadRecentEmotes().filter((n) => n !== name)
-  list.unshift(name)
-  if (list.length > RECENT_CAP) list = list.slice(0, RECENT_CAP)
-  try {
-    localStorage.setItem(RECENT_KEY, JSON.stringify(list))
-  } catch (_) {}
-  bumpEmoteFrecency(name) // the picker's cache key carries the list: next open rebuilds
-}
-
-// Frecency — per-emote use count with recency decay, feeding tab-complete
-// ranking. The RECENT_KEY list above is recency-only and capped at 24, which
-// made ordering fragile: one accidental completion of KKonaLand outranked
-// KKona used a hundred times, and a habitual emote silently fell off the cap.
-// Score = uses halved per week since last use, so an old habit fades but a
-// single stray insert never beats a real one.
-const FRECENCY_KEY = 'hs-mc-emote-frecency'
-const FRECENCY_CAP = 200
-const FRECENCY_HALF_LIFE_MS = 7 * 24 * 3600e3
-
-function _loadFrecencyRaw() {
-  try {
-    const r = JSON.parse(localStorage.getItem(FRECENCY_KEY))
-    if (r && typeof r === 'object' && !Array.isArray(r)) return r
-  } catch (_) {}
-  // First run: seed from the legacy MRU list so existing habits carry over
-  // (staggered timestamps preserve the list's recency order).
-  const seeded = {}
-  const legacy = loadRecentEmotes()
-  for (let i = 0; i < legacy.length; i++) {
-    seeded[legacy[i]] = { n: 1, t: Date.now() - i * 3600e3 }
-  }
-  return seeded
-}
-
-function _frecencyScore(entry, now) {
-  if (!entry || !(entry.n > 0)) return 0
-  const age = Math.max(0, now - (entry.t || 0))
-  return entry.n * 2 ** (-age / FRECENCY_HALF_LIFE_MS)
-}
-
-// findEmoteMatches calls loadEmoteFrecency() on every debounced keystroke —
-// re-reading + JSON.parse'ing localStorage and rebuilding the decayed Map
-// each time was pure waste when nothing changed since the last call. Cache
-// the built Map, keyed off the raw localStorage string itself (a cheap
-// getItem + === check) rather than a manual invalidation flag — self-heals
-// against ANY write to the key, not just the two functions below.
-let _frecencyCache = null // { raw, map }
-
-/** name → decayed score (>0 means "the user has actually inserted this"). */
-function loadEmoteFrecency() {
-  let raw
-  try {
-    raw = localStorage.getItem(FRECENCY_KEY)
-  } catch (_) {
-    raw = null
-  }
-  if (_frecencyCache && _frecencyCache.raw === raw) return _frecencyCache.map
-  const parsed = _loadFrecencyRaw()
-  const now = Date.now()
-  const out = new Map()
-  for (const [name, entry] of Object.entries(parsed)) {
-    const s = _frecencyScore(entry, now)
-    if (s > 0) out.set(name, s)
-  }
-  _frecencyCache = { raw, map: out }
-  return out
-}
-
-/** Revert one bump — used when the user cycles PAST a candidate mid-session,
- *  so only the emote they stop on keeps the credit. Subtracting 1 restores the
- *  exact pre-bump decayed score (bump set n = decayed + 1 at t = now). */
-function unbumpEmoteFrecency(name) {
-  if (!name) return
-  const raw = _loadFrecencyRaw()
-  const cur = raw[name]
-  if (!cur) return
-  const n = (cur.n || 0) - 1
-  if (n <= 0) delete raw[name]
-  else raw[name] = { n, t: cur.t }
-  try {
-    localStorage.setItem(FRECENCY_KEY, JSON.stringify(raw))
-  } catch (_) {}
-}
-
-function bumpEmoteFrecency(name) {
-  if (!name) return
-  const raw = _loadFrecencyRaw()
-  const cur = raw[name]
-  const now = Date.now()
-  // Fold the decayed old score into the new count so frequency survives the
-  // bump instead of resetting the decay clock on the full total.
-  raw[name] = { n: _frecencyScore(cur, now) + 1, t: now }
-  const names = Object.keys(raw)
-  if (names.length > FRECENCY_CAP) {
-    names.sort((a, b) => _frecencyScore(raw[a], now) - _frecencyScore(raw[b], now))
-    for (const dead of names.slice(0, names.length - FRECENCY_CAP)) delete raw[dead]
-  }
-  try {
-    localStorage.setItem(FRECENCY_KEY, JSON.stringify(raw))
-  } catch (_) {}
-}
-
-// Resolve MRU names to live emote pairs, dropping any no longer available
-// (blocked, removed, or not loaded for this channel). A recent emote also
-// appears in its source section below — intended, mirrors Discord.
-function buildRecentSection(allEmotes) {
-  const out = []
-  for (const name of loadRecentEmotes()) {
-    const e = allEmotes.get(name)
-    if (e) out.push([name, e])
-    if (out.length >= RECENT_CAP) break
-  }
-  return out.length ? { key: 'recent', label: t('btn_recent'), emotes: out } : null
+// The recents row: the pictures you sent last (emote-law-usage.js), drawn first and omitted while
+// empty. A recent emote also appears in its source section below — intended, mirrors Discord.
+function buildRecentSection() {
+  const emotes = lawRecentTiles([viewerPersonalEmotes, ...activeTabEmotePools(), emoteCache])
+  return emotes.length ? { key: 'recent', label: t('btn_recent'), emotes } : null
 }
 
 function groupEmotes(allEmotes) {
@@ -951,7 +823,7 @@ function groupEmotes(allEmotes) {
     label: SECTION_LABELS[k] || k,
     emotes: groups[k],
   }))
-  const recent = buildRecentSection(allEmotes)
+  const recent = buildRecentSection()
   if (recent) sections.unshift(recent)
   return sections
 }
@@ -1244,7 +1116,7 @@ function pickerCacheKey() {
   // the recents row too: another tab on this site writes the same list
   let recent = ''
   try {
-    recent = localStorage.getItem(RECENT_KEY) || ''
+    recent = localStorage.getItem(LAW_RECENT_KEY) || ''
   } catch (_) {}
   return `${ch}|${emoteSize}|${emoteCache.size}|${chSize}|${_blockedRev}|${recent}`
 }
@@ -1608,7 +1480,6 @@ function showEmotePicker(tab = null) {
       if (wysiwygEnabled || !('value' in input)) {
         pasteEmoteToInput(name)
       } else {
-        recordRecentEmote(name)
         const pos = input.selectionStart || input.value.length
         const before = input.value.slice(0, pos)
         const after = input.value.slice(pos)
@@ -2096,7 +1967,6 @@ function _hsMcParseModWords(s) {
 function pasteEmoteToInput(emoteName, modWords) {
   const input = document.getElementById('hs-mc-input')
   if (!input) return
-  recordRecentEmote(emoteName)
   const _applyMods = (img) => {
     if (!img || !modWords) return
     const { mods, hue, words } = _hsMcParseModWords(modWords)
@@ -5171,7 +5041,6 @@ export {
   blockedEmoteNames,
   blockedFallbackForName,
   blockedFallbacksForName,
-  bumpEmoteFrecency,
   channelEmoteCaches,
   deriveStaticEmoteSrc,
   detectEmoteSource,
@@ -5188,7 +5057,6 @@ export {
   inventoryEmotes,
   isViewerEmote,
   isViewerEmoteUrl,
-  loadEmoteFrecency,
   loadSenderEmoteSets,
   lookupEmote,
   lookupEmoteRenderOrder,
@@ -5209,7 +5077,6 @@ export {
   staticEmoteSrc,
   sweepHsEmoteIdleRows,
   teardownHsEmoteIdleGate,
-  unbumpEmoteFrecency,
   viewerPersonalEmotes,
   whyEmote,
   zeroWidthFromAnyCache,

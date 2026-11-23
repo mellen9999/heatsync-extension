@@ -303,6 +303,16 @@ async function s18Composer(plat: Plat) {
         await clear(p)
         return c.includes(pickable) ? [] : [`input chips [${c.join(', ')}]`]
       })
+      // a recent is an emote you SENT, and this run cannot send on a live channel: the list is
+      // written the way a send writes it, and both tabs must show it without a reload
+      await step(`a pick never sent is no recent; "${pickable}" filed as sent on page 1`, async () => {
+        await openPicker(p)
+        await sleep(SETTLE_MS)
+        const before = await recents(p)
+        await closePicker(p)
+        await p.evaluate((name: string) => localStorage.setItem('hs-mc-recent-emotes', JSON.stringify([name])), pickable)
+        return before.includes(pickable) ? [`the unsent pick is already in recents [${before.slice(0, 3).join(', ')}]`] : []
+      })
       for (const [pg, n] of [[p, 1], [p2, 2]] as const)
         await step(`page ${n}'s picker lists "${pickable}" first in recents`, async () => {
           await openPicker(pg)

@@ -21,6 +21,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { transformSync } from 'esbuild'
 import { computeBuildStamp } from './scripts/lib/build-stamp.mjs'
+import { rebindDebugLog, unbindDebugLog } from './scripts/lib/debug-log.mjs'
 import { emojiPairsSource } from './scripts/lib/emoji-pairs.mjs'
 import { emoteLawSource, lawIsUsed } from './scripts/lib/emote-law-bundle.mjs'
 
@@ -1502,7 +1503,8 @@ function deploy() {
 function minifyDistFile(outDir, file, extraDefines) {
   const path = join(outDir, file)
   if (!existsSync(path)) return
-  const src = readFileSync(path, 'utf8')
+  let src = readFileSync(path, 'utf8')
+  if (file === 'multichat-core.js') src = unbindDebugLog(src)
   const flat = src.startsWith(FLAT_MARK)
   try {
     const result = transformSync(flat ? `"use strict";\n${src}` : src, {
@@ -1515,8 +1517,12 @@ function minifyDistFile(outDir, file, extraDefines) {
       // and tree-shaking then sees the lib as top-level declarations.
       ...(flat ? { format: 'iife', treeShaking: true } : {}),
       ...(extraDefines ? { define: extraDefines } : {}),
+      // see scripts/lib/debug-log.mjs
+      ...(file === 'multichat-core.js' ? { pure: ['log'] } : {}),
     })
-    writeFileSync(path, result.code)
+    let code = result.code
+    if (file === 'multichat-core.js') code = rebindDebugLog(code)
+    writeFileSync(path, code)
   } catch (e) {
     // an unwrapped bundle left on disk would leak its lib into the page's world
     if (flat) throw new Error(`build: minify+shake of ${file} failed: ${e.message?.split('\n')[0]}`)

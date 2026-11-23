@@ -277,7 +277,10 @@ describe('pcMergeRecent — server /api/card recent + local buffer, deduped', ()
   )
 
   function makeFn(localMessages) {
-    return new Function('getRecentMessagesFromUser', `${src}\nreturn pcMergeRecent`)(() => localMessages)
+    return new Function('getRecentMessagesFromUser', 'pcLocalLineHtml', `${src}\nreturn pcMergeRecent`)(
+      () => localMessages,
+      () => null,
+    )
   }
 
   test('null when both server and local have nothing', () => {

@@ -3088,7 +3088,7 @@ async function _quickOpToFeed(username, msg) {
     showToast(t('mc_social_login_first') || 'log in at heatsync.org first to post', 'error')
     return
   }
-  const raw = ((typeof _extractMcMsgText === 'function' ? _extractMcMsgText(msg) : msg?.textContent) || '').trim()
+  const raw = (_extractMcMsgText(msg) || '').trim()
   if (!raw) {
     showToast(t('mc_input_nothing_to_post'), 'error')
     return
@@ -4519,7 +4519,7 @@ function tryOverlayOnZero(_input) {
     }
     // Overlay onto a raw unicode emoji typed as plain text before the word
     // (only for non-relocate cases — relocate already has its element).
-    if (!relocateSpan && typeof peelTrailingEmoji === 'function') {
+    if (!relocateSpan) {
       const peeled = peelTrailingEmoji(beforeText.replace(/\s+$/, ''))
       if (peeled) {
         const restNode = peeled.rest ? document.createTextNode(peeled.rest) : null
@@ -5611,7 +5611,7 @@ function insertCompletionWysiwyg(match) {
     }
     // Overlay onto a raw unicode emoji typed/pasted as plain text in `before`
     // (parity with the typed live-replace path and chat render).
-    if (wantsOverlay && typeof peelTrailingEmoji === 'function') {
+    if (wantsOverlay) {
       const peeled = peelTrailingEmoji(before.replace(/\s+$/, ''))
       if (peeled) {
         const parent = textNode.parentNode
@@ -6301,10 +6301,7 @@ function matchSlashCommands(q) {
 }
 
 function checkSlashAutocomplete(precomputedText) {
-  const text =
-    typeof precomputedText === 'string'
-      ? precomputedText
-      : (typeof getInputText === 'function' ? getInputText() : '') || ''
+  const text = typeof precomputedText === 'string' ? precomputedText : getInputText() || ''
   const m = text.match(/^\/([a-z?]*)$/i)
   if (!m) {
     hideSlashDropdown()
@@ -6404,7 +6401,7 @@ function insertSlashCommand(c) {
   }
   hideSlashDropdown()
   pendingMessage = inserted
-  if (typeof updateCharCount === 'function') updateCharCount()
+  updateCharCount()
   input.focus()
 }
 
@@ -6839,7 +6836,7 @@ async function handleSlashCommand(text, input) {
     // sync local-link fan-out AND the async server-linked-account fan-out, same
     // as right-click mute (_toggleMcMute); null platform → userKey returns bare
     // key, so /mute stays global (correct: no platform context from bare name).
-    const aliasKeys = typeof expandUserAliasKeys === 'function' ? await expandUserAliasKeys(u, null) : [u]
+    const aliasKeys = await expandUserAliasKeys(u, null)
     const already = _muteKeyForms(u, aliasKeys).some((k) => mutedUsers.has(k))
     if (already) {
       showToast(t('mc_input_already_muted', [u]), 'error')
@@ -6862,7 +6859,7 @@ async function handleSlashCommand(text, input) {
     }
     // Same async fan-out as /mute and right-click mute — covers server-linked
     // accounts, not just sync-local links.
-    const aliasKeys = typeof expandUserAliasKeys === 'function' ? await expandUserAliasKeys(u, null) : [u]
+    const aliasKeys = await expandUserAliasKeys(u, null)
     const forms = _muteKeyForms(u, aliasKeys)
     const wasMuted = forms.some((k) => mutedUsers.has(k))
     if (!wasMuted) {

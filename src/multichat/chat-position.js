@@ -570,7 +570,6 @@ function applyChatPosition({ settled = false } = {}) {
 // padding with !important that beats CSS rules — only inline can fight
 // inline. When chatPosition flips back to 'right' we restore the native
 // values (Twitch's chat-width JS will re-apply them on next tick).
-const _overrideObserver = null
 // _hsSetYtBelowTop, _hsEnsureYtBelowObserver moved to youtube-host.js (platform module)
 function applyPlatformPositionOverrides() {
   const isRight = chatPosition === 'right'

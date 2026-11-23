@@ -46,13 +46,6 @@ function feedHeatRepaintSoon() {
   }, 500)
 }
 
-// A cached post by id: the open thread's OP / replies first, then the feed.
-function feedFindMsg(id) {
-  if (!id) return null
-  if (activeThread?.op?.base36_id === id) return activeThread.op
-  return activeThread?.replies?.find((r) => r.base36_id === id) || feedMessages.find((m) => m.base36_id === id) || null
-}
-
 // Every cached object for a post id. The open thread and the feed list hold
 // separate copies of the same post, so a vote landed on one is invisible to
 // the other until it refetches.
@@ -570,7 +563,7 @@ function showFeedEditUI(div, msg) {
       msg.edit_count = resp.data.message?.edit_count
       close()
       // Re-render entire feed to pick up sanitized content + emote refs
-      if (typeof renderFeed === 'function') renderFeed()
+      renderFeed()
     } else {
       errEl.textContent = resp?.data?.error || resp?.error || t('mc_social_edit_failed')
       saveBtn.disabled = false
@@ -2092,7 +2085,7 @@ function renderFeed() {
   // Wire post-link hover preview once (event delegation — survives re-renders).
   // Must run before the thread-view early-return below: >>id links live IN the
   // thread view, so wiring only on the feed-list path missed them entirely.
-  if (typeof setupFeedPostLinkHover === 'function') setupFeedPostLinkHover()
+  setupFeedPostLinkHover()
 
   // Update feed tab button text
   const feedTabBtn = tabBarElement?.querySelector('[data-tab="feed"]')

@@ -22,7 +22,7 @@ function lawOfferCtx({ catalog, emoji } = {}) {
     caches: channelEmoteCaches,
     picks: null,
   })
-  const frec = typeof loadEmoteFrecency === 'function' ? loadEmoteFrecency() : null
+  const frec = loadEmoteFrecency()
   // inventory's `at` reads your whole set, the platform emotes in it too
   const views = [s.room?.names, s.own.inventory, s.globals]
   return {
@@ -31,7 +31,7 @@ function lawOfferCtx({ catalog, emoji } = {}) {
     globals: s.globals,
     catalog,
     emoji,
-    usage: frec ? (n) => frec.get(n) || 0 : null,
+    usage: (n) => frec.get(n) || 0,
     // an emote you blocked, or one hidden from you, is never offered (and the law lets no
     // look-alike of its name in from the catalog)
     blocked: (key) => {

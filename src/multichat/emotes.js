@@ -1837,7 +1837,7 @@ function createInputEmoteImg(emoteName) {
     blockedEmoteNames.has(emoteName.slice(0, -1))
   const _chipBlockedByHash = !!(emote.hash && blockedEmoteHashes.has(String(emote.hash)))
   if (emoteIsBlocked(emoteName, emote) || _chipBlockedByBase || _chipBlockedByHash) markInputEmoteBlocked(img, true)
-  if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(img)
+  hsAttachInputEmoteSnap(img)
   return img
 }
 
@@ -2414,8 +2414,7 @@ function unblockEmote(emoteName, opts) {
   // as a middle tier on the ladder; with the ladder gone, unblock is simply
   // "stop hiding this," and the natural state restores green-equivalent
   // highlight color across chat-row + picker.
-  const newState =
-    typeof getEmoteState === 'function' ? getEmoteState(emoteName, emote?.source) : emote?.state || 'global'
+  const newState = getEmoteState(emoteName, emote?.source)
   queryEmoteWrappers(emoteName).forEach((w) => {
     if (!wrapperIsEmote(w, hash, _bfEmote?.url || realUrl)) return
     w.classList.remove(
@@ -3998,7 +3997,7 @@ const _hsSnapQueue = new Set()
 let _hsSnapScheduled = false
 const HS_SNAP_QUEUE_CAP = 200
 function hsAttachInputEmoteSnap(img) {
-  if (!img || typeof hsSnapEmoteBox !== 'function') return
+  if (!img) return
   img.addEventListener('load', () => hsSnapEmoteBox(img), { once: true })
   // A cached image fires no load event — that path stayed blurry without this.
   if (img.complete && img.naturalWidth) hsSnapEmoteBox(img)

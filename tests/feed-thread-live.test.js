@@ -20,7 +20,6 @@ function load(posts = {}) {
     hsAuthToken: true,
     hsCurrentUserId: '7',
     safeSendMessage: async (m) => sent.push(m),
-    feedFindMsg: (id) => posts[id] || null,
     feedCachedCopies: (id) => (posts[id] ? [posts[id]] : []),
     apiFetch: async () => ({ ok: true, data: {} }),
     showToast: () => {},

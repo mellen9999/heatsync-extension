@@ -10,6 +10,8 @@
  *   b. a line with an IRC emotes= tag on W  -> the twitch emote
  *   c. a chatter who owns a W of their own  -> still the channel's W (their set is below the room)
  *   d. that chatter's Solo, which the room has no emote for -> their picture
+ * then the kick channel of the same name loads a W of its own and a KiOnly: a twitch row still
+ * draws twitch's W, and KiOnly is text there (each platform's row reads its own emotes).
  * What the viewer sends (the emote law, send + offer), with Wlol in the channel AND in their
  * inventory as two pictures:
  *   e. Wlol typed by hand                   -> the chip and the sent row are the channel's
@@ -188,6 +190,32 @@ try {
   check(dd.src.includes('Solo_sender'), `d. their Solo, a name the room has no emote for, draws their picture (got ${dd.src || 'nothing'})`)
 
   check(a.state !== 'owned' && cc.state !== 'owned', `other chatters' W are not labelled yours (states ${a.state}, ${cc.state})`)
+
+  // ── the kick channel of the same name has a W of its own and a name twitch has none of ──
+  await sw.evaluate(async (u: Record<string, string>) => {
+    const emotes = [
+      { name: 'W', url: u.W_kick, source: '7tv', hash: 'kickwhash' },
+      { name: 'KiOnly', url: u.KiOnly, source: '7tv', hash: 'kionlyhash' },
+    ]
+    // @ts-ignore — service worker globals
+    channelEmotesMap['kick/probechan'] = emotes
+    // @ts-ignore
+    channelEmotesFetchedAt['kick/probechan'] = Date.now()
+    // @ts-ignore
+    broadcastToTabs({ type: 'channel_emotes_update', channelOwner: 'probechan', platform: 'kick', emotes })
+  }, { W_kick: E('W_kick'), KiOnly: E('KiOnly') })
+  await p.waitForTimeout(1500)
+  line('erin', 444, 'ce', 'epsilon W KiOnly')
+  await until(p, async () => (await p.evaluate(() => document.getElementById('hs-mc-messages')?.textContent || '')).includes('epsilon'))
+  await p.waitForTimeout(1500)
+  const eps: string[] = await p.evaluate(() => {
+    const row = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes('epsilon'))
+    return [...(row?.querySelectorAll('.hs-mc-emote-wrapper img, img.hs-mc-emote') || [])].map((i) => i.getAttribute('src') || '')
+  })
+  check(
+    eps.length === 1 && eps[0].includes('W_ffz'),
+    `a twitch row draws twitch's W and leaves kick's KiOnly as text once the kick channel's emotes load (got ${eps.join(', ') || 'nothing'})`,
+  )
 
   // ── what the viewer sends: the room has a Wlol, their inventory has another ──
   const chipSrc = () => p.evaluate(() => (document.querySelector('#hs-mc-input img') as HTMLImageElement | null)?.getAttribute('src') || '')

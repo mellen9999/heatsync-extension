@@ -495,7 +495,9 @@ function listenForSettingsChanges() {
         // window alone missed them. Upgrade-only: removal payloads add no
         // names, so they never trigger a history re-render ("history is
         // sacred" — the stale-ghost registry handles removals).
-        const _prevCache = channelEmoteCaches[_ownerKey]
+        // read against this platform's own room in the set: a name kick already had is
+        // still new to the twitch rows that were waiting on twitch's list
+        const _prevCache = channelRoomNames(channelEmoteCaches[_ownerKey], msg.platform || 'twitch')
         for (const _e of msg.emotes) {
           if (_e?.name && _e.url && !(_prevCache instanceof Map && _prevCache.has(_e.name))) {
             _pendingEmoteAdds = true

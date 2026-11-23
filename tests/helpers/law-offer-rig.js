@@ -44,6 +44,7 @@ export function lawOfferRig({
     viewerPersonalEmotes,
     emoteCache,
     channelEmoteCaches,
+    channelRoomNames: globalThis.channelRoomNames,
     draftPicks,
     pinPickedEmote,
     refOf,

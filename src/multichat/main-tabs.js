@@ -1597,6 +1597,8 @@ function computeMessageText(m) {
     m.time,
     true,
     hsMsgRefs,
+    null,
+    m.platform,
   )
   if (m.emotes && m.emotes.length > 0) {
     processedText = processYtEmotes(processedText, m.emotes, true)

@@ -16,6 +16,7 @@ const scope = {
   viewerPersonalEmotes: new Map(),
   emoteCache: new Map(),
   channelEmoteCaches: {},
+  channelRoomNames: globalThis.channelRoomNames,
 }
 const { lawSendCtx, lawShip, lawStored, lawYtKey } = new Function(
   ...Object.keys(scope),

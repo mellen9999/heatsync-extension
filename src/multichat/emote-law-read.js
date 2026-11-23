@@ -27,6 +27,7 @@ function lawSenderViews(set, named, gate) {
  * Everything one row reads against.
  * @param {object} p
  * @param {Map|null} p.room        the row's channel emotes (name -> entry), null when none loaded
+ * @param {string} [p.platform]    the row's platform
  * @param {Map} p.globals
  * @param {Map|null} p.tags        the platform's own emotes on this line, keyed by the ESCAPED word
  * @param {Map|null} p.refs        this line's refs, keyed by escaped word; `named` ones are server name-matches
@@ -34,7 +35,7 @@ function lawSenderViews(set, named, gate) {
  * @param {(e:object)=>object|null} p.gate  inventory-time gate for the sender's entries
  * @param {(s:string)=>string} p.unesc
  */
-function lawReadCtx({ room, globals, tags, refs, sender, gate, unesc }) {
+function lawReadCtx({ room, platform, globals, tags, refs, sender, gate, unesc }) {
   // what the sender's app shipped with the line: a plain object, so a word called __proto__ is a name
   const picks = Object.create(null)
   const named = new Map()
@@ -45,7 +46,9 @@ function lawReadCtx({ room, globals, tags, refs, sender, gate, unesc }) {
   }
   const s = lawSenderViews(sender, named, gate)
   return {
-    room: room ? { platform: 'twitch', channel: '', loaded: true, names: room } : null,
+    room: room
+      ? { platform: platform === 'yt' ? 'youtube' : platform || 'twitch', channel: '', loaded: true, names: room }
+      : null,
     refs: picks,
     sender: { inventory: s.inventory, personal: s.personal, native: {} },
     globals,

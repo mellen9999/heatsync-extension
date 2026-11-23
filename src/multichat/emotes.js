@@ -3406,22 +3406,17 @@ function getEmoteState(name, source) {
 // triggers loadEmotes against still-stale storage.
 function _buildChannelEmoteCache(ch, emotes, platform) {
   if (!ch || !Array.isArray(emotes)) return
-  platform = platform || 'twitch'
-  // Merge per-platform, keyed by the BARE channel name (every consumer —
-  // render/picker/autocomplete — reads bare). A same-name twitch+kick
-  // simulcast linked in one panel channel must keep BOTH sets: we replace
-  // only THIS platform's prior contribution (tagged via _plat) so an update
-  // refreshes without accumulating stale, and the other platform's emotes
-  // survive instead of being overwritten. Same-name/different-image across
-  // platforms falls to last-writer-wins (rare + cosmetic).
+  platform = channelLeg(platform) || 'twitch'
+  // One set per BARE channel name (every consumer reads bare), one list per platform inside
+  // it. A same-name twitch+kick simulcast keeps BOTH lists whole: an update replaces only its
+  // own platform's, and a name both have is each platform's own emote on that platform's rows
+  // (emote-rooms.js). The set itself reads twitch first, then kick, then youtube.
   let chCache = channelEmoteCaches[ch]
   if (!(chCache instanceof Map)) {
     chCache = new Map()
     channelEmoteCaches[ch] = chCache
   }
-  for (const [name, e] of chCache) {
-    if (e._plat === platform) chCache.delete(name)
-  }
+  const leg = new Map()
   for (const e of emotes) {
     if (!e.name || !e.url) continue
     if (
@@ -3462,17 +3457,18 @@ function _buildChannelEmoteCache(ch, emotes, platform) {
     // emoteProviderPriority decides the winner instead of plain array-order
     // last-write-wins. Every other pairing (heatsync, twitch, kick, or a
     // same-provider refresh) is untouched — see resolveEmoteProviderWinner.
-    chCache.set(e.name, resolveEmoteProviderWinner(chCache.get(e.name), entry, EMOTE_TIER_ORDER.channel))
+    leg.set(e.name, resolveEmoteProviderWinner(leg.get(e.name), entry, EMOTE_TIER_ORDER.channel))
     if (e.hash) {
       emoteHashes.set(e.name, e.hash)
       hashToName.set(e.hash, e.name)
     }
   }
-  // Ceiling on the per-channel map — every other cache in this file has one,
+  // Ceiling on a platform's list — every other cache in this file has one,
   // this (the authoritative path) trusted upstream response size. Real
   // channels combine to a few hundred names; 2000 only ever bites a
   // malformed/hostile payload. Oldest-inserted evicts first.
-  while (chCache.size > 2000) chCache.delete(chCache.keys().next().value)
+  while (leg.size > 2000) leg.delete(leg.keys().next().value)
+  channelLegPut(chCache, platform, leg)
   // Self-heal the stale-emote ghost registry: any name back in this channel's
   // live set was re-added (perhaps while we missed the event) — drop it so old
   // messages stop rendering ghosted. The render path also guards on the live
@@ -3773,7 +3769,7 @@ function scanDomForEmotes() {
       // them into channelEmoteCaches as if they were channel-wide. That
       // leaks the viewer's set into every sender's message in this channel.
       if (source === '7tv' || source === 'bttv' || source === 'ffz') continue
-      cache.set(name, { url, source, state: getEmoteState(name, source), zeroWidth: false })
+      channelScanPut(cache, name, { url, source, state: getEmoteState(name, source), zeroWidth: false })
       found++
     }
   }
@@ -4311,6 +4307,7 @@ function processEmotes(
   skipMentions = false,
   msgRefs = null,
   lastResort = null,
+  platform = undefined,
 ) {
   if (
     emoteCache.size === 0 &&
@@ -4364,7 +4361,8 @@ function processEmotes(
   // the tooltip attributes those to the inventory instead of the emote's original provider.
   // Past ownership and the removed-emote fallback come after: the law has no clock to ask.
   const _lawCtx = lawReadCtx({
-    room: (channel && channelEmoteCaches[channel]) || null,
+    room: (channel && channelRoomNames(channelEmoteCaches[channel], platform)) || null,
+    platform,
     globals: emoteCache,
     tags: extraCache,
     refs: msgRefs,
@@ -4798,7 +4796,7 @@ function processEmotes(
             ? window._hsStaleEmotes.get(chKey)?.get(word)
             : null
         if (meta) {
-          const liveSet = channelEmoteCaches[chKey] || channelEmoteCaches[channel]
+          const liveSet = channelRoomNames(channelEmoteCaches[chKey] || channelEmoteCaches[channel], platform)
           const liveNow = !!liveSet?.has(word)
           // Identity: only ghost the emote that was actually removed. Trust the
           // hash when both sides have one; else require the same provider —

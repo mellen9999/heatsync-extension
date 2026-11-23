@@ -15,6 +15,7 @@ export function lawSendRig({ viewerPersonalEmotes, emoteCache, channelEmoteCache
     viewerPersonalEmotes,
     emoteCache,
     channelEmoteCaches,
+    channelRoomNames: globalThis.channelRoomNames,
     draftPicks,
     pinPickedEmote,
     refOf,

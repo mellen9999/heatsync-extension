@@ -89,7 +89,8 @@ function lawSendCtx({ legs, mine, globals, caches, picks }) {
   for (const platform of ['twitch', 'kick', 'youtube']) {
     const key = legs?.[platform]
     if (!key) continue
-    const set = caches[key] || caches[String(key).toLowerCase()]
+    // the room of THIS platform inside the channel's set: a kick leg never ships twitch's emote
+    const set = channelRoomNames(caches[key] || caches[String(key).toLowerCase()], platform)
     rooms.push({ platform, channel: key, loaded: !!set, names: lawView(set) })
   }
   const held = picks && (picks.picked.size || picks.remote.size) ? new Map([...picks.remote, ...picks.picked]) : null

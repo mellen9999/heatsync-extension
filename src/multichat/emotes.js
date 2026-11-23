@@ -3070,7 +3070,10 @@ const SENDER_EMOTE_NAMES_MAX = 300
 // replace can carry names the sender never/no-longer owns (merge-era bleed) —
 // loading them paints wrong emotes for a fetch round-trip on every boot.
 // Bump to discard incompatible persisted data once; sets rebuild fresh.
-const SENDER_EMOTE_SETS_VERSION = 2
+// v3: an entry says whether it is a 7tv/bttv personal emote (`personal`), which the
+// emote law reads above the room. A v2 entry has no mark and would read below it
+// until its sender was refetched: a picture that flips twice for no reason.
+const SENDER_EMOTE_SETS_VERSION = 3
 // Clock-drift pad for the inventory-time render gate (_sGate): a message's
 // platform timestamp (tmi-sent-ts / kick / yt) and the server's added_at come
 // from different clocks. Without the pad, collect-then-send-within-seconds

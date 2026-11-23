@@ -175,9 +175,17 @@ describe('loadSenderEmoteSets versioning', () => {
     expect('sender_emote_sets' in storageData).toBe(false)
   })
 
-  test('v2 blob loads normally', async () => {
-    storageData.sender_emote_sets = { 'twitch:1': { Good: E() } }
+  test('a v2 blob is discarded: its 7tv personal emotes carry no personal mark, so they would read below the room until refetched', async () => {
+    storageData.sender_emote_sets = { 'twitch:1': { Stale: E() } }
     storageData.sender_emote_sets_v = 2
+    await loadSenderEmoteSets()
+    expect(senderEmoteSets.size).toBe(0)
+    expect('sender_emote_sets' in storageData).toBe(false)
+  })
+
+  test('the current blob loads normally', async () => {
+    storageData.sender_emote_sets = { 'twitch:1': { Good: E() } }
+    storageData.sender_emote_sets_v = 3
     await loadSenderEmoteSets()
     expect(senderEmoteSets.get('twitch:1').get('Good').url).toBe(E().url)
   })

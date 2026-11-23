@@ -1,8 +1,8 @@
 {
   "_": "bytes, measured 2026-11-09 + 2% headroom (min 256B). lower to measured, never raise to go green; a raise needs the reason in its commit.",
-  "_raised": "11-22 e2 read-through-the-law: multichat-core +3494B (the law adapter + its bundled law, after the 7102B debug-log diet), chat-injector +16B (heatsync joins the tier order). exact measured shortfall, no headroom. 11-22 e2 send-through-the-law: multichat-core +4658B (the send adapter 3.6KB, the site's stored-ref normaliser 0.9KB, per-message picks 0.5KB, after removing the click-pasted fallback map). exact measured shortfall, no headroom.",
+  "_raised": "11-22 e2 read-through-the-law: multichat-core +3494B (the law adapter + its bundled law, after the 7102B debug-log diet), chat-injector +16B (heatsync joins the tier order). exact measured shortfall, no headroom. 11-22 e2 send-through-the-law: multichat-core +4658B (the send adapter 3.6KB, the site's stored-ref normaliser 0.9KB, per-message picks 0.5KB, after removing the click-pasted fallback map). exact measured shortfall, no headroom. 11-23 favorites + one room per platform: multichat-core +8215B (favorite emotes: the menu row, the picker section, the account list and its unsent mark; each platform of a tab keeping its own emote list; the law's favorites tier and Tab seams in the bundled law. a scan found no uncalled function in the overlay to take out first), total zip +3338B chrome / +3326B firefox. exact measured shortfall, no headroom.",
   "chrome": {
-    "multichat-core.js": 1696421,
+    "multichat-core.js": 1704636,
     "content.js": 240884,
     "heatsync-button.js": 139283,
     "autocomplete-hook.js": 87710,
@@ -40,10 +40,10 @@
     "icon-48-black.png": 4329,
     "manifest.json": 8580,
     "total raw": 7930502,
-    "total zip": 2038448
+    "total zip": 2041786
   },
   "firefox": {
-    "multichat-core.js": 1696421,
+    "multichat-core.js": 1704636,
     "content.js": 240884,
     "heatsync-button.js": 139283,
     "autocomplete-hook.js": 87710,
@@ -81,6 +81,6 @@
     "icon-48-black.png": 4329,
     "manifest.json": 8363,
     "total raw": 7930280,
-    "total zip": 2038493
+    "total zip": 2041819
   }
 }

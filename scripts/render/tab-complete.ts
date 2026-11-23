@@ -316,10 +316,16 @@ export async function tabCompleteCheck() {
     }
     ok(`Tab applies an ffz modifier to the emote before it (mods="${mod.mods}", ${mod.transform})`)
 
-    // ── 4. someone who just talked outranks every emote ─────────────────────
+    // ── 4. someone who just talked joins the cycle right after the room's emotes ──
     // Straight off the socket, through the parser, into the channel buffer,
-    // out again as the top completion. Nothing about this can be faked from a
-    // fixture, which is why it lives here and not in a unit test.
+    // out again in the cycle. Nothing about this can be faked from a fixture,
+    // which is why it lives here and not in a unit test.
+    //
+    // The order is the emote law's (site docs/emote-law.md, "people in Tab"): a bare
+    // word is the room's emote first, then the people in the room, then yours and
+    // the globals. `@` is people only. Before the law any recent talker led every
+    // emote, so "zorp" stopped sending the channel's zorpChannel the moment a
+    // ZorpChatter spoke.
     irc.push(
       '@display-name=ZorpChatter;color=#00FF00;user-id=77;id=zc1 ' +
         ':zorpchatter!z@z.tmi.twitch.tv PRIVMSG #probechan :hello\r\n',
@@ -328,19 +334,41 @@ export async function tabCompleteCheck() {
       (await p.evaluate(() => document.getElementById('hs-mc-messages')?.textContent || '')).includes('ZorpChatter'),
     )
 
+    const isPerson = (v: string) => v.replace(/^@/, '').toLowerCase() === 'zorpchatter'
     await resetInput()
     await p.keyboard.type('zorp')
     await p.keyboard.press('Tab')
-    await until(p, async () => (await readCycle()).value.toLowerCase() === 'zorpchatter', 8000)
+    await until(p, async () => (await readCycle()).value !== '', 8000)
     const lead = await readCycle()
-    if (lead.value.toLowerCase() !== 'zorpchatter') {
+    if (lead.value !== 'zorpChannel') {
       fail(
-        `after ZorpChatter talked, "zorp" + Tab still completed to ${JSON.stringify(lead.value)}. ` +
-          'whoever just spoke leads the cycle, above every emote tier — that is what makes Tab ' +
-          'usable for replying to the person on screen.',
+        `after ZorpChatter talked, "zorp" + Tab completed to ${JSON.stringify(lead.value)}. ` +
+          "a bare word is the room's emote first: someone speaking must not change what the word completes to.",
       )
     }
-    ok(`someone who just talked leads the cycle, above all three emote tiers (${JSON.stringify(lead.value)})`)
+    await p.keyboard.press('Tab')
+    await until(p, async () => isPerson((await readCycle()).value), 8000)
+    const person = await readCycle()
+    if (!isPerson(person.value)) {
+      fail(
+        `the second Tab on "zorp" gave ${JSON.stringify(person.value)}. whoever just spoke comes right after the ` +
+          "room's emotes, ahead of your own and the globals — that is what keeps Tab usable for replying to the person on screen.",
+      )
+    }
+    await cycleStep(false, 'zorpOwn', 'after the person, the cycle goes on to the emote you own')
+    ok(`someone who just talked joins the cycle after the room's emote, ahead of yours (zorpChannel → ${person.value} → zorpOwn)`)
+
+    await resetInput()
+    await p.keyboard.type('@zorp')
+    await p.keyboard.press('Tab')
+    await until(p, async () => isPerson((await readCycle()).value), 8000)
+    const at = await readCycle()
+    if (!isPerson(at.value)) fail(`"@zorp" + Tab gave ${JSON.stringify(at.value)}: @ is people only, so the person leads`)
+    await p.keyboard.press('Tab')
+    await p.waitForTimeout(400)
+    const at2 = await readCycle()
+    if (!isPerson(at2.value)) fail(`a second Tab on "@zorp" left the people for ${JSON.stringify(at2.value)}: @ never offers an emote`)
+    ok(`@ is people only (${JSON.stringify(at.value)}, and the next Tab stays on people)`)
 
     // ── 5. the "tab opens the list" setting ─────────────────────────────────
     // Off by default: everything above ran with it off. Switched on from

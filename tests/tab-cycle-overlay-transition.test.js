@@ -29,6 +29,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const INPUT_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
+const LAW_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'emote-law-send.js'), 'utf8')
 const EMOTES_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'emotes.js'), 'utf8')
 
 const carve = (src, startMarker, endMarker) => {
@@ -251,6 +252,8 @@ const parts = [
   carve(INPUT_SRC, 'function placeCaretAfter(', '// Cycle-depth + visibility readout'),
   carve(INPUT_SRC, 'function caretOnActiveCompletion(', 'function mergeChipIntoWordForRecompletion('),
   carve(EMOTES_SRC, 'function stackInputEmote(', '// Find last emote element'),
+  // the picture a chip names (a Tab step writes it): the real one
+  carve(LAW_SRC, 'function hsChipIs(', '// What a right-clicked emote is to you'),
 ]
 
 const acState = { matches: [], index: 0, active: true, wordStart: 0, afterText: '', search: 'wave' }
@@ -263,6 +266,12 @@ const api = new Function(
   'getInputText',
   'updateCharCount',
   'attachInputEmoteErrorRecovery',
+  // emotes.js, the same bundle: nothing is blocked here, no name is an overlay by lookup
+  'hsAttachInputEmoteSnap',
+  'zeroWidthForSameAsset',
+  'lookupEmoteWithOverlay',
+  'emoteIsBlocked',
+  'blockedEmoteNames',
   `let pendingMessage = ''
    ${parts.join('\n')}
    return { insertCompletionWysiwyg, caretOnActiveCompletion }`,
@@ -275,6 +284,11 @@ const api = new Function(
   () => '',
   () => {},
   () => {},
+  () => {},
+  () => false,
+  () => null,
+  () => false,
+  new Set(),
 )
 
 // ─── scenario ───────────────────────────────────────────────────────────────

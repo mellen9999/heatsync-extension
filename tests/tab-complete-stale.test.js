@@ -44,7 +44,8 @@ const makeCaretFn = (acState) =>
 const overlaySrc = carve('function completionWantsOverlay(', 'function insertCompletionWysiwyg(')
 const makeOverlayFn = (assetRecovery) =>
   new Function('zeroWidthForSameAsset', `${overlaySrc}; return completionWantsOverlay`)(assetRecovery)
-const completionWantsOverlay = makeOverlayFn(undefined)
+// the picture is not a known overlay under another name: the match flag and the lookup decide
+const completionWantsOverlay = makeOverlayFn(() => false)
 
 describe('caretOnActiveCompletion — plain input, completion "Kappa" at wordStart 6', () => {
   // "hello Kappa …" → completion occupies [6, 11], auto-space at 11, caret lands at 12

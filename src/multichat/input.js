@@ -810,7 +810,7 @@ function registerClickPasteForAutoAdd(emoteName, emoteUrl, source) {
   // emote server-side (same guard as trackCompletionForAutoAdd._synthOverlay).
   if (emoteName.length > 1 && emoteName.endsWith('0')) {
     const literal =
-      (typeof lookupEmoteRenderOrder === 'function' && lookupEmoteRenderOrder(emoteName)) ||
+      lookupEmoteRenderOrder(emoteName) ||
       (typeof senderEmoteSets !== 'undefined' &&
         [...senderEmoteSets.values()].some((m) => {
           const e = m.get(emoteName)
@@ -826,7 +826,7 @@ function registerClickPasteForAutoAdd(emoteName, emoteUrl, source) {
   // (identity-checked), and a sender-set overlay emote isn't in viewer caches
   // at all — sweep sender sets by asset id so the add inherits the flag
   // (losing it renders a stacked overlay as a standalone base after auto-add).
-  let zw = typeof zeroWidthForSameAsset === 'function' && zeroWidthForSameAsset(emoteName, emoteUrl)
+  let zw = zeroWidthForSameAsset(emoteName, emoteUrl)
   if (!zw && typeof senderEmoteSets !== 'undefined' && typeof _hsEmoteAssetId === 'function') {
     const aid = _hsEmoteAssetId(emoteUrl)
     if (aid) {
@@ -1831,19 +1831,24 @@ function initInput() {
         (target.src?.includes('frankerfacez') && !target.src?.includes('room-badge/')) ||
         target.src?.includes('static-cdn.jtvnw.net/emoticons'))
     ) {
-      const isBlocked = target.classList.contains('hs-state-blocked') || target.dataset.state === 'blocked'
+      const d = target.dataset
+      const isBlocked = target.classList.contains('hs-state-blocked') || d.state === 'blocked'
+      // A box chip names its own picture (createInputEmoteImg, a Tab step): its url and hash, and
+      // the name it is filed under (an overlay typed as name0 is its base name's emote).
       return {
         wrapper: null,
-        emoteName: target.alt || target.dataset.emoteName || target.title?.split(' ')[0] || 'emote',
-        state: isBlocked ? 'blocked' : target.dataset.state || 'global',
-        emoteUrl: target.dataset.hsOrigSrc || target.src || '',
-        source: target.dataset.source || 'unknown',
+        chip: target.classList.contains('hs-input-emote'),
+        emoteName: d.hsKey || target.alt || d.emoteName || target.title?.split(' ')[0] || 'emote',
+        state: isBlocked ? 'blocked' : d.state || 'global',
+        emoteUrl: d.hsUrl || d.hsOrigSrc || target.src || '',
+        hash: d.hsHash,
+        source: d.source || 'unknown',
       }
     }
     return null
   }
 
-  function openEmoteCtxMenu(x, y, { emoteName, emoteUrl, state, source, targetEl, wrapper }) {
+  function openEmoteCtxMenu(x, y, { emoteName, emoteUrl, state, source, targetEl, wrapper, hash }) {
     const hi = getHighResUrl(emoteUrl)
     const items = hsFavMenuItems({ emoteName, emoteUrl, source, targetEl, wrapper })
     // Block/unblock + remove-from-set live here so the shift menu is the
@@ -1853,12 +1858,12 @@ function initInput() {
     if (state === 'blocked') {
       items.push({
         label: t('mc_input_unblock'),
-        fn: () => unblockEmote(emoteName, { hash: wrapper?.dataset?.emoteHash || undefined }),
+        fn: () => unblockEmote(emoteName, { hash }),
       })
     } else {
       items.push({
         label: t('content_card_block'),
-        fn: () => blockEmote(emoteName, emoteUrl, source, { hash: wrapper?.dataset?.emoteHash || undefined }),
+        fn: () => blockEmote(emoteName, emoteUrl, source, { hash }),
       })
       if (state === 'owned' && inventoryEmotes.has(emoteName)) {
         items.push({ label: t('mc_input_remove_from_set'), fn: () => removeEmoteFromInventory(emoteName, targetEl) })
@@ -1985,20 +1990,17 @@ function initInput() {
         e.preventDefault()
         e.stopPropagation()
 
+        const { emoteName, emoteUrl, source, wrapper } = emoteInfo
+        const hash = wrapper?.dataset?.emoteHash || emoteInfo.hash || undefined
+        // yours = this exact emote, never the name (rule 10): emotes.js emoteClickState
+        const state = emoteClickState(emoteInfo, hash)
+
         if (e.shiftKey) {
           // targetEl: remove-from-set needs the clicked element so the
           // picker-tile cleanup path can find and drop the right tile.
-          openEmoteCtxMenu(e.clientX, e.clientY, { ...emoteInfo, targetEl: e.target })
+          openEmoteCtxMenu(e.clientX, e.clientY, { ...emoteInfo, state, hash, targetEl: e.target })
           return
         }
-
-        const { emoteName, emoteUrl, source, wrapper } = emoteInfo
-        // Yours = this exact emote, not the name: another chatter's channel W under a W
-        // you own is blocked, never a removal of yours (rule 10).
-        const state =
-          emoteInfo.state === 'owned' && wrapper && !isViewerEmoteUrl(emoteName, emoteUrl, wrapper?.dataset?.emoteHash)
-            ? 'global'
-            : emoteInfo.state
 
         // Race-guard against rapid clicking
         if (pendingEmoteOps.has(emoteName)) return
@@ -2008,11 +2010,11 @@ function initInput() {
         // emote promises), anything else → block. Blocking an owned emote is the
         // shift menu's 'block' — it keeps the server row, removal does not.
         if (state === 'blocked') {
-          unblockEmote(emoteName, { hash: wrapper?.dataset?.emoteHash || undefined })
+          unblockEmote(emoteName, { hash })
         } else if (state === 'owned' && inventoryEmotes.has(emoteName)) {
           removeEmoteFromInventory(emoteName, e.target)
         } else {
-          blockEmote(emoteName, emoteUrl, source, { hash: wrapper?.dataset?.emoteHash || undefined })
+          blockEmote(emoteName, emoteUrl, source, { hash })
         }
       },
       { capture: true, signal: mcSignal },
@@ -2181,7 +2183,7 @@ function initInput() {
             !viewerPersonalEmotes.has(emoteName) &&
             emoteUrl &&
             /^https?:/i.test(emoteUrl) &&
-            (typeof lookupEmoteWithOverlay !== 'function' || !lookupEmoteWithOverlay(emoteName))
+            !lookupEmoteWithOverlay(emoteName)
           ) {
             viewerPersonalEmotes.set(emoteName, {
               url: emoteUrl,
@@ -3868,7 +3870,6 @@ function deflectAdjacentChip(node, wordStart) {
 // recall/paste/undo path that turns a serialized wire string back into chips.
 function imagifyValidWordsInTextNode(textNode) {
   if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return false
-  if (typeof lookupEmoteWithOverlay !== 'function') return false
   const text = textNode.textContent
   if (!text.trim()) return false
   const parts = text.split(/(\s+)/)
@@ -3890,7 +3891,7 @@ function imagifyValidWordsInTextNode(textNode) {
     // Blocked emotes must stay plain text here — keep them out of the chip
     // builder so a blocked emote reaching a text node (paste/undo/recall/
     // unwrap) can't render as a live image and defeat the block.
-    if (typeof blockedEmoteNames !== 'undefined' && emoteIsBlocked(part, lookupEmoteRenderOrder(part))) {
+    if (emoteIsBlocked(part, lookupEmoteRenderOrder(part))) {
       replacements.push(document.createTextNode(part))
       continue
     }
@@ -3906,7 +3907,7 @@ function imagifyValidWordsInTextNode(textNode) {
     // from the TYPED WORD (pool entries key on the name and don't carry a .name
     // field, so reading emote.name here produced "undefined" chips on recall),
     // and applies res-url + state + overlay parity with the type/paste path.
-    const chip = typeof createInputEmoteImg === 'function' ? createInputEmoteImg(part) : null
+    const chip = createInputEmoteImg(part)
     if (!chip) {
       replacements.push(document.createTextNode(part))
       continue
@@ -4454,10 +4455,10 @@ function tryOverlayOnZero(_input) {
   if (relocateSpan) {
     overlayEl = relocateSpan
   } else {
-    const resolved = typeof lookupEmoteWithOverlay === 'function' ? lookupEmoteWithOverlay(word) : null
+    const resolved = lookupEmoteWithOverlay(word)
     if (resolved?.isOverlay) {
       // (1)/(3) emote overlay
-      overlayEl = typeof createInputEmoteImg === 'function' ? createInputEmoteImg(word) : null
+      overlayEl = createInputEmoteImg(word)
     } else if (word.startsWith(':') && word.endsWith(':0') && word.length > 3) {
       // (4) literal ":smile:0" that never span-converted → build emoji overlay
       const ename = word.slice(1, -2)
@@ -4959,9 +4960,7 @@ function _isBlockedAnyPlat(name) {
 // is unfiltered (see emotes.js _buildChannelEmoteCache).
 function _hsAcEmoteBlocked(name, emote) {
   if (!name) return false
-  if (typeof hsEmoteHiddenForViewer === 'function' && hsEmoteHiddenForViewer(emote)) return true
-  if (typeof hsChannelNsfwHidden === 'function' && hsChannelNsfwHidden(emote)) return true
-  if (typeof blockedEmoteNames === 'undefined') return false
+  if (hsEmoteHiddenForViewer(emote) || hsChannelNsfwHidden(emote)) return true
   // this exact emote (rule 9) — a blocked 7tv W does not drop the bttv W from the cycle
   if (emoteIsBlocked(name, emote)) return true
   if (typeof unescapeHtml === 'function' && emoteIsBlocked(unescapeHtml(name), emote)) return true
@@ -5255,7 +5254,7 @@ function hsFetchUserColorAndApply(lower, span) {
 function completionWantsOverlay(match, resolved) {
   if (match._synthOverlay) return true
   if (match.zeroWidth) return true
-  if (typeof zeroWidthForSameAsset === 'function' && zeroWidthForSameAsset(match.name, match.url)) return true
+  if (zeroWidthForSameAsset(match.name, match.url)) return true
   if (match.zeroWidth !== undefined) return false
   return !!resolved?.isOverlay
 }
@@ -5274,13 +5273,14 @@ function insertCompletionWysiwyg(match) {
     delete img.dataset.hsOrigSrc
     img.classList.remove('hs-state-blocked')
     delete img.dataset.state
+    // the step's own picture, for a right-click on the chip: a reused chip never keeps the last step's
+    hsChipIs(img, match.url, match.hash, match._synthOverlay && match.name.slice(0, -1))
+    img.dataset.source = match.source || 'unknown'
     if (
       match.name &&
-      typeof blockedEmoteNames !== 'undefined' &&
       // synth trailing-0 overlays carry "name0" but the block set holds the
       // base name — check the stripped base too
-      (emoteIsBlocked(match.name, match) || (match._synthOverlay && blockedEmoteNames.has(match.name.slice(0, -1)))) &&
-      typeof markInputEmoteBlocked === 'function'
+      (emoteIsBlocked(match.name, match) || (match._synthOverlay && blockedEmoteNames.has(match.name.slice(0, -1))))
     ) {
       markInputEmoteBlocked(img, true)
     }
@@ -5294,7 +5294,7 @@ function insertCompletionWysiwyg(match) {
     img.className = 'hs-input-emote hs-cycling-emote'
     img.draggable = false
     attachInputEmoteErrorRecovery(img)
-    if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(img)
+    hsAttachInputEmoteSnap(img)
     _applyInputBlock(img)
     return img
   }
@@ -5309,7 +5309,7 @@ function insertCompletionWysiwyg(match) {
       // overlay and non-overlay alternatives. Without this, the FIRST insert's
       // overlay state sticks — every cycle stays inside the stack span and
       // non-overlay matches appear to stack onto whatever's before them.
-      const resolved = typeof lookupEmoteWithOverlay === 'function' ? lookupEmoteWithOverlay(match.name) : null
+      const resolved = lookupEmoteWithOverlay(match.name)
       const wantsOverlay = completionWantsOverlay(match, resolved)
       const stack = existingEmote.parentElement?.classList?.contains('hs-input-stack')
         ? existingEmote.parentElement
@@ -5373,7 +5373,7 @@ function insertCompletionWysiwyg(match) {
       existingEmote.src = match.url
       existingEmote.alt = match.name
       existingEmote.dataset.emoteName = match.name
-      if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(existingEmote)
+      hsAttachInputEmoteSnap(existingEmote)
       _applyInputBlock(existingEmote)
     } else if (match.type === 'emoji') {
       // Replace emote img with emoji span
@@ -5575,7 +5575,7 @@ function insertCompletionWysiwyg(match) {
     const img = cyclingImg()
     // Zero-width / overlay: stack onto preceding emote so the input preview
     // matches how chat will render the same word sequence.
-    const resolved = typeof lookupEmoteWithOverlay === 'function' ? lookupEmoteWithOverlay(match.name) : null
+    const resolved = lookupEmoteWithOverlay(match.name)
     const wantsOverlay = completionWantsOverlay(match, resolved)
     if (wantsOverlay && before.trim() === '') {
       // Base = element chip OR a raw emoji ending a PRECEDING text node

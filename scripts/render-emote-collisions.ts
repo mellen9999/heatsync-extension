@@ -22,6 +22,15 @@
  *   f. Wlol + Tab, Tab                      -> the second copy is theirs; it ships and their row draws it
  *   g. Wlol typed by hand in the next line  -> the channel's again: a pick dies with its message
  *   h. the picker's recents                 -> both pictures of Wlol, as sent, the last one first
+ * A right-click on an emote in the box acts on the picture the box shows, as it does on a chat line:
+ *   n. the channel's Wlol typed in the box (a name the viewer also owns) -> that picture is
+ *      blocked, the viewer's own Wlol is NOT removed; a second right-click unblocks it
+ *   o. blocking the channel's Wlol on a chat line never dashes a box chip of the viewer's own Wlol
+ *   p. the viewer's own Wlol in the box -> removed from their set; the chip is read again and is
+ *      the channel's, which is what the line then ships
+ *   q. an emote only the viewer has, removed from the box -> the word is text again (as it ships)
+ *   r. the channel's W changes while its chip sits in the box -> the row sent is the picture the
+ *      box showed at enter, whichever that was
  * then right-click another chatter's W: it is blocked, the viewer's own W is NOT removed, and
  * only that exact emote hides.
  */
@@ -129,9 +138,11 @@ try {
       emote_inventory: [
         { name: 'W', url: u.W_inv, source: 'heatsync', hash: 'invhash' },
         { name: 'Wlol', url: u.Wlol_inv, source: 'heatsync', hash: 'wlolinvhash' },
+        // a name nothing else has: removed from the box, its word is text (case q)
+        { name: 'Mine', url: u.Mine_inv, source: 'heatsync', hash: 'mineinvhash' },
       ],
     })
-  }, Object.fromEntries(['W_global', 'W_inv', 'Wlol_inv', 'W_bttv', 'W_7tv', 'W_ffz'].map((n) => [n, E(n)])))
+  }, Object.fromEntries(['W_global', 'W_inv', 'Wlol_inv', 'Mine_inv', 'W_bttv', 'W_7tv', 'W_ffz'].map((n) => [n, E(n)])))
   // Seed the channel's sets the way the background holds them after a real fetch: in its memory
   // and in its IndexedDB (never storage.local, which every tab would hear). It answers a tab's
   // cold-start pull (get_channel_emotes_map) from there.
@@ -374,6 +385,135 @@ try {
   await p.keyboard.press('Control+A')
   await p.keyboard.press('Backspace')
   await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+
+  // ── a right-click on an emote in the box acts on the picture the box shows ──
+  const chip = () =>
+    p.evaluate(() => {
+      const i = document.querySelector('#hs-mc-input img.hs-input-emote') as HTMLImageElement | null
+      return i ? { pic: i.dataset.hsUrl || '', src: i.getAttribute('src') || '', blocked: i.dataset.hsInputBlocked === '1' } : null
+    })
+  const inventory = async (): Promise<string[]> => {
+    const pg = await c.newPage()
+    await pg.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
+    const names: string[] = await pg.evaluate(async () => {
+      // @ts-ignore — extension page
+      const st = await chrome.storage.local.get('emote_inventory')
+      return (st.emote_inventory || []).map((e: any) => e.name)
+    })
+    await pg.close()
+    await p.bringToFront()
+    return names
+  }
+  const rightClickChip = () => p.click('#hs-mc-input img.hs-input-emote', { button: 'right' })
+
+  await typeLine('box1 Wlol ')
+  await until(p, async () => (await chipSrc()).includes('Wlol_room'), 5000)
+  await rightClickChip()
+  await until(p, async () => !!(await chip())?.blocked, 5000)
+  const n1 = await chip()
+  check(!!n1?.blocked && n1.pic.includes('Wlol_room'), `n. right-click the channel's Wlol in the box: that picture is blocked (got ${JSON.stringify(n1)})`)
+  const invN = await inventory()
+  check(invN.includes('Wlol'), `n. and the viewer's own Wlol was not removed (inventory: ${JSON.stringify(invN)})`)
+  await p.waitForTimeout(1200) // the block's own storage write re-reads the box
+  const n2 = await chip()
+  check(!!n2?.blocked && !n2.src.includes('Wlol_inv'), `n. the blocked chip stays a dashed box, never a look-alike of the name (got ${JSON.stringify(n2)})`)
+  await rightClickChip()
+  await until(p, async () => (await chip())?.blocked === false, 5000)
+  const n3 = await chip()
+  check(n3?.blocked === false && n3.src.includes('Wlol_room'), `n. a second right-click unblocks it and the picture is back (got ${JSON.stringify(n3)})`)
+
+  await typeLine('box2 Wlol')
+  await p.keyboard.press('Tab')
+  await p.keyboard.press('Tab')
+  await until(p, async () => (await chipSrc()).includes('Wlol_inv'), 5000)
+  await p.evaluate(() => {
+    const row = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes('own1'))
+    ;(row?.querySelector('.hs-mc-emote-wrapper') as HTMLElement | null)?.setAttribute('data-hs-probe', 'own1')
+  })
+  await p.click('[data-hs-probe="own1"]', { button: 'right' })
+  await until(p, async () => (await imgOf('own1')).state === 'blocked', 5000)
+  const o1 = await chip()
+  check((await imgOf('own1')).state === 'blocked', "o. the channel's Wlol is blocked on a chat line")
+  check(!!o1 && !o1.blocked && o1.src.includes('Wlol_inv'), `o. a box chip of the viewer's OWN Wlol is not dashed by it (got ${JSON.stringify(o1)})`)
+  // a blocked emote is its dashed box: the click lands on the wrapper, as a viewer's does
+  await p.click('[data-hs-probe="own1"]', { button: 'right' })
+  await until(p, async () => (await imgOf('own1')).state !== 'blocked', 5000)
+  const o2 = await imgOf('own1')
+  check(o2.state !== 'blocked' && o2.src.includes('Wlol_room'), `o. a right-click on its dashed box unblocks it: the row draws the channel's Wlol again (got ${JSON.stringify(o2)})`)
+
+  // the server call cannot be made here (heatsync.org is refused): the background's remove answers yes
+  await sw.evaluate(() => {
+    // @ts-ignore — service worker globals
+    removeFromInventory = async (_hash: string, name: string) => {
+      // @ts-ignore
+      const st = await chrome.storage.local.get('emote_inventory')
+      // @ts-ignore
+      emoteInventory = (st.emote_inventory || []).filter((e: any) => e.name !== name)
+      // @ts-ignore
+      await chrome.storage.local.set({ emote_inventory: emoteInventory })
+      return { success: true }
+    }
+  })
+  await rightClickChip()
+  await until(p, async () => (await chipSrc()).includes('Wlol_room'), 5000)
+  const p1 = await chip()
+  const invP = await inventory()
+  check(!invP.includes('Wlol') && invP.includes('W'), `p. right-click the viewer's own Wlol in the box: it is removed from their set, nothing else is (inventory: ${JSON.stringify(invP)})`)
+  check(!!p1 && !p1.blocked && p1.src.includes('Wlol_room'), `p. the chip is read again: the channel's Wlol, not the copy just removed (got ${JSON.stringify(p1)})`)
+  await p.click('#hs-mc-input', { timeout: 5000 })
+  await p.keyboard.press('Control+End')
+  await p.keyboard.press('Enter')
+  await rowHas('box2')
+  await p.waitForTimeout(800)
+  const box2 = await imgOf('box2')
+  check(box2.src.includes('Wlol_room'), `p. and the line ships what the box showed (got ${box2.src || (box2.has ? 'a row with no emote' : 'no row')})`)
+
+  await typeLine('box3 Mine ')
+  await until(p, async () => (await chipSrc()).includes('Mine_inv'), 5000)
+  check((await chipSrc()).includes('Mine_inv'), 'q. setup: an emote only the viewer has is a chip as typed')
+  await rightClickChip()
+  await until(p, async () => !(await chip()), 5000)
+  const q1 = await p.evaluate(() => {
+    const el = document.getElementById('hs-mc-input')
+    return { imgs: el?.querySelectorAll('img').length ?? -1, text: (el?.textContent || '').replace(/\s+/g, ' ').trim() }
+  })
+  check(q1.imgs === 0 && q1.text === 'box3 Mine', `q. removed, with no other emote of the name: the word is text again, as it ships (got ${JSON.stringify(q1)})`)
+  await p.click('#hs-mc-input', { timeout: 5000 })
+  await p.keyboard.press('Control+A')
+  await p.keyboard.press('Backspace')
+
+  // ── enter ships what the box shows, even when the channel's set moves under a chip ──
+  const roomSet = (w: string) =>
+    sw.evaluate(async ([wUrl, lolUrl]: string[]) => {
+      const emotes = [
+        { name: 'W', url: wUrl, source: 'ffz', hash: 'ffzhash' },
+        { name: 'Wlol', url: lolUrl, source: '7tv', hash: 'wlolroomhash' },
+      ]
+      // @ts-ignore — service worker globals
+      channelEmotesMap['twitch/probechan'] = emotes
+      // @ts-ignore
+      channelEmotesFetchedAt['twitch/probechan'] = Date.now()
+      // @ts-ignore
+      await bgPersistChannelEmotes('twitch/probechan')
+      // @ts-ignore
+      broadcastToTabs({ type: 'channel_emotes_update', channelOwner: 'probechan', platform: 'twitch', emotes })
+    }, [E(w), E('Wlol_room')])
+  const picOf = (src: string) => src.match(/emote\/([A-Za-z0-9_]+)\.png/)?.[1] || src
+  await typeLine('box4 W ')
+  await until(p, async () => (await chipSrc()).includes('W_ffz'), 5000)
+  await roomSet('W_moved')
+  await p.waitForTimeout(1500)
+  const shown = picOf((await chip())?.pic || '')
+  check(shown === 'W_ffz' || shown === 'W_moved', `r. setup: the box still holds a W chip after the channel's W changed (got ${shown || 'no chip'})`)
+  await p.click('#hs-mc-input', { timeout: 5000 })
+  await p.keyboard.press('Control+End')
+  await p.keyboard.press('Enter')
+  await rowHas('box4')
+  await p.waitForTimeout(800)
+  const box4 = picOf((await imgOf('box4')).src)
+  check(!!shown && box4 === shown, `r. the row sent is the picture the box showed at enter (box ${shown || 'nothing'}, row ${box4 || 'nothing'})`)
+  await roomSet('W_ffz')
+  await p.waitForTimeout(1500)
 
   // right-click alice's W: blocked, inventory untouched, other emotes unaffected
   await p.evaluate(() => {

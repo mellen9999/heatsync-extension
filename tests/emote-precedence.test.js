@@ -331,9 +331,16 @@ describe('lookupEmoteWithOverlay', () => {
     expect(lookupEmoteWithOverlay('KEKW').emote.url).toBe('my-kekw')
   })
 
-  test('a removed or blocked emote nothing ships for still shows its picture', () => {
+  // the box shows what ships: an emote you removed ships as a plain word, so it is no picture
+  // there (it kept its picture while the line went out as text). one you blocked keeps its
+  // dashed box: the chip is built from the blocked record and drawn blocked
+  test('an emote you removed is text in the box; one you blocked still has its (dashed) chip', () => {
     removedEmoteFallback.set('Gone', { url: 'gone-url' })
-    expect(lookupEmoteWithOverlay('Gone').emote.url).toBe('gone-url')
+    expect(lookupEmoteWithOverlay('Gone')).toBeNull()
     expect(lookupEmoteWithOverlay('Gone', { ownedOnly: true })).toBeNull()
+    blockedEmoteFallback.set('Hidden', { url: 'blocked-url', source: '7tv', zeroWidth: false })
+    expect(lookupEmoteWithOverlay('Hidden').emote.url).toBe('blocked-url')
+    expect(lookupEmoteWithOverlay('Hidden0')).toMatchObject({ emote: { url: 'blocked-url' }, isOverlay: true })
+    expect(lookupEmoteWithOverlay('Hidden', { ownedOnly: true })).toBeNull()
   })
 })

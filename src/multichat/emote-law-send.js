@@ -215,13 +215,30 @@ function lawChip(word, legs) {
  * @returns {{wire:object, refs:object|undefined, picked:string[]|undefined, used:Array<{name:string,url:string}>, chosen:Array<[string, object]>|undefined}}
  */
 function lawShip(text, legs, box) {
-  const ctx = lawSendCtx({
-    legs,
-    mine: viewerPersonalEmotes,
-    globals: emoteCache,
-    caches: channelEmoteCaches,
-    picks: draftPicks(box),
-  })
+  const read = (picks) =>
+    lawSendCtx({ legs, mine: viewerPersonalEmotes, globals: emoteCache, caches: channelEmoteCaches, picks })
+  const held = draftPicks(box)
+  let ctx = read(held)
+  // Enter ships what the box shows. A chip is drawn by this same answer and read again when the
+  // tab or its emotes change, but whatever a chip still shows as the line leaves is what goes
+  // out, as this line's own pick. Read here alone: it never joins the draft, so nothing is added
+  // to your set and nothing is remembered with the line. A dashed box shows no picture (an emote
+  // you blocked, which may ship nothing at all): it is left to the send.
+  let shown
+  for (const img of box?.querySelectorAll?.('img.hs-input-emote') || []) {
+    const d = img.dataset
+    if (!d.hsUrl || d.hsInputBlocked === '1') continue
+    if (hsEmoteLaw.sendWord(d.emoteName, ctx)?.emote.url === d.hsUrl) continue
+    const name = d.hsKey || d.emoteName
+    ;(shown ||= new Map(held.picked)).set(name, {
+      name,
+      url: d.hsUrl,
+      provider: d.source,
+      hash: d.hsHash,
+      zeroWidth: d.zeroWidth === '1',
+    })
+  }
+  if (shown) ctx = read({ picked: shown, remote: held.remote })
   const sent = hsEmoteLaw.sendLine(text, ctx)
   // a name can be anything, __proto__ included: file a ref by definition, never by `=`
   let refs
@@ -276,6 +293,33 @@ function rereadInputChips() {
     chip.replaceWith(words)
     imagifyValidWordsInTextNode(words)
   }
+}
+
+// The picture a box chip shows, named on the chip itself: its url, its hash where it has one, and
+// the name it is filed under when that is not the word typed (an overlay typed as name0 is its
+// base name's emote). Every writer of a chip's picture passes here, so a reused chip (a Tab step)
+// never keeps the last picture's identity.
+function hsChipIs(img, url, hash, key) {
+  const d = img.dataset
+  d.hsUrl = url
+  if (hash) d.hsHash = hash
+  else delete d.hsHash
+  if (key && key !== d.emoteName) d.hsKey = key
+  else delete d.hsKey
+}
+
+// What a right-clicked emote is to you, judged at the click. Yours = this exact emote, not the
+// name: another chatter's channel W under a W you own is blocked, never a removal of yours (rule
+// 10). A box chip is judged as it stands now: the room's picture under a name you own is not yours
+// (its chip read 'owned' and the right-click removed YOUR copy), and your own copy put in by Tab
+// (a chip with no state of its own) is.
+function emoteClickState(info, hash) {
+  let state = info.state
+  if (state !== 'blocked' && (info.wrapper || info.chip)) {
+    const mine = isViewerEmoteUrl(info.emoteName, info.emoteUrl, hash)
+    if (mine ? info.chip : state === 'owned') state = mine ? 'owned' : 'global'
+  }
+  return state
 }
 
 /** a line's refs in the shape the server stores ({p,id,a}); undefined when none of them can be stored */

@@ -1632,7 +1632,7 @@ function applyBlockedHashDelta(newHashesArr) {
         if (img) img.dataset.state = 'blocked'
       })
     } catch {}
-    applyInputEmoteBlockState(name, true)
+    applyInputEmoteBlockState(name)
   }
 
   for (const hash of toUnblock) {
@@ -1692,7 +1692,7 @@ function applyBlockedHashDelta(newHashesArr) {
         if (img) img.dataset.state = newState
       })
     } catch {}
-    applyInputEmoteBlockState(name, false)
+    applyInputEmoteBlockState(name)
   }
 
   if (changedNames.length) _blockedRev++
@@ -1704,7 +1704,7 @@ function applyBlockedHashDelta(newHashesArr) {
   // touches data-source="heatsync" wrappers. Invalidate ONLY the messages that
   // reference the changed emotes (no global epoch bump → no whole-chat rebuild
   // flash); live DOM was already corrected in-place above.
-  if (typeof invalidateRenderedForEmotes === 'function') invalidateRenderedForEmotes(changedNames)
+  invalidateRenderedForEmotes(changedNames)
 }
 
 // Flash all wrappers for a given emote name. Also touches multichat input
@@ -1741,7 +1741,7 @@ function flashAllEmotes(emoteName, flashClass) {
 function createInputEmoteImg(emoteName) {
   const resolved = lookupEmoteWithOverlay(emoteName)
   if (!resolved) return null
-  const { emote, isOverlay } = resolved
+  const { emote, isOverlay, key } = resolved
   if (hsEmoteHiddenForViewer(emote)) return null
   const img = document.createElement('img')
   img.className = 'hs-input-emote'
@@ -1749,15 +1749,17 @@ function createInputEmoteImg(emoteName) {
   img.alt = emoteName
   img.dataset.emoteName = emoteName
   img.draggable = false
-  // Persist state + source on the chip so findEmoteTarget (input.js:752) reads
-  // 'owned' instead of defaulting to 'global'. Without this, right-clicking a
-  // wavE chip in the input fell into the else branch and tried to BLOCK an
-  // emote you own; left-click hover also missed its green-state CSS. Match
-  // resolved emote.state ('owned'/'global'/'channel'/'unadded') 1:1.
+  // State + source + the picture's own url and hash ride on the chip: a right-click on it
+  // (input.js findEmoteTarget) acts on THIS picture, as it does on a chat line. Its own field
+  // names, so the page script's [data-emote-hash] passes never take a chip for a chat emote.
   const _resolvedSource = emote.source || detectEmoteSource(emote.url)
   img.dataset.source = _resolvedSource
-  // Owned shadows global/channel — surface what the user actually controls.
-  img.dataset.state = inventoryEmotes.has(emoteName) ? 'owned' : emote.state || 'global'
+  hsChipIs(img, emote.url, emote.hash, key)
+  // Yours = this very picture (rule 10), not the name: the room's emote under a name you also
+  // own read 'owned', and a right-click on its chip removed YOUR copy.
+  img.dataset.state = isViewerEmote(key || emoteName, emote)
+    ? 'owned'
+    : (emote.state !== 'owned' && emote.state) || 'global'
   img.classList.add(`hs-state-${img.dataset.state}`)
   // Category tell follows the emote into the input chip (decision surface) —
   // same cwCats source the picker cell reads, first category wins.
@@ -1776,15 +1778,14 @@ function createInputEmoteImg(emoteName) {
   // "name0" resolving to a blocked base ("TriHard0" -> blocked "TriHard") must
   // also render blocked — only when there's no literal "name0" emote of its
   // own (mirrors _synthOverlay in findEmoteMatches/_applyInputBlock, input.js).
-  // Hash check catches the same asset re-listed under a different alias.
+  // emoteIsBlocked reads the picture's own hash first: the same asset under another alias.
   const _chipBlockedByBase =
     isOverlay &&
     emoteName.length > 1 &&
     emoteName.endsWith('0') &&
     !lookupEmoteRenderOrder(emoteName) &&
     blockedEmoteNames.has(emoteName.slice(0, -1))
-  const _chipBlockedByHash = !!(emote.hash && blockedEmoteHashes.has(String(emote.hash)))
-  if (emoteIsBlocked(emoteName, emote) || _chipBlockedByBase || _chipBlockedByHash) markInputEmoteBlocked(img, true)
+  if (emoteIsBlocked(emoteName, emote) || _chipBlockedByBase) markInputEmoteBlocked(img, true)
   hsAttachInputEmoteSnap(img)
   return img
 }
@@ -1829,11 +1830,13 @@ function markInputEmoteBlocked(img, blocked) {
 // multichat input and any cycling/preview imgs that share the class. Match
 // by alt + dataset.emoteName (both set at creation; alt may be the typed
 // overlay name like "TriHard0" while dataset is identical).
-function applyInputEmoteBlockState(emoteName, blocked) {
+function applyInputEmoteBlockState(emoteName) {
   if (!emoteName) return
   const inputs = document.querySelectorAll('img.hs-input-emote')
   for (const img of inputs) {
-    if (img.alt !== emoteName && img.dataset.emoteName !== emoteName) continue
+    if (img.alt !== emoteName && img.dataset.emoteName !== emoteName && img.dataset.hsKey !== emoteName) continue
+    // the chip's own picture decides (rule 9): blocking the room's W dashed a chip of YOUR W
+    const blocked = emoteIsBlocked(emoteName, { url: img.dataset.hsUrl, hash: img.dataset.hsHash })
     // Render the dashed box in place — same as chat/picker. The chip keeps its
     // alt/dataset.emoteName so getInputText still serializes the name on send
     // (recipient renders the emote unless they too blocked it). Removing the
@@ -2154,9 +2157,13 @@ function applyLocalRemoval(emoteName, pt) {
   // nothing else is named that. We intentionally leave channel/global caches intact
   // so the fallback emote still resolves. Invalidate cached renders + reprocess
   // visible rows so existing messages update in place instead of keeping the
-  // removed image. (typeof guards: these live in main.js, loaded after this module.)
-  if (typeof invalidateRenderedForEmotes === 'function') invalidateRenderedForEmotes([emoteName])
-  if (typeof reprocessEmoteTextInPlace === 'function') reprocessEmoteTextInPlace()
+  // removed image.
+  invalidateRenderedForEmotes([emoteName])
+  reprocessEmoteTextInPlace()
+  // The box: a pick of the removed picture is no pick any more, and its chip is read again by
+  // what the word sends now (the room's emote, a global, or text). It kept your removed picture.
+  if (_re?.url) dropPick({ name: emoteName, url: _re.url }, lawBox())
+  rereadInputChips()
   rehoverAt(pt, false)
   // Failure path: put every cache back exactly as it was and re-render.
   return (undoPt) => {
@@ -2167,8 +2174,9 @@ function applyLocalRemoval(emoteName, pt) {
     if (_re) viewerPersonalEmotes.set(emoteName, _re)
     if (removedEmoteFallback.delete(emoteName)) persistRemovedFallback()
     markPickerDirty()
-    if (typeof invalidateRenderedForEmotes === 'function') invalidateRenderedForEmotes([emoteName])
-    if (typeof reprocessEmoteTextInPlace === 'function') reprocessEmoteTextInPlace()
+    invalidateRenderedForEmotes([emoteName])
+    reprocessEmoteTextInPlace()
+    rereadInputChips()
     rehoverAt(undoPt, true)
   }
 }
@@ -2274,7 +2282,7 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
     })
   } catch {}
 
-  applyInputEmoteBlockState(emoteName, true)
+  applyInputEmoteBlockState(emoteName)
 
   refreshEmoteTooltip(emoteName, 'blocked')
   // Success toast fires from syncBlockToAPI on confirmation (or immediately for
@@ -2284,7 +2292,7 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
   flashAllEmotes(emoteName, 'hs-flash-block')
   // Surgical: only re-key messages that reference this emote (no epoch bump →
   // no whole-chat rebuild flash). Live DOM already updated in-place above.
-  if (typeof invalidateRenderedForEmotes === 'function') invalidateRenderedForEmotes(emoteName)
+  invalidateRenderedForEmotes(emoteName)
 }
 
 // Re-apply current state to all rendered wrappers for `emoteName`. Use after
@@ -2374,13 +2382,21 @@ function unblockEmote(emoteName, opts) {
       'hs-emote-highlight',
     )
     w.closest?.('.hs-mc-emote-stack')?.classList.remove('hs-stack-hl')
-    w.classList.add(`hs-state-${newState}`)
-    w.dataset.state = newState
+    // The wrapper's own picture comes back, in its own state. The name's did: under a name you
+    // also own, the room's emote came back as YOUR copy's picture and marked yours.
+    const own = w.dataset?.emoteUrl
+    const url = own || realUrl
+    const state =
+      own && newState === 'owned' && !isViewerEmoteUrl(emoteName, own, w.dataset.emoteHash)
+        ? getEmoteState('', w.dataset.source)
+        : newState
+    w.classList.add(`hs-state-${state}`)
+    w.dataset.state = state
     w.style.outline = ''
     hsPinLogEmoteSize(w, false)
     const img = w.querySelector('img')
-    if (img && realUrl) {
-      img.src = realUrl
+    if (img && url) {
+      img.src = url
       img.style.width = ''
       img.style.height = ''
       img.classList.remove(
@@ -2390,8 +2406,8 @@ function unblockEmote(emoteName, opts) {
         'hs-emote-blocked',
         'hs-emote-unadded',
       )
-      img.classList.add(`hs-emote-${newState}`)
-      img.dataset.state = newState
+      img.classList.add(`hs-emote-${state}`)
+      img.dataset.state = state
     }
   })
 
@@ -2405,12 +2421,12 @@ function unblockEmote(emoteName, opts) {
     })
   } catch {}
 
-  applyInputEmoteBlockState(emoteName, false)
+  applyInputEmoteBlockState(emoteName)
 
   refreshEmoteTooltip(emoteName, newState)
   if (opts?.skipSync && !opts?.silent) showToast(t('mc_emote_unblocked', [emoteName]), 'success')
   flashAllEmotes(emoteName, 'hs-flash-unblock')
-  if (typeof invalidateRenderedForEmotes === 'function') invalidateRenderedForEmotes(emoteName)
+  invalidateRenderedForEmotes(emoteName)
 }
 
 // Add emote to inventory (click-to-add for unadded emotes).
@@ -3278,11 +3294,12 @@ function lookupEmoteWithOverlay(name, { ownedOnly = false } = {}) {
   if (hit) {
     // owned copies have 7tv's zero-width flag stripped: recover it from any cache under the name
     const isOverlay = hit.overlay || (!hit.e.zeroWidth && zeroWidthFromAnyCache(hit.key))
-    return { emote: hit.e, isOverlay, displayName: name }
+    return { emote: hit.e, isOverlay, displayName: name, key: hit.key }
   }
   if (ownedOnly) return null
-  // nothing ships for this word: a removed or blocked emote still shows its picture (the dashed box)
-  const gone = (n) => removedEmoteFallback.get(n) || blockedFallbackForName(n)
+  // nothing ships for this word. An emote you blocked still shows its dashed box. One you removed
+  // is text, as it ships: it kept its picture here while the line went out as a plain word
+  const gone = blockedFallbackForName
   const emote = gone(name)
   if (emote) return { emote, isOverlay: !!emote.zeroWidth || zeroWidthFromAnyCache(name), displayName: name }
   if (endsWithZero) {

@@ -161,3 +161,34 @@ test('lawShip chosen: only a pick that changed what its word sends comes back wi
   expect(ship('KEKW hi')).toBeUndefined()
   scope.viewerPersonalEmotes.clear()
 })
+
+// enter ships what the box shows: a chip is drawn by the send's own answer, and whatever it still
+// shows as the line leaves is what goes out (the room's set can move under a chip between the
+// two). the stale chip is this line's pick, read by the send alone
+test('lawShip: a chip the send would answer differently ships as drawn, and joins nothing', () => {
+  const OLD = '60ae958e229664e8667aea41'
+  scope.channelEmoteCaches.chan = new Map([['IDK', stv(ID.ROOM)]])
+  const chip = (dataset) => ({ dataset })
+  const box = (chips) => ({ querySelectorAll: () => chips })
+  // the chip still shows the picture the room had a moment ago
+  const stale = box([chip({ emoteName: 'IDK', hsUrl: stv(OLD).url, source: '7tv' })])
+  const out = lawShip('hi IDK', { twitch: 'chan' }, stale)
+  expect(out.refs.IDK.url).toBe(stv(OLD).url)
+  expect(out.picked).toEqual(['IDK'])
+  expect(out.chosen || []).toEqual([])
+  expect(draftPicks(stale).picked.size).toBe(0)
+  // a chip that shows what the send answers changes nothing
+  const fresh = box([chip({ emoteName: 'IDK', hsUrl: stv(ID.ROOM).url, source: '7tv' })])
+  const same = lawShip('hi IDK', { twitch: 'chan' }, fresh)
+  expect(same.refs.IDK.url).toBe(stv(ID.ROOM).url)
+  expect(same.picked).toBeUndefined()
+  // an overlay typed as name0 is filed under its base name, and still reads as the overlay
+  const over = box([chip({ emoteName: 'IDK0', hsKey: 'IDK', hsUrl: stv(OLD).url, source: '7tv', zeroWidth: '1' })])
+  expect(lawShip('x IDK0', { twitch: 'chan' }, over).refs.IDK.url).toBe(stv(OLD).url)
+  // a chip with no picture of its own (an older build's) is left to the send
+  const bare = box([chip({ emoteName: 'IDK' })])
+  expect(lawShip('hi IDK', { twitch: 'chan' }, bare).refs.IDK.url).toBe(stv(ID.ROOM).url)
+  // a dashed box shows no picture: an emote you blocked that no room or set answers stays text
+  const dashed = box([chip({ emoteName: 'Gone', hsUrl: stv(OLD).url, hsInputBlocked: '1', source: '7tv' })])
+  expect(lawShip('hi Gone', { twitch: 'chan' }, dashed).refs?.Gone).toBeUndefined()
+})

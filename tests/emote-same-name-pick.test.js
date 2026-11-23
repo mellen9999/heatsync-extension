@@ -32,7 +32,9 @@ globalThis.linksEnabled = false
 let _settings = {}
 globalThis.getSetting = (k) => _settings[k]
 
-const { processEmotes, channelEmoteCaches, emoteCache } = await import('../src/multichat/emotes.js')
+const { processEmotes, channelEmoteCaches, emoteCache, clickPastedRefs, registerClickPastedRef } = await import(
+  '../src/multichat/emotes.js'
+)
 
 const T = 1700000000000
 const SKEW = 120000 // EMOTE_ADDED_SKEW_MS
@@ -149,6 +151,20 @@ describe('the law: the row reads its own room', () => {
     withChannel(() => {
       const refs = new Map([['IDK', { url: url(REF), source: '7tv', state: 'global', zeroWidth: false, named: true }]])
       expect(draws(processEmotes('IDK', 'chan-x', null, null, T, true, refs), CHANNEL)).toBe(true)
+    }))
+
+  test('an emote you once click-pasted is a fallback for your own echo, never a lasting pick over the room', () =>
+    withChannel(() => {
+      // pasted an hour ago from someone's row; now the word is hand-typed in a room that has its own
+      registerClickPastedRef('IDK', url(REF), '7tv', false)
+      try {
+        const own = new Map(clickPastedRefs)
+        expect(draws(processEmotes('IDK', 'chan-x', null, null, T, true, own), CHANNEL)).toBe(true)
+        // where the room has no such word the pasted picture still draws: the echo never falls to text
+        expect(draws(processEmotes('IDK', 'chan-empty', null, null, T, true, own), REF)).toBe(true)
+      } finally {
+        clickPastedRefs.clear()
+      }
     }))
 
   test('a name only the inventory has still draws (no room copy)', () => {

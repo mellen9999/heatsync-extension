@@ -2848,13 +2848,16 @@ const viewerPersonalEmotes = new Map() // Map<name, emoteData>
 // symptom). This map is the durable fallback: own-message render consults it so
 // a click-pasted emote ALWAYS renders in your own echo. Keyed by ESCAPED name
 // (matches processEmotes' escaped-token lookups). Own-messages only — never
-// applied to other senders' rendering.
-const clickPastedRefs = new Map() // Map<escapedName, {url, source, state, zeroWidth}>
+// applied to other senders' rendering. A fallback, never a pick: an entry is
+// `named`, so the emote law reads it below the room (a pick lives one message;
+// a name pasted an hour ago must not beat the room's emote of that name on
+// every later line of yours, while everyone else sees the room's).
+const clickPastedRefs = new Map() // Map<escapedName, {url, source, state, zeroWidth, named}>
 const CLICK_PASTED_REFS_MAX = 300
 function registerClickPastedRef(name, url, source, zeroWidth) {
   if (!name || !url || !/^https?:/i.test(url)) return
   const key = escapeHtml(name)
-  clickPastedRefs.set(key, { url, source: source || 'heatsync', state: 'global', zeroWidth: !!zeroWidth })
+  clickPastedRefs.set(key, { url, source: source || 'heatsync', state: 'global', zeroWidth: !!zeroWidth, named: true })
   while (clickPastedRefs.size > CLICK_PASTED_REFS_MAX) {
     const oldest = clickPastedRefs.keys().next().value
     if (oldest === undefined) break
@@ -5254,6 +5257,7 @@ export {
   blockedFallbacksForName,
   bumpEmoteFrecency,
   channelEmoteCaches,
+  clickPastedRefs,
   deriveStaticEmoteSrc,
   detectEmoteSource,
   dropEmoteFromAllSenders,
@@ -5282,6 +5286,7 @@ export {
   pickerBaseEmotes,
   processEmotes,
   reapHsIdleEmoteRows,
+  registerClickPastedRef,
   rememberBlockedEmote,
   removedEmoteFallback,
   replaceSenderEmotes,

@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "닫기"
+  },
+  "mc_picker_favorites": {
+    "message": "즐겨찾기"
+  },
+  "mc_fav_add": {
+    "message": "즐겨찾기에 추가"
+  },
+  "mc_fav_remove": {
+    "message": "즐겨찾기에서 제거"
+  },
+  "mc_fav_full": {
+    "message": "즐겨찾기가 가득 찼습니다 — 먼저 하나를 제거하세요"
   }
 }

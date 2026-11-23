@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "tutup"
+  },
+  "mc_picker_favorites": {
+    "message": "favorit"
+  },
+  "mc_fav_add": {
+    "message": "tambahkan ke favorit"
+  },
+  "mc_fav_remove": {
+    "message": "hapus dari favorit"
+  },
+  "mc_fav_full": {
+    "message": "favorit penuh — hapus satu dulu"
   }
 }

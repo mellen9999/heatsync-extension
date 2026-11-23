@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "lukk"
+  },
+  "mc_picker_favorites": {
+    "message": "favoritter"
+  },
+  "mc_fav_add": {
+    "message": "legg til i favoritter"
+  },
+  "mc_fav_remove": {
+    "message": "fjern fra favoritter"
+  },
+  "mc_fav_full": {
+    "message": "favoritter er fulle — fjern én først"
   }
 }

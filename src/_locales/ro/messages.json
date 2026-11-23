@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "închide"
+  },
+  "mc_picker_favorites": {
+    "message": "favorite"
+  },
+  "mc_fav_add": {
+    "message": "adaugă la favorite"
+  },
+  "mc_fav_remove": {
+    "message": "elimină din favorite"
+  },
+  "mc_fav_full": {
+    "message": "favorite pline — elimină mai întâi unul"
   }
 }

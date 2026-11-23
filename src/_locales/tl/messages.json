@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "isara"
+  },
+  "mc_picker_favorites": {
+    "message": "mga paborito"
+  },
+  "mc_fav_add": {
+    "message": "idagdag sa mga paborito"
+  },
+  "mc_fav_remove": {
+    "message": "alisin sa mga paborito"
+  },
+  "mc_fav_full": {
+    "message": "puno na ang mga paborito — mag-alis muna ng isa"
   }
 }

@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "sluiten"
+  },
+  "mc_picker_favorites": {
+    "message": "favorieten"
+  },
+  "mc_fav_add": {
+    "message": "toevoegen aan favorieten"
+  },
+  "mc_fav_remove": {
+    "message": "verwijderen uit favorieten"
+  },
+  "mc_fav_full": {
+    "message": "favorieten vol — verwijder er eerst een"
   }
 }

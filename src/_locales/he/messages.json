@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "סגור"
+  },
+  "mc_picker_favorites": {
+    "message": "מועדפים"
+  },
+  "mc_fav_add": {
+    "message": "הוסף למועדפים"
+  },
+  "mc_fav_remove": {
+    "message": "הסר מהמועדפים"
+  },
+  "mc_fav_full": {
+    "message": "המועדפים מלאים — הסר אחד קודם"
   }
 }

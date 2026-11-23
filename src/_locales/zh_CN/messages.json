@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "关闭"
+  },
+  "mc_picker_favorites": {
+    "message": "收藏"
+  },
+  "mc_fav_add": {
+    "message": "加入收藏"
+  },
+  "mc_fav_remove": {
+    "message": "取消收藏"
+  },
+  "mc_fav_full": {
+    "message": "收藏已满 — 请先移除一个"
   }
 }

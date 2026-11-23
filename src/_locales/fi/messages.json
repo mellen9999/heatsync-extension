@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "sulje"
+  },
+  "mc_picker_favorites": {
+    "message": "suosikit"
+  },
+  "mc_fav_add": {
+    "message": "lisää suosikkeihin"
+  },
+  "mc_fav_remove": {
+    "message": "poista suosikeista"
+  },
+  "mc_fav_full": {
+    "message": "suosikit täynnä — poista ensin yksi"
   }
 }

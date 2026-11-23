@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "ปิด"
+  },
+  "mc_picker_favorites": {
+    "message": "รายการโปรด"
+  },
+  "mc_fav_add": {
+    "message": "เพิ่มในรายการโปรด"
+  },
+  "mc_fav_remove": {
+    "message": "นำออกจากรายการโปรด"
+  },
+  "mc_fav_full": {
+    "message": "รายการโปรดเต็มแล้ว — นำออกหนึ่งรายการก่อน"
   }
 }

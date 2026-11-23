@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "κλείσιμο"
+  },
+  "mc_picker_favorites": {
+    "message": "αγαπημένα"
+  },
+  "mc_fav_add": {
+    "message": "προσθήκη στα αγαπημένα"
+  },
+  "mc_fav_remove": {
+    "message": "αφαίρεση από τα αγαπημένα"
+  },
+  "mc_fav_full": {
+    "message": "τα αγαπημένα γέμισαν — αφαίρεσε πρώτα ένα"
   }
 }

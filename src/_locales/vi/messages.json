@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "đóng"
+  },
+  "mc_picker_favorites": {
+    "message": "yêu thích"
+  },
+  "mc_fav_add": {
+    "message": "thêm vào yêu thích"
+  },
+  "mc_fav_remove": {
+    "message": "xóa khỏi yêu thích"
+  },
+  "mc_fav_full": {
+    "message": "yêu thích đã đầy — hãy xóa một mục trước"
   }
 }

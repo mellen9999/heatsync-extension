@@ -7463,5 +7463,17 @@
   },
   "common_close": {
     "message": "close"
+  },
+  "mc_picker_favorites": {
+    "message": "favorites"
+  },
+  "mc_fav_add": {
+    "message": "add to favorites"
+  },
+  "mc_fav_remove": {
+    "message": "remove from favorites"
+  },
+  "mc_fav_full": {
+    "message": "favorites full — remove one first"
   }
 }

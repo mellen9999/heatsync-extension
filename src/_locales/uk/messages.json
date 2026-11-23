@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "закрити"
+  },
+  "mc_picker_favorites": {
+    "message": "обране"
+  },
+  "mc_fav_add": {
+    "message": "додати в обране"
+  },
+  "mc_fav_remove": {
+    "message": "прибрати з обраного"
+  },
+  "mc_fav_full": {
+    "message": "обране заповнене — спершу прибери один"
   }
 }

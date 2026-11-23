@@ -7445,5 +7445,17 @@
   },
   "common_close": {
     "message": "閉じる"
+  },
+  "mc_picker_favorites": {
+    "message": "お気に入り"
+  },
+  "mc_fav_add": {
+    "message": "お気に入りに追加"
+  },
+  "mc_fav_remove": {
+    "message": "お気に入りから削除"
+  },
+  "mc_fav_full": {
+    "message": "お気に入りがいっぱいです — 先に1つ削除してください"
   }
 }

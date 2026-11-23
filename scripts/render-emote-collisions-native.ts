@@ -6,9 +6,15 @@
  * The word W exists in the channel (ffz + 7tv + bttv: three pictures), in globals and in the
  * viewer's inventory — six distinct urls. Raw PRIVMSGs come over a local wss mock (twitch is
  * never contacted):
- *   a. another chatter's bare W            -> the channel ffz W   (rules 3, 4)
- *   b. a line with an IRC emotes= tag on W -> the twitch emote    (rule 1)
- *   c. a line whose sender set holds W=X   -> X                   (rule 2)
+ *   a. another chatter's bare W            -> the channel ffz W   (the room)
+ *   b. a line with an IRC emotes= tag on W -> the twitch emote    (a platform token)
+ *   c. a chatter who saved their own W     -> still the channel ffz W: a typed word is the room's
+ *   d. her Solo, which the channel has not -> her Solo             (the sender's own, below the room)
+ *   e. her app says she PICKED her W       -> her W on that line; her earlier line keeps the channel's
+ *   f. a row that beat its pick here       -> redrawn with the pick when it lands
+ *   g. you type "W Mine" in the site's box -> the room is told Mine only, never your saved W
+ *   h. the streamer's own heatsync emote   -> draws, and leads a 7tv emote of its name
+ * (the emote law: the site's docs/emote-law.md; src/content/native-emote-law.js)
  * then right-click another chatter's W: it is blocked, the viewer's own W is NOT removed, and
  * only that exact emote hides (rules 9, 10).
  */
@@ -29,7 +35,10 @@ const E = (n: string) => `https://cdn.heatsync.org/emote/${n}.png`
 //                                              (MAIN world, reads the react fiber) - fixture sets the attribute directly
 //  .chat-author__display-name                = the sender name span
 //  span.text-fragment                        = react's text run; <img.chat-image alt=W> = twitch's own emote img
-const body = '<div id="host-content" style="height:100vh"><div class="chat-scrollable-area__message-container" id="list"></div></div>'
+//  [data-a-target="chat-input"]            = twitch's own box (a contenteditable)
+const body =
+  '<div id="host-content" style="height:100vh"><div class="chat-scrollable-area__message-container" id="list"></div>' +
+  '<div data-a-target="chat-input" contenteditable="true" id="box" style="position:fixed;bottom:0;left:0;width:400px;height:30px;background:#222;color:#fff"></div></div>'
 const html = `<!doctype html><html><head><title>fixture</title></head><body style="margin:0">${body}</body></html>`
 
 const failures: string[] = []
@@ -60,13 +69,18 @@ const c = await launchWithExtension(prof, [
 const errors: string[] = []
 try {
   await c.route('https://heatsync.org/**', (r: any) => r.abort())
-  // the sender set for chatter 222 (rule 2): their W is the picture X
+  // the sender set for chatter 222: her own W (a name the channel has) and her Solo (one it has not)
   await c.route('https://heatsync.org/api/users/emotes/batch**', (r: any) =>
     r.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        sets: { 'twitch:222': [{ name: 'W', url: E('W_sender'), hash: 'senderhash', added_at: '2020-01-01T00:00:00Z', source: 'extension' }] },
+        sets: {
+          'twitch:222': [
+            { name: 'W', url: E('W_sender'), hash: 'senderhash', added_at: '2020-01-01T00:00:00Z', source: 'extension' },
+            { name: 'Solo', url: E('Solo_sender'), hash: 'solohash', added_at: '2020-01-01T00:00:00Z', source: 'extension' },
+          ],
+        },
         vers: {},
       }),
     }),
@@ -92,9 +106,12 @@ try {
       heatsync_multichat: { channels: [{ id: 'probechan', twitch: 'probechan', kick: '', youtube: '' }] },
       user_info: { username: 'probeuser' },
       global_emotes: [{ name: 'W', url: u.W_global, source: '7tv', hash: 'globalhash' }],
-      emote_inventory: [{ name: 'W', url: u.W_inv, source: 'heatsync', hash: 'invhash' }],
+      emote_inventory: [
+        { name: 'W', url: u.W_inv, source: 'heatsync', hash: 'invhash' },
+        { name: 'Mine', url: u.Mine_inv, source: 'heatsync', hash: 'minehash' },
+      ],
     })
-  }, Object.fromEntries(['W_global', 'W_inv', 'W_bttv', 'W_7tv', 'W_ffz'].map((n) => [n, E(n)])))
+  }, Object.fromEntries(['W_global', 'W_inv', 'Mine_inv', 'W_bttv', 'W_7tv', 'W_ffz'].map((n) => [n, E(n)])))
   // the per-site "hs off" lives in storage.sync (ui_settings.subsystems), read once at boot
   await seed.evaluate(async () => {
     // @ts-ignore — extension page
@@ -114,6 +131,10 @@ try {
     { name: 'W', url: E('W_bttv'), source: 'bttv', hash: 'bttvhash' },
     { name: 'W', url: E('W_7tv'), source: '7tv', hash: 'stvhash' },
     { name: 'W', url: E('W_ffz'), source: 'ffz', hash: 'ffzhash' },
+    // the streamer's own heatsync emotes: no `source`, as the background maps them (mapChannelOwnerEmote)
+    { name: 'Own', url: E('Own_streamer'), hash: 'ownerhash', provider: 'heatsync' },
+    { name: 'Dup', url: E('Dup_streamer'), hash: 'dupownerhash', provider: 'heatsync' },
+    { name: 'Dup', url: E('Dup_7tv'), source: '7tv', hash: 'dup7tvhash' },
   ]] as [string, unknown[]])
 
   await seed.close()
@@ -127,6 +148,10 @@ try {
     { name: 'W', url: E('W_bttv'), source: 'bttv', hash: 'bttvhash' },
     { name: 'W', url: E('W_7tv'), source: '7tv', hash: 'stvhash' },
     { name: 'W', url: E('W_ffz'), source: 'ffz', hash: 'ffzhash' },
+    // the streamer's own heatsync emotes: no `source`, as the background maps them (mapChannelOwnerEmote)
+    { name: 'Own', url: E('Own_streamer'), hash: 'ownerhash', provider: 'heatsync' },
+    { name: 'Dup', url: E('Dup_streamer'), hash: 'dupownerhash', provider: 'heatsync' },
+    { name: 'Dup', url: E('Dup_7tv'), source: '7tv', hash: 'dup7tvhash' },
   ]
   await sw.evaluate(async (emotes: any[]) => {
     // @ts-ignore — service worker globals
@@ -149,9 +174,16 @@ try {
         (native ? '<span class="text-fragment"><img class="chat-image" alt="W" src="https://static-cdn.jtvnw.net/emoticons/v2/555/default/dark/1.0"></span>' : '')
       document.getElementById('list')!.appendChild(row)
     }
+    ;(window as any).__add = add
     add('alice', 111, 'alpha', false)
     add('bobtag', 333, 'beta', true)
     add('carol', 222, 'gamma', false)
+    add('alice', 111, 'omega Own Dup then', false)
+    const solo = document.createElement('div')
+    solo.className = 'chat-line__message'
+    solo.setAttribute('data-user-id', '222')
+    solo.innerHTML = '<span class="chat-author__display-name">carol</span>: <span class="text-fragment">delta Solo</span>'
+    document.getElementById('list')!.appendChild(solo)
   })
   await p.waitForTimeout(4000)
 
@@ -166,9 +198,56 @@ try {
   check(a.src.includes('W_ffz'), `a. another chatter's bare W draws the channel ffz W (got ${a.src || 'nothing'})`)
   const b = await imgOf('beta')
   check(b.src.includes('/555/') && !b.wrapped, `b. twitch's own emote img is left alone (got ${b.src || 'nothing'}, wrapped ${b.wrapped})`)
-  const cc = await imgOf('gamma')
-  check(cc.src.includes('W_sender'), `c. the sender-set W draws the sender's picture (got ${cc.src || 'nothing'})`)
+  let cc = await imgOf('gamma')
+  check(cc.src.includes('W_ffz'), `c. a chatter's saved W does not take the channel's name: her typed W is the channel ffz W (got ${cc.src || 'nothing'})`)
+  const dd = await imgOf('delta')
+  check(dd.src.includes('Solo_sender'), `d. her Solo, a name the channel has not, draws her picture (got ${dd.src || 'nothing'})`)
+  const hh: string[] = await p.evaluate(() => {
+    const row = [...document.querySelectorAll('.chat-line__message')].find((r) => (r.textContent || '').includes('omega'))
+    return [...(row?.querySelectorAll('.heatsync-emote-wrapper > img:first-child') || [])].map((i) => i.getAttribute('src') || '')
+  })
+  check(hh.length === 3 && hh[0].includes('Own_streamer') && hh[1].includes('Dup_streamer') && hh[2].includes('W_ffz'), `h. the streamer's own emotes draw and lead a 7tv emote of the same name (got ${JSON.stringify(hh)})`)
   check(a.state !== 'owned' && cc.state !== 'owned', `other chatters' W are not labelled yours (states ${a.state}, ${cc.state})`)
+
+  // e. her app announces a pick (what a send does when she chose her own W on purpose): the line
+  // that comes with it draws her W; the line she sent before, by hand, keeps the channel's
+  const announce = (username: string, hash: string, pic: string) =>
+    sw.evaluate(([u, h, url]: string[]) => {
+      // @ts-ignore — service worker globals
+      broadcastToTabs({ type: 'emote_broadcast', username: u, emoteName: 'W', emoteData: { url, hash: h } })
+    }, [username, hash, E(pic)])
+  await announce('carol', 'senderhash', 'W_sender')
+  await p.evaluate(() => (window as any).__add('carol', 222, 'epsilon', false))
+  await until(p, async () => (await imgOf('epsilon')).wrapped, 6000)
+  const ee = await imgOf('epsilon')
+  check(ee.src.includes('W_sender'), `e. a W she picked on purpose draws her W on that line (got ${ee.src || 'nothing'})`)
+  cc = await imgOf('gamma')
+  check(cc.src.includes('W_ffz'), `e. her earlier hand-typed W keeps the channel's picture (got ${cc.src || 'nothing'})`)
+
+  // f. the row lands first, the pick a moment later
+  await p.evaluate(() => (window as any).__add('dave', 444, 'zeta', false))
+  await until(p, async () => (await imgOf('zeta')).wrapped, 6000)
+  const before = await imgOf('zeta')
+  await announce('dave', 'davehash', 'W_dave')
+  await until(p, async () => (await imgOf('zeta')).src.includes('W_dave'), 4000)
+  const ff = await imgOf('zeta')
+  check(before.src.includes('W_ffz') && ff.src.includes('W_dave'), `f. a row that beat its pick is redrawn with it (before ${before.src || 'nothing'}, after ${ff.src || 'nothing'})`)
+
+  // g. the viewer types into the site's own box: W is the channel's (told to nobody), Mine is
+  // theirs and the channel has none (told). The old send told the room about both.
+  await sw.evaluate(() => {
+    // @ts-ignore — service worker globals
+    globalThis.__told = []
+    // @ts-ignore
+    broadcastEmoteUsage = (name: string, hash: string) => (globalThis.__told.push(`${name}=${hash}`), { success: true })
+  })
+  await p.click('#box')
+  await p.keyboard.type('W Mine hi W')
+  await p.keyboard.press('Enter')
+  await p.waitForTimeout(800)
+  // @ts-ignore — service worker globals
+  const told: string[] = await sw.evaluate(() => globalThis.__told)
+  check(JSON.stringify(told) === JSON.stringify(['Mine=minehash']), `g. typing "W Mine hi W" tells the room about Mine only (told: ${JSON.stringify(told)})`)
 
   const rc = async (word: string, tag: string) => {
     await p.evaluate(([w, t]: string[]) => {
@@ -199,12 +278,12 @@ try {
   check(blockedA.state === 'blocked' && blockedA.src.includes('W_ffz'), `alice's blocked W stays the blocked ffz W, no fall-through (state ${blockedA.state}, src ${blockedA.src})`)
   const mid = await imgOf('beta')
   check(mid.src.includes('/555/'), 'the twitch emote still shows')
-  await rc('gamma', 'carol')
+  await rc('epsilon', 'carol')
   bl = await blockedNow()
-  check(bl.includes('senderhash'), `right-click on carol's W (shares your W's name) blocks her emote (blocked: ${JSON.stringify(bl)})`)
+  check(bl.includes('senderhash'), `right-click on the W carol picked (shares your W's name) blocks her emote (blocked: ${JSON.stringify(bl)})`)
   check(!bl.includes('invhash'), 'your own inventory W is not blocked')
-  const blockedC = await imgOf('gamma')
-  check(blockedC.state === 'blocked' && blockedC.src.includes('W_sender'), `carol's blocked W stays her sender-set W (state ${blockedC.state}, src ${blockedC.src})`)
+  const blockedC = await imgOf('epsilon')
+  check(blockedC.state === 'blocked' && blockedC.src.includes('W_sender'), `carol's blocked W stays the W she picked (state ${blockedC.state}, src ${blockedC.src})`)
   const dbg = await c.newPage()
   await dbg.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
   const invNames: string[] = await dbg.evaluate(async () => {

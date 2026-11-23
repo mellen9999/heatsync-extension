@@ -837,6 +837,7 @@ const ENTRY_MODULES = {
     'multichat/filter-rules.js',
     'multichat/filter-rules-legacy.js',
     'content/native-filter-rules.js',
+    'content/native-emote-law.js',
     'content/site-nodes.js',
     'multichat/x-glyph.js',
     'multichat/emote-rungs.js',

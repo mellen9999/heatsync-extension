@@ -6,7 +6,11 @@
  * Rows are injected into a fixture kick.com page (see the stand-ins below); the overlay is off.
  *   a. another chatter's bare W          -> the channel ffz W   (rules 3, 4)
  *   b. kick's own emote img on W         -> left alone          (rule 1: the platform token is exact)
- *   c. a row whose sender set holds W=X  -> X                   (rule 2; sender key kick:<name>)
+ *   c. a chatter who saved their own W   -> still the channel ffz W: a typed word is the room's
+ *   d. her Solo, which the channel has not -> her Solo           (the sender's own; sender key kick:<name>)
+ *   e. her app says she PICKED her W     -> her W on that line; her earlier line keeps the channel's
+ *   f. a row that beat its pick here     -> redrawn with the pick when it lands
+ * (the emote law: the site's docs/emote-law.md; src/content/native-emote-law.js)
  * then right-click: only that exact emote's key is stored, the viewer's own W is untouched (rules 9, 10).
  */
 import { mkdtempSync, rmSync } from 'node:fs'
@@ -58,13 +62,18 @@ const c = await launchWithExtension(prof, [
 const errors: string[] = []
 try {
   await c.route('https://heatsync.org/**', (r: any) => r.abort())
-  // the sender set for chatter 222 (rule 2): their W is the picture X
+  // the sender set for carol: her own W (a name the channel has) and her Solo (one it has not)
   await c.route('https://heatsync.org/api/users/emotes/batch**', (r: any) =>
     r.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        sets: { 'kick:carol': [{ name: 'W', url: E('W_sender'), hash: 'senderhash', added_at: '2020-01-01T00:00:00Z', source: 'extension' }] },
+        sets: {
+          'kick:carol': [
+            { name: 'W', url: E('W_sender'), hash: 'senderhash', added_at: '2020-01-01T00:00:00Z', source: 'extension' },
+            { name: 'Solo', url: E('Solo_sender'), hash: 'solohash', added_at: '2020-01-01T00:00:00Z', source: 'extension' },
+          ],
+        },
         vers: {},
       }),
     }),
@@ -145,9 +154,14 @@ try {
       row.innerHTML = `<button class="inline font-bold">${user}</button>: <span class="font-normal">${pre} ${native ? '<img alt="W" data-emote-id="555" src="https://files.kick.com/emotes/555/fullsize">' : 'W'}</span>`
       document.getElementById('list')!.appendChild(row)
     }
+    ;(window as any).__add = add
     add('alice', 111, 'alpha', false)
     add('bobtag', 333, 'beta', true)
     add('carol', 222, 'gamma', false)
+    const solo = document.createElement('div')
+    solo.setAttribute('data-index', '223')
+    solo.innerHTML = '<button class="inline font-bold">carol</button>: <span class="font-normal">delta Solo</span>'
+    document.getElementById('list')!.appendChild(solo)
   })
   await p.waitForTimeout(4000)
 
@@ -162,9 +176,34 @@ try {
   check(a.src.includes('W_ffz'), `a. another chatter's bare W draws the channel ffz W (got ${a.src || 'nothing'})`)
   const b = await imgOf('beta')
   check(b.src.includes('/emotes/555/') && !b.wrapped, `b. kick's own emote img is left alone (got ${b.src || 'nothing'}, wrapped ${b.wrapped})`)
-  const cc = await imgOf('gamma')
-  check(cc.src.includes('W_sender'), `c. the sender-set W draws the sender's picture (got ${cc.src || 'nothing'})`)
+  let cc = await imgOf('gamma')
+  check(cc.src.includes('W_ffz'), `c. a chatter's saved W does not take the channel's name: her typed W is the channel ffz W (got ${cc.src || 'nothing'})`)
+  const dd = await imgOf('delta')
+  check(dd.src.includes('Solo_sender'), `d. her Solo, a name the channel has not, draws her picture (got ${dd.src || 'nothing'})`)
   check(a.state !== 'owned' && cc.state !== 'owned', `other chatters' W are not labelled yours (states ${a.state}, ${cc.state})`)
+
+  // e. her app announces a pick: the line that comes with it draws her W, the earlier one keeps the channel's
+  const announce = (username: string, hash: string, pic: string) =>
+    sw.evaluate(([u, h, url]: string[]) => {
+      // @ts-ignore — service worker globals
+      broadcastToTabs({ type: 'emote_broadcast', username: u, emoteName: 'W', emoteData: { url, hash: h } })
+    }, [username, hash, E(pic)])
+  await announce('carol', 'senderhash', 'W_sender')
+  await p.evaluate(() => (window as any).__add('carol', 224, 'epsilon', false))
+  await until(p, async () => (await imgOf('epsilon')).wrapped, 6000)
+  const ee = await imgOf('epsilon')
+  check(ee.src.includes('W_sender'), `e. a W she picked on purpose draws her W on that line (got ${ee.src || 'nothing'})`)
+  cc = await imgOf('gamma')
+  check(cc.src.includes('W_ffz'), `e. her earlier hand-typed W keeps the channel's picture (got ${cc.src || 'nothing'})`)
+
+  // f. the row lands first, the pick a moment later
+  await p.evaluate(() => (window as any).__add('dave', 444, 'zeta', false))
+  await until(p, async () => (await imgOf('zeta')).wrapped, 6000)
+  const before = await imgOf('zeta')
+  await announce('dave', 'davehash', 'W_dave')
+  await until(p, async () => (await imgOf('zeta')).src.includes('W_dave'), 4000)
+  const ff = await imgOf('zeta')
+  check(before.src.includes('W_ffz') && ff.src.includes('W_dave'), `f. a row that beat its pick is redrawn with it (before ${before.src || 'nothing'}, after ${ff.src || 'nothing'})`)
 
   const rc = async (word: string, tag: string) => {
     await p.evaluate(([w, t]: string[]) => {
@@ -195,12 +234,12 @@ try {
   check(blockedA.state === 'blocked' && blockedA.src.includes('W_ffz'), `alice's blocked W stays the blocked ffz W, no fall-through (state ${blockedA.state}, src ${blockedA.src})`)
   const mid = await imgOf('beta')
   check(mid.src.includes('/emotes/555/'), 'the kick emote still shows')
-  await rc('gamma', 'carol')
+  await rc('epsilon', 'carol')
   bl = await blockedNow()
-  check(bl.includes('senderhash'), `right-click on carol's W (shares your W's name) blocks her emote (blocked: ${JSON.stringify(bl)})`)
+  check(bl.includes('senderhash'), `right-click on the W carol picked (shares your W's name) blocks her emote (blocked: ${JSON.stringify(bl)})`)
   check(!bl.includes('invhash'), 'your own inventory W is not blocked')
-  const blockedC = await imgOf('gamma')
-  check(blockedC.state === 'blocked' && blockedC.src.includes('W_sender'), `carol's blocked W stays her sender-set W (state ${blockedC.state}, src ${blockedC.src})`)
+  const blockedC = await imgOf('epsilon')
+  check(blockedC.state === 'blocked' && blockedC.src.includes('W_sender'), `carol's blocked W stays the W she picked (state ${blockedC.state}, src ${blockedC.src})`)
   const dbg = await c.newPage()
   await dbg.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
   const invNames: string[] = await dbg.evaluate(async () => {

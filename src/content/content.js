@@ -495,25 +495,26 @@
 
   // Cached allEmotes map — rebuilt only when emote data changes
   let cachedAllEmotes = null
-  // Same as cachedAllEmotes but with viewer-inventory variants stripped. Used as
-  // the channel/global fallback for OTHER senders' messages so the viewer's
-  // personal set doesn't bleed into renders of users who don't actually have
-  // the emote. cachedAllEmotes (with inventory) is still used for own renders
-  // + picker + autocomplete + tab-complete suggestions.
+  // The emote law's tiers for a native row (content/native-emote-law.js), one name -> emote map
+  // each, rebuilt with cachedAllEmotes:
+  //   room      this page's channel: the streamer's own heatsync emotes, then ffz, 7tv, bttv, then
+  //             the platform's. It answers a bare word for EVERY sender, the viewer included
+  //   inventory the viewer's own heatsync emotes: on the viewer's own rows, below the room
+  //   global    the fallback everyone shares
+  let cachedRoomEmotes = null
+  let cachedInventoryEmotes = null
+  let cachedGlobalEmotes = null
+  // The two rows most lines are, as ready maps (no per-row object): someone else's line with no
+  // pick and no set of their own reads room > global; the viewer's own reads room > inventory >
+  // global. The viewer's emotes are in no map another sender's row can see.
   let cachedNonInventoryEmotes = null
-  // Channel-only render map (non-inventory, non-global). Channel emotes are
-  // authoritative in their own channel for EVERY sender, so they must beat a
-  // sender's colliding personal set — but only for names the channel carries;
-  // names it doesn't fall through to the sender's set, then global. Mirrors the
-  // multichat panel's channel > senderEmotes > global order.
-  let cachedChannelEmotes = null
-  // Own-message render map: channel > inventory > global. Channel emotes are
-  // authoritative in their own channel for EVERYONE — so the viewer's own messages
-  // render a channel emote identically to how other chatters see it. Inventory still
-  // fills every name the channel doesn't carry (emote sovereignty preserved). Without
-  // this, a personal-inventory emote sharing a name with a (different) channel emote
-  // made the viewer's own messages diverge from the rest of chat.
   let cachedOwnEmotes = null
+  // twitch emotes the viewer may post anywhere (twitch's globals, their subs): twitch marks those
+  // words itself, so a send never announces a look-alike for one
+  let twitchOwnNames = new Set()
+  // The picks of the draft in the site's own box: name -> { hash, seen }, noted when a tile of our
+  // picker pastes the word. The draft's own: gone with the line, or when its word leaves the box.
+  const nativeDraftPicks = new Map()
   // name → emote[] in priority order (inventory[0], channel[1..], global[N..]).
   // Same-named emotes from different sources are kept as siblings so right-click
   // block on the active one swaps to the next non-blocked variant in DOM.
@@ -2646,6 +2647,20 @@
       pendingBroadcastsByUser.get(user).set(emoteName, data)
     }
   }
+  // When each row was first seen, and how long after that a pick can still be its own: the row
+  // and the pick leave the sender together and arrive within a moment of each other.
+  const rowSeenAt = new WeakMap()
+  const PICK_RACE_MS = 3000
+  // A line's pick, held for the row it belongs to: 10 seconds, long enough for the row and the
+  // word to arrive in either order, short enough that it cannot draw a later line. A newer hold
+  // of the same key outlives an older one's timer.
+  function _holdBroadcast(key, emoteData) {
+    const held = { ...emoteData, addedAt: Date.now() }
+    _addBroadcast(key, held)
+    cleanup.setTimeout(() => {
+      if (pendingEmoteBroadcasts.get(key) === held) _deleteBroadcast(key)
+    }, 10000)
+  }
   function _deleteBroadcast(key) {
     pendingEmoteBroadcasts.delete(key)
     const colon = key.indexOf(':')
@@ -2696,6 +2711,10 @@
     allEmotesDirty = false
     cachedAllEmotes = new Map()
     cachedAllEmoteVariants = new Map()
+    cachedRoomEmotes = new Map()
+    cachedInventoryEmotes = new Map()
+    cachedGlobalEmotes = new Map()
+    twitchOwnNames = new Set()
 
     // Normalize + push a variant into the per-name array. Inventory variants
     // go first (highest priority), then channel, then global. Dedupe by hash so
@@ -2714,6 +2733,11 @@
         url.includes('cdn.betterttv.net') ||
         url.includes('cdn.frankerfacez.com') ||
         url.includes('static-cdn.jtvnw.net')
+      // The law's tiers, before the variant dedupe below: a room emote that is the very picture
+      // the viewer also owns is still the room's. Each pool arrives winner first.
+      const tier =
+        source === 'inventory' ? cachedInventoryEmotes : source === 'global' ? cachedGlobalEmotes : cachedRoomEmotes
+      if (!tier.has(emote.name)) tier.set(emote.name, norm)
       let arr = cachedAllEmoteVariants.get(emote.name)
       if (!arr) {
         arr = []
@@ -2727,14 +2751,17 @@
     // Subscription emotes are skipped: Twitch's native DOM gates them via the
     // IRC emotes= tag, so re-imagifying them would surface them for non-entitled senders.
     emoteInventory.forEach((emote) => {
-      if (emote.subscription) return
+      if (emote.subscription) {
+        twitchOwnNames.add(emote.name)
+        return
+      }
       _addVariant(emote, 'inventory')
     })
 
-    // Channel emotes (third-party only — BTTV/FFZ/7TV/Twitch).
+    // Channel emotes: the streamer's own heatsync emotes (no `source`; rankEmotePool keeps them in
+    // front), then ffz, 7tv, bttv, then the platform's.
     // Skip Twitch sub/follower/bits-tier emotes for the same reason as above.
     rankEmotePool(channelEmotes, 'channel').forEach((emote) => {
-      if (!emote.source) return
       if (
         emote.source === 'twitch' &&
         (emote.tier ||
@@ -2748,6 +2775,7 @@
 
     // Global emotes LAST (lowest priority, fallback only).
     rankEmotePool(globalEmotes, 'global').forEach((emote) => {
+      if (emote.source === 'twitch') twitchOwnNames.add(emote.name)
       _addVariant(emote, 'global')
     })
 
@@ -2756,24 +2784,9 @@
     for (const [name, variants] of cachedAllEmoteVariants) {
       cachedAllEmotes.set(name, variants[0])
     }
-    // cachedNonInventoryEmotes: first non-inventory variant per name. Channel
-    // and global variants only — what other senders can legitimately render.
-    cachedNonInventoryEmotes = new Map()
-    for (const [name, variants] of cachedAllEmoteVariants) {
-      const v = variants.find((x) => !x.inInventory)
-      if (v) cachedNonInventoryEmotes.set(name, v)
-    }
-    // cachedOwnEmotes: variants[0] = inventory > channel > global, the sender's choice.
-    cachedOwnEmotes = new Map()
-    cachedChannelEmotes = new Map()
-    for (const [name, variants] of cachedAllEmoteVariants) {
-      const channelV = variants.find((x) => !x.inInventory && !x.isGlobal)
-      // Your own line is YOUR pick (rule 6: inventory → channel → globals), the same picture
-      // the composer chip showed when you sent it — variants[0] is the inventory copy when
-      // you hold the name. Channel emotes only fill names you don't hold.
-      cachedOwnEmotes.set(name, variants[0])
-      if (channelV) cachedChannelEmotes.set(name, channelV)
-    }
+    // The two ready rows (see their declarations): later maps only fill names the earlier leave.
+    cachedNonInventoryEmotes = new Map([...cachedGlobalEmotes, ...cachedRoomEmotes])
+    cachedOwnEmotes = new Map([...cachedGlobalEmotes, ...cachedInventoryEmotes, ...cachedRoomEmotes])
 
     // Rebuild O(1) lookup sets
     inventoryHashSet = new Set()
@@ -3468,25 +3481,10 @@
           }
           // Another user sent an emote, store for upcoming message
           const broadcastKey = `${message.username.toLowerCase()}:${message.emoteName}`
-          log(' 📥 RECEIVED BROADCAST:', {
-            username: message.username,
-            emoteName: message.emoteName,
-            key: broadcastKey,
-            emoteUrl: message.emoteData?.url,
-            pendingCount: pendingEmoteBroadcasts.size,
-          })
-          _addBroadcast(broadcastKey, { ...message.emoteData, addedAt: Date.now() })
+          _holdBroadcast(broadcastKey, message.emoteData)
 
           // Retroactively process recent messages from this user
           retroactivelyProcessBroadcast(message.username, message.emoteName, message.emoteData)
-
-          // Clear after 10 seconds - long enough for race conditions, short enough to prevent stale renders
-          cleanup.setTimeout(() => {
-            if (pendingEmoteBroadcasts.has(broadcastKey)) {
-              log(' ⏰ Broadcast expired:', broadcastKey)
-              _deleteBroadcast(broadcastKey)
-            }
-          }, 10000)
           break
         }
 
@@ -4684,26 +4682,6 @@
   }
 
   // Get current user's username from Twitch DOM
-  // First layer that has the name wins (null layers skipped). Order IS the precedence.
-  function layeredEmoteMap(layers) {
-    const live = layers.filter(Boolean)
-    return {
-      get(name) {
-        for (const m of live) {
-          const e = m.get(name)
-          if (e) return e
-        }
-        return undefined
-      },
-      has(name) {
-        return live.some((m) => m.has(name))
-      },
-      get size() {
-        return live.reduce((n, m) => n + m.size, 0)
-      },
-    }
-  }
-
   // Drop owner-tier entries (no `source`) the inventory no longer holds; every sourced entry stays.
   function pruneOwnerTier(channelList, inventory) {
     const held = new Set(inventory.map((e) => e.hash))
@@ -5472,6 +5450,7 @@
   // Process individual message for emote replacement
   function processMessage(messageElement) {
     if (!messageElement?.isConnected) return
+    if (!rowSeenAt.has(messageElement)) rowSeenAt.set(messageElement, performance.now())
     if (messageElement.dataset.heatsyncGeneration === emoteGeneration) return
 
     messageElement.dataset.heatsyncGeneration = emoteGeneration
@@ -5626,27 +5605,26 @@
     // Guard: emotes not yet loaded — reprocess will catch this message once inventory arrives
     if (cachedAllEmotes === null) return
 
-    // 2-tier lookup: cached base + per-user broadcast emotes (avoids cloning entire Map)
-    // Fast path: skip broadcast scan when no broadcasts pending (common case)
-    // For our own messages, skip broadcasts — our inventory is authoritative
+    // Which emote each word is: the emote law's read order (content/native-emote-law.js).
+    //   the line's pick > the sender's personal set > the room > the sender's own > globals
+    // A typed word is the room's emote for everyone, whoever also owns a copy of the name; a
+    // sender's own emote draws where the room has none, or when their app said they picked it.
     let allEmotes
     const currentUser = getCurrentUsername()
     const isOwnMessage = currentUser && lowerUser && lowerUser === currentUser.toLowerCase()
-    // Sender's persistent heatsync/personal set (null until fetched or
-    // fetched-empty). Skipped for own messages — our own inventory is authoritative.
+    // The sender's set (null until fetched, or fetched empty)
     let senderKey = ''
-    if (!isOwnMessage) {
-      if (isKick) {
-        const ku = messageElement.dataset.hsCosmeticKickUser
-        if (ku) senderKey = `kick:${ku}`
-      } else if (messageElement.dataset.hsCosmeticUserId) {
-        senderKey = `twitch:${messageElement.dataset.hsCosmeticUserId}`
-      }
+    if (isKick) {
+      const ku = messageElement.dataset.hsCosmeticKickUser
+      if (ku) senderKey = `kick:${ku}`
+    } else if (messageElement.dataset.hsCosmeticUserId) {
+      senderKey = `twitch:${messageElement.dataset.hsCosmeticUserId}`
     }
     const senderSet = senderKey ? senderHeatsyncEmotes.get(senderKey) : null
-    // Live 10s broadcast overlay (highest priority, freshest).
+    // The line's picks: what the sender's app announced for it (lives 10s). Ours too: our own
+    // send comes back from the room like anyone's, so our row is what everyone sees.
     let userBroadcasts = null
-    if (pendingEmoteBroadcasts.size > 0 && username && !isOwnMessage) {
+    if (pendingEmoteBroadcasts.size > 0 && username) {
       const userBroadcastMap = pendingBroadcastsByUser.get(lowerUser)
       if (userBroadcastMap && userBroadcastMap.size > 0) {
         // Defer Map alloc — most messages have no surviving entries after the
@@ -5665,21 +5643,30 @@
         }
       }
     }
-    // Own renders see viewer inventory; other senders see only channel/global +
-    // their own sender_emote_set + live broadcasts. Without this split, mellen
-    // adding "Catge" to inventory would have made every chatter's "Catge" render
-    // as the image even when they don't have the emote in any of their sets.
-    const baseMap = isOwnMessage ? cachedOwnEmotes : cachedNonInventoryEmotes
-    if (!userBroadcasts && (!senderSet || senderSet.size === 0)) {
-      // Fast path — no overlays, no Map alloc.
-      allEmotes = baseMap
+    if (isOwnMessage) {
+      // The same order with our inventory as this page holds it: of the set the server hands
+      // out for us, only the personal half is read. No pick, no personal set: one ready map.
+      const mine = senderSet?.hsPersonal ? senderSet : null
+      allEmotes =
+        userBroadcasts || mine
+          ? hsNativeReadTiers({
+              picks: userBroadcasts,
+              sender: mine,
+              room: cachedRoomEmotes,
+              own: cachedInventoryEmotes,
+              globals: cachedGlobalEmotes,
+            })
+          : cachedOwnEmotes
+    } else if (!userBroadcasts && (!senderSet || senderSet.size === 0)) {
+      // Fast path: no pick, no set of their own. room > globals, no per-row object.
+      allEmotes = cachedNonInventoryEmotes
     } else {
-      // Precedence (rule 2, same as multichat's _lookup): live broadcast > the sender's
-      // persistent set > channel > globals. The sender's pick is the line's pick, so a
-      // chatter's same-name emote beats the room's; baseMap still backstops with channel +
-      // globals for every name the sender doesn't carry. Own messages never reach this
-      // branch (no broadcast/senderSet) → fast path, cachedOwnEmotes (inventory first).
-      allEmotes = layeredEmoteMap([userBroadcasts, senderSet, cachedChannelEmotes, baseMap])
+      allEmotes = hsNativeReadTiers({
+        picks: userBroadcasts,
+        sender: senderSet,
+        room: cachedRoomEmotes,
+        globals: cachedGlobalEmotes,
+      })
     }
 
     // Process ALL text fragments with overlay stacking support
@@ -7596,13 +7583,8 @@
 
   // Retroactively process messages when broadcast arrives
   function retroactivelyProcessBroadcast(username, emoteName, emoteData) {
-    log(' 🔄 Retroactively processing messages for:', username, emoteName)
-
     const chatContainer = findChatContainer()
-    if (!chatContainer) {
-      log(' ⚠️ Chat container not found for retroactive processing')
-      return
-    }
+    if (!chatContainer) return
 
     // Get only the LAST message - retroactive is just for race condition where message
     // appears a split second before broadcast arrives. Old messages should not be replaced.
@@ -7613,7 +7595,6 @@
 
     // Process last 5 messages - handles fast chats where message appears after broadcast
     const recentMessages = Array.from(messages).slice(-5)
-    let processedCount = 0
 
     recentMessages.forEach((messageElement) => {
       const messageUsername = getUsername(messageElement)
@@ -7627,8 +7608,24 @@
       if (!textElement) return
 
       // Skip if emote already replaced (check for existing img with this hash)
-      const alreadyReplaced = textElement.querySelector(`img[data-emote-hash="${emoteData.hash}"]`)
+      const alreadyReplaced = textElement.querySelector(`img[data-emote-hash="${CSS.escape(String(emoteData.hash))}"]`)
       if (alreadyReplaced) return
+
+      // The row beat the pick here and drew the room's (or a global) emote of the name: the pick
+      // is the line's, so give the word back and draw the row again with the pick in hand. Only a
+      // row that just arrived: an older line of theirs was sent before this pick was made.
+      const fresh = performance.now() - (rowSeenAt.get(messageElement) ?? 0) < PICK_RACE_MS
+      let redrawn = false
+      for (const w of fresh ? messageElement.querySelectorAll('.heatsync-emote-wrapper') : []) {
+        if (w.dataset.emoteName !== emoteName || w.closest('.heatsync-emote-stack')) continue
+        w.replaceWith(document.createTextNode(emoteName))
+        redrawn = true
+      }
+      if (redrawn) {
+        messageElement.dataset.heatsyncGeneration = ''
+        processMessage(messageElement)
+        return
+      }
 
       // On kick the words sit in our own spans and kick's text nodes are never swapped out
       // (site-nodes.js). A kick row not drawn yet has none: processMessage draws it with this
@@ -7643,12 +7640,6 @@
           .join('')
         regex.lastIndex = 0
         if (!textContent.match(regex)) continue
-        log(' ✅ RETROACTIVE REPLACE:', {
-          username,
-          emoteName,
-          messageText: textElement.textContent.substring(0, 50),
-        })
-
         replaceEmoteInText(host, {
           name: emoteName,
           url: emoteData.url.startsWith('http') ? emoteData.url : `${API_URL}${emoteData.url}`,
@@ -7656,11 +7647,8 @@
           width: emoteData.width,
           height: emoteData.height,
         })
-        processedCount++
       }
     })
-
-    log(' Retroactively processed', processedCount, 'message(s)')
   }
 
   // Get username from message element
@@ -8000,7 +7988,10 @@
             hash: data.hash || '',
             zeroWidth: !!data.zeroWidth,
             source: data.source,
+            // their 7tv / bttv personal set reads above the room, their heatsync emotes below it
+            personal: data.personal === true,
           })
+          if (data.personal === true) inner.hsPersonal = true
         }
         // Store the Map (or null for fetched-empty); freshness stamp gates re-fetch
         // until the TTL so newly-added emotes propagate without re-fetching forever.
@@ -8034,8 +8025,9 @@
       if (k.startsWith('kick:')) kickUsers.add(id)
       else twitchIds.add(id)
     }
-    // Rule 2: the sender's pick is the line's pick. A row drawn BEFORE their set arrived holds the
-    // channel/global twin of a name they carry; give those words back so the re-pass redraws them.
+    // A row drawn BEFORE their set arrived holds the room's or a global twin of a name they carry.
+    // Give back the words their set now answers (the law's read order): a name in their personal
+    // set, or one of their own emotes the room has none of. A word the room answers stays.
     const reopenSenderWords = (el, key) => {
       const set = senderHeatsyncEmotes.get(key)
       if (!set || set.size === 0) return
@@ -8043,6 +8035,7 @@
         if (w.closest('.heatsync-emote-stack')) continue
         const mine = set.get(w.dataset.emoteName)
         if (!mine || (mine.hash && w.dataset.emoteHash === mine.hash)) continue
+        if (!mine.personal && cachedRoomEmotes?.has(w.dataset.emoteName)) continue
         w.replaceWith(document.createTextNode(w.dataset.emoteName))
       }
     }
@@ -9890,39 +9883,61 @@
           }
           historyIndex = -1
 
-          // Check if message contains any of MY emotes (use cached regex from createEmoteRegex)
-          emoteInventory.forEach((emote) => {
-            if (!emote._outgoingRegex) {
-              emote._outgoingRegex = new RegExp(`\\b${escapeRegex(emote.name)}\\b`)
-            }
-            if (emote._outgoingRegex.test(message)) {
-              // Notify background script to broadcast
-              safeSendMessage({
-                type: 'emote_sent',
-                emoteName: emote.name,
-                emoteHash: emote.hash,
-              })
-                .then((response) => {
-                  if (response?.success) {
-                    log(' ✅ Emote broadcast sent successfully')
-                  } else {
-                    warn(' ⚠️ Emote broadcast FAILED:', response)
-                  }
-                })
-                .catch((err) => {
-                  if (!extensionContextValid) return
-                  // A real (non-teardown) failure must not vanish silently —
-                  // sibling handlers on this path log/toast (see ~10807).
-                  warn(' ⚠️ Emote broadcast error:', err)
-                })
-            }
+          // Tell the room which emotes it cannot work out by itself (content/native-emote-law.js):
+          // a pick made in this draft, or our own emote where the channel has none of that name.
+          // A hand-typed word the channel answers is the channel's: never our saved copy of it.
+          rebuildEmoteMapIfDirty()
+          const me = getCurrentUsername()?.toLowerCase()
+          // our own set as every reader holds it (known once a row of ours was seen here)
+          const myKey = !me ? '' : isKick ? `kick:${me}` : `twitch:${chatterTwitchIds.get(me) || ''}`
+          const told = hsNativeAnnounce(message, {
+            native: isKick ? null : twitchOwnNames,
+            picks: hsPicksOf(nativeDraftPicks, message, cachedInventoryEmotes),
+            personal: hsPersonalOf(senderHeatsyncEmotes.get(myKey)),
+            room: cachedRoomEmotes,
+            inventory: cachedInventoryEmotes,
+            globals: cachedGlobalEmotes,
           })
+          nativeDraftPicks.clear()
+          for (const { name, emote } of told) {
+            if (!emote.hash) continue
+            // our own row draws it at once: the room's answer comes back a beat after the row
+            if (me) _holdBroadcast(`${me}:${name}`, emote)
+            // Notify background script to broadcast
+            safeSendMessage({
+              type: 'emote_sent',
+              emoteName: name,
+              emoteHash: emote.hash,
+            })
+              .then((response) => {
+                if (!response?.success) warn(' ⚠️ Emote broadcast FAILED:', response)
+              })
+              .catch((err) => {
+                if (!extensionContextValid) return
+                // A real (non-teardown) failure must not vanish silently —
+                // sibling handlers on this path log/toast (see ~10807).
+                warn(' ⚠️ Emote broadcast error:', err)
+              })
+          }
         }
       },
       { signal },
     )
 
+    // A pick ends when its word leaves the box (deleted, replaced, the line cleared).
+    chatInput.addEventListener('input', () => hsTrackPicks(nativeDraftPicks, getInputText()), { signal })
+
     log(' Message interceptor attached')
+  }
+
+  // Our picker (heatsync-button.js, this same isolated world) is about to paste an emote into the
+  // site's box: that picture is this draft's pick for the name (the latest one, if the name was
+  // picked before). The send reads it (hsPicksOf): the room is told when it is one of the viewer's
+  // own emotes; the room's emote or a global is what the bare word already means.
+  window.__hsNativePick = (name, hash) => {
+    if (typeof name !== 'string' || !name) return
+    if (typeof hash === 'string' && hash) nativeDraftPicks.set(name, { hash, seen: false })
+    else nativeDraftPicks.delete(name)
   }
 
   // SPA navigation handler — event-driven via early-inject-main.js history hooks

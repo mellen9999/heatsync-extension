@@ -2869,10 +2869,10 @@
             insertEmoteIntoChat(`:${e.name}:`)
           } else if (!isGlobal && !inInventory && isLoggedIn && currentTab !== 'mine') {
             addEmoteToInventorySilent(e)
-              .then(() => insertEmoteIntoChat(e.name))
-              .catch(() => insertEmoteIntoChat(e.name))
+              .then(() => insertEmoteIntoChat(e.name, e.hash))
+              .catch(() => insertEmoteIntoChat(e.name, e.hash))
           } else {
-            insertEmoteIntoChat(e.name)
+            insertEmoteIntoChat(e.name, e.hash)
           }
         })
 
@@ -3520,7 +3520,7 @@
         }
       }
       recordRecentEmote(emote)
-      insertEmoteIntoChat(emote.name)
+      insertEmoteIntoChat(emote.name, emote.hash)
       closePanel()
     }
 
@@ -4715,7 +4715,8 @@
     }
 
     // Insert emote name into Twitch chat input
-    function insertEmoteIntoChat(emoteName) {
+    function insertEmoteIntoChat(emoteName, hash) {
+      window.__hsNativePick?.(emoteName, hash) // a tile is this draft's pick of that picture: content.js, native-emote-law.js
       const platform = window.heatsyncPlatform?.detectPlatform() || 'unknown'
 
       let chatInput
@@ -4759,7 +4760,6 @@
         }
       }
 
-      // Close panel after inserting
       closePanel()
     }
 

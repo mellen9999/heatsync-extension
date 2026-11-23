@@ -167,18 +167,22 @@ function lawAtPeople(q) {
 }
 
 /**
- * The law's list with the people set in: exact names are both kinds (the emote, then the person
- * typed whole), then the room's emotes, the other people, the rest.
+ * The law's list with the people set in, at the two seams the law names (offerSeams): exact names
+ * are both kinds (the emote, then the person typed whole), then the names you use and the room's
+ * emotes, the other people, the rest. Never by reading tiers: a name you use or pinned keeps its
+ * tier and stands ahead of the room.
  */
-function lawWithPeople(list, people) {
+function lawWithPeople(list, people, seams = { exact: 0, room: 0 }) {
   if (!people?.length) return list
   const exact = people.filter((p) => p._b === 0)
   const rest = people.filter((p) => p._b !== 0)
-  let i = 0
-  while (i < list.length && list[i]._c.match === 0) i++
-  let j = i
-  while (j < list.length && list[j]._c.tier === 'room') j++
-  return [...list.slice(0, i), ...exact, ...list.slice(i, j), ...rest, ...list.slice(j)]
+  return [
+    ...list.slice(0, seams.exact),
+    ...exact,
+    ...list.slice(seams.exact, seams.room),
+    ...rest,
+    ...list.slice(seams.room),
+  ]
 }
 
 /**
@@ -186,12 +190,10 @@ function lawWithPeople(list, people) {
  * answer): everything up to the cursor stays where it is, the rest is the fresh ranking minus it.
  */
 function lawTabList(typed, { catalog, emoji, people, prev, cursor = -1 } = {}) {
-  const ctx = lawOfferCtx({ catalog, emoji })
-  const head = prev ? prev.slice(0, cursor + 1) : []
-  const heads = head.filter((m) => m._c).map((m) => m._c)
-  const cands = prev ? hsEmoteLaw.extendOffer(heads, heads.length - 1, typed, ctx) : hsEmoteLaw.offer(typed, ctx)
-  const all = lawWithPeople(cands.map(lawMatchOf), people)
+  const fresh = hsEmoteLaw.offerSeams(typed, lawOfferCtx({ catalog, emoji }))
+  const all = lawWithPeople(fresh.list.map(lawMatchOf), people, fresh)
   if (!prev) return all
+  const head = prev.slice(0, cursor + 1)
   const have = new Set(head.map(lawMatchKey))
   return [...head, ...all.filter((m) => !have.has(lawMatchKey(m)))]
 }

@@ -480,8 +480,20 @@ function gather(ctx: OfferCtx): Cand[] {
  * Copies of one name always sit in send order wherever they land.
  */
 export function offer(typed: string, ctx: OfferCtx, limit?: number): Candidate[] {
+  return offerSeams(typed, ctx, limit).list
+}
+
+/**
+ * The offer, and the two places a client may set something that is not an emote (the room's people)
+ * into it: `exact` candidates are the exact name; the first `room` are those, the names you use and
+ * the room's. The law ranks emotes only, but it alone knows where its groups end: a tier says where
+ * an emote came from, not which group it stands in.
+ */
+export interface Offered { list: Candidate[]; exact: number; room: number }
+
+export function offerSeams(typed: string, ctx: OfferCtx, limit?: number): Offered {
   const q = typed.toLowerCase()
-  if (!q) return []
+  if (!q) return { list: [], exact: 0, room: 0 }
   const pool: Cand[] = []
   for (const c of gather(ctx)) {
     c.match = matchBucket(c.emote.name, q)
@@ -511,6 +523,9 @@ export function offer(typed: string, ctx: OfferCtx, limit?: number): Candidate[]
     if (ga === 9) return b.pop - a.pop || tail(a, b)
     return a.match - b.match || b.use - a.use || b.pop - a.pop || tail(a, b)
   })
+  // counted by slot, before copies trade places inside the slots their name earned
+  let exact = 0, room = 0
+  for (const c of pool) { const g = group(c); if (g === 0) exact++; if (g <= 2) room++ }
   // copies of one name keep the slots they earned, but stand in send order within them
   const slots = new Map<string, number[]>()
   pool.forEach((c, i) => { const l = slots.get(c.emote.name); if (l) l.push(i); else slots.set(c.emote.name, [i]) })
@@ -521,7 +536,10 @@ export function offer(typed: string, ctx: OfferCtx, limit?: number): Candidate[]
     idx.forEach((i, n) => { pool[i] = copies[n]; if (native && n > 0) pool[i].shadowed = true })
   }
   const list = limit && limit > 0 ? pool.slice(0, limit) : pool
-  return list.map(c => (c.shadowed ? { emote: c.emote, tier: c.tier, match: c.match, shadowed: true } : { emote: c.emote, tier: c.tier, match: c.match }))
+  return {
+    list: list.map(c => (c.shadowed ? { emote: c.emote, tier: c.tier, match: c.match, shadowed: true } : { emote: c.emote, tier: c.tier, match: c.match })),
+    exact: Math.min(exact, list.length), room: Math.min(room, list.length),
+  }
 }
 
 /**

@@ -40,6 +40,17 @@ describe('a favorite leads', () => {
     expect(tab(rig, 'og')[0]).toBe(`PogA ${stv('A').url}`)
   })
 
+  test("Tab: a favorite and a name you use lead the room's people, whoever holds them", () => {
+    const rig = world({ room: { PogA: stv('A') }, globals: { PogZ: stv('Z'), PogU: stv('U') } })
+    rig.people.set('pogfan', 'pogfan')
+    const names = () => rig.findEmoteMatches('pog').map((x) => x.name)
+    expect(names()).toEqual(['PogA', 'pogfan', 'PogU', 'PogZ'])
+    expect(rig.hsToggleFavorite('PogZ', stv('Z'))).toBe('added')
+    expect(names()).toEqual(['PogZ', 'PogA', 'pogfan', 'PogU'])
+    rig.frecency.set('PogU', 9)
+    expect(names()).toEqual(['PogZ', 'PogU', 'PogA', 'pogfan'])
+  })
+
   test('the picker: favorites are the first section, in the order pinned, and gone when empty', () => {
     const rig = world({ room: { PogA: stv('A') }, globals: { PogZ: stv('Z') } })
     expect(rig.hsFavSection(rig.where())).toBe(null)

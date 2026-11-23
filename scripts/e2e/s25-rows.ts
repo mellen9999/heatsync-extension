@@ -340,7 +340,8 @@ async function site(env: Env, plat: Plat, url: string, errs: string[]): Promise<
       const hlRe = wordRe(hlW.word)
       const say = (rs: CRow[]) => rs.filter((r) => hlRe.test(r.body) && !hideRe.test(r.body))
       info(`${name}: hide "${hideW.word}" (${hideW.n} rows), highlight "${hlW.word}" (${hlW.n} rows)`)
-      const before = new Set((await chatRows(p)).map((r) => r.key))
+      const beforeRows = await chatRows(p)
+      const before = new Set(beforeRows.map((r) => r.key))
       await writeLocal(env, 'chat_filter_rules', JSON.stringify([rule('e2e-hide', 'hide', hideW.word), rule('e2e-hl', 'highlight', hlW.word)]))
       try {
         await sleep(6000) // the repaint is given its time before anything is judged
@@ -392,14 +393,18 @@ async function site(env: Env, plat: Plat, url: string, errs: string[]): Promise<
       let after = await chatRows(p)
       const stuck = after.filter((r) => r.hl && drawnUnder.has(r.key))
       const seenAgain = after.filter((r) => hideRe.test(r.body)).length
-      // a chat fast enough to have pushed every row from before the rules off the list has pushed the
-      // rows that said the word off with them: nothing is left to come back (kick, 13 rows a second)
-      const turnedOver = !after.some((r) => before.has(r.key))
-      if (!seenAgain && turnedOver) info(`${name}: every row from before the rules has left the list: "${hideW.word}" coming back is not observable`)
+      // a row the rule took off comes back only where the list still reaches: it sat after a row from
+      // before the rules that is still on it. a fast chat pushes every earlier row off (kick, 13 rows a
+      // second), and a word one row said goes with the oldest of them while newer ones stay (nightly
+      // 11-23: 1 row said it, 245 arrived under the rules): nothing is left to come back
+      const left = new Set(after.map((r) => r.key))
+      const oldestLeft = beforeRows.findIndex((r) => left.has(r.key))
+      const dueBack = oldestLeft >= 0 && beforeRows.slice(oldestLeft).some((r) => hideRe.test(r.body))
+      if (!seenAgain && !dueBack) info(`${name}: every row that said "${hideW.word}" before the rules has left the list: it coming back is not observable`)
       check(
         'rules removed: rows drawn under the highlight lose it, rows saying the word are on screen',
-        [...(stuck.length ? [`${stuck.length}/${drawnUnder.size} rows keep the rule highlight: ${JSON.stringify(stuck[0].body.slice(0, 80))}`] : []), ...(seenAgain || turnedOver ? [] : [`no row says "${hideW.word}"`])],
-        { stuck: stuck.slice(0, 2), seenAgain },
+        [...(stuck.length ? [`${stuck.length}/${drawnUnder.size} rows keep the rule highlight: ${JSON.stringify(stuck[0].body.slice(0, 80))}`] : []), ...(seenAgain || !dueBack ? [] : [`no row says "${hideW.word}"`])],
+        { stuck: stuck.slice(0, 2), seenAgain, oldestLeft, pre: beforeRows.length },
       )
       // new rows after removal must not take the highlight
       await sleep(20_000)

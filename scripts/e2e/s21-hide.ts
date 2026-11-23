@@ -20,6 +20,7 @@ type Look = {
   panel: number[]
   pill: boolean
   video: number[] | null
+  room: number[] | null
   ytChat: number[] | null
   shownLocal: string | null
   hiddenLocal: string | null
@@ -48,6 +49,8 @@ const look = (p: any): Promise<Look> =>
       panel: box(document.getElementById('hs-mc-container')) || [0, 0, 0, 0],
       pill: !!document.getElementById('hs-chat-restore-pill'),
       video: box(v || null),
+      // twitch's slot for the player: the room a hide gives back, whatever twitch draws in it
+      room: box(document.querySelector('.persistent-player')),
       ytChat: box(document.querySelector('ytd-live-chat-frame')),
       shownLocal: sessionStorage.getItem('hs-chat-shown-local'),
       hiddenLocal: sessionStorage.getItem('hs-chat-hidden-local'),
@@ -100,13 +103,20 @@ async function site(env: any, name: string, url: string, popout: string, errs: s
   }
   await backslash(p)
   let h = await look(p)
-  // twitch frames an ad around a shrunk stream (530x300 where 1360x765 was due, nightly 11-19):
-  // the room is the player's, the picture in it is twitch's for the length of the ad
-  const smaller = (l: Look) => !isYt && !!base.video && !!l.video && l.video[2] <= base.video[2]
+  // twitch frames an ad around a shrunk stream (530x300 where 1360x765 was due, nightly 11-19), for
+  // as long as the ad runs: it outlasted a 45s wait (nightly 11-23). the room is the player's, the
+  // picture in it is twitch's. where the page names the player's slot the slot is what is measured;
+  // elsewhere the picture is, given the length of a short ad to grow
+  const wide = (l: Look) => (base.room?.[2] && l.room?.[2] ? l.room : l.video)?.[2]
+  const smaller = (l: Look) => !isYt && !!wide(base) && !!wide(l) && wide(l)! <= wide(base)!
   for (let i = 0; i < 9 && gone(h) && smaller(h); i++) {
     await sleep(5000)
     h = await look(p)
     if (!smaller(h)) info(`${name}: the player grew ${(i + 1) * 5}s after the hide (an ad frame held the picture small)`)
+  }
+  if (base.room?.[2] && h.room?.[2]) {
+    const held = base.video && h.video && h.video[2] <= base.video[2] ? `; an ad frame holds the picture at ${h.video[2]}x${h.video[3]}` : ''
+    info(`${name}: the player's slot, ${base.room[2]} wide with the panel up, is ${h.room[2]} with it hidden${held}`)
   }
   check(
     '\\ hides the panel, the pill shows, the player takes the room back',

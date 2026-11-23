@@ -304,7 +304,7 @@ function buildMessageDiv(m, tabId) {
     if (m._renderedHtml == null)
       m._renderedHtml = highlightHashtagsInHtml(
         highlightMentionsInHtml(
-          processEmotes(escapeHtml(m.text), null, hsAnyChannelEmotes(), undefined, undefined, true),
+          processEmotes(escapeHtml(m.text), null, null, undefined, undefined, true, null, hsAnyChannelEmotes()),
           m.platform,
         ),
       )

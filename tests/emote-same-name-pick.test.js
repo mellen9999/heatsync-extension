@@ -32,9 +32,8 @@ globalThis.linksEnabled = false
 let _settings = {}
 globalThis.getSetting = (k) => _settings[k]
 
-const { processEmotes, channelEmoteCaches, emoteCache, clickPastedRefs, registerClickPastedRef } = await import(
-  '../src/multichat/emotes.js'
-)
+const { processEmotes, channelEmoteCaches, emoteCache, clickPastedRefs, registerClickPastedRef, hsAnyChannelEmotes } =
+  await import('../src/multichat/emotes.js')
 
 const T = 1700000000000
 const SKEW = 120000 // EMOTE_ADDED_SKEW_MS
@@ -170,5 +169,45 @@ describe('the law: the row reads its own room', () => {
   test('a name only the inventory has still draws (no room copy)', () => {
     const refs = new Map([['Solo', { url: url(REF), source: '7tv', state: 'global', zeroWidth: false, named: true }]])
     expect(draws(processEmotes('Solo', 'chan-x', null, null, T, true, refs), REF)).toBe(true)
+  })
+})
+
+describe('the law: a line with no room (a whisper, a dm)', () => {
+  const A = '01ROOMAIDK0000000000000000'
+  const B = '01ROOMBIDK0000000000000000'
+  const set = (id) => new Map([['IDK', { url: url(id), source: '7tv', state: 'channel' }]])
+  const roomless = (text) => processEmotes(text, null, null, undefined, undefined, true, null, hsAnyChannelEmotes())
+  const clear = () => {
+    for (const k of ['room-b', 'room-a']) delete channelEmoteCaches[k]
+    emoteCache.delete('IDK')
+  }
+
+  test('a word only some loaded channel has still draws: it is the last resort, not text', () => {
+    channelEmoteCaches['room-a'] = set(A)
+    try {
+      expect(draws(roomless('IDK'), A)).toBe(true)
+    } finally {
+      clear()
+    }
+  })
+
+  test('a global of that name wins: an unrelated channel never outranks what everyone shares', () => {
+    channelEmoteCaches['room-a'] = set(A)
+    emoteCache.set('IDK', { url: url(GLOBAL), source: '7tv', state: 'global' })
+    try {
+      expect(draws(roomless('IDK'), GLOBAL)).toBe(true)
+    } finally {
+      clear()
+    }
+  })
+
+  test('which channel supplies the word never depends on which loaded first', () => {
+    channelEmoteCaches['room-b'] = set(B)
+    channelEmoteCaches['room-a'] = set(A)
+    try {
+      expect(draws(roomless('IDK'), A)).toBe(true)
+    } finally {
+      clear()
+    }
   })
 })

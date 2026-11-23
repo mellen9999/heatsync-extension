@@ -872,7 +872,7 @@ function renderWhispersTab() {
     // 7TV → color precedence + twitch-space id-guard are reused, not duplicated.
     const whisperBody = highlightHashtagsInHtml(
       highlightMentionsInHtml(
-        processEmotes(escapeHtml(m.text), null, hsAnyChannelEmotes(), undefined, undefined, true),
+        processEmotes(escapeHtml(m.text), null, null, undefined, undefined, true, null, hsAnyChannelEmotes()),
         m.platform,
       ),
     )

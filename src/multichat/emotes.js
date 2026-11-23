@@ -4510,8 +4510,11 @@ function _hsCwBoxHtml(cwCat, displayName, boxW) {
 
 // A whisper / DM belongs to no channel, so a channel-only emote ("BillyLift" from
 // the channel you typed it in) found nothing to resolve against and stayed plain
-// text. This is every loaded channel's set in one map (names escaped, the form
-// processEmotes' extraCache is keyed by), rebuilt only when a set changes size.
+// text. This is every loaded channel's set in one map (names escaped), rebuilt
+// only when a set changes size. It is processEmotes' LAST RESORT for a roomless
+// line: the emote law gives such a line no room (pick, yours, globals), so a
+// channel's emote only fills a word nothing else answers, and of two channels
+// holding the word the first by name supplies it, never the first to load.
 let _anyChanEmotes = null
 let _anyChanSig = ''
 function hsAnyChannelEmotes() {
@@ -4519,7 +4522,7 @@ function hsAnyChannelEmotes() {
   for (const k in channelEmoteCaches) sig += `${k}:${channelEmoteCaches[k]?.size || 0};`
   if (_anyChanEmotes && sig === _anyChanSig) return _anyChanEmotes
   const all = new Map()
-  for (const k in channelEmoteCaches) {
+  for (const k of Object.keys(channelEmoteCaches).sort()) {
     for (const [name, e] of channelEmoteCaches[k] || []) {
       const key = escapeHtml(name)
       if (!all.has(key)) all.set(key, e)
@@ -4530,13 +4533,23 @@ function hsAnyChannelEmotes() {
   return all
 }
 
-function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMentions = false, msgRefs = null) {
+function processEmotes(
+  text,
+  channel,
+  extraCache,
+  senderEmotes,
+  msgTime,
+  skipMentions = false,
+  msgRefs = null,
+  lastResort = null,
+) {
   if (
     emoteCache.size === 0 &&
     !channelEmoteCaches[channel] &&
     !extraCache?.size &&
     !senderEmotes?.size &&
-    !msgRefs?.size
+    !msgRefs?.size &&
+    !lastResort?.size
   )
     return text
   // Removed-emote render fallback applies ONLY to the viewer's own messages
@@ -4596,7 +4609,10 @@ function processEmotes(text, channel, extraCache, senderEmotes, msgTime, skipMen
     // `name` is an HTML-escaped token; the removed/past-ownership stores are keyed by RAW names
     const raw = name.indexOf('&') === -1 ? name : unescapeHtml(name)
     const e = _rfGate(_rf?.get(raw)) || (_rf ? pastOwnershipAt(raw, msgTime) : null)
-    return e ? { e, inv: true } : null
+    if (e) return { e, inv: true }
+    // a roomless line's last resort (hsAnyChannelEmotes): only a word nothing above answered
+    const any = lastResort?.get(name)
+    return any ? { e: any, inv: false } : null
   }
 
   // Kick emote splits gated by indexOf — Kick text is <5% of overall msg volume;
@@ -5267,6 +5283,7 @@ export {
   ensureHsEmoteIdleObserver,
   getEmoteState,
   getSenderEmotes,
+  hsAnyChannelEmotes,
   hsSwapRowEmotesForIdle,
   hydrateEmoteBoxWidths,
   inventoryEmotes,

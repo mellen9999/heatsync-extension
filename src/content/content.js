@@ -1354,7 +1354,6 @@
             if (typeof e.tier === 'string' && /^[a-z0-9]{1,16}$/i.test(e.tier)) out.tier = e.tier
             return out
           })
-        log(' Received', emotes.length, 'native Twitch emotes from MAIN world')
         chrome.storage.local.set({ native_twitch_emotes: emotes })
       }
 
@@ -2060,7 +2059,6 @@
     } catch (_) {}
   }
   ensureEmoteStyles()
-  log(' 🎨 CSS injected for emote hover effects')
 
   // Badge hover tooltip for cosmetic badges (BTTV/FFZ/7TV/Chatterino)
   function createBadgeTooltip() {
@@ -2557,7 +2555,6 @@
   let emoteInventory = []
   let globalEmotes = []
   let channelEmotes = [] // Channel owner's emotes (for THIS tab's channel only)
-  let currentChannelOwner = null // Track channel owner for emote filtering
 
   // Hoisted regex constants — avoids per-call allocation in hot paths
   const COLOR_RE = /^(#[0-9a-f]{3,8}|rgb\(.+\)|[a-z]+)$/i
@@ -2899,7 +2896,6 @@
           ...e,
           url: normalizeEmoteUrl(e.url),
         }))
-        currentChannelOwner = myChannel
 
         log(
           ` ✅ Loaded from storage in ${(performance.now() - loadStart).toFixed(0)}ms:`,
@@ -2985,8 +2981,6 @@
             })
             .catch(() => {})
 
-          log(' Received inventory via message:', emoteInventory.length, 'personal,', globalEmotes.length, 'global')
-
           if (globalEmotes.length > 0) {
             log(
               ' Sample global emotes:',
@@ -3003,7 +2997,6 @@
           extensionContextValid = false
           return
         }
-        log('loadInventory attempt', attempts, 'failed:', err?.message)
       }
 
       attempts++
@@ -3015,7 +3008,6 @@
     }
 
     hideLoadingStatus()
-    log(' Will receive emotes when service worker broadcasts them')
 
     // Safety net: if emotes arrive late via broadcast, we need to ensure existing messages get processed.
     // Set up a one-shot listener that fires processExistingMessages on first emote data arrival.
@@ -3125,11 +3117,7 @@
           // carry a `source`) are not in your inventory and must survive every poll, and on
           // anyone else's channel the owner tier is theirs, not yours.
           if (channelEmotes.length > 0 && isOwnChannelPage()) {
-            const before = channelEmotes.length
             channelEmotes = pruneOwnerTier(channelEmotes, emoteInventory)
-            if (channelEmotes.length !== before) {
-              log(' 🔄 Synced channel emotes with inventory:', before, '→', channelEmotes.length)
-            }
           }
 
           // Surgical add updates: when emotes are added back (e.g. unblock restored
@@ -3172,7 +3160,6 @@
           pendingRemovals.delete(message.emoteName)
           allEmotesDirty = true
           emoteGeneration++
-          log(' ✅ Emote added to your set:', message.emoteName)
           if (!emoteInventory.some((e) => e.hash === message.hash)) {
             emoteInventory.push({
               name: message.emoteName,
@@ -3206,7 +3193,6 @@
           if (message.hash || message.emoteName) {
             updateEmoteState(message.hash || '', message.emoteName, 'neutral')
           }
-          log(' ⏳ Emote removal starting:', message.emoteName)
           break
         }
 
@@ -3225,7 +3211,6 @@
           if (_snap) {
             updateEmoteState(_snap.hash || '', _snap.name, 'added')
           }
-          log(' ↩️ Emote removal cancelled:', message.emoteName)
           break
         }
 
@@ -3236,7 +3221,6 @@
           allEmotesDirty = true
           emoteGeneration++
           _tabEmoteMapDirty = true
-          log(' ✅ Emote removed from your set:', message.emoteName)
           emoteInventory = emoteInventory.filter((e) => e.hash !== message.hash && e.name !== message.emoteName)
           // Clear any stale broadcasts for this emote
           for (const key of pendingEmoteBroadcasts.keys()) {
@@ -3255,7 +3239,6 @@
           allEmotesDirty = true
           emoteGeneration++
           rebuildEmoteMapIfDirty()
-          log(' Global emotes updated:', globalEmotes.length)
           if (globalEmotes.length > 0) {
             log(
               ' Sample global emotes:',
@@ -3271,13 +3254,11 @@
           const myChannel = getPageChannel()
           const emoteOwner = (message.channelOwner || '').toLowerCase()
           if (myChannel && emoteOwner && emoteOwner !== myChannel) {
-            log(' Ignoring channel emotes for', emoteOwner, '(this tab is', `${myChannel})`)
             break
           }
           if (message.platform) {
             const myPlatform = window.location.hostname.includes('kick.com') ? 'kick' : 'twitch'
             if (message.platform !== myPlatform) {
-              log(' Ignoring channel emotes for platform', message.platform, '(this tab is', `${myPlatform})`)
               break
             }
           }
@@ -3291,15 +3272,12 @@
             channelEmotes.length > 0 &&
             channelEmotes.every((e, i) => e.hash === newEmotes[i]?.hash && e.name === newEmotes[i]?.name)
           ) {
-            log(' Channel emotes unchanged for', emoteOwner, '- skipping reprocess')
             break
           }
           channelEmotes = newEmotes
           allEmotesDirty = true
           emoteGeneration++
           rebuildEmoteMapIfDirty()
-          currentChannelOwner = emoteOwner || null
-          log(' Channel owner emotes updated:', channelEmotes.length, 'for channel:', currentChannelOwner)
           if (channelEmotes.length > 0) {
             log(
               ' Sample channel emotes:',
@@ -3333,7 +3311,6 @@
           break
 
         case 'emote_add_failed': {
-          log(' ❌ Failed to add emote:', message.emoteName, message.error)
           // Logged-out is the common case, not a failure — collapse the per-emote
           // red errors into one gentle deduped nudge (statusbar dedupes identical
           // text to ×N). Real failures still surface the actual error.
@@ -3435,7 +3412,6 @@
           // Another user removed an emote, clear their pending broadcast
           const removeKey = `${message.username.toLowerCase()}:${message.emoteName}`
           if (pendingEmoteBroadcasts.has(removeKey)) {
-            log(' 🗑️ Clearing broadcast (user removed emote):', removeKey)
             _deleteBroadcast(removeKey)
           }
           // Also drop the name from any cached sender_emote_set so old messages
@@ -3459,7 +3435,6 @@
         case 'emote_broadcast': {
           // Reject broadcasts for emotes we're actively removing (WS echo race condition)
           if (pendingRemovals.has(message.emoteName)) {
-            log(' 🚫 Rejecting broadcast for removed emote:', message.emoteName)
             break
           }
           // Defense-in-depth: re-validate emote URL at content-script intake.
@@ -5406,8 +5381,6 @@
         },
         { capture: true, signal },
       )
-
-      log(' ✅ Emote stack expand/collapse handler installed')
     }
 
     // Observer setup folded into watchForNewMessages (single unified observer).
@@ -5788,11 +5761,8 @@
       const isOverlay = isZeroWidthEmote(currentEmoteName, currentEmote, allEmotes)
 
       if (!isOverlay) {
-        log(' 🔍 NOT overlay:', currentEmoteName)
         continue
       }
-
-      log(' 🔍 Overlay found:', currentEmoteName)
 
       // Find base: check if previous emote is in a stack, otherwise use it directly as base
       const existingStack = prevElement.closest('.heatsync-emote-stack')
@@ -5856,7 +5826,6 @@
 
       if (existingStack) {
         // Add to existing stack (insert before block-all button if present)
-        log(' ✅ Adding to existing stack:', currentEmoteName)
         const blockAllBtn = existingStack.querySelector('.heatsync-stack-block-all')
         if (blockAllBtn) {
           existingStack.insertBefore(currentWrapper, blockAllBtn)
@@ -5886,8 +5855,6 @@
           outerContainer.parentNode.insertBefore(baseWrapper, outerContainer)
           baseWrapper.appendChild(outerContainer)
         }
-
-        log(' ✅ Creating stack:', baseWrapper.dataset.emoteName, '+', currentEmoteName)
 
         const stackContainer = document.createElement('span')
         stackContainer.className = 'heatsync-emote-stack'
@@ -6024,15 +5991,10 @@
 
       // Insert wrapper before image, then move image into wrapper
       if (!img.parentNode) {
-        log(' ❌ SKIP - img has no parentNode:', emote.name)
         continue
       }
       img.parentNode.insertBefore(wrapper, img)
       wrapper.appendChild(img)
-
-      // Verify it's actually in DOM
-      const inDOM = document.contains(wrapper)
-      log(' ✅ WRAPPED emote:', emote.name, 'inDOM:', inDOM, 'parent:', wrapper.parentNode?.tagName)
     }
   }
 
@@ -6419,7 +6381,6 @@
     // Use replaceChildren() instead of innerHTML (React-safe)
     // CRITICAL: Validate element is still in DOM before modification
     if (!element || !document.contains(element)) {
-      log('⚠️ Element removed from DOM, skipping emote replacement')
       return
     }
 
@@ -6789,12 +6750,10 @@
 
         // Prevent double-clicks while operation in progress
         if (pendingOperations.has(operationKey)) {
-          log(' ⏳ Operation already in progress:', emoteName)
           return
         }
 
         const isBlocked = hash ? blockedEmotes.has(hash) : blockedEmotes.has(emoteName)
-        log(' LEFT CLICK - emote:', emoteName, 'hash:', hash, 'blocked:', isBlocked)
 
         if (isBlocked) {
           // BLOCKED → left-click means "I want this" → unblock + restore in one go.
@@ -6813,7 +6772,6 @@
                   ? 'global'
                   : 'neutral'
               updateEmoteState(hash, emoteName, restoredState)
-              log(' ✅ Unblocked:', emoteName)
               showToast(t('content_toast_unblocked', [emoteName]), 'success')
             } else {
               showToast(t('content_toast_failed_unblock', [String(result?.error || 'Unknown error')]), 'error')
@@ -6823,7 +6781,6 @@
           }
         } else {
           // NOT BLOCKED → INSERT into chat via Slate (postMessage to autocomplete-hook)
-          log(' INSERTING EMOTE via Slate:', emoteName)
           // Get emote URL and hash for Slate insertion
           const imgEl = wrapper.querySelector('img')
           const emoteUrl = imgEl?.src || ''
@@ -6836,7 +6793,6 @@
             },
             location.origin,
           )
-          log(' 💬 Sent insert request for:', emoteName)
         }
       },
       { capture: true },
@@ -6900,7 +6856,6 @@
 
         // Prevent double-clicks while operation in progress
         if (pendingOperations.has(operationKey)) {
-          log(' ⏳ Operation already in progress:', emoteName)
           return
         }
 
@@ -6917,9 +6872,7 @@
           updateEmoteState(hash, emoteName, restoredState)
           try {
             const result = await safeSendMessage({ type: 'unblock_emote', hash })
-            if (result?.success) {
-              log(' ✅ Unblocked:', emoteName)
-            } else {
+            if (!result?.success) {
               // Rollback
               blockedEmotes.add(hash)
               markLocalBlockToggle(hash, 'blocked')
@@ -6951,7 +6904,6 @@
           try {
             const result = await safeSendMessage({ type: 'block_emote', hash })
             if (result?.success) {
-              log(' 🚫 Blocked:', emoteName)
               showToast(t('content_toast_blocked', [emoteName]), 'info')
             } else {
               // Rollback on failure
@@ -6976,8 +6928,6 @@
       // Capture on purpose — preempts the page's own context menu.
       'emote-contextmenu',
     )
-
-    log(' ✅ Event delegation setup for emote clicks')
   }
 
   // Right-click on an emote in your own set removes it (web parity); the
@@ -7106,8 +7056,6 @@
 
   // Update visual state of all instances of an emote
   function updateEmoteState(hash, emoteName, state) {
-    log(` Updating emote "${emoteName}" to state: ${state}, hash: ${hash}`)
-
     // Query by hash OR name (handles old vs normalized hash mismatch)
     // Exact emote only (rule 9/10): a block or remove of one W never touches another W of the
     // same name. The name stands in only when no hash is known (or on elements that carry none).
@@ -7115,7 +7063,6 @@
       ? `[data-emote-hash="${hash}"], [data-emote-name="${emoteName}"]:not([data-emote-hash])`
       : `[data-emote-name="${emoteName}"]`
     const elements = (findChatContainer() || document).querySelectorAll(selector)
-    log(` updateEmoteState found ${elements.length} elements for selector:`, selector)
 
     // Multi-variant wrappers: re-pick from blockedEmotes state, skip the
     // single-variant class-stamping logic entirely. Dedupe via Set since the
@@ -7302,8 +7249,6 @@
 
       if (emotesToShow.length === 0) return
 
-      log(' Preview:', emotesToShow.length, 'emotes')
-
       // Aggressively strip ALL tooltip attributes from wrapper, img, AND parent elements
       const img = wrapper.querySelector('img')
       wrapper.removeAttribute('aria-describedby')
@@ -7471,8 +7416,6 @@
       if (target.closest('.heatsync-emote-wrapper') || target.closest('.heatsync-emote-preview')) return
       hidePreview()
     }
-
-    log(' ✅ Emote hover preview setup')
   })()
 
   // Profile card on username click — this file no longer builds a card of
@@ -8003,10 +7946,9 @@
       }
       // Retro-render: messages from these senders already drawn (as text) need a re-pass.
       applySenderEmotesToMessages(batch.filter((k) => senderHeatsyncEmotes.get(k)))
-    } catch (e) {
+    } catch {
       // Drop the pending mark on failure so a later message can retry.
       for (const k of batch) senderEmotePending.delete(k)
-      log(' flushSenderEmoteBatch failed:', e?.message)
     }
   }
 
@@ -9497,8 +9439,6 @@
     bridge.style.display = 'none'
     bridge.dataset.emotes = '[]'
     document.documentElement.appendChild(bridge)
-
-    log(' Emote bridge created for autocomplete-hook.js')
   }
 
   // Update emotes in the bridge for the injected script
@@ -9552,7 +9492,6 @@
       }
     }
 
-    log(' Updating emote bridge:', allEmotes.length, 'total emotes')
     bridge.dataset.emotes = JSON.stringify(allEmotes)
     bridge.dataset.version = String(++_bridgeVersion)
     // Dispatched on `document`, NOT on the bridge element. autocomplete-hook.js
@@ -9730,7 +9669,6 @@
           const len = tabCompleteState.matches.length
           tabCompleteState.index = (tabCompleteState.index + (e.shiftKey ? len - 1 : 1)) % len
           const emote = tabCompleteState.matches[tabCompleteState.index]
-          log(' Cycling to:', emote.name, '(', tabCompleteState.index + 1, '/', len, ')')
           showEmotePreview(emote, tabCompleteState.index + 1, len)
           completeEmoteInInput(chatInput, emote, tabCompleteState.startPos)
           tabCompleteState.completing = false
@@ -9947,7 +9885,6 @@
     log(' 🔄 URL changed from', lastChatUrl, 'to', location.href)
     lastChatUrl = location.href
     channelEmotes = []
-    currentChannelOwner = null
     msgCacheBuffer = []
     msgCacheIds.clear()
     subTenureMap.clear()

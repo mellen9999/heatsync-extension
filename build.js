@@ -22,6 +22,7 @@ import { fileURLToPath } from 'node:url'
 import { transformSync } from 'esbuild'
 import { computeBuildStamp } from './scripts/lib/build-stamp.mjs'
 import { emojiPairsSource } from './scripts/lib/emoji-pairs.mjs'
+import { emoteLawSource, lawIsUsed } from './scripts/lib/emote-law-bundle.mjs'
 
 // Build stamp — swapped into bootstrap.js's '__HS_BUILD_STAMP__' literal so
 // every hs_diag_ring boot event names the code it ran. Needed because a tab
@@ -1089,6 +1090,10 @@ function readMultichatModules() {
   if (existsSync(emoteRefsPath)) {
     combined += `\n// --- lib/emote-refs.js ---\n${stripExports(readFileSync(emoteRefsPath, 'utf8'))}\n`
   }
+
+  // The emote law (shared/emote-law.ts, byte copy of the site's) as one namespace object. Only when a
+  // multichat module names it: unused it is ~10KB of nothing.
+  if (lawIsUsed(__dirname)) combined += `\n// --- shared/emote-law.ts ---\n${emoteLawSource(__dirname)}\n`
 
   // What a stream event says and which stored ones a reload brings back
   // (scripts/sync-site-copies.sh mirror of client/utils/stream-event-text.js).

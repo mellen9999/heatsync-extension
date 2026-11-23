@@ -37,6 +37,12 @@
 # this stick; biome.json leaves these files unformatted so a formatter pass
 # cannot break byte parity.
 #
+# shared/emote-law.{ts,vectors.json} + shared/emote-rank.ts are the emote law (docs/emote-law.md on the
+# site): the one rule for "which emote is this word". The vectors are its contract; the extension
+# runs every case against its own copy (tests/emote-law-vectors.test.ts, which builds its worlds with
+# tests/helpers/emote-world.ts, copied too). They keep the site's shared/ layout so the helper's
+# own imports resolve unchanged. build.js transpiles the .ts into the multichat bundle.
+#
 #   scripts/sync-site-copies.sh            # from ../heatsync (or $HS_SITE_DIR)
 set -euo pipefail
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -55,7 +61,11 @@ for pair in \
   public/css/modules/brand-rows.css:src/multichat/styles/21-brand-rows.css \
   shared/brand/tokens.gen.js:src/lib/brand-tokens.js \
   scripts/lib/inline-doctrine.mjs:tests/lib/inline-doctrine.mjs \
-  scripts/lib/strip-comments.mjs:tests/lib/strip-comments.mjs
+  scripts/lib/strip-comments.mjs:tests/lib/strip-comments.mjs \
+  shared/emote-law.ts:shared/emote-law.ts \
+  shared/emote-rank.ts:shared/emote-rank.ts \
+  shared/emote-law.vectors.json:shared/emote-law.vectors.json \
+  tests/helpers/emote-world.ts:tests/helpers/emote-world.ts
 do
   src_rel="${pair%%:*}"
   dst_rel="${pair##*:}"

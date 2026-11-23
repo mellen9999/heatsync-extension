@@ -49,6 +49,10 @@ const FILES = [
   ['shared/brand/tokens.gen.js', 'src/lib/brand-tokens.js'],
   ['scripts/lib/inline-doctrine.mjs', 'tests/lib/inline-doctrine.mjs'],
   ['scripts/lib/strip-comments.mjs', 'tests/lib/strip-comments.mjs'],
+  ['shared/emote-law.ts', 'shared/emote-law.ts'],
+  ['shared/emote-rank.ts', 'shared/emote-rank.ts'],
+  ['shared/emote-law.vectors.json', 'shared/emote-law.vectors.json'],
+  ['tests/helpers/emote-world.ts', 'tests/helpers/emote-world.ts'],
 ]
 
 describe('site-copy parity', () => {

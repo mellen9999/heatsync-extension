@@ -1397,8 +1397,8 @@ function handleWSMessage(msg) {
           // batch keys this sender resolves as) + ver (emote-ver cache-bust) —
           // invalidate precisely. Legacy shape (no senderKeys): scrub by name
           // across every cached set.
-          log(' 🗑️ EMOTE REMOVED BROADCAST:', msg)
           const rmKeys = sanitizeSenderKeys(msg.senderKeys)
+          if (rmKeys) refreshOwnerEmotes(rmKeys)
           if (globalThis.__senderEmoteCache) {
             if (rmKeys) {
               for (const k of rmKeys) globalThis.__senderEmoteCache.delete(k)
@@ -1431,8 +1431,8 @@ function handleWSMessage(msg) {
           log(' ✅ EMOTE ADDED TO INVENTORY:', msg.name, 'slot:', msg.slot)
           scheduleInventoryRefresh()
         } else if (msg.username) {
-          log(' ➕ EMOTE ADDED BROADCAST:', msg)
           const addKeys = sanitizeSenderKeys(msg.senderKeys)
+          if (addKeys) refreshOwnerEmotes(addKeys)
           if (globalThis.__senderEmoteCache) {
             if (addKeys) for (const k of addKeys) globalThis.__senderEmoteCache.delete(k)
             else globalThis.__senderEmoteCache.clear()

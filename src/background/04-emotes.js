@@ -60,6 +60,62 @@ function bgPersistChannelEmotes(key) {
   return bgIdbPut(BG_IDB_EMOTES, key, { emotes, at: channelEmotesFetchedAt[key] || 0 })
 }
 
+// A streamer changed their emotes (the `emote:added|removed` push every socket gets, with the
+// account's platform tokens in `senderKeys`): a channel in use that is theirs reads its set
+// again now, not at the 30 minute TTL. twitch by the id resolved for the channel, kick by the
+// account's name (an older account some_name lives at the address some-name), youtube by
+// channel id or handle. Never a guess: an unmatched channel reads nothing.
+function ownerChannelsOf(senderKeys, channelKeys) {
+  const keys = new Set(senderKeys)
+  const lowered = new Set(senderKeys.map((k) => k.toLowerCase()))
+  const hit = []
+  for (const key of new Set(channelKeys)) {
+    const { platform, channel } = splitChKey(key)
+    const name = String(channel || '').toLowerCase()
+    if (!name) continue
+    let mine = false
+    if (platform === 'twitch') {
+      const id = twitchIdCache.get(name) || twitchIdCache.get(channel)
+      mine = !!id && keys.has(`twitch:${id}`)
+    } else if (platform === 'kick') {
+      mine = keys.has(`kick:${name}`) || (name.includes('-') && keys.has(`kick:${name.replace(/-/g, '_')}`))
+    } else if (platform === 'youtube') {
+      // a channel id is case-sensitive: the tab's own spelling. a handle is not
+      mine = keys.has(`ytc:${channel}`) || lowered.has(`yt:${name.replace(/^@/, '')}`)
+    }
+    if (mine) hit.push(key)
+  }
+  return hit
+}
+
+// one read per channel per burst (an import or a set swap is many frames). a read already out
+// may have asked before the change, so the channel waits for it and reads again
+const ownerRefreshTimers = new Map()
+const OWNER_REFRESH_MS = 1000
+const OWNER_REFRESH_TRIES = 15
+function refreshOwnerEmotes(senderKeys, wait = OWNER_REFRESH_MS) {
+  const inUse = [...tabChannels.values()]
+    .map((e) => e?.channel)
+    .filter(Boolean)
+    .concat([...joinedExtraChannels])
+  for (const key of ownerChannelsOf(senderKeys, inUse)) {
+    if (ownerRefreshTimers.has(key)) continue
+    const { platform, channel } = splitChKey(key)
+    const cacheKey = chKey(platform, channel)
+    let tries = 0
+    const run = () => {
+      if (channelEmotesMap[cacheKey] === 'loading' && ++tries < OWNER_REFRESH_TRIES) {
+        ownerRefreshTimers.set(key, setTimeout(run, wait))
+        return
+      }
+      ownerRefreshTimers.delete(key)
+      channelEmotesFetchedAt[cacheKey] = 0
+      fetchChannelOwnerEmotes(channel, null, platform).catch(() => {})
+    }
+    ownerRefreshTimers.set(key, setTimeout(run, wait))
+  }
+}
+
 // Fetch channel owner's emotes (public API) + third-party channel emotes
 async function fetchChannelOwnerEmotes(channelName, channelId = null, platform = 'twitch') {
   const key = chKey(platform, channelName)
@@ -68,33 +124,17 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
   // Kept for the failure path: a failed refetch falls back to this instead of
   // erasing the channel's emotes (stale beats missing).
   const prevCached = Array.isArray(cached) ? cached : null
-  if (cached === 'loading') {
-    log(' Channel emotes currently loading for', channelName, '- skipping')
-    return
-  }
+  if (cached === 'loading') return
   if (Array.isArray(cached)) {
     const age = Date.now() - (channelEmotesFetchedAt[key] || 0)
     const ttl = cached.length > 0 ? CHANNEL_EMOTES_TTL : CHANNEL_EMOTES_EMPTY_TTL
     // Always broadcast cached data immediately — content script needs emotes NOW
     broadcastToTabs({ type: 'channel_emotes_update', emotes: cached, channelOwner: channelName, platform })
-    if (age < ttl) {
-      log(
-        ' Channel emotes already fetched for',
-        channelName,
-        '- skipping (',
-        cached.length,
-        'emotes,',
-        `${Math.round(age / 1000)}s old)`,
-      )
-      return
-    }
-    log(' Channel emotes stale for', channelName, '(', `${Math.round(age / 1000)}s) - refetching in background`)
+    if (age < ttl) return
   }
   channelEmotesMap[key] = 'loading'
 
   try {
-    log(' 📺 Fetching channel emotes for:', channelName, 'id:', channelId, 'platform:', platform)
-
     // Show loading indicator
     broadcastToTabs({ type: 'loading_status', text: bgT('bg_loading_channel') })
 
@@ -532,7 +572,6 @@ async function fetchTwitchGlobalEmotes() {
     }))
 
     const validated = sanitizeEmoteList(emotes)
-    log('✅ Loaded', validated.length, 'Twitch global emotes from server')
     return validated
   } catch (error) {
     log('❌ Twitch global emotes error:', error)
@@ -555,7 +594,6 @@ async function fetchTwitchChannelEmotes(channelName) {
     }
 
     const data = await response.json()
-    log(' Loaded', data.count, 'Twitch channel emotes for', channelName)
 
     return sanitizeEmoteList(
       (data?.emotes || []).map((e) => ({
@@ -618,7 +656,6 @@ async function fetchKickChannelEmotes(channelName) {
         })
       }
     }
-    log(' Loaded', out.length, 'Kick channel emotes for', channelName)
     return sanitizeEmoteList(out)
   } catch (error) {
     log(' Kick channel emotes error for', channelName, ':', error?.message)
@@ -649,10 +686,8 @@ function fetchGlobalEmotes() {
   if (globalEmotesFetchPromise) return globalEmotesFetchPromise
   globalEmotesFetchPromise = (async () => {
     try {
-      log(' Fetching global emotes from', `${API_URL}/api/emotes`)
       // Try server API first (has all providers cached)
       const response = await fetchWithTimeout(withNsfwParam(`${API_URL}/api/emotes`))
-      log(' Global emotes response:', response.status, response.ok)
       if (response.ok) {
         const data = await response.json()
         globalEmotes = sanitizeEmoteList(
@@ -665,14 +700,8 @@ function fetchGlobalEmotes() {
             os: e.os > 1 ? Math.min(2, +e.os) : undefined,
           })),
         )
-        log(' Loaded', globalEmotes.length, 'global emotes from server')
-        log(
-          ' Sample global emotes:',
-          globalEmotes.slice(0, 5).map((e) => e.name),
-        )
 
         // ALWAYS fetch Twitch + 7TV global emotes separately (server cache may be stale)
-        log('📥 Fetching Twitch + 7TV globals separately...')
         const [twitchGlobals, seventvGlobals] = await Promise.all([fetchTwitchGlobalEmotes(), fetch7TVEmotes()])
 
         // Rebuild merged array (prevents duplicate accumulation on reconnects).
@@ -688,17 +717,6 @@ function fetchGlobalEmotes() {
           }
         }
         globalEmotes = merged
-        log(
-          '✅ Merged globals:',
-          globalEmotes.length,
-          '(twitch:',
-          twitchGlobals.length,
-          '7tv:',
-          seventvGlobals.length,
-          ')',
-        )
-
-        log('📊 Total global emotes:', globalEmotes.length)
 
         broadcastToTabs({ type: 'global_emotes_update', emotes: globalEmotes })
         return
@@ -714,7 +732,6 @@ function fetchGlobalEmotes() {
       ])
 
       globalEmotes = rankEmotePool([...bttv, ...ffz, ...sevenTV, ...twitchGlobal], 'global')
-      log(' Loaded', globalEmotes.length, 'global emotes (fallback)')
       broadcastToTabs({ type: 'global_emotes_update', emotes: globalEmotes })
     } catch (error) {
       console.error('[heatsync] fetchGlobalEmotes failed:', error.message || error)

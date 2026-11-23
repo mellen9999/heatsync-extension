@@ -293,6 +293,62 @@ try {
   })
   await dbg.close()
   check(invNames.includes('W'), `your own inventory W was never removed (inventory: ${JSON.stringify(invNames)})`)
+  // i. the streamer adds an emote while you watch: the push every socket gets re-reads their set
+  // (not at the 30 minute TTL), and the next row that says the word draws it
+  let ownerReads = 0
+  await c.route('https://heatsync.org/api/emotes/user/probechan**', (r: any) => {
+    ownerReads++
+    return r.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        emotes: [
+          { name: 'Own', url: E('Own_streamer'), hash: 'ownerhash', provider: 'heatsync' },
+          { name: 'Live', url: E('Live_streamer'), hash: 'livehash', provider: 'heatsync' },
+        ],
+      }),
+    })
+  })
+  const inUse: boolean = await sw.evaluate(() => {
+    // @ts-ignore — service worker globals: the id twitch gave for the channel, as a join resolves it
+    twitchIdCache.set('probechan', '999')
+    // @ts-ignore
+    const open = [...tabChannels.values()].some((e) => e?.channel === 'twitch/probechan')
+    // someone else changed their emotes: nothing is read
+    // @ts-ignore
+    handleWSMessage({ type: 'emote:added', username: 'stranger', emoteName: 'Live', senderKeys: ['twitch:123', 'kick:probechan'], ver: 6 })
+    return open
+  })
+  check(inUse, 'i. the tab on twitch.tv/probechan is a channel in use')
+  await p.waitForTimeout(2500)
+  check(ownerReads === 0, `i. a stranger's emote change reads no streamer's set (reads: ${ownerReads})`)
+  await sw.evaluate(() => {
+    // @ts-ignore — the streamer's own push, as the server sends it
+    handleWSMessage({ type: 'emote:added', username: 'probechan', emoteName: 'Live', senderKeys: ['twitch:999'], ver: 7 })
+  })
+  let held = false
+  for (let i = 0; i < 40 && !held; i++) {
+    await p.waitForTimeout(250)
+    held = await sw.evaluate(() => {
+      // @ts-ignore
+      const list = channelEmotesMap['twitch/probechan']
+      return Array.isArray(list) && list.some((e: any) => e.name === 'Live')
+    })
+  }
+  check(held && ownerReads === 1, `i. the streamer's push re-reads their set once (held ${held}, reads ${ownerReads})`)
+  await p.evaluate(() => (window as any).__add('alice', 111, 'sigma Live then', false))
+  let live = { src: '' } as { src: string }
+  for (let i = 0; i < 24 && !live.src.includes('Live_streamer'); i++) {
+    await p.waitForTimeout(250)
+    live = await imgOf('sigma')
+  }
+  check(live.src.includes('Live_streamer'), `i. a row after the streamer added Live draws it, with no reload (got ${live.src || 'nothing'})`)
+  const kept = await sw.evaluate(() => {
+    // @ts-ignore
+    const list = channelEmotesMap['twitch/probechan'] as any[]
+    return ['bttvhash', 'stvhash', 'ffzhash'].filter((h) => list.some((e) => e.hash === h)).length
+  })
+  check(kept === 3, `i. the channel's other emotes are still there after the re-read, providers unreachable (kept ${kept} of 3)`)
   if (errors.length) failures.push(`page errors: ${errors.join(' | ')}`)
 } finally {
   try {

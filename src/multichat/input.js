@@ -5688,7 +5688,7 @@ function placeCaretAfter(node, offset = 0) {
 //   heatsync only — your personal set + catalog-search hits (labelled "catalog ·
 //                   <provider>"): only viewers running heatsync render these;
 //                   everyone else sees plain text
-// Colors form a breadth gradient: green (all) → yellow (needs an ext) → orange
+// Colors form a breadth gradient: green (all) → yellow (needs an ext) → white
 // (heatsync only), so you can feel how deep / how niche the current pick is.
 function emoteCycleMeta(m) {
   if (!m) return { cat: '', vis: null }

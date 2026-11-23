@@ -17,6 +17,8 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { heldPick } from '../src/lib/emote-refs.js'
+import { pickRig } from './helpers/pick-rig.js'
 
 const INPUT_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 const start = INPUT_SRC.indexOf('const recentRemoteCompletions = new Map()')
@@ -26,14 +28,17 @@ if (start === -1 || end === -1 || end <= start) throw new Error('click-paste car
 const ASSET_ID_RE = /(?:cdn\.7tv\.app|cdn\.betterttv\.net|cdn\.frankerfacez\.com)\/emote\/([^/]+)/
 
 function build({ senderSets = new Map(), renderOrder = () => null, sameAsset = () => false } = {}) {
+  const picks = pickRig()
   const fns = new Function(
     'lookupEmoteRenderOrder',
     'senderEmoteSets',
     'zeroWidthForSameAsset',
     '_hsEmoteAssetId',
+    'lawPin',
     `${INPUT_SRC.slice(start, end)}; return { recentRemoteCompletions, registerClickPasteForAutoAdd }`,
-  )(renderOrder, senderSets, sameAsset, (url) => ASSET_ID_RE.exec(url || '')?.[1] || null)
-  return fns
+  )(renderOrder, senderSets, sameAsset, (url) => ASSET_ID_RE.exec(url || '')?.[1] || null, picks.lawPin)
+  // what the composer's own draft holds for a name: the pick this message ships
+  return { ...fns, picked: (name) => heldPick(name, picks.lawBox())[0] }
 }
 
 const URL_7TV = 'https://cdn.7tv.app/emote/01FY9WEBXR00077WTWSFD40R6K/1x.avif'
@@ -43,6 +48,12 @@ describe('click-paste registers for auto-add-on-send', () => {
     const { recentRemoteCompletions, registerClickPasteForAutoAdd } = build()
     registerClickPasteForAutoAdd('GODNO', URL_7TV, '7tv')
     expect(recentRemoteCompletions.get('GODNO')).toEqual({ url: URL_7TV, source: '7tv', zeroWidth: false })
+  })
+
+  test('a clicked emote is this message pick of its name: it ships that picture, whatever the room has', () => {
+    const { registerClickPasteForAutoAdd, picked } = build()
+    registerClickPasteForAutoAdd('GODNO', URL_7TV, '7tv')
+    expect(picked('GODNO')).toMatchObject({ name: 'GODNO', url: URL_7TV, provider: '7tv' })
   })
 
   test("another user's heatsync emote registers, so it survives a reload", () => {

@@ -2960,14 +2960,13 @@ function _extractFeedBodyText(root) {
 // builder (src/lib/emote-refs.js, byte copy), so a post from here vouches the
 // same way a post from heatsync.org does.
 //
-// Sources, in the order the composer itself resolves a word: an emote picked
-// from remote search this session (recentRemoteCompletions — url-only ref, no
-// hash yet), then whatever the composer knows (channel > owned > global). A
+// Sources, in the law's order for a line with no room: a pick made in this very
+// message (the box's own draft; url-only ref, no hash yet), then yours, then globals. A
 // known emote with a real inventory hash goes through emotesMap so it keeps the
 // hash; anything else is registered as a url-only catalog ref. The server drops
 // a ref it dislikes, never the post, and the sanitizer re-checks every url.
 const FEED_REF_HASH_RE = /^[a-f0-9]{8,64}$/i
-function buildFeedEmoteRefs(text) {
+function buildFeedEmoteRefs(text, from, quoted) {
   if (!text) return null
   const owned = new Map()
   const names = new Set()
@@ -2979,12 +2978,15 @@ function buildFeedEmoteRefs(text) {
     if (word.length > 1 && word.endsWith('0')) names.add(word.slice(0, -1))
   }
   for (const name of names) {
-    const pick = typeof recentRemoteCompletions !== 'undefined' ? recentRemoteCompletions.get(name) : null
+    // a pick made in THIS message, in the box it was written in; a post built from elsewhere has none
+    const held = from ? heldPick(name, from) : null
+    const pick = held && (held[0] || held[1])
     if (pick?.url && /^https:/i.test(pick.url)) {
-      reg({ name, url: pick.url, provider: pick.source, zeroWidth: !!pick.zeroWidth })
+      reg({ name, url: pick.url, provider: pick.provider, zeroWidth: !!pick.zeroWidth })
       continue
     }
-    const e = typeof lookupEmoteRenderOrder === 'function' ? lookupEmoteRenderOrder(name) : null
+    // a post has no room (yours, then globals); a quoted chat line is its room's words, never yours
+    const e = quoted ? lookupPublicEmote(name) : viewerPersonalEmotes.get(name) || emoteCache.get(name)
     if (!e?.url || !/^https:/i.test(e.url)) continue
     const provider = e.source || e.provider
     if (typeof e.hash === 'string' && FEED_REF_HASH_RE.test(e.hash)) {
@@ -3028,7 +3030,7 @@ async function postFeedMessage(text, { topLevel = false, replyTo = null } = {}) 
   }
 
   const body = { content: text }
-  const emoteRefs = buildFeedEmoteRefs(text)
+  const emoteRefs = buildFeedEmoteRefs(text, lawBox())
   if (emoteRefs) body.emote_refs = emoteRefs
   if (mediaUrl) {
     body.media_url = mediaUrl

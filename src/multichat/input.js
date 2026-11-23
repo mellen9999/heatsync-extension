@@ -62,7 +62,7 @@ function _pruneRecent(arr) {
 
 // Kick echoes a native emote back in its wire form, [emote:<id>:<name>], while
 // we track what the user typed. Since the composer now rewrites kick emotes on
-// the way out (kickifyEmoteText), the two forms differ by construction — and an
+// the way out (the law's kick wire), the two forms differ by construction — and an
 // echo that fails to match is an echo that renders a second time and never
 // confirms the pending send. Compare with the tokens collapsed to their names.
 // Guarded on the literal so the ~95% of traffic that carries no token pays
@@ -84,10 +84,13 @@ function _echoTextMatches(entry, msgText) {
   return !!entry.reply && b.replace(/^@\S+\s+/, '') === a
 }
 
-function trackSentMessage(text, hostOverride, synthId, echoes, reply, sendId) {
+function trackSentMessage(text, hostOverride, synthId, echoes, reply, sendId, shipped) {
   _recentSentMessages.push({
     text,
     sendId: sendId || '',
+    // what the line shipped for its emotes: kick's echo files the refs, and its own echo draws the
+    // picked ones (a pick is the one answer the row cannot read back from the room or your set)
+    ...(shipped?.refs ? { refs: shipped.refs, picked: shipped.picked } : null),
     time: Date.now(),
     host: hostOverride || hostPlatform,
     synthId,
@@ -333,6 +336,18 @@ function peekSentId(msgText) {
     if (e.sendId && e.time >= cutoff && _echoTextMatches(e, msgText)) return e.sendId
   }
   return ''
+}
+// the refs OUR send of these words shipped, for the echo of that very send: matched on the
+// echo's own time, so a reload keeps them and the same words typed again natively inherit nothing
+const SENT_REFS_WINDOW = 60000
+/** @returns {{text:string, refs:object}|null} the send's own entry: its typed words and their refs */
+function peekSentRefs(msgText, at) {
+  const t = at || Date.now()
+  for (let i = _recentSentMessages.length - 1; i >= 0; i--) {
+    const e = _recentSentMessages[i]
+    if (e.refs && Math.abs(t - e.time) <= SENT_REFS_WINDOW && _echoTextMatches(e, msgText)) return e
+  }
+  return null
 }
 function _peekSent(msgText) {
   // Use the longer SENT_HOST_WINDOW (24h) — badge attribution must survive
@@ -728,6 +743,7 @@ const acState = {
   wordStart: 0, // Position where the completion word starts
   afterText: '', // Text after the completion
   _frecBumped: null, // emote bumped this session — reverted if the user cycles past it
+  _pinStep: null, // { name, held }: what the name held before this cycle's step pinned it
   search: '', // search term that produced these matches (remote-fetch guard)
   remoteDone: false, // 7tv fallback already merged for this search
   remotePending: false, // a lazy remote fetch is in flight for this search
@@ -756,6 +772,8 @@ function trackCompletionForAutoAdd(match) {
   // persisted a bogus literal "name0" emote server-side, burning an inventory
   // slot. The base emote is tracked on its own; the "0" is a render convention.
   if (match._synthOverlay) return
+  // this message's pick of the name, whatever the emote is (the channel's, yours, a catalog one)
+  lawPin(match.name, match)
   // The latest pick for a name is the only one that counts: cycling from a
   // catalog IDK back onto the channel's IDK (or onto a native twitch/kick one
   // that never registers below) must un-pick the catalog one, or the send
@@ -799,7 +817,11 @@ function registerClickPasteForAutoAdd(emoteName, emoteUrl, source) {
           const e = m.get(emoteName)
           return e && !e.removedAt
         }))
-    if (!literal) return
+    if (!literal) {
+      // the picture is the base emote's: this message's pick of the base name, read as its overlay
+      lawPin(emoteName.slice(0, -1), { url: emoteUrl, source, zeroWidth: true })
+      return
+    }
   }
   // Zero-width recovery: viewer caches strip the flag on owned copies
   // (identity-checked), and a sender-set overlay emote isn't in viewer caches
@@ -850,7 +872,8 @@ if (/(^|\.)twitch\.tv$/.test(location.hostname)) {
     while (recentRemoteCompletions.size > REMOTE_COMPLETION_CAP) {
       recentRemoteCompletions.delete(recentRemoteCompletions.keys().next().value)
     }
-    if (names.length) autoAddInputEmotes(names.join(' '))
+    // sent through twitch's own box: there is no draft of ours to hold these, the relay is the pick
+    if (names.length) autoAddInputEmotes(names.join(' '), { relayed: true })
   })
 }
 
@@ -1060,6 +1083,7 @@ async function fetchRemoteEmoteMatches(search) {
         // IDK): the box shows that one, so registering the catalog's IDK would
         // silently add an emote nobody picked.
         if (!typedHasLocal) {
+          lawPin(it.name, { url: it.url, source: src, id: it.id, zeroWidth: !!it.zeroWidth })
           recentRemoteCompletions.delete(it.name)
           recentRemoteCompletions.set(it.name, { url: it.url, source: src, zeroWidth: !!it.zeroWidth, variant: true })
           while (recentRemoteCompletions.size > REMOTE_COMPLETION_CAP) {
@@ -2166,14 +2190,12 @@ function initInput() {
               if (!name || pendingEmoteOps.has(name)) continue
               const url = w.dataset.emoteUrl || w.querySelector('img')?.src || ''
               const source = w.dataset.source || 'heatsync'
-              if (typeof registerClickPastedRef === 'function') registerClickPastedRef(name, url, source)
+              lawPin(name, { url, source }) // a clicked emote is this message's pick of its name
               addEmoteToInventory(name, url, source, w)
             } else {
               // global/channel/owned stack members follow the same
               // auto-add-on-send contract as the single-emote click path.
               const url = w.dataset.emoteUrl || w.querySelector('img')?.src || ''
-              if (typeof registerClickPastedRef === 'function')
-                registerClickPastedRef(w.dataset.emoteName, url, w.dataset.source || 'unknown')
               registerClickPasteForAutoAdd(w.dataset.emoteName, url, w.dataset.source || 'unknown')
             }
           }
@@ -2274,12 +2296,8 @@ function initInput() {
               addedAt: Date.now(),
             })
           }
-          // Durable own-echo fallback: record the ref so a failed auto-add-on-send
-          // (offline / rate-limit / recycled SW / unreadable cookie) never leaves
-          // your own echo as raw text. Never rolled back. See clickPastedRefs.
-          if (typeof registerClickPastedRef === 'function') registerClickPastedRef(emoteName, emoteUrl, source)
-          // Commit the slot at send (2-state contract) — without this the
-          // optimistic seed above renders the chip for the clicker only.
+          // The click is this message's pick (it ships with the line, and your own echo draws what
+          // shipped, so a failed add never leaves it as raw text), and the slot commits at send.
           registerClickPasteForAutoAdd(emoteName, emoteUrl, source)
           showInputBar()
           pasteEmoteToInput(emoteName, modWords)
@@ -3184,7 +3202,7 @@ async function _quickOpToFeed(username, msg) {
   const content = truncateSafe(`@${username}: ${raw}`, 500)
   try {
     const body = { content }
-    const emoteRefs = buildFeedEmoteRefs(content)
+    const emoteRefs = buildFeedEmoteRefs(content, null, true)
     if (emoteRefs) body.emote_refs = emoteRefs
     const resp = await apiFetch('/api/messages', { method: 'POST', auth: true, body })
     showToast(resp?.ok ? t('mc_input_posted_to_feed') : t('mc_input_post_failed'), resp?.ok ? 'success' : 'error')
@@ -4135,6 +4153,10 @@ function handleInputChange(_e) {
   // this fix so the cursor can't re-enter.
   const inputEl = document.getElementById('hs-mc-input')
   if (inputEl) {
+    // a pick lives while its word is in the box: delete the chip and the same name typed by hand
+    // is a hand-typed word. An undo that brings the chip back brings its pick back.
+    const type = _e?.inputType
+    keepPicksIn(() => getInputText(), inputEl, type === 'historyUndo' || type === 'historyRedo')
     for (const stack of inputEl.querySelectorAll('.hs-input-stack')) {
       if (stack.getAttribute('contenteditable') !== 'false') {
         stack.setAttribute('contenteditable', 'false')
@@ -5413,11 +5435,28 @@ function findEmoteMatches(search) {
   return recentChatters.length ? recentChatters.concat(matches) : matches
 }
 
+// A Tab step that was only looked at leaves its name as it found it: cycling past the catalog's
+// IDK must not leave it deciding what an IDK typed earlier in this message sends. Called before
+// the step pins; the cycle's last step is the one that stays (hideAutocomplete forgets the step).
+function acPinStep(match, box) {
+  const step = acState._pinStep
+  if (step && step.name !== match.name) putBackPick(step.name, step.held, box)
+  if (match.type !== 'emote' || !match.name) acState._pinStep = null
+  else if (step?.name !== match.name) acState._pinStep = { name: match.name, held: heldPick(match.name, box) }
+}
+
+/** the message left its box: its picks go with it, and so does the Tab step that was looking at one */
+function endComposerPicks(box) {
+  endDraftPicks(box)
+  acState._pinStep = null
+}
+
 // Insert completion and keep cycling state
 function insertCompletionKeepOpen(match) {
   const input = document.getElementById('hs-mc-input')
   if (!input || !match) return
 
+  acPinStep(match, input)
   trackCompletionForAutoAdd(match)
   if (match.type === 'emote' && match.name && typeof recordRecentEmote === 'function') {
     // Usage must reflect where the user STOPS, not every candidate they cycle
@@ -6221,6 +6260,7 @@ function hideAutocomplete() {
   acState.afterText = ''
   acState.search = ''
   acState._frecBumped = null // session over — whatever was last bumped is the commit
+  acState._pinStep = null // and whatever was last pinned is this message's pick
   acState.remoteDone = false
   acState.remotePending = false
   acState._remotePage = 0
@@ -6681,6 +6721,7 @@ function clearInput(input) {
   hideSlashDropdown()
   if (wysiwygEnabled) input.textContent = ''
   else input.value = ''
+  endComposerPicks(input) // the message is gone, and its picks with it
   pendingMessage = ''
   updateCharCount()
   // programmatic clears fire no input event — queue the auto-hide here.
@@ -8630,15 +8671,24 @@ async function openWhisperConversation(platform, username, input) {
 // name you already own with a DIFFERENT emote swaps: the server keeps one emote per
 // name, so the old one is removed first (swapEmoteInInventory). Only a deliberate
 // catalog pick swaps — tabbing onto the channel's own IDK never replaces yours.
-function autoAddInputEmotes(text) {
+function autoAddInputEmotes(text, { relayed = false } = {}) {
   if (!text || !recentRemoteCompletions.size) return null
   const adds = []
   const seen = new Set()
+  const box = relayed ? null : lawBox()
   for (const word of text.split(/\s+/)) {
     if (!word || seen.has(word)) continue
     seen.add(word)
     const rec = recentRemoteCompletions.get(word)
     if (!rec) continue
+    // A pick belongs to the message it was made in. Only a word this box still holds as that very
+    // pick adds: a name picked in an earlier message and typed by hand now is a hand-typed word,
+    // and it must never add (or swap out) an emote nobody chose for this line.
+    if (!relayed) {
+      const held = box ? heldPick(word, box) : null
+      const pick = held && (held[0] || held[1])
+      if (!pick || _acPicKey(pick.url) !== _acPicKey(rec.url)) continue
+    }
     if (
       typeof blockedEmoteNames !== 'undefined' &&
       (typeof emoteIsBlocked === 'function' ? emoteIsBlocked(word, rec) : blockedEmoteNames.has(word))
@@ -9069,6 +9119,15 @@ async function sendMessage(retry) {
   const meMatch = text.match(/^\/me\s+(\S[\s\S]*)$/i)
   const restText = meMatch ? meMatch[1].trim() : text
   const twitchText = meMatch ? `\x01ACTION ${restText}\x01` : text
+  // what this line ships, from the emote law, over the room of each leg and the box's own picks
+  const shipped = lawShip(
+    restText,
+    {
+      twitch: sendToTwitch ? twitchName || targetChannel : '',
+      kick: sendToKick ? kickSlug || targetChannel : '',
+    },
+    input,
+  )
 
   // Register pending-send tracker — echo confirmation is our ground truth
   // for "did the platform deliver?", separate from sendIrc/Kick's "did we
@@ -9123,7 +9182,7 @@ async function sendMessage(retry) {
               : sendToYoutube
                 ? 'yt'
                 : hostPlatform
-  trackSentMessage(restText, _echoHost, _synthId, _echoCount || 1, !!replyState?.msgId, _sendId)
+  trackSentMessage(restText, _echoHost, _synthId, _echoCount || 1, !!replyState?.msgId, _sendId, shipped)
 
   hsSentHistoryRecord(text)
 
@@ -9185,6 +9244,7 @@ async function sendMessage(retry) {
   // window so rapid-fire chatting never retypes into a dead cursor.
   if (wysiwygEnabled) input.textContent = ''
   else input.value = ''
+  endComposerPicks(input) // shipped above: a name typed by hand in the next message is a hand-typed word
   pendingMessage = ''
   updateCharCount()
   // Settle the composer: auto-hide → instant hide, otherwise open the
@@ -9221,9 +9281,9 @@ async function sendMessage(retry) {
       }
     }
     // Kick-native emotes need their [emote:id:name] wire form — see
-    // kickifyEmoteText. Only the kick leg gets rewritten; twitchText/ytText
+    // the law's kick wire. Only the kick leg gets rewritten; twitchText/ytText
     // below still carry the bare words.
-    const kickPromise = sendKickMessage(slug, kickifyEmoteText(restText), kickReply)
+    const kickPromise = sendKickMessage(slug, shipped.wire.kick ?? restText, kickReply)
     const twitchPromise = sendToTwitch
       ? getTwitchAuthTokenAsync().then(({ token: tok, username: twitchNick }) =>
           sendIrcMessage(twitchName, twitchText, tok, twitchReplyId, twitchNick),
@@ -9257,7 +9317,7 @@ async function sendMessage(retry) {
         // silently (no red border, no retry notif, just a no_echo warning
         // 20s later).
         const twitchSent = twitchResult === true
-        if (twitchSent) hsTagTwitchSend(restText, twitchName, _sendId)
+        if (twitchSent) hsTagTwitchSend(restText, twitchName, _sendId, lawStored(shipped.refs))
         const twitchOk = twitchSent || twitchResult === null
         // 'queued' = IRC was offline, message stuffed in send-queue for next
         // reconnect (could be never). Treat as a visible yellow cue, not silent
@@ -9408,7 +9468,7 @@ async function sendMessage(retry) {
   sendIrcMessage(targetChannel, twitchText, token, twitchReplyId, twitchNick)
     .then((result) => {
       if (result === true) {
-        hsTagTwitchSend(restText, targetChannel, _sendId)
+        hsTagTwitchSend(restText, targetChannel, _sendId, lawStored(shipped.refs))
         keepTempTabAfterSend()
         if (wsState !== 'OPEN') {
           input.style.borderColor = 'var(--hs-warn)'

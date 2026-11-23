@@ -13,11 +13,12 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { pickRig } from './helpers/pick-rig.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 const a0 = SRC.indexOf('const recentRemoteCompletions = new Map()')
 const a1 = SRC.indexOf('// Native twitch chat parity:')
-const b0 = SRC.indexOf('function autoAddInputEmotes(text)')
+const b0 = SRC.indexOf('function autoAddInputEmotes(text')
 const b1 = SRC.indexOf('// Sticky-focus window after a send')
 if ([a0, a1, b0, b1].some((i) => i === -1) || a1 <= a0 || b1 <= b0) throw new Error('carve markers not found')
 
@@ -27,7 +28,10 @@ function rig({ inventory = [], cache = new Map(), ok = true } = {}) {
   const added = []
   const viewerPersonalEmotes = new Map()
   const inventoryEmotes = new Set(inventory)
+  const picks = pickRig()
   const env = {
+    ...picks,
+    _acPicKey: (u) => u,
     lookupEmoteRenderOrder: () => null,
     senderEmoteSets: new Map(),
     zeroWidthForSameAsset: () => false,
@@ -47,7 +51,9 @@ function rig({ inventory = [], cache = new Map(), ok = true } = {}) {
     ...names,
     `${SRC.slice(a0, a1)}\n${SRC.slice(b0, b1)}; return { registerClickPasteForAutoAdd, autoAddInputEmotes }`,
   )(...names.map((k) => env[k]))
-  return { ...api, added, viewerPersonalEmotes }
+  // the next message: the box is cleared, and its picks with it
+  const nextMessage = () => picks.endDraftPicks(picks.lawBox())
+  return { ...api, added, viewerPersonalEmotes, nextMessage }
 }
 
 describe('a tapped channel emote joins the inventory on send', () => {
@@ -80,6 +86,14 @@ describe('a tapped channel emote joins the inventory on send', () => {
     const { registerClickPasteForAutoAdd, autoAddInputEmotes, added } = rig({ cache })
     registerClickPasteForAutoAdd('GoodLuck', FFZ, 'ffz')
     autoAddInputEmotes('GoodLuck')
+    expect(added.length).toBe(0)
+  })
+
+  test('a tap belongs to the message it was made in: the name typed by hand in a later message adds nothing', () => {
+    const { registerClickPasteForAutoAdd, autoAddInputEmotes, added, nextMessage } = rig()
+    registerClickPasteForAutoAdd('GoodLuck', FFZ, 'ffz')
+    nextMessage() // that message left the box (sent without the word, or cleared)
+    autoAddInputEmotes('gl GoodLuck')
     expect(added.length).toBe(0)
   })
 

@@ -65,6 +65,7 @@ function harness({ activeThread = null, currentTab = 'feed', posted = null } = {
     renderFeed: () => {},
     isOpMsg: () => false,
     buildFeedEmoteRefs: () => null,
+    lawBox: () => null,
     t: (k) => k,
     cleanup: { setTimeout: () => {} },
     showToast: () => {},

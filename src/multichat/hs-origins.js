@@ -28,6 +28,16 @@ function hsOriginNote(platform, id, sendId) {
 // m.sentHost and picks ONLY the visible [T]/[K]/[Y]/[H] tag.
 function stampSentHost(m, host) {
   m.sentHost = host === 'yt' ? 'youtube' : host
+  // Your own row draws what the send shipped. Room, own and global words read back the same from
+  // the row itself; a pick is the one that cannot, so the echo of that send is handed its picks.
+  const sent = typeof peekSentRefs === 'function' ? peekSentRefs(m.text, m.time) : null
+  if (!sent?.picked?.length) return
+  const mine = { ...m.hsEmotes }
+  // a name can be anything, __proto__ included: by definition, never by `=`
+  for (const n of sent.picked) {
+    Object.defineProperty(mine, n, { value: sent.refs[n], enumerable: true, writable: true, configurable: true })
+  }
+  m.hsEmotes = mine
 }
 
 // Rows saved by older builds retagged m.platform to the send host and kept the real chat in
@@ -137,11 +147,11 @@ function hsNewSendId() {
 // Twitch: sent through our own auth socket, so the server never saw it. Tell it what we
 // just sent (after the socket write succeeded); it matches twitch's own echo and writes
 // the durable row. Fire-and-forget.
-function hsTagTwitchSend(text, channel, sendId) {
+function hsTagTwitchSend(text, channel, sendId, refs) {
   if (!text || !channel) return
   safeSendMessage({
     type: 'ws_send',
-    data: { type: 'chat:origin_tag', text, channel: String(channel).toLowerCase(), sendId },
+    data: { type: 'chat:origin_tag', text, channel: String(channel).toLowerCase(), sendId, ...(refs ? { refs } : {}) },
   })
 }
 
@@ -149,7 +159,15 @@ function hsTagTwitchSend(text, channel, sendId) {
 // carries the real message id: record it (the same POST the site makes). Callers pass only
 // an echo that is provably ours; once per message id.
 const hsWitnessed = new Set()
-function hsWitnessOwnEcho(platform, channel, messageId, sendId) {
+// kick has no server witness for a browser send: its echo is the one place the line's refs can be
+// filed from (the server re-checks them against `text`). youtube's are filed by the poller only.
+function hsWitnessRefs(platform, text) {
+  if (platform !== 'kick' || !text || typeof peekSentRefs !== 'function') return null
+  const sent = peekSentRefs(text)
+  const refs = sent && lawStored(sent.refs)
+  return refs ? { refs, text: sent.text } : null
+}
+function hsWitnessOwnEcho(platform, channel, messageId, sendId, text) {
   if (!messageId || !channel || !sendId || hsWitnessed.has(messageId)) return
   hsWitnessed.add(messageId)
   if (hsWitnessed.size > 500) hsWitnessed.delete(hsWitnessed.values().next().value)
@@ -164,6 +182,7 @@ function hsWitnessOwnEcho(platform, channel, messageId, sendId) {
       message_id: String(messageId),
       origin: 'heatsync',
       send_id: sendId,
+      ...hsWitnessRefs(platform, text),
     },
   })
 }

@@ -2840,30 +2840,6 @@ const inventoryEmotes = new Set() // Names of emotes in user's inventory
 // Viewer's personal set — separated from emoteCache so it does NOT bleed into
 // OTHER users' rendered messages. Used as senderEmotes only when sender == viewer.
 const viewerPersonalEmotes = new Map() // Map<name, emoteData>
-// Emotes the viewer click-pasted from OTHER users' messages this session. NEVER
-// rolled back (unlike the viewerPersonalEmotes optimistic seed): if the
-// auto-add-on-send POST fails — offline, rate-limit, recycled SW, or composing
-// from a kick/yt surface with an unreadable heatsync cookie — that seed is
-// deleted and the own echo would textify with no fallback (the exact logged-out
-// symptom). This map is the durable fallback: own-message render consults it so
-// a click-pasted emote ALWAYS renders in your own echo. Keyed by ESCAPED name
-// (matches processEmotes' escaped-token lookups). Own-messages only — never
-// applied to other senders' rendering. A fallback, never a pick: an entry is
-// `named`, so the emote law reads it below the room (a pick lives one message;
-// a name pasted an hour ago must not beat the room's emote of that name on
-// every later line of yours, while everyone else sees the room's).
-const clickPastedRefs = new Map() // Map<escapedName, {url, source, state, zeroWidth, named}>
-const CLICK_PASTED_REFS_MAX = 300
-function registerClickPastedRef(name, url, source, zeroWidth) {
-  if (!name || !url || !/^https?:/i.test(url)) return
-  const key = escapeHtml(name)
-  clickPastedRefs.set(key, { url, source: source || 'heatsync', state: 'global', zeroWidth: !!zeroWidth, named: true })
-  while (clickPastedRefs.size > CLICK_PASTED_REFS_MAX) {
-    const oldest = clickPastedRefs.keys().next().value
-    if (oldest === undefined) break
-    clickPastedRefs.delete(oldest)
-  }
-}
 // Render fallback for emotes the viewer REMOVED from their set. Removing purges
 // the emote from inventory/caches, so after a refresh the viewer's own past
 // messages that used it would resolve to nothing and render as raw text. This
@@ -3435,31 +3411,6 @@ function lookupEmote(name) {
     blockedFallbackForName(name)
   )
 }
-// Kick-native emotes only exist on the wire as [emote:<id>:<name>]. Sending
-// the bare name posts literal text to every kick client — and our own renderer
-// paints bare names, so in-panel it looked right while nobody else saw the
-// emote at all. Proven on 2026-07-21: a pool emote sent from the composer
-// archived as the plain word, no emote ref. Rewrite kick-source words on the
-// way out; twitch and youtube keep the bare word (their wire formats differ).
-const KICK_EMOTE_ID_RE = /files\.kick\.com\/emotes\/(\d+)\//
-const KICK_MAX_MESSAGE = 500
-function kickifyEmoteText(text) {
-  if (!text || typeof text !== 'string') return text
-  const out = text.replace(/\S+/g, (word) => {
-    // Never touch a token the user (or kick's own composer) already wrote.
-    if (word.startsWith('[emote:')) return word
-    const e = typeof lookupEmoteWireOrder === 'function' ? lookupEmoteWireOrder(word) : null
-    if (e?.source !== 'kick' || !e.url) return word
-    const m = KICK_EMOTE_ID_RE.exec(e.url)
-    return m ? `[emote:${m[1]}:${word}]` : word
-  })
-  // Tokens are far longer than the names they replace. If expanding pushed a
-  // message that would have fit over kick's limit, send the words — a
-  // delivered message without emote images beats a rejected one.
-  if (out.length > KICK_MAX_MESSAGE && text.length <= KICK_MAX_MESSAGE) return text
-  return out
-}
-
 // In-set lookup: only emotes the viewer actually owns (heatsync inventory +
 // their native Twitch subs). Excludes channel/global/3rd-party pools — those
 // are words a viewer never deliberately added (e.g. a channel's lowercase
@@ -3467,10 +3418,9 @@ function kickifyEmoteText(text) {
 function lookupOwnedEmote(name) {
   return viewerPersonalEmotes.get(name)
 }
-// Composer preview order: inventory > channel > global, the order a sent line draws in
-// (see _lookup: your own emote beats the channel's of the same name). lookupEmote stays
-// inventory-first too — it drives block/add/state/tooltip. Removed/blocked fallbacks
-// stay last so a blocked emote still resolves its real url for the dashed-box preview.
+// "Does anything here answer to this name": inventory, the open tab's channel, globals, then
+// the removed/blocked fallbacks (a blocked emote still resolves its real url for the
+// dashed-box preview). Not what a word sends or draws: that is the law's (lawChip, lawShip).
 function lookupEmoteRenderOrder(name) {
   return (
     viewerPersonalEmotes.get(name) ||
@@ -3484,17 +3434,6 @@ function lookupEmoteRenderOrder(name) {
 // your inventory, which is yours alone (rule 4).
 function lookupPublicEmote(name) {
   return activeTabChannelEmote(name) || emoteCache.get(name)
-}
-// Wire order for kick: channel > inventory > global, so a kick channel emote that shares a name
-// with one you own still goes out as the kick-native token every kick viewer can see.
-function lookupEmoteWireOrder(name) {
-  return (
-    activeTabChannelEmote(name) ||
-    viewerPersonalEmotes.get(name) ||
-    emoteCache.get(name) ||
-    removedEmoteFallback.get(name) ||
-    blockedFallbackForName(name)
-  )
 }
 // True if ANY cache knows this emote name is 7TV zero-width. The owned set
 // (viewerPersonalEmotes) and the heatsync server cache don't carry 7TV's
@@ -3555,25 +3494,26 @@ function zeroWidthForSameAsset(name, url) {
 // type-word-then-space auto-convert so only your emotes imagify as you type.
 // Channel/global emotes still render via Tab-complete (which omits the flag).
 function lookupEmoteWithOverlay(name, { ownedOnly = false } = {}) {
-  const resolve = ownedOnly ? lookupOwnedEmote : lookupEmoteRenderOrder
   const endsWithZero = name.length > 1 && name.endsWith('0')
-  // A literal full-name hit ALWAYS wins — an emote actually named "lerolero0"
-  // is a standalone emote, NOT the "lerolero" overlay. It only stacks if it
-  // carries a real zeroWidth flag (recoverable from any cache for owned
-  // copies that shadow the flagged channel/global entry). The trailing-0
-  // heuristic must never shadow a real "name0" emote. See processEmotes for
-  // the matching chat-render order.
-  const emote = resolve(name)
-  if (emote) {
-    let isOverlay = !!emote.zeroWidth
-    if (!isOverlay && zeroWidthFromAnyCache(name)) isOverlay = true
-    return { emote, isOverlay, displayName: name }
+  // as-you-type only turns a word you own into a chip; what the chip draws is still the send's answer
+  if (ownedOnly && !lookupOwnedEmote(name) && !(endsWithZero && lookupOwnedEmote(name.slice(0, -1)))) return null
+  // The chip is what a send from this tab would ship (the law's sendWord): this message's pick,
+  // then the room, then yours, then globals. A literal "name0" is tried before the overlay
+  // reading of "name" inside the law, so an emote really named "lerolero0" stays standalone.
+  const hit = lawChip(name)
+  if (hit) {
+    // owned copies have 7tv's zero-width flag stripped: recover it from any cache under the name
+    const isOverlay = hit.overlay || (!hit.e.zeroWidth && zeroWidthFromAnyCache(hit.key))
+    return { emote: hit.e, isOverlay, displayName: name }
   }
-  // No literal hit — apply the 7TV-style "name0" overlay convention: strip the
-  // trailing 0 and overlay the base emote (e.g. "TriHard0" → overlay TriHard).
+  if (ownedOnly) return null
+  // nothing ships for this word: a removed or blocked emote still shows its picture (the dashed box)
+  const gone = (n) => removedEmoteFallback.get(n) || blockedFallbackForName(n)
+  const emote = gone(name)
+  if (emote) return { emote, isOverlay: !!emote.zeroWidth || zeroWidthFromAnyCache(name), displayName: name }
   if (endsWithZero) {
-    const baseEmote = resolve(name.slice(0, -1))
-    if (baseEmote) return { emote: baseEmote, isOverlay: true, displayName: name }
+    const base = gone(name.slice(0, -1))
+    if (base) return { emote: base, isOverlay: true, displayName: name }
   }
   return null
 }
@@ -5273,7 +5213,6 @@ export {
   blockedFallbacksForName,
   bumpEmoteFrecency,
   channelEmoteCaches,
-  clickPastedRefs,
   deriveStaticEmoteSrc,
   detectEmoteSource,
   dropEmoteFromAllSenders,
@@ -5293,7 +5232,6 @@ export {
   loadSenderEmoteSets,
   lookupEmote,
   lookupEmoteRenderOrder,
-  lookupEmoteWireOrder,
   lookupEmoteWithOverlay,
   lookupOwnedEmote,
   lookupPublicEmote,
@@ -5303,7 +5241,6 @@ export {
   pickerBaseEmotes,
   processEmotes,
   reapHsIdleEmoteRows,
-  registerClickPastedRef,
   rememberBlockedEmote,
   removedEmoteFallback,
   replaceSenderEmotes,

@@ -13,7 +13,7 @@ import { escapeHtml } from '../src/lib/utils.js'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'main-tabs.js'), 'utf8')
 const START = 'let hsMsgRefs = null'
-const END = '// Own messages: fall back to click-pasted refs'
+const END = 'let processedText = processEmotes('
 const s = SRC.indexOf(START)
 const e = SRC.indexOf(END, s)
 if (s === -1 || e === -1) throw new Error('row refs loop markers moved in main-tabs.js')

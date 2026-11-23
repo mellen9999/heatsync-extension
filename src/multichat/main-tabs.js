@@ -1589,15 +1589,6 @@ function computeMessageText(m) {
       })
     }
   }
-  // Own messages: fall back to click-pasted refs (never rolled back) so an
-  // emote you pasted from someone else's message renders in your echo even if
-  // the auto-add-on-send commit failed. Own-only — clickPastedRefs is keyed by
-  // escaped name and carries {url,source,state,zeroWidth} already.
-  if (isOwn && typeof clickPastedRefs !== 'undefined' && clickPastedRefs.size) {
-    for (const [k, v] of clickPastedRefs) {
-      if (!(hsMsgRefs ||= new Map()).has(k)) hsMsgRefs.set(k, v)
-    }
-  }
   let processedText = processEmotes(
     escapeHtml(m.text),
     m.emoteChannel || m.channel,

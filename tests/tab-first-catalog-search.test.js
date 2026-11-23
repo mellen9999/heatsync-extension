@@ -23,6 +23,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { pickRig } from './helpers/pick-rig.js'
 
 const INPUT_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 const start = INPUT_SRC.indexOf('let _acRemoteAbort = null')
@@ -54,6 +55,7 @@ function build({ stv, matches = [], search = 'kap' } = {}) {
     'mcSearchFfzApi',
     'mcSearchBttvApi',
     'mcSearch7tvApi',
+    'lawPin',
     `${INPUT_SRC.slice(start, end)}; return { fetchRemoteEmoteMatches }`,
   )(
     () => ({ kind: 'word' }),
@@ -66,6 +68,7 @@ function build({ stv, matches = [], search = 'kap' } = {}) {
     async () => [],
     async () => [],
     stv || (async () => []),
+    pickRig().lawPin,
   )
   return { acState, recentRemoteCompletions, fetch: fns.fetchRemoteEmoteMatches }
 }

@@ -96,7 +96,7 @@ async function sendKickMessage(kickSlug, text, reply = null) {
       }
       // Kick VALIDATES emote tokens and 400s the WHOLE message on a bad one
       // (INVALID_EMOTE_ERROR, confirmed live 2026-07-21). Our outgoing rewrite
-      // (kickifyEmoteText) can hand kick an id that has since been removed,
+      // (the law's kick wire) can hand kick an id that has since been removed,
       // gated behind a sub, or belongs to another channel — and then a message
       // that used to send as plain words wouldn't send at all, which is
       // strictly worse than not rendering an emote. Strip the tokens back to

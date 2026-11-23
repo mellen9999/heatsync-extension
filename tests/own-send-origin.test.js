@@ -39,6 +39,14 @@ test('twitch origin_tag: the words, the lowercase login, the send id, through ws
   ])
 })
 
+test('origin_tag carries the refs it is handed, and only when there are some', () => {
+  const refs = { catJAM: { p: '7tv', id: '60ae958e229664e8667aea38' } }
+  lib.hsTagTwitchSend('gm catJAM', 'x', 'id-1', refs)
+  lib.hsTagTwitchSend('gm', 'x', 'id-2', undefined)
+  expect(sent[0].data.refs).toEqual(refs)
+  expect('refs' in sent[1].data).toBe(false)
+})
+
 test('no text or no channel: nothing is sent', () => {
   lib.hsTagTwitchSend('', 'x', 'a')
   lib.hsTagTwitchSend('hi', '', 'a')
@@ -80,16 +88,20 @@ const INPUT = read('input.js')
 test('the composer mints one send id and every leg shares it', () => {
   expect((INPUT.match(/hsNewSendId\(\)/g) || []).length).toBe(1)
   expect(INPUT).toContain(
-    'trackSentMessage(restText, _echoHost, _synthId, _echoCount || 1, !!replyState?.msgId, _sendId)',
+    'trackSentMessage(restText, _echoHost, _synthId, _echoCount || 1, !!replyState?.msgId, _sendId, shipped)',
   )
 })
 
 test('twitch is tagged only where the socket write succeeded', () => {
-  const tags = [...INPUT.matchAll(/hsTagTwitchSend\(([^)]*)\)/g)].map((m) => m[1])
-  expect(tags).toEqual(['restText, twitchName, _sendId', 'restText, targetChannel, _sendId'])
+  // the refs go out in the shape the server stores ({p,id,a}), never the row's own shape (a url)
+  const tags = [...INPUT.matchAll(/hsTagTwitchSend\((.*?)\)\n/g)].map((m) => m[1])
+  expect(tags).toEqual([
+    'restText, twitchName, _sendId, lawStored(shipped.refs)',
+    'restText, targetChannel, _sendId, lawStored(shipped.refs)',
+  ])
   // dual path: inside `if (twitchSent)`; twitch-only path: inside `if (result === true)`
-  expect(INPUT).toMatch(/if \(twitchSent\) hsTagTwitchSend\(restText, twitchName, _sendId\)/)
-  const only = INPUT.indexOf('hsTagTwitchSend(restText, targetChannel, _sendId)')
+  expect(INPUT).toContain('if (twitchSent) hsTagTwitchSend(restText, twitchName, _sendId, lawStored(shipped.refs))')
+  const only = INPUT.indexOf('hsTagTwitchSend(restText, targetChannel, _sendId, lawStored(shipped.refs))')
   expect(INPUT.slice(only - 200, only)).toContain('if (result === true) {')
 })
 

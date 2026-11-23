@@ -1205,7 +1205,7 @@ async function init() {
     // kick is sent browser → kick, never seen by the server: record our own echo. Before the
     // dual-send drop below, which only keeps one copy on screen: the server still needs THIS
     // leg's message id, or every other viewer sees it as a second line.
-    if (isSelf(msg, 'kick')) hsWitnessOwnEcho('kick', msg.channel, msg.id, peekSentId(msg.text))
+    if (isSelf(msg, 'kick')) hsWitnessOwnEcho('kick', msg.channel, msg.id, peekSentId(msg.text), msg.text)
     // Suppress echo of own sent messages (dedup dual-send) — pass 'kick'
     // so host-platform preference can favor this echo when on kick.com.
     if (isSentEcho(msg.text, 'kick', msg)) return scheduleMergedRender()

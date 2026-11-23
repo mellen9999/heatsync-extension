@@ -32,9 +32,10 @@ const quickSrc = carve(INPUT, 'async function _quickOpToFeed(', 'async function 
 const FFZ = 'https://cdn.frankerfacez.com/emote/123456/1'
 const STV = 'https://cdn.7tv.app/emote/01FY9WEBXR00077WTWSFD40R6K/1x.avif'
 
-function harness({ picks = [], known = {} } = {}) {
+// picks: made in the composer for this post · mine: your own set · room: the open chat tab's emotes
+function harness({ picks = [], mine = {}, room = {} } = {}) {
   const calls = []
-  const recentRemoteCompletions = new Map(picks)
+  const box = {}
   const stubs = {
     document: { getElementById: () => ({ value: 'x', dataset: {}, style: {} }) },
     hsAuthToken: 'tok',
@@ -43,8 +44,10 @@ function harness({ picks = [], known = {} } = {}) {
     activeThread: null,
     currentTab: 'feed',
     feedMessages: [],
-    recentRemoteCompletions,
-    lookupEmoteRenderOrder: (n) => known[n],
+    lawBox: () => box,
+    viewerPersonalEmotes: new Map(Object.entries(mine)),
+    emoteCache: new Map(),
+    lookupPublicEmote: (n) => room[n],
     apiFetch: async (_path, opts) => {
       calls.push(opts.body)
       return { ok: true, data: {} }
@@ -63,8 +66,14 @@ function harness({ picks = [], known = {} } = {}) {
     _extractMcMsgText: () => 'gg goodluck',
   }
   const names = Object.keys(stubs)
-  const factory = new Function(...names, `${LIB}\n${feedSrc}\n${quickSrc}\nreturn { postFeedMessage, _quickOpToFeed }`)
-  return { ...factory(...names.map((n) => stubs[n])), calls }
+  const factory = new Function(
+    ...names,
+    `${LIB}\n${feedSrc}\n${quickSrc}\nreturn { postFeedMessage, _quickOpToFeed, pinPickedEmote }`,
+  )
+  const api = factory(...names.map((n) => stubs[n]))
+  for (const [name, e] of picks)
+    api.pinPickedEmote({ name, url: e.url, provider: e.source, zeroWidth: !!e.zeroWidth }, box)
+  return { ...api, calls }
 }
 
 describe('feed post emote_refs', () => {
@@ -82,9 +91,9 @@ describe('feed post emote_refs', () => {
     expect(calls[0].emote_refs.Clap.provider).toBe('7tv')
   })
 
-  test('a known (channel/owned) emote with an inventory hash keeps its hash', async () => {
+  test('an emote you own keeps its inventory hash', async () => {
     const { postFeedMessage, calls } = harness({
-      known: { KEKW: { url: STV, source: '7tv', hash: 'abcdef0123456789' } },
+      mine: { KEKW: { url: STV, source: '7tv', hash: 'abcdef0123456789' } },
     })
     await postFeedMessage('KEKW')
     expect(calls[0].emote_refs.KEKW.hash).toBe('abcdef0123456789')
@@ -97,13 +106,16 @@ describe('feed post emote_refs', () => {
   })
 
   test('a non-https url is never vouched', async () => {
-    const { postFeedMessage, calls } = harness({ known: { Odd: { url: 'http://cdn.7tv.app/x', source: '7tv' } } })
+    const { postFeedMessage, calls } = harness({ mine: { Odd: { url: 'http://cdn.7tv.app/x', source: '7tv' } } })
     await postFeedMessage('Odd')
     expect('emote_refs' in calls[0]).toBe(false)
   })
 
-  test('_quickOpToFeed (op to feed) vouches too', async () => {
-    const { _quickOpToFeed, calls } = harness({ picks: [['goodluck', { url: FFZ, source: 'ffz' }]] })
+  test("_quickOpToFeed (op to feed) vouches the line's own room emotes, not what the composer holds", async () => {
+    const { _quickOpToFeed, calls } = harness({
+      room: { goodluck: { url: FFZ, source: 'ffz' } },
+      picks: [['goodluck', { url: STV, source: '7tv' }]],
+    })
     await _quickOpToFeed('someone', {})
     expect(calls[0].emote_refs.goodluck.url).toBe(FFZ)
   })

@@ -287,6 +287,8 @@ function checkScopeCollisions() {
     'gif-search-remote.js',
     // The site's emote_refs builder (verbatim copy) — feed posts vouch their emotes.
     'emote-refs.js',
+    // the stored shape of a line's refs ({p,id,a}): what the server files, byte copy of the site's
+    'emote-refs-normalize.js',
     // What a stream event says and which stored ones a reload brings back
     // (client/utils/stream-event-text.js on the site) — one answer for both.
     'stream-event-text.js',
@@ -918,6 +920,7 @@ const MULTICHAT_MODULES = [
   'kick-send.js',
   'emote-rungs.js',
   'emote-law-read.js',
+  'emote-law-send.js',
   'emotes.js',
   'emote-cache-evict.js',
   'emote-upload-core.js',
@@ -1092,6 +1095,9 @@ function readMultichatModules() {
   if (existsSync(emoteRefsPath)) {
     combined += `\n// --- lib/emote-refs.js ---\n${stripExports(readFileSync(emoteRefsPath, 'utf8'))}\n`
   }
+  // the shape the server stores a line's refs in ({p,id,a}), the site's own normaliser: a send ships that
+  const refsWirePath = join(SRC_DIR, 'lib', 'emote-refs-normalize.js')
+  combined += `\n// --- lib/emote-refs-normalize.js ---\n${stripExports(readFileSync(refsWirePath, 'utf8'))}\n`
 
   // The emote law (shared/emote-law.ts, byte copy of the site's) as one namespace object. Only when a
   // multichat module names it: unused it is ~10KB of nothing.

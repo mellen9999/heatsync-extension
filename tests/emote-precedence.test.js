@@ -16,6 +16,7 @@
 
 import { beforeEach, describe, expect, test } from 'bun:test'
 import * as mods from '../src/lib/modifiers.js'
+import { lawSendRig } from './helpers/law-send-rig.js'
 
 globalThis.cleanup = { setIntervalIfVisible: () => {}, persistInterval: () => {} }
 globalThis.HS_MOD_TOKENS = mods.HS_MOD_TOKENS
@@ -41,7 +42,6 @@ const {
   inventoryEmotes,
   lookupEmote,
   lookupEmoteRenderOrder,
-  lookupEmoteWireOrder,
   lookupEmoteWithOverlay,
   lookupOwnedEmote,
   removedEmoteFallback,
@@ -49,7 +49,13 @@ const {
   zeroWidthFromAnyCache,
 } = await import('../src/multichat/emotes.js')
 
+// the composer chip asks the law's send adapter (a bundle global): the real one, over these maps.
+// The open tab sends to twitch room chan-a.
+const law = lawSendRig({ viewerPersonalEmotes, emoteCache, channelEmoteCaches })
+globalThis.lawChip = law.lawChip
+
 function resetAll() {
+  law.reset()
   viewerPersonalEmotes.clear()
   emoteCache.clear()
   for (const k of Object.keys(channelEmoteCaches)) delete channelEmoteCaches[k]
@@ -200,23 +206,6 @@ describe('lookupEmoteRenderOrder precedence (inventory-first, like a sent line)'
   })
 })
 
-describe('lookupEmoteWireOrder precedence (channel-first: kick-native stays kick-native)', () => {
-  test('a kick channel emote beats an owned emote of the same name', () => {
-    viewerPersonalEmotes.set('Foo', { url: 'inventory-url', source: '7tv' })
-    channelEmoteCaches['chan-a'] = new Map([['Foo', { url: 'kick-url', source: 'kick' }]])
-    expect(lookupEmoteWireOrder('Foo').url).toBe('kick-url')
-    expect(lookupEmoteRenderOrder('Foo').url).toBe('inventory-url')
-  })
-
-  test('inventory beats global, fallbacks last', () => {
-    viewerPersonalEmotes.set('Foo', { url: 'inventory-url' })
-    emoteCache.set('Foo', { url: 'global-url' })
-    expect(lookupEmoteWireOrder('Foo').url).toBe('inventory-url')
-    removedEmoteFallback.set('Bar', { url: 'removed-url' })
-    expect(lookupEmoteWireOrder('Bar').url).toBe('removed-url')
-  })
-})
-
 // ── zeroWidthFromAnyCache ────────────────────────────────────────────────────
 
 describe('zeroWidthFromAnyCache', () => {
@@ -290,19 +279,61 @@ describe('lookupEmoteWithOverlay', () => {
     expect(r.isOverlay).toBe(false)
   })
 
-  test('ownedOnly:true restricts resolution to viewerPersonalEmotes only', () => {
+  test('ownedOnly: only a word you own turns into a chip as you type', () => {
     channelEmoteCaches['chan-a'] = new Map([['Foo', { url: 'channel-url' }]])
     expect(lookupEmoteWithOverlay('Foo', { ownedOnly: true })).toBeNull()
-    viewerPersonalEmotes.set('Foo', { url: 'owned-url' })
-    expect(lookupEmoteWithOverlay('Foo', { ownedOnly: true }).emote.url).toBe('owned-url')
+    viewerPersonalEmotes.set('Bar', { url: 'owned-url' })
+    expect(lookupEmoteWithOverlay('Bar', { ownedOnly: true }).emote.url).toBe('owned-url')
   })
 
-  test('ownedOnly:true also restricts the name0 base-lookup to owned set', () => {
+  test('ownedOnly: the name0 reading needs the base owned too', () => {
     channelEmoteCaches['chan-a'] = new Map([['TriHard', { url: 'channel-trihard' }]])
     expect(lookupEmoteWithOverlay('TriHard0', { ownedOnly: true })).toBeNull()
+    delete channelEmoteCaches['chan-a']
     viewerPersonalEmotes.set('TriHard', { url: 'owned-trihard' })
     const r = lookupEmoteWithOverlay('TriHard0', { ownedOnly: true })
     expect(r.emote.url).toBe('owned-trihard')
     expect(r.isOverlay).toBe(true)
+  })
+
+  // the chip is what a send from this tab ships (emote law, send): pick, room, yours, globals
+  test("a typed word the room has draws the room's emote, even when you own a copy of the name", () => {
+    channelEmoteCaches['chan-a'] = new Map([['KEKW', { url: 'room-kekw', source: '7tv', state: 'global' }]])
+    viewerPersonalEmotes.set('KEKW', { url: 'my-kekw', source: '7tv', state: 'owned' })
+    expect(lookupEmoteWithOverlay('KEKW').emote.url).toBe('room-kekw')
+    expect(lookupEmoteWithOverlay('KEKW', { ownedOnly: true }).emote.url).toBe('room-kekw')
+  })
+
+  test('the room is the one the line goes to, not one whose emotes merely loaded', () => {
+    channelEmoteCaches['chan-b'] = new Map([['KEKW', { url: 'other-room', source: '7tv', state: 'global' }]])
+    viewerPersonalEmotes.set('KEKW', { url: 'my-kekw', source: '7tv', state: 'owned' })
+    expect(lookupEmoteWithOverlay('KEKW').emote.url).toBe('my-kekw')
+    law.legs = { twitch: 'chan-b' }
+    expect(lookupEmoteWithOverlay('KEKW').emote.url).toBe('other-room')
+  })
+
+  test('a pick made in this message beats the room and yours; it is gone with the message', () => {
+    channelEmoteCaches['chan-a'] = new Map([['KEKW', { url: 'room-kekw', source: '7tv', state: 'global' }]])
+    viewerPersonalEmotes.set('KEKW', { url: 'my-kekw', source: '7tv', state: 'owned' })
+    law.lawPin('KEKW', { url: 'https://cdn.7tv.app/emote/60ae958e229664e8667aea38/2x.webp', source: '7tv' })
+    const picked = lookupEmoteWithOverlay('KEKW').emote
+    expect(picked.url).toBe('https://cdn.7tv.app/emote/60ae958e229664e8667aea38/2x.webp')
+    expect(picked.source).toBe('7tv')
+    law.reset() // sent: the box is cleared
+    expect(lookupEmoteWithOverlay('KEKW').emote.url).toBe('room-kekw')
+  })
+
+  test('a pick of your own copy draws your entry itself (its state, its variants)', () => {
+    channelEmoteCaches['chan-a'] = new Map([['KEKW', { url: 'room-kekw', source: '7tv', state: 'global' }]])
+    const mine = { url: 'my-kekw', source: 'heatsync', state: 'owned', hash: 'abc123' }
+    viewerPersonalEmotes.set('KEKW', mine)
+    law.lawPin('KEKW', mine)
+    expect(lookupEmoteWithOverlay('KEKW').emote.url).toBe('my-kekw')
+  })
+
+  test('a removed or blocked emote nothing ships for still shows its picture', () => {
+    removedEmoteFallback.set('Gone', { url: 'gone-url' })
+    expect(lookupEmoteWithOverlay('Gone').emote.url).toBe('gone-url')
+    expect(lookupEmoteWithOverlay('Gone', { ownedOnly: true })).toBeNull()
   })
 })

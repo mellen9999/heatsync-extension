@@ -71,7 +71,7 @@ describe('own-reply bar', () => {
   test('kick echo — the emote wire form still matches', () => {
     const { rememberOwnReply, restoreOwnReplyBar } = load()
     rememberOwnReply('lol KEKW', PARENT)
-    // kickifyEmoteText rewrites the send; the echo carries the wire form back.
+    // the law's kick wire rewrites the send; the echo carries the wire form back.
     const msg = { text: 'lol [emote:37226:KEKW]' }
     restoreOwnReplyBar(msg)
     expect(msg.replyTo).toEqual(PARENT)

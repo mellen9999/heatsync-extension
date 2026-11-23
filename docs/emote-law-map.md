@@ -53,12 +53,12 @@ those bundles too (≈10KB each, minified) or a message to the overlay. that is 
 ## where today's answer differs from the law
 
 - **read: the sender's whole merged set beats the room** (R1 step 3 / R4). law: only their 7tv personal set is above the room; their heatsync set is tier 4, below it. on your own rows it is your entire inventory (`main-tabs.js:1541`). — closed (READ): only `personal: true` entries (7tv/bttv personal sets) read above the room
-- **read: `hsEmotes` is used as a pick** (R2, `main-tabs.js:1562`). law: a server name-match is not a pick. — closed (READ): server name-matches carry `named: true` and read as the sender's inventory
+- **read: `hsEmotes` is used as a pick** (R2). law: a server name-match is not a pick. — closed (READ): a ref the server marked `nm` reads as the sender's inventory (`named`), below the room; a ref without it is what the sender's app shipped, a pick. an old server sends no `nm`, so every ref reads as a pick, as before
 - **read: a provider overwrites the streamer's heatsync set of the same name** (R3, `resolveEmoteProviderWinner`). law: owner heatsync first. — closed (READ): `EMOTE_TIER_ORDER.channel` starts with heatsync
 - **read: a heatsync global overwrites 7tv/bttv/ffz** (R3). law: heatsync is last of the globals. — closed (READ): `EMOTE_TIER_ORDER.global` ends with heatsync
 - **read: native rows skip the streamer's set** (R17, `content.js:2738`).
 - **read: twitch+kick share one bare-name map** (`emotes.js:3642`): a kick row can draw the twitch channel's emote. law: the platform's own channel emotes. — still open: the shared map is built per channel key; the adapter hardcodes `platform: 'twitch'`
-- **read: dms use `hsAnyChannelEmotes()`** (R1, `emotes.js:4511`) as if every loaded channel were a platform token. law: no room → no room rule (picks, sender, globals). — still open: dms/feed (R12) are outside multichat-core processEmotes
+- **read: dms use `hsAnyChannelEmotes()`** (R1) as if every loaded channel were a platform token. law: no room → no room rule (picks, sender, globals). — closed (READ): the any-channel map is `processEmotes`' last resort for a roomless line (a word nothing else answered), first channel by name, never by load order. feed rows (R12) are still outside
 - **read: youtube native rows and dms never draw the sender's own sets** (R21).
 - **read: the case setting is not wired** — exact case is the only mode. law: exact first, then a folded match for words nothing matched.
 - **send: the typed word is not the room's** (R7 yours > room > globals; R9 room > yours > globals; disagree with each other and with the law, which is room > yours).
@@ -95,7 +95,7 @@ the answer is drawn or whether it is allowed.
 - twitch sub "locked" state for emotes you cannot post — `main-tabs.js:1505-1523`; `input.js:2236`.
 - the inventory render opt-out and suggest toggle — `emotes.js:4545`, `input.js:5128`. (`suggestOwn` exists in `OfferCtx`; the render opt-out does not.)
 - **auto-add-on-send mutates "yours"** (add, swap, optimistic seed, rollback) — `input.js:8633-8713`, `emotes.js:1604-1640`. the law's send is a pure resolve and never edits a set. this is the biggest behaviour question for the SEND step: keep it as a step *after* `sendLine`, driven by `Shipped.chips`.
-- click-pasted own-echo refs that survive a failed add — `emotes.js:2852`, `main-tabs.js:1593`.
+- click-pasted own-echo refs that survive a failed add — `emotes.js` `clickPastedRefs`. they are `named`: a fallback below the room for your own echo, never a lasting pick.
 - server-rendered archive rows — `chat-logs.js:812-893`.
 
 ## design note: one on-disk law copy for the content-script bundles (no code yet)

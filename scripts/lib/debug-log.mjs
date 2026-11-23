@@ -22,3 +22,22 @@ export function rebindDebugLog(code) {
   if (out === code) throw new Error('build: multichat-core.js does not open with the iife the debug log is rebound in')
   return out
 }
+
+// the background's `log` is the same kind of dead weight: `const log = DEBUG ? console.log.bind(…) : () => {}`
+// with DEBUG a const false, so a release build ran none of its ~300 calls and shipped every string.
+// background.js is a plain script (no wrapper, top-level names kept), so the definition is taken out,
+// `pure` drops the calls nothing reads, and the name is bound again to an empty function up front for
+// the calls whose result is used. a source with DEBUG switched on (a debugging build) is left whole: null
+const BG_LOG = "const log = DEBUG ? console.log.bind(console, '[heatsync]') : () => {}\n"
+export function unbindBgDebugLog(src) {
+  const n = src.split(BG_LOG).length - 1
+  if (n !== 1) throw new Error(`build: expected the 1 debug log definition in background.js, found ${n}`)
+  if (!/^const DEBUG = false$/m.test(src)) return null
+  return src.replace(BG_LOG, '')
+}
+
+/** The minified background opens with `log` bound to nothing, as DEBUG=false always had it. */
+export function rebindBgDebugLog(code) {
+  const strict = code.startsWith('"use strict";') ? '"use strict";' : ''
+  return `${strict}function log(){}${code.slice(strict.length)}`
+}

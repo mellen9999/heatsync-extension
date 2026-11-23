@@ -8,7 +8,8 @@ import { expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { transformSync } from 'esbuild'
-import { rebindDebugLog, unbindDebugLog } from '../scripts/lib/debug-log.mjs'
+import { rebindBgDebugLog, rebindDebugLog, unbindBgDebugLog, unbindDebugLog } from '../scripts/lib/debug-log.mjs'
+import { bgSource } from './bg-src.js'
 
 const ROOT = join(import.meta.dir, '..')
 const read = (p) => readFileSync(join(ROOT, p), 'utf8')
@@ -78,3 +79,58 @@ test('a bundle without them is refused, not shipped half-treated', () => {
 function MC_DEBUG_IS_CONST_FALSE(src) {
   return /^const MC_DEBUG = false$/m.test(src)
 }
+
+// ── the background: the same dead weight, a plain script instead of a wrapped bundle ───────────────
+const BG_DEF = "const DEBUG = false\nconst log = DEBUG ? console.log.bind(console, '[heatsync]') : () => {}\n"
+const BG_BODY = `${BG_DEF}
+function warn() { console.warn('a warning that ships') }
+function boot(p) {
+  log('a debug string nobody reads', p)
+  log(\`a template \${p} nobody reads\`)
+  p.catch((e) => log('caught and said nothing', e))
+  const said = log('a result that is used')
+  if (DEBUG) console.log('guarded by the flag')
+  console.error('an error that ships')
+  warn()
+  return said
+}
+self.boot = boot
+`
+
+// the same steps minifyDistFile takes for background.js
+function shipBg(body) {
+  const quiet = unbindBgDebugLog(body)
+  const { code } = transformSync(quiet, { loader: 'js', minify: true, keepNames: true, pure: ['log'] })
+  return rebindBgDebugLog(code)
+}
+
+test('background: debug calls and their strings are gone, warnings and errors stay', () => {
+  const out = shipBg(BG_BODY)
+  expect(out).not.toContain('a debug string nobody reads')
+  expect(out).not.toContain('nobody reads')
+  expect(out).not.toContain('console.log.bind')
+  expect(out).toContain('an error that ships')
+  expect(out).toContain('a warning that ships')
+})
+
+test('background: the name still means a function that does nothing', () => {
+  const out = shipBg(BG_BODY)
+  const self = {}
+  const said = []
+  new Function('self', 'console', out)(self, { error() {}, warn() {}, log: (...a) => said.push(a) })
+  expect(self.boot(Promise.reject(new Error('x')))).toBeUndefined()
+  expect(said).toEqual([])
+})
+
+test('background: the real source has exactly the one definition the build takes out, DEBUG a const false', () => {
+  const src = bgSource()
+  const quiet = unbindBgDebugLog(src)
+  expect(quiet).not.toBeNull()
+  expect(quiet).not.toContain('console.log.bind')
+  expect(src.length - quiet.length).toBe(BG_DEF.length - 'const DEBUG = false\n'.length)
+})
+
+test('background: a source with the flag switched on is left whole, and one with no definition is refused', () => {
+  expect(unbindBgDebugLog(BG_BODY.replace('const DEBUG = false', 'const DEBUG = true'))).toBeNull()
+  expect(() => unbindBgDebugLog('const DEBUG = false\n')).toThrow(/found 0/)
+})

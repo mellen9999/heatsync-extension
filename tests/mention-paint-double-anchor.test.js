@@ -210,9 +210,10 @@ describe('computeMessageText call-site guard — structural invariant', () => {
   test('the processEmotes call inside computeMessageText passes skipMentions=true', () => {
     // Whitespace-insensitive: the formatter may wrap this call across lines.
     const flat = MAIN_SRC.replace(/\s+/g, ' ')
+    // the sixth argument is skipMentions; what follows it (the row's refs, its platform) is not this guard's
     const marker =
-      'let processedText = processEmotes( escapeHtml(m.text), m.emoteChannel || m.channel, twitchExtra, senderEmotes, m.time, true, hsMsgRefs, )'
-    expect(flat.includes(marker) || flat.includes(marker.replace('( ', '(').replace(', )', ')'))).toBe(true)
+      'let processedText = processEmotes( escapeHtml(m.text), m.emoteChannel || m.channel, twitchExtra, senderEmotes, m.time, true, '
+    expect(flat.includes(marker) || flat.includes(marker.replace('( ', '('))).toBe(true)
   })
 
   test('highlightMentionsInHtml still runs right after, in the same function (mention rendering is not silently dropped)', () => {

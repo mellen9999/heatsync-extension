@@ -1,3 +1,5 @@
+// NOTE: this file is byte-copied into the extension, which still calls buildEmoteRefs, lookupPickedEmote and
+// lookupRemoteEmoteRef: they stay here even though the site now sends through emotes/law.js.
 // Single source of truth for building a message's `emote_refs` map.
 //
 // `emote_refs` is how a sender VOUCHES the emotes in their message so OTHER
@@ -85,6 +87,26 @@ export function draftPicks(owner) {
 const put = (map, key, val) => { if (val === undefined) map.delete(key); else map.set(key, val) }
 
 /**
+ * An emote as a line carries it: the one record every pick, registration and
+ * shipped ref is made of. `id` and `animated` are the provider's own, carried so
+ * the durable per-message ref (migrations/315, {p,id,a}) needs no id re-derived
+ * from the url; the natural size lets a reader reserve the line box.
+ * @param {{name?:string,url?:string,hash?:string,provider?:string,id?:string,animated?:boolean,zeroWidth?:boolean,width?:number,height?:number}} e
+ */
+export function refOf(e) {
+  return {
+    name: e.name,
+    url: e.url,
+    ...(e.hash ? { hash: e.hash } : {}),
+    provider: e.provider,
+    zeroWidth: !!e.zeroWidth,
+    ...(typeof e.id === 'string' && e.id ? { id: e.id } : {}),
+    ...(typeof e.animated === 'boolean' ? { animated: e.animated } : {}),
+    ...naturalSize(e),
+  }
+}
+
+/**
  * @param {{name?:string,url?:string,provider?:string,id?:string,animated?:boolean,zeroWidth?:boolean,width?:number,height?:number}} emote
  *        a catalog search result the user completed via Tab or clicked in the picker
  * @param {object} [owner] the box it was picked into
@@ -92,19 +114,7 @@ const put = (map, key, val) => { if (val === undefined) map.delete(key); else ma
 export function registerRemoteEmoteRef(emote, owner) {
   // null is "there is no box" (the composer is not on the page): nothing to file
   if (!emote?.name || !emote?.url || owner === null) return
-  draftPicks(owner).remote.set(emote.name, {
-    name: emote.name,
-    url: emote.url,
-    provider: emote.provider,
-    zeroWidth: !!emote.zeroWidth,
-    // The provider's own id + whether it's animated — carried through so the
-    // send path can build the durable, permanent per-message ref
-    // (migrations/315, {p,id,a}) without re-deriving an id from the url.
-    // Neither is used for rendering, only stored when present.
-    ...(typeof emote.id === 'string' && emote.id ? { id: emote.id } : {}),
-    ...(typeof emote.animated === 'boolean' ? { animated: emote.animated } : {}),
-    ...naturalSize(emote),
-  })
+  draftPicks(owner).remote.set(emote.name, refOf(emote))
 }
 
 /**
@@ -123,16 +133,7 @@ export function pinPickedEmote(emote, owner) {
   // otherwise survive and the send's commit step would add THAT one to the
   // inventory in place of the pick.
   if (d.remote.get(key)?.url !== emote.url) d.remote.delete(key)
-  d.picked.set(key, {
-    name: emote.name,
-    url: emote.url,
-    ...(emote.hash ? { hash: emote.hash } : {}),
-    provider: emote.provider,
-    zeroWidth: !!emote.zeroWidth,
-    ...(typeof emote.id === 'string' && emote.id ? { id: emote.id } : {}),
-    ...(typeof emote.animated === 'boolean' ? { animated: emote.animated } : {}),
-    ...naturalSize(emote),
-  })
+  d.picked.set(key, refOf(emote))
 }
 
 /**
@@ -466,7 +467,10 @@ export function mergeEmoteRefs(target, source) {
   let gained = false
   for (const [name, ref] of Object.entries(from)) {
     if (!ref) continue
-    if (target.emote_refs?.[name]) continue
+    // a name-matched ref (`nm`: the server or a sender's set guessed it from the word) never
+    // blocks a real one, or a line's shipped emote would stay a guess forever
+    const held = target.emote_refs?.[name]
+    if (held && !(held.nm && !ref.nm)) continue
     if (!target.emote_refs) target.emote_refs = {}
     target.emote_refs[name] = ref
     gained = true

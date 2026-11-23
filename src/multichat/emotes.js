@@ -94,7 +94,7 @@ function mcRerenderSearch(query) {
   mcRemoteEmoteIndex.clear()
   if (!query) {
     _mcSearchRenderedQuery = ''
-    grid.innerHTML = renderEmoteSections(groupEmotes(pickerBaseEmotes()))
+    grid.innerHTML = renderEmoteSections(groupEmotes())
     attachChunkObserver(grid)
     markPickerDirty()
     return
@@ -786,14 +786,9 @@ function getHighResUrl(url) {
   return hsOwnCanonicalUrl(url)
 }
 
-/**
- * Group emotes by state+source into ordered sections
- */
-// 'set' = anything the user owns (state==='owned'), regardless of original
-// provider. Without this branch a 7tv emote in the user's heatsync set
-// would bucket into '7tv' and the user's 982-emote set would scatter
-// across every section instead of sitting in one.
-const SECTION_ORDER = ['set', '7tv', 'bttv', 'ffz', 'twitch', 'kick', 'heatsync']
+// The headings of the untyped picker's sections (the order is the law adapter's, LAW_BROWSE_ORDER).
+// 'set' = anything you own (state === 'owned'), whatever provider it came from: a 7tv emote in
+// your set sits with your set, not under 7TV.
 const SECTION_LABELS = {
   set: 'inventory',
   '7tv': '7TV',
@@ -811,18 +806,10 @@ function buildRecentSection() {
   return emotes.length ? { key: 'recent', label: t('btn_recent'), emotes } : null
 }
 
-function groupEmotes(allEmotes) {
-  const groups = {}
-  for (const [name, emote] of allEmotes) {
-    const key = emote.state === 'owned' ? 'set' : emote.source
-    if (!groups[key]) groups[key] = []
-    groups[key].push([name, emote])
-  }
-  const sections = SECTION_ORDER.filter((k) => groups[k]?.length).map((k) => ({
-    key: k,
-    label: SECTION_LABELS[k] || k,
-    emotes: groups[k],
-  }))
+// The untyped picker: your favorites, the pictures you sent last, then the law's browse of the open
+// tab (emote-law-offer.js lawBrowseSections): yours, the room's, the globals by provider.
+function groupEmotes() {
+  const sections = lawBrowseSections(activeTabEmotePools(), { ...SECTION_LABELS, channel: t('btn_tab_channel') })
   const recent = buildRecentSection()
   if (recent) sections.unshift(recent)
   const fav = hsFavSection([viewerPersonalEmotes, ...activeTabEmotePools(), emoteCache])
@@ -1095,17 +1082,6 @@ let pickerTab = 'emotes'
 let _pickerBuiltKey = null
 let _pickerPrebuildScheduled = false
 
-// What the picker grid lists with no query: your set first (so 'owned' shows on top), then
-// every channel pool this tab covers (a merged or yt tab spans several; the raw tab key
-// finds none of them), then globals. The same pools search and Tab read.
-function pickerBaseEmotes() {
-  const all = new Map()
-  for (const [k, v] of viewerPersonalEmotes) all.set(k, v)
-  for (const pool of activeTabEmotePools()) for (const [k, v] of pool) if (!all.has(k)) all.set(k, v)
-  for (const [k, v] of emoteCache) if (!all.has(k)) all.set(k, v)
-  return all
-}
-
 function pickerCacheKey() {
   // pickerTab is intentionally NOT in the key — switching the active tab
   // (emotes ↔ twitch) just toggles display, no rebuild needed.
@@ -1204,7 +1180,7 @@ function showEmotePicker(tab = null) {
   // Cache miss → build full DOM synchronously (no chunks, no popping).
   // Merge channel emotes first (keeps 'channel' state), then globals.
   // All names/urls are pre-sanitized via escapeHtml in render helpers.
-  const sections = groupEmotes(pickerBaseEmotes())
+  const sections = groupEmotes()
   picker.innerHTML = `
       <div class="hs-mc-tab-content" id="hs-mc-tab-emotes" style="display: ${pickerTab === 'emotes' ? 'flex' : 'none'}; flex-direction: column;">
         <div class="hs-mc-picker-header">
@@ -5035,7 +5011,6 @@ export {
   mergeSenderEmotes,
   pastOwnership,
   pastOwnershipAt,
-  pickerBaseEmotes,
   processEmotes,
   reapHsIdleEmoteRows,
   rememberBlockedEmote,

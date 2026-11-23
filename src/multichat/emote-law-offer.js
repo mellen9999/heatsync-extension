@@ -198,6 +198,46 @@ function lawTabList(typed, { catalog, emoji, people, prev, cursor = -1 } = {}) {
   return [...head, ...all.filter((m) => !have.has(lawMatchKey(m)))]
 }
 
+// the picker with nothing typed, after favorites and recents: yours, the room's, the globals by provider
+const LAW_BROWSE_ORDER = ['set', 'channel', '7tv', 'bttv', 'ffz', 'twitch', 'kick', 'heatsync']
+
+/**
+ * The picker with nothing typed, read by the law's browse over the room the open tab's line goes
+ * to: each section most used first, then a-z, in any load order. Every copy of a name keeps its own
+ * tile (your KEKW beside the room's: a click pins the picture under it). A blocked emote keeps its
+ * tile too: that tile is where it is unblocked. `pools` are the other channel sets the tab covers
+ * (a merged tab, a second platform): what the room does not already hold follows it, a-z.
+ * @param {Array<Map>} pools name -> entry
+ * @param {Record<string,string>} labels section key -> heading
+ * @returns {Array<{key:string, label:string, emotes:Array<[string, object]>}>}
+ */
+function lawBrowseSections(pools, labels) {
+  const b = hsEmoteLaw.browse({ ...lawOfferCtx(), favorites: null, blocked: null, suggestOwn: true }, [])
+  const groups = {}
+  const have = new Set()
+  const file = (key, name, raw) => {
+    const pic = `${name}\n${_acPicKey(raw.url)}`
+    if (!raw?.url || have.has(pic)) return
+    have.add(pic)
+    if (!groups[key]) groups[key] = []
+    groups[key].push([name, raw])
+  }
+  for (const c of b.room) file('channel', c.emote.name, c.emote.raw)
+  const more = []
+  for (const m of pools || []) for (const [n, e] of m) more.push([n, e])
+  more.sort((x, y) => hsEmoteLaw.cmpCp(x[0].toLowerCase(), y[0].toLowerCase()) || hsEmoteLaw.cmpCp(x[0], y[0]))
+  for (const [n, e] of more) file('channel', n, e)
+  for (const c of [...b.own, ...b.global]) {
+    const raw = c.emote.raw
+    file(raw.state === 'owned' ? 'set' : raw.source || 'heatsync', c.emote.name, raw)
+  }
+  return LAW_BROWSE_ORDER.filter((k) => groups[k]?.length).map((k) => ({
+    key: k,
+    label: labels[k] || k,
+    emotes: groups[k],
+  }))
+}
+
 /**
  * The picker's search. The law's list leads, so its first tile is what typing the word sends. The
  * law keeps one search result per name and none for a name you already reach (right for Tab, which

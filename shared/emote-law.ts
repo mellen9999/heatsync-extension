@@ -89,7 +89,7 @@ export function cmpCp(a: string, b: string): number {
 }
 
 export const CHANNEL_ORDER: readonly string[] = ['ffz', '7tv', 'bttv']
-const GLOBAL_ORDER: readonly string[] = ['7tv', 'bttv', 'ffz', 'twitch', 'hs']
+export const GLOBAL_ORDER: readonly string[] = ['7tv', 'bttv', 'ffz', 'twitch', 'hs']
 const rankIn = (order: readonly string[], p: string) => { const i = order.indexOf(p); return i === -1 ? order.length : i }
 
 const EMPTY: NameIndex = new Map()

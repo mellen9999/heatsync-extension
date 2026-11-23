@@ -538,6 +538,8 @@ function listenForSettingsChanges() {
             // rebuild (the flash). Additive-only outside the window, so a
             // removal never re-renders history ("history is sacred").
             if (hadAdds || _emoteColdLoad(pending)) reloadEmotesInPlace()
+            // the box reads this tab's emotes too: a chip whose picture changed or went follows
+            rereadInputChips()
           })
           .catch((e) => log('[heatsync-mc] loadEmotes error:', e))
       }, 300)

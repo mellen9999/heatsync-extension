@@ -117,7 +117,13 @@ try {
   await seed.evaluate(async (u: Record<string, string>) => {
     // @ts-ignore — extension page
     await chrome.storage.local.set({
-      heatsync_multichat: { channels: [{ id: 'probechan', twitch: 'probechan', kick: '', youtube: '' }] },
+      heatsync_multichat: {
+        channels: [
+          { id: 'probechan', twitch: 'probechan', kick: '', youtube: '' },
+          // a second tab with its own Wlol: the box is read against the tab it is in (case l)
+          { id: 'probechan2', twitch: 'probechan2', kick: '', youtube: '' },
+        ],
+      },
       user_info: { username: 'probeuser' },
       global_emotes: [{ name: 'W', url: u.W_global, source: '7tv', hash: 'globalhash' }],
       emote_inventory: [
@@ -178,6 +184,17 @@ try {
       emotes,
     })
   }, Object.fromEntries(['W_bttv', 'W_7tv', 'W_ffz', 'Wlol_room'].map((n) => [n, E(n)])))
+  await sw.evaluate(async (url: string) => {
+    const emotes = [{ name: 'Wlol', url, source: '7tv', hash: 'wlolroom2hash' }]
+    // @ts-ignore — service worker globals
+    channelEmotesMap['twitch/probechan2'] = emotes
+    // @ts-ignore
+    channelEmotesFetchedAt['twitch/probechan2'] = Date.now()
+    // @ts-ignore
+    await bgPersistChannelEmotes('twitch/probechan2')
+    // @ts-ignore
+    broadcastToTabs({ type: 'channel_emotes_update', channelOwner: 'probechan2', platform: 'twitch', emotes })
+  }, E('Wlol_room2'))
   await p.waitForTimeout(1500)
 
   const now = Date.now()
@@ -307,6 +324,26 @@ try {
   )
   await p.click('#hs-mc-emote-btn', { timeout: 5000 }).catch(() => {})
   await p.keyboard.press('Escape').catch(() => {})
+
+  // ── a word left in the box when the tab changes is read against the tab it will be sent in ──
+  await typeLine('own4 Wlol ')
+  await until(p, async () => (await chipSrc()).includes('Wlol_room'), 5000)
+  await p.click('.hs-mc-tab[data-tab="probechan2"]', { timeout: 5000 })
+  await until(p, async () => (await chipSrc()).includes('Wlol_room2'), 5000)
+  const chipB = await chipSrc()
+  check(chipB.includes('Wlol_room2'), `l. the box carried to another tab shows that tab's Wlol, the one a send from there ships (got ${chipB || 'no chip'})`)
+  const boxText = await p.evaluate(() => {
+    const el = document.getElementById('hs-mc-input')
+    return [...(el?.childNodes || [])].map((n) => ((n as HTMLElement).dataset?.emoteName ? (n as HTMLElement).dataset.emoteName : n.textContent)).join('')
+  })
+  check(boxText.replace(/\s+/g, ' ').trim() === 'own4 Wlol', `l. and its words are all still there, in order (got ${JSON.stringify(boxText)})`)
+  await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+  await until(p, async () => { const s = await chipSrc(); return s.includes('Wlol_room') && !s.includes('Wlol_room2') }, 5000)
+  const chipA = await chipSrc()
+  check(chipA.includes('Wlol_room') && !chipA.includes('Wlol_room2'), `l. back in the first tab it is that tab's Wlol again (got ${chipA || 'no chip'})`)
+  await p.click('#hs-mc-input', { timeout: 5000 })
+  await p.keyboard.press('Control+A')
+  await p.keyboard.press('Backspace')
 
   // right-click alice's W: blocked, inventory untouched, other emotes unaffected
   await p.evaluate(() => {

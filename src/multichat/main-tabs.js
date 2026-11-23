@@ -1272,6 +1272,8 @@ function switchTab(id, sub, subOpts) {
 
   // Update input placeholder for new tab
   updateInputPlaceholder()
+  // a word left in the box is this tab's now
+  rereadInputChips()
 
   // Hide native chat when our overlay is active
   setNativeChatHidden(true)

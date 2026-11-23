@@ -244,6 +244,28 @@ function lawShip(text, legs, box) {
   return { wire: sent.wire, refs, picked, used }
 }
 
+/**
+ * The box writes to another tab now, or this tab's emotes changed: each chip is read again by
+ * the answer a send from here gives (lawChip, through createInputEmoteImg). A pick answers
+ * itself and stays; any other chip takes this room's picture, or is text again where it is no
+ * emote here. The box kept the last tab's picture while the line shipped this tab's emote of
+ * the name. Plain words are left alone: as you type, only Tab and your own set draw.
+ */
+function rereadInputChips() {
+  const input = document.getElementById('hs-mc-input')
+  if (!input?.isContentEditable) return
+  for (const img of input.querySelectorAll('img.hs-input-emote')) {
+    // the second picture of a stack already put back as words
+    if (!img.isConnected) continue
+    if (createInputEmoteImg(img.dataset.emoteName || '')?.src === img.src) continue
+    // back to its words (a stack whole, modifiers kept), and those words drawn as they are here
+    const chip = img.closest('.hs-input-stack') || img
+    const words = document.createTextNode(chipToText(chip) || '')
+    chip.replaceWith(words)
+    imagifyValidWordsInTextNode(words)
+  }
+}
+
 /** a line's refs in the shape the server stores ({p,id,a}); undefined when none of them can be stored */
 function lawStored(refs) {
   if (!refs) return undefined

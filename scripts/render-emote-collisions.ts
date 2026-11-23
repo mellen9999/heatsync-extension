@@ -10,6 +10,10 @@
  *   b. a line with an IRC emotes= tag on W  -> the twitch emote
  *   c. a chatter who owns a W of their own  -> still the channel's W (their set is below the room)
  *   d. that chatter's Solo, which the room has no emote for -> their picture
+ * and three lines already in the channel's history when the tab opens:
+ *   i. one whose sender picked a W of their own (the server's record) -> their pick, not the channel's
+ *   j. one whose picked W was taken down since                      -> the word, no emote
+ *   k. one with no record                                          -> the channel's W
  * then the kick channel of the same name loads a W of its own and a KiOnly: a twitch row still
  * draws twitch's W, and KiOnly is text there (each platform's row reads its own emotes).
  * What the viewer sends (the emote law, send + offer), with Wlol in the channel AND in their
@@ -76,6 +80,22 @@ try {
           ],
         },
         vers: {},
+      }),
+    }),
+  )
+  // the channel's history, as heatsync serves it: the lines, and beside them what each sender's app shipped
+  const hist = (who: string, uid: number, mid: string, text: string) =>
+    `@display-name=${who};color=#00FF00;user-id=${uid};id=${mid};tmi-sent-ts=${Date.now() - 120_000} :${who}!${who}@${who}.tmi.twitch.tv PRIVMSG #probechan :${text}`
+  await c.route('https://heatsync.org/api/recent-messages/probechan**', (r: any) =>
+    r.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        messages: [hist('histy', 444, 'h1', 'zeta W'), hist('histy', 444, 'h2', 'eta W'), hist('histy', 444, 'h3', 'theta W')],
+        emote_refs: {
+          h1: { W: { p: 'hs', id: 'histpickhash', url: E('W_histpick') } },
+          h2: { W: { p: 'hs', id: 'histgonehash', gone: true } },
+        },
       }),
     }),
   )
@@ -188,6 +208,13 @@ try {
   check(cc.src.includes('W_ffz'), `c. a chatter's own W, never picked, still draws the channel's W (got ${cc.src || 'nothing'})`)
   const dd = await imgOf('delta')
   check(dd.src.includes('Solo_sender'), `d. their Solo, a name the room has no emote for, draws their picture (got ${dd.src || 'nothing'})`)
+
+  const hi = await imgOf('zeta')
+  check(hi.src.includes('W_histpick'), `i. a history line draws the W its sender picked, not the channel's (got ${hi.src || (hi.has ? 'no emote' : 'no row')})`)
+  const hj = await imgOf('eta W')
+  check(hj.has && !hj.src, `j. a history line whose picked W was taken down since draws the word, no emote (got ${hj.src || (hj.has ? 'no emote' : 'no row')})`)
+  const hk = await imgOf('theta')
+  check(hk.src.includes('W_ffz'), `k. a history line with no record draws the channel's W (got ${hk.src || (hk.has ? 'no emote' : 'no row')})`)
 
   check(a.state !== 'owned' && cc.state !== 'owned', `other chatters' W are not labelled yours (states ${a.state}, ${cc.state})`)
 

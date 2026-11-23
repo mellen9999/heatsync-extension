@@ -330,7 +330,6 @@ function scanExistingMentions() {
 
   // Twitch + Kick message selectors
   const messages = document.querySelectorAll('[data-a-target="chat-line-message"], #chatroom-messages [data-index]')
-  log('Scanning', messages.length, 'existing messages for mentions of', targets.join(','))
 
   let found = 0
   const mentionRes = targets.map((t) => new RegExp(`\\b${escapeRegex(t)}\\b`, 'i'))

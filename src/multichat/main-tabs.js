@@ -669,7 +669,6 @@ function getOrCreateHsContainer(chatRoom) {
       )
     }
   }
-  log('Created #hs-mc-container in', `${parent.tagName}.${[...parent.classList].join('.')}`)
   // Reposition the unified resize handle now that the container has a real
   // rect. On no-chat pages (Twitch /directory etc) applyChatPosition fired
   // before this point with cont=null, so the handle was stranded at 0,0.
@@ -1563,6 +1562,12 @@ function computeMessageText(m) {
     for (const name in m.hsEmotes) {
       const r = m.hsEmotes[name]
       if (!r) continue
+      // a pick taken down since the line was sent: the word is text, and no other emote of the
+      // name takes its place (emote law). kept as a marker so the read stops here
+      if (r.gone) {
+        ;(hsMsgRefs ||= new Map()).set(escapeHtml(name), { gone: true })
+        continue
+      }
       // cw stub — server hid a filter-flagged emote for THIS viewer and sent
       // {name, cw} with no url (mirrors background.js's get_sender_emotes
       // stub handling, see cw-stub-passthrough.test.js). `!r.url` alone used

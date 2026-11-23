@@ -1029,6 +1029,53 @@ function bgIrcRefillGap(ch, tries = 3) {
   )
 }
 
+// The server's record of what each sender's app shipped with a line (`emote_refs: { id: { word: ref } }`
+// beside the history's lines), as a row's hsEmotes: `{ p, id, z?, a? }` named as each provider names
+// its 1x file, an `hs` one by the url the server resolved, `{ gone: true }` for one taken down since
+// (the word is text: no past copy, no look-alike). No `nm`: these are picks, they read above the room.
+function bgIrcHistoryRefs(refs) {
+  if (!refs || typeof refs !== 'object' || Array.isArray(refs)) return null
+  let out = null
+  let n = 0
+  for (const name of Object.keys(refs)) {
+    const r = refs[name]
+    if (!r || typeof r !== 'object' || !name || name.length > 100 || /\s/.test(name)) continue
+    let ref = null
+    if (r.gone === true) ref = { gone: true }
+    else if (typeof r.id === 'string') {
+      const id = r.id
+      let url = ''
+      if (r.p === 'hs') url = typeof r.url === 'string' ? absUrl(r.url) : ''
+      else if (r.p === '7tv' && /^[A-Za-z0-9]{1,40}$/.test(id)) url = `https://cdn.7tv.app/emote/${id}/1x.webp`
+      else if (r.p === 'bttv' && /^[A-Za-z0-9]{1,40}$/.test(id)) url = `https://cdn.betterttv.net/emote/${id}/1x.webp`
+      else if (r.p === 'ffz' && /^\d{1,12}$/.test(id))
+        url = `https://cdn.frankerfacez.com/emote/${id}/${r.a === true ? 'animated/' : ''}1`
+      if (/^https:\/\/[^\s"'<>]+$/.test(url) && url.length <= 2048) {
+        ref = { url, provider: r.p === 'hs' ? 'heatsync' : r.p, zeroWidth: r.z === true }
+      }
+    }
+    if (!ref) continue
+    // defined, never assigned: a word called __proto__ is a name
+    Object.defineProperty((out ||= {}), name, { value: ref, enumerable: true, writable: true, configurable: true })
+    if (++n >= 50) break
+  }
+  return out
+}
+
+// A row already held takes the record too: a name it has no ref for, one it only has a name-match
+// for, and any the record says is gone. true when the row changed.
+function bgIrcAdoptHistoryRefs(m, hs) {
+  let changed = false
+  for (const n of Object.keys(hs)) {
+    const have = m.hsEmotes && Object.hasOwn(m.hsEmotes, n) ? m.hsEmotes[n] : null
+    if (have && !have.nm && !(hs[n].gone && !have.gone)) continue
+    if (!m.hsEmotes) m.hsEmotes = {}
+    Object.defineProperty(m.hsEmotes, n, { value: hs[n], enumerable: true, writable: true, configurable: true })
+    changed = true
+  }
+  return changed
+}
+
 function bgIrcFetchRobotty(ch) {
   if (BG_IRC.historyInFlight.has(ch)) return BG_IRC.historyInFlight.get(ch)
   // per-channel cooldown — protects robotty + our SW from thrash on
@@ -1058,9 +1105,18 @@ function bgIrcFetchRobotty(ch) {
       const fpKey = (m) => `${m.user}|${m.time}|${(m.text || '').slice(0, 60)}`
       const existingFp = new Set(existing.filter((m) => !m.id).map(fpKey))
       const toAdd = []
+      const shipped = data.emote_refs && typeof data.emote_refs === 'object' ? data.emote_refs : null
+      const byId = shipped ? new Map(existing.filter((m) => m.id).map((m) => [m.id, m])) : null
+      let adopted = 0
       for (const line of data.messages) {
         const msg = bgIrcParseLine(line, ch)
         if (!msg) continue
+        const hs = shipped && msg.id && Object.hasOwn(shipped, msg.id) ? bgIrcHistoryRefs(shipped[msg.id]) : null
+        if (hs) {
+          const held = byId.get(msg.id)
+          if (held) adopted += bgIrcAdoptHistoryRefs(held, hs) ? 1 : 0
+          else msg.hsEmotes = hs
+        }
         // Non-renderable types (roomstate/userstate/whisper) belong in their
         // dedicated maps, not the chat buffer. Live path filters them; without
         // this skip the backfill paths flooded the ring with mode-toggle dupes.
@@ -1074,6 +1130,11 @@ function bgIrcFetchRobotty(ch) {
         // Even on a no-op merge, reconcile — a live CLEARCHAT may have landed
         // for a user whose backfilled msgs predate it; this paints them cleared.
         bgIrcReconcileCleared(buf)
+        // rows already held took a pick or a take-down from the record: the open chat reads them again
+        if (adopted) {
+          bgIrcPersistChannel(ch)
+          bgIrcBroadcast({ type: 'bg_irc_history_merged', channel: ch, count: 0 })
+        }
         return
       }
       const all = [...existing, ...toAdd].sort((a, b) => (a.time || 0) - (b.time || 0))

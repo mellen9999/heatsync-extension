@@ -57,6 +57,21 @@ function withChannel(fn) {
 }
 
 describe('same-name emote pick: what a line draws', () => {
+  // a pick the server says was taken down since the line was sent (history's `{ gone: true }`): the
+  // word is text. not the room's emote of the name, not the sender's, not the roomless last resort
+  test('a taken-down pick is text, never another emote of the name', () =>
+    withChannel(() => {
+      const gone = new Map([['IDK', { gone: true }]])
+      const out = processEmotes('IDK', 'chan-x', null, senderSet({ addedAt: T }), T + 5000, true, gone)
+      expect(out).toBe('IDK')
+      const roomless = processEmotes('IDK', null, null, undefined, T, true, gone, hsAnyChannelEmotes())
+      expect(roomless).toBe('IDK')
+      // the same word with no marker still draws: the marker is what stops it
+      expect(draws(processEmotes('IDK', null, null, undefined, T, true, null, hsAnyChannelEmotes()), CHANNEL)).toBe(
+        true,
+      )
+    }))
+
   test('no ref: the sender own IDK is drawn, not the channel IDK', () =>
     withChannel(() => {
       const out = processEmotes('IDK', 'chan-x', null, senderSet({ addedAt: T }), T + 5000)

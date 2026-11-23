@@ -34,3 +34,9 @@ test('a hidden-by-filter stub keeps its mark and its kind', () => {
   const r = run({ Gore: { cw: 'gore', nm: 1 } }).get('Gore')
   expect(r).toMatchObject({ state: 'cw', cw: 'gore', named: true })
 })
+
+test('a pick taken down since the send is kept as a marker, so the read stops at it', () => {
+  const refs = run({ Old: { gone: true }, KEKW: { url, provider: '7tv' } })
+  expect(refs.get('Old')).toEqual({ gone: true })
+  expect(refs.get('KEKW').url).toBe(url)
+})

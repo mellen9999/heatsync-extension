@@ -3123,12 +3123,9 @@ async function loadSenderEmoteSets() {
       senderEmoteSets.set(k, new Map(Object.entries(names)))
     }
     if (entries.length > SENDER_EMOTE_LRU_MAX) {
-      log('Loaded sender_emote_sets:', senderEmoteSets.size, 'of', entries.length, 'persisted (truncated to LRU cap)')
       // Persist the truncation back so the storage shrinks too.
       _senderEmoteDirty = true
       _scheduleSenderEmotePersist()
-    } else {
-      log('Loaded sender_emote_sets:', senderEmoteSets.size, 'senders')
     }
   } catch (e) {
     log('Error loading sender_emote_sets:', e)
@@ -3656,8 +3653,6 @@ async function loadEmotes() {
 
       // Rebuild blockedEmoteNames from loaded hashes
       rebuildBlockedNames()
-
-      log('Loaded', emoteCache.size, 'emotes (inventory:', inventoryEmotes.size, ', hashes:', emoteHashes.size, ')')
     } catch (e) {
       log('Error loading emotes:', e)
     }
@@ -4323,6 +4318,8 @@ function processEmotes(
     if (hit) return hit
     // `name` is an HTML-escaped token; the removed/past-ownership stores are keyed by RAW names
     const raw = name.indexOf('&') === -1 ? name : unescapeHtml(name)
+    // a pick taken down since the line was sent is text: no past copy of it, no look-alike
+    if (_lawCtx.refs[raw]?.gone) return null
     const e = _rfGate(_rf?.get(raw)) || (_rf ? pastOwnershipAt(raw, msgTime) : null)
     if (e) return { e, inv: true }
     // a roomless line's last resort (hsAnyChannelEmotes): only a word nothing above answered

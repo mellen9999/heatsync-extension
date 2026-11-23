@@ -939,6 +939,7 @@ const MULTICHAT_MODULES = [
   'feed-embed.js',
   'feed-engage.js',
   'polled-tab.js',
+  'auth-state.js',
   'social.js',
   'whispers.js',
   'eventsub-whispers.js',

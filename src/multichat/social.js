@@ -621,7 +621,7 @@ async function apiFetch(path, opts = {}) {
 async function loadHsAuth() {
   try {
     const data = await api.storage.local.get(['auth_token_encrypted', 'auth_token'])
-    hsAuthToken = !!(data.auth_token_encrypted || data.auth_token)
+    hsAuthToken = hsAuthRead(data)
     log('Heatsync auth:', hsAuthToken ? 'logged in' : 'anonymous')
   } catch (_) {
     hsAuthToken = false
@@ -644,7 +644,7 @@ async function loadHsAuth() {
       }
       if (changes.auth_token_encrypted || changes.auth_token) {
         const wasAuthed = hsAuthToken
-        hsAuthToken = !!(changes.auth_token_encrypted?.newValue || changes.auth_token?.newValue)
+        hsAuthToken = hsAuthAfter(changes)
         if (wasAuthed !== hsAuthToken) {
           log('Auth state changed:', hsAuthToken ? 'logged in' : 'logged out')
           if (typeof _refreshKickHostSession === 'function') _refreshKickHostSession()

@@ -64,6 +64,8 @@ const MC_PREFETCH_AHEAD = new Set(['7tv'])
 const MC_PAGE_SIZE = { '7tv': 24, bttv: 100, ffz: 200, hs: 100 }
 const _mcProviderAborts = { '7tv': null, bttv: null, ffz: null, hs: null }
 let mcCurrentQuery = ''
+// the same query as the person spelled it (the emote law leads with the spelling typed)
+let mcCurrentTyped = ''
 // Exact-match filter — when on, picker search shows only emotes whose name
 // equals the query (drops prefix + substring), so a common stem like "xd"
 // pins to the literal name. Client-side filter; no refetch needed to toggle.
@@ -97,88 +99,35 @@ function mcRerenderSearch(query) {
     markPickerDirty()
     return
   }
-  // Best-match ordering — type a name, the exact match leads instantly, then
-  // prefix, then substring; remote provider-fuzzy hits land last. Within a
-  // match bucket: owned > channel > global-local > remote (locality), then
-  // popularity (provider order / local iteration order = `pop`), then alpha.
-  // `pop` is a monotonic insertion counter, so already-shown tiles keep a
-  // stable order when load-more appends new pages.
-  const seenNames = new Set()
-  const seenVariantIds = new Set()
-  const entries = []
-  let pop = 0
-  const matchQuality = (nl) => (nl === query ? 0 : nl.startsWith(query) ? 1 : nl.includes(query) ? 2 : 3)
-  // Local matches (your set + channel + globals) — locality 0/1/2.
-  {
-    const localLoc = new Map()
-    const pool = new Map()
-    for (const [k, v] of viewerPersonalEmotes) {
-      pool.set(k, v)
-      localLoc.set(k, 0)
-    }
-    for (const sc of activeTabEmotePools())
-      for (const [k, v] of sc)
-        if (!pool.has(k)) {
-          pool.set(k, v)
-          localLoc.set(k, 1)
-        }
-    for (const [k, v] of emoteCache)
-      if (!pool.has(k)) {
-        pool.set(k, v)
-        localLoc.set(k, 2)
-      }
-    for (const [name, emote] of pool) {
-      const mq = matchQuality(name.toLowerCase())
-      if (mq === 3) continue // local has no fuzzy concept — substring or nothing
-      if (mcExactMatch && mq !== 0) continue
-      seenNames.add(name)
-      entries.push({ name, emote, mq, loc: localLoc.get(name) ?? 2, pop: pop++ })
-    }
-  }
-  // Remote provider results — locality 3 (below all local). Provider order
-  // already reflects popularity (7TV TOP_ALL_TIME / FFZ count-desc), preserved
-  // via `pop`. Same-name dups collapse to the first (one tile per name —
-  // inventory is name-keyed, so a viewer can only hold one image per name) —
-  // iterate in emoteProviderPriority order so the collapse picks the same
-  // winner as the merged channel/global pools ('hs' stays last, unaffected).
+  // The emote law's list leads (lawPickerSearch): the same order Tab gives, so the first tile is
+  // what typing the word sends. Every other picture the providers returned follows in their own
+  // order (the provider setting first, 'hs' last): the picker is where another KEKW is picked.
+  const found = []
   for (const p of [...emoteProviderOrder(emoteProviderPriority), 'hs']) {
     if (!mcPickerSources.has(p)) continue
     if (mcProviderLastQuery[p] !== query) continue
-    for (const r of mcProviderResults[p]) {
-      if (!r.name) continue
-      // Once the name is typed in full, every upload of it is its own tile —
-      // 7TV holds hundreds of 'dance' and they are different art. Told apart by
-      // id; all paste the same name, and the one you click is the one added.
-      const exactName = r.name.toLowerCase() === query
-      const variant = seenNames.has(r.name) && exactName && !!r.id && !seenVariantIds.has(r.id)
-      if (seenNames.has(r.name) && !variant) continue
-      const mq = matchQuality(r.name.toLowerCase())
-      if (mcExactMatch && mq !== 0) continue
-      seenNames.add(r.name)
-      // state='remote' — unowned picker result, click handler routes through
-      // addEmoteToInventory to persist. Auto-add-on-send also commits the slot.
-      if (r.id && exactName) seenVariantIds.add(r.id)
-      const vkey = variant ? `${r.name}#${r.id}` : r.name
-      entries.push({
-        name: r.name,
-        // source tracks the emote's real provider (r.provider), which equals the
-        // bucket key p for third-party but is 'heatsync' for the 'hs' directory —
-        // keeps source/provider aligned for state + tooltip + re-add.
-        emote: {
-          source: r.provider || p,
-          state: 'remote',
-          url: r.url,
-          provider: r.provider,
-          variant: variant ? r.id : '',
-        },
-        mq,
-        loc: 3,
-        pop: pop++,
-      })
-      mcRemoteEmoteIndex.set(vkey, { url: r.url, provider: r.provider, id: r.id, zeroWidth: !!r.zeroWidth })
-    }
+    // source tracks the emote's real provider (r.provider), which equals the bucket key p for
+    // third-party but is 'heatsync' for the 'hs' directory
+    for (const r of mcProviderResults[p]) if (r.name) found.push(r.provider ? r : { ...r, provider: p })
   }
-  entries.sort((a, b) => a.mq - b.mq || a.loc - b.loc || a.pop - b.pop || a.name.localeCompare(b.name))
+  // the spelling as typed leads its case twin; provider caches stay keyed by the lowercased query
+  const typed = mcCurrentTyped.toLowerCase() === query ? mcCurrentTyped : query
+  const entries = lawPickerSearch(typed, found, mcExactMatch).map((e) => {
+    if (!e.remote) return { name: e.name, emote: e.raw }
+    // state='remote': an unowned result, the click handler adds it (and auto-add-on-send commits
+    // the slot). Every upload is its own tile, told apart by id.
+    const r = e.raw
+    mcRemoteEmoteIndex.set(r.id ? `${e.name}#${r.id}` : e.name, {
+      url: r.url,
+      provider: r.source,
+      id: r.id,
+      zeroWidth: r.zeroWidth,
+    })
+    return {
+      name: e.name,
+      emote: { source: r.source, state: 'remote', url: r.url, provider: r.source, variant: r.id || '' },
+    }
+  })
   // One unified flat feed — no section headers, no visual distinction between
   // owned and remote results. Click handler routes remote emotes through
   // add-to-inventory transparently.
@@ -1501,7 +1450,8 @@ function showEmotePicker(tab = null) {
   let _searchFrame = 0
   const searchInput = document.getElementById('hs-mc-emote-search')
   searchInput?.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase().trim()
+    mcCurrentTyped = e.target.value.trim()
+    const query = mcCurrentTyped.toLowerCase()
     mcCurrentQuery = query
     if (!_searchFrame) {
       _searchFrame = requestAnimationFrame(() => {
@@ -1620,6 +1570,16 @@ function showEmotePicker(tab = null) {
         // concurrent add POST (this was the only add entry point missing the guard).
         // The paste below still runs, so multi-click still inserts the emote each time.
         const _addInFlight = typeof pendingEmoteOps !== 'undefined' && pendingEmoteOps.has(name)
+        // The tile clicked is this message's pick of its name: without the pin the word resolved
+        // like a hand-typed one, so another KEKW picked here shipped the room's KEKW.
+        if (remote) {
+          lawPin(name, {
+            url: remote.url,
+            source: remote.provider || '7tv',
+            id: remote.id,
+            zeroWidth: remote.zeroWidth,
+          })
+        }
         if (remote && !_addInFlight) {
           const _optimistic = !viewerPersonalEmotes.has(name)
           if (_optimistic) {

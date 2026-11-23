@@ -214,3 +214,73 @@ describe('one picture under two names', () => {
     expect(names(rig.findEmoteMatches('pog'))).toEqual(['PogA', 'PogB'])
   })
 })
+
+describe("the picker's search", () => {
+  const seven = (id, size = '2x.webp') => `https://cdn.7tv.app/emote/${id}/${size}`
+  const hit = (name, id, more = {}) => ({ name, url: seven(id, '1x.avif'), id, provider: '7tv', ...more })
+  const tiles = (list) => list.map((x) => [x.name, x.raw.url, x.remote])
+
+  test("the law's list leads: the first tile is what typing the word sends", () => {
+    const rig = world({ room: { KEKW: e('room') }, own: { KEKW: mine('mine') } })
+    const list = rig.lawPickerSearch('KEKW', [], false)
+    expect(list[0].raw.url).toBe(rig.lawChip('KEKW').e.url)
+    expect(tiles(list)).toEqual([
+      ['KEKW', e('room').url, false],
+      ['KEKW', mine('mine').url, false],
+    ])
+  })
+
+  test('every other picture the search returned follows: another KEKW can be picked on purpose', () => {
+    const rig = world({ room: { KEKW: { url: seven('ROOM'), source: '7tv', state: 'global' } } })
+    const list = rig.lawPickerSearch('kekw', [hit('KEKW', 'B'), hit('KEKW', 'C'), hit('kekwait', 'D')], false)
+    expect(tiles(list)).toEqual([
+      ['KEKW', seven('ROOM'), false],
+      ['kekwait', seven('D', '1x.avif'), true],
+      ['KEKW', seven('B', '1x.avif'), true],
+      ['KEKW', seven('C', '1x.avif'), true],
+    ])
+  })
+
+  test("the room's own emote coming back from the search is not a second tile, in any size or format", () => {
+    const rig = world({ room: { KEKW: { url: seven('ROOM'), source: '7tv', state: 'global' } } })
+    const list = rig.lawPickerSearch('kekw', [hit('KEKW', 'ROOM'), hit('KEKW', 'B')], false)
+    expect(tiles(list)).toEqual([
+      ['KEKW', seven('ROOM'), false],
+      ['KEKW', seven('B', '1x.avif'), true],
+    ])
+  })
+
+  test('"exact" keeps only the name typed, any case', () => {
+    const rig = world({ room: { KEKW: e('room'), KEKWait: e('wait') } })
+    const list = rig.lawPickerSearch('kekw', [hit('kekw', 'B'), hit('KEKWow', 'C')], true)
+    expect(list.map((x) => x.name)).toEqual(['kekw', 'KEKW'])
+  })
+
+  test('a blocked name is not found again through the search', () => {
+    const rig = world({ room: { KEKW: e('room') } })
+    rig.blocked = (n) => n === 'KEKW'
+    expect(rig.lawPickerSearch('kekw', [hit('KEKW', 'B')], false)).toEqual([])
+  })
+})
+
+describe('a search result clicked in the picker', () => {
+  test("is pinned as this message's pick before it is pasted (it used to resolve like a hand-typed word)", async () => {
+    const { readFileSync } = await import('node:fs')
+    const { join } = await import('node:path')
+    const src = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'emotes.js'), 'utf8')
+    const a = src.indexOf("if (img.dataset.state === 'remote') {")
+    const b = src.indexOf('pasteEmoteToInput(name)', a)
+    expect(a).toBeGreaterThan(-1)
+    expect(b).toBeGreaterThan(a)
+    expect(src.slice(a, b).replace(/\s+/g, ' ')).toContain('lawPin(name, { url: remote.url')
+  })
+
+  test("the pin makes the chip that very picture, over the room's emote of the name", () => {
+    const rig = world({ room: { KEKW: e('room') } })
+    expect(rig.lawChip('KEKW').e.url).toBe(e('room').url)
+    rig.lawPin('KEKW', { url: 'https://cdn.7tv.app/emote/OTHER/1x.avif', source: '7tv', id: 'OTHER' })
+    expect(rig.lawChip('KEKW')).toMatchObject({ from: 'pick', e: { url: 'https://cdn.7tv.app/emote/OTHER/1x.avif' } })
+    rig.reset()
+    expect(rig.lawChip('KEKW').e.url).toBe(e('room').url)
+  })
+})

@@ -9,6 +9,10 @@ import { draftPicks, endDraftPicks, pinPickedEmote, refOf } from '../../src/lib/
 import { normalizeEmoteRefsForSend } from '../../src/lib/emote-refs-normalize.js'
 
 const dir = join(import.meta.dir, '..', '..', 'src', 'multichat')
+// the shipped picture-identity helper (…/emote/<id>/1x.avif and …/emote/<id>/2x.webp are one emote)
+const INPUT = readFileSync(join(dir, 'input.js'), 'utf8')
+const PIC = INPUT.slice(INPUT.indexOf('const _AC_PIC_RE ='), INPUT.indexOf('let _acRemoteToken = 0'))
+const _acPicKey = new Function(`${PIC}; return _acPicKey`)()
 const SRC = `${readFileSync(join(dir, 'emote-law-send.js'), 'utf8')}\n${readFileSync(join(dir, 'emote-law-offer.js'), 'utf8')}`
 
 export function lawOfferRig({
@@ -43,7 +47,7 @@ export function lawOfferRig({
     loadEmoteFrecency: () => rig.frecency,
     getSetting: (k) => rig.settings[k],
     _hsAcEmoteBlocked: (n, e) => rig.blocked(n, e),
-    _acPicKey: (u) => u,
+    _acPicKey,
     getRecencyMap: () => rig.recency,
     _ucDisplay: rig.people,
     _isBlockedAnyPlat: () => false,
@@ -58,7 +62,7 @@ export function lawOfferRig({
   const api = new Function(
     ...names,
     'rig',
-    `${SRC}\nlawOpenLegs = () => rig.legs\nreturn { findEmoteMatches, lawCatalogEmote, lawChip, lawPin, lawBox }`,
+    `${SRC}\nlawOpenLegs = () => rig.legs\nreturn { findEmoteMatches, lawCatalogEmote, lawPickerSearch, lawChip, lawPin, lawBox }`,
   )(...names.map((k) => scope[k]), rig)
   rig.reset = () => {
     endDraftPicks(rig.box)

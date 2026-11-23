@@ -195,6 +195,38 @@ function lawTabList(typed, { catalog, emoji, people, prev, cursor = -1 } = {}) {
 }
 
 /**
+ * The picker's search. The law's list leads, so its first tile is what typing the word sends. The
+ * law keeps one search result per name and none for a name you already reach (right for Tab, which
+ * must not offer a look-alike); the picker is also where a picture is found, so every other picture
+ * the search returned follows, in the search's own order.
+ * @param {string} typed the query as spelled
+ * @param {Array} found provider hits ({ name, url, id, provider, zeroWidth, uses })
+ * @param {boolean} exact keep only names equal to the query (any case)
+ * @returns {Array<{name:string, raw:object, remote:boolean}>} `raw` is the cache's own entry, or
+ *   the hit ({ url, source, id, zeroWidth }) when `remote`
+ */
+function lawPickerSearch(typed, found, exact) {
+  const q = typed.toLowerCase()
+  const catalog = []
+  for (const it of found) {
+    const e = lawCatalogEmote(it)
+    if (e) catalog.push(e)
+  }
+  const out = []
+  // one tile per word and picture, whatever size or format the picture came in
+  const have = new Set()
+  const add = (e, remote) => {
+    const pic = `${e.name}\n${_acPicKey(e.raw.url)}`
+    if (have.has(pic) || (exact && e.name.toLowerCase() !== q)) return
+    have.add(pic)
+    out.push({ name: e.name, raw: e.raw, remote })
+  }
+  for (const c of hsEmoteLaw.offer(typed, lawOfferCtx({ catalog }))) add(c.emote, c.tier === 'catalog')
+  for (const e of catalog) add(e, true)
+  return out
+}
+
+/**
  * What Tab, the `:` list and the Tab list offer for the word under the caret.
  * `@word` = people only. `:word` = emotes and emoji. A bare word = emotes with the room's people.
  * @param {string} search the word as typed

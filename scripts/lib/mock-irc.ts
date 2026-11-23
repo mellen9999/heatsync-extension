@@ -39,6 +39,8 @@ export function startMockIrc(): {
 
   const frames: string[] = []
   const sockets = new Set<any>()
+  // every echo is its own message: one fixed id would make the second send a duplicate of the first
+  let echoes = 0
   const server = Bun.serve({
     port: 0,
     tls: { key: readFileSync(join(certDir, 'key.pem')), cert: readFileSync(join(certDir, 'cert.pem')) },
@@ -66,7 +68,7 @@ export function startMockIrc(): {
             const m = line.match(/^PRIVMSG (#\S+) :(.*)$/)
             if (m) {
               const echo =
-                `@display-name=probeuser;color=#FF8700;user-id=1;id=echo-1 ` +
+                `@display-name=probeuser;color=#FF8700;user-id=1;id=echo-${++echoes} ` +
                 `:probeuser!p@p.tmi.twitch.tv PRIVMSG ${m[1]} :${m[2]}\r\n`
               for (const c of sockets) {
                 try {

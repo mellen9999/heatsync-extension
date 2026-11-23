@@ -131,3 +131,33 @@ test('the send names the same youtube room the chip is judged against', () => {
   expect(SRC).toContain("youtube: ch.youtube && st.youtube ? lawYtKey(ch.youtube) : '',")
   expect(SRC).toContain("youtube: hostPlatform === 'yt' ? live : '',")
 })
+
+// what a recall of the line brings back (sent-history.js). Most emotes are typed with Tab, and
+// Tab's first answer is the room's own emote: kept as a pick, that line brought back in another
+// channel shipped the FIRST channel's emote there. Only a pick that changed what the word sends is kept
+test('lawShip chosen: only a pick that changed what its word sends comes back with the line', () => {
+  const C = { ROOM: '60ae958e229664e8667aea41', MINE: '60ae958e229664e8667aea42', FAR: '60ae958e229664e8667aea43' }
+  scope.channelEmoteCaches.chan = new Map([['KEKW', stv(C.ROOM)]])
+  scope.viewerPersonalEmotes.set('KEKW', stv(C.MINE))
+  scope.viewerPersonalEmotes.set('Solo', stv(C.FAR))
+  const ship = (text, ...pins) => {
+    const box = {}
+    for (const p of pins) pinPickedEmote(p, box)
+    return lawShip(text, { twitch: 'chan' }, box).chosen
+  }
+  const names = (c) => c?.map((row) => row[0])
+  // a Tab that took the room's own emote is not a choice
+  expect(names(ship('KEKW hi', { name: 'KEKW', ...stv(C.ROOM) }))).toEqual([])
+  // your own copy picked over the room's is
+  const mine = ship('KEKW hi', { name: 'KEKW', ...stv(C.MINE) })
+  expect(names(mine)).toEqual(['KEKW'])
+  expect(mine[0][1].url).toBe(stv(C.MINE).url)
+  // your own emote where the room has none is what typing it sends: not a choice
+  expect(names(ship('Solo', { name: 'Solo', ...stv(C.FAR) }))).toEqual([])
+  // a pick whose word is not in the line is not the line's
+  expect(names(ship('KEKW hi', { name: 'KEKW', ...stv(C.MINE) }, { name: 'Gone', ...stv(C.FAR) }))).toEqual(['KEKW'])
+  expect(ship('hi there', { name: 'KEKW', ...stv(C.MINE) })).toBeUndefined()
+  // no pick at all: nothing to ask
+  expect(ship('KEKW hi')).toBeUndefined()
+  scope.viewerPersonalEmotes.clear()
+})

@@ -345,6 +345,36 @@ try {
   await p.keyboard.press('Control+A')
   await p.keyboard.press('Backspace')
 
+  // ── a line brought back with the up arrow keeps the copy chosen in it ──
+  await p.keyboard.press('ArrowUp') // own3: Wlol typed by hand
+  await until(p, async () => (await chipSrc()).includes('Wlol_room'), 5000)
+  await p.keyboard.press('ArrowUp') // own2: the viewer's own Wlol, picked with a second Tab
+  await until(p, async () => (await chipSrc()).includes('Wlol_inv'), 5000)
+  const back = await chipSrc()
+  check(back.includes('Wlol_inv'), `m. the line sent with your own Wlol comes back with your own Wlol, not the channel's (got ${back || 'no chip'})`)
+  await p.keyboard.type(' again', { delay: 30 })
+  await p.keyboard.press('Enter')
+  await rowHas('again')
+  await p.waitForTimeout(800)
+  const again = await imgOf('again')
+  check(sent('own2 Wlol again'), 'm. the recalled line went out')
+  check(again.src.includes('Wlol_inv'), `m. and its row draws the copy that was picked (got ${again.src || (again.has ? 'a row with no emote' : 'no row')})`)
+  // a Tab that took the channel's own emote is no choice: recalled in another tab it is THAT tab's
+  await typeLine('own5 Wlol')
+  await p.keyboard.press('Tab')
+  await until(p, async () => (await chipSrc()).includes('Wlol_room'), 5000)
+  await p.keyboard.press('Enter')
+  await rowHas('own5')
+  await p.click('.hs-mc-tab[data-tab="probechan2"]', { timeout: 5000 })
+  await p.click('#hs-mc-input', { timeout: 5000 })
+  await p.keyboard.press('ArrowUp')
+  await until(p, async () => (await chipSrc()).includes('Wlol_room2'), 5000)
+  const far = await chipSrc()
+  check(far.includes('Wlol_room2'), `m. a Tab-completed line recalled in another tab shows that tab's Wlol, never the first channel's (got ${far || 'no chip'})`)
+  await p.keyboard.press('Control+A')
+  await p.keyboard.press('Backspace')
+  await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+
   // right-click alice's W: blocked, inventory untouched, other emotes unaffected
   await p.evaluate(() => {
     const row = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes('alpha'))

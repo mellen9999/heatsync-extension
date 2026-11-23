@@ -30,6 +30,7 @@ afterAll(() => {
 const ROOT = join(import.meta.dir, '..')
 const MODULE = join(ROOT, 'src', 'multichat', 'sent-history.js')
 const KEY = 'hs_sent_history'
+const PICKS = 'hs_sent_history_picks'
 const REMEMBER = 'hs_remember_sent'
 
 let disk
@@ -61,12 +62,14 @@ function installBrowser() {
       return out
     },
     async set(obj) {
+      // like the browser: onChanged names only the keys whose value really changed
       const changes = {}
       for (const [k, v] of Object.entries(obj)) {
-        changes[k] = { oldValue: disk[k], newValue: structuredClone(v) }
+        if (JSON.stringify(disk[k]) !== JSON.stringify(v))
+          changes[k] = { oldValue: disk[k], newValue: structuredClone(v) }
         disk[k] = structuredClone(v)
       }
-      fire(changes)
+      if (Object.keys(changes).length) fire(changes)
     },
     async remove(key) {
       if (!(key in disk)) return
@@ -325,6 +328,169 @@ describe('two tabs on one device', () => {
   })
 })
 
+describe('a line comes back with the copies chosen in it', () => {
+  const ref = (name, id) => ({ name, url: `https://cdn.7tv.app/emote/${id}/2x.webp`, provider: '7tv', id })
+  // lawShip's `chosen`: [name, ref] rows, a catalog pick and a pin alike
+  const chosen = (...rows) => rows
+
+  test('a pick comes back with its line, after a reload too, as a draft of its own', async () => {
+    const a = await openTab()
+    const mine = ref('KEKW', 'MINE')
+    a.hsSentHistoryRecord('KEKW hi', chosen(['KEKW', mine]))
+    await tick()
+    for (const tab of [a, await openTab()]) {
+      const back = tab.hsSentHistoryPicks('KEKW hi')
+      expect([...back.picked]).toEqual([['KEKW', mine]])
+      expect(back.remote.size + back.away.size).toBe(0)
+      // each recall is a fresh draft: editing one never changes what the next recall brings
+      back.picked.clear()
+      expect(tab.hsSentHistoryPicks('KEKW hi').picked.size).toBe(1)
+    }
+  })
+
+  test('a catalog pick (in no set of yours) comes back too; a line with no pick has none', async () => {
+    const a = await openTab()
+    const far = ref('LICK', 'FAR')
+    a.hsSentHistoryRecord('LICK', chosen(['LICK', far]))
+    a.hsSentHistoryRecord('plain words')
+    a.hsSentHistoryRecord('nothing chosen', chosen())
+    await tick()
+    const b = await openTab()
+    expect([...b.hsSentHistoryPicks('LICK').picked]).toEqual([['LICK', far]])
+    expect(b.hsSentHistoryPicks('plain words')).toBeNull()
+    expect(b.hsSentHistoryPicks('nothing chosen')).toBeNull()
+    expect(b.hsSentHistoryPicks('never sent')).toBeNull()
+  })
+
+  test('the newest send of a line is the one that comes back: sent again by hand, it has no pick', async () => {
+    const a = await openTab()
+    a.hsSentHistoryRecord('KEKW', chosen(['KEKW', ref('KEKW', 'MINE')]))
+    a.hsSentHistoryRecord('between')
+    a.hsSentHistoryRecord('KEKW', chosen(['KEKW', ref('KEKW', 'OTHER')]))
+    expect(a.hsSentHistoryPicks('KEKW').picked.get('KEKW').id).toBe('OTHER')
+    a.hsSentHistoryRecord('between 2')
+    a.hsSentHistoryRecord('KEKW')
+    expect(a.hsSentHistoryPicks('KEKW')).toBeNull()
+    await tick()
+    expect((await openTab()).hsSentHistoryPicks('KEKW')).toBeNull()
+  })
+
+  // the browser's change event names only the keys that changed. A send with no pick leaves the
+  // stored picks as they were, so the event carries the list alone: read as "the picks are gone",
+  // every earlier line lost its pick on the next send (found by the real-browser run)
+  test('a later send with no pick of its own leaves an earlier line its pick', async () => {
+    const a = await openTab()
+    const b = await openTab()
+    a.hsSentHistoryRecord('KEKW', chosen(['KEKW', ref('KEKW', 'MINE')]))
+    await tick()
+    a.hsSentHistoryRecord('plain words')
+    await tick()
+    for (const tab of [a, b]) expect(tab.hsSentHistoryPicks('KEKW').picked.get('KEKW').id).toBe('MINE')
+    // the same last line sent again with another copy: the list is unchanged, the picks alone move
+    a.hsSentHistoryRecord('plain words', chosen(['plain', ref('plain', 'P')]))
+    await tick()
+    for (const tab of [a, b]) expect(tab.hsSentHistoryPicks('plain words').picked.has('plain')).toBe(true)
+  })
+
+  test('a line that falls off the list takes its picks with it', async () => {
+    const a = await openTab()
+    a.hsSentHistoryRecord('KEKW old', chosen(['KEKW', ref('KEKW', 'MINE')]))
+    for (let i = 0; i < 50; i++) a.hsSentHistoryRecord(`m${i}`)
+    expect(a.mcMessageHistory).not.toContain('KEKW old')
+    expect(a.hsSentHistoryPicks('KEKW old')).toBeNull()
+    await tick()
+    expect(disk[PICKS]).toEqual([])
+  })
+
+  test('a line sent while the stored list was still being read keeps its own answer', async () => {
+    const a = await openTab()
+    a.hsSentHistoryRecord('KEKW', chosen(['KEKW', ref('KEKW', 'OLD')]))
+    a.hsSentHistoryRecord('LUL', chosen(['LUL', ref('LUL', 'L')]))
+    await tick()
+    deferGet = true
+    const mod = await import(`${MODULE}?tab${++n}`)
+    mod.hsSentHistoryRecord('KEKW') // by hand, before the read lands: no pick
+    deferGet = false
+    releaseGet()
+    await mod.mcSentHistoryReady
+    expect(mod.hsSentHistoryPicks('KEKW')).toBeNull()
+    expect(mod.hsSentHistoryPicks('LUL').picked.has('LUL')).toBe(true)
+  })
+
+  test('"remember sent" off: this page only, nothing on disk; clear wipes both', async () => {
+    const a = await openTab()
+    a.hsSentHistoryRecord('KEKW', chosen(['KEKW', ref('KEKW', 'MINE')]))
+    await tick()
+    expect(disk[PICKS].length).toBe(1)
+    await browser.storage.local.set({ [REMEMBER]: false })
+    await tick()
+    expect(PICKS in disk).toBe(false)
+    a.hsSentHistoryRecord('KEKW now', chosen(['KEKW', ref('KEKW', 'MINE')]))
+    await tick()
+    expect(a.hsSentHistoryPicks('KEKW now').picked.size).toBe(1)
+    expect(PICKS in disk).toBe(false)
+    await browser.storage.local.set({ [REMEMBER]: true })
+    await tick()
+    expect(a.hsSentHistoryPicks('KEKW now')).toBeNull()
+    a.hsSentHistoryRecord('KEKW', chosen(['KEKW', ref('KEKW', 'MINE')]))
+    await tick()
+    await a.hsSentHistoryClear()
+    expect(a.hsSentHistoryPicks('KEKW')).toBeNull()
+    expect(PICKS in disk).toBe(false)
+  })
+
+  test('a send in one tab is recalled with its pick in the other; a clear empties both', async () => {
+    const a = await openTab()
+    const b = await openTab()
+    a.hsSentHistoryRecord('KEKW', chosen(['KEKW', ref('KEKW', 'MINE')]))
+    await tick()
+    expect(b.hsSentHistoryPicks('KEKW').picked.get('KEKW').id).toBe('MINE')
+    await a.hsSentHistoryClear()
+    await tick()
+    expect(b.hsSentHistoryPicks('KEKW')).toBeNull()
+  })
+
+  test('whatever storage hands back is made safe', async () => {
+    const ok = ref('KEKW', 'MINE')
+    disk[KEY] = ['KEKW a b c', 'junk']
+    disk[PICKS] = [
+      [
+        'KEKW a b c',
+        [
+          ['KEKW', ok],
+          ['a', { name: 'a', url: 'javascript:alert(1)' }],
+          ['b', { name: 'other', url: ok.url }],
+          ['c'],
+          5,
+          null,
+        ],
+        'nope',
+      ],
+      ['junk', [['x', { name: 'x', url: 'http://plain.example/x.png' }]]],
+      ['not on the list', [['KEKW', ok]]],
+      'text',
+      null,
+      [5, [['KEKW', ok]]],
+    ]
+    const a = await openTab()
+    expect([...a.hsSentHistoryPicks('KEKW a b c').picked]).toEqual([['KEKW', ok]])
+    expect(a.hsSentHistoryPicks('junk')).toBeNull()
+    expect(a.hsSentHistoryPicks('not on the list')).toBeNull()
+    for (const bad of ['{not json', {}, 7, null]) {
+      disk[PICKS] = bad
+      expect((await openTab()).hsSentHistoryPicks('KEKW a b c')).toBeNull()
+    }
+  })
+
+  test("the box takes the line's picks before the line is drawn, and a send hands them over", () => {
+    const input = readFileSync(join(ROOT, 'src', 'multichat', 'input.js'), 'utf8')
+    expect(input).toMatch(
+      /endComposerPicks\(input\)\n\s*resumeDraftPicks\(hsSentHistoryPicks\(text\), input\)\n\s*if \(wysiwygEnabled\) restoreWysiwygText\(input, text\)/,
+    )
+    expect(input).toContain('hsSentHistoryRecord(text, shipped.chosen)')
+  })
+})
+
 describe('local only', () => {
   test('nothing in the whole lifecycle touches chrome.storage.sync', async () => {
     const tab = await openTab()
@@ -342,6 +508,7 @@ describe('local only', () => {
     expect(line, 'settings-ui no longer declares _SETTINGS_PRIVATE_KEY_RE').toBeTruthy()
     const re = new Function(`return ${line[1]}`)()
     expect(re.test(KEY)).toBe(true) // what you typed never rides an export
+    expect(re.test(PICKS)).toBe(true) // nor the emotes you picked in it
     expect(re.test(REMEMBER)).toBe(false) // the preference itself may
   })
 })

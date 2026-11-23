@@ -211,7 +211,8 @@ function lawChip(word, legs) {
  * server checks "the sender owns this". `picked` names the refs that are this message's picks: the
  * ones your own row cannot read back from the room or your set, so the echo is handed them. `used`
  * is every emote the line carries, by name and picture: what a send counts as used (lawNoteSent).
- * @returns {{wire:object, refs:object|undefined, picked:string[]|undefined, used:Array<{name:string,url:string}>}}
+ * `chosen` is the picks a recall of this line brings back (sent-history.js).
+ * @returns {{wire:object, refs:object|undefined, picked:string[]|undefined, used:Array<{name:string,url:string}>, chosen:Array<[string, object]>|undefined}}
  */
 function lawShip(text, legs, box) {
   const ctx = lawSendCtx({
@@ -241,7 +242,18 @@ function lawShip(text, legs, box) {
       configurable: true,
     })
   }
-  return { wire: sent.wire, refs, picked, used }
+  // the copies you chose: a pick that changed what its word sends. A Tab that took the room's own
+  // emote is no choice, and kept with the line it would ship this room's emote in the next one.
+  // [name, ref] rows, a catalog pick and a pin of one name both (the pin last: it is the final word)
+  const draft = picked && draftPicks(box)
+  const plain = { ...ctx, picks: null }
+  const words = new Set(text.split(/\s+/))
+  const chosen =
+    draft &&
+    [...draft.remote, ...draft.picked].filter(
+      ([k, e]) => (words.has(k) || words.has(`${k}0`)) && hsEmoteLaw.sendWord(k, plain)?.emote.url !== e.url,
+    )
+  return { wire: sent.wire, refs, picked, used, chosen }
 }
 
 /**

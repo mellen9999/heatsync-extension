@@ -96,6 +96,49 @@ function _injectShareSynthetic(claim, user, months, customText) {
     if (_pendingShareClaim === claim) _pendingShareClaim = null
   }, 30000)
 }
+/**
+ * A share mode borrows the composer: its class on the bar and the box, its prompt over the box's
+ * own placeholder (kept once, so a second mode taking over never saves the first one's prompt as
+ * "the original"). @returns {HTMLElement|null} the box, or null when there is none to borrow
+ */
+function _shareBoxEnter(cls, placeholder) {
+  const input = document.getElementById('hs-mc-input')
+  if (!input) return null
+  document.getElementById('hs-mc-inputbar')?.classList.add(cls)
+  input.classList.add(cls)
+  if (input.dataset.hsOrigPlaceholder === undefined) {
+    input.dataset.hsOrigPlaceholder = input.getAttribute('placeholder') || ''
+  }
+  if (input.dataset.hsOrigDataPlaceholder === undefined) {
+    input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
+  }
+  input.setAttribute('placeholder', placeholder)
+  input.setAttribute('data-placeholder', placeholder)
+  try {
+    input.focus()
+  } catch (_) {}
+  return input
+}
+
+/** The share mode is over: its class comes off and the box gets its own placeholder back. */
+function _shareBoxLeave(cls) {
+  const input = document.getElementById('hs-mc-input')
+  document.getElementById('hs-mc-inputbar')?.classList.remove(cls)
+  input?.classList.remove(cls)
+  if (input?.dataset.hsOrigPlaceholder !== undefined) {
+    input.setAttribute('placeholder', input.dataset.hsOrigPlaceholder)
+    delete input.dataset.hsOrigPlaceholder
+  }
+  if (input?.dataset.hsOrigDataPlaceholder !== undefined) {
+    if (input.dataset.hsOrigDataPlaceholder) {
+      input.setAttribute('data-placeholder', input.dataset.hsOrigDataPlaceholder)
+    } else {
+      input.removeAttribute('data-placeholder')
+    }
+    delete input.dataset.hsOrigDataPlaceholder
+  }
+}
+
 function _enterResubShareMode(claim, user, months) {
   // Mutually exclusive with watchstreak-share — exit that first if active,
   // silently (keep its banner up so user can come back to it).
@@ -104,26 +147,11 @@ function _enterResubShareMode(claim, user, months) {
   // A hidden composer (auto-hide) made share mode invisible: nothing to type
   // into, so the 30s fallback fired an empty share. Open it for the duration.
   if (typeof showInputBar === 'function') showInputBar()
-  const input = document.getElementById('hs-mc-input')
-  const inputBar = document.getElementById('hs-mc-inputbar')
-  if (!input) return
-  inputBar?.classList.add('hs-mc-resub-share')
-  input.classList.add('hs-mc-resub-share')
-  if (input.dataset.hsOrigPlaceholder === undefined) {
-    input.dataset.hsOrigPlaceholder = input.getAttribute('placeholder') || ''
-  }
-  if (input.dataset.hsOrigDataPlaceholder === undefined) {
-    input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
-  }
   const placeholder =
     claim.kind === 'modanniv'
       ? t('mc_misc_modanniv_placeholder', [String(months)])
       : t('mc_misc_resub_placeholder', [String(months)])
-  input.setAttribute('placeholder', placeholder)
-  input.setAttribute('data-placeholder', placeholder)
-  try {
-    input.focus()
-  } catch (_) {}
+  if (!_shareBoxEnter('hs-mc-resub-share', placeholder)) return
   if (_resubShareModeTimer) cleanup.clearTimeout(_resubShareModeTimer)
   _resubShareModeTimer = cleanup.setTimeout(() => _exitResubShareMode(claim, true), 30000)
 }
@@ -150,24 +178,9 @@ function _exitResubShareMode(claim, fireFallback, silent) {
       }
     } catch (_) {}
   }
-  const input = document.getElementById('hs-mc-input')
-  const inputBar = document.getElementById('hs-mc-inputbar')
-  inputBar?.classList.remove('hs-mc-resub-share')
-  input?.classList.remove('hs-mc-resub-share')
+  _shareBoxLeave('hs-mc-resub-share')
   // hand the composer back to auto-hide (it no-ops unless the setting is on and the bar is empty)
   if (typeof hideInputBar === 'function') cleanup.setTimeout(() => hideInputBar(), 0)
-  if (input?.dataset.hsOrigPlaceholder !== undefined) {
-    input.setAttribute('placeholder', input.dataset.hsOrigPlaceholder)
-    delete input.dataset.hsOrigPlaceholder
-  }
-  if (input?.dataset.hsOrigDataPlaceholder !== undefined) {
-    if (input.dataset.hsOrigDataPlaceholder) {
-      input.setAttribute('data-placeholder', input.dataset.hsOrigDataPlaceholder)
-    } else {
-      input.removeAttribute('data-placeholder')
-    }
-    delete input.dataset.hsOrigDataPlaceholder
-  }
   // 30s timeout with no user text → fall back to the empty-body synthetic so
   // the celebration banner still shows locally.
   if (fireFallback && wasCtx && !wasCtx.claim.synthId && wasCtx.claim.kind !== 'modanniv') {
@@ -650,23 +663,7 @@ function _enterWatchstreakShareMode(claim, user, streakCount) {
   // (keep its banner up so user can come back to it).
   if (_resubShareCtx) _exitResubShareMode(_resubShareCtx.claim, false, true)
   _watchstreakShareCtx = { claim, user, streakCount }
-  const input = document.getElementById('hs-mc-input')
-  const inputBar = document.getElementById('hs-mc-inputbar')
-  if (!input) return
-  inputBar?.classList.add('hs-mc-watchstreak-share')
-  input.classList.add('hs-mc-watchstreak-share')
-  if (input.dataset.hsOrigPlaceholder === undefined) {
-    input.dataset.hsOrigPlaceholder = input.getAttribute('placeholder') || ''
-  }
-  if (input.dataset.hsOrigDataPlaceholder === undefined) {
-    input.dataset.hsOrigDataPlaceholder = input.getAttribute('data-placeholder') || ''
-  }
-  const placeholder = t('mc_misc_streak_placeholder', [String(streakCount)])
-  input.setAttribute('placeholder', placeholder)
-  input.setAttribute('data-placeholder', placeholder)
-  try {
-    input.focus()
-  } catch (_) {}
+  if (!_shareBoxEnter('hs-mc-watchstreak-share', t('mc_misc_streak_placeholder', [String(streakCount)]))) return
   if (_watchstreakShareModeTimer) cleanup.clearTimeout(_watchstreakShareModeTimer)
   _watchstreakShareModeTimer = cleanup.setTimeout(() => _exitWatchstreakShareMode(claim, true), 30000)
 }
@@ -686,22 +683,7 @@ function _exitWatchstreakShareMode(claim, fireFallback, silent) {
       )
     } catch (_) {}
   }
-  const input = document.getElementById('hs-mc-input')
-  const inputBar = document.getElementById('hs-mc-inputbar')
-  inputBar?.classList.remove('hs-mc-watchstreak-share')
-  input?.classList.remove('hs-mc-watchstreak-share')
-  if (input?.dataset.hsOrigPlaceholder !== undefined) {
-    input.setAttribute('placeholder', input.dataset.hsOrigPlaceholder)
-    delete input.dataset.hsOrigPlaceholder
-  }
-  if (input?.dataset.hsOrigDataPlaceholder !== undefined) {
-    if (input.dataset.hsOrigDataPlaceholder) {
-      input.setAttribute('data-placeholder', input.dataset.hsOrigDataPlaceholder)
-    } else {
-      input.removeAttribute('data-placeholder')
-    }
-    delete input.dataset.hsOrigDataPlaceholder
-  }
+  _shareBoxLeave('hs-mc-watchstreak-share')
   if (fireFallback && wasCtx && !wasCtx.claim.synthId) {
     _injectWatchstreakSynthetic(wasCtx.claim, wasCtx.user, wasCtx.streakCount, '')
   }

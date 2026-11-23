@@ -65,13 +65,15 @@ describe('horizontal: the chip must occupy a whole number of pixels', () => {
       const body = src.slice(start, src.indexOf('\n}', start))
       expect(body, label).toContain('hsAttachInputEmoteSnap')
     }
-    // the emote-cycling creators are inline, not in named functions
-    expect((INPUT.match(/hs-input-emote hs-cycling-emote/g) || []).length).toBe(3)
-    // 3 call sites in input.js: the THREE cycling creators. The typing/recall
-    // path no longer has its own builder here — it shares createInputEmoteImg.
-    // This count is the drift guard — it already caught a site a whitespace-
-    // sensitive edit had missed.
-    expect((INPUT.match(/hsAttachInputEmoteSnap\(img\)/g) || []).length).toBe(3)
+    // a Tab step's chip has one builder (cyclingImg, inside insertCompletionKeepOpen) and the three
+    // places a step lands (over a text span, over a user chip, fresh) all draw through it: the snap is
+    // attached once, there. The typing/recall path shares createInputEmoteImg. The counts are the
+    // drift guard: a fourth inline creator, or a builder that lost its snap, fails here.
+    const builder = INPUT.slice(INPUT.indexOf('const cyclingImg = () => {'))
+    expect(builder.slice(0, builder.indexOf('return img'))).toContain('hsAttachInputEmoteSnap(img)')
+    expect((INPUT.match(/hs-input-emote hs-cycling-emote/g) || []).length).toBe(1)
+    expect((INPUT.match(/hsAttachInputEmoteSnap\(img\)/g) || []).length).toBe(1)
+    expect((INPUT.match(/const img = cyclingImg\(\)/g) || []).length).toBe(3)
   })
 
   test('the snapper accepts a bare input chip', () => {

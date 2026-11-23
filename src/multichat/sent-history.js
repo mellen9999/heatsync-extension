@@ -13,8 +13,15 @@
 // A message sent before it lands is kept and merged ahead of the stored ones,
 // and a save always waits for that merge so a fast sender cannot overwrite
 // the stored list with a shorter one.
+//
+// A line comes back with the copies you chose: a pick that changed what its
+// word sends (lawShip's `chosen`) is kept beside the list, by the line's text,
+// and returns with it. A pick is that line's, never the name's (emote law):
+// only a recall brings it back. Same store rules: local only, off or "clear"
+// wipes it, and its key sits under the history's so the export skips it too.
 
 const SENT_HISTORY_KEY = 'hs_sent_history'
+const SENT_PICKS_KEY = 'hs_sent_history_picks'
 // The registry key for the "remember sent messages" setting (settings-schema.js).
 const SENT_REMEMBER_KEY = 'hs_remember_sent'
 const MC_HISTORY_MAX = 50
@@ -25,6 +32,8 @@ const mcMessageHistory = [] // newest first
 let mcHistoryIndex = -1
 let mcHistoryDraft = ''
 let mcSentRemember = true
+// line -> the copies chosen in it, as [name, ref] rows (a Map does not survive storage)
+const mcSentPicks = new Map()
 
 /** Whatever storage handed back, made safe: strings only, no repeats in a row, capped. */
 function hsSentHistoryClean(list) {
@@ -39,21 +48,48 @@ function hsSentHistoryClean(list) {
   return out
 }
 
+// a stored pick is only ever drawn and re-sent (the server checks what ships): a name and an https picture
+function hsSentPickRows(list) {
+  if (!Array.isArray(list)) return []
+  return list
+    .filter((e) => Array.isArray(e) && e[0] && e[1]?.name === e[0] && /^https:\/\//.test(e[1].url))
+    .slice(0, 20)
+}
+
+/** a line that fell off the list (or, with `keep`, any line not in it) takes its picks along */
+function hsSentPicksPrune(keep = mcMessageHistory) {
+  for (const k of [...mcSentPicks.keys()]) if (!keep.includes(k)) mcSentPicks.delete(k)
+}
+
+/** Stored rows ([line, picks]) into memory: only for a line still on the list, and never over `keep`. */
+function hsSentPicksAdopt(rows, keep) {
+  hsSentPicksPrune(keep || [])
+  if (!Array.isArray(rows)) return
+  for (const row of rows) {
+    const line = Array.isArray(row) ? row[0] : null
+    if (typeof line !== 'string' || keep?.includes(line) || !mcMessageHistory.includes(line)) continue
+    const picks = hsSentPickRows(row[1])
+    if (picks.length) mcSentPicks.set(line, picks)
+  }
+}
+
 function hsSentHistoryLoad() {
   try {
     return browser.storage.local
-      .get([SENT_HISTORY_KEY, SENT_REMEMBER_KEY])
+      .get([SENT_HISTORY_KEY, SENT_PICKS_KEY, SENT_REMEMBER_KEY])
       .then((data) => {
         mcSentRemember = data?.[SENT_REMEMBER_KEY] !== false
         if (!mcSentRemember) {
           // a stale copy must never outlive an "off"
-          browser.storage.local.remove(SENT_HISTORY_KEY).catch(() => {})
+          hsSentHistoryWipe()
           return
         }
         const sentBeforeLoad = mcMessageHistory.splice(0)
         mcMessageHistory.push(
           ...hsSentHistoryClean([...sentBeforeLoad, ...hsSentHistoryClean(data?.[SENT_HISTORY_KEY])]),
         )
+        // a line sent before the read landed is the newest send of it: its picks (or none) stand
+        hsSentPicksAdopt(data?.[SENT_PICKS_KEY], sentBeforeLoad)
       })
       .catch(() => {})
   } catch (_) {
@@ -62,24 +98,55 @@ function hsSentHistoryLoad() {
 }
 const mcSentHistoryReady = hsSentHistoryLoad()
 
+/** the stored copy, both keys, gone from disk */
+function hsSentHistoryWipe() {
+  try {
+    return Promise.all([SENT_HISTORY_KEY, SENT_PICKS_KEY].map((k) => browser.storage.local.remove(k))).catch(() => {})
+  } catch (_) {
+    return Promise.resolve()
+  }
+}
+
 function hsSentHistorySave() {
   mcSentHistoryReady.then(() => {
     if (!mcSentRemember) return
     try {
-      browser.storage.local.set({ [SENT_HISTORY_KEY]: mcMessageHistory.slice() }).catch(() => {})
+      browser.storage.local
+        .set({
+          [SENT_HISTORY_KEY]: mcMessageHistory.slice(),
+          [SENT_PICKS_KEY]: [...mcSentPicks],
+        })
+        .catch(() => {})
     } catch (_) {}
   })
 }
 
-/** A message went out: it becomes the newest entry (not twice in a row). */
-function hsSentHistoryRecord(text) {
+/**
+ * A message went out: it becomes the newest entry (not twice in a row), with the copies chosen in it.
+ * @param {string} text
+ * @param {Array<[string, object]>} [chosen] lawShip's `chosen`: [name, ref] rows
+ */
+function hsSentHistoryRecord(text, chosen) {
   const line = text.length > MC_HISTORY_LINE_MAX ? text.slice(0, MC_HISTORY_LINE_MAX) : text
   if (mcMessageHistory[0] !== line) {
     mcMessageHistory.unshift(line)
     if (mcMessageHistory.length > MC_HISTORY_MAX) mcMessageHistory.length = MC_HISTORY_MAX
   }
+  // the newest send of a line is the one that comes back: sent again with no pick, it has none
+  if (chosen?.length) mcSentPicks.set(line, chosen)
+  else mcSentPicks.delete(line)
+  hsSentPicksPrune()
   mcHistoryIndex = -1
   hsSentHistorySave()
+}
+
+/**
+ * The copies a remembered line was sent with, as a draft its box can take
+ * (resumeDraftPicks): a fresh one each recall. null when it had none.
+ */
+function hsSentHistoryPicks(line) {
+  const p = mcSentPicks.get(line)
+  return p ? { picked: new Map(p), remote: new Map(), away: new Map() } : null
 }
 
 /**
@@ -107,11 +174,8 @@ function hsSentHistoryClear() {
   mcMessageHistory.length = 0
   mcHistoryIndex = -1
   mcHistoryDraft = ''
-  try {
-    return browser.storage.local.remove(SENT_HISTORY_KEY).catch(() => {})
-  } catch (_) {
-    return Promise.resolve()
-  }
+  mcSentPicks.clear()
+  return hsSentHistoryWipe()
 }
 
 /**
@@ -125,17 +189,20 @@ function hsSentHistoryRemember(on) {
   if (next) {
     mcMessageHistory.length = 0
     mcHistoryIndex = -1
-  } else {
-    try {
-      browser.storage.local.remove(SENT_HISTORY_KEY).catch(() => {})
-    } catch (_) {}
-  }
+    mcSentPicks.clear()
+  } else hsSentHistoryWipe()
 }
 
-/** Another tab saved (or cleared) the list: follow it, unless this one is mid-recall. */
-function hsSentHistoryAdopt(next) {
+/**
+ * Another tab saved (or cleared) the list: follow it, unless this one is mid-recall. `next` and
+ * `picks` are the change records of the two keys, and the browser names only a key whose value
+ * changed: picks not named are still the ones held here, less the lines gone from the list.
+ */
+function hsSentHistoryAdopt(next, picks) {
   if (!mcSentRemember || mcHistoryIndex >= 0) return
-  mcMessageHistory.splice(0, mcMessageHistory.length, ...hsSentHistoryClean(next))
+  if (next) mcMessageHistory.splice(0, mcMessageHistory.length, ...hsSentHistoryClean(next.newValue))
+  if (picks) hsSentPicksAdopt(picks.newValue)
+  else hsSentPicksPrune()
 }
 
 // onChanged covers every writer — this tab's settings toggle, another tab's
@@ -144,7 +211,10 @@ try {
   cleanup.addListener(chrome.storage.onChanged, (changes, area) => {
     if (area !== 'local') return
     if (changes[SENT_REMEMBER_KEY]) hsSentHistoryRemember(changes[SENT_REMEMBER_KEY].newValue)
-    if (changes[SENT_HISTORY_KEY]) hsSentHistoryAdopt(changes[SENT_HISTORY_KEY].newValue)
+    // one save writes the list and its picks together: one event, with whichever of the two changed
+    if (changes[SENT_HISTORY_KEY] || changes[SENT_PICKS_KEY]) {
+      hsSentHistoryAdopt(changes[SENT_HISTORY_KEY], changes[SENT_PICKS_KEY])
+    }
   })
 } catch (_) {}
 
@@ -152,10 +222,12 @@ try {
 // one shared scope, so nothing imports this at runtime.
 export {
   hsSentHistoryClear,
+  hsSentHistoryPicks,
   hsSentHistoryRecord,
   hsSentHistoryStep,
   mcMessageHistory,
   mcSentHistoryReady,
   SENT_HISTORY_KEY,
+  SENT_PICKS_KEY,
   SENT_REMEMBER_KEY,
 }

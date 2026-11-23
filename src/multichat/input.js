@@ -3486,6 +3486,9 @@ function handleInputKeydownInner(e, input) {
     const text = hsSentHistoryStep(e.key === 'ArrowUp' ? 1 : -1, getInputText().trim())
     if (text !== null) {
       e.preventDefault()
+      // the line is back in its box, with the copies you chose in it
+      endComposerPicks(input)
+      resumeDraftPicks(hsSentHistoryPicks(text), input)
       if (wysiwygEnabled) restoreWysiwygText(input, text)
       else input.value = text
       return
@@ -5282,6 +5285,19 @@ function insertCompletionWysiwyg(match) {
       markInputEmoteBlocked(img, true)
     }
   }
+  // the chip a Tab step draws: the match's own picture, marked as the step being cycled
+  const cyclingImg = () => {
+    const img = document.createElement('img')
+    img.src = match.url
+    img.alt = match.name
+    img.dataset.emoteName = match.name
+    img.className = 'hs-input-emote hs-cycling-emote'
+    img.draggable = false
+    attachInputEmoteErrorRecovery(img)
+    if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(img)
+    _applyInputBlock(img)
+    return img
+  }
 
   // Check if we're replacing an existing cycling element (emote img, text span, or user span)
   const existingEmote = input.querySelector('img.hs-cycling-emote')
@@ -5398,16 +5414,7 @@ function insertCompletionWysiwyg(match) {
   }
   if (existingText) {
     if (match.url) {
-      // Replace text span with emote img
-      const img = document.createElement('img')
-      img.src = match.url
-      img.alt = match.name
-      img.dataset.emoteName = match.name
-      img.className = 'hs-input-emote hs-cycling-emote'
-      img.draggable = false
-      attachInputEmoteErrorRecovery(img)
-      if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(img)
-      _applyInputBlock(img)
+      const img = cyclingImg()
       existingText.replaceWith(img)
       const space = img.nextSibling
       if (space) placeCaretAfter(space, 1)
@@ -5442,16 +5449,7 @@ function insertCompletionWysiwyg(match) {
   }
   if (existingUser) {
     if (match.url) {
-      // Replace user span with emote img
-      const img = document.createElement('img')
-      img.src = match.url
-      img.alt = match.name
-      img.dataset.emoteName = match.name
-      img.className = 'hs-input-emote hs-cycling-emote'
-      img.draggable = false
-      attachInputEmoteErrorRecovery(img)
-      if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(img)
-      _applyInputBlock(img)
+      const img = cyclingImg()
       existingUser.replaceWith(img)
       const space = img.nextSibling
       if (space) placeCaretAfter(space, 1)
@@ -5574,16 +5572,7 @@ function insertCompletionWysiwyg(match) {
   }
 
   if (match.url) {
-    // Create emote image
-    const img = document.createElement('img')
-    img.src = match.url
-    img.alt = match.name
-    img.dataset.emoteName = match.name
-    img.className = 'hs-input-emote hs-cycling-emote'
-    img.draggable = false
-    attachInputEmoteErrorRecovery(img)
-    if (typeof hsAttachInputEmoteSnap === 'function') hsAttachInputEmoteSnap(img)
-    _applyInputBlock(img)
+    const img = cyclingImg()
     // Zero-width / overlay: stack onto preceding emote so the input preview
     // matches how chat will render the same word sequence.
     const resolved = typeof lookupEmoteWithOverlay === 'function' ? lookupEmoteWithOverlay(match.name) : null
@@ -8704,7 +8693,7 @@ async function sendMessage(retry) {
                 : hostPlatform
   trackSentMessage(restText, _echoHost, _synthId, _echoCount || 1, !!replyState?.msgId, _sendId, shipped)
 
-  hsSentHistoryRecord(text)
+  hsSentHistoryRecord(text, shipped.chosen)
 
   const replyParentId = replyState?.msgId || null
   // A parent id belongs to the platform its row came from: twitch and kick each only

@@ -147,9 +147,9 @@ describe('the catalog arrives late', () => {
     })
     expect(names(after.slice(0, 2))).toEqual(['PogU', 'Pogger'])
     expect(after[0]).toBe(before[0])
-    // the exact name leads what is left; the catalog's other hit comes after the globals
-    expect(names(after.slice(2))).toEqual(['pog', 'PogChamp', 'PogTasty'])
-    expect(after[2].remote).toBe(true)
+    // a search answer is not what typing it sends: the exact one leads the catalog, after the globals
+    expect(names(after.slice(2))).toEqual(['PogChamp', 'pog', 'PogTasty'])
+    expect(after[3].remote).toBe(true)
   })
 
   test('one copy of a name (the most carried), and none of a name something loaded answers to', () => {
@@ -250,10 +250,10 @@ describe("the picker's search", () => {
     ])
   })
 
-  test('"exact" keeps only the name typed, any case', () => {
+  test('"exact" keeps only the name typed, any case: the room copy leads the search answer', () => {
     const rig = world({ room: { KEKW: e('room'), KEKWait: e('wait') } })
     const list = rig.lawPickerSearch('kekw', [hit('kekw', 'B'), hit('KEKWow', 'C')], true)
-    expect(list.map((x) => x.name)).toEqual(['kekw', 'KEKW'])
+    expect(list.map((x) => x.name)).toEqual(['KEKW', 'kekw'])
   })
 
   test('a blocked name is not found again through the search', () => {

@@ -418,6 +418,8 @@ export interface Candidate {
 }
 
 const TIER_RANK: Record<Tier, number> = { room: 0, own: 1, global: 2, catalog: 3, emoji: 4 }
+/** the tiers a hand-typed word can send: an exact name leads the offer only from these */
+const LOCAL: Record<Tier, boolean> = { room: true, own: true, global: true, catalog: false, emoji: false }
 
 /** pin: place in the person's favorites, -1 none. hit: a search answered with this name (a catalog copy only) */
 interface Cand extends Candidate { copy: number; use: number; pop: number; pin: number; hit: boolean }
@@ -473,7 +475,7 @@ function gather(ctx: OfferCtx): Cand[] {
 
 /**
  * Tab, the `:` list and picker search: one ranked list.
- *   the exact name (the spelling typed leads its case twin)
+ *   the exact name, held here (the spelling typed leads its case twin): what typing it sends
  *   your favorites, in your order, then names you use — only when the name starts with what you typed
  *   the room · yours · globals · not loaded yet · emoji
  * Inside a tier: starts-with, word-start, inside; then ones you use, more carried, shorter, a-z.
@@ -505,10 +507,14 @@ export function offerSeams(typed: string, ctx: OfferCtx, limit?: number): Offere
   }
   const bestCopy = new Map<string, number>()
   for (const c of pool) bestCopy.set(c.emote.name, Math.min(bestCopy.get(c.emote.name) ?? 99, c.copy))
+  // the exact name leads only where typing it sends it: a copy held here (the room, yours, a global).
+  // a search answer or an emoji of that exact name is not what the typed word sends, so it leads its
+  // own tier (the match bucket orders it first there), and a favorite or a name you use counts its
+  // exact name as starting with what you typed
   const group = (c: Cand) =>
-    c.match === BUCKET_EXACT ? 0
+    c.match === BUCKET_EXACT && LOCAL[c.tier] ? 0
       : c.match === BUCKET_NONE ? 9
-        : (c.use > 0 || c.pin >= 0) && c.match === BUCKET_PREFIX ? 1
+        : (c.use > 0 || c.pin >= 0) && c.match <= BUCKET_PREFIX ? 1
           : 2 + TIER_RANK[c.tier]
   const tail = (a: Cand, b: Cand) => a.emote.name.length - b.emote.name.length || cmpCp(a.emote.name, b.emote.name) || a.copy - b.copy || cmpCp(a.emote.key, b.emote.key)
   pool.sort((a, b) => {
@@ -521,7 +527,8 @@ export function offerSeams(typed: string, ctx: OfferCtx, limit?: number): Offere
     }
     if (ga === 1) return (a.pin < 0 ? NOT_PINNED : a.pin) - (b.pin < 0 ? NOT_PINNED : b.pin) || b.use - a.use || TIER_RANK[a.tier] - TIER_RANK[b.tier] || b.pop - a.pop || tail(a, b)
     if (ga === 9) return b.pop - a.pop || tail(a, b)
-    return a.match - b.match || b.use - a.use || b.pop - a.pop || tail(a, b)
+    // the spelling typed leads its case twin in every tier, the way it does as the exact name
+    return a.match - b.match || Number(a.emote.name !== typed) - Number(b.emote.name !== typed) || b.use - a.use || b.pop - a.pop || tail(a, b)
   })
   // counted by slot, before copies trade places inside the slots their name earned
   let exact = 0, room = 0

@@ -11,12 +11,37 @@
  * combobox) and the close path run for real against a stand-in DOM. The real
  * browser proof is the picker scenario in scripts/render-extension.ts.
  */
-import { beforeEach, describe, expect, test } from 'bun:test'
+import { afterAll, beforeEach, describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const ROOT = join(import.meta.dir, '..')
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
+
+// bun runs every test file in one realm, and the beforeEach below swaps real globals for
+// stand-ins. they go back when this file is done: left behind, the cleanup stub threw inside
+// paints.js in whichever cosmetics test loaded next (a file order an unpacked source zip hit).
+const STUBBED = [
+  'document',
+  'cleanup',
+  'ResizeObserver',
+  'MutationObserver',
+  '_fillChunk',
+  '_mcSearchRenderedQuery',
+  'pickerTab',
+  'mcSignal',
+  'hideInputBar',
+  'stopPredictionPoll',
+  'resizeWatched',
+  'resizeFired',
+]
+const realGlobals = new Map(STUBBED.filter((k) => k in globalThis).map((k) => [k, globalThis[k]]))
+afterAll(() => {
+  for (const k of STUBBED) {
+    if (realGlobals.has(k)) globalThis[k] = realGlobals.get(k)
+    else delete globalThis[k]
+  }
+})
 
 const TILE = '.hs-mc-picker-emote-wrap'
 const CHUNK = '.hs-mc-picker-chunk'

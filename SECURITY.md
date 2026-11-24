@@ -19,7 +19,7 @@ because a nonce cannot be kept secret in a realm shared with the page, the init 
 
 ## scope
 
-extension-side processing happens locally in the browser tab. the extension communicates with heatsync.org (emote sync, plus first-party proxying of username→id, recent-messages, and chatterino-badge lookups), directly with 7TV / FFZ / BTTV for cosmetics, and with pusher (`wss://ws-us2.pusher.com`) for kick's live-chat transport — see [the privacy policy](https://heatsync.org/legal/privacy) for the full data flow.
+extension-side processing happens locally in the browser tab. the extension communicates with heatsync.org (emote sync, plus first-party proxying of username→id, recent-messages, and chatterino-badge lookups), directly with 7TV / FFZ / BTTV for cosmetics, and with kick's own chat socket (`wss://*.kick.com`) for kick's live chat — opened from a hidden web.kick.com frame, because kick only accepts that socket from a kick.com page — see [the privacy policy](https://heatsync.org/legal/privacy) for the full data flow.
 
 ## permissions — and what we deliberately don't request
 
@@ -32,6 +32,7 @@ cross-platform chat extension and nothing speculative.
 | `cookies` | read your *own* httpOnly auth token on heatsync.org / twitch / kick to act on your behalf (send chat, follow, set color); content scripts cannot read httpOnly cookies, so this is the only mechanism |
 | `alarms` | keep the background service worker's periodic tasks (emote refresh, live polling) alive after the SW is evicted |
 | `notifications` | live-stream alerts you opt into |
+| `offscreen` (chrome only) | hosts the one hidden web.kick.com frame that opens kick's chat socket. it runs no other code, shows nothing, and closes when no kick channel is being read. firefox does the same from its background page |
 | host permissions | inject the chat UI and fetch emote/cosmetic data on the platforms this extension is built for (twitch, kick, youtube, 7tv, ffz, bttv, heatsync.org) |
 
 **we deliberately do NOT request:**
@@ -49,7 +50,7 @@ cross-platform chat extension and nothing speculative.
 - **`safeUrl()`** gates every url assigned to a link `href` or an iframe / embed `src` — the sinks where a `javascript:` / `data:` scheme could execute; only `http(s):` passes. media (`img` / `video`) `src` additionally pass through `escapeHtml()`.
 - **`sanitizeColor()`** restricts user-supplied colors to `#rrggbb` / `#rgb` hex.
 - **CSP**: extension pages declare `script-src 'self'; object-src 'none'` in both MV3 (`extension_pages`) and MV2 manifests — no inline eval, no remote scripts.
-- **SSRF guard**: urls the content script asks the background to fetch (link previews, feed embeds) are validated in `chrome/background.js` (`fetch_link_preview` / `fetch_embed_resolve`) — `http(s):`-only, with a localhost / private-IP blocklist so the proxy can't be aimed at the local network.
+- **SSRF guard**: urls the content script asks the background to fetch (link previews, feed embeds) are validated in `src/background/07-handle-message.js` (`fetch_link_preview` / `fetch_embed_resolve`) — `http(s):`-only, with a localhost / private-IP blocklist so the proxy can't be aimed at the local network.
 
 ## secrets and server-driven actions
 

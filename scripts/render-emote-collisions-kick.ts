@@ -31,9 +31,15 @@ const E = (n: string) => `https://cdn.heatsync.org/emote/${n}.png`
 //  span.font-normal                    = a text run; <img src=files.kick.com/emotes/ID/fullsize alt=W> = kick's own emote img
 //                                        (the [emote:id:name] token is what kick's chat stream carries; the DOM has already
 //                                        turned it into that img, so "the token wins" is: the img is left alone)
-const body = '<div id="host-content" style="height:100vh"><div id="chatroom-messages"><div class="no-scrollbar" id="list"></div></div></div>'
+//  div.editor-input                   = kick's own chat box (a lexical contenteditable); heatsync's hook completes in it
+const body = '<div id="host-content" style="height:100vh"><div id="chatroom-messages"><div class="no-scrollbar" id="list"></div></div><div class="editor-input" contenteditable="true" style="position:fixed;bottom:0;left:0;width:600px;height:40px;background:#000;color:#fff"></div></div>'
 const html = `<!doctype html><html><head><title>fixture</title></head><body style="margin:0">${body}</body></html>`
 
+// the room's emotes the native box's list is read from (the law's offer, not a ranking of the hook's own)
+const NATIVE_ROOM = [
+  { name: 'KEKW', url: E('KEKW_room'), source: '7tv', hash: 'kekwroomhash' },
+  { name: 'catJAM', url: E('catJAM'), source: '7tv', hash: 'jamhash' },
+]
 const failures: string[] = []
 const check = (cond: boolean, msg: string) => {
   console.log(`${cond ? '✓' : '✗'} ${msg}`)
@@ -98,10 +104,16 @@ try {
     await chrome.storage.local.set({
       heatsync_multichat: { channels: [{ id: 'probechan', twitch: 'probechan', kick: '', youtube: '' }] },
       user_info: { username: 'probeuser' },
-      global_emotes: [{ name: 'W', url: u.W_global, source: '7tv', hash: 'globalhash' }],
-      emote_inventory: [{ name: 'W', url: u.W_inv, source: 'heatsync', hash: 'invhash' }],
+      global_emotes: [
+        { name: 'W', url: u.W_global, source: '7tv', hash: 'globalhash' },
+        { name: 'kekw', url: u.kekw_glob, source: 'bttv', hash: 'kekwglobhash' },
+      ],
+      emote_inventory: [
+        { name: 'W', url: u.W_inv, source: 'heatsync', hash: 'invhash' },
+        { name: 'catKISS', url: u.catKISS, source: 'heatsync', hash: 'kisshash' },
+      ],
     })
-  }, Object.fromEntries(['W_global', 'W_inv', 'W_bttv', 'W_7tv', 'W_ffz'].map((n) => [n, E(n)])))
+  }, Object.fromEntries(['W_global', 'W_inv', 'W_bttv', 'W_7tv', 'W_ffz', 'catKISS', 'kekw_glob'].map((n) => [n, E(n)])))
   // the per-site "hs off" lives in storage.sync (ui_settings.subsystems), read once at boot
   await seed.evaluate(async () => {
     // @ts-ignore — extension page
@@ -121,6 +133,7 @@ try {
     { name: 'W', url: E('W_bttv'), source: 'bttv', hash: 'bttvhash' },
     { name: 'W', url: E('W_7tv'), source: '7tv', hash: 'stvhash' },
     { name: 'W', url: E('W_ffz'), source: 'ffz', hash: 'ffzhash' },
+    ...NATIVE_ROOM,
   ]] as [string, unknown[]])
 
   await seed.close()
@@ -134,6 +147,7 @@ try {
     { name: 'W', url: E('W_bttv'), source: 'bttv', hash: 'bttvhash' },
     { name: 'W', url: E('W_7tv'), source: '7tv', hash: 'stvhash' },
     { name: 'W', url: E('W_ffz'), source: 'ffz', hash: 'ffzhash' },
+    ...NATIVE_ROOM,
   ]
   await sw.evaluate(async (emotes: any[]) => {
     // @ts-ignore — service worker globals
@@ -249,6 +263,40 @@ try {
   })
   await dbg.close()
   check(invNames.includes('W'), `your own inventory W was never removed (inventory: ${JSON.stringify(invNames)})`)
+
+  // n. kick's OWN box: the list is the law's, over this page's channel (the same list the panel's Tab gives)
+  const typeIn = async (text: string) => {
+    await p.click('div.editor-input')
+    await p.keyboard.press('Control+A')
+    await p.keyboard.press('Delete')
+    await p.keyboard.type(text, { delay: 30 })
+    await p.waitForTimeout(500)
+    return p.evaluate(() =>
+      [...document.querySelectorAll('#hs-kick-emote-dropdown .hs-ac-item')].map(
+        (r) => (r.querySelector('.hs-ac-emoji')?.textContent ? ':emoji:' : '') + (r.querySelector('.hs-ac-name')?.textContent || ''),
+      ),
+    )
+  }
+  const twins = await typeIn('kekw')
+  check(twins[0] === 'kekw' && twins.includes('KEKW'), `n. the box offers both case twins, the spelling typed first (got ${JSON.stringify(twins)})`)
+  const cats = await typeIn('cat')
+  check(cats[0] === 'catJAM' && cats[1] === 'catKISS', `n. the room's catJAM, then your catKISS (got ${JSON.stringify(cats)})`)
+  const colon = await typeIn(':catj')
+  check(colon[0] === 'catJAM', `n. the \`:\` list offers emotes, the room's first (got ${JSON.stringify(colon)})`)
+  const colonAll = await typeIn(':cat')
+  check(colonAll[0] === 'catJAM' && colonAll.some((x) => x.startsWith(':emoji:')), `n. the \`:\` list holds emoji after the emotes by default (got ${JSON.stringify(colonAll)})`)
+  const sy = await c.newPage()
+  await sy.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'load' })
+  await sy.evaluate(async () => {
+    // @ts-ignore — extension page
+    await chrome.storage.sync.set({ ui_settings: { subsystems: { 'overlay-kick': false }, colonListOrder: 'emoji' } })
+  })
+  await sy.close()
+  await p.waitForTimeout(800)
+  const emojiFirst = await typeIn(':cat')
+  check(emojiFirst[0]?.startsWith(':emoji:'), `n. with the \`:\` setting on emoji first, every emoji leads (got ${JSON.stringify(emojiFirst)})`)
+  const tabKeep = await typeIn('cat')
+  check(tabKeep[0] === 'catJAM', `n. the bare word never moves emoji (got ${JSON.stringify(tabKeep)})`)
   if (errors.length) failures.push(`page errors: ${errors.join(' | ')}`)
 } finally {
   try {

@@ -36,18 +36,14 @@ describe('multichat catalog keeps case twins apart', () => {
 })
 
 describe('native bridges', () => {
-  test('twitch hook ranks the spelled twin first, among exacts', () => {
-    const s = read('src', 'content', 'autocomplete-hook.js')
-    expect(s).toContain('r._spelled = name === search')
-    expect(s).toContain('if (a._exact && a._spelled !== b._spelled) return a._spelled ? -1 : 1')
+  // the native boxes rank nothing: they ask the law's offer, where the twin spelled like the typed word
+  // leads and dedupe is on the exact name (tests/native-offer-is-the-laws-list.test.js runs it)
+  test('twitch and kick hooks ask the offer, no comparator of their own', () => {
+    expect(read('src', 'content', 'autocomplete-hook.js')).toContain('lawRows(actualInput)')
+    expect(read('src', 'content', 'kick-autocomplete-hook.js')).toContain('window.heatsyncNativeOffer')
   })
   test('twitch remote merge orders the typed spelling before a case twin', () => {
     expect(read('src', 'content', 'autocomplete-hook.js')).toContain("(a.name || '') === search ? 0")
-  })
-  test('kick hook ranks the spelled twin first and dedupes on the exact name', () => {
-    const s = read('src', 'content', 'kick-autocomplete-hook.js')
-    expect(s).toContain('(a.name === query) !== (b.name === query)')
-    expect(s).toContain('if (seen.has(e.name)) continue')
   })
 })
 

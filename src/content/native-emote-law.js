@@ -190,3 +190,16 @@ export function hsModBind(words, isEmote) {
   }
   return out
 }
+
+/**
+ * The law's offer (multichat-core's lawNativeMatches) as the plain rows the native boxes draw and
+ * the twitch hook reads across worlds: { name, url, hash, source, tier } for an emote (tier 0 the
+ * room's, 1 yours, 2 a global), { name: ':cat:', emoji } for an emoji.
+ */
+export function hsNativeRows(matches) {
+  return matches.map((m) =>
+    m.type === 'emoji'
+      ? { name: m.name, emoji: m.emoji }
+      : { name: m.name, url: m.url, hash: m.hash, source: m.source, tier: m.tier, sub: !!m.sub },
+  )
+}

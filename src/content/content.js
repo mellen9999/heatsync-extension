@@ -504,6 +504,8 @@
   let cachedRoomEmotes = null
   let cachedInventoryEmotes = null
   let cachedGlobalEmotes = null
+  // everything you hold here, the platform's own emotes you can use too (the offer's `own`)
+  let cachedOfferOwn = null
   // The two rows most lines are, as ready maps (no per-row object): someone else's line with no
   // pick and no set of their own reads room > global; the viewer's own reads room > inventory >
   // global. The viewer's emotes are in no map another sender's row can see.
@@ -2707,6 +2709,7 @@
     cachedRoomEmotes = new Map()
     cachedInventoryEmotes = new Map()
     cachedGlobalEmotes = new Map()
+    cachedOfferOwn = new Map()
     twitchOwnNames = new Set()
 
     // Normalize + push a variant into the per-name array. Inventory variants
@@ -2746,6 +2749,7 @@
     emoteInventory.forEach((emote) => {
       if (emote.subscription) {
         twitchOwnNames.add(emote.name)
+        cachedOfferOwn.set(emote.name, emote)
         return
       }
       _addVariant(emote, 'inventory')
@@ -2771,6 +2775,8 @@
       if (emote.source === 'twitch') twitchOwnNames.add(emote.name)
       _addVariant(emote, 'global')
     })
+
+    for (const [n, e] of cachedInventoryEmotes) cachedOfferOwn.set(n, e)
 
     // cachedAllEmotes points to the highest-priority variant — preserves existing
     // single-lookup callers (replaceEmotesWithStacking, autocomplete, picker).
@@ -3095,7 +3101,6 @@
 
           emoteInventory = newInv
           allEmotesDirty = true
-          _tabEmoteMapDirty = true
           rebuildEmoteMapIfDirty()
           log(
             ' Inventory updated:',
@@ -3181,7 +3186,6 @@
           if (_snap) _pendingRemovalSnapshots.set(message.emoteName, _snap)
           emoteInventory = emoteInventory.filter((e) => e.name !== message.emoteName)
           allEmotesDirty = true
-          _tabEmoteMapDirty = true
           rebuildEmoteMapIfDirty()
           // Optimistic visual tier-drop on existing rendered messages: pickActiveVariant
           // now sees inventoryHashSet sans this emote and skips the inventory variant in
@@ -3202,7 +3206,6 @@
           }
           _pendingRemovalSnapshots.delete(message.emoteName)
           allEmotesDirty = true
-          _tabEmoteMapDirty = true
           rebuildEmoteMapIfDirty()
           if (_snap) {
             updateEmoteState(_snap.hash || '', _snap.name, 'added')
@@ -3216,7 +3219,6 @@
           _pendingRemovalSnapshots.delete(message.emoteName)
           allEmotesDirty = true
           emoteGeneration++
-          _tabEmoteMapDirty = true
           emoteInventory = emoteInventory.filter((e) => e.hash !== message.hash && e.name !== message.emoteName)
           // Clear any stale broadcasts for this emote
           for (const key of pendingEmoteBroadcasts.keys()) {
@@ -9137,58 +9139,6 @@
     completing: false, // Prevent re-entry during completion
   }
 
-  // Build combined emote map for searching (inventory + globals)
-  // Tier order matches input.js: channel (0) > inventory/own (1) > global (2)
-  // Channel emotes are inserted first so they win dedup on name collision.
-  let _tabEmoteMap = null
-  let _tabEmoteMapDirty = true
-  function buildEmoteMap() {
-    if (_tabEmoteMap && !_tabEmoteMapDirty && !allEmotesDirty) return _tabEmoteMap
-    _tabEmoteMapDirty = false
-    const map = new Map()
-
-    // Tier 0 — channel emotes win dedup (inserted first, highest priority)
-    channelEmotes.forEach((emote) => {
-      if (!emote.source) return
-      const key = emote.name.toLowerCase()
-      map.set(key, {
-        name: emote.name,
-        url: emote.url?.startsWith('http') ? emote.url : `${API_URL}${emote.url}`,
-        hash: emote.hash,
-        provider: 'channel',
-      })
-    })
-
-    // Tier 1 — viewer's own inventory (doesn't override channel)
-    emoteInventory.forEach((emote) => {
-      const key = emote.name.toLowerCase()
-      if (!map.has(key)) {
-        map.set(key, {
-          name: emote.name,
-          url: emote.url?.startsWith('http') ? emote.url : `${API_URL}${emote.url}`,
-          hash: emote.hash,
-          provider: 'inventory',
-        })
-      }
-    })
-
-    // Tier 2 — global emotes (BTTV, FFZ, 7TV) — lowest priority
-    globalEmotes.forEach((emote) => {
-      const key = emote.name.toLowerCase()
-      if (!map.has(key)) {
-        map.set(key, {
-          name: emote.name,
-          url: emote.url,
-          hash: emote.hash || btoa(emote.url),
-          provider: emote.source || 'global',
-        })
-      }
-    })
-
-    _tabEmoteMap = map
-    return map
-  }
-
   // Get text and cursor position from contenteditable or textarea
   function getInputState(element) {
     const isContentEditable = element.getAttribute('contenteditable') === 'true'
@@ -9223,52 +9173,65 @@
     }
   }
 
-  // Find matches for partial emote name
-  function findEmoteMatches(partialWord) {
-    const emoteMap = buildEmoteMap()
-    const matches = []
-    const partial = partialWord.toLowerCase()
-
-    log(
-      ` 🔍 Searching for "${partial}" in ${emoteMap.size} emotes (inv: ${emoteInventory.length}, global: ${globalEmotes.length}, channel: ${channelEmotes.length})`,
+  // ── The native boxes' list (twitch's and kick's own chat, heatsync chat off) ──
+  // One list for all three: the emote law's offer, which multichat-core owns (same isolated world, so
+  // `heatsyncLawOffer` is a plain call). Read over THIS page's channel, the room the box sends to, and what
+  // this page holds. Twitch's hook is MAIN world: it names its own emotes (what twitch lets you use) in the
+  // bridge, fires `heatsync-law-offer` with the typed word in it, and reads the answer back, all in one tick.
+  const offerSet = { emojiFirst: false, suggestOwn: true }
+  function readOfferSettings(ui) {
+    offerSet.emojiFirst = ui?.colonListOrder === 'emoji'
+    offerSet.suggestOwn = ui?.suggestInventoryEmotes !== false
+  }
+  const pageChannel = () => location.pathname.match(/^\/(?:(?:popout|embed)\/)?([^/?#]+)/)?.[1]?.toLowerCase() || 'page'
+  let _offerOwn = null
+  function offerOwn(bridge) {
+    rebuildEmoteMapIfDirty()
+    const raw = bridge?.dataset.offerNative || ''
+    if (_offerOwn?.base === cachedOfferOwn && _offerOwn.raw === raw) return _offerOwn.map
+    const map = new Map(cachedOfferOwn)
+    try {
+      for (const e of raw ? JSON.parse(raw) : []) {
+        if (!map.has(e.name)) map.set(e.name, { ...e, source: 'twitch', ...(e.sub && { subscription: true }) })
+      }
+    } catch {}
+    _offerOwn = { base: cachedOfferOwn, raw, map }
+    return map
+  }
+  function nativeOfferRows(search) {
+    const law = window.heatsyncLawOffer
+    if (typeof law !== 'function' || !search) return []
+    const own = offerOwn(document.getElementById('heatsync-emote-bridge'))
+    return hsNativeRows(
+      law(search, {
+        platform: isKick ? 'kick' : 'twitch',
+        channel: pageChannel(),
+        room: cachedRoomEmotes,
+        own,
+        globals: cachedGlobalEmotes,
+        blocked: (name, raw) => localBlockedEmoteNames.has(name) || !!(raw?.hash && blockedEmotes.has(raw.hash)),
+        ...offerSet,
+      }),
     )
+  }
+  window.heatsyncNativeOffer = nativeOfferRows
+  document.addEventListener(
+    'heatsync-law-offer',
+    () => {
+      const bridge = document.getElementById('heatsync-emote-bridge')
+      if (bridge) bridge.dataset.offer = JSON.stringify(nativeOfferRows(bridge.dataset.offerQ || ''))
+    },
+    { signal },
+  )
 
-    for (const [name, emote] of emoteMap.entries()) {
-      if (name.includes(partial)) {
-        matches.push(emote)
-      }
-    }
-
-    // Add emoji matches for :prefix style (Discord/Slack)
-    if (partialWord.startsWith(':') && partial.length >= 3) {
-      const emojiSearch = partial.slice(1)
-      if (typeof EMOJI_DATA !== 'undefined') {
-        let emojiCount = 0
-        for (const entry of EMOJI_DATA) {
-          if (entry.name.includes(emojiSearch)) {
-            matches.push({
-              name: entry.emoji,
-              url: '',
-              provider: 'emoji',
-              emojiName: entry.name,
-            })
-            if (++emojiCount >= 10) break
-          }
-        }
-      }
-    }
-
-    // Sort: channel (tier 0) > inventory (tier 1) > global/other (tier 2) > emoji
-    // Matches input.js tier ordering (channel-first — reversed 2026-06-13)
-    const _tier = (p) => (p === 'channel' ? 0 : p === 'inventory' ? 1 : p === 'emoji' ? 3 : 2)
-    matches.sort((a, b) => {
-      const at = _tier(a.provider),
-        bt = _tier(b.provider)
-      if (at !== bt) return at - bt
-      return (a.emojiName || a.name).localeCompare(b.emojiName || b.name)
-    })
-
-    return matches
+  // Tab on kick's own box: the emote law's one list (multichat-core, same isolated world), over this
+  // page's channel (nativeOfferRows). Emoji rows insert as the character.
+  function findEmoteMatches(partialWord) {
+    return nativeOfferRows(partialWord).map((r) =>
+      r.emoji
+        ? { name: r.emoji, url: '', provider: 'emoji', emojiName: r.name.slice(1, -1) }
+        : { name: r.name, url: r.url, hash: r.hash, provider: r.source },
+    )
   }
 
   // Show TAB COMPLETION preview popup (different from hover preview!)
@@ -10052,6 +10015,7 @@
   }
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== 'sync' || !changes.ui_settings) return
+    readOfferSettings(changes.ui_settings.newValue)
     const subs = changes.ui_settings.newValue?.subsystems
     if (subs) HS_GATES['right-click-block'] = subs['right-click-block'] !== false
   })
@@ -10102,6 +10066,7 @@
 
   chrome.storage.sync.get('ui_settings', (d) => {
     try {
+      readOfferSettings(d?.ui_settings)
       const subs = d?.ui_settings?.subsystems || {}
       for (const k in HS_GATES) if (subs[k] === false) HS_GATES[k] = false
     } catch (_) {}

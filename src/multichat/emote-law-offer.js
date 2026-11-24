@@ -13,9 +13,19 @@ const LAW_PEOPLE_MAX = 50
  * @param {object} [o]
  * @param {Array|null} [o.catalog] law emotes no cache holds yet (lawCatalogEmote)
  * @param {Array|null} [o.emoji]
+ * @param {object|null} [o.src] a native page's holdings (lawNativeMatches): its room, not the open tab's
  */
-function lawOfferCtx({ catalog, emoji } = {}) {
-  const s = lawCtx(lawOpenLegs(), null)
+function lawOfferCtx({ catalog, emoji, src } = {}) {
+  const s = src
+    ? lawSendCtx({
+        legs: { [src.platform]: src.channel },
+        mine: src.own,
+        globals: src.globals,
+        caches: { [src.channel]: src.room },
+        picks: null,
+      })
+    : lawCtx(lawOpenLegs(), null)
+  const isBlocked = src ? src.blocked : _hsAcEmoteBlocked
   const frec = loadEmoteFrecency()
   // inventory's `at` reads your whole set, the platform emotes in it too
   const views = [s.room?.names, s.own.inventory, s.globals]
@@ -33,11 +43,11 @@ function lawOfferCtx({ catalog, emoji } = {}) {
     blocked: (key) => {
       for (const v of views) {
         const e = v?.at?.(key)
-        if (e) return _hsAcEmoteBlocked(e.name, e.raw)
+        if (e) return isBlocked(e.name, e.raw)
       }
       return false
     },
-    suggestOwn: getSetting('suggestInventoryEmotes') !== false,
+    suggestOwn: src ? src.suggestOwn : getSetting('suggestInventoryEmotes') !== false,
   }
 }
 
@@ -183,8 +193,8 @@ function lawWithPeople(list, people, seams = { exact: 0, room: 0 }) {
  * One Tab cycle's matches for `typed`. With `prev` + `cursor` it is a late arrival (a catalog
  * answer): everything up to the cursor stays where it is, the rest is the fresh ranking minus it.
  */
-function lawTabList(typed, { catalog, emoji, people, prev, cursor = -1, emojiFirst = false } = {}) {
-  const fresh = hsEmoteLaw.offerSeams(typed, { ...lawOfferCtx({ catalog, emoji }), emojiFirst })
+function lawTabList(typed, { catalog, emoji, people, prev, cursor = -1, emojiFirst = false, src } = {}) {
+  const fresh = hsEmoteLaw.offerSeams(typed, { ...lawOfferCtx({ catalog, emoji, src }), emojiFirst })
   const all = lawWithPeople(fresh.list.map(lawMatchOf), people, fresh)
   if (!prev) return all
   const head = prev.slice(0, cursor + 1)
@@ -269,15 +279,16 @@ function lawPickerSearch(typed, found, exact) {
  * `@word` = people only. `:word` = emotes and emoji. A bare word = emotes with the room's people.
  * @param {string} search the word as typed
  * @param {{catalog?:Array, prev?:Array, cursor?:number}} [more] a late arrival, see lawTabList
+ * @param {object} [src] a native page's holdings (lawNativeMatches); none = the open tab's room
  */
-function findEmoteMatches(search, more) {
+function findEmoteMatches(search, more, src) {
   // an ffz-style modifier token ("w!") never completes, even when an emote is literally named that
   if (hsModClassify(search, { allowPrefix: false }).kind === 'modifier') return []
   const isUserSearch = search.startsWith('@')
   const isColonSearch = !isUserSearch && search.startsWith(':')
   const term = isUserSearch || isColonSearch ? search.slice(1) : search
   const q = term.toLowerCase()
-  if (isUserSearch) return lawAtPeople(q)
+  if (isUserSearch) return src ? [] : lawAtPeople(q)
   if (!q) return []
 
   let emoji = null
@@ -296,15 +307,30 @@ function findEmoteMatches(search, more) {
     }
   }
   // "`:` list shows": emoji first is the `:` list's own order; Tab and the Tab list never ask for it
-  const emojiFirst = isColonSearch && getSetting('colonListOrder') === 'emoji'
-  const list = lawTabList(term, { ...more, emoji, emojiFirst, people: isColonSearch ? null : lawPeople(q) })
+  const emojiFirst = isColonSearch && (src ? src.emojiFirst : getSetting('colonListOrder') === 'emoji')
+  // a native box keeps its own recent-talker lead (people are not emotes); the emotes are this list
+  const people = isColonSearch || src ? null : lawPeople(q)
+  const list = lawTabList(term, { ...more, emoji, emojiFirst, people, src })
   // "TriHard0" + Tab confirms TriHard as an overlay though nothing is named TriHard0; an emote that
   // IS literally named that is standalone and is already in the list
   const isEmote = (m, n) => m.type === 'emote' && m.name.toLowerCase() === n
   if (!more?.prev && !isColonSearch && q.length > 2 && q.endsWith('0') && !list.some((m) => isEmote(m, q))) {
     const baseQ = q.slice(0, -1)
-    const base = lawTabList(term.slice(0, -1)).find((m) => isEmote(m, baseQ))
+    const base = lawTabList(term.slice(0, -1), { src }).find((m) => isEmote(m, baseQ))
     if (base) list.unshift(lawOverlayOf(base))
   }
   return list
 }
+
+/**
+ * Twitch's and kick's own boxes (heatsync chat off: nothing else of this file runs there) ask the
+ * same list over what their page holds. `src` is the page's channel, the one that box sends to:
+ * { platform, channel, room, own, globals } (name -> entry maps), `blocked(name, raw)`,
+ * `suggestOwn`, `emojiFirst` (the `:` list's setting; Tab never passes it). The answer is the
+ * overlay's own match list (`_c` is the law's candidate behind each).
+ */
+function lawNativeMatches(search, src) {
+  hsInitFavorites()
+  return findEmoteMatches(search, undefined, src)
+}
+if (typeof window !== 'undefined') window.heatsyncLawOffer = lawNativeMatches

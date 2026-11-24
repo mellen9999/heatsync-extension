@@ -211,6 +211,24 @@ try {
   check(hh.length === 3 && hh[0].includes('Own_streamer') && hh[1].includes('Dup_streamer') && hh[2].includes('W_ffz'), `h. the streamer's own emotes draw and lead a 7tv emote of the same name (got ${JSON.stringify(hh)})`)
   check(a.state !== 'owned' && cc.state !== 'owned', `other chatters' W are not labelled yours (states ${a.state}, ${cc.state})`)
 
+  // n. twitch's box (autocomplete-hook.js, MAIN world) asks content.js for the law's list across the worlds, in one
+  // tick: the typed word goes into the bridge, `heatsync-law-offer` fires, the rows are there when it returns.
+  // Every copy of W is offered, the room's first, then yours, then the global (the hook folded them to one).
+  const offer = (word: string, native = '') =>
+    p.evaluate(([w, n]: string[]) => {
+      const b = document.getElementById('heatsync-emote-bridge')!
+      b.dataset.offerNative = n
+      b.dataset.offerQ = w
+      b.dataset.offer = '[]'
+      document.dispatchEvent(new Event('heatsync-law-offer'))
+      return JSON.parse(b.dataset.offer || '[]').map((r: any) => `${r.name}:${(r.url || '').split('/').pop()}`)
+    }, [word, native])
+  const ws = await offer('w')
+  check(JSON.stringify(ws) === JSON.stringify(['W:W_ffz.png', 'W:W_inv.png', 'W:W_global.png', 'Own:Own_streamer.png']),
+    `n. the bridge offers the room's W, then yours, then the global's (got ${JSON.stringify(ws)})`)
+  const kx = await offer('kappax', JSON.stringify([{ name: 'KappaX', hash: '99', url: 'https://static-cdn.jtvnw.net/emoticons/v2/99/default/dark/1.0', sub: false }]))
+  check(JSON.stringify(kx) === JSON.stringify(['KappaX:1.0']), `n. the emotes twitch lets you use ride along (got ${JSON.stringify(kx)})`)
+
   // modifiers on a native row bind by the overlay's rule (shared/emote-mods.vectors.json): this
   // drawer reached back first, and a word with no emote beside it left the line
   await p.evaluate(() => {
@@ -400,6 +418,7 @@ try {
     return ['bttvhash', 'stvhash', 'ffzhash'].filter((h) => list.some((e) => e.hash === h)).length
   })
   check(kept === 3, `i. the channel's other emotes are still there after the re-read, providers unreachable (kept ${kept} of 3)`)
+
   if (errors.length) failures.push(`page errors: ${errors.join(' | ')}`)
 } finally {
   try {

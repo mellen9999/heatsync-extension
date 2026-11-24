@@ -4,9 +4,8 @@
  * Lightweight hook for Kick's contenteditable div.editor-input.
  * emoji-data.js must be loaded before this script.
  *
- * Two modes:
- *   emoji   — triggered by :prefix (existing behaviour)
- *   emote   — triggered by bare word >= 2 chars (heatsync/BTTV/FFZ/7TV)
+ * One list, two triggers: a bare word >= 2 chars, or `:word` (emotes and emoji). Both ask the emote
+ * law's offer (content.js -> multichat-core) over this page's channel: no ranking lives here.
  */
 ;(() => {
   const DEBUG = false
@@ -20,7 +19,6 @@
   }
 
   // Hoisted: abort handler may fire during init (bfcache pagehide race)
-  let dropdown = null
   let emoteDropdown = null
   let hsEmoteList = []
   let hsEmoteByName = new Map()
@@ -32,12 +30,6 @@
   window.addEventListener('pagehide', () => lifecycle.abort())
   sig.addEventListener('abort', () => {
     clearTimeout(emoteDebounceTimer)
-    if (dropdown) {
-      try {
-        dropdown.remove()
-      } catch (_) {}
-      dropdown = null
-    }
     if (emoteDropdown) {
       try {
         emoteDropdown.remove()
@@ -47,17 +39,10 @@
     hsEmoteList = []
   })
 
-  // Build emoji map from emoji-data.js
+  // :shortcode: -> emoji, for the closing colon
   const EMOJI_MAP = {}
-  const EMOJI_ENTRIES = []
-  if (typeof EMOJI_DATA !== 'undefined') {
-    for (const e of EMOJI_DATA) {
-      EMOJI_MAP[e.name] = e.emoji
-      EMOJI_ENTRIES.push(e)
-    }
-  }
-
-  if (!EMOJI_ENTRIES.length) {
+  if (typeof EMOJI_DATA !== 'undefined') for (const e of EMOJI_DATA) EMOJI_MAP[e.name] = e.emoji
+  if (!Object.keys(EMOJI_MAP).length) {
     log('no emoji data, bailing')
     return
   }
@@ -74,30 +59,17 @@
     return m ? m[1].toLowerCase() : null
   }
 
+  // the emote strip's lookup by word (not a ranking: the offer is content.js's)
   function buildEmoteList(data) {
     const blocked = new Set(data.blocked || [])
     const seen = new Set()
     const list = []
-    // Tier rides on each emote so searchEmotes can rank channel > own > global —
-    // a channel emote beats own/global even when the latter is a closer match
-    // (exact/prefix), e.g. "hug" → channel peepoHug over global "HuG". Channel
-    // emotes are listed FIRST so first-seen dedup keeps the CHANNEL image for a
-    // name you also own (the channel emote is what renders in this channel).
-    const sources = [
-      ...(data.channelEmotes || []).map((e) => ({ e, tier: 0 })),
-      ...(data.inventoryEmotes || []).map((e) => ({ e, tier: 1 })),
-      ...(data.globalEmotes || []).map((e) => ({ e, tier: 2 })),
-    ]
-    for (const { e, tier } of sources) {
-      if (!e?.name) continue
-      if (blocked.has(e.hash)) continue
-      if (seen.has(e.name)) continue
+    // channel first: the first copy of a name is the one this channel draws
+    for (const e of [...(data.channelEmotes || []), ...(data.inventoryEmotes || []), ...(data.globalEmotes || [])]) {
+      if (!e?.name || blocked.has(e.hash) || seen.has(e.name)) continue
       seen.add(e.name)
-      // Cache lowercase once at build time — searchEmotes runs per keystroke,
-      // so per-call toLowerCase on 50k emotes is what we're avoiding here.
-      list.push({ name: e.name, url: e.url || e.cdnUrl || '', lower: e.name.toLowerCase(), tier, source: e.source })
+      list.push({ name: e.name, url: e.url || e.cdnUrl || '', source: e.source })
     }
-    list.sort((a, b) => (a.lower < b.lower ? -1 : a.lower > b.lower ? 1 : 0))
     return list
   }
 
@@ -118,92 +90,15 @@
     } catch (_) {}
   }
 
-  // Binary-search prefix lookup over hsEmoteList (sorted by .lower).
-  // Falls back to linear substring scan only if cap not met after prefix pass.
-  function searchEmotes(query) {
-    if (!query || query.length < 2) return []
-    const q = query.toLowerCase()
-    const len = hsEmoteList.length
-    if (!len) return []
-
-    let lo = 0,
-      hi = len
-    while (lo < hi) {
-      const mid = (lo + hi) >> 1
-      if (hsEmoteList[mid].lower < q) lo = mid + 1
-      else hi = mid
-    }
-
-    const exact = [],
-      prefix = [],
-      contains = []
-    const seen = new Set()
-    for (let i = lo; i < len; i++) {
-      const e = hsEmoteList[i]
-      if (!e.lower.startsWith(q)) break
-      if (seen.has(e.name)) continue
-      seen.add(e.name)
-      if (e.lower === q) exact.push(e)
-      else prefix.push(e)
-      if (exact.length + prefix.length >= MAX_RESULTS) break
-    }
-
-    if (exact.length + prefix.length < MAX_RESULTS) {
-      const remaining = MAX_RESULTS - exact.length - prefix.length
-      for (let i = 0; i < len; i++) {
-        const e = hsEmoteList[i]
-        if (seen.has(e.name)) continue
-        if (e.lower.startsWith(q)) continue
-        if (e.lower.indexOf(q) === -1) continue
-        seen.add(e.name)
-        contains.push(e)
-        if (contains.length >= remaining) break
-      }
-    }
-
-    // Exact full-name match leads UNCONDITIONALLY — typing the whole name is
-    // the intent ("nam" → NaM even never-used vs a channel NAMarrive; reverses
-    // the old strong-exact/tier call, keep in lockstep with input.js
-    // compareAcMatches + autocomplete-hook.js). Then used-before (frecency —
-    // "kko" → your KKona, never the channel's untouched KKonaLand). Never-used:
-    // tier outranks match-type — the array is grouped exact→prefix→contains
-    // and Array.sort is stable, so a tier-only key preserves match-type order
-    // WITHIN a tier.
-    const frec = readEmoteFrecency()
-    return [...exact, ...prefix, ...contains].sort((a, b) => {
-      const ax = a.lower === q ? 0 : 1,
-        bx = b.lower === q ? 0 : 1
-      if (ax !== bx) return ax - bx
-      // kek / KEK: the channel's own leads — a habit or a global lookalike of
-      // the same name must not outrank it (parity with input.js)
-      // case twins (KEKW / kekw) both stay; the one spelled like the typed word leads
-      if (ax === 0 && (a.name === query) !== (b.name === query)) return a.name === query ? -1 : 1
-      if (ax === 0 && (a.tier === 0) !== (b.tier === 0)) return a.tier === 0 ? -1 : 1
-      const af = frec.get(a.name) || 0,
-        bf = frec.get(b.name) || 0
-      if (af > 0 !== bf > 0) return af > 0 ? -1 : 1
-      const at = a.tier ?? 2,
-        bt = b.tier ?? 2
-      if (af > 0) {
-        // both used — typed prefix first, then habit strength, then tier
-        const ap = a.lower.startsWith(q) ? 0 : 1,
-          bp = b.lower.startsWith(q) ? 0 : 1
-        if (ap !== bp) return ap - bp
-        if (af !== bf) return bf - af
-      }
-      return at !== bt ? at - bt : 0
-    })
-  }
+  // the one list: the emote law's, read over this page's channel (content.js, multichat-core)
+  const offer = (word) => (typeof window.heatsyncNativeOffer === 'function' ? window.heatsyncNativeOffer(word) : [])
 
   // ---- shared state ----
-  const DROPDOWN_ID = 'hs-kick-emoji-dropdown'
   const EMOTE_DROPDOWN_ID = 'hs-kick-emote-dropdown'
   const MAX_RESULTS = 8
-  // dropdown, emoteDropdown, emoteDebounceTimer hoisted above
+  // emoteDropdown, emoteDebounceTimer hoisted above
   let selectedIdx = 0
   let matches = []
-  // 'emoji' | 'emote' | null
-  let activeMode = null
   let activeInput = null
 
   function injectStyles() {
@@ -211,7 +106,6 @@
     const style = document.createElement('style')
     style.id = 'heatsync-kick-ac-styles'
     style.textContent = `
-      #${DROPDOWN_ID},
       #${EMOTE_DROPDOWN_ID} {
         position: fixed;
         z-index: 99999;
@@ -225,7 +119,6 @@
         font-size: 13px;
         display: none;
       }
-      #${DROPDOWN_ID} .hs-ac-item,
       #${EMOTE_DROPDOWN_ID} .hs-ac-item {
         display: flex;
         align-items: center;
@@ -234,19 +127,16 @@
         cursor: pointer;
         color: #fff;
       }
-      #${DROPDOWN_ID} .hs-ac-item.selected,
-      #${DROPDOWN_ID} .hs-ac-item:hover,
       #${EMOTE_DROPDOWN_ID} .hs-ac-item.selected,
       #${EMOTE_DROPDOWN_ID} .hs-ac-item:hover {
         background: #fff;
         color: #000;
       }
-      #${DROPDOWN_ID} .hs-ac-emoji {
+      #${EMOTE_DROPDOWN_ID} .hs-ac-emoji {
         font-size: 18px;
         width: 24px;
         text-align: center;
       }
-      #${DROPDOWN_ID} .hs-ac-name,
       #${EMOTE_DROPDOWN_ID} .hs-ac-name {
         color: #ffffff;
         flex: 1;
@@ -282,14 +172,6 @@
     document.head.appendChild(style)
   }
 
-  function createDropdown() {
-    if (dropdown) return dropdown
-    dropdown = document.createElement('div')
-    dropdown.id = DROPDOWN_ID
-    document.body.appendChild(dropdown)
-    return dropdown
-  }
-
   function createEmoteDropdown() {
     if (emoteDropdown) return emoteDropdown
     emoteDropdown = document.createElement('div')
@@ -298,57 +180,10 @@
     return emoteDropdown
   }
 
-  function hideDropdown() {
-    if (dropdown) dropdown.style.display = 'none'
-    if (activeMode === 'emoji') {
-      matches = []
-      selectedIdx = 0
-      activeMode = null
-    }
-  }
-
   function hideEmoteDropdown() {
-    if (emoteDropdown) emoteDropdown.style.display = 'none'
-    if (activeMode === 'emote') {
-      matches = []
-      selectedIdx = 0
-      activeMode = null
-    }
-  }
-
-  function hideAll() {
-    if (dropdown) dropdown.style.display = 'none'
     if (emoteDropdown) emoteDropdown.style.display = 'none'
     matches = []
     selectedIdx = 0
-    activeMode = null
-  }
-
-  function renderDropdownItems(container, results) {
-    container.textContent = ''
-    results.forEach((r, i) => {
-      const item = document.createElement('div')
-      item.className = `hs-ac-item${i === 0 ? ' selected' : ''}`
-      item.dataset.idx = i
-
-      const emojiSpan = document.createElement('span')
-      emojiSpan.className = 'hs-ac-emoji'
-      emojiSpan.textContent = r.emoji
-
-      const nameSpan = document.createElement('span')
-      nameSpan.className = 'hs-ac-name'
-      nameSpan.textContent = `:${r.name}:`
-
-      item.appendChild(emojiSpan)
-      item.appendChild(nameSpan)
-
-      item.addEventListener('mousedown', (e) => {
-        e.preventDefault()
-        insertEmoji(activeInput, results[i])
-      })
-
-      container.appendChild(item)
-    })
   }
 
   // Per-row visibility tag — same wedge signal as the cycle readout on the other
@@ -358,6 +193,7 @@
   // to the neutral category so it never asserts a wrong visibility.
   function hsVisTag(r) {
     if (r.isChatter) return { t: 'everyone', cls: 'v-all' }
+    if (r.emoji) return { t: 'emoji', cls: 'v-all' }
     const tier = r.tier ?? 2
     const src = (r.source || '').toLowerCase()
     if (src === 'twitch' || src === 'kick') return { t: src, cls: 'v-all' }
@@ -373,7 +209,12 @@
       item.className = `hs-ac-item${i === 0 ? ' selected' : ''}`
       item.dataset.idx = i
 
-      if (r.url && /^https:\/\//.test(r.url)) {
+      if (r.emoji) {
+        const glyph = document.createElement('span')
+        glyph.className = 'hs-ac-emoji'
+        glyph.textContent = r.emoji
+        item.appendChild(glyph)
+      } else if (r.url && /^https:\/\//.test(r.url)) {
         const img = document.createElement('img')
         img.className = 'hs-ac-img'
         img.src = r.url
@@ -401,7 +242,7 @@
 
       item.addEventListener('mousedown', (e) => {
         e.preventDefault()
-        insertEmote(activeInput, results[i])
+        insertPick(activeInput, results[i])
       })
 
       container.appendChild(item)
@@ -416,32 +257,14 @@
     el.style.minWidth = `${Math.min(rect.width, 280)}px`
   }
 
-  function showDropdown(input, results) {
-    if (!results.length) {
-      hideDropdown()
-      return
-    }
-    if (emoteDropdown) emoteDropdown.style.display = 'none'
-    createDropdown()
-    matches = results
-    selectedIdx = 0
-    activeMode = 'emoji'
-
-    renderDropdownItems(dropdown, results)
-    positionAboveInput(dropdown, input)
-    dropdown.style.display = 'block'
-  }
-
   function showEmoteDropdown(input, results) {
     if (!results.length) {
       hideEmoteDropdown()
       return
     }
-    if (dropdown) dropdown.style.display = 'none'
     createEmoteDropdown()
     matches = results
     selectedIdx = 0
-    activeMode = 'emote'
 
     renderEmoteItems(emoteDropdown, results)
     positionAboveInput(emoteDropdown, input)
@@ -449,7 +272,7 @@
   }
 
   function updateSelection() {
-    const container = activeMode === 'emote' ? emoteDropdown : dropdown
+    const container = emoteDropdown
     if (!container) return
     container.querySelectorAll('.hs-ac-item').forEach((el, i) => {
       el.classList.toggle('selected', i === selectedIdx)
@@ -496,36 +319,15 @@
     return document.execCommand('insertText', false, text)
   }
 
-  // Replace :prefix back to opening colon and insert emoji
-  function insertEmoji(input, match) {
+  // Replace the word under the caret (`:word` for the colon list) with the picked row
+  function insertPick(input, match) {
     const text = getTextBeforeCursor(input)
-    const colonMatch = text.match(/:([a-z0-9_+-]*)$/)
-    if (!colonMatch) {
-      hideDropdown()
-      return
-    }
-
-    replaceBefore(input, colonMatch[0], `${match.emoji} `)
-    hideDropdown()
-    log('inserted', match.name, match.emoji)
-  }
-
-  // Replace bare word prefix and insert heatsync emote name
-  function insertEmote(input, match) {
-    const text = getTextBeforeCursor(input)
-    // Match the current word (non-space sequence) at end of text
     const wordMatch = text.match(/(\S+)$/)
-    if (!wordMatch) {
+    const colonMatch = match.colon && text.match(/:([A-Za-z0-9_+-]*)$/)
+    if (!wordMatch || (match.colon && !colonMatch)) {
       hideEmoteDropdown()
       return
     }
-    // Don't fire on emoji-shortcode words — that path is owned by the emoji
-    // autocomplete handler. Prevents corrupting partial :foo: sequences.
-    if (wordMatch[0].startsWith(':')) {
-      hideEmoteDropdown()
-      return
-    }
-
     // @-mention rows carry isMention (see the '@' branch in handleInput) —
     // the query itself never keeps the '@' (stripped for the chatter lookup),
     // so restore it here on insert. Not an emote usage, so no MRU bump.
@@ -536,8 +338,14 @@
       log('inserted mention', match.name)
       return
     }
+    if (match.emoji) {
+      replaceBefore(input, colonMatch[0], `${match.emoji} `)
+      hideEmoteDropdown()
+      log('inserted', match.name, match.emoji)
+      return
+    }
     // textContent-safe: emote names are alphanumeric + limited punctuation
-    replaceBefore(input, wordMatch[0], `${match.name} `)
+    replaceBefore(input, match.colon ? colonMatch[0] : wordMatch[0], `${match.name} `)
     hideEmoteDropdown()
     // chatter rows aren't emote usage — keep usernames out of the shared signal
     if (!match.isChatter) recordRecentEmoteMru(match.name)
@@ -546,7 +354,7 @@
 
   // Shared usage signal with the multichat picker/tab-complete (emotes.js) —
   // same origin, same localStorage keys, so kick-native completions feed the
-  // frecency ranking searchEmotes reads above. Two stores: the legacy MRU list
+  // frecency the offer reads. Two stores: the legacy MRU list
   // (drives the picker's "recent" section) and the frecency map (use count
   // with a one-week half-life). Logic MUST mirror emotes.js
   // loadEmoteFrecency/bumpEmoteFrecency exactly (same as autocomplete-hook.js).
@@ -573,17 +381,6 @@
       }
     } catch (_) {}
     return seeded
-  }
-  /** name → decayed score (>0 means the user has actually inserted this) */
-  function readEmoteFrecency() {
-    const raw = _hsFrecRaw()
-    const now = Date.now()
-    const out = new Map()
-    for (const name of Object.keys(raw)) {
-      const s = _hsFrecScore(raw[name], now)
-      if (s > 0) out.set(name, s)
-    }
-    return out
   }
   function bumpEmoteFrecency(name) {
     if (!name) return
@@ -615,27 +412,6 @@
     bumpEmoteFrecency(name)
   }
 
-  // Search emoji by prefix
-  function searchEmoji(query) {
-    if (!query) return []
-    const q = query.toLowerCase()
-    const exact = []
-    const prefix = []
-    const contains = []
-    for (const e of EMOJI_ENTRIES) {
-      if (e.name === q) {
-        exact.push(e)
-        continue
-      }
-      if (e.name.startsWith(q)) {
-        prefix.push(e)
-        continue
-      }
-      if (e.name.includes(q)) contains.push(e)
-    }
-    return [...exact, ...prefix, ...contains].slice(0, MAX_RESULTS)
-  }
-
   function handleInput(e) {
     const input = e.target.closest('div.editor-input')
     if (!input) return
@@ -652,23 +428,22 @@
         if (sel.rangeCount) {
           replaceBefore(input, closingMatch[0], `${emoji} `)
           log(`auto-converted :${closingMatch[1]}: →`, emoji)
-          hideAll()
+          hideEmoteDropdown()
           return
         }
       }
     }
 
-    // Check for :prefix (no closing colon) — show emoji dropdown
-    // Colon-triggered completions stay in emoji mode; heatsync does NOT intercept these
-    const colonMatch = text.match(/:([a-z0-9_+-]{1,})$/)
+    // `:word` (no closing colon): the `:` list, emotes and emoji, in the order the setting picks
+    const colonMatch = text.match(/:([A-Za-z0-9_+-]{1,})$/)
     if (colonMatch) {
-      const results = searchEmoji(colonMatch[1])
-      showDropdown(input, results)
-      if (emoteDropdown) emoteDropdown.style.display = 'none'
+      clearTimeout(emoteDebounceTimer)
+      const results = offer(colonMatch[0])
+        .slice(0, MAX_RESULTS)
+        .map((r) => ({ ...r, colon: true }))
+      if (activeInput) showEmoteDropdown(activeInput, results)
       return
     }
-
-    hideDropdown()
 
     // Bare-word emote completion — debounced 60ms
     // Only trigger if word >= 2 chars and not preceded by colon
@@ -677,7 +452,7 @@
     if (wordMatch) {
       const query = wordMatch[1]
 
-      // '@' branch: dedicated mention dropdown. searchEmotes() never matches
+      // '@' branch: dedicated mention dropdown. the offer never matches
       // '@'-prefixed queries (no emote name starts with '@'), and the
       // recent-chatter lead below explicitly skips them too — so without this
       // branch "@so" showed an empty/junk emote dropdown. Recent chatters
@@ -703,7 +478,7 @@
       emoteDebounceTimer = setTimeout(() => {
         if (sig.aborted) return
         refreshEmotes(getCurrentChannel())
-        let results = searchEmotes(query)
+        let results = offer(query).slice(0, MAX_RESULTS)
         // Recent-chatter lead (parity with overlay + twitch): a chatter who just
         // talked and whose name prefix-matches leads above all emotes. Source:
         // content.js (ISOLATED, same world) via window.heatsyncGetRecentChatters,
@@ -728,19 +503,12 @@
   }
 
   function handleKeydown(e) {
-    const anyOpen =
-      (dropdown && dropdown.style.display !== 'none' && activeMode === 'emoji') ||
-      (emoteDropdown && emoteDropdown.style.display !== 'none' && activeMode === 'emote')
-    if (!anyOpen || !matches.length) return
+    if (!emoteDropdown || emoteDropdown.style.display === 'none' || !matches.length) return
 
     if (e.key === 'Tab' || e.key === 'Enter') {
       e.preventDefault()
       e.stopPropagation()
-      if (activeMode === 'emote') {
-        insertEmote(activeInput, matches[selectedIdx])
-      } else {
-        insertEmoji(activeInput, matches[selectedIdx])
-      }
+      insertPick(activeInput, matches[selectedIdx])
       return
     }
 
@@ -760,7 +528,7 @@
 
     if (e.key === 'Escape') {
       e.preventDefault()
-      hideAll()
+      hideEmoteDropdown()
     }
   }
 
@@ -814,7 +582,7 @@
   document.addEventListener(
     'focusout',
     onEditor(() => {
-      setTimeout(() => hideAll(), 150)
+      setTimeout(() => hideEmoteDropdown(), 150)
     }),
     { signal: sig },
   )

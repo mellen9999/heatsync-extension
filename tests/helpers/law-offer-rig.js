@@ -121,7 +121,7 @@ export function lawOfferRig({
   const api = new Function(
     ...names,
     'rig',
-    `let hsAuthToken = true, hsCurrentUserId = '7'\n${SRC}\n${FAVS}\n${usage ? USAGE : ''}\nlawOpenLegs = () => rig.legs\nreturn { findEmoteMatches, lawCatalogEmote, lawPickerSearch, lawBrowseSections, lawChip, lawPin, lawBox, lawShip, hsToggleFavorite, hsIsFavorite, hsFavClean, hsFavTiles, hsFavSection, hsRemoteTile, hsFavMenuItems, hsLoadFavorites, hsFavStorageChanged, lawFavorites, favorites: () => hsFavList, sign: (on, id = null) => { hsAuthToken = on; hsCurrentUserId = id }${usage ? ', lawNoteSent, lawRecentTiles, loadRecentEmotes, loadEmoteFrecency' : ''} }`,
+    `let hsAuthToken = true, hsCurrentUserId = '7'\n${SRC}\n${FAVS}\n${usage ? USAGE : ''}\nlawOpenLegs = () => rig.legs\nreturn { findEmoteMatches, lawNativeMatches, lawCatalogEmote, lawPickerSearch, lawBrowseSections, lawChip, lawPin, lawBox, lawShip, hsToggleFavorite, hsIsFavorite, hsFavClean, hsFavTiles, hsFavSection, hsRemoteTile, hsFavMenuItems, hsLoadFavorites, hsFavStorageChanged, lawFavorites, favorites: () => hsFavList, sign: (on, id = null) => { hsAuthToken = on; hsCurrentUserId = id }${usage ? ', lawNoteSent, lawRecentTiles, loadRecentEmotes, loadEmoteFrecency' : ''} }`,
   )(...names.map((k) => scope[k]), rig)
   // a line leaves the composer: shipped against the open tab's rooms, its emotes noted, the box cleared
   rig.send = (text) => {

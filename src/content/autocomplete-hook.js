@@ -180,17 +180,6 @@
     } catch (_) {}
     return seeded
   }
-  /** name → decayed score (>0 means the user has actually inserted this) */
-  function readEmoteFrecency() {
-    const raw = _hsFrecRaw()
-    const now = Date.now()
-    const out = new Map()
-    for (const name of Object.keys(raw)) {
-      const s = _hsFrecScore(raw[name], now)
-      if (s > 0) out.set(name, s)
-    }
-    return out
-  }
   function bumpEmoteFrecency(name) {
     if (!name) return
     try {
@@ -613,26 +602,44 @@
     return emotes
   }
 
-  // Get all emotes for Tab cycling (bridge + native Twitch)
-  function getAllEmotesForCycling() {
-    const bridgeEmotes = getEmotesForFix()
-    const seen = new Set()
-    const all = []
-    for (const e of bridgeEmotes) {
-      if (seen.has(e.name)) continue
-      seen.add(e.name)
-      if (!e.nameLower) e.nameLower = (e.name || '').toLowerCase()
-      all.push(e)
+  // The one list: the emote law's offer for a word (`:word` too), read over this page's channel. content.js
+  // answers it (it holds the room's sets and multichat-core holds the law): the word and the emotes twitch
+  // lets you use go into the bridge, a document event runs the offer there, and the rows come back in the
+  // same tick. No second ranking lives in this file.
+  let _offerNativeCount = -1
+  function lawRows(word) {
+    const bridge = document.getElementById('heatsync-emote-bridge')
+    if (!bridge || !word) return []
+    const native = getNativeTwitchEmotes()
+    if (native.length !== _offerNativeCount) {
+      _offerNativeCount = native.length
+      bridge.dataset.offerNative = JSON.stringify(
+        native.map((e) => ({ name: e.name, hash: e.hash, url: e.url, sub: e.sub })),
+      )
     }
-    for (const e of getNativeTwitchEmotes()) {
-      if (seen.has(e.name)) continue
-      seen.add(e.name)
-      // sub emotes are channel-tier (0), the rest global (2); bridge emotes already
-      // carry their real tier (0=channel/1=own/2=global) from content.js.
-      if (e.tier == null) e.tier = e.sub ? 0 : 2
-      all.push(e)
+    bridge.dataset.offerQ = word
+    bridge.dataset.offer = '[]'
+    document.dispatchEvent(new Event('heatsync-law-offer'))
+    try {
+      return JSON.parse(bridge.dataset.offer || '[]').map(asEmote)
+    } catch {
+      return []
     }
-    return all
+  }
+  // an offer row as the emote this file inserts (a twitch picture keeps its real id: twitch draws it)
+  function asEmote(r) {
+    if (r.emoji) return { name: r.name, nameLower: r.name.slice(1, -1), isEmoji: true, emoji: r.emoji, tier: 9 }
+    const real = /^https:\/\/static-cdn\.jtvnw\.net\/emoticons\/v2\/([\w-]+)\//.exec(r.url || '')
+    return {
+      name: r.name,
+      nameLower: r.name.toLowerCase(),
+      url: r.url,
+      hash: real ? real[1] : r.hash,
+      native: !!real,
+      source: r.source,
+      tier: r.tier ?? 2,
+      sub: r.sub,
+    }
   }
 
   // Infinite Tab-cycle: when local matches run out, pull more from the 7TV
@@ -1136,9 +1143,7 @@
         // or the last word of a sentence turned into an emote on the first Enter and needed a second to send.
         if (!pressedTab && !actualInput.startsWith(':')) return raw
 
-        // Get heatsync emotes
         const hsEmotes = getHeatsyncEmotes()
-        const searchLower = search.toLowerCase()
 
         // BTTV/FFZ modifier tokens MUST NOT autocomplete — they're not emotes.
         // (Otherwise typing "w!" + Tab inserts a random emote whose name
@@ -1163,40 +1168,12 @@
           return []
         }
 
-        // Fuzzy match: sequential character match with scoring
-        function fuzzyMatch(query, name) {
-          if (name.includes(query)) return 2 + query.length / name.length // exact substring
-          let qi = 0
-          for (let i = 0; i < name.length && qi < query.length; i++) {
-            if (name[i] === query[qi]) qi++
-          }
-          return qi >= query.length ? qi / name.length : 0
-        }
-
-        // Filter matching heatsync emotes (array, not Map — avoids allocation per keystroke)
-        const hsMatches = []
-        for (const emote of hsEmotes) {
-          if (!emote.hash) continue
-          const score = fuzzyMatch(searchLower, emote.nameLower)
-          if (score <= 0) continue
-          emote._score = score
-          hsMatches.push(emote)
-        }
-
-        // Include native Twitch emotes (sub emotes, etc.) that Twitch's own getMatches missed
-        // (Twitch's native getMatches returns 0 for non-colon searches)
-        const hsMatchNames = new Set(hsMatches.map((e) => e.name))
-        const resultNames = new Set(results.map((r) => r.replacement || r.emote?.token))
-        for (const emote of getNativeTwitchEmotes()) {
-          if (hsMatchNames.has(emote.name) || resultNames.has(emote.name)) continue
-          const score = fuzzyMatch(searchLower, emote.nameLower)
-          if (score <= 0) continue
-          emote._score = score
-          // Native Twitch: sub emotes are channel-tier (0), the rest are global (2).
-          // Heatsync bridge emotes already carry their real tier (0/1/2) from content.js.
-          emote.tier = emote.sub ? 0 : 2
-          hsMatches.push(emote)
-        }
+        // The law's list, in the law's order. twitch's own answer for a name the law holds is dropped: it knows
+        // one picture per name, the law offers every copy. What twitch alone answers (people, its own emoji)
+        // follows, emotes before names.
+        const offered = lawRows(actualInput).filter((e) => !e.isEmoji)
+        const offeredNames = new Set(offered.map((e) => e.name))
+        results = results.filter((r) => !offeredNames.has(r.replacement || r.emote?.token))
 
         // 7TV-style fix: Modify srcSet on React elements for our emotes
         results.forEach((m) => {
@@ -1232,119 +1209,25 @@
           }
         })
 
-        // Add heatsync emotes that aren't already in results
-        for (const emote of hsMatches) {
-          // Check if already in results
-          if (results.some((r) => r.emote?.token === emote.name)) continue
-
+        const own = offered.map((emote) => {
           const emoteId = emote.native ? emote.hash : HEATSYNC_PREFIX + emote.hash + HEATSYNC_SUFFIX
-          const setId = emote.native ? 'TwitchEmotes' : 'HeatSyncEmotes'
           let srcSet = `${emote.url} 1x, ${emote.url} 2x`
           if (emote.native) {
             const base = `https://static-cdn.jtvnw.net/emoticons/v2/${emote.hash}`
             srcSet = `${base}/default/dark/1.0 1x, ${base}/default/dark/2.0 2x`
           }
-          results.push({
+          return {
             current: input,
             replacement: emote.name,
             element: null,
-            emote: {
-              id: emoteId,
-              setID: setId,
-              token: emote.name,
-              srcSet: srcSet,
-            },
-            _heatsyncSub: !!emote.sub,
-            _tier: emote.tier,
-          })
-        }
-
-        // Usernames intentionally NOT injected — Twitch's native @user completion
-        // covers that surface. Bare-word Tab is emote-only.
-
-        // Emoji shortcodes (:name:) handled by Tab cycling only — not injected into dropdown
-
-        // Sort results: EMOTES first, then USERNAMES
-        // Pre-compute sort keys to avoid repeated toLowerCase() in comparator.
-        // Sub emotes flagged via _heatsyncSub on the matches we pushed; for results
-        // Twitch returned natively, derive from name (sub names tracked above).
-        const nativeSubNames = new Set()
-        for (const e of getNativeTwitchEmotes()) {
-          if (e.sub) nativeSubNames.add(e.name)
-        }
-        const frec = readEmoteFrecency()
-        for (const r of results) {
-          const name = r.replacement || r.emote?.token || ''
-          r._sortKey = name.toLowerCase()
-          r._sortType = r.emote ? 0 : 1 // 0=emote, 1=username
-          r._isSub = r._heatsyncSub || nativeSubNames.has(name)
-          // channel(0) > own(1) > global(2). Pushed heatsync/native emotes carry _tier;
-          // anything else (Twitch's own dropdown results) falls back via sub status —
-          // sub emotes are channel-tier (0).
-          r._tier = r._tier ?? (r._isSub ? 0 : 2)
-          r._frec = frec.get(name) || 0
-          // Exact: the typed word IS this emote's full name. Leads outright,
-          // UNCONDITIONALLY — typing the whole name is the intent ("nam" →
-          // NaM even if never used and the channel has a NAMarrive). Reverses
-          // the old "tier beats never-used exact" call: precision wins.
-          r._exact = r._sortKey === searchLower
-          r._spelled = name === search
-        }
-        // Same ranking as the multichat comparator (input.js compareAcMatches)
-        // — keep the two in lockstep so native chat and the overlay never
-        // disagree on what Tab produces.
-        results.sort((a, b) => {
-          // Category sort: emotes < usernames
-          if (a._sortType !== b._sortType) return a._sortType - b._sortType
-
-          // Usernames: alphabetical only
-          if (a._sortType === 1) return a._sortKey.localeCompare(b._sortKey)
-
-          // Full-name exact match beats everything.
-          if (a._exact !== b._exact) return a._exact ? -1 : 1
-
-          // Both are the typed word in different casing (kek / KEK): the
-          // channel's own is what everyone here reads as that word, so it
-          // leads — a habit or a global lookalike must not outrank it.
-          // Case twins (KEKW / kekw) are two candidates; the one spelled like the typed word leads.
-          if (a._exact && a._spelled !== b._spelled) return a._spelled ? -1 : 1
-          if (a._exact && (a._tier === 0) !== (b._tier === 0)) return a._tier === 0 ? -1 : 1
-
-          // Personal habit beats structure: an emote the user actually sends
-          // wins over tier ("kko" → their KKona, never the channel's untouched
-          // KKonaLand).
-          const aUsed = a._frec > 0
-          const bUsed = b._frec > 0
-          if (aUsed !== bUsed) return aUsed ? -1 : 1
-
-          const aPrefix = a._sortKey.startsWith(searchLower)
-          const bPrefix = b._sortKey.startsWith(searchLower)
-          if (aUsed) {
-            // both used — they typed a prefix, respect it; then habit strength
-            if (aPrefix !== bPrefix) return aPrefix ? -1 : 1
-            if (a._frec !== b._frec) return b._frec - a._frec
-            if (a._tier !== b._tier) return a._tier - b._tier
-          } else {
-            // neither used — channel culture leads (tier), then prefix >
-            // contains > sub emote (exact already ranked above, absolutely)
-            if (a._tier !== b._tier) return a._tier - b._tier
-            if (aPrefix !== bPrefix) return aPrefix ? -1 : 1
-            if (a._isSub !== b._isSub) return a._isSub ? -1 : 1
+            emote: { id: emoteId, setID: emote.native ? 'TwitchEmotes' : 'HeatSyncEmotes', token: emote.name, srcSet },
           }
-
-          if (a._sortKey.length !== b._sortKey.length) return a._sortKey.length - b._sortKey.length
-          return a._sortKey.localeCompare(b._sortKey)
         })
-        // Clean up sort keys
-        for (const r of results) {
-          delete r._sortKey
-          delete r._sortType
-          delete r._isSub
-          delete r._heatsyncSub
-          delete r._tier
-          delete r._frec
-          delete r._exact
-        }
+        results = [
+          ...own,
+          ...results.filter((r) => r.emote),
+          ...results.filter((r) => !r.emote).sort((a, b) => (a.replacement || '').localeCompare(b.replacement || '')),
+        ]
 
         if (results.length > 0) {
           log(
@@ -1977,90 +1860,10 @@
                 cycleState.searchTerm +
                 '" - rebuilding matches',
             )
-            // Build fresh matches for current input (bridge + native Twitch sub emotes)
-            const hsEmotes = getAllEmotesForCycling()
-            const matches = []
-            // Strip leading colon for emoji shortcode search
+            // Fresh matches for the current input: the law's list (emoji too for a `:` word)
             const emojiSearch = currentSearch.startsWith(':') ? currentSearch.slice(1) : null
             const emoteSearch = emojiSearch || currentSearch
-            // No iteration cap: sub emotes live at the tail of hsEmotes (bridge-first ordering),
-            // so any cap silently hides them once the user has many custom emotes that match.
-            // Substring-scanning ~5k names is sub-millisecond; correctness > micro-perf.
-            for (const em of hsEmotes) {
-              if (em.nameLower?.startsWith(emoteSearch)) {
-                em._isPrefix = true
-                matches.push(em)
-              } else if (em.nameLower?.includes(emoteSearch)) {
-                em._isPrefix = false
-                matches.push(em)
-              }
-            }
-            // Add emoji shortcode matches when searching with :prefix. tier 9 keeps emoji
-            // below all emotes (own/channel/global), preserving "emotes first, then emoji".
-            if (emojiSearch && emojiSearch.length >= 2) {
-              let n = 0
-              for (const [name, emoji] of EMOJI_ENTRIES) {
-                if (name.startsWith(emojiSearch)) {
-                  matches.push({
-                    name: `:${name}:`,
-                    nameLower: name,
-                    isEmoji: true,
-                    emoji,
-                    tier: 9,
-                    _isPrefix: true,
-                  })
-                  n++
-                } else if (name.includes(emojiSearch)) {
-                  matches.push({
-                    name: `:${name}:`,
-                    nameLower: name,
-                    isEmoji: true,
-                    emoji,
-                    tier: 9,
-                    _isPrefix: false,
-                  })
-                  n++
-                }
-                if (n >= 20) break
-              }
-            }
-            // Same ranking as everywhere else (input.js compareAcMatches / the
-            // getMatches sort above): full-name exact match beats everything
-            // UNCONDITIONALLY, then used-before (frecency — "kko" → your KKona,
-            // never the channel's untouched KKonaLand), then never-used by tier
-            // (channel culture, emoji last) > prefix > substring > sub emote;
-            // shorter > alpha tail.
-            const frecCyc = readEmoteFrecency()
-            matches.sort((a, b) => {
-              const at = a.tier ?? 2,
-                bt = b.tier ?? 2
-              const ae = a.nameLower === emoteSearch,
-                be = b.nameLower === emoteSearch
-              if (ae !== be) return ae ? -1 : 1
-              // kek / KEK: the channel's own leads (see the getMatches sort)
-              if (ae && (a.tier === 0) !== (b.tier === 0)) return a.tier === 0 ? -1 : 1
-              const af = frecCyc.get(a.name || '') || 0,
-                bf = frecCyc.get(b.name || '') || 0
-              if (af > 0 !== bf > 0) return af > 0 ? -1 : 1
-              if (af > 0) {
-                // both used — typed prefix first, then habit strength, then tier
-                if (a._isPrefix !== b._isPrefix) return a._isPrefix ? -1 : 1
-                if (af !== bf) return bf - af
-                if (at !== bt) return at - bt
-              } else {
-                // neither used — tier outranks match-type so a channel substring
-                // match beats a global prefix match ("hug" → peepoHug over "HuG")
-                if (at !== bt) return at - bt
-                if (a._isPrefix !== b._isPrefix) return a._isPrefix ? -1 : 1
-                const aSub = a.sub ? 0 : 1,
-                  bSub = b.sub ? 0 : 1
-                if (aSub !== bSub) return aSub - bSub
-              }
-              const la = (a.name || '').length,
-                lb = (b.name || '').length
-              if (la !== lb) return la - lb
-              return (a.name || '').localeCompare(b.name || '')
-            })
+            const matches = lawRows(currentSearch)
             // Recent-chatter lead: a chatter who just talked and whose name
             // prefix-matches leads the cycle above all emotes (parity with the
             // overlay). Bare word only; inserted as the plain name. Source: content.js

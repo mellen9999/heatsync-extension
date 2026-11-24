@@ -59,7 +59,7 @@ test('thread id click: the >>id quote always lands at the end of the input', () 
   const social = readFileSync(new URL('../src/multichat/social.js', import.meta.url), 'utf8')
   const i = social.indexOf('const quote = `>>${qid} `')
   const h = social.slice(i, i + 900)
-  expect(h).toMatch(/range\.collapse\(false\)[\s\S]*insertText/)
+  expect(h).toMatch(/cursorToEnd\(input\)[\s\S]*insertText/)
   expect(h).toMatch(/input\.value \+= quote/)
 })
 

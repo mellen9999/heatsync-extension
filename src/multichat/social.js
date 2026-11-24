@@ -2446,12 +2446,7 @@ function buildFeedMessageDiv(m, opUsername) {
       // repeated clicks would otherwise stack quotes at that spot
       if (wysiwygEnabled) {
         input.focus()
-        const range = document.createRange()
-        range.selectNodeContents(input)
-        range.collapse(false)
-        const sel = window.getSelection()
-        sel.removeAllRanges()
-        sel.addRange(range)
+        cursorToEnd(input)
         document.execCommand('insertText', false, quote)
       } else {
         input.value += quote

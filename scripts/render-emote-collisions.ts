@@ -413,9 +413,25 @@ try {
   await until(p, async () => (await chipSrc()).includes('Wlol_room2'), 5000)
   const far = await chipSrc()
   check(far.includes('Wlol_room2'), `m. a Tab-completed line recalled in another tab shows that tab's Wlol, never the first channel's (got ${far || 'no chip'})`)
+  // the caret stays behind an emote the next tab draws again. a recalled line ends in its emote with
+  // the caret right behind it, no text between: the tab changes, the picture is swapped, and backspace
+  // deletes the emote. the caret used to fall in front of the new picture, so the key ate the space
+  // before it and the emote fell back into its name, glued to the word
+  const boxWords = () =>
+    p.evaluate(() => {
+      const el = document.getElementById('hs-mc-input')
+      const word = (n: ChildNode) => ((n as HTMLElement).dataset?.emoteName ? `<${(n as HTMLElement).dataset.emoteName}>` : n.textContent)
+      return [...(el?.childNodes || [])].map(word).join('').replace(/\s+/g, ' ').trim()
+    })
+  await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+  await until(p, async () => { const src = await chipSrc(); return src.includes('Wlol_room') && !src.includes('Wlol_room2') }, 5000)
+  check((await boxWords()) === 'own5 <Wlol>', `m. the recalled line went with you to the next tab (got ${JSON.stringify(await boxWords())})`)
+  await p.focus('#hs-mc-input')
+  await p.keyboard.press('Backspace')
+  await until(p, async () => (await boxWords()) === 'own5', 2000)
+  check((await boxWords()) === 'own5', `m. backspace behind an emote the next tab drew again deletes that emote (got ${JSON.stringify(await boxWords())})`)
   await p.keyboard.press('Control+A')
   await p.keyboard.press('Backspace')
-  await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
 
   // ── one name is one picture in a line: a pick answers every copy of its name ──
   const boxSrcs = () => p.evaluate(() => [...document.querySelectorAll('#hs-mc-input img.hs-input-emote')].map((i) => i.getAttribute('src') || ''))

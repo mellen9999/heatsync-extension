@@ -1832,13 +1832,7 @@ function pcMention(name) {
       const sep = cur && !cur.endsWith(' ') ? ' ' : ''
       input.textContent = cur + sep + tag
       input.focus()
-      // Place caret at end
-      const range = document.createRange()
-      range.selectNodeContents(input)
-      range.collapse(false)
-      const sel = window.getSelection()
-      sel.removeAllRanges()
-      sel.addRange(range)
+      cursorToEnd(input)
     }
   }, 60)
 }

@@ -44,6 +44,7 @@ const reread = new Function(
   'emoteIsBlocked',
   'lookupEmoteRenderOrder',
   'blockedEmoteNames',
+  'getSelection',
   `${fn(INPUT, 'chipToText')}
 ${fn(INPUT, 'imagifyValidWordsInTextNode')}
 ${fn(read('emote-law-send.js'), 'rereadInputChips')}
@@ -56,6 +57,8 @@ return rereadInputChips`,
   () => false,
   () => null,
   new Set(),
+  // the caret itself is held in a real browser (render-emote-collisions, case m)
+  () => win.getSelection(),
 )
 
 const chip = (name, src) => `<img class="hs-input-emote" src="${src}" alt="${name}" data-emote-name="${name}">`

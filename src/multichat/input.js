@@ -3180,12 +3180,7 @@ function _mentionInMcInput(username) {
     const needsSpace = !!last && !(last.nodeType === Node.TEXT_NODE && /\s$/.test(last.textContent || ''))
     input.appendChild(document.createTextNode((needsSpace ? ' ' : '') + mention))
     try {
-      const sel = window.getSelection()
-      const range = document.createRange()
-      range.selectNodeContents(input)
-      range.collapse(false)
-      sel.removeAllRanges()
-      sel.addRange(range)
+      cursorToEnd(input)
     } catch {}
     pendingMessage = getInputText()
   }
@@ -3929,12 +3924,7 @@ function restoreWysiwygText(input, text) {
     if (child.nodeType === Node.TEXT_NODE) imagifyValidWordsInTextNode(child)
   }
   try {
-    const sel = window.getSelection()
-    const range = document.createRange()
-    range.selectNodeContents(input)
-    range.collapse(false)
-    sel.removeAllRanges()
-    sel.addRange(range)
+    cursorToEnd(input)
   } catch {}
 }
 
@@ -6387,14 +6377,9 @@ function insertSlashCommand(c) {
   const inserted = `/${c.cmd}${c.args ? ' ' : ''}`
   if (wysiwygEnabled) {
     input.textContent = inserted
-    const range = document.createRange()
-    range.selectNodeContents(input)
-    range.collapse(false)
-    const sel = window.getSelection()
-    if (sel) {
-      sel.removeAllRanges()
-      sel.addRange(range)
-    }
+    try {
+      cursorToEnd(input)
+    } catch {}
   } else {
     input.value = inserted
     if (typeof input.setSelectionRange === 'function') {

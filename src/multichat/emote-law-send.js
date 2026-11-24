@@ -290,8 +290,15 @@ function rereadInputChips() {
     // back to its words (a stack whole, modifiers kept), and those words drawn as they are here
     const chip = img.closest('.hs-input-stack') || img
     const words = document.createTextNode(chipToText(chip) || '')
+    // a caret right behind the chip (no text between) fell in front of what replaced it, and the
+    // next Backspace ate the space before the emote: it is put back behind
+    const sel = getSelection()
+    const box = chip.parentNode
+    const next = chip.nextSibling
+    const behind = sel?.isCollapsed && sel.anchorNode === box && box.childNodes[sel.anchorOffset - 1] === chip
     chip.replaceWith(words)
     imagifyValidWordsInTextNode(words)
+    if (behind) sel.collapse(box, next ? [...box.childNodes].indexOf(next) : box.childNodes.length)
   }
 }
 

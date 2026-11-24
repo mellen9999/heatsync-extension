@@ -1,6 +1,6 @@
 # god-file ceilings: <max lines> <path>  # why. raise only with a reason in the same commit
 10293 src/content/content.js  # 2026-11-08: moved from chrome/ (was unscanned there); +27 native filter-rule wiring (logic lives in native-filter-rules.js)
-9366 src/multichat/input.js  # baseline; -475 Tab's ranking moved to emote-law-offer.js (the emote law's offer), incl. +5 the cycle tooltip says when a copy won't show; -14 Tab no longer counts a use per step (a use is a sent line, emote-law-usage.js)
+9350 src/multichat/input.js  # baseline; -16 three caret-to-end copies are cursorToEnd; -475 Tab's ranking moved to emote-law-offer.js (the emote law's offer), incl. +5 the cycle tooltip says when a copy won't show; -14 Tab no longer counts a use per step (a use is a sent line, emote-law-usage.js)
 5055 src/multichat/emotes.js  # baseline; -94 the picker search's own ranking replaced by the emote law's list (emote-law-offer.js); -133 recents + usage store moved to emote-law-usage.js; -28 a search-result click is a pick added on send, not an add on click (favorites live in emote-favorites.js)
 5132 src/content/heatsync-button.js  # 2026-11-08: moved from chrome/ (was unscanned there); ceiling = size at the move; +1 native upload form mount (logic in native-emote-upload.js); +5 kick button waits for hydration; +3 recents adopt another tab's pick
 4757 src/multichat/twitch-api.js  # baseline

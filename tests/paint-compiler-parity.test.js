@@ -19,7 +19,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
-import { siteDir } from './site-dir.js'
+import { SITE_MISSING, siteDir, siteRequired } from './site-dir.js'
 
 const HERE = resolve(import.meta.dir, '..')
 const SITE = siteDir('client/utils/paint-spec.js')
@@ -55,13 +55,11 @@ const FILES = [
 describe('paint compiler parity with the site', () => {
   if (!SITE) {
     // A green run that checked nothing is how 1,300 lines drifted in three
-    // weeks. Skipping is allowed only where the sibling cannot exist.
-    if (process.env.HS_PARITY_SKIP_OK !== '1') {
-      throw new Error(
-        'site repo not found beside this checkout — parity cannot be checked. clone heatsync as a sibling, or set HS_PARITY_SKIP_OK=1 where that is impossible (ci, until the site repo is public)',
-      )
-    }
-    test.skip('site repo not present — HS_PARITY_SKIP_OK=1', () => {})
+    // weeks, so ci and HS_REQUIRE_SITE=1 fail here (site-dir.js). A plain
+    // clone skips: the site repo is private, and an outside contributor or an
+    // AMO reviewer building the source zip could otherwise build nothing.
+    if (siteRequired()) throw new Error(SITE_MISSING)
+    test.skip('site repo not present — parity cannot be checked here', () => {})
     return
   }
   for (const rel of FILES) {
@@ -94,13 +92,11 @@ const theirs = SITE ? await import(join(SITE, 'client', 'utils', 'font-grid.js')
 describe('font-grid contract parity with the site', () => {
   if (!SITE) {
     // A green run that checked nothing is how 1,300 lines drifted in three
-    // weeks. Skipping is allowed only where the sibling cannot exist.
-    if (process.env.HS_PARITY_SKIP_OK !== '1') {
-      throw new Error(
-        'site repo not found beside this checkout — parity cannot be checked. clone heatsync as a sibling, or set HS_PARITY_SKIP_OK=1 where that is impossible (ci, until the site repo is public)',
-      )
-    }
-    test.skip('site repo not present — HS_PARITY_SKIP_OK=1', () => {})
+    // weeks, so ci and HS_REQUIRE_SITE=1 fail here (site-dir.js). A plain
+    // clone skips: the site repo is private, and an outside contributor or an
+    // AMO reviewer building the source zip could otherwise build nothing.
+    if (siteRequired()) throw new Error(SITE_MISSING)
+    test.skip('site repo not present — parity cannot be checked here', () => {})
     return
   }
 

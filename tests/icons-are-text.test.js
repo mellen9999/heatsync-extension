@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
-import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { trackedFiles } from '../scripts/lib/tracked-files.mjs'
 
 // Icons are unicode text (<span class="hs-glyph">), never an svg. The site
 // holds the same rule (tests/unit/icons-are-text.test.ts).
@@ -14,9 +14,7 @@ const SVG_OK = new Map([
 
 describe('icons are text', () => {
   test('no svg icon in src', () => {
-    const files = execFileSync('git', ['ls-files', 'src'], { cwd: ROOT, encoding: 'utf8' })
-      .split('\n')
-      .filter((f) => /\.(js|html)$/.test(f) && !SVG_OK.has(f))
+    const files = trackedFiles(ROOT, 'src').filter((f) => /\.(js|html)$/.test(f) && !SVG_OK.has(f))
     const bad = files.filter((f) =>
       /<svg\b/.test(readFileSync(join(ROOT, f), 'utf8').replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, '')),
     )
@@ -27,9 +25,7 @@ describe('icons are text', () => {
   // drawn that way and the test above read as green over them
   test('no svg built in script either, bar the channel-points coin', () => {
     const NS = /createElementNS|www\.w3\.org\/2000\/svg/
-    const files = execFileSync('git', ['ls-files', 'src'], { cwd: ROOT, encoding: 'utf8' })
-      .split('\n')
-      .filter((f) => /\.(js|html)$/.test(f) && !SVG_OK.has(f))
+    const files = trackedFiles(ROOT, 'src').filter((f) => /\.(js|html)$/.test(f) && !SVG_OK.has(f))
     const built = files.filter((f) => NS.test(readFileSync(join(ROOT, f), 'utf8')))
     expect(built).toEqual(['src/multichat/twitch-api.js'])
     // twitch's own coin mark (brand art), one builder: makeCoinSvg

@@ -46,6 +46,8 @@ bun run build.js --package # both, minified, + store zips + source zip
 
 load it: chrome `chrome://extensions` → developer mode → load unpacked → `dist/chrome`. firefox `about:debugging` → this firefox → load temporary add-on → `dist/firefox/manifest.json`.
 
+every github release carries `heatsync-source-X.Y.Z.zip`: unpack it, run the same steps, and you get the shipped files byte for byte.
+
 every build runs the unit tests first (`--no-test` skips them, never with `--package`), then `node --check` on the output. it builds into `dist/<browser>.staging` and swaps into `dist/<browser>` only when everything passes, so a failed build never leaves a half-built folder. `multichat-core.js` and `background.js` are build output, not tracked — edit `src/multichat/` and `src/background/`.
 
 ## contributing

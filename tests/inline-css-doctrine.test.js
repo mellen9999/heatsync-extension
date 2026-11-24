@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
-import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { trackedFiles } from '../scripts/lib/tracked-files.mjs'
 import { BRAND } from '../src/lib/brand-tokens.js'
 import { HS_PLAT_COLORS } from '../src/lib/palette.js'
 import { inlineDoctrineOffenders } from './lib/inline-doctrine.mjs'
@@ -15,9 +15,7 @@ const ROOT = join(import.meta.dir, '..')
 // paint + scene compilers: somebody's art is the format
 const ART_FILES = new Set(['src/lib/paint-spec.js', 'src/lib/scene-spec.js'])
 
-const files = execFileSync('git', ['ls-files', 'src'], { cwd: ROOT, encoding: 'utf8' })
-  .split('\n')
-  .filter((f) => /\.(js|mjs)$/.test(f) && !ART_FILES.has(f))
+const files = trackedFiles(ROOT, 'src').filter((f) => /\.(js|mjs)$/.test(f) && !ART_FILES.has(f))
 
 describe('inline css doctrine', () => {
   test('scans the code that writes style', () => {

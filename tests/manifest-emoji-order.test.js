@@ -1,9 +1,9 @@
 import { expect, test } from 'bun:test'
-import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { runInNewContext } from 'node:vm'
 import { emojiPairs, emojiPairsSource } from '../scripts/lib/emoji-pairs.mjs'
+import { trackedFiles } from '../scripts/lib/tracked-files.mjs'
 
 const ROOT = new URL('..', import.meta.url).pathname
 
@@ -110,12 +110,9 @@ test('the two shipped copies are generated, never tracked — one source in src/
   const ignored = readFileSync(join(ROOT, '.gitignore'), 'utf8').split('\n')
   expect(ignored).toContain('chrome/emoji-data.iso.js')
   expect(ignored).toContain('chrome/emoji-data.main.js')
-  const tracked = execFileSync(
-    'git',
-    ['ls-files', '--', 'chrome/emoji-data.js', 'chrome/emoji-data.iso.js', 'chrome/emoji-data.main.js'],
-    { cwd: ROOT, encoding: 'utf8' },
+  expect(trackedFiles(ROOT, 'chrome/emoji-data.js', 'chrome/emoji-data.iso.js', 'chrome/emoji-data.main.js')).toEqual(
+    [],
   )
-  expect(tracked.trim()).toBe('')
 })
 
 test('a malformed dataset fails the build instead of shipping a partial file', () => {

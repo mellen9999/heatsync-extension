@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
-import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { trackedFiles } from '../scripts/lib/tracked-files.mjs'
 
 // Readable text is ≥13px, emphasis is bold (700) not a mid weight, copy is
 // lowercase. Counts only fall: lower a cap when you fix one, never raise it.
@@ -14,9 +14,9 @@ const RULES = {
   uppercase: [/text-transform\s*:\s*uppercase|textTransform\s*=\s*'uppercase'/g, 0],
 }
 
-const files = execFileSync('git', ['ls-files', 'src'], { cwd: ROOT, encoding: 'utf8' })
-  .split('\n')
-  .filter((f) => /\.(js|css|html)$/.test(f) && !ART.has(f) && !f.includes('_locales'))
+const files = trackedFiles(ROOT, 'src').filter(
+  (f) => /\.(js|css|html)$/.test(f) && !ART.has(f) && !f.includes('_locales'),
+)
 
 describe('type doctrine ratchet', () => {
   for (const [name, [re, cap]] of Object.entries(RULES)) {

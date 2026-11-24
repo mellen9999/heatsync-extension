@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { inGit } from '../scripts/lib/tracked-files.mjs'
 
 /**
  * Every version that reached users has a CHANGELOG.md entry — its own
@@ -26,6 +27,8 @@ const ranges = [...log.matchAll(/^## \[(\d+\.\d+\.\d+) – (\d+\.\d+\.\d+)\]/gm)
 const covered = (v) => single.has(v) || ranges.some(([a, b]) => cmp(a, v) <= 0 && cmp(v, b) <= 0)
 
 function tags() {
+  // an unpacked source zip has no .git; git run there would answer for whatever repo is above it
+  if (!inGit(ROOT)) return []
   try {
     return execFileSync('git', ['tag', '-l', 'v*'], { cwd: ROOT, encoding: 'utf8' })
       .split('\n')

@@ -369,13 +369,13 @@ function composeApprovalNotes(ver) {
     bunVersion = execFileSync('bun', ['--version']).toString().trim()
   } catch {}
   return [
-    'reproducible build:',
+    'reproducible build (needs zip and node on the path):',
     `  1. bun ${bunVersion} (https://bun.sh)`,
-    '  2. git clone https://github.com/mellen9999/heatsync-extension.git && cd heatsync-extension',
-    `  3. git checkout v${ver}`,
-    '  4. bun install',
-    '  5. bun run build.js firefox --package',
-    `output: dist/firefox/ (unpacked), dist/heatsync-firefox-${ver}.zip (submitted build)`,
+    `  2. unzip the attached heatsync-source-${ver}.zip into an empty folder and cd into it`,
+    `     (or: git clone https://github.com/mellen9999/heatsync-extension.git && cd heatsync-extension && git checkout v${ver})`,
+    '  3. bun install --frozen-lockfile',
+    '  4. bun run build.js firefox --package',
+    `output: dist/firefox/ (unpacked), dist/heatsync-firefox-${ver}.zip — same files, byte for byte, as the submitted build`,
     '',
     'no remote code is executed at build or runtime — zero runtime dependencies ' +
       '(enforced by build.js checkNoRuntimeDeps), no eval()/new Function() anywhere in src/ or chrome/ ' +

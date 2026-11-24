@@ -24,6 +24,7 @@ import { computeBuildStamp } from './scripts/lib/build-stamp.mjs'
 import { rebindBgDebugLog, rebindDebugLog, unbindBgDebugLog, unbindDebugLog } from './scripts/lib/debug-log.mjs'
 import { emojiPairsSource } from './scripts/lib/emoji-pairs.mjs'
 import { emoteLawSource, lawIsUsed } from './scripts/lib/emote-law-bundle.mjs'
+import { trackedFiles } from './scripts/lib/tracked-files.mjs'
 
 // Build stamp — swapped into bootstrap.js's '__HS_BUILD_STAMP__' literal so
 // every hs_diag_ring boot event names the code it ran. Needed because a tab
@@ -1442,34 +1443,40 @@ function syntaxCheck(outDir, browser) {
   console.log(`  Syntax check: ${files.length} files clean`)
 }
 
-// Build a source zip suitable for AMO source-code review:
-// - everything needed to reproduce the build (chrome/, src/, build.js, lockfile, package.json)
-// - reviewer-facing docs (README, CHANGELOG, LICENSE, etc.)
-// - excludes generated multichat.js (regenerated from src/multichat/), dist/, node_modules/, .git/
+// Build a source zip suitable for AMO source-code review: every file this repo is
+// made of (scripts/lib/tracked-files.mjs — tracked, plus new files git does not
+// ignore), so an unpacked zip holds everything `bun install && bun run build.js
+// firefox --package` reads: build.js's own imports (scripts/lib), shared/, the
+// tests every build runs first, the configs. The hand-kept include list it
+// replaced had no scripts/ or shared/, and build.js died on its first import
+// inside the zip.
 function buildSourceZip() {
   const version = getVersion()
   const zipName = `heatsync-source-${version}.zip`
   const zipPath = join(__dirname, 'dist', zipName)
   if (existsSync(zipPath)) rmSync(zipPath)
 
-  const include = [
-    'chrome',
-    'src',
+  const files = trackedFiles(__dirname)
+  for (const need of [
     'build.js',
-    'bun.lock',
     'package.json',
-    'README.md',
-    'CHANGELOG.md',
-    'CONTRIBUTING.md',
-    'LICENSE',
-    'SECURITY.md',
-  ].filter((p) => existsSync(join(__dirname, p)))
-
-  const excludes = ['chrome/multichat-core.js', 'dist/*', 'node_modules/*', '.git/*', '*/.DS_Store']
-  const args = ['-rq', zipPath, ...include]
-  for (const ex of excludes) args.push('-x', ex)
-  execFileSync('zip', args, { cwd: __dirname, stdio: 'inherit' })
-  console.log(`  ${zipName}`)
+    'bun.lock',
+    'scripts/lib/tracked-files.mjs',
+    'src',
+    'shared',
+    'tests',
+  ]) {
+    if (!files.some((f) => f === need || f.startsWith(`${need}/`))) {
+      throw new Error(`buildSourceZip: ${need} is missing from the source list — the zip could not rebuild`)
+    }
+  }
+  // -X: no uid/gid extras, so the same files zip the same on any machine. names on stdin (-@).
+  execFileSync('zip', ['-q', '-X', zipPath, '-@'], {
+    cwd: __dirname,
+    input: files.join('\n'),
+    stdio: ['pipe', 'inherit', 'inherit'],
+  })
+  console.log(`  ${zipName} (${files.length} files)`)
   return zipPath
 }
 

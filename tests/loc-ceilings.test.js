@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
-import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { trackedFiles } from '../scripts/lib/tracked-files.mjs'
 
 // god-files only grow. the 6 biggest source files each have a ceiling in
 // tests/loc-ceilings.txt (line = "<max> <path>  # why"). lines = newline count.
@@ -23,10 +23,7 @@ for (const l of readFileSync(join(ROOT, LIST), 'utf8').split('\n')) {
   const m = l.match(/^(\d+)\s+(\S+)/)
   if (m) ceilings.set(m[2], Number(m[1]))
 }
-const files = execFileSync('git', ['ls-files', '-z'], { cwd: ROOT, maxBuffer: 1 << 26 })
-  .toString()
-  .split('\0')
-  .filter((p) => SRC.test(p) && !SKIP.test(p))
+const files = trackedFiles(ROOT).filter((p) => SRC.test(p) && !SKIP.test(p))
 const lines = new Map(files.map((p) => [p, count(p)]))
 
 describe('loc ceilings', () => {

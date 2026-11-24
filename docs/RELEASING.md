@@ -20,6 +20,19 @@ pushing a `v*` tag runs `.github/workflows/release.yml`:
 
 if amo is down, the release stays a prerelease and nothing breaks: `release-finish.yml` retries stranded prereleases every 30 minutes, or run it by hand.
 
+## the source zip rebuilds the release
+
+`heatsync-source-X.Y.Z.zip` is every file the repo is made of (`scripts/lib/tracked-files.mjs`), and amo reviewers rebuild from it. to prove a zip by hand:
+
+```bash
+bun run build.js --package
+d=$(mktemp -d) && cd "$d" && unzip -q ~/projects/heatsync-extension/dist/heatsync-source-X.Y.Z.zip
+bun install --frozen-lockfile && bun run build.js firefox --package
+diff -r dist/firefox ~/projects/heatsync-extension/dist/firefox && echo same build
+```
+
+an outsider has no site repo beside the zip: the parity tests skip there (they fail only in ci or with `HS_REQUIRE_SITE=1`).
+
 ## publish.js
 
 `scripts/publish.js` publishes to the chrome web store and amo (firefox, listed channel). safe by default: without `--publish`, nothing is ever uploaded.

@@ -45,6 +45,10 @@
  *      and ordinary words, typed a key at a time: each row is the rule's reading of the text
  *      that went out, and what the box showed at enter. every other one is sent straight after
  *      its last word, before the box has taken it
+ *   y. 30 messages of a seeded random session (HS_SESSION_LINES, HS_SESSION_SEED): typed names, Tab
+ *      picks, a second Tab, tab switches mid-line, the up arrow. the box at enter is the row, a
+ *      typed word is its tab's emote, a pick is its picture, a recalled line keeps the picks that
+ *      were a choice
  * then right-click another chatter's W: it is blocked, the viewer's own W is NOT removed, and
  * only that exact emote hides.
  */
@@ -568,6 +572,128 @@ try {
       if (settled && norm(box.chips).join(' ') !== row.join(' ')) check(false, `${said}: the row is what the box showed (box ${JSON.stringify(box)}, row ${JSON.stringify(row)}, wire ${JSON.stringify(wire)})`)
     }
     check(done === LINES && changed > LINES / 8, `w. ${done} random lines typed into the box: each row is the rule's reading of its wire text, and what the box showed (${changed} carried a modifier on a chip)`)
+    await p.keyboard.press('Control+A')
+    await p.keyboard.press('Backspace')
+  }
+
+  // ── y. a session nobody scripted: typed names, Tab picks, a second Tab, tab switches, the up arrow ──
+  // seeded, across the two tabs that each have a Wlol while the viewer owns a third. held on every
+  // message: a word typed by hand is the emote of the tab the line goes to; a pick is the picture
+  // picked, in any tab, for that message; one name is one picture in a line; the box at enter is
+  // the row; a line brought back keeps only the picks that were a choice.
+  {
+    type Room = 'A' | 'B'
+    const TAB: Record<Room, string> = { A: 'probechan', B: 'probechan2' }
+    const PICS: Array<[string, string]> = [['Wlol_room2', 'roomB'], ['Wlol_room', 'roomA'], ['Wlol_inv', 'mine'], ['W_ffz', 'Wroom'], ['W_inv', 'Wmine'], ['Mine_inv', 'mine2']]
+    const label = (src: string) => PICS.find(([id]) => src.includes(id))?.[1] ?? `?(${src})`
+    const typed = (room: Room, word: string): string | null =>
+      word === 'Wlol' ? (room === 'A' ? 'roomA' : 'roomB') : word === 'W' ? (room === 'A' ? 'Wroom' : 'Wmine') : word === 'Mine' ? 'mine2' : null
+    const HAND = ['Wlol', 'Wlol', 'Wlol', 'W', 'Mine', 'hi', 'ok']
+    const cells = (sel: string, mark: string) =>
+      p.evaluate(([sel, mark]: string[]) => {
+        const root = mark ? [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes(mark)) : document
+        return [...(root?.querySelectorAll(sel) || [])].map((i) => `${(i as HTMLElement).dataset.emoteName || i.getAttribute('alt') || ''}=${i.getAttribute('src') || ''}`)
+      }, [sel, mark]).then((l: string[]) => l.map((c) => `${c.slice(0, c.indexOf('='))}=${label(c.slice(c.indexOf('=') + 1))}`))
+    const boxCells = () => cells('#hs-mc-input img.hs-input-emote', '')
+    const rowCells = (mark: string) => cells('.hs-mc-emote-wrapper img, img.hs-mc-emote', mark)
+    const inBox = () => p.evaluate(() => document.activeElement?.id === 'hs-mc-input')
+    const endsWithGap = () => p.evaluate(() => { const n = document.getElementById('hs-mc-input')?.lastChild; return !!n && n.nodeType === 3 && /[\s ]$/.test(n.textContent || '') })
+    const boxText = () => p.evaluate(() => document.getElementById('hs-mc-input')?.textContent || '')
+    const key = (text: string) => p.keyboard.type(text, { delay: 20 })
+    let state = Number(process.env.HS_SESSION_SEED || 1) * 7919
+    const rand = () => {
+      state = (state + 0x6d2b79f5) | 0
+      let t = Math.imul(state ^ (state >>> 15), 1 | state)
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+    }
+    const MESSAGES = Number(process.env.HS_SESSION_LINES || 30)
+    let room: Room = 'A'
+    let last: { mark: string; words: string[]; chosen: Record<string, string> } | null = null
+    const seen = { picks: 0, switches: 0, recalls: 0, two: 0 }
+    let bad = 0
+    await p.click('#hs-mc-input', { timeout: 5000 })
+    await p.keyboard.press('Control+A')
+    await p.keyboard.press('Backspace')
+    for (let n = 1; n <= MESSAGES && bad < 3; n++) {
+      type Step = { hand: string } | { tabs: 1 | 2 } | 'switch'
+      const steps: Step[] = []
+      const recall = !!last && rand() < 0.25
+      const words = recall ? Math.floor(rand() * 3) : 1 + Math.floor(rand() * 4)
+      for (let i = 0; i < words; i++) {
+        if (i && rand() < 0.3) steps.push('switch')
+        steps.push(rand() < 0.4 ? { tabs: rand() < 0.5 ? 1 : 2 } : { hand: HAND[Math.floor(rand() * HAND.length)] })
+      }
+      if (rand() < 0.25) steps.push('switch')
+      const settled = n % 3 !== 0
+      const mark = `ys${n}x`
+      const said = `y. message ${n} ${recall ? `<up ${JSON.stringify(last?.words)} kept ${JSON.stringify(last?.chosen)}> ` : ''}${JSON.stringify(steps.map((s) => (s === 'switch' ? '<switch>' : 'hand' in s ? s.hand : `Wlol+Tab×${s.tabs}`)))} from ${TAB[room]}`
+      const fail = (msg: string) => { bad++; check(false, `${said}: ${msg}`) }
+      const draft: Array<{ word: string; pick?: string }> = []
+      if (recall && last) {
+        const was = last
+        await p.keyboard.press('ArrowUp')
+        if (!(await until(p, async () => (await boxText()).includes(was.mark), 5000))) { fail(`the up arrow did not bring the last line back (box ${JSON.stringify(await boxText())})`); break }
+        await p.keyboard.press('Control+End')
+        for (const word of was.words) draft.push({ word, pick: was.chosen[word] })
+        seen.recalls++
+        await key(` ${mark} `)
+      } else {
+        await key(`${mark} `)
+      }
+      for (const [i, s] of steps.entries()) {
+        if (s === 'switch') {
+          room = room === 'A' ? 'B' : 'A'
+          await p.click(`.hs-mc-tab[data-tab="${TAB[room]}"]`, { timeout: 5000 })
+          await p.waitForTimeout(300)
+          await p.focus('#hs-mc-input')
+          await p.keyboard.press('Control+End')
+          seen.switches++
+          continue
+        }
+        if ('hand' in s) {
+          await key(i === steps.length - 1 && !settled ? s.hand : `${s.hand} `)
+          draft.push({ word: s.hand })
+          continue
+        }
+        await key('Wlol')
+        for (let t = 0; t < s.tabs; t++) {
+          await p.keyboard.press('Tab')
+          await p.waitForTimeout(120)
+        }
+        if (!(await inBox())) fail(`the caret left the box after Tab×${s.tabs}`)
+        // copies of one name go room, then yours
+        draft.push({ word: 'Wlol', pick: s.tabs === 1 ? (room === 'A' ? 'roomA' : 'roomB') : 'mine' })
+        seen.picks++
+        if (!(await endsWithGap())) await key(' ')
+      }
+      const pickOf = (word: string) => draft.filter((d) => d.word === word && d.pick).at(-1)?.pick
+      if (new Set(draft.filter((d) => d.pick).map((d) => d.pick)).size > 1) seen.two++
+      const want = draft.flatMap((d) => { const is = pickOf(d.word) ?? typed(room, d.word); return is ? [`${d.word}=${is}`] : [] })
+      let before = ''
+      await until(p, async () => { const now = (await boxCells()).join(' '); const same = now === before; before = now; return same }, 5000)
+      await p.waitForTimeout(150)
+      const shown = await boxCells()
+      const lastStep = steps.at(-1)
+      const boxHeld = settled || !lastStep || lastStep === 'switch' || !('hand' in lastStep)
+      if (boxHeld && shown.join(' ') !== want.join(' ')) fail(`the box shows each word as what it will send in ${TAB[room]} (box ${JSON.stringify(shown)}, expected ${JSON.stringify(want)})`)
+      await p.keyboard.press('Enter')
+      if (!(await until(p, async () => (await rowCells(mark)).length === want.length && !!(await p.evaluate((m: string) => [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].some((r) => (r.textContent || '').includes(m)), mark)), 8000))) {
+        fail(`my row never drew what was sent (row ${JSON.stringify(await rowCells(mark))}, expected ${JSON.stringify(want)}, box was ${JSON.stringify(shown)})`)
+      }
+      await p.waitForTimeout(300)
+      const row = await rowCells(mark)
+      const went = irc.frames.find((f) => f.startsWith('PRIVMSG #') && f.includes(mark)) || ''
+      if (!went.startsWith(`PRIVMSG #${TAB[room]} `)) fail(`the line went to the open tab (wire ${JSON.stringify(went.slice(0, 60))})`)
+      if (row.join(' ') !== want.join(' ')) fail(`my row draws what ${TAB[room]} sends (row ${JSON.stringify(row)}, expected ${JSON.stringify(want)})`)
+      if (boxHeld && row.join(' ') !== shown.join(' ')) fail(`the row is what the box showed at enter (box ${JSON.stringify(shown)}, row ${JSON.stringify(row)})`)
+      last = { mark, words: draft.map((d) => d.word), chosen: {} }
+      for (const { word } of draft) { const pk = pickOf(word); if (pk && pk !== typed(room, word)) last.chosen[word] = pk }
+      await until(p, async () => !(await boxText()).trim() && !(await boxCells()).length, 5000)
+    }
+    check(!bad && seen.picks > 4 && seen.switches > 3 && seen.recalls > 1 && seen.two > 0, `y. ${MESSAGES} messages of a random session: the box at enter is the row, a typed word is its tab's emote, a pick is its picture (${JSON.stringify(seen)})`)
+    if (room === 'B') await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+    await p.click('#hs-mc-input', { timeout: 5000 })
     await p.keyboard.press('Control+A')
     await p.keyboard.press('Backspace')
   }

@@ -2550,7 +2550,10 @@
   let channelEmotes = [] // Channel owner's emotes (for THIS tab's channel only)
 
   // Hoisted regex constants — avoids per-call allocation in hot paths
-  const COLOR_RE = /^(#[0-9a-f]{3,8}|rgb\(.+\)|[a-z]+)$/i
+  // a whole colour and nothing after it: the value lands in style.cssText, where `rgb(.+)` once let
+  // "rgb(1,2,3); background:url(…)" through as a second declaration (a beacon from another user's colour)
+  const COLOR_RE =
+    /^(#[0-9a-f]{3,8}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(,\s*(0|1|0?\.\d+)\s*)?\)|[a-z]{3,20})$/i
   const SUB_TENURE_RE = /(\d+)-Month Subscriber/i
 
   // Get channel name from current page URL

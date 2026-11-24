@@ -934,7 +934,10 @@ try {
       for (const { word } of draft) { const pk = pickOf(word); if (pk && pk !== typed(room, word)) last.chosen[word] = pk }
       await until(p, async () => !(await boxText()).trim() && !(await boxCells()).length, 5000)
     }
-    check(!bad && seen.picks > 4 && seen.switches > 3 && seen.recalls > 1 && seen.two > 0 && seen.deletes > 2 && seen.ended > 0 && seen.undone > 0 && seen.touches > 0 && seen.clicks > 1, `y. ${MESSAGES} messages of a random session: the box at enter is the row, a typed word is its tab's emote, a pick is its picture and ends with its word (${JSON.stringify(seen)})`)
+    // the gate seed must reach every case the session is for; a hunt's seed (HS_SESSION_SEED) may miss one,
+    // and is red only on a message that broke the law
+    const reached = !!process.env.HS_SESSION_SEED || (seen.picks > 4 && seen.switches > 3 && seen.recalls > 1 && seen.two > 0 && seen.deletes > 2 && seen.ended > 0 && seen.undone > 0 && seen.touches > 0 && seen.clicks > 1)
+    check(!bad && reached, `y. ${MESSAGES} messages of a random session: the box at enter is the row, a typed word is its tab's emote, a pick is its picture and ends with its word (${JSON.stringify(seen)})`)
     if (room === 'B') await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
     await p.click('#hs-mc-input', { timeout: 5000 })
     await p.keyboard.press('Control+A')

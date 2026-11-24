@@ -4014,14 +4014,7 @@ function unwrapStuckChips(inputEl, acceptWhitespace) {
     }
   }
   if (changed && cursorTarget?.parentNode) {
-    const sel = window.getSelection()
-    if (sel) {
-      const r = document.createRange()
-      r.setStart(cursorTarget, Math.min(cursorOffset, cursorTarget.textContent.length))
-      r.collapse(true)
-      sel.removeAllRanges()
-      sel.addRange(r)
-    }
+    placeCaretAfter(cursorTarget, cursorOffset)
     pendingMessage = getInputText()
   }
   return changed
@@ -4040,7 +4033,11 @@ function handleInputChange(_e) {
     // a pick lives while its word is in the box: delete the chip and the same name typed by hand
     // is a hand-typed word. An undo that brings the chip back brings its pick back.
     const type = _e?.inputType
-    keepPicksIn(() => getInputText(), inputEl, _e?.hsUndo || /^history/.test(type))
+    // what an undo restores is never mid-cycle: a step saved while Tab was cycling a chip carries the
+    // chip's cycling mark, and with it back the next Tab stepped that old chip, not the word typed
+    const undo = _e?.hsUndo
+    if (undo) hideAutocomplete()
+    keepPicksIn(() => getInputText(), inputEl, undo || /^history/.test(type))
     for (const stack of inputEl.querySelectorAll('.hs-input-stack')) {
       if (stack.getAttribute('contenteditable') !== 'false') {
         stack.setAttribute('contenteditable', 'false')
@@ -4078,14 +4075,7 @@ function handleInputChange(_e) {
         if (extra) {
           const t = document.createTextNode(extra)
           em.parentNode.insertBefore(t, em.nextSibling)
-          const sel = window.getSelection()
-          if (sel) {
-            const r = document.createRange()
-            r.setStart(t, t.textContent.length)
-            r.collapse(true)
-            sel.removeAllRanges()
-            sel.addRange(r)
-          }
+          placeCaretAfter(t, t.length)
         }
       }
     }

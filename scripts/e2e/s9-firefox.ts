@@ -39,20 +39,28 @@ async function waitPanel(ff: FF, ms = 30_000) {
   return false
 }
 
+/**
+ * A youtube page's rows come from the server relay alone here: the panel collapses youtube's own
+ * chat frame (main-storage checkYtLive), which unloads the live_chat iframe the native tap reads,
+ * and headless firefox shows no frame to read before that. A relay batch every 20-40s is a busy
+ * stream, so youtube legs give flow a longer window than twitch and kick.
+ */
+const YT_FLOW_MS = 120_000
+
 /** A fresh load: panel mounted, the tab the shown one, chat flowing. */
-async function land(ff: FF, p: Page, url: string, label: string) {
+async function land(ff: FF, p: Page, url: string, label: string, flowMs?: number) {
   await ff.goto(url)
   if (!(await waitPanel(ff))) return bad(`${label}: panel never mounted`), false
   if (!(await ff.ensureVisible())) info(`${label}: headless firefox still reads the tab hidden`)
-  return flows(p, label)
+  return flows(p, label, undefined, flowMs)
 }
 
-async function flows(p: Page, label: string, expect?: string) {
-  const flowing = await rowsFlow(p, 45_000)
+async function flows(p: Page, label: string, expect?: string, ms = 45_000) {
+  const flowing = await rowsFlow(p, ms)
   const st: any = await panel(p)
   const live = (st.tabs || []).find((t: string) => t.startsWith('live='))
   info(`${label}: ${JSON.stringify({ url: st.url?.slice(0, 60), rows: st.rows, offline: st.offline, live })}`)
-  if (!flowing) bad(`${label}: chat did not flow in the panel within 45s`, st)
+  if (!flowing) bad(`${label}: chat did not flow in the panel within ${ms / 1000}s`, st)
   else if (expect && live && !live.toLowerCase().includes(expect.slice(0, 10))) bad(`${label}: live tab names "${live}"`)
   else ok(`${label}: chat flows`)
   return flowing
@@ -126,14 +134,14 @@ async function youtube(ff: FF, p: Page) {
   const live = await liveYtVideo()
   if (!live) return
   const url = `https://www.youtube.com/watch?v=${live.id}`
-  if (!(await land(ff, p, url, `ff yt-live-${live.handle}`))) return
+  if (!(await land(ff, p, url, `ff yt-live-${live.handle}`, YT_FLOW_MS))) return
   await ff.goto(`https://www.youtube.com/watch?v=${YT_VOD}`)
   await sleep(20_000)
   const vod: any = await panel(p)
   if (vod.err) bad('ff yt: the vod page could not be read', vod.err)
   else if (vod.rows > 0 && !vod.offline) bad('ff yt: a vod opened after a livestream shows chat rows and a live panel', vod)
   else ok('ff yt: typed vod after a livestream: no stream chat, panel down')
-  if (!(await land(ff, p, url, 'ff yt-live-again'))) return
+  if (!(await land(ff, p, url, 'ff yt-live-again', YT_FLOW_MS))) return
   await ff.page(`document.querySelector('a#logo, ytd-topbar-logo-renderer a')?.click(); return 1`)
   await sleep(8000)
   const home: any = await panel(p)
@@ -142,7 +150,7 @@ async function youtube(ff: FF, p: Page) {
   else ok('ff yt: home (in-page) after a livestream: panel down')
   await ff.page('history.back(); return 1')
   await sleep(6000)
-  if ((await ff.page<string>('return location.href')).includes(live.id)) await flows(p, 'ff yt-back-to-live')
+  if ((await ff.page<string>('return location.href')).includes(live.id)) await flows(p, 'ff yt-back-to-live', undefined, YT_FLOW_MS)
   else info('ff yt: back did not return to the stream')
 }
 

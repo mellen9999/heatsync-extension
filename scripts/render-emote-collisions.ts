@@ -39,6 +39,10 @@
  *      look; the line goes out `w! Wlol Wlol` and the row is what the box showed
  *   u. `w! Wlol ` typed in the box widens the emote after the word
  *   v. a word with no emote beside it stays as typed
+ *   w. 40 seeded random lines (HS_RANDOM_LINES for more) of the room's emotes, modifier words
+ *      and ordinary words, typed a key at a time: each row is the rule's reading of the text
+ *      that went out, and what the box showed at enter. every other one is sent straight after
+ *      its last word, before the box has taken it
  * then right-click another chatter's W: it is blocked, the viewer's own W is NOT removed, and
  * only that exact emote hides.
  */
@@ -84,6 +88,10 @@ const c = await launchWithExtension(prof, [
 const errors: string[] = []
 try {
   await c.route('https://heatsync.org/**', (r: any) => r.abort())
+  // the viewer is signed in (the auth cookie below), so a block or an unblock is the server's to
+  // take: it says yes, as it does for a signed-in viewer
+  await c.route('https://heatsync.org/api/user/emotes/block', (r: any) => r.fulfill({ status: 200, contentType: 'application/json', body: '{"success":true}' }))
+  await c.route('https://heatsync.org/api/user/emotes/blocked/**', (r: any) => r.fulfill({ status: 200, contentType: 'application/json', body: '{"success":true}' }))
   // the sender set for chatter 222: their own W (a name the room has) and Solo (a name it has not)
   await c.route('https://heatsync.org/api/users/emotes/batch**', (r: any) =>
     r.fulfill({
@@ -124,6 +132,11 @@ try {
   await c.addCookies([
     { name: 'auth-token', value: 'harnesstoken0000', domain: '.twitch.tv', path: '/', secure: true },
     { name: 'login', value: 'probeuser', domain: '.twitch.tv', path: '/', secure: true },
+    // signed in to heatsync too. without it the background reads "no auth cookie" on its second
+    // inventory poll, calls the viewer signed out and empties the seeded inventory, a minute or two
+    // in: every later case would then run for a viewer who owns nothing. with it the poll's fetch is
+    // refused like every other heatsync request here, and a refused fetch keeps what it holds
+    { name: 'auth', value: 'harnessauth0000', domain: 'heatsync.org', path: '/', secure: true, httpOnly: true },
   ])
 
   let sw = c.serviceWorkers()[0]
@@ -453,6 +466,74 @@ try {
   check(v1.chips.length === 0 && v1.text === 'mod3 w! then', `v. with no emote beside it the word stays the word that was typed (got ${JSON.stringify(v1)})`)
   await p.keyboard.press('Control+A')
   await p.keyboard.press('Backspace')
+
+  // ── w. the box is the row under lines nobody thought of ──
+  // seeded random lines of the room's two emotes, modifier words and ordinary words, typed a key
+  // at a time. my row must be what every other app draws for the text that went out (the rule,
+  // shared/emote-mods.vectors.json) and, once the box has taken the last word (a space after
+  // it), what the box showed. every other line is sent straight after its last word.
+  {
+    const WORDS = ['Wlol', 'Wlol', 'W', 'Wlol', 'w!', 'h!', 'v!', 'ffzX', 'ffzY', 'w!h!', 'w!', 'ffzX', 'hi', 'w', 'ffz', 'constructor']
+    const MOD = /^(w!|h!|v!|ffzX|ffzY|w!h!)$/
+    const isEmote = (w: string) => w === 'Wlol' || w === 'W'
+    // one spelling per effect: a row keeps the effect, a chip the word that was typed
+    const canon = (list: string[]) => list.flatMap((w) => w.match(/w!|h!|v!|ffzX|ffzY/g) ?? []).map((w) => (w === 'ffzX' ? 'h!' : w === 'ffzY' ? 'v!' : w)).sort().join(',')
+    const norm = (cells: string[]) => cells.map((c) => `${c.slice(0, c.indexOf(':'))}:${canon(c.slice(c.indexOf(':') + 1).split(/[ ,]+/))}`)
+    const ruleRow = (wire: string): string[] => {
+      const words = wire.split(/\s+/).filter(Boolean)
+      const on = new Map<number, string[]>()
+      let last = -1
+      words.forEach((w, i) => {
+        if (!MOD.test(w)) { last = isEmote(w) ? i : -1; return }
+        let next = -1
+        for (let j = i + 1; j < words.length; j++) {
+          if (MOD.test(words[j])) continue
+          next = isEmote(words[j]) ? j : -1
+          break
+        }
+        const to = w[1] === '!' ? (next >= 0 ? next : last) : last >= 0 ? last : next
+        if (to >= 0) on.set(to, [...(on.get(to) ?? []), w])
+      })
+      return words.flatMap((w, i) => (isEmote(w) ? [`${w}:${canon(on.get(i) ?? [])}`] : []))
+    }
+    let seedState = 0
+    const rand = () => {
+      seedState = (seedState + 0x6d2b79f5) | 0
+      let t = Math.imul(seedState ^ (seedState >>> 15), 1 | seedState)
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+    }
+    const LINES = Number(process.env.HS_RANDOM_LINES || 40)
+    let done = 0
+    let changed = 0
+    for (let seed = 1; done < LINES && seed < 600; seed++) {
+      seedState = seed
+      const words = Array.from({ length: 2 + Math.floor(rand() * 5) }, () => WORDS[Math.floor(rand() * WORDS.length)])
+      if (!words.some(isEmote) || !words.some((w) => MOD.test(w))) continue
+      done++
+      const settled = done % 2 === 1
+      const mark = `rq${seed}x`
+      const said = `w. seed ${seed} ${JSON.stringify(words.join(' '))}${settled ? '' : ' (sent straight after the last word)'}`
+      await typeLine(`${mark} ${words.join(' ')}${settled ? ' ' : ''}`)
+      let before = ''
+      await until(p, async () => { const now = JSON.stringify(await boxNow()); const same = now === before; before = now; return same }, 5000)
+      await p.waitForTimeout(150)
+      const box = await boxNow()
+      if (settled && box.chips.some((c) => !c.endsWith(':'))) changed++
+      await p.keyboard.press('Enter')
+      await rowHas(mark)
+      await p.waitForTimeout(500)
+      const frame = irc.frames.find((f) => f.startsWith('PRIVMSG #probechan') && f.includes(mark)) || ''
+      const wire = frame.slice(frame.indexOf(' :') + 2)
+      const row = norm(await fxOf(mark))
+      const want = ruleRow(wire)
+      if (row.join(' ') !== want.join(' ')) check(false, `${said}: my row is what everyone else draws for the text that went out (wire ${JSON.stringify(wire)}, row ${JSON.stringify(row)}, the rule ${JSON.stringify(want)})`)
+      if (settled && norm(box.chips).join(' ') !== row.join(' ')) check(false, `${said}: the row is what the box showed (box ${JSON.stringify(box)}, row ${JSON.stringify(row)}, wire ${JSON.stringify(wire)})`)
+    }
+    check(done === LINES && changed > LINES / 8, `w. ${done} random lines typed into the box: each row is the rule's reading of its wire text, and what the box showed (${changed} carried a modifier on a chip)`)
+    await p.keyboard.press('Control+A')
+    await p.keyboard.press('Backspace')
+  }
 
   // ── a right-click on an emote in the box acts on the picture the box shows ──
   const chip = () =>

@@ -15,6 +15,7 @@
  *   g. you type "W Mine" in the site's box -> the room is told Mine only, never your saved W
  *   h. the streamer's own heatsync emote   -> draws, and leads a 7tv emote of its name
  *   j. `W w! W`, `W ffzX W`, `w! then W`   -> the emote after, the emote before, and a word left alone
+ *   k. `w! <twitch emote>`, `<twitch emote> ffzX` -> twitch's own emote changes and the word leaves the line
  * (the emote law: the site's docs/emote-law.md; src/content/native-emote-law.js)
  * then right-click another chatter's W: it is blocked, the viewer's own W is NOT removed, and
  * only that exact emote hides (rules 9, 10).
@@ -230,6 +231,34 @@ try {
   check(JSON.stringify(m2.scaled) === '[true,false]' && !m2.text.includes('ffzX'), `j. \`W ffzX W\` flips the emote before the word (got ${JSON.stringify(m2)})`)
   const m3 = await wide('modthree')
   check(JSON.stringify(m3.scaled) === '[false]' && m3.text.includes('w!'), `j. a word with text between it and the emote stays on the line and changes nothing (got ${JSON.stringify(m3)})`)
+
+  // k. a word beside twitch's OWN emote (another dom node): bound by the same rule, and off the line
+  await p.evaluate(() => {
+    const tw = '<span class="text-fragment"><img class="chat-image" alt="Kappa" src="https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/1.0"></span>'
+    const row = (user: string, html: string) => {
+      const el = document.createElement('div')
+      el.className = 'chat-line__message'
+      el.setAttribute('data-user-id', '777')
+      el.innerHTML = `<span class="chat-author__display-name">${user}</span>: ${html}`
+      document.getElementById('list')!.appendChild(el)
+    }
+    row('fay', `<span class="text-fragment">modfour w! </span>${tw}<span class="text-fragment"> tail</span>`)
+    row('fay', `<span class="text-fragment">modfive </span>${tw}<span class="text-fragment"> ffzX tail</span>`)
+    row('fay', `<span class="text-fragment">modsix </span>${tw}<span class="text-fragment"> hello w!</span>`)
+  })
+  await p.waitForTimeout(3000)
+  const own = (word: string): Promise<{ tf: string; text: string }> =>
+    p.evaluate((w: string) => {
+      const row = [...document.querySelectorAll('.chat-line__message')].find((r) => (r.textContent || '').includes(w))
+      const img = row?.querySelector('img.chat-image') as HTMLElement | null
+      return { tf: img?.style.transform || '', text: (row?.textContent || '').replace(/\s+/g, ' ').trim() }
+    }, word)
+  const k1 = await own('modfour')
+  check(k1.tf.includes('scale(2, 1)') && !k1.text.includes('w!'), `k. \`w!\` before twitch's own emote widens it and leaves the line (got ${JSON.stringify(k1)})`)
+  const k2 = await own('modfive')
+  check(k2.tf.includes('scale(-1, 1)') && !k2.text.includes('ffzX') && k2.text.includes('tail'), `k. \`ffzX\` after twitch's own emote flips it and leaves the line (got ${JSON.stringify(k2)})`)
+  const k3 = await own('modsix')
+  check(!k3.tf && k3.text.includes('hello w!'), `k. with text between, the word stays and the emote is untouched (got ${JSON.stringify(k3)})`)
 
   // e. her app announces a pick (what a send does when she chose her own W on purpose): the line
   // that comes with it draws her W; the line she sent before, by hand, keeps the channel's

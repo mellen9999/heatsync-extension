@@ -418,5 +418,6 @@ export {
   hsModRead,
   hsModResolvePrefix,
   hsModSide,
+  hsModTransformStr,
   hsModWordsFromState,
 }

@@ -5667,8 +5667,8 @@
     // Post-process: Stack overlay emotes that are adjacent to base emotes
     stackAdjacentOverlayEmotes(messageElement, allEmotes)
 
-    // FFZ modifiers across DOM boundaries — text-fragments split modifiers
-    // from preceding emotes, so do a post-pass walking the message timeline.
+    // A modifier word beside the platform's own emote sits alone in its text run: the
+    // message is read once more as one line, and what is left binds by the same rule.
     if (_uiPrefs.emoteModifiers) applyModifiersAcrossMessage(messageElement)
 
     // Color all @username mentions (Chatterino-style) - AFTER emote replacement
@@ -6000,69 +6000,88 @@
   // The kick input hook is a plain copied file with no lib: it asks this to tell a modifier word from an emote
   if (window.HS) window.HS.isModifierWord = (word) => hsModClassify(word).kind === 'modifier'
   const HS_C_HEX_RE = HS_MOD_C_HEX_RE
-  // Walk a chat message left→right; build groups of {base, overlays, mods, hue},
-  // then apply transform/filter to each base. Modifiers in a group ALWAYS target
-  // the base (skipping overlays), and chain multiplicatively (w! w! = 4x wide).
+  // A modifier word beside the platform's OWN emote (`<twitch Kappa> ffzX`, `w! <kick emote>`):
+  // the emote is another dom node, so the word is alone in its text run and the row drawer
+  // above leaves it as typed. Here the whole message is one line again (every emote on it,
+  // ours and the platform's, and every word of its text) and the same rule binds what is left:
+  // hsModBind (native-emote-law.js; shared/emote-mods.vectors.json). A word that changes an
+  // emote leaves the line, as in the overlay. Only text this page drew is read for modifiers or
+  // changed: the platform's own nodes (a name, a link, a mention) are words that end a reach.
+  const HS_NATIVE_EMOTE_SEL =
+    '.heatsync-emote-wrapper, img[src*="/emoticons/"], img[src*="cdn.7tv.app"], img[src*="cdn.betterttv.net"], img[src*="cdn.frankerfacez.com"], img[src*="files.kick.com/emotes"]'
   function applyModifiersAcrossMessage(messageElement) {
     if (!messageElement?.isConnected) return
-    // Modifiers can only ever attach to an emote; a message with no emote
-    // candidates (wrapper or emote-CDN img — mirrors the timeline filter
-    // below; badge imgs live on /badges paths and don't match) is a
-    // guaranteed no-op — skip the full element+text TreeWalk (~most
-    // plain-text messages on a busy channel) for one cheap selector probe.
-    if (
-      !messageElement.querySelector(
-        '.heatsync-emote-wrapper, img[src*="/emoticons/"], img[src*="cdn.7tv.app"], img[src*="cdn.betterttv.net"], img[src*="cdn.frankerfacez.com"]',
-      )
-    )
-      return
+    // Modifiers can only ever attach to an emote, and every modifier word has a `!` or `ffz`
+    // in it: two cheap looks skip the walk for nearly every message on a busy channel.
+    const all = messageElement.textContent || ''
+    if (!all.includes('!') && !all.includes('ffz')) return
+    if (!messageElement.querySelector(HS_NATIVE_EMOTE_SEL)) return
     const walker = document.createTreeWalker(messageElement, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT)
-    const timeline = []
+    // one entry per word of the line: an emote's element, or a word of a text node
+    const words = []
+    const at = []
+    const texts = []
     let n = walker.nextNode()
     while (n) {
       if (n.nodeType === 1) {
-        if (n.matches?.('.heatsync-emote-wrapper')) {
-          timeline.push({ kind: 'emote', el: n, isOverlay: n.classList.contains('heatsync-overlay') })
-        } else if (
-          n.tagName === 'IMG' &&
-          !n.closest('.heatsync-emote-wrapper') &&
-          !n.closest('.hs-cosmetic-badge') &&
-          !n.classList.contains('chat-badge') &&
-          (n.alt || '').length > 0
-        ) {
-          const src = n.src || ''
-          if (
-            src.includes('static-cdn.jtvnw.net/emoticons') ||
-            src.includes('cdn.7tv.app') ||
-            src.includes('cdn.betterttv.net') ||
-            src.includes('cdn.frankerfacez.com')
-          ) {
-            timeline.push({ kind: 'emote', el: n, isOverlay: false })
-          }
+        const isEmote = n.matches('.heatsync-emote-wrapper')
+          ? true
+          : n.tagName === 'IMG' &&
+            n.matches(HS_NATIVE_EMOTE_SEL) &&
+            !n.closest('.heatsync-emote-wrapper, .hs-cosmetic-badge') &&
+            !n.classList.contains('chat-badge') &&
+            (n.alt || '').length > 0
+        if (isEmote) {
+          words.push('\u0001')
+          at.push({ el: n })
         }
-      } else if (n.nodeType === 3) {
-        const tx = n.textContent || ''
-        if (tx.trim()) timeline.push({ kind: 'text', text: tx })
+      } else if (
+        n.nodeValue.trim() &&
+        !n.parentElement?.closest('.heatsync-stack-collapse, .heatsync-stack-block-all')
+      ) {
+        // ours: drawn by replaceEmotesWithStacking into twitch's text run or our kick span
+        const ours = !!n.parentElement?.matches('.text-fragment, .hs-textfrag')
+        const text = { node: n, tokens: n.nodeValue.split(HS_WS_SPLIT), drop: new Set() }
+        if (ours) texts.push(text)
+        text.tokens.forEach((tok, k) => {
+          if (!tok.trim()) return
+          // a word of the platform's own is a word, whatever it spells
+          words.push(ours ? tok : '\u0002')
+          at.push({ text, k })
+        })
       }
       n = walker.nextNode()
     }
-    // FFZ semantic: modifier attaches to IMMEDIATELY PRECEDING emote (base
-    // OR overlay). Track currentTarget = last emote seen.
-    let currentTarget = null
-    let currentMods = []
-    let currentHue = null
-    const flushTo = (targetInfo) => {
-      if (!targetInfo) return
-      if (!currentMods.length && currentHue == null) return
-      const { el } = targetInfo
-      const isHsWrapper = el.matches?.('.heatsync-emote-wrapper')
+    const binds = hsModBind(words, (i) => !!at[i].el)
+    if (!binds.size) return
+    // each emote with what its words add up to, in line order
+    const fxOf = new Map()
+    for (const [k, to] of binds) {
+      const cls = hsModClassify(words[k])
+      const fx = fxOf.get(at[to].el) || { mods: [], hue: null }
+      for (const m of cls.mods) fx.mods.push(m)
+      if (cls.hue != null) fx.hue = cls.hue
+      fxOf.set(at[to].el, fx)
+      at[k].text.drop.add(at[k].k)
+    }
+    // the words leave the line: each with one gap beside it, the rest as typed
+    for (const { node, tokens, drop } of texts) {
+      if (!drop.size) continue
+      for (const k of [...drop]) {
+        if (k > 0 && !tokens[k - 1].trim() && !drop.has(k - 1)) drop.add(k - 1)
+        else if (tokens[k + 1] !== undefined && !tokens[k + 1].trim()) drop.add(k + 1)
+      }
+      node.nodeValue = tokens.filter((_, k) => !drop.has(k)).join('')
+    }
+    for (const [el, { mods, hue }] of fxOf) {
+      const isHsWrapper = el.matches('.heatsync-emote-wrapper')
       const targetImg = el.tagName === 'IMG' ? el : el.querySelector('img')
-      if (!targetImg) return
-      const { sx, sy, rotate } = hsModComposeTransform(currentMods)
+      if (!targetImg) continue
+      const { sx, sy, rotate } = hsModComposeTransform(mods)
       const tf = hsModTransformStr(sx, sy, rotate)
       let filter = ''
-      if (currentMods.includes('cursed')) filter += ' hue-rotate(45deg) saturate(2)'
-      if (currentHue != null) filter += ` hue-rotate(${currentHue}deg) saturate(1.6)`
+      if (mods.includes('cursed')) filter += ' hue-rotate(45deg) saturate(2)'
+      if (hue != null) filter += ` hue-rotate(${hue}deg) saturate(1.6)`
       if (tf) {
         const fx = Math.abs(sx),
           fy = Math.abs(sy)
@@ -6089,42 +6108,8 @@
         }
       }
       if (filter.trim()) targetImg.style.setProperty('filter', filter, 'important')
-      if (el.classList) for (const m of new Set(currentMods)) el.classList.add(`heatsync-mod-${m}`)
+      for (const m of new Set(mods)) el.classList.add(`heatsync-mod-${m}`)
     }
-    for (let i = 0; i < timeline.length; i++) {
-      const item = timeline[i]
-      if (item.kind === 'emote') {
-        // Any emote (base or overlay) becomes the new modifier target.
-        // Flush pending mods to whatever was previous, then retarget.
-        flushTo(currentTarget)
-        currentTarget = item
-        currentMods = []
-        currentHue = null
-      } else if (item.kind === 'text') {
-        const tokens = item.text.trim().split(/\s+/).filter(Boolean)
-        let allConsumed = true
-        for (const tok of tokens) {
-          if (HS_MODIFIER_CLASSES[tok]) {
-            currentMods.push(HS_MODIFIER_CLASSES[tok])
-            continue
-          }
-          const m = tok.match(HS_C_HEX_RE)
-          if (m) {
-            currentHue = hsHexToHueDeg(m[1])
-            continue
-          }
-          allConsumed = false
-          break
-        }
-        if (!allConsumed) {
-          flushTo(currentTarget)
-          currentTarget = null
-          currentMods = []
-          currentHue = null
-        }
-      }
-    }
-    flushTo(currentTarget)
   }
 
   // hex → hue degrees. Delegates to lib/modifiers.js

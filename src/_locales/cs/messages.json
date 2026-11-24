@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab na slově ukáže odpovídající emoty v seznamu nad polem pro psaní. šipky vybírají, tab nebo enter vloží, esc zavře. vypnuto doplňuje přímo v textu"
   },
+  "mc_settings_colon_list": {
+    "message": "seznam `:` ukazuje"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "co dá seznam otevřený napsáním : nahoru. nejdřív emoty je pořadí, které dává tab; nejdřív emoji dá každé emoji nad emoty. tab a hledání ve výběru drží jedno pořadí"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "nejdřív emoty"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "nejdřív emoji"
+  },
   "mc_settings_show_pronouns": {
     "message": "zájmena"
   },

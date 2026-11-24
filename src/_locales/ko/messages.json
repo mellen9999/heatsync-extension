@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "단어에서 tab을 누르면 일치하는 이모트를 입력창 위 목록으로 보여줘요. 화살표로 고르고, tab이나 enter로 넣고, esc로 닫아요. 끄면 그 자리에서 바로 완성해요"
   },
+  "mc_settings_colon_list": {
+    "message": "`:` 목록 표시"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": ": 를 입력하면 열리는 목록의 맨 위에 올 것. 이모트 먼저는 tab과 같은 순서이고, 이모지 먼저는 모든 이모지를 이모트 위에 둡니다. tab과 선택기 검색은 한 가지 순서를 유지합니다"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "이모트 먼저"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "이모지 먼저"
+  },
   "mc_settings_show_pronouns": {
     "message": "대명사"
   },

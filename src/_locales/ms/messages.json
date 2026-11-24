@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab pada satu perkataan menunjukkan emote yang sepadan dalam senarai di atas ruang input. anak panah memilih, tab atau enter memasukkan, esc menutup. mati melengkapkan terus dalam teks"
   },
+  "mc_settings_colon_list": {
+    "message": "senarai `:` menunjukkan"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "apa yang diletakkan di atas oleh senarai yang dibuka dengan menaip :. emote dahulu ialah susunan tab; emoji dahulu meletakkan setiap emoji di atas emote. tab dan carian pemilih kekal satu susunan"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "emote dahulu"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "emoji dahulu"
+  },
   "mc_settings_show_pronouns": {
     "message": "kata ganti nama"
   },

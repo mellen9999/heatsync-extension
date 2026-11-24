@@ -1125,6 +1125,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab on a word shows matching emotes in a list above the input. arrows pick, tab or enter inserts, esc closes. off completes in place"
   },
+  "mc_settings_colon_list": {
+    "message": "`:` list shows"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "what the list typing : opens puts on top. emotes first is the order tab gives; emoji first puts every emoji above the emotes. tab and the picker search keep one order"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "emotes first"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "emoji first"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronouns"
   },

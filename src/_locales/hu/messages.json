@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "a tab egy szón a beviteli mező fölötti listában mutatja az egyező emote-okat. a nyilak választanak, a tab vagy enter beszúr, az esc bezár. kikapcsolva közvetlenül a szövegben egészít ki"
   },
+  "mc_settings_colon_list": {
+    "message": "a `:` lista mutatja"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "mit tesz felülre a : beírásával nyíló lista. előbb az emote-ok a tab sorrendje; előbb az emojik minden emojit az emote-ok fölé tesz. a tab és a választó keresése egy sorrendet tart"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "előbb az emote-ok"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "előbb az emojik"
+  },
   "mc_settings_show_pronouns": {
     "message": "névmások"
   },

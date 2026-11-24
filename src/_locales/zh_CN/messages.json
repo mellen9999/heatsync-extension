@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "在单词上按 tab 会在输入框上方的列表中显示匹配的表情。方向键选择，tab 或 enter 插入，esc 关闭。关闭时直接在文本中补全"
   },
+  "mc_settings_colon_list": {
+    "message": "`:` 列表显示"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "输入 : 打开的列表把什么放在最上面。表情优先与 tab 的顺序相同；emoji 优先把所有 emoji 放在表情上面。tab 和选择器搜索保持同一顺序"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "表情优先"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "emoji 优先"
+  },
   "mc_settings_show_pronouns": {
     "message": "代词"
   },

@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "ang tab sa isang salita ay nagpapakita ng mga katugmang emote sa listahan sa itaas ng input. arrows para pumili, tab o enter para ilagay, esc para isara. kapag off, kinukumpleto agad sa text"
   },
+  "mc_settings_colon_list": {
+    "message": "ipinapakita ng listang `:`"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "ano ang inilalagay sa itaas ng listang bumubukas sa pag-type ng :. emotes muna ang ayos na ibinibigay ng tab; emoji muna ay inilalagay ang bawat emoji sa itaas ng emotes. iisang ayos ang tab at ang paghahanap sa picker"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "emotes muna"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "emoji muna"
+  },
   "mc_settings_show_pronouns": {
     "message": "mga panghalip"
   },

@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab op een woord toont passende emotes in een lijst boven het invoerveld. pijltjes kiezen, tab of enter voegt in, esc sluit. uit vult direct in de tekst aan"
   },
+  "mc_settings_colon_list": {
+    "message": "`:`-lijst toont"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "wat de lijst die : opent bovenaan zet. emotes eerst is de volgorde van tab; emoji eerst zet elke emoji boven de emotes. tab en het zoeken in de kiezer houden één volgorde"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "emotes eerst"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "emoji eerst"
+  },
   "mc_settings_show_pronouns": {
     "message": "voornaamwoorden"
   },

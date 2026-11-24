@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab na słowie pokazuje pasujące emotki na liście nad polem wpisywania. strzałki wybierają, tab lub enter wstawia, esc zamyka. wyłączone uzupełnia od razu w tekście"
   },
+  "mc_settings_colon_list": {
+    "message": "lista `:` pokazuje"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "co lista otwierana wpisaniem : stawia na górze. najpierw emotki to kolejność tab; najpierw emoji stawia każde emoji nad emotkami. tab i wyszukiwanie w wyborze trzymają jedną kolejność"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "najpierw emotki"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "najpierw emoji"
+  },
   "mc_settings_show_pronouns": {
     "message": "zaimki"
   },

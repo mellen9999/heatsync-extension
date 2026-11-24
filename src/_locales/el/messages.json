@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "το tab πάνω σε λέξη δείχνει τα αντίστοιχα emotes σε λίστα πάνω από το πεδίο. τα βέλη επιλέγουν, tab ή enter εισάγει, esc κλείνει. όταν είναι κλειστό συμπληρώνει μέσα στο κείμενο"
   },
+  "mc_settings_colon_list": {
+    "message": "η λίστα `:` δείχνει"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "τι βάζει πάνω η λίστα που ανοίγει το : . πρώτα τα emotes είναι η σειρά του tab· πρώτα τα emoji βάζει κάθε emoji πάνω από τα emotes. το tab και η αναζήτηση του επιλογέα κρατούν μία σειρά"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "πρώτα τα emotes"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "πρώτα τα emoji"
+  },
   "mc_settings_show_pronouns": {
     "message": "αντωνυμίες"
   },

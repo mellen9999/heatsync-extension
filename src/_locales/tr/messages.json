@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "bir kelimede tab, eşleşen emote'ları yazma alanının üstünde bir listede gösterir. oklar seçer, tab ya da enter ekler, esc kapatır. kapalıyken doğrudan metinde tamamlar"
   },
+  "mc_settings_colon_list": {
+    "message": "`:` listesi gösterir"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": ": yazınca açılan listenin en üste koyduğu. önce emote'lar tab'ın sırasıdır; önce emojiler her emojiyi emote'ların üstüne koyar. tab ve seçicideki arama tek bir sıra tutar"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "önce emote'lar"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "önce emojiler"
+  },
   "mc_settings_show_pronouns": {
     "message": "zamirler"
   },

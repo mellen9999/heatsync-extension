@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "กด tab บนคำจะแสดงอีโมตที่ตรงกันในรายการเหนือช่องพิมพ์ ลูกศรเลือก tab หรือ enter แทรก esc ปิด ปิดไว้จะเติมคำในข้อความทันที"
   },
+  "mc_settings_colon_list": {
+    "message": "รายการ `:` แสดง"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "สิ่งที่รายการซึ่งเปิดเมื่อพิมพ์ : วางไว้บนสุด อีโมตก่อนคือลำดับเดียวกับ tab ส่วนอีโมจิก่อนจะวางอีโมจิทุกตัวไว้เหนืออีโมต tab และการค้นหาในตัวเลือกใช้ลำดับเดียว"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "อีโมตก่อน"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "อีโมจิก่อน"
+  },
   "mc_settings_show_pronouns": {
     "message": "สรรพนาม"
   },

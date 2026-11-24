@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "الضغط على tab فوق كلمة يعرض الإيموتات المطابقة في قائمة فوق حقل الكتابة. الأسهم للاختيار، tab أو enter للإدراج، esc للإغلاق. عند الإيقاف يكمل الكلمة مباشرة"
   },
+  "mc_settings_colon_list": {
+    "message": "قائمة `:` تعرض"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "ما تضعه القائمة التي تفتحها كتابة : في الأعلى. الإيموتات أولًا هو ترتيب tab؛ الإيموجي أولًا يضع كل إيموجي فوق الإيموتات. tab وبحث المنتقي يحتفظان بترتيب واحد"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "الإيموتات أولًا"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "الإيموجي أولًا"
+  },
   "mc_settings_show_pronouns": {
     "message": "الضمائر"
   },

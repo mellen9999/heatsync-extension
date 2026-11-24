@@ -783,6 +783,26 @@ const SETTINGS = [
     alias: 'tab complete autocomplete dropdown list suggestions popup',
   },
   {
+    // The `:` list only (emote-law-offer.js findEmoteMatches → the law's emojiFirst): emoji first
+    // puts every emoji above the emotes, each part in the law's order. Tab and the picker search
+    // keep the one order. Bridged to heatsync.org's colonListOrder (server/lib/settings-bridge.ts).
+    key: 'colonListOrder',
+    type: 'enum',
+    default: 'emotes',
+    scope: 'sync',
+    category: 'chat',
+    section: 'input',
+    sectionKey: 'btn_settings_input',
+    labelKey: 'mc_settings_colon_list',
+    tipKey: 'mc_settings_colon_list_desc',
+    control: 'select',
+    alias: 'colon emoji emote order list first',
+    options: [
+      { value: 'emotes', label: 'emotes first', labelKey: 'lib_opt_colon_emotes' },
+      { value: 'emoji', label: 'emoji first', labelKey: 'lib_opt_colon_emoji' },
+    ],
+  },
+  {
     key: 'wysiwygEnabled',
     type: 'bool',
     default: true,

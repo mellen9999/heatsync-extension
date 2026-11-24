@@ -183,8 +183,8 @@ function lawWithPeople(list, people, seams = { exact: 0, room: 0 }) {
  * One Tab cycle's matches for `typed`. With `prev` + `cursor` it is a late arrival (a catalog
  * answer): everything up to the cursor stays where it is, the rest is the fresh ranking minus it.
  */
-function lawTabList(typed, { catalog, emoji, people, prev, cursor = -1 } = {}) {
-  const fresh = hsEmoteLaw.offerSeams(typed, lawOfferCtx({ catalog, emoji }))
+function lawTabList(typed, { catalog, emoji, people, prev, cursor = -1, emojiFirst = false } = {}) {
+  const fresh = hsEmoteLaw.offerSeams(typed, { ...lawOfferCtx({ catalog, emoji }), emojiFirst })
   const all = lawWithPeople(fresh.list.map(lawMatchOf), people, fresh)
   if (!prev) return all
   const head = prev.slice(0, cursor + 1)
@@ -295,7 +295,9 @@ function findEmoteMatches(search, more) {
       })
     }
   }
-  const list = lawTabList(term, { ...more, emoji, people: isColonSearch ? null : lawPeople(q) })
+  // "`:` list shows": emoji first is the `:` list's own order; Tab and the Tab list never ask for it
+  const emojiFirst = isColonSearch && getSetting('colonListOrder') === 'emoji'
+  const list = lawTabList(term, { ...more, emoji, emojiFirst, people: isColonSearch ? null : lawPeople(q) })
   // "TriHard0" + Tab confirms TriHard as an overlay though nothing is named TriHard0; an emote that
   // IS literally named that is standalone and is already in the list
   const isEmote = (m, n) => m.type === 'emote' && m.name.toLowerCase() === n

@@ -406,6 +406,8 @@ export interface OfferCtx {
   suggestOwn?: boolean
   /** pictures the person pinned, in their order. whole records: a favorite goes where they go, loaded here or not */
   favorites?: readonly Emote[] | null
+  /** the `:` list's own setting, "emoji first": every emoji ahead of every emote. Tab and the picker never set it */
+  emojiFirst?: boolean
 }
 
 export interface Candidate {
@@ -480,6 +482,7 @@ function gather(ctx: OfferCtx): Cand[] {
  *   the room · yours · globals · not loaded yet · emoji
  * Inside a tier: starts-with, word-start, inside; then ones you use, more carried, shorter, a-z.
  * Copies of one name always sit in send order wherever they land.
+ * The `:` list's "emoji first" setting puts every emoji ahead of every emote; each part keeps this order.
  */
 export function offer(typed: string, ctx: OfferCtx, limit?: number): Candidate[] {
   return offerSeams(typed, ctx, limit).list
@@ -489,7 +492,7 @@ export function offer(typed: string, ctx: OfferCtx, limit?: number): Candidate[]
  * The offer, and the two places a client may set something that is not an emote (the room's people)
  * into it: `exact` candidates are the exact name; the first `room` are those, the names you use and
  * the room's. The law ranks emotes only, but it alone knows where its groups end: a tier says where
- * an emote came from, not which group it stands in.
+ * an emote came from, not which group it stands in. Under "emoji first" both count the emoji ahead of them.
  */
 export interface Offered { list: Candidate[]; exact: number; room: number }
 
@@ -541,6 +544,15 @@ export function offerSeams(typed: string, ctx: OfferCtx, limit?: number): Offere
     const copies = idx.map(i => pool[i]).sort((a, b) => a.copy - b.copy || cmpCp(a.emote.key, b.emote.key))
     const native = copies[0].copy === 0 && ctx.room?.platform !== 'kick'
     idx.forEach((i, n) => { pool[i] = copies[n]; if (native && n > 0) pool[i].shadowed = true })
+  }
+  // "emoji first" (the `:` list only): every emoji leads, then the emotes, each part in the order above.
+  // an emoji is never the exact name or the room's, so the seams move down by the emoji ahead of them
+  if (ctx.emojiFirst) {
+    const emoji = pool.filter(c => c.tier === 'emoji')
+    const rest = pool.filter(c => c.tier !== 'emoji')
+    pool.splice(0, pool.length, ...emoji, ...rest)
+    exact = emoji.length; room = emoji.length
+    for (const c of rest) { const g = group(c); if (g === 0) exact++; if (g <= 2) room++ }
   }
   const list = limit && limit > 0 ? pool.slice(0, limit) : pool
   return {

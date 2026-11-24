@@ -205,6 +205,19 @@ describe('name0 and the colon', () => {
     expect(names(list)).toEqual(['smileW', ':smile:', ':unsmiling:'])
     expect(list[1]).toMatchObject({ type: 'emoji', emoji: '😄' })
   })
+
+  test('"`:` list shows" emoji first: every emoji above the emotes, each part in its order; Tab keeps the one order', () => {
+    const rig = world({ room: { catJAM: e('r1'), cat: e('r2') }, own: { catKISS: mine('m1') } })
+    rig.emoji.push({ name: 'cat', emoji: '🐱' }, { name: 'smiley_cat', emoji: '😺' })
+    rig.frecency.set('catKISS', 5)
+    expect(names(rig.findEmoteMatches(':cat'))).toEqual(['cat', 'catKISS', 'catJAM', ':cat:', ':smiley_cat:'])
+    rig.settings.colonListOrder = 'emoji'
+    expect(names(rig.findEmoteMatches(':cat'))).toEqual([':cat:', ':smiley_cat:', 'cat', 'catKISS', 'catJAM'])
+    // Tab (a bare word) and an unknown value never put emoji first
+    expect(names(rig.findEmoteMatches('cat'))).toEqual(['cat', 'catKISS', 'catJAM'])
+    rig.settings.colonListOrder = 'sideways'
+    expect(names(rig.findEmoteMatches(':cat'))).toEqual(['cat', 'catKISS', 'catJAM', ':cat:', ':smiley_cat:'])
+  })
 })
 
 describe('one picture under two names', () => {

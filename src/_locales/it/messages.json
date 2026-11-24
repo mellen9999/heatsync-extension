@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab su una parola mostra le emote corrispondenti in un elenco sopra il campo. le frecce scelgono, tab o invio inserisce, esc chiude. disattivato completa direttamente nel testo"
   },
+  "mc_settings_colon_list": {
+    "message": "la lista `:` mostra"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "cosa mette in cima la lista aperta scrivendo :. prima le emote è l'ordine di tab; prima le emoji mette ogni emoji sopra le emote. tab e la ricerca del selettore tengono un solo ordine"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "prima le emote"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "prima le emoji"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronomi"
   },

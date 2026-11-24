@@ -30,13 +30,13 @@ const SHUFFLES = [1, 7, 1337, 90210, 424242]
 const KNOWN: Record<string, readonly string[]> = {
   read: ['kind', 'name', 'world', 'room', 'sender', 'text', 'tokens', 'refs', 'fold', 'expect'],
   session: ['kind', 'name', 'world', 'who', 'steps'],
-  offer: ['kind', 'name', 'world', 'room', 'who', 'typed', 'catalog', 'emoji', 'usage', 'pop', 'blocked', 'suggestOwn', 'favorites', 'limit', 'expect'],
+  offer: ['kind', 'name', 'world', 'room', 'who', 'typed', 'catalog', 'emoji', 'usage', 'pop', 'blocked', 'suggestOwn', 'favorites', 'emojiFirst', 'limit', 'expect'],
   extend: ['kind', 'name', 'world', 'who', 'typed', 'cursor', 'prev', 'next', 'limit', 'expect'],
   browse: ['kind', 'name', 'world', 'room', 'who', 'recents', 'usage', 'blocked', 'suggestOwn', 'favorites', 'expect'],
 }
 const STEP = ['room', 'legs', 'picks', 'stored', 'fold', 'text', 'textRepeat', 'expect']
 const STEP_EXPECT = ['from', 'refs', 'tokens', 'wire', 'wireIsText', 'chips']
-const OFFER_PART = ['room', 'catalog', 'emoji', 'usage', 'pop', 'blocked', 'suggestOwn', 'favorites']
+const OFFER_PART = ['room', 'catalog', 'emoji', 'usage', 'pop', 'blocked', 'suggestOwn', 'favorites', 'emojiFirst']
 
 function known(obj: object, allowed: readonly string[], where: string) {
   for (const k of Object.keys(obj)) if (!allowed.includes(k)) throw new Error(`${where}: field "${k}" is not one this runner understands`)
@@ -72,6 +72,7 @@ function offerCtx(w: World, who: string | null, part: Case): OfferCtx {
     blocked: key => blocked.has(key),
     suggestOwn: part.suggestOwn,
     favorites: part.favorites ? part.favorites.map((a: string) => w.emote(a)) : null,
+    emojiFirst: part.emojiFirst,
   }
 }
 

@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab auf einem wort zeigt passende emotes in einer liste über dem eingabefeld. pfeiltasten wählen, tab oder enter fügt ein, esc schließt. aus vervollständigt direkt im text"
   },
+  "mc_settings_colon_list": {
+    "message": "`:`-liste zeigt"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "was die liste, die : öffnet, oben zeigt. emotes zuerst ist die reihenfolge von tab; emoji zuerst stellt jedes emoji über die emotes. tab und die suche in der auswahl behalten eine reihenfolge"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "emotes zuerst"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "emoji zuerst"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronomen"
   },

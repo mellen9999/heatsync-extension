@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "किसी शब्द पर tab दबाने से मेल खाते emotes इनपुट के ऊपर एक सूची में दिखते हैं। तीर चुनते हैं, tab या enter डालता है, esc बंद करता है। बंद होने पर सीधे टेक्स्ट में पूरा करता है"
   },
+  "mc_settings_colon_list": {
+    "message": "`:` सूची दिखाती है"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": ": लिखने से खुलने वाली सूची सबसे ऊपर क्या रखे। पहले इमोट वही क्रम है जो tab देता है; पहले इमोजी हर इमोजी को इमोट के ऊपर रखता है। tab और पिकर की खोज एक ही क्रम रखते हैं"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "पहले इमोट"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "पहले इमोजी"
+  },
   "mc_settings_show_pronouns": {
     "message": "प्रोनाउन"
   },

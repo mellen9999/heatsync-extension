@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab sanan kohdalla näyttää sopivat emotet listassa kirjoituskentän yläpuolella. nuolet valitsevat, tab tai enter lisää, esc sulkee. pois päältä täydentää suoraan tekstiin"
   },
+  "mc_settings_colon_list": {
+    "message": "`:`-lista näyttää"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "mitä :-merkin avaama lista näyttää ylimpänä. emotet ensin on tabin järjestys; emojit ensin nostaa jokaisen emojin emotejen yläpuolelle. tab ja valitsimen haku pitävät yhden järjestyksen"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "emotet ensin"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "emojit ensin"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronominit"
   },

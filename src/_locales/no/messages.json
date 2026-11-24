@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab på et ord viser passende emotes i en liste over inntastingsfeltet. pilene velger, tab eller enter setter inn, esc lukker. av fullfører rett i teksten"
   },
+  "mc_settings_colon_list": {
+    "message": "`:`-listen viser"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "hva listen som : åpner, setter øverst. emotes først er rekkefølgen tab gir; emoji først setter alle emoji over emotene. tab og søket i velgeren holder én rekkefølge"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "emotes først"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "emoji først"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronomen"
   },

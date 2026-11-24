@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab pe un cuvânt arată emote-urile potrivite într-o listă deasupra câmpului. săgețile aleg, tab sau enter inserează, esc închide. oprit completează direct în text"
   },
+  "mc_settings_colon_list": {
+    "message": "lista `:` arată"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "ce pune sus lista deschisă când scrii :. întâi emote-urile este ordinea din tab; întâi emoji pune fiecare emoji deasupra emote-urilor. tab și căutarea din selector păstrează o singură ordine"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "întâi emote-urile"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "întâi emoji"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronume"
   },

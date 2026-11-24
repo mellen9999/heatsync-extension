@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "単語の上で tab を押すと、一致する emote を入力欄の上にリストで表示。矢印で選択、tab か enter で挿入、esc で閉じる。オフだとその場で補完"
   },
+  "mc_settings_colon_list": {
+    "message": "`:` リストの表示"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": ": を入力して開くリストで上に来るもの。エモート優先は tab と同じ順番、絵文字優先はすべての絵文字をエモートより上に置きます。tab とピッカー検索の順番は変わりません"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "エモート優先"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "絵文字優先"
+  },
   "mc_settings_show_pronouns": {
     "message": "代名詞"
   },

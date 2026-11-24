@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab על מילה מציג אימוטים מתאימים ברשימה מעל שדה הכתיבה. החצים בוחרים, tab או enter מוסיפים, esc סוגר. כבוי משלים ישירות בטקסט"
   },
+  "mc_settings_colon_list": {
+    "message": "רשימת `:` מציגה"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "מה שהרשימה שנפתחת בהקלדת : שמה למעלה. אימוטים קודם הוא הסדר של tab; אימוג׳י קודם שם כל אימוג׳י מעל האימוטים. tab והחיפוש בבורר שומרים על סדר אחד"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "אימוטים קודם"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "אימוג׳י קודם"
+  },
   "mc_settings_show_pronouns": {
     "message": "כינויי גוף"
   },

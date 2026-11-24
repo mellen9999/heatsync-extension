@@ -1124,6 +1124,18 @@
   "mc_settings_tab_list_desc": {
     "message": "tab på ett ord visar matchande emotes i en lista ovanför inmatningsfältet. pilarna väljer, tab eller enter infogar, esc stänger. av fyller i direkt i texten"
   },
+  "mc_settings_colon_list": {
+    "message": "`:`-listan visar"
+  },
+  "mc_settings_colon_list_desc": {
+    "message": "vad listan som : öppnar lägger överst. emotes först är ordningen tab ger; emoji först lägger varje emoji över emotes. tab och sökningen i väljaren håller en ordning"
+  },
+  "lib_opt_colon_emotes": {
+    "message": "emotes först"
+  },
+  "lib_opt_colon_emoji": {
+    "message": "emoji först"
+  },
   "mc_settings_show_pronouns": {
     "message": "pronomen"
   },

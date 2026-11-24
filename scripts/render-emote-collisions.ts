@@ -49,7 +49,8 @@
  *      picks, a second Tab, tab switches mid-line, the up arrow. the box at enter is the row, a
  *      typed word is its tab's emote, a pick is its picture, a recalled line keeps the picks that
  *      were a choice. words are deleted with backspace and their names put back by keys or by a
- *      paste: a pick is over when its word leaves the box
+ *      paste: a pick is over when its word leaves the box. a pick is also a click on a picker
+ *      tile, and a letter typed against an emote leaves it the emote it was
  *   z. `Wlol` + Tab, Tab (your own), backspace it out, paste `Wlol` -> the room's emote, a typed
  *      word, not the pick that was deleted. the same delete, then ctrl-z -> the chip is back as
  *      your own, and ships as it
@@ -743,13 +744,13 @@ try {
     const MESSAGES = Number(process.env.HS_SESSION_LINES || 30)
     let room: Room = 'A'
     let last: { mark: string; words: string[]; chosen: Record<string, string> } | null = null
-    const seen = { picks: 0, switches: 0, recalls: 0, two: 0, deletes: 0, ended: 0, undone: 0 }
+    const seen = { picks: 0, switches: 0, recalls: 0, two: 0, deletes: 0, ended: 0, undone: 0, touches: 0, clicks: 0 }
     let bad = 0
     await p.click('#hs-mc-input', { timeout: 5000 })
     await p.keyboard.press('Control+A')
     await p.keyboard.press('Backspace')
     for (let n = 1; n <= MESSAGES && bad < 3; n++) {
-      type Step = { hand: string } | { tabs: 1 | 2 } | { again: null | 'keys' | 'paste' | 'undo' | 'typed-undo' } | 'switch'
+      type Step = { hand: string } | { tabs: 1 | 2 } | { click: 'room' | 'mine' } | { touch: 'off' | 'stay' } | { again: null | 'keys' | 'paste' | 'undo' | 'typed-undo' } | 'switch'
       const steps: Step[] = []
       const recall = !!last && rand() < 0.25
       const words = recall ? Math.floor(rand() * 3) : 1 + Math.floor(rand() * 4)
@@ -759,15 +760,19 @@ try {
         // or the delete is undone (at once, or after another word was typed)
         const del = (): Step => ({ again: rand() < 0.8 ? (['keys', 'paste', 'undo', 'typed-undo'] as const)[Math.floor(rand() * 4)] : null })
         if (i && rand() < 0.1) steps.push(del())
-        const step: Step = rand() < 0.4 ? { tabs: rand() < 0.5 ? 1 : 2 } : { hand: HAND[Math.floor(rand() * HAND.length)] }
+        // a pick is a Tab or a click on the name's tile in the picker
+        const kind = rand()
+        const step: Step = kind < 0.3 ? { tabs: rand() < 0.5 ? 1 : 2 } : kind < 0.45 ? { click: rand() < 0.5 ? 'room' : 'mine' } : { hand: HAND[Math.floor(rand() * HAND.length)] }
         steps.push(step)
         // a pick is the word most worth deleting: put back by hand, its name is a typed word again
-        if ('tabs' in step && rand() < 0.35) steps.push(del())
+        if (!('hand' in step) && rand() < 0.35) steps.push(del())
+        // a letter typed right against the last word, taken off again or left there
+        else if (rand() < 0.15) steps.push({ touch: rand() < 0.5 ? 'off' : 'stay' })
       }
       if (rand() < 0.25) steps.push('switch')
       const settled = n % 3 !== 0
       const mark = `ys${n}x`
-      const said = `y. message ${n} ${recall ? `<up ${JSON.stringify(last?.words)} kept ${JSON.stringify(last?.chosen)}> ` : ''}${JSON.stringify(steps.map((s) => (s === 'switch' ? '<switch>' : 'hand' in s ? s.hand : 'again' in s ? `<del${s.again ? ` +${s.again}` : ''}>` : `Wlol+Tab×${s.tabs}`)))} from ${TAB[room]}`
+      const said = `y. message ${n} ${recall ? `<up ${JSON.stringify(last?.words)} kept ${JSON.stringify(last?.chosen)}> ` : ''}${JSON.stringify(steps.map((s) => (s === 'switch' ? '<switch>' : 'hand' in s ? s.hand : 'again' in s ? `<del${s.again ? ` +${s.again}` : ''}>` : 'click' in s ? `Wlol+click ${s.click}` : 'touch' in s ? `<touch ${s.touch}>` : `Wlol+Tab×${s.tabs}`)))} from ${TAB[room]}`
       const fail = (msg: string) => { bad++; check(false, `${said}: ${msg}`) }
       const draft: Array<{ word: string; pick?: string }> = []
       const pickOf = (word: string) => draft.filter((d) => d.word === word && d.pick).at(-1)?.pick
@@ -794,6 +799,9 @@ try {
           seen.switches++
           continue
         }
+        // a word starts behind a gap. a letter left against an emote and then deleted leaves none, and a
+        // name typed straight against a chip is that chip's name made longer (Tab completes the two as one)
+        if (('hand' in s || 'tabs' in s) && (await wordsIn()) && !(await endsWithGap())) await key(' ')
         if ('hand' in s) {
           await key(i === steps.length - 1 && !settled ? s.hand : `${s.hand} `)
           draft.push({ word: s.hand })
@@ -848,6 +856,50 @@ try {
           if (was && !rest && was !== typed(room, gone.word)) seen.ended++
           continue
         }
+        if ('touch' in s) {
+          const at = draft.at(-1)
+          // only a word this message added, and only one the box has taken (a gap stands behind it)
+          if (!at || draft.length <= recalledWords || !(await endsWithGap())) continue
+          const before = await wordsIn()
+          await p.keyboard.press('Backspace')
+          if ((await wordsIn()) !== before) { fail(`backspace on the gap behind ${at.word} took a word (${JSON.stringify(await boxText())})`); continue }
+          await key('q')
+          // an emote in the box stays the emote: the letter is a word of its own, and the line ships a space
+          // between them. a plain word takes the letter
+          const emote = !!(pickOf(at.word) ?? typed(room, at.word))
+          if (s.touch === 'off') await p.keyboard.press('Backspace')
+          else if (emote) draft.push({ word: 'q' })
+          else at.word += 'q'
+          await key(' ')
+          if ((await wordsIn()) !== before + (s.touch === 'stay' && emote ? 1 : 0)) fail(`a letter typed against ${at.word} (${s.touch}) left the wrong words in the box (${JSON.stringify(await boxText())})`)
+          seen.touches++
+          continue
+        }
+        if ('click' in s) {
+          const id = s.click === 'mine' ? 'Wlol_inv' : room === 'A' ? 'Wlol_room.' : 'Wlol_room2'
+          const tile = `#hs-mc-emote-picker .hs-mc-picker-emote-wrap img[alt="Wlol"][src*="${id}"]`
+          await p.click('#hs-mc-emote-btn', { timeout: 5000 })
+          await p.waitForSelector('#hs-mc-emote-picker.visible', { timeout: 10_000 })
+          if (!(await until(p, async () => !!(await p.$(tile)), 5000))) {
+            const have = await p.$$eval('#hs-mc-emote-picker .hs-mc-picker-emote-wrap img', (els: HTMLImageElement[]) => els.map((x) => `${(x.closest('[data-section-key]') as HTMLElement)?.dataset.sectionKey}:${x.alt}=${x.getAttribute('src')}`))
+            fail(`the picker has no tile for ${s.click === 'mine' ? 'my' : "the room's"} Wlol (tiles ${JSON.stringify(have)})`)
+          } else {
+            const before = await wordsIn()
+            await p.click(tile, { timeout: 5000 })
+            if (!(await until(p, async () => (await wordsIn()) === before + 1, 5000))) fail(`a click on a picker tile put no word in the box (${JSON.stringify(await boxText())})`)
+            draft.push({ word: 'Wlol', pick: s.click === 'mine' ? 'mine' : room === 'A' ? 'roomA' : 'roomB' })
+            seen.picks++
+            seen.clicks++
+          }
+          if (await p.$('#hs-mc-emote-picker.visible')) await p.click('#hs-mc-emote-btn', { timeout: 5000 })
+          await p.focus('#hs-mc-input')
+          await p.keyboard.press('Control+End')
+          // a hand's pace: the box ends a Tab cycle 150ms after it lost focus, and a script back in the box
+          // with a name typed and Tab pressed inside that time lost the cycle it had just begun
+          await p.waitForTimeout(200)
+          if (!(await endsWithGap())) await key(' ')
+          continue
+        }
         await key('Wlol')
         for (let t = 0; t < s.tabs; t++) {
           await p.keyboard.press('Tab')
@@ -882,7 +934,7 @@ try {
       for (const { word } of draft) { const pk = pickOf(word); if (pk && pk !== typed(room, word)) last.chosen[word] = pk }
       await until(p, async () => !(await boxText()).trim() && !(await boxCells()).length, 5000)
     }
-    check(!bad && seen.picks > 4 && seen.switches > 3 && seen.recalls > 1 && seen.two > 0 && seen.deletes > 2 && seen.ended > 0 && seen.undone > 0, `y. ${MESSAGES} messages of a random session: the box at enter is the row, a typed word is its tab's emote, a pick is its picture and ends with its word (${JSON.stringify(seen)})`)
+    check(!bad && seen.picks > 4 && seen.switches > 3 && seen.recalls > 1 && seen.two > 0 && seen.deletes > 2 && seen.ended > 0 && seen.undone > 0 && seen.touches > 0 && seen.clicks > 1, `y. ${MESSAGES} messages of a random session: the box at enter is the row, a typed word is its tab's emote, a pick is its picture and ends with its word (${JSON.stringify(seen)})`)
     if (room === 'B') await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
     await p.click('#hs-mc-input', { timeout: 5000 })
     await p.keyboard.press('Control+A')

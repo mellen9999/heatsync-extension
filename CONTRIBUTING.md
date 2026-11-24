@@ -8,7 +8,7 @@ requires [bun](https://bun.sh), plus node — the build runs `node --check` over
 git clone https://github.com/mellen9999/heatsync-extension
 cd heatsync-extension
 bun install
-git config core.hooksPath .githooks   # enable the pre-push gate (lint/typecheck/version/build/test)
+git config core.hooksPath .githooks   # enable the pre-push gate (lint, typecheck, versions, both builds + bundle budget, tests + coverage)
 ```
 
 ## build
@@ -53,7 +53,7 @@ bun scripts/e2e/run.ts --only s2   # one family; no flag runs them all
 
 1. fork, branch off `main`
 2. keep commits small and atomic
-3. run `bun run build.js && bun test` before pushing
+3. run `bun run build.js` before pushing (it runs the tests first)
 4. open a PR against `main` — describe what changed and why
 5. don't force push
 
@@ -61,6 +61,8 @@ bun scripts/e2e/run.ts --only s2   # one family; no flag runs them all
 
 - `src/multichat/` — multichat overlay (main.js, input.js, emotes.js, etc.). edit here for anything multichat-related.
 - `src/lib/` — shared modules bundled into content scripts at build time.
+- `src/data/` — the emoji dataset; the build generates both shipped copies from it.
+- `src/manifests/` — `chrome.json` and `firefox.json`, the source of the built manifests.
 - `src/background/` — the service worker, in parts; build.js concatenates them (BG_PARTS order) into `background.js`.
 - `src/content/` — the hand-written page scripts (content.js, early-inject-main.js, popup.js, etc.); build.js bundles or copies each into `dist/`.
 - `chrome/` — static html/css/icons plus the generated manifest + `_locales`. no hand-written js; the bundles (`multichat-core.js`, `background.js`) are built into `dist/`, never here.

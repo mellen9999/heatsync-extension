@@ -27,6 +27,7 @@ then open any twitch, kick or youtube stream: the panel takes over the chat colu
 no ad trackers and no third-party analytics — nothing goes to google analytics, sentry or any ad network.
 
 - signed in, your inventory and settings sync through heatsync's own servers. settings also ride your browser's own sync if you have it on.
+- a line you send through heatsync tells heatsync.org its message id and the emotes in it (on twitch, the text too), so other heatsync users see your emotes. it's public chat either way.
 - the one usage count is a check-in to heatsync.org: a random id that changes every midnight, added to daily totals, never stored. opt-in on firefox.
 - opening a channel lets heatsync.org archive its public chat — never whispers. anyone can erase their own messages at [heatsync.org/erase](https://heatsync.org/erase).
 - it talks to 7tv, bttv and ffz, because that is where their emotes live. pronouns come through heatsync.org, so pronoundb never sees you.
@@ -54,7 +55,7 @@ every build runs the unit tests first (`--no-test` skips them, never with `--pac
 
 `bun test`, `bun run lint` and `bun run typecheck` are the gates. `git config core.hooksPath .githooks` runs them, plus the build and bundle budget, before every push. [CONTRIBUTING.md](CONTRIBUTING.md) has the setup, [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has what runs where, and [CHANGELOG.md](CHANGELOG.md) has what changed in each version.
 
-some files are byte-for-byte copies of heatsync.org's own code — the user card, the stream event wording, gif search, emote refs, the emote law, the brand tokens, the name-paint compiler. `scripts/sync-site-copies.sh` and `scripts/sync-paint-compiler.sh` list them, and a parity test fails if one drifts. the site repo is private, so don't edit them here: say what you need in an issue or your pr, and the change lands on the site first.
+some files are byte-for-byte copies of heatsync.org's own code — the user card, the stream event wording, gif search, emote refs, the emote law, the brand tokens, the name-paint compiler. `scripts/sync-site-copies.sh` and `scripts/sync-paint-compiler.sh` list them, and a parity test fails in ci if one drifts. the site repo is private, so don't edit them here: say what you need in an issue or your pr, and the change lands on the site first.
 
 ## releasing
 

@@ -143,3 +143,57 @@ describe('run again on the same message', () => {
     expect(read(el)).toEqual({ emotes: ['Kappa:'], text: ' hello' })
   })
 })
+
+// Every line of the vector file whose emotes the platform could have issued (plain names: not an
+// overlay, not a name shaped like a modifier), drawn the way twitch draws it: each emote its own
+// node, the words between them in text runs. The whole-message pass alone must give the rule's
+// answer, whichever of the emotes are the platform's.
+describe("the vector file, with the platform's own emotes", () => {
+  const V = JSON.parse(readFileSync(join(import.meta.dir, '..', 'shared', 'emote-mods.vectors.json'), 'utf8'))
+  const isMod = (w) => mods.hsModClassify(w).kind === 'modifier'
+  const plain = (name) => !isMod(name) && !name.endsWith('0')
+  const lines = V.lines.filter((c) => c.line.split(' ').every((w) => !c.emotes.includes(w) || plain(w)))
+  test('enough lines qualify to mean something', () => {
+    expect(lines.length).toBeGreaterThan(80)
+  })
+  for (const c of lines) {
+    test(`${c.name}: ${JSON.stringify(c.line)}`, () => {
+      const words = c.line.split(' ')
+      // twitch's shape: an emote is a node, a run of words between two emotes is one text fragment
+      let body = ''
+      let run = []
+      const flush = (edge) => {
+        if (run.length || edge) body += frag(run.join(' '))
+        run = []
+      }
+      words.forEach((w, i) => {
+        if (!c.emotes.includes(w)) {
+          run.push(w)
+          return
+        }
+        // the spaces around an emote live in the text runs beside it
+        run.push('')
+        flush(false)
+        body += TW(w)
+        run = i < words.length - 1 ? [''] : []
+      })
+      flush(false)
+      const got = read(message(body))
+      const bound = new Set(Object.keys(c.want).map(Number))
+      const want = words
+        .map((w, i) => ({ w, i }))
+        .filter(({ w, i }) => c.emotes.includes(w) && !bound.has(i))
+        .map(({ w, i }) => {
+          const mine = Object.entries(c.want)
+            .filter(([, to]) => to === i)
+            .flatMap(([k]) => mods.hsModClassify(words[Number(k)]).mods || [])
+          const { sx, sy, rotate } = mods.hsModComposeTransform(mine)
+          return `${w}:${mods.hsModTransformStr(sx, sy, rotate)}`
+        })
+      expect(got.emotes).toEqual(want)
+      expect(got.text.replace(/\|/g, ' ').split(/\s+/).filter(Boolean)).toEqual(
+        words.filter((w, i) => w && !bound.has(i) && !c.emotes.includes(w)),
+      )
+    })
+  }
+})

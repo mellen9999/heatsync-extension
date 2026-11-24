@@ -294,8 +294,8 @@ export async function liveChannels(platform: 'twitch' | 'kick', n: number): Prom
   if (names.length < n) throw new Error(`only ${names.length} live ${platform} channels found, wanted ${n}`)
   return names.slice(0, n)
 }
-/** A youtube video that is live right now (24/7 streams; canonical url of the handle's /live). */
-export async function liveYtVideo(handles = ['LofiGirl', 'lofigirl', 'chillhopmusic', 'SpaceVideosHD']) {
+/** A youtube video that is live right now (canonical url of the handle's /live). Busy news chats first: a quiet chat can't prove flow. */
+export async function liveYtVideo(handles = ['aljazeeraenglish', 'SkyNews', 'LofiGirl', 'lofigirl', 'chillhopmusic', 'SpaceVideosHD']) {
   for (const h of handles) {
     const res = await fetch(`https://www.youtube.com/@${h}/live`, {
       headers: { 'user-agent': UA, 'accept-language': 'en', cookie: 'SOCS=CAI' },

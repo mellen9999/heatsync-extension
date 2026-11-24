@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "kein Kanal — wähl oben einen Tab"
   },
+  "mc_input_login_to_chat": {
+    "message": "bei $PLATFORM$ oder heatsync einloggen",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "folge $USER$, um zu schreiben — folgen + senden",
     "placeholders": {

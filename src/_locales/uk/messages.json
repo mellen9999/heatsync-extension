@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "немає каналу — обери вкладку вгорі"
   },
+  "mc_input_login_to_chat": {
+    "message": "увійди в $PLATFORM$ або heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "підпишись на $USER$, щоб написати dm — підписатися + надіслати",
     "placeholders": {

@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "brak kanału — wybierz kartę powyżej"
   },
+  "mc_input_login_to_chat": {
+    "message": "zaloguj się na $PLATFORM$ lub heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "zaobserwuj $USER$, żeby napisać dm — obserwuj + wyślij",
     "placeholders": {

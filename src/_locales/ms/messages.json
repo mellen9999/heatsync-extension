@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "tiada saluran — pilih tab di atas"
   },
+  "mc_input_login_to_chat": {
+    "message": "log masuk di $PLATFORM$ atau heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "ikut $USER$ untuk dm — ikut + hantar",
     "placeholders": {

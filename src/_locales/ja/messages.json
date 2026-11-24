@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "チャンネルなし — 上のタブを選んで"
   },
+  "mc_input_login_to_chat": {
+    "message": "$PLATFORM$かheatsyncにログイン",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "$USER$ に dm するにはフォローが必要 — フォロー + 送信",
     "placeholders": {

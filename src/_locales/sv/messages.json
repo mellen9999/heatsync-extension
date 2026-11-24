@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "ingen kanal — välj en flik ovan"
   },
+  "mc_input_login_to_chat": {
+    "message": "logga in på $PLATFORM$ eller heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "följ $USER$ för att dm:a — följ + skicka",
     "placeholders": {

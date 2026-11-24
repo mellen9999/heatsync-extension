@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "没有频道 — 请在上方选择标签页"
   },
+  "mc_input_login_to_chat": {
+    "message": "登录 $PLATFORM$ 或 heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "关注 $USER$ 才能发 dm — 关注并发送",
     "placeholders": {

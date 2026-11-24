@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "nincs csatorna — válassz egy lapot fent"
   },
+  "mc_input_login_to_chat": {
+    "message": "jelentkezz be: $PLATFORM$ vagy heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "kövesd $USER$-t, hogy dm-elhess neki — követés + küldés",
     "placeholders": {

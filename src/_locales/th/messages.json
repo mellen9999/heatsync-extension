@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "ไม่มีช่อง — เลือกแท็บด้านบน"
   },
+  "mc_input_login_to_chat": {
+    "message": "เข้าสู่ระบบ $PLATFORM$ หรือ heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "ติดตาม $USER$ เพื่อ dm หา — ติดตาม + ส่ง",
     "placeholders": {

@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "ei kanavaa — valitse välilehti ylhäältä"
   },
+  "mc_input_login_to_chat": {
+    "message": "kirjaudu: $PLATFORM$ tai heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "seuraa käyttäjää $USER$ lähettääksesi dm — seuraa + lähetä",
     "placeholders": {

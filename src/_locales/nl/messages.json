@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "geen kanaal — kies hierboven een tab"
   },
+  "mc_input_login_to_chat": {
+    "message": "log in op $PLATFORM$ of heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "volg $USER$ om te dm'en — volgen + sturen",
     "placeholders": {

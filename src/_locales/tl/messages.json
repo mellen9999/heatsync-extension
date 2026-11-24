@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "walang channel — pumili ng tab sa itaas"
   },
+  "mc_input_login_to_chat": {
+    "message": "mag-login sa $PLATFORM$ o heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "i-follow si $USER$ para ma-dm siya — follow + ipadala",
     "placeholders": {

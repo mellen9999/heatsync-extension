@@ -3258,7 +3258,8 @@ function _refreshKickHostSession() {
   })
 }
 
-function _composerNeedsLogin() {
+// the hint in place of "send to #channel" when nothing can send ('' when something can); twitch + kick name their own login
+function _composerLoginHint() {
   const hostSession =
     hostPlatform === 'twitch'
       ? !!getTwitchAuthToken()
@@ -3267,7 +3268,10 @@ function _composerNeedsLogin() {
         : hostPlatform === 'yt'
           ? true
           : null
-  return composerNeedsLogin({ hsAuth: hsAuthToken, hostSession })
+  if (!composerNeedsLogin({ hsAuth: hsAuthToken, hostSession })) return ''
+  return hostPlatform === 'twitch' || hostPlatform === 'kick'
+    ? t('mc_input_login_to_chat', [hostPlatform])
+    : t('mc_social_login_first')
 }
 
 // "[TKY] " before the input on a merged channel tab: which platforms a send
@@ -3319,7 +3323,7 @@ function updateInputPlaceholder() {
     // message..." promises a send that can't happen: Enter just flashes red. Name
     // the actual state instead.
     placeholder = channel ? t('mc_input_send_channel', [channel]) : t('mc_input_no_channel')
-    if (channel && _composerNeedsLogin()) placeholder = t('mc_social_login_first')
+    if (channel) placeholder = _composerLoginHint() || placeholder
   } else if (currentTab === 'mentions') {
     // Mentions aggregates across channels, so sendMessage refuses every plain
     // send here — promising "send to #channel" was a lie regardless of whether
@@ -3345,7 +3349,7 @@ function updateInputPlaceholder() {
     // fallbacks empty). The no-channel copy is the honest thing to show then —
     // t() no longer leaks the raw key either way, but don't render "send to #".
     placeholder = chanName ? t('mc_input_send_channel', [chanName]) : t('mc_input_no_channel')
-    if (chanName && _composerNeedsLogin()) placeholder = t('mc_social_login_first')
+    if (chanName) placeholder = _composerLoginHint() || placeholder
   }
 
   // shut for you here (banned / timed out / a room rule): say why, in place of the invite to type

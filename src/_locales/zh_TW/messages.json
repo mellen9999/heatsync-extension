@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "沒有頻道 — 請在上方選擇分頁"
   },
+  "mc_input_login_to_chat": {
+    "message": "登入 $PLATFORM$ 或 heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "追蹤 $USER$ 才能傳 dm — 追蹤並傳送",
     "placeholders": {

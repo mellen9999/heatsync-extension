@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "няма канал — избери таб горе"
   },
+  "mc_input_login_to_chat": {
+    "message": "влез в $PLATFORM$ или heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "последвай $USER$, за да му пишеш — последвай + изпрати",
     "placeholders": {

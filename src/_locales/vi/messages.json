@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "chưa có kênh — chọn một tab phía trên"
   },
+  "mc_input_login_to_chat": {
+    "message": "đăng nhập $PLATFORM$ hoặc heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "theo dõi $USER$ để nhắn dm — theo dõi + gửi",
     "placeholders": {

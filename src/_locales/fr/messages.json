@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "pas de chaîne — choisis un onglet au-dessus"
   },
+  "mc_input_login_to_chat": {
+    "message": "connecte-toi sur $PLATFORM$ ou heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "suis $USER$ pour lui écrire — suivre + envoyer",
     "placeholders": {

@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "niciun canal — alege un tab mai sus"
   },
+  "mc_input_login_to_chat": {
+    "message": "autentifică-te pe $PLATFORM$ sau heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "urmărește-l pe $USER$ ca să-i dai dm — urmărește + trimite",
     "placeholders": {

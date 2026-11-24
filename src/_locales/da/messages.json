@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "ingen kanal — vælg en fane ovenfor"
   },
+  "mc_input_login_to_chat": {
+    "message": "log ind på $PLATFORM$ eller heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "følg $USER$ for at skrive — følg + send",
     "placeholders": {

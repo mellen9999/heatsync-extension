@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "אין ערוץ — בחר לשונית למעלה"
   },
+  "mc_input_login_to_chat": {
+    "message": "התחבר ל-$PLATFORM$ או ל-heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "עקוב אחרי $USER$ כדי לשלוח dm — עקוב + שלח",
     "placeholders": {

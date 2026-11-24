@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "채널 없음 — 위에서 탭을 골라"
   },
+  "mc_input_login_to_chat": {
+    "message": "$PLATFORM$ 또는 heatsync에 로그인",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "$USER$에게 dm하려면 팔로우해야 해 — 팔로우 + 전송",
     "placeholders": {

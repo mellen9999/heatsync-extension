@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "žiadny kanál — vyber kartu hore"
   },
+  "mc_input_login_to_chat": {
+    "message": "prihlás sa na $PLATFORM$ alebo heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "nasleduj $USER$, aby si mu mohol písať dm — nasledovať a odoslať",
     "placeholders": {

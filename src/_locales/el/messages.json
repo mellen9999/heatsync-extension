@@ -849,6 +849,14 @@
   "mc_input_no_channel": {
     "message": "κανένα κανάλι — διάλεξε καρτέλα από πάνω"
   },
+  "mc_input_login_to_chat": {
+    "message": "συνδέσου στο $PLATFORM$ ή στο heatsync",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
   "mc_whisper_follow_to_dm": {
     "message": "κάνε follow τον/την $USER$ για dm — follow + αποστολή",
     "placeholders": {

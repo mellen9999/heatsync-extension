@@ -1,5 +1,38 @@
 # changelog
 
+## [1.7.140] — 2026-11-24
+
+### added
+- **favorite emotes** — pin a picture from the emote menu (shift + right-click) and it leads the picker and tab. the list is your account's, so a pin made on the site is here too.
+- **one emote order everywhere** — tab, the `:` list, the tab list and the picker's search give the same list: the exact name you typed, when typing it sends that emote here, then the names you use, the room's emotes, yours, then globals.
+- **the picker shows what the room sees** — your copy of a name no longer hides the room's, and a tile's hover text says who sees the emote (7tv users, heatsync only).
+- **a streamer's emote change shows right away** in the channels open, not up to half an hour later.
+- **recents are the emotes you sent**, the picture you sent, not the name read again in whatever tab is open.
+
+### fixed
+- **tab on a full name** — the exact name leads only when typing it sends it here (the room's, yours, a global). a 7tv search hit or an emoji of that name now comes after them, so `pep` no longer jumps ahead of the room's PepePls.
+- **a word you type is the room's emote** — in a channel with its own emote of a name you also own, typing the name sends the channel's, on twitch's and kick's own chat too. yours goes out when you pick it (tab, the picker, a click), for that message only. before, any emote you had ever picked stuck to its name in every channel.
+- **the box, the line sent and your own row are one emote** — what the box shows when you press enter is what goes out and what your row draws.
+- **one name is one picture in a line** — pick your copy of a name and every copy of it in the line follows.
+- **changing tabs with words in the box** reads them against the new tab. an emote you picked stays the one you picked. the caret stays where it was.
+- **delete a picked emote** and its pick is over: typed or pasted back, the name is the room's emote again. ctrl-z brings the picked one back. after an undo, tab completes the word you typed.
+- **a line brought back with the up arrow** keeps the copy you picked in it.
+- **an emote in the box is an emote** — a right-click on it acts on that picture: the channel's emote under a name you also own no longer removes your copy.
+- **a search result clicked in the picker** joins your set when the line is sent, not on the click.
+- **modifier words** (`w!`, `ffzX` and the rest) change one emote, the same one in the box, in the line sent and on every row, the platform's own emotes and youtube's emoji too.
+- **a channel on twitch and kick** — each row draws its own platform's emote of a shared name.
+- **a streamer's overlay emote** draws as an overlay.
+- **a whisper, a dm or a feed post** has no room: an unrelated channel's emote no longer wins a word in it.
+- **a scrolled-back twitch line** keeps the emote its sender picked.
+- **a watch streak or resub with a message** is two lines: the event, then what they typed.
+- **signing in again** — sealing your saved login no longer reads as a logout.
+- **a held hover** lets go when the pointer leaves, instead of freezing chat until a tab switch.
+- **firefox** now lists every data category the extension sends, and needs firefox 140 or newer. existing firefox users see the new categories once, on update.
+- **signed out on twitch or kick**, the box says you can log in to twitch or heatsync to send.
+- **a native chat name colour** can no longer carry anything but a colour.
+- **youtube** — chat features load in a live chat frame that opens before its page has a body, instead of failing on firefox.
+- **the settings buttons** (export, import, the tour, clear sent, reset all) light up on hover like every other button.
+
 ## [1.7.139] — 2026-11-21
 
 ### added

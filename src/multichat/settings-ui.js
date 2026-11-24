@@ -625,7 +625,7 @@ const _SET_ACTION_ROWS = [
       '">' +
       t('mc_set_export') +
       '</span>' +
-      '<button class="hs-mc-settings-btn" data-action="export-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      '<button class="hs-mc-settings-btn" data-action="export-settings">' +
       t('mc_set_export_btn') +
       '</button>' +
       '</div>',
@@ -639,7 +639,7 @@ const _SET_ACTION_ROWS = [
       '">' +
       t('mc_set_import') +
       '</span>' +
-      '<button class="hs-mc-settings-btn" data-action="import-settings" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      '<button class="hs-mc-settings-btn" data-action="import-settings">' +
       t('mc_set_import_btn') +
       '</button>' +
       '</div>',
@@ -650,7 +650,7 @@ const _SET_ACTION_ROWS = [
       '<div class="hs-mc-setting-row" style="justify-content:flex-end">' +
       '<button class="hs-mc-defaults-btn" title="' +
       escapeHtml(t('mc_set_reset_all_title')) +
-      '" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      '">' +
       t('mc_set_all_defaults') +
       '</button>' +
       '</div>',
@@ -671,7 +671,7 @@ function _setHelpActionRows() {
         '">' +
         t('mc_set_tour') +
         '</span>' +
-        '<button class="hs-mc-settings-btn" data-action="show-tour" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+        '<button class="hs-mc-settings-btn" data-action="show-tour">' +
         t('mc_set_tour_btn') +
         '</button>' +
         '</div>',
@@ -695,7 +695,7 @@ function _sentClearRow() {
       '">' +
       t('mc_set_clear_sent') +
       '</span>' +
-      '<button class="hs-mc-settings-btn" data-action="clear-sent-history" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+      '<button class="hs-mc-settings-btn" data-action="clear-sent-history">' +
       t('mc_set_clear_sent_btn') +
       '</button>' +
       '</div>',
@@ -731,7 +731,7 @@ function _renderPageDefaultsRow(cat) {
     escapeHtml(cat) +
     '" title="' +
     escapeHtml(t('mc_set_page_reset_title')) +
-    '" style="background:#000;color:#fff;border:1px solid #ffffff;padding:2px 10px;font-size:13px;cursor:pointer;font-family:inherit">' +
+    '">' +
     t('mc_set_default') +
     '</button>' +
     '</div>'

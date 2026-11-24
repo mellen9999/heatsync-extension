@@ -1182,7 +1182,7 @@ function getInputText() {
   if (wysiwygEnabled) {
     // Convert emote images, stacks, and cycling spans back to text.
     // Modifiers stored in dataset.hsWords (canonical, set by hsModApplyToImg)
-    // appended after the emote so recipients see "Kappa w! h!" not "Kappa".
+    // go out beside the emote so recipients see a wide Kappa, not "Kappa".
     let text = ''
     // Adjacency-safe serialization: chips (emote img / stack / emoji span /
     // mention) must stay whitespace-bounded on the wire — `parseEmotes` and
@@ -1192,12 +1192,10 @@ function getInputText() {
     const sepBefore = () => {
       if (text && !/\s$/.test(text)) text += ' '
     }
+    // each word where it stays this emote's own: `w! Kappa`, `Kappa ffzX` (hsModChipText)
     const appendImg = (img) => {
-      text += img.dataset.emoteName || img.alt || ''
       const modWords = img.dataset.hsWords || img.dataset.hsModWords // back-compat
-      if (modWords) {
-        for (const w of modWords.split(/\s+/).filter(Boolean)) text += ` ${w}`
-      }
+      text += hsModChipText(img.dataset.emoteName || img.alt || '', modWords)
     }
     const extractNode = (node) => {
       if (node.nodeType === Node.TEXT_NODE) {
@@ -1304,6 +1302,9 @@ function initInput() {
   input.addEventListener('keydown', handleInputKeydown)
   input.addEventListener('input', (e) => {
     handleInputChange(e)
+    // a finished modifier word beside a chip is that chip's now, not when the
+    // line lands: `w! Kappa` drew a plain Kappa in the box and a wide one in chat
+    if (wysiwygEnabled && input.firstElementChild) scanAndApplyModifiersInInput(input, { settled: true })
     // handleInputChange keeps pendingMessage synced with the live DOM on every
     // path (initial read + after each WYSIWYG mutation branch) — reuse it
     // instead of updateCharCount re-serializing the whole input a 3rd time.
@@ -3749,15 +3750,10 @@ function isInlineChip(el) {
 function chipToText(el) {
   if (!el || el.nodeType !== Node.ELEMENT_NODE) return null
   if (el.tagName === 'IMG' && el.classList?.contains('hs-input-emote')) {
-    let txt = el.dataset.emoteName || el.alt || ''
     const mods = el.dataset.hsWords || el.dataset.hsModWords
-    if (mods) {
-      for (const w of mods.split(/\s+/).filter(Boolean)) txt += ` ${w}`
-      // Trailing space keeps modifier tokens parseable when merged into adjacent
-      // text — "Kappa w!" + "4He" must become "Kappa w! 4He", not "Kappa w!4He".
-      txt += ' '
-    }
-    return txt
+    // Trailing space keeps modifier tokens parseable when merged into adjacent
+    // text — "Kappa ffzX" + "4He" must become "Kappa ffzX 4He", not "Kappa ffzX4He".
+    return hsModChipText(el.dataset.emoteName || el.alt || '', mods) + (mods ? ' ' : '')
   }
   if (el.classList?.contains('hs-input-stack')) {
     const parts = []
@@ -3768,13 +3764,8 @@ function chipToText(el) {
         continue
       }
       if (child.tagName !== 'IMG') continue
-      let txt = child.dataset.emoteName || child.alt || ''
       const mods = child.dataset.hsWords || child.dataset.hsModWords
-      if (mods) {
-        for (const w of mods.split(/\s+/).filter(Boolean)) txt += ` ${w}`
-        txt += ' '
-      }
-      parts.push(txt)
+      parts.push(hsModChipText(child.dataset.emoteName || child.alt || '', mods) + (mods ? ' ' : ''))
     }
     return parts.join(' ')
   }
@@ -4213,35 +4204,10 @@ function handleInputChange(_e) {
           const match = before.match(/(\S+)\s$/)
           if (match) {
             const word = match[1]
-            // FFZ-style modifier token / chain — apply to the previous emote
-            // (don't insert as BTTV emote even if "w!" is a real emote name).
-            // Live-replace modifier path — delegate to shared lib + apply.
-            const cls = hsModClassify(word, { allowPrefix: false })
-            if (cls.kind === 'modifier') {
-              const wordStart = cursor - match[0].length
-              let prev = node.previousSibling
-              while (prev && prev.nodeType === Node.TEXT_NODE && prev.textContent.trim() === '') {
-                prev = prev.previousSibling
-              }
-              // Only whitespace may sit between the anchor chip and the
-              // modifier — "Kappa lol w!" is three words, not a wide Kappa.
-              const targetImg = /^[\s\u00a0]*$/.test(text.slice(0, wordStart)) ? hsModAnchorEl(prev) : null
-              if (targetImg) {
-                {
-                  hsModApplyToImg(targetImg, cls.mods, cls.hue, cls.words)
-                  node.textContent = text.slice(0, wordStart) + (text.slice(cursor) || ' ')
-                  const nr = document.createRange()
-                  nr.setStart(node, wordStart)
-                  nr.collapse(true)
-                  sel.removeAllRanges()
-                  sel.addRange(nr)
-                  pendingMessage = getInputText()
-                  return
-                }
-              }
-              // Modifier without an anchor — keep as plain text, don't insert as BTTV emote
-              return
-            }
+            // A modifier word is never an emote here, even where "w!" is a real emote name:
+            // the box's own pass (scanAndApplyModifiersInInput, settled, run right after this
+            // on every change) hands it to the chip the rule says, or leaves it as typed.
+            if (hsModClassify(word, { allowPrefix: false }).kind === 'modifier') return
             // Live auto-convert: in-set emotes only. Channel/global emotes
             // (incl. lowercase word collisions like "what") stay text until Tab.
             let resolved = lookupEmoteWithOverlay(word, { ownedOnly: true })
@@ -4846,12 +4812,27 @@ function hsModAnchorEl(prev) {
   return null
 }
 
+// The emote a modifier typed right before a chip would change: the chip after
+// this text node, or the base of the stack there. An emoji is no emote here,
+// as in the rows (a modifier reaches ahead only for an emote).
+function hsModNextEl(textNode) {
+  const el = textNode?.nextSibling
+  if (!el || el.nodeType !== Node.ELEMENT_NODE) return null
+  if (el.tagName === 'IMG' && el.classList?.contains('hs-input-emote')) return el
+  if (!el.classList?.contains('hs-input-stack')) return null
+  const base = [...el.children].find((c) => c.tagName === 'IMG' || c.classList?.contains('hs-mc-emoji'))
+  return base?.tagName === 'IMG' ? base : null
+}
+
 // Scan input for modifier shorthands adjacent to emotes; apply via lib helper.
 // Cursor-position-agnostic. Returns true if any modifier was applied.
 // Only mutates a text node if it consumed at least one token from it — leaves
 // non-modifier text alone so emote autocomplete can still find words.
-function scanAndApplyModifiersInInput(input) {
+// settled (the box's own pass, as you type): no bare-letter shorthand, and the
+// word the caret is in or at the end of is still being written.
+function scanAndApplyModifiersInInput(input, opts) {
   if (!input) return false
+  const settled = !!opts?.settled
   let appliedAny = false
   let prevEmote = null
   // Bare-letter prefix forms ("w" → w!) only classify for the token the caret
@@ -4880,16 +4861,24 @@ function scanAndApplyModifiersInInput(input) {
       else if (child.tagName !== 'BR') prevEmote = null
       continue
     }
-    if (child.nodeType !== Node.TEXT_NODE || !prevEmote) continue
+    if (child.nodeType !== Node.TEXT_NODE) continue
+    // the emote chip right after this text: a word may be its own (`w! Kappa`)
+    const after = hsModNextEl(child)
+    if (!prevEmote && !after) continue
     const tokens = child.textContent.split(/(\s+)/)
+    const passable = (t) => !t || /^\s*$/.test(t) || hsModClassify(t, { allowPrefix: false }).kind === 'modifier'
     // Caret token = last non-whitespace token starting at or before the caret
     // in this node (covers both "w|" and "w |" caret positions).
     let caretTokIdx = -1
+    let openTokIdx = -1
     if (child === caretNode) {
       let pos = 0
       for (let i = 0; i < tokens.length; i++) {
         const end = pos + tokens[i].length
-        if (tokens[i] && !/^\s*$/.test(tokens[i]) && pos <= caretOffset) caretTokIdx = i
+        if (tokens[i] && !/^\s*$/.test(tokens[i]) && pos <= caretOffset) {
+          caretTokIdx = i
+          openTokIdx = caretOffset > pos && caretOffset <= end ? i : -1
+        }
         pos = end
       }
     }
@@ -4902,14 +4891,20 @@ function scanAndApplyModifiersInInput(input) {
     for (let i = 0; i < tokens.length; i++) {
       const tok = tokens[i]
       if (!tok || /^\s*$/.test(tok)) continue
-      const cls = hsModClassify(tok, { allowPrefix: i === caretTokIdx })
+      const cls = hsModClassify(tok, { allowPrefix: !settled && i === caretTokIdx })
       if (cls.kind !== 'modifier') {
         // Real text between the emote and the token breaks the anchor — a
-        // modifier attaches to the IMMEDIATELY preceding emote.
+        // modifier never reaches over text.
         prevEmote = null
         continue
       }
-      const targetImg = hsModAnchorEl(prevEmote)
+      if (settled && i === openTokIdx) continue
+      // Which chip: hsModSide, the rule the rows are drawn by. Ahead, it is the
+      // chip after this text when only modifiers stand between. A bare letter
+      // resolved at the caret ("w" → "w!") only ever reaches back.
+      const next = !!after && !cls.resolvedFrom && tokens.slice(i + 1).every(passable)
+      const side = hsModSide(cls.resolvedFrom ? 'ffz' : tok, !!prevEmote, () => next)
+      const targetImg = side === 'next' ? after : side === 'last' ? hsModAnchorEl(prevEmote) : null
       if (!targetImg) continue
       hsModApplyToImg(targetImg, cls.mods, cls.hue, cls.words)
       drop.add(i)
@@ -4921,7 +4916,17 @@ function scanAndApplyModifiersInInput(input) {
       consumedHere = true
     }
     if (consumedHere) {
+      // the caret keeps its place in what is left of this text
+      let cut = 0
+      if (child === caretNode) {
+        let pos = 0
+        for (let i = 0; i < tokens.length && pos < caretOffset; i++) {
+          if (drop.has(i)) cut += Math.min(tokens[i].length, caretOffset - pos)
+          pos += tokens[i].length
+        }
+      }
       child.textContent = tokens.filter((_, i) => !drop.has(i)).join('') || ' '
+      if (child === caretNode) _sel.collapse(child, Math.min(Math.max(caretOffset - cut, 0), child.textContent.length))
     }
   }
   if (appliedAny && typeof pendingMessage !== 'undefined') pendingMessage = getInputText()

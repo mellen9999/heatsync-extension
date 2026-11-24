@@ -21,7 +21,7 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { hsModClassify } from '../src/lib/modifiers.js'
+import { hsModClassify, hsModSide } from '../src/lib/modifiers.js'
 
 const INPUT_SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 const start = INPUT_SRC.indexOf('function scanAndApplyModifiersInInput(')
@@ -31,9 +31,10 @@ const SWEEP_SRC = INPUT_SRC.slice(start, end)
 
 // --- minimal fake DOM ---
 const NodeStub = { ELEMENT_NODE: 1, TEXT_NODE: 3 }
-const chip = () => ({
+const chip = (name = 'chip') => ({
   nodeType: 1,
   tagName: 'IMG',
+  name,
   classList: { contains: (c) => c === 'hs-input-emote' },
 })
 const text = (s) => ({ nodeType: 3, textContent: s })
@@ -42,33 +43,46 @@ const text = (s) => ({ nodeType: 3, textContent: s })
 // modifier words consumed so tests can assert exactly what got eaten.
 function makeSweep({ caretNode = null, caretOffset = -1 } = {}) {
   const applied = []
+  // which chip took each word
+  const onto = []
+  const caret = { node: caretNode, offset: caretOffset }
   const windowStub = {
     getSelection: () => ({
       rangeCount: caretNode ? 1 : 0,
       getRangeAt: () => ({ collapsed: true, startContainer: caretNode, startOffset: caretOffset }),
+      collapse: (node, offset) => Object.assign(caret, { node, offset }),
     }),
   }
   const sweep = new Function(
     'Node',
     'window',
     'hsModClassify',
+    'hsModSide',
     'hsModAnchorEl',
+    'hsModNextEl',
     'hsModApplyToImg',
     `${SWEEP_SRC}; return scanAndApplyModifiersInInput`,
   )(
     NodeStub,
     windowStub,
     hsModClassify,
+    hsModSide,
     (el) => el, // anchor resolves to the chip itself
-    (_img, _mods, _hue, words) => applied.push(...(words || [])),
+    (textNode) => textNode.next || null, // the chip right after this text (makeInput links them)
+    (img, _mods, _hue, words) => {
+      applied.push(...(words || []))
+      for (const w of words || []) onto.push(`${w}>${img.name}`)
+    },
   )
-  return { sweep, applied }
+  return { sweep, applied, onto, caret }
 }
 
-const makeInput = (children) => ({
-  childNodes: children,
-  contains: () => true,
-})
+const makeInput = (children) => {
+  children.forEach((n, i) => {
+    if (n.nodeType === 3 && children[i + 1]?.nodeType === 1) n.next = children[i + 1]
+  })
+  return { childNodes: children, contains: () => true }
+}
 
 describe('modifier sweep — bare letters only consume at the caret', () => {
   test('literal "Z" after a chip, caret on a different word → survives (the bug)', () => {
@@ -145,6 +159,91 @@ describe('modifier sweep — a modifier attaches to the emote it touches', () =>
     const { sweep, applied } = makeSweep({})
     expect(sweep(input)).toBe(true)
     expect(applied).toEqual(['w!', 'h!'])
+  })
+})
+
+// The row renderer's rule (lib/modifiers.js hsModSide; shared/emote-mods.vectors.json): a
+// betterttv-shaped word changes the emote after it. The sweep only ever reached back, so
+// `w! Kappa` drew a plain Kappa in the box and a wide one in chat.
+describe('modifier sweep — the box binds by the rule the rows are drawn by', () => {
+  test("a word typed before a chip is that chip's", () => {
+    const node = text('w! ')
+    const input = makeInput([node, chip('Kappa')])
+    const { sweep, onto } = makeSweep({})
+    expect(sweep(input)).toBe(true)
+    expect(onto).toEqual(['w!>Kappa'])
+    expect(node.textContent.trim()).toBe('')
+  })
+
+  test('between two chips a betterttv word takes the next, a frankerfacez word the last', () => {
+    const { sweep, onto } = makeSweep({})
+    expect(sweep(makeInput([chip('Kappa'), text(' w! '), chip('Keepo')]))).toBe(true)
+    expect(sweep(makeInput([chip('Kappa'), text(' ffzX '), chip('Keepo')]))).toBe(true)
+    expect(onto).toEqual(['w!>Keepo', 'ffzX>Kappa'])
+  })
+
+  test('with no chip before it a frankerfacez word falls ahead; with none after, a betterttv word falls back', () => {
+    const { sweep, onto } = makeSweep({})
+    sweep(makeInput([text('ffzX '), chip('Kappa')]))
+    sweep(makeInput([chip('Kappa'), text(' w! ')]))
+    expect(onto).toEqual(['ffzX>Kappa', 'w!>Kappa'])
+  })
+
+  test('never ahead over text, and the text is left as typed', () => {
+    const node = text('w! lol ')
+    const { sweep, onto } = makeSweep({})
+    expect(sweep(makeInput([node, chip('Kappa')]))).toBe(false)
+    expect(onto).toEqual([])
+    expect(node.textContent).toBe('w! lol ')
+  })
+
+  test('a bare letter resolved at the caret only reaches back: typing a word before a chip eats nothing', () => {
+    const node = text('w')
+    const { sweep, onto } = makeSweep({ caretNode: node, caretOffset: 1 })
+    expect(sweep(makeInput([node, chip('Kappa')]))).toBe(false)
+    expect(onto).toEqual([])
+    expect(node.textContent).toBe('w')
+  })
+})
+
+// The same sweep runs on every change of the box (input.js, the 'input' listener), settled:
+// a finished word is taken at once, the word still being written is not, and a bare
+// letter is a letter.
+describe('modifier sweep — settled, as you type', () => {
+  test('a finished word beside a chip is taken', () => {
+    const node = text(' w! ')
+    const { sweep, onto } = makeSweep({ caretNode: node, caretOffset: 4 })
+    expect(sweep(makeInput([chip('Kappa'), node]), { settled: true })).toBe(true)
+    expect(onto).toEqual(['w!>Kappa'])
+  })
+
+  test('the word the caret is still in is left alone', () => {
+    const node = text(' w!')
+    const { sweep, onto } = makeSweep({ caretNode: node, caretOffset: 3 })
+    expect(sweep(makeInput([chip('Kappa'), node]), { settled: true })).toBe(false)
+    expect(onto).toEqual([])
+    expect(node.textContent).toBe(' w!')
+  })
+
+  test('a bare letter after a chip is a letter, not its shorthand', () => {
+    const node = text(' w ')
+    const { sweep, onto } = makeSweep({ caretNode: node, caretOffset: 3 })
+    expect(sweep(makeInput([chip('Kappa'), node]), { settled: true })).toBe(false)
+    expect(onto).toEqual([])
+    expect(node.textContent).toBe(' w ')
+  })
+
+  test('the caret keeps its place in the text that is left', () => {
+    const node = text('w! hello')
+    // caret at the end of "hello": the word before the chip... is over text, stays
+    const a = makeSweep({ caretNode: node, caretOffset: 8 })
+    expect(a.sweep(makeInput([node, chip('Kappa')]), { settled: true })).toBe(false)
+    // `Kappa ffzX hello|`: ffzX goes, the caret stays after hello
+    const tail = text(' ffzX hello')
+    const b = makeSweep({ caretNode: tail, caretOffset: 11 })
+    expect(b.sweep(makeInput([chip('Kappa'), tail]), { settled: true })).toBe(true)
+    expect(tail.textContent).toBe(' hello')
+    expect(b.caret).toEqual({ node: tail, offset: 6 })
   })
 })
 

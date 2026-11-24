@@ -1,11 +1,13 @@
 // @ts-check
 // BTTV/FFZ-style emote modifier system — single source of truth.
-// Bundled into every content script via build.js readLib(). Kept byte-identical
-// with the site's client/utils/hs-modifiers.js so chat renders the same on
-// Twitch native chat, the multichat overlay, and heatsync.org.
+// Bundled into every content script via build.js readLib(). The site's twin is
+// client/utils/hs-modifiers.js: the tables and the rule are the same there
+// (the site's tests compare them), the comments are not.
 //
-// Canonical semantics (from the REAL night/betterttv + FrankerFaceZ source):
-// - A modifier token attaches to the IMMEDIATELY PRECEDING emote (base/overlay)
+// What the words add up to and which emote a word changes is one rule for every
+// app, as data: emote-mods.vectors.json (the site's shared/ copy is the source).
+// - A BetterTTV-shaped word (`w!`) changes the emote AFTER it, a FrankerFaceZ
+//   word (`ffzX`) the one BEFORE it; each falls back to the other side (hsModSide)
 // - Scale mods compound: "Kappa w! w!" → 4× wide (clamped ±MAX_SCALE)
 // - Rotations add: "l! l!" → -180°
 // - Animated effects (party/shake/rainbow/bounce/jam/spin/slide/arrive/leave)
@@ -39,36 +41,40 @@ const HS_FX = Object.freeze({
   zeroWidth: { zero: true },
 })
 
-const HS_MOD_TOKENS = Object.freeze({
-  // BTTV `!` modifiers
-  'w!': 'wide',
-  'h!': 'flipH',
-  'v!': 'flipV',
-  'z!': 'zeroWidth',
-  'c!': 'cursed',
-  'l!': 'rotateL',
-  'r!': 'rotateR',
-  'p!': 'party',
-  's!': 'shake',
-  'x!': 'flipH',
-  'y!': 'flipV',
-  // FFZ effect emotes (static)
-  ffzX: 'flipH',
-  ffzY: 'flipV',
-  ffzW: 'wide',
-  ffzWide: 'wide',
-  ffzTall: 'tall',
-  ffzCursed: 'cursed',
-  // FFZ effect emotes (animated)
-  ffzHyper: 'hyper',
-  ffzRainbow: 'rainbow',
-  ffzBounce: 'bounce',
-  ffzJam: 'jam',
-  ffzSlide: 'slide',
-  ffzArrive: 'arrive',
-  ffzLeave: 'leave',
-  ffzSpin: 'spin',
-})
+// No prototype: a word is looked up here as typed, and `constructor`, `toString` or
+// `valueOf` after an emote read as a modifier and left the line.
+const HS_MOD_TOKENS = Object.freeze(
+  Object.assign(Object.create(null), {
+    // BTTV `!` modifiers
+    'w!': 'wide',
+    'h!': 'flipH',
+    'v!': 'flipV',
+    'z!': 'zeroWidth',
+    'c!': 'cursed',
+    'l!': 'rotateL',
+    'r!': 'rotateR',
+    'p!': 'party',
+    's!': 'shake',
+    'x!': 'flipH',
+    'y!': 'flipV',
+    // FFZ effect emotes (static)
+    ffzX: 'flipH',
+    ffzY: 'flipV',
+    ffzW: 'wide',
+    ffzWide: 'wide',
+    ffzTall: 'tall',
+    ffzCursed: 'cursed',
+    // FFZ effect emotes (animated)
+    ffzHyper: 'hyper',
+    ffzRainbow: 'rainbow',
+    ffzBounce: 'bounce',
+    ffzJam: 'jam',
+    ffzSlide: 'slide',
+    ffzArrive: 'arrive',
+    ffzLeave: 'leave',
+    ffzSpin: 'spin',
+  }),
+)
 
 const HS_MOD_TOKEN_KEYS = Object.keys(HS_MOD_TOKENS)
 const HS_MOD_KEYS_BY_LEN = HS_MOD_TOKEN_KEYS.slice().sort((a, b) => b.length - a.length)
@@ -190,6 +196,30 @@ function hsModClassify(word, opts) {
     }
   }
   return { kind: 'plain' }
+}
+
+// Which emote a modifier word changes: 'next', 'last', or null when it stays as
+// typed. Each provider's own direction first, so a line means here what it means
+// to that provider's users: a BetterTTV-shaped word (`w!`, a tint, a chain led by
+// one) takes the emote after it, a FrankerFaceZ one (`ffzX`) the emote before it.
+// The other side is only the fallback. `emoteNext` answers whether an emote
+// follows with nothing but modifiers between: a modifier never reaches over text.
+function hsModSide(word, hasLast, emoteNext) {
+  if (word[1] === '!' ? emoteNext() : !hasLast && emoteNext()) return 'next'
+  return hasLast ? 'last' : null
+}
+
+// A chip as words: the emote's name with its modifier words where each one is
+// its own whatever stands beside the chip. BetterTTV-shaped words go before the
+// name and FrankerFaceZ ones after, the side hsModSide reads first: `Kappa w!`
+// followed by another emote would be read as that emote's. An emote whose own
+// name is a modifier word (`ffzX`) is only ever an emote with nothing ahead of
+// it to bind to, so its words all follow it.
+function hsModChipText(name, words) {
+  const list = typeof words === 'string' ? words.split(/\s+/).filter(Boolean) : words || []
+  if (!name || !list.length) return name || ''
+  if (hsModClassify(name).kind === 'modifier') return [name, ...list].join(' ')
+  return [...list.filter((w) => w[1] === '!'), name, ...list.filter((w) => w[1] !== '!')].join(' ')
 }
 
 function hsModComposeAll(mods, hue) {
@@ -376,6 +406,7 @@ export {
   hsModAnimClassAttr,
   hsModApplyToImg,
   hsModBuildStyleAttr,
+  hsModChipText,
   hsModClassify,
   hsModComposeAll,
   hsModComposeAnimClasses,
@@ -386,5 +417,6 @@ export {
   hsModPeelChain,
   hsModRead,
   hsModResolvePrefix,
+  hsModSide,
   hsModWordsFromState,
 }

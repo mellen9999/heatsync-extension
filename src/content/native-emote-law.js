@@ -153,3 +153,40 @@ export function hsPicksOf(picks, text, inventory) {
   }
   return out.size ? out : null
 }
+
+// Modifiers (`w! Kappa`, `Kappa ffzX`) on a native row: for each modifier word, the index of the
+// word it changes. The rule is lib/modifiers.js hsModSide, the one the overlay's rows are drawn by
+// (shared/emote-mods.vectors.json is it as data; tests/native-modifier-binding.test.js runs it here).
+// `words` is the line split on whitespace (gaps may stay in the list);
+// `isEmote(i, ahead)` says whether word i is drawn as an emote, and is asked with
+// ahead=true when a word reaches forward (an emoji takes a word typed after it
+// but is never reached for). A word with no emote on either side is not in the
+// answer: it is drawn as typed, as the emote of its name when there is one.
+export function hsModBind(words, isEmote) {
+  const out = new Map()
+  // every modifier word starts with one of its tokens: `x!` or `ffz…`
+  const isMod = (w) => (w.charCodeAt(1) === 33 || w.startsWith('ffz')) && hsModClassify(w).kind === 'modifier'
+  const blank = (w) => !w || !w.trim()
+  let last = -1
+  for (let i = 0; i < words.length; i++) {
+    const w = words[i]
+    if (blank(w)) continue
+    if (!isMod(w.trim())) {
+      last = isEmote(i, false) ? i : -1
+      continue
+    }
+    let next = -1
+    const ahead = () => {
+      for (let j = i + 1; j < words.length; j++) {
+        if (blank(words[j]) || isMod(words[j].trim())) continue
+        next = isEmote(j, true) ? j : -1
+        break
+      }
+      return next >= 0
+    }
+    const side = hsModSide(w.trim(), last >= 0, ahead)
+    if (side) out.set(i, side === 'last' ? last : next)
+    else last = isEmote(i, false) ? i : -1
+  }
+  return out
+}

@@ -14,6 +14,7 @@
  *   f. a row that beat its pick here       -> redrawn with the pick when it lands
  *   g. you type "W Mine" in the site's box -> the room is told Mine only, never your saved W
  *   h. the streamer's own heatsync emote   -> draws, and leads a 7tv emote of its name
+ *   j. `W w! W`, `W ffzX W`, `w! then W`   -> the emote after, the emote before, and a word left alone
  * (the emote law: the site's docs/emote-law.md; src/content/native-emote-law.js)
  * then right-click another chatter's W: it is blocked, the viewer's own W is NOT removed, and
  * only that exact emote hides (rules 9, 10).
@@ -208,6 +209,27 @@ try {
   })
   check(hh.length === 3 && hh[0].includes('Own_streamer') && hh[1].includes('Dup_streamer') && hh[2].includes('W_ffz'), `h. the streamer's own emotes draw and lead a 7tv emote of the same name (got ${JSON.stringify(hh)})`)
   check(a.state !== 'owned' && cc.state !== 'owned', `other chatters' W are not labelled yours (states ${a.state}, ${cc.state})`)
+
+  // modifiers on a native row bind by the overlay's rule (shared/emote-mods.vectors.json): this
+  // drawer reached back first, and a word with no emote beside it left the line
+  await p.evaluate(() => {
+    ;(window as any).__add('erin', 666, 'modone W w!', false) // "modone W w! W"
+    ;(window as any).__add('erin', 666, 'modtwo W ffzX', false) // "modtwo W ffzX W"
+    ;(window as any).__add('erin', 666, 'modthree w! then', false) // "modthree w! then W"
+  })
+  await p.waitForTimeout(3000)
+  const wide = (word: string): Promise<{ scaled: boolean[]; text: string }> =>
+    p.evaluate((w: string) => {
+      const row = [...document.querySelectorAll('.chat-line__message')].find((r) => (r.textContent || '').includes(w))
+      const scaled = [...(row?.querySelectorAll('.heatsync-emote-wrapper') || [])].map((el) => /scale\(/.test(`${(el as HTMLElement).style.transform} ${(el.querySelector('img') as HTMLElement | null)?.style.transform || ''}`))
+      return { scaled, text: row?.textContent || '' }
+    }, word)
+  const m1 = await wide('modone')
+  check(JSON.stringify(m1.scaled) === '[false,true]' && !m1.text.includes('w!'), `j. \`W w! W\` on a native row widens the emote after the word, as the overlay does (got ${JSON.stringify(m1)})`)
+  const m2 = await wide('modtwo')
+  check(JSON.stringify(m2.scaled) === '[true,false]' && !m2.text.includes('ffzX'), `j. \`W ffzX W\` flips the emote before the word (got ${JSON.stringify(m2)})`)
+  const m3 = await wide('modthree')
+  check(JSON.stringify(m3.scaled) === '[false]' && m3.text.includes('w!'), `j. a word with text between it and the emote stays on the line and changes nothing (got ${JSON.stringify(m3)})`)
 
   // e. her app announces a pick (what a send does when she chose her own W on purpose): the line
   // that comes with it draws her W; the line she sent before, by hand, keeps the channel's

@@ -1017,24 +1017,17 @@
         continue
       }
 
-      // Multiset compose then clamp at ±4x per axis (layout limit)
-      let sx = 1,
-        sy = 1,
-        filter = ''
-      for (const m of mods) {
-        if (m === 'wide') sx *= 2
-        else if (m === 'tall') sy *= 2
-        else if (m === 'hflip') sx *= -1
-        else if (m === 'vmirror') sy *= -1
-      }
-      sx = Math.min(Math.max(sx, -4), 4)
-      sy = Math.min(Math.max(sy, -4), 4)
+      // What the words add up to is the lib's answer (HS_FX), as on a chat row. This
+      // arithmetic was written out here by hand under older names, so a flip
+      // (h! v! ffzX ffzY) and a turn (l! r!) drew nothing.
+      const { sx, sy, rotate } = hsModComposeTransform(mods)
+      let filter = ''
       if (mods.includes('cursed')) filter += ' hue-rotate(45deg) saturate(2)'
       if (hue != null) filter += ` hue-rotate(${hue}deg) saturate(1.6)`
 
       // Apply transform to the WRAPPER span (so all visual artifacts scale together)
-      if (sx !== 1 || sy !== 1) {
-        span.style.setProperty('transform', `scale(${sx}, ${sy})`, 'important')
+      if (sx !== 1 || sy !== 1 || rotate) {
+        span.style.setProperty('transform', hsModTransformStr(sx, sy, rotate), 'important')
         span.style.setProperty('transform-origin', 'center', 'important')
         const fx = Math.abs(sx),
           fy = Math.abs(sy)
@@ -6007,9 +6000,6 @@
   // The kick input hook is a plain copied file with no lib: it asks this to tell a modifier word from an emote
   if (window.HS) window.HS.isModifierWord = (word) => hsModClassify(word).kind === 'modifier'
   const HS_C_HEX_RE = HS_MOD_C_HEX_RE
-  // Static, sorted longest-first — used inside per-word hot path of applyModifiersAcrossMessage.
-  // Hoisting saves ~167k allocations/min at 1000 msgs/min × 10 words/msg.
-  const HS_MOD_KEYS_SORTED = Object.keys(HS_MODIFIER_CLASSES).sort((a, b) => b.length - a.length)
   // Walk a chat message left→right; build groups of {base, overlays, mods, hue},
   // then apply transform/filter to each base. Modifiers in a group ALWAYS target
   // the base (skipping overlays), and chain multiplicatively (w! w! = 4x wide).
@@ -6068,24 +6058,16 @@
       const isHsWrapper = el.matches?.('.heatsync-emote-wrapper')
       const targetImg = el.tagName === 'IMG' ? el : el.querySelector('img')
       if (!targetImg) return
-      let sx = 1,
-        sy = 1,
-        filter = ''
-      for (const m of currentMods) {
-        if (m === 'wide') sx *= 2
-        else if (m === 'tall') sy *= 2
-        else if (m === 'hflip') sx *= -1
-        else if (m === 'vmirror') sy *= -1
-      }
-      sx = Math.min(Math.max(sx, -4), 4)
-      sy = Math.min(Math.max(sy, -4), 4)
+      const { sx, sy, rotate } = hsModComposeTransform(currentMods)
+      const tf = hsModTransformStr(sx, sy, rotate)
+      let filter = ''
       if (currentMods.includes('cursed')) filter += ' hue-rotate(45deg) saturate(2)'
       if (currentHue != null) filter += ` hue-rotate(${currentHue}deg) saturate(1.6)`
-      if (sx !== 1 || sy !== 1) {
+      if (tf) {
         const fx = Math.abs(sx),
           fy = Math.abs(sy)
         if (isHsWrapper) {
-          el.style.setProperty('transform', `scale(${sx}, ${sy})`, 'important')
+          el.style.setProperty('transform', tf, 'important')
           el.style.setProperty('transform-origin', 'center', 'important')
           if (fx > 1) {
             const halfX = `calc(var(--hs-emote-width, 28px) * ${(fx - 1) / 2})`
@@ -6099,7 +6081,7 @@
           }
           el.style.setProperty('--hs-mod-scale', String(Math.max(fx, fy)))
         } else {
-          targetImg.style.setProperty('transform', `scale(${sx}, ${sy})`, 'important')
+          targetImg.style.setProperty('transform', tf, 'important')
           targetImg.style.setProperty('transform-origin', 'center', 'important')
           if (fx > 1) targetImg.style.setProperty('margin-right', 'var(--hs-emote-width, 28px)', 'important')
           if (fy > 1)
@@ -6162,22 +6144,37 @@
     const resultNodes = []
     let currentStack = []
     let pendingWhitespace = ''
-    let pendingModifiers = [] // BTTV/FFZ modifier classes (chain) — applied to PREVIOUS emote
-    let pendingModColor = null // c!#hex parsed hue degrees
 
-    // FFZ semantic: modifier attaches to the IMMEDIATELY PRECEDING emote.
-    // For "Kappa RainTime w!" — w! applies to RainTime (last entry), not Kappa.
-    // Multiset semantics: chain `w! w!` on same emote = 4x wide.
-    const applyPendingToLast = () => {
-      if (!currentStack.length) return
-      const target = currentStack[currentStack.length - 1]
-      if (pendingModifiers.length) {
-        target.modifiers = (target.modifiers || []).concat(pendingModifiers)
-        pendingModifiers = []
+    // The word as this row draws it: the literal name through every tier, then
+    // the overlay reading (`TriHard0`). Shared by the loop below and by the
+    // modifier pass, so both mean the same thing by "an emote".
+    const emoteOf = (w) => allEmotes.get(w) || (w.length > 1 && w.endsWith('0') ? allEmotes.get(w.slice(0, -1)) : null)
+    const emojiOf = (w) => {
+      if (typeof EMOJI_BY_NAME !== 'undefined' && w.length > 2 && w.startsWith(':')) {
+        const core = w.endsWith(':0') && w.length > 3 ? w.slice(0, -1) : w
+        if (core.endsWith(':') && EMOJI_BY_NAME.get(core.slice(1, -1))) return true
       }
-      if (pendingModColor != null) {
-        target.modColorHue = pendingModColor
-        pendingModColor = null
+      return UNICODE_EMOJI_RE.test(w)
+    }
+    // Modifiers (`w! Kappa`, `Kappa ffzX`): which emote each word changes is one
+    // rule in every app, hsModBind (lib/modifiers.js; emote-mods.vectors.json is
+    // it as data). Worked out for the whole line first, so an emote is drawn once
+    // with everything on it and a word with no emote beside it stays on the line.
+    // This loop reached back first and swallowed the word when nothing took it:
+    // `Kappa w! Keepo` widened Kappa here and Keepo in the overlay.
+    const binds =
+      _uiPrefs.emoteModifiers && (text.includes('!') || text.includes('ffz'))
+        ? hsModBind(words, (k, ahead) => !!emoteOf(words[k].trim()) || (!ahead && emojiOf(words[k].trim())))
+        : null
+    // word index of an emote → what its words add up to
+    const fxFor = new Map()
+    if (binds) {
+      for (const [k, to] of binds) {
+        const cls = hsModClassify(words[k].trim())
+        const fx = fxFor.get(to) || { modifiers: [], modColorHue: null }
+        for (const m of cls.mods) fx.modifiers.push(m)
+        if (cls.hue != null) fx.modColorHue = cls.hue
+        fxFor.set(to, fx)
       }
     }
 
@@ -6191,60 +6188,13 @@
         continue
       }
 
-      // Chained modifier word (e.g. "w!h!ffzX" or "w!c!#888") — peel into parts.
-      if (_uiPrefs.emoteModifiers && !HS_MODIFIER_CLASSES[trimmed] && !HS_C_HEX_RE.test(trimmed)) {
-        const _hsPeel = (() => {
-          if (!trimmed || trimmed.length < 2) return null
-          // All modifier tokens contain '!' — fast reject before the loop
-          if (!trimmed.includes('!')) return null
-          const mods = []
-          let hue = null
-          let rem = trimmed
-          while (rem.length > 0) {
-            let matched = false
-            for (const k of HS_MOD_KEYS_SORTED) {
-              if (rem.startsWith(k)) {
-                mods.push(HS_MODIFIER_CLASSES[k])
-                rem = rem.slice(k.length)
-                matched = true
-                break
-              }
-            }
-            if (matched) continue
-            const cm = rem.match(/^c!#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})/)
-            if (cm) {
-              hue = hsHexToHueDeg(cm[1])
-              rem = rem.slice(cm[0].length)
-              continue
-            }
-            return null
-          }
-          return mods.length || hue != null ? { mods, hue } : null
-        })()
-        if (_hsPeel) {
-          for (const m of _hsPeel.mods) pendingModifiers.push(m)
-          if (_hsPeel.hue != null) pendingModColor = _hsPeel.hue
-          pendingWhitespace = ''
-          applyPendingToLast()
-          continue
-        }
-      }
-      // FFZ-style modifier — applies to BASE of current group.
-      // Chain: "Kappa w! raintime0 h! w!" → all mods apply to Kappa, raintime overlays.
-      if (_uiPrefs.emoteModifiers && HS_MODIFIER_CLASSES[trimmed]) {
-        pendingModifiers.push(HS_MODIFIER_CLASSES[trimmed])
+      // a modifier word that changes an emote is not drawn: its emote carries it
+      if (binds?.has(i)) {
         pendingWhitespace = ''
-        applyPendingToLast()
         continue
       }
-      // c!#RRGGBB color modifier
-      const cHexMatch = _uiPrefs.emoteModifiers ? trimmed.match(HS_C_HEX_RE) : null
-      if (cHexMatch) {
-        pendingModColor = hsHexToHueDeg(cHexMatch[1])
-        pendingWhitespace = ''
-        applyPendingToLast()
-        continue
-      }
+      // what the words bound to this one add up to ({ modifiers, modColorHue }), if any
+      const fx = fxFor.get(i)
 
       // Resolve the emote. A literal full-name hit ALWAYS wins — an emote
       // actually named "lerolero0" is standalone, NOT the "lerolero" overlay.
@@ -6268,24 +6218,17 @@
       }
 
       if (emote && isOverlay && currentStack.length > 0) {
-        // Overlay emote with existing base — add to stack as overlay (no mods)
-        const entry = { emote, isOverlay: true, originalWord: trimmed }
+        // Overlay emote with existing base — add to stack as overlay
+        const entry = { emote, isOverlay: true, originalWord: trimmed, ...fx }
         currentStack.push(entry)
         pendingWhitespace = ''
       } else if (emote && isOverlay && currentStack.length === 0) {
-        // Overlay with no base — promote to standalone (modifiers may still
-        // apply since this becomes the "base" of a new group)
+        // Overlay with no base — promote to standalone, with the words that are its own
         if (pendingWhitespace) {
           resultNodes.push(document.createTextNode(pendingWhitespace))
           pendingWhitespace = ''
         }
-        const overlayEntry = { emote, isOverlay: true, originalWord: trimmed }
-        // No base anchor — apply pending mods/hue to this standalone entry.
-        if (pendingModifiers.length) overlayEntry.modifiers = pendingModifiers
-        if (pendingModColor != null) overlayEntry.modColorHue = pendingModColor
-        pendingModifiers = []
-        pendingModColor = null
-        resultNodes.push(generateEmoteElement(emote, true, overlayEntry.modifiers, overlayEntry.modColorHue))
+        resultNodes.push(generateEmoteElement(emote, true, fx?.modifiers, fx?.modColorHue))
       } else if (emote) {
         // Non-overlay (base) emote — flush previous group, start new group
         if (currentStack.length > 0) {
@@ -6297,10 +6240,8 @@
           resultNodes.push(document.createTextNode(pendingWhitespace))
           pendingWhitespace = ''
         }
-        const entry = { emote, isOverlay: false, originalWord: trimmed }
+        const entry = { emote, isOverlay: false, originalWord: trimmed, ...fx }
         currentStack.push(entry)
-        // Apply any pending mods (floating before base, e.g. "w! Kappa") to this base
-        applyPendingToLast()
       } else {
         // Emoji :shortcode: (stackable base) OR ":shortcode:0" (overlay that sits
         // on top of the previous token — mirrors the emote "name0" convention).
@@ -6318,6 +6259,7 @@
                   isOverlay: true,
                   isEmoji: true,
                   originalWord: trimmed,
+                  ...fx,
                 })
                 pendingWhitespace = ''
                 continue
@@ -6337,6 +6279,7 @@
                 isOverlay: false,
                 isEmoji: true,
                 originalWord: trimmed,
+                ...fx,
               })
               continue
             }
@@ -6352,7 +6295,7 @@
             resultNodes.push(document.createTextNode(pendingWhitespace))
             pendingWhitespace = ''
           }
-          currentStack.push({ emoji: trimmed, isOverlay: false, isEmoji: true, originalWord: trimmed })
+          currentStack.push({ emoji: trimmed, isOverlay: false, isEmoji: true, originalWord: trimmed, ...fx })
           continue
         }
         // Not an emote - flush stack and add word
@@ -6501,7 +6444,7 @@
   }
 
   // Generate DOM element for a single emote (React-safe, no innerHTML)
-  // modifiers: array of class suffixes like ['wide','hflip']  (FFZ-style chained)
+  // modifiers: array of class suffixes like ['wide','flipH'] (HS_FX names)  (FFZ-style chained)
   // modColorHue: optional 0-359 deg from c!#hex
   function generateEmoteElement(emote, isOverlay, modifiers, modColorHue) {
     const blocked = blockedEmotes.has(emote.hash)
@@ -6557,24 +6500,13 @@
     // Compose multiset modifier transform — repeats compound (w! w! → 4x wide).
     // Cap each axis at ±4x: chat layout breaks past 4x (line-height etc.) and
     // recipients can't reserve more vertical/horizontal space without overlap.
-    const _composeMods = (mods) => {
-      let sx = 1,
-        sy = 1
-      if (mods)
-        for (const m of mods) {
-          if (m === 'wide') sx *= 2
-          else if (m === 'tall') sy *= 2
-          else if (m === 'hflip') sx *= -1
-          else if (m === 'vmirror') sy *= -1
-        }
-      sx = Math.min(Math.max(sx, -4), 4)
-      sy = Math.min(Math.max(sy, -4), 4)
-      return { sx, sy }
-    }
+    // what the words add up to: the lib's answer (HS_FX), one table for every row. Written out
+    // here by hand it knew `wide` and `tall` only, so a flip and a turn drew nothing.
+    const fx0 = hsModComposeTransform(modList)
+    const modTransform = hsModTransformStr(fx0.sx, fx0.sy, fx0.rotate)
     if (isOverlay) {
-      // Overlay wrapper: the stack css centres it over the widest emote; only a modifier scale is set here.
-      const ov = _composeMods(modList)
-      const overlayScale = ov.sx !== 1 || ov.sy !== 1 ? `transform: scale(${ov.sx}, ${ov.sy}); ` : ''
+      // Overlay wrapper: the stack css centres it over the widest emote; only a modifier transform is set here.
+      const overlayScale = modTransform ? `transform: ${modTransform}; ` : ''
       wrapper.style.cssText = `${overlayScale}transform-origin: center; display: inline-block; overflow: visible; cursor: pointer;`
     } else {
       // Base wrapper. Modifier scale goes here (not on img) so the green
@@ -6585,11 +6517,11 @@
       let layoutMargin = ''
       let modScaleVar = ''
       if (modList) {
-        const { sx, sy } = _composeMods(modList)
-        if (sx !== 1 || sy !== 1) {
+        const { sx, sy } = fx0
+        if (modTransform) {
           const fx = Math.abs(sx),
             fy = Math.abs(sy)
-          baseTransform = `transform: scale(${sx}, ${sy}) !important; transform-origin: center !important;`
+          baseTransform = `transform: ${modTransform} !important; transform-origin: center !important;`
           if (fx > 1) {
             const halfX = `calc(var(--hs-emote-width, 28px) * ${(fx - 1) / 2})`
             layoutMargin += `margin-left: ${halfX} !important; margin-right: ${halfX} !important;`

@@ -31,6 +31,14 @@
  *   q. an emote only the viewer has, removed from the box -> the word is text again (as it ships)
  *   r. the channel's W changes while its chip sits in the box -> the row sent is the picture the
  *      box showed at enter, whichever that was
+ * Modifiers (shared/emote-mods.vectors.json is the rule): one emote changes, the same one in the
+ * box, on the wire and on the row:
+ *   s. a chatter's `Wlol w! Wlol` widens the second, `Wlol ffzX Wlol` flips the first, a word
+ *      never reaches over text, `constructor` after an emote stays on the line
+ *   t. `Wlol w! ` typed in the box widens that chip; another emote typed after it keeps its own
+ *      look; the line goes out `w! Wlol Wlol` and the row is what the box showed
+ *   u. `w! Wlol ` typed in the box widens the emote after the word
+ *   v. a word with no emote beside it stays as typed
  * then right-click another chatter's W: it is blocked, the viewer's own W is NOT removed, and
  * only that exact emote hides.
  */
@@ -385,6 +393,66 @@ try {
   await p.keyboard.press('Control+A')
   await p.keyboard.press('Backspace')
   await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+
+  // ── modifiers: one emote changes, the same one in the box, on the wire and on the row ──
+  // each emote of a row with the effects stamped on it, in order
+  const fxOf = (word: string): Promise<string[]> =>
+    p.evaluate((w: string) => {
+      const row = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes(w))
+      return [...(row?.querySelectorAll('.hs-mc-emote-wrapper') || [])].map((el) => `${(el as HTMLElement).dataset.emoteName}:${(el as HTMLElement).dataset.hsMods || ''}`)
+    }, word)
+  const boxNow = () =>
+    p.evaluate(() => {
+      const el = document.getElementById('hs-mc-input')
+      return {
+        chips: [...(el?.querySelectorAll('img.hs-input-emote') || [])].map((i) => `${(i as HTMLElement).dataset.emoteName}:${(i as HTMLElement).dataset.hsWords || ''}`),
+        text: [...(el?.childNodes || [])].filter((n) => n.nodeType === 3).map((n) => n.textContent).join(' ').replace(/\s+/g, ' ').trim(),
+      }
+    })
+  line('dana', 555, 'cs1', 'sigma Wlol w! Wlol')
+  line('dana', 555, 'cs2', 'tau Wlol ffzX Wlol')
+  line('dana', 555, 'cs3', 'upsilon w! hello Wlol constructor')
+  await until(p, async () => (await p.evaluate(() => document.getElementById('hs-mc-messages')?.textContent || '')).includes('upsilon'))
+  await p.waitForTimeout(800)
+  const s1 = await fxOf('sigma')
+  check(s1.join(' ') === 'Wlol: Wlol:w!', `s. \`Wlol w! Wlol\` on a chatter's line widens the emote after the word (got ${JSON.stringify(s1)})`)
+  const s2 = await fxOf('tau')
+  check(s2.join(' ') === 'Wlol:h! Wlol:', `s. \`Wlol ffzX Wlol\` flips the emote before the word (got ${JSON.stringify(s2)})`)
+  const s3 = await fxOf('upsilon')
+  const s3text = await p.evaluate(() => [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes('upsilon'))?.textContent || '')
+  check(s3.join(' ') === 'Wlol:' && s3text.includes('w!') && s3text.includes('constructor'), `s. a word never reaches over text, and an ordinary word after an emote stays on the line (got ${JSON.stringify(s3)} in ${JSON.stringify(s3text.slice(-60))})`)
+
+  await typeLine('mod1 Wlol w! ')
+  await until(p, async () => (await boxNow()).chips[0] === 'Wlol:w!', 5000)
+  const t1 = await boxNow()
+  check(t1.chips.join(' ') === 'Wlol:w!' && !t1.text.includes('w!'), `t. \`Wlol w! \` typed in the box widens the chip and the word leaves the box (got ${JSON.stringify(t1)})`)
+  await p.keyboard.type('Wlol tail', { delay: 30 })
+  await until(p, async () => (await boxNow()).chips.length === 2, 5000)
+  const t2 = await boxNow()
+  check(t2.chips.join(' ') === 'Wlol:w! Wlol:' && t2.text === 'mod1 tail', `t. a second emote typed after it keeps its own look, and the caret stayed where typing goes on (got ${JSON.stringify(t2)})`)
+  await p.keyboard.press('Enter')
+  await rowHas('mod1')
+  await p.waitForTimeout(800)
+  check(sent('mod1 w! Wlol Wlol tail'), `t. the line went out with the word where it stays the first emote's own (frames: ${JSON.stringify(irc.frames.filter((f) => f.includes('mod1')).map((f) => f.slice(0, 80)))})`)
+  const t3 = await fxOf('mod1')
+  check(t3.join(' ') === 'Wlol:w! Wlol:', `t. and the row is what the box showed (got ${JSON.stringify(t3)})`)
+
+  await typeLine('mod2 w! Wlol ')
+  await until(p, async () => (await boxNow()).chips[0] === 'Wlol:w!', 5000)
+  const u1 = await boxNow()
+  check(u1.chips.join(' ') === 'Wlol:w!' && !u1.text.includes('w!'), `u. a word typed BEFORE an emote is that emote's in the box, as on the row (got ${JSON.stringify(u1)})`)
+  await p.keyboard.press('Enter')
+  await rowHas('mod2')
+  await p.waitForTimeout(800)
+  const u2 = await fxOf('mod2')
+  check(sent('mod2 w! Wlol') && u2.join(' ') === 'Wlol:w!', `u. sent as typed, drawn wide (got ${JSON.stringify(u2)})`)
+
+  await typeLine('mod3 w! then')
+  await p.waitForTimeout(400)
+  const v1 = await boxNow()
+  check(v1.chips.length === 0 && v1.text === 'mod3 w! then', `v. with no emote beside it the word stays the word that was typed (got ${JSON.stringify(v1)})`)
+  await p.keyboard.press('Control+A')
+  await p.keyboard.press('Backspace')
 
   // ── a right-click on an emote in the box acts on the picture the box shows ──
   const chip = () =>

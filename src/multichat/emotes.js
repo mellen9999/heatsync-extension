@@ -1966,8 +1966,7 @@ function pasteEmoteToInput(emoteName, modWords) {
       // Fallback: emote not in cache, insert as text
       const text = input.textContent || ''
       const space = text.length > 0 && !text.endsWith(' ') ? ' ' : ''
-      const modTail = modWords ? ` ${modWords.trim()}` : ''
-      input.textContent = `${text + space + emoteName + modTail} `
+      input.textContent = `${text + space + hsModChipText(emoteName, modWords)} `
       cursorToEnd(input)
     }
     pendingMessage = getInputText()
@@ -1976,8 +1975,8 @@ function pasteEmoteToInput(emoteName, modWords) {
     const before = input.value.slice(0, pos)
     const after = input.value.slice(pos)
     const space = before.length > 0 && !before.endsWith(' ') ? ' ' : ''
-    const modTail = modWords ? ` ${modWords.trim()}` : ''
-    const insert = `${emoteName + modTail} `
+    // each word where it stays this emote's own, as a chip writes it (`w! Kappa`, `Kappa ffzX`)
+    const insert = `${hsModChipText(emoteName, modWords)} `
     input.value = before + space + insert + after
     pendingMessage = input.value
     input.selectionStart = input.selectionEnd = pos + space.length + insert.length
@@ -3759,8 +3758,6 @@ cleanup.persistInterval(cleanup.setIntervalIfVisible(scanDomForEmotes, 10000))
 // FFZ/BTTV-style modifier helpers — bridged to lib/modifiers.js
 // (HS_MOD_TOKENS, hsModClassify, hsModBuildStyleAttr, hsModInjectWrapperStyle,
 // hsModComposeFilter, hsModHexToHue) are bundled by build.js.
-const HS_MC_MODS = HS_MOD_TOKENS
-const HS_MC_C_RE = HS_MOD_C_HEX_RE
 // Static list — hoisted out of the per-word inline-suffix peel so it isn't
 // reallocated for every non-resolved word on the message hot path. DERIVED from
 // HS_MOD_TOKENS, never hand-listed: the hand-written version had drifted and was
@@ -3768,9 +3765,11 @@ const HS_MC_C_RE = HS_MOD_C_HEX_RE
 // eaten by an upstream send pipeline) resolved to nothing. Longest-first so a
 // long token wins over any shorter one that ends the same way.
 const HS_INLINE_MOD_SUFFIXES = Object.keys(HS_MOD_TOKENS).sort((a, b) => b.length - a.length)
-function _hsMcHexToHue(h) {
-  return hsModHexToHue(h)
-}
+// Every modifier word starts with one of its tokens, and those are `x!` or
+// `ffz…`: a word that is neither is never asked the longer question (this runs
+// for every word of every line).
+const _isModWord = (w) => (w.charCodeAt(1) === 33 || w.startsWith('ffz')) && hsModClassify(w).kind === 'modifier'
+
 function _hsMcApplyMods(html, mods, hue) {
   if (!mods?.length && hue == null) return html
   // Stamp the ORDERED effect list on the wrapper so the hover tooltip can show
@@ -4430,81 +4429,41 @@ function processEmotes(
     // user, and multi-emote runs are exactly where interop breaks visibly.
     // A token with an emote on NEITHER side stays literal text (never
     // swallowed — that regression is why the orphan guard exists below).
-    const _modForward = (w) => w.endsWith('!') // BTTV token shape; ffz* are backward
+    // Which emote: hsModSide (lib/modifiers.js), the rule every app runs from
+    // emote-mods.vectors.json. A chain (`w!h!ffzX`, a heatsync-ism no provider
+    // parses) goes the way of the word it is led by.
     // Is there an emote ahead before any plain word? Skips intervening
-    // modifiers so "c! ffzX Kappa" lands both on Kappa.
+    // modifiers, chains included, so "c! ffzX Kappa" lands both on Kappa.
     const _emoteComesNext = (from) => {
       for (let j = from; j < words.length; j++) {
         const w = words[j]
         if (WS_RE.test(w)) continue
-        if (HS_MC_MODS[w] || HS_MC_C_RE.test(w)) continue
+        if (_isModWord(w)) continue
         if (hasKickEmote && /^\[emote:\d+:[^\]]+\]$/.test(w)) return true
         return !!_lookup(w)?.e
       }
       return false
     }
 
-    // FFZ semantic: modifier attaches to the IMMEDIATELY PRECEDING emote.
-    // Kappa RainTime w! → wide RainTime (not Kappa).
-    // FFZ modifiers attach to the IMMEDIATELY PRECEDING emote. If there's no
-    // emote in the current stack to attach to (e.g. the base failed to resolve
-    // from a cold cache after a refresh), the modifier is ORPHANED — it must
-    // render as literal text, NOT be silently swallowed. Swallowing it into
-    // pendingMods (the old behavior) dropped it entirely when no following emote
-    // consumed it — the reported "WideBirdge ffzW ..." → plain "WideBirdge"
-    // repeated, every ffzW eaten. So each modifier branch only consumes the token
-    // when _lastItem() exists; otherwise it falls through to the text path below.
-    const modKind = HS_MC_MODS[word]
-    if (modKind) {
-      const fwd = _modForward(word)
-      // canonical direction first, opposite as fallback, else fall through to text
-      if (fwd && _emoteComesNext(_wIdx + 1)) {
-        pendingMods.push(modKind)
-        pendingWhitespace = ''
-        continue
-      }
-      if (_lastItem()) {
-        _lastItem().mods.push(modKind)
-        pendingWhitespace = ''
-        continue
-      }
-      if (!fwd && _emoteComesNext(_wIdx + 1)) {
-        pendingMods.push(modKind)
-        pendingWhitespace = ''
-        continue
-      }
+    // A modifier with an emote on NEITHER side is ORPHANED: it must render as
+    // literal text (or as the emote of that name), NOT be silently swallowed.
+    // Swallowing it dropped the reported "WideBirdge ffzW ..." to a plain
+    // "WideBirdge" repeated when the base failed to resolve from a cold cache,
+    // every ffzW eaten. So the word is only consumed when it has an emote to
+    // change; otherwise it falls through to the text path below.
+    const _cls = _isModWord(word) ? hsModClassify(word) : null
+    const _side = _cls && hsModSide(word, !!_lastItem(), () => _emoteComesNext(_wIdx + 1))
+    if (_side === 'next') {
+      // ride pendingMods onto the emote that follows
+      for (const m of _cls.mods) pendingMods.push(m)
+      if (_cls.hue != null) pendingHue = _cls.hue
+      pendingWhitespace = ''
+      continue
     }
-    const cMatchTok = word.match(HS_MC_C_RE)
-    if (cMatchTok) {
-      // c!#hex is a BTTV-shaped token — forward first, same as its siblings.
-      const hueVal = _hsMcHexToHue(cMatchTok[1])
-      if (_emoteComesNext(_wIdx + 1)) {
-        pendingHue = hueVal
-        pendingWhitespace = ''
-        continue
-      }
-      if (_lastItem()) {
-        _lastItem().hue = hueVal
-        pendingWhitespace = ''
-        continue
-      }
-    }
-    // Peel chained modifier word (e.g. "w!h!ffzX" or "w!c!#888h!"). Chaining is
-    // a heatsync-ism — no provider parses it — so direction follows the word's
-    // FIRST token, matching what the user led with and keeping the rule
-    // identical to the single-token case above.
-    const _hsPeel = _lastItem() || _emoteComesNext(_wIdx + 1) ? hsModPeelChain(word) : null
-    if (_hsPeel) {
-      const chainFwd = _modForward(word)
-      const target = chainFwd && _emoteComesNext(_wIdx + 1) ? null : _lastItem()
-      if (target) {
-        for (const m of _hsPeel.mods) target.mods.push(m)
-        if (_hsPeel.hue != null) target.hue = _hsPeel.hue
-      } else {
-        // forward: ride pendingMods onto the emote that follows
-        for (const m of _hsPeel.mods) pendingMods.push(m)
-        if (_hsPeel.hue != null) pendingHue = _hsPeel.hue
-      }
+    if (_side === 'last') {
+      const target = _lastItem()
+      for (const m of _cls.mods) target.mods.push(m)
+      if (_cls.hue != null) target.hue = _cls.hue
       pendingWhitespace = ''
       continue
     }
@@ -4673,7 +4632,7 @@ function processEmotes(
             emote = candHit.e
             emoteFromInv = candHit.inv
             isOverlayEmote = !!emote.zeroWidth
-            _hsInlineModSuffix = HS_MC_MODS[suf] || null
+            _hsInlineModSuffix = HS_MOD_TOKENS[suf] || null
             // resolved from the peeled base — a block on the base must hide
             // "Basew!" too, same as the trailing-0 overlay path
             overlayBaseName = baseGuess
@@ -4692,8 +4651,8 @@ function processEmotes(
             emoteFromInv = candHit.inv
             isOverlayEmote = !!emote.zeroWidth
             overlayBaseName = baseGuess
-            const m = inlineColor[2].match(HS_MC_C_RE)
-            if (m) _hsInlineModSuffix = { hue: _hsMcHexToHue(m[1]) }
+            const m = inlineColor[2].match(HS_MOD_C_HEX_RE)
+            if (m) _hsInlineModSuffix = { hue: hsModHexToHue(m[1]) }
           }
         }
       }

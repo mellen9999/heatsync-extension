@@ -9,6 +9,10 @@ import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { Window } from 'happy-dom'
+import { hsModChipText } from '../src/lib/modifiers.js'
+
+// input.js is concatenated beside lib/modifiers.js: a chip's words are written by its helper
+globalThis.hsModChipText = hsModChipText
 
 const ROOT = join(import.meta.dir, '..')
 const IRC = readFileSync(join(ROOT, 'src', 'multichat', 'irc.js'), 'utf8')

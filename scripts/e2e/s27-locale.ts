@@ -269,6 +269,13 @@ async function oneLocale(lang: string, tw: string) {
     enTexts.set(s, [...(enTexts.get(s) || []), k])
   }
   const locTexts = new Set(Object.values(LOC).map((v) => norm(v.message)))
+  // a message with a $SLOT$ (the login hint's platform, a channel name) is a pattern, not one text
+  const esc = (x: string) => x.replace(/[.*+?^()|[\]\\{}]/g, '\\$&')
+  const locSlots = Object.values(LOC)
+    .map((v) => norm(v.message))
+    .filter((m) => /\$[a-z_]+\$/.test(m) && m.replace(/\$[a-z_]+\$/g, '').trim().length >= 4)
+    .map((m) => new RegExp(`^${m.split(/\$[a-z_]+\$/).map(esc).join('.+')}$`))
+  const isLocText = (x: string) => locTexts.has(x) || locSlots.some((re) => re.test(x))
   const leaks = new Map<string, { key: string; surface: string; el: string }>()
   let t0 = Date.now()
   const errs: string[] = []
@@ -378,7 +385,7 @@ async function oneLocale(lang: string, tw: string) {
     ok(`${tag}: panel mounted, chat flows`)
     const place = await p.evaluate(() => document.getElementById('hs-mc-input')?.getAttribute('data-placeholder') || '')
     // signed out the box says to sign in first: whichever line it shows must be this language's own words
-    if (!locTexts.has(norm(place)) || (lang !== 'en' && enTexts.has(norm(place)) && !locTexts.has(norm(place))))
+    if (!isLocText(norm(place)))
       bad(`${tag}: the composer's placeholder "${place}" is not a message of the ${lang} file`)
     if (lang === 'ar') {
       const pd = await p.evaluate(() => {

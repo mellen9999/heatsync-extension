@@ -1,5 +1,7 @@
 # heatsync
 
+<img src="docs/img/panel.png" width="339" align="right" alt="the heatsync panel on twitch: one tab with northernlion's twitch and kick chat merged, each line marked [T] or [K]">
+
 twitch, kick and youtube live chat in one panel — read all your channels at once and reply into any of them without alt-tabbing. a streamer live on all three is one tab. plus your own emotes in any channel: 5,000 free slots, no streamer setup. other heatsync users see them; everyone else sees the plain name.
 
 ## install

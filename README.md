@@ -1,94 +1,63 @@
 # heatsync
 
-twitch, kick and youtube live chat in one panel — read every stream you follow and reply into any of them without alt-tabbing. nobody else has to install anything. plus your own emotes in any channel: 5,000 free slots, no streamer setup needed.
-
-**no ad trackers, no third-party analytics or telemetry** — emotes and settings sync through heatsync's own servers, never to google, sentry, or any analytics company. it does talk to 7tv, bttv and ffz, because that is where those emotes and cosmetics live (pronouns come through heatsync, so chatter ids never reach pronoundb); [the privacy policy](https://heatsync.org/legal/privacy) lists exactly what goes to each.
-
-## features
-
-- **multichat overlay** — twitch, kick, and youtube chat in one panel: per-channel tabs, per-platform filters, mentions, twitch whispers, resizable and dockable to any edge. no account needed to read.
-- **emote sovereignty** — a free 5,000-slot inventory ([one account](https://heatsync.org)) that follows you into twitch and kick native chat and the overlay — any channel, no streamer opt-in. tab-complete a 7TV emote and hit send; the slot fills silently. one click imports a channel's whole emote inventory.
-- **7TV / BTTV / FFZ** — emotes, paints, and badges render automatically, channel and global. heatsync sits next to those extensions — keep them, and add the cross-platform chat and portable emotes they don't do.
-- **keyboard-first input** — vim keybindings on the twitch, kick, and multichat inputs (normal/insert, motions, operators, `.` repeat), a wysiwyg emote composer, message history, reply threading, and an instant filter that narrows the live buffer by text or user.
-- **moderation + profiles** — a hover mod toolbar (`/ban` `/timeout` `/unban` `/delete`), client-side automod, and mute-or-block that carries a user across twitch and kick. profile cards with socials, badges, and a paginated chat-log archive a click away. one-click twitch clips.
-- **stream events + whispers** — inline banners for going live, offline, game switches, raids, hype trains, gift subs, redeems, predictions and polls, each one toggleable. twitch whispers, a desktop notification on a mention, and a seen-state that follows you across tabs and devices. a refresh brings back the last 15 minutes of game switches and go-offlines, worded the same as heatsync.org.
-- **native chat cleanup** — toggles that hide channel points, hype trains, bits, drops and upsells, and auto-claim for channel points.
-- **localized** — 34 languages, right-to-left included.
-- **light on your machine** — vanilla js, zero runtime dependencies. a capped message buffer and dom render cap hold memory steady through long sessions; the render cap is adjustable for weak hardware.
+twitch, kick and youtube live chat in one panel — read all your channels at once and reply into any of them without alt-tabbing. a streamer live on all three is one tab. plus your own emotes in any channel: 5,000 free slots, no streamer setup. other heatsync users see them; everyone else sees the plain name.
 
 ## install
 
-### chrome / edge / brave / arc / opera
+- **chrome, edge, brave and other chromium browsers** — [chrome web store](https://chromewebstore.google.com/detail/heatsync/afadollcanjpemaonbgnkhjddaebjeja). one click, updates itself.
+- **firefox 128+** — [firefox add-ons](https://addons.mozilla.org/firefox/addon/heatsync-chat/). one click, updates itself. or open the signed [heatsync-firefox.xpi](https://github.com/mellen9999/heatsync-extension/releases/latest/download/heatsync-firefox.xpi) with firefox — same code, updates itself from this repo's releases.
 
-**[install from the chrome web store](https://chromewebstore.google.com/detail/heatsync/afadollcanjpemaonbgnkhjddaebjeja)** — one click, auto-updates.
+then open any twitch, kick or youtube stream: the panel takes over the chat column and a short tour shows you around. reading needs no account. sending uses your twitch, kick or youtube login; the emote inventory needs a free [heatsync.org](https://heatsync.org) account.
 
-### firefox
+## features
 
-**[install from firefox add-ons](https://addons.mozilla.org/firefox/addon/heatsync-chat/)** — one click, auto-updates.
+- **one panel, every chat** — a tab per channel, or one tab per streamer with their twitch, kick and youtube chats merged (show or hide each). mentions and whispers tabs, a live-follows list, and an import of your twitch and kick follows. resize it, dock it to any edge, or pop it out.
+- **your emotes, any channel** — a 5,000-slot inventory that works in twitch's and kick's own chat and in the panel, any channel, no streamer opt-in. tab-complete any 7tv emote and send it — it's added for you. upload your own, or copy a channel's whole emote list in one click. gif and emoji tabs in the picker.
+- **7tv, bttv and ffz built in** — their emotes, paints and badges (channel, global, personal) render on their own, next to heatsync's own name paints and badges. no other extension needed.
+- **keyboard-first** — emotes turn into pictures as you type, up/down brings back what you sent, replies on twitch and kick, and a search box narrows the live chat to a word, `@name` or `/regex/`. opt-in vim keys in every chat box — twitch, kick, youtube and the panel (normal/insert, motions, operators, `.` repeat).
+- **moderation** — hover buttons you pick (delete, timeouts, purge, ban, unban), mod slash commands, twitch's automod queue with allow/deny, a mod tools panel (shield mode, unban requests, automod level, blocked terms) and a mod log. on twitch, kick and youtube, as far as each platform allows.
+- **people** — profile cards with followage, sub status, badges, pronouns and your private notes, and their chat history a click away. mute or block someone and it follows their linked accounts. one-click clips of live twitch streams.
+- **filters + alerts** — rules that highlight or hide messages by word, pattern, user, badge or kind; hide bots, commands and repeats. mention sounds, an opt-in desktop notification, and what you've read follows you across tabs and devices when signed in.
+- **stream events** — going live, offline, game switches, raids, hype trains, subs, redeems, predictions, polls, youtube super chats and memberships, each one toggleable. channel points claim themselves on twitch.
+- **34 languages**, right-to-left included.
+- **light** — vanilla js, zero runtime dependencies. chat buffers and on-screen rows are capped, so memory holds steady through a long session.
 
-alternative: download the AMO-signed **[heatsync-firefox.xpi](https://github.com/mellen9999/heatsync-extension/releases/latest/download/heatsync-firefox.xpi)** and open it with firefox — installs permanently, and auto-updates from the same link.
+## privacy
+
+no ad trackers and no third-party analytics — nothing goes to google analytics, sentry or any ad network.
+
+- signed in, your inventory and settings sync through heatsync's own servers. settings also ride your browser's own sync if you have it on.
+- the one usage count is a check-in to heatsync.org: a random id that changes every midnight, added to daily totals, never stored. opt-in on firefox.
+- opening a channel lets heatsync.org archive its public chat — never whispers. anyone can erase their own messages at [heatsync.org/erase](https://heatsync.org/erase).
+- it talks to 7tv, bttv and ffz, because that is where their emotes live. pronouns come through heatsync.org, so pronoundb never sees you.
+
+the [privacy policy](https://heatsync.org/legal/privacy) lists exactly what goes where.
 
 ## build from source
+
+needs [bun](https://bun.sh), plus node for the syntax check.
 
 ```bash
 bun install
 bun run build.js chrome    # → dist/chrome/
 bun run build.js firefox   # → dist/firefox/
-bun run build.js --package # both + signed zips + source zip
+bun run build.js --package # both, minified, + store zips + source zip
 ```
 
-every build runs the test suite first, then `node --check` on the output. add `--minify` for a release-sized bundle. the bundles (`multichat-core.js`, `background.js`) are build output, not tracked — `src/multichat/` and `src/background/` are the source. a build lands in `dist/<browser>.staging` and swaps into `dist/<browser>` only when it passes, so a failed build never leaves a half-built folder.
+load it: chrome `chrome://extensions` → developer mode → load unpacked → `dist/chrome`. firefox `about:debugging` → this firefox → load temporary add-on → `dist/firefox/manifest.json`.
 
-`--package` minifies, and emits `dist/heatsync-{chrome,firefox}-X.Y.Z.zip` plus `dist/heatsync-source-X.Y.Z.zip` for AMO review.
+every build runs the unit tests first (`--no-test` skips them, never with `--package`), then `node --check` on the output. it builds into `dist/<browser>.staging` and swaps into `dist/<browser>` only when everything passes, so a failed build never leaves a half-built folder. `multichat-core.js` and `background.js` are build output, not tracked — edit `src/multichat/` and `src/background/`.
 
 ## contributing
 
-`bun test` runs the unit tests, `bun run lint` and `bun run typecheck` are the other two gates, and `git config core.hooksPath .githooks` turns on the pre-push check that runs all of them. [CONTRIBUTING.md](CONTRIBUTING.md) has the setup, [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has what runs where and how the build fits together, and [CHANGELOG.md](CHANGELOG.md) has what changed in each version.
+`bun test`, `bun run lint` and `bun run typecheck` are the gates. `git config core.hooksPath .githooks` runs them, plus the build and bundle budget, before every push. [CONTRIBUTING.md](CONTRIBUTING.md) has the setup, [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has what runs where, and [CHANGELOG.md](CHANGELOG.md) has what changed in each version.
 
-a few files are byte-for-byte copies of heatsync.org's own modules — the user card, the stream event wording, the gif search layer, the emote-refs builder, the name-paint compiler. edit them on the site, then run `scripts/sync-site-copies.sh` (paint compiler: `scripts/sync-paint-compiler.sh`). the build and a parity test on each side fail if a copy drifts.
+some files are byte-for-byte copies of heatsync.org's own code — the user card, the stream event wording, gif search, emote refs, the emote law, the brand tokens, the name-paint compiler. `scripts/sync-site-copies.sh` and `scripts/sync-paint-compiler.sh` list them, and a parity test fails if one drifts. the site repo is private, so don't edit them here: say what you need in an issue or your pr, and the change lands on the site first.
 
 ## releasing
 
-pushing a `v*` tag runs `.github/workflows/release.yml`: build, package, and attach versioned zips, versionless aliases and the source zip to a github release. the install links above resolve to the latest tag.
+maintainer runbook: [docs/RELEASING.md](docs/RELEASING.md).
 
-`scripts/publish.js` is the one-command publisher for the chrome web store and amo (firefox, listed channel). safe by default: without `--publish`, nothing is ever uploaded.
+---
 
-**order: stores first, tag second.** amo version numbers are single-use across channels — the store submission owns the clean `X.Y.Z`, and the tag-triggered self-dist workflow signs its unlisted xpi as `X.Y.Z.1` so the two never collide. run `publish.js --publish`, then push the tag.
-
-```bash
-bun scripts/publish.js                                # dry-run, current version, both stores
-bun scripts/publish.js --version 1.7.24 --publish      # bump + build + publish both
-bun scripts/publish.js --chrome-only --publish
-bun scripts/publish.js --firefox-only --publish
-bun scripts/publish.js --dry-run                       # force no-network even with --publish
-bun scripts/publish.js --sync-summaries --publish      # push the per-language amo listing summaries only
-```
-
-### one-time credential setup
-
-credentials live in `~/.config/heatsync/publish.env` (chmod 600, never committed). running `bun scripts/publish.js` with the file missing prints this exact checklist:
-
-```
-AMO_JWT_ISSUER=...
-AMO_JWT_SECRET=...
-CWS_CLIENT_ID=...
-CWS_CLIENT_SECRET=...
-CWS_REFRESH_TOKEN=...
-```
-
-1. **amo (firefox) api keys** — [addons.mozilla.org → Developer Hub → Manage API Keys](https://addons.mozilla.org/en-US/developers/addon/api/key/). generate credentials; keep the tab open, the secret is shown once.
-2. **chrome web store api**:
-   - Google Cloud Console → pick/create a project → enable **Chrome Web Store API**
-   - APIs & Services → Credentials → Create Credentials → OAuth client ID → type **Web application**
-   - add `http://127.0.0.1:8976` as an **Authorized redirect URI** (google blocked the old copy-paste "oob" flow, so the token exchange redirects to a local port instead)
-3. `bun scripts/publish.js --set-creds` — prompts for all four values with **hidden input** and writes them to `~/.config/heatsync/publish.env` (chmod 600). nothing is echoed, so a secret never lands in a shell transcript.
-4. `bun scripts/publish.js --cws-auth` — opens the google consent flow, catches the redirect on `127.0.0.1:8976`, and writes `CWS_REFRESH_TOKEN` for you (never printed).
-
-### what it does
-
-- bumps `package.json` + both manifests when `--version` is passed, then runs the normal `build.js --package` build (which also syncs the built `chrome/manifest.json`)
-- **chrome**: refreshes an oauth access token, `PUT`s the zip to the Chrome Web Store upload endpoint, then publishes the item. pending review is hours-to-days.
-- **firefox**: uploads the zip to amo's `listed` channel (this is deliberate — unlisted/self uploads don't reach the public listing), polls validation, creates a new version with release notes (auto-composed from `git log` since the last tag) and approval notes (exact reproducible build steps for reviewers), then attaches the source zip. pending review is typically a few days.
-- prints a final summary of what was uploaded where and what's still pending.
-
-[MIT](LICENSE)
+[MIT](LICENSE) · [security](SECURITY.md) · [trademark](TRADEMARK.md) — not affiliated with twitch, kick, youtube, 7tv, bttv or ffz.

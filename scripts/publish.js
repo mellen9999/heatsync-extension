@@ -15,7 +15,7 @@
 // no-network behavior even if --publish is also passed.
 //
 // credentials live in ~/.config/heatsync/publish.env (chmod 600, never in the
-// repo). see README.md "releasing" for one-time setup.
+// repo). see docs/RELEASING.md for one-time setup.
 
 import { execFileSync } from 'node:child_process'
 import { createHmac } from 'node:crypto'
@@ -210,7 +210,7 @@ async function cwsAuthFlow() {
   if (!map.CWS_CLIENT_ID || !map.CWS_CLIENT_SECRET) {
     console.error(`CWS_CLIENT_ID / CWS_CLIENT_SECRET not found in ${path}`)
     console.error('create a Google Cloud OAuth client (type "Web application", redirect URI http://127.0.0.1:8976) and add both keys first')
-    console.error('see README.md "releasing" for the exact steps')
+    console.error('see docs/RELEASING.md for the exact steps')
     process.exit(1)
   }
 

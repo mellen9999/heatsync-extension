@@ -1006,8 +1006,9 @@ async function clearPendingSurfaces(sent) {
 // data category (src/manifests/firefox.json), so there it is the user's call:
 // without the grant the poll still goes out — the kill-switch must never
 // depend on it — but carries no id and no surfaces. Chromium has no such
-// permission; its store disclosure covers the poll. A Firefox too old to know
-// the key throws, and has no consent to honor either.
+// permission; its store disclosure covers the poll. Every Firefox this build
+// installs on (140+, strict_min_version) knows the key, so a throw is
+// something broken, and broken reads as no consent.
 //
 // An unpacked / temporary load is never a user: it is a dev build or a headless
 // fresh-profile run, and each of those mints a new id. In sep 2026 they were 19
@@ -1026,7 +1027,7 @@ async function mayCountInstall() {
   try {
     return (await browser.permissions.contains({ data_collection: ['technicalAndInteraction'] })) === true
   } catch {
-    return true
+    return false
   }
 }
 

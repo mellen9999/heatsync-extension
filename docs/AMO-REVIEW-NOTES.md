@@ -26,8 +26,24 @@ images, and on kick.com the page's own stylesheet text (re-applied as CSS to
 keep kick's layout intact) — never executed as code. (The only eval/new Function in the repository
 live under tests/ and are not part of the package.)
 
+DATA CATEGORIES (data_collection_permissions, Firefox 140+ so the built-in
+consent covers every user). Required, because the extension cannot do its job
+without them, and each leaves the browser on its own rather than on one command:
+- authenticationInfo: the heatsync.org session and account, and the account
+  data synced to it (emote inventory, blocked emotes, channel list, settings, private profile
+  notes).
+- personalCommunications: heatsync DMs (/api/dm), Twitch whispers sent through
+  heatsync.org (/api/twitch/whisper), heatsync feed posts and replies, and the
+  sent-line report described below.
+- browsingActivity: which Twitch/Kick/YouTube channel is open, so heatsync.org
+  can serve that channel's emotes, cosmetics, recent messages and live status
+  and archive its public chat. Nothing outside those three sites.
+- websiteContent: links posted in chat, sent for a link preview or embed.
+Optional: technicalAndInteraction, the check-in below.
+
 DATA HANDLING. No third-party tracking, no ad networks, no analytics SDK. We do
-not collect browsing history, clickstream, or device identifiers. Chat: the
+not collect browsing history outside the open channel, clickstream, or device
+identifiers. Chat: the
 public chat of channels the user opens is archived by heatsync.org's own server
 (the browser never uploads it); for a line the user sends through heatsync, the
 extension reports its message id and the emotes in it (on Twitch the text too,
@@ -96,4 +112,4 @@ the emote inventory, sign in with the free Twitch/Kick OAuth at heatsync.org.
 - [ ] `src/manifests/firefox.json` version == the version being submitted (build.js guards this).
 - [ ] attach `dist/heatsync-source-X.Y.Z.zip` (produced by `bun run build.js --package`).
 - [ ] permissions in the tables above still match both manifests.
-- [ ] data-collection form: MUST match `src/manifests/firefox.json` → `data_collection_permissions` (declares `authenticationInfo`). Declare **authentication info collected + transmitted** to first-party heatsync.org for emote/account sync, plus synced account data (emote inventory, blocked emotes, channel names, ui prefs). Do NOT declare "no data collected" — the extension transmits the heatsync account token + inventory to heatsync.org and retains it server-side, and reports the lines the user sends through heatsync (message id, emotes, on Twitch the text) (see the privacy policy). Also declare **technical and interaction data** (optional in the manifest) for the rotating-id health/kill-switch check-in (privacy policy, "the extension check-in") — first-party, not shared. No third-party sharing, no third-party analytics/telemetry. Twitch/Kick/YouTube cookies are read locally for identity and never sent to us.
+- [ ] data-collection form: MUST match `src/manifests/firefox.json` → `data_collection_permissions` and the DATA CATEGORIES list above: required authentication info, personal communications, browsing activity and website content; optional technical and interaction data (the check-in). All first-party to heatsync.org, none shared or sold, no third-party analytics. Never "no data collected". Twitch/Kick/YouTube cookies are read locally and never sent to us.

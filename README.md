@@ -7,7 +7,7 @@ twitch, kick and youtube live chat in one panel — read all your channels at on
 ## install
 
 - **chrome, edge, brave and other chromium browsers** — [chrome web store](https://chromewebstore.google.com/detail/heatsync/afadollcanjpemaonbgnkhjddaebjeja). one click, updates itself.
-- **firefox 128+** — [firefox add-ons](https://addons.mozilla.org/firefox/addon/heatsync-chat/). one click, updates itself. or open the signed [heatsync-firefox.xpi](https://github.com/mellen9999/heatsync-extension/releases/latest/download/heatsync-firefox.xpi) with firefox — same code, updates itself from this repo's releases.
+- **firefox 140+** — [firefox add-ons](https://addons.mozilla.org/firefox/addon/heatsync-chat/). one click, updates itself. or open the signed [heatsync-firefox.xpi](https://github.com/mellen9999/heatsync-extension/releases/latest/download/heatsync-firefox.xpi) with firefox — same code, updates itself from this repo's releases.
 
 then open any twitch, kick or youtube stream: the panel takes over the chat column and a short tour shows you around. reading needs no account. sending uses your twitch, kick or youtube login; the emote inventory needs a free [heatsync.org](https://heatsync.org) account.
 

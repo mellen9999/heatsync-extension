@@ -353,7 +353,7 @@
 
   // Per-row visibility tag — same wedge signal as the cycle readout on the other
   // surfaces: who actually sees this emote if you send it. Color grades by reach:
-  // green everyone/native → yellow {provider} (needs that ext) → orange heatsync
+  // green everyone/native → yellow {provider} (needs that ext) → white heatsync
   // only (your set; non-heatsync viewers get plain text). Unknown source falls back
   // to the neutral category so it never asserts a wrong visibility.
   function hsVisTag(r) {

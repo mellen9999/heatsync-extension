@@ -1694,7 +1694,7 @@
 
   // Per-row visibility tag — same wedge signal as the cycle readout on the other
   // surfaces: who sees this emote if you send it. green everyone → yellow {provider}
-  // (needs that ext) → orange heatsync only. Unknown source falls back to the
+  // (needs that ext) → white heatsync only. Unknown source falls back to the
   // neutral category so it never asserts a wrong visibility.
   function hsVisTag(e) {
     if (e.isChatter || e.isEmoji) return { t: 'everyone', cls: 'v-all' }

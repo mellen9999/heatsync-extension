@@ -1041,12 +1041,15 @@ function emoteImgHtml([name, emote]) {
   const cwAttr = flagCat ? ` data-cw="${escapeHtml(flagCat)}"` : ''
   const wrapCls = (isBlocked ? 'hs-mc-picker-emote-wrap blocked' : 'hs-mc-picker-emote-wrap') + nsfwTag
   const safeName = escapeHtml(name)
+  // who sees it if you send it, in the Tab readout's own words (a variant = not loaded in this room)
+  const who = emoteCycleMeta({ source: emote.source, tier: emote.state === 'owned' ? 1 : 2, remote: !!emote.variant })
+    .vis.t
   // The picker grid is a FIXED 32px box (.hs-mc-picker-emote, max-height:32px)
   // — it does not move with the emote-size setting, so it asks for the rung the
   // SCREEN needs and nothing else. Same reasoning as getChatResUrl: max-height
   // only shrinks, so a denser file changes the pixels and not the layout.
   const pickerUrl = hsRungUrl(emote.url, typeof devicePixelRatio === 'number' && devicePixelRatio >= 1.5 ? 2 : 1)
-  return `<span class="${wrapCls}" role="option" aria-selected="false" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}"${emote.variant ? ` data-variant="${escapeHtml(emote.variant)}"` : ''} data-source="${escapeHtml(emote.source)}" data-state="${escapeHtml(state)}" loading="lazy"></span>`
+  return `<span class="${wrapCls}" role="option" aria-selected="false" data-name="${safeName}"${cwAttr}><img src="${escapeHtml(pickerUrl)}" alt="${safeName}" title="${safeName} (${escapeHtml(emote.source)} · ${escapeHtml(who)})" class="hs-mc-picker-emote hs-emote-${escapeHtml(emote.source)}" data-name="${safeName}"${emote.variant ? ` data-variant="${escapeHtml(emote.variant)}"` : ''} data-source="${escapeHtml(emote.source)}" data-state="${escapeHtml(state)}" loading="lazy"></span>`
 }
 
 /**

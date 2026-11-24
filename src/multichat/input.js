@@ -8271,7 +8271,7 @@ function autoAddInputEmotes(text, { relayed = false } = {}) {
 // account — not a channel or global emote that shows for everyone anyway.
 // Inventory is kept out of emoteCache, so emoteCache.has means global.
 function ownOnlyEmotesIn(text) {
-  const pools = typeof activeTabEmotePools === 'function' ? activeTabEmotePools() : []
+  const pools = activeTabEmotePools()
   const out = new Set()
   for (const w of text.split(/\s+/)) {
     if (!w || !inventoryEmotes.has(w) || emoteCache.has(w) || pools.some((p) => p?.has?.(w))) continue

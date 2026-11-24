@@ -631,7 +631,7 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
         // renderProbe: run the probe name through the REAL chat render pipeline
         // and return the emitted html — proves what a live message would paint
         // without waiting for one to arrive.
-        if (e?.detail?.renderProbe && typeof processEmotes === 'function') {
+        if (e?.detail?.renderProbe) {
           out.renderHtml = processEmotes(
             String(e.detail.renderProbe),
             (e.detail.ch || '').toLowerCase(),
@@ -650,7 +650,7 @@ if (typeof __HS_DEV_BUILD__ !== 'undefined' ? __HS_DEV_BUILD__ : true) {
             name: probe,
             lookup: !!lookupEmote(probe),
             renderOrder: typeof lookupEmoteRenderOrder === 'function' ? !!lookupEmoteRenderOrder(probe) : null,
-            pools: typeof activeTabEmotePools === 'function' ? activeTabEmotePools().map((m) => m.size) : null,
+            pools: activeTabEmotePools().map((m) => m.size),
             // raw pool rows — which map has it, and with what state (the
             // autoAddInputEmotes global-state skip is invisible without this)
             cacheEntry: typeof emoteCache !== 'undefined' ? emoteCache.get(probe) || null : null,

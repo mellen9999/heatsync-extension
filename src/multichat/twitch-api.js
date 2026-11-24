@@ -513,8 +513,7 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
   title.className = 'hs-mc-pred-title'
   // Render emotes/emoji in prediction title — content sanitized via escapeHtml() then processEmotes()
   // This is the same pattern used for all chat messages in main.js (existing safe innerHTML pattern)
-  title.innerHTML =
-    typeof processEmotes === 'function' ? processEmotes(escapeHtml(pred.title), null) : escapeHtml(pred.title)
+  title.innerHTML = processEmotes(escapeHtml(pred.title), null)
   header.appendChild(title)
 
   if (isCanceled) {
@@ -625,8 +624,7 @@ function renderPrediction(pred, balance, channelId, isMod, cpImage, cpName) {
     const titleSpan = document.createElement('span')
     titleSpan.className = 'hs-mc-pred-outcome-title'
     // Render emotes/emoji in outcome title — sanitized via escapeHtml() + processEmotes() (same as chat messages)
-    titleSpan.innerHTML =
-      typeof processEmotes === 'function' ? processEmotes(escapeHtml(outcome.title), null) : escapeHtml(outcome.title)
+    titleSpan.innerHTML = processEmotes(escapeHtml(outcome.title), null)
     if (isWinner) {
       const winBadge = document.createElement('span')
       winBadge.className = 'hs-mc-pred-winner-badge'

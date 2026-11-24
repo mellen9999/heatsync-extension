@@ -145,7 +145,7 @@ function persistServerBlockedEmotes() {
 }
 
 // Extension badge — combined source: live followed creators (red, priority) +
-// unread heatsync notifications (orange, fallback). Whichever is non-zero wins,
+// unread heatsync notifications (black, fallback). Whichever is non-zero wins,
 // live wins when both. One number on the icon, colour disambiguates the source.
 // Firefox MV2 uses browserAction, Chrome MV3 uses action.
 const badgeApi = browser.action || browser.browserAction

@@ -6,7 +6,8 @@
  * A signed-in viewer whose account list already holds one picture this channel has never heard of
  * (AwayFav). heatsync.org is unreachable for the whole run, so every pin is the offline case: kept
  * on this device and marked unsent.
- *   a. the picker opens on favorites, and the away favorite is there, drawn from its record
+ *   a. the picker opens on favorites, and the away favorite is there, drawn from its record; a tile's
+ *      hover text says who sees it
  *   b. shift + right-click a channel emote -> "add to favorites" -> it joins the section, after AwayFav
  *   c. the pin is on this device, marked unsent (the account could not be reached)
  *   d. "Awa" + Tab -> the away favorite leads, and the chip is its picture
@@ -154,6 +155,12 @@ try {
   // b. pin the channel's Wlol from its menu
   const roomTile = `${PICKER} .hs-mc-picker-section:not([data-section-key="favorite"]) .hs-mc-picker-emote-wrap img[alt="Wlol"]`
   await p.waitForSelector(roomTile, { timeout: 8000 })
+  // a tile's hover text says who sees it: the room's 7tv emote, and a picture not loaded in this room
+  const tip = (sel: string) => p.$eval(sel, (x: HTMLImageElement) => x.title)
+  const roomTip = await tip(roomTile)
+  check(roomTip === 'Wlol (7tv · 7tv users)', `a. the room's tile says who sees it (got ${JSON.stringify(roomTip)})`)
+  const awayTip = await tip(`${PICKER} [data-section-key="favorite"] .hs-mc-picker-emote-wrap img[alt="AwayFav"]`)
+  check(awayTip.endsWith(' · heatsync only)'), `a. the away favorite's tile says heatsync only (got ${JSON.stringify(awayTip)})`)
   await p.click(roomTile, { button: 'right', modifiers: ['Shift'] })
   const m1 = await (await until(p, async () => (await menu()).length > 0, 5000), menu())
   check(m1[0] === 'add to favorites', `b. the emote menu leads with the pin row (got ${JSON.stringify(m1.slice(0, 3))})`)

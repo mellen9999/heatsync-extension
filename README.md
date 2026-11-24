@@ -29,7 +29,7 @@ then open any twitch, kick or youtube stream: the panel takes over the chat colu
 no ad trackers and no third-party analytics — nothing goes to google analytics, sentry or any ad network.
 
 - signed in, your inventory and settings sync through heatsync's own servers. settings also ride your browser's own sync if you have it on.
-- a line you send through heatsync tells heatsync.org its message id and the emotes in it (on twitch, the text too), so other heatsync users see your emotes. it's public chat either way.
+- a line you send through heatsync tells heatsync.org its message id and the emotes in it, so other heatsync users see your emotes. twitch lines, and kick lines with emotes, carry the text too: held to match the platform's copy, never stored. it's public chat either way.
 - the one usage count is a check-in to heatsync.org: a random id that changes every midnight, added to daily totals, never stored. opt-in on firefox.
 - opening a channel lets heatsync.org archive its public chat — never whispers. anyone can erase their own messages at [heatsync.org/erase](https://heatsync.org/erase).
 - it talks to 7tv, bttv and ffz, because that is where their emotes live. pronouns come through heatsync.org, so pronoundb never sees you.

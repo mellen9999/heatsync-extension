@@ -32,7 +32,7 @@ public chat of channels the user opens is archived by heatsync.org's own server
 (the browser never uploads it); for a line the user sends through heatsync, the
 extension reports its message id and the emotes in it (on Twitch the text too,
 to match Twitch's own echo; on Kick the text with the emotes, which the server
-re-checks), so other heatsync viewers see the user's emotes. One first-party
+re-checks; neither text is stored), so other heatsync viewers see the user's emotes. One first-party
 usage signal: a health/kill-switch poll to
 heatsync.org (every 5 min + on startup) sends a rotating install id (changes
 daily, cannot be joined across days), extension version, a rough install-age range (first day/week/month/older,

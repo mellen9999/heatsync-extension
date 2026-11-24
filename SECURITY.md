@@ -21,7 +21,7 @@ because a nonce cannot be kept secret in a realm shared with the page, the init 
 
 extension-side processing happens in the browser. the extension talks to:
 
-- **heatsync.org** — your account, inventory and settings sync; first-party proxies for username→id, recent messages, chatterino badges, pronouns, link previews and embeds; your kick follow list, mirrored into your heatsync follows; and, for a line you send through heatsync, its message id (on twitch the text too, to match twitch's own echo) and the emotes it used, so other heatsync viewers see them and the [H] mark
+- **heatsync.org** — your account, inventory and settings sync; first-party proxies for username→id, recent messages, chatterino badges, pronouns, link previews and embeds; your kick follow list, mirrored into your heatsync follows; and, for a line you send through heatsync, its message id and the emotes it used (the text too on twitch, and on kick when the line has emotes — used to match twitch's echo or check the emotes, never stored), so other heatsync viewers see them and the [H] mark
 - **7TV / FFZ / BTTV** directly, for emotes, paints and badges
 - **twitch, kick and youtube** themselves — including kick's own chat socket (`wss://*.platform.kick.com`), opened from a hidden web.kick.com frame because kick only accepts that socket from a kick.com page
 

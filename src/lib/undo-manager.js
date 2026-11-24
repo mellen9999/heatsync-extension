@@ -66,7 +66,8 @@ export class UndoManager {
     this.input.replaceChildren(...clones)
     this._reattachImgHandlers()
     this._setCharOffset(snapshot.cursorOffset)
-    this.input.dispatchEvent(new Event('input', { bubbles: true }))
+    // marked: what came back is what was there, picks included (emote-refs keepPicksIn)
+    this.input.dispatchEvent(Object.assign(new Event('input', { bubbles: true }), { hsUndo: true }))
   }
 
   _reattachImgHandlers() {

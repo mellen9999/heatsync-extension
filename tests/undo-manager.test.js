@@ -200,6 +200,23 @@ describe('UndoManager — undo/redo basic sequence', () => {
     expect(m.index).toBe(0)
   })
 
+  // the box hears an undo as an undo: a pick whose chip comes back comes back with it
+  // (emote-refs keepPicksIn restores a pick only for a change marked as one)
+  test('the input event an undo or a redo fires is marked as one', async () => {
+    await loadModule()
+    const input = fakeInput([fakeTextNode('a')])
+    const fired = []
+    input.dispatchEvent = (e) => fired.push(e)
+    const m = new UndoManager(input)
+    pushState(m, input, 'b')
+    m.undo()
+    m.redo()
+    expect(fired.map((e) => [e.type, e.hsUndo])).toEqual([
+      ['input', true],
+      ['input', true],
+    ])
+  })
+
   test('redo after undo returns true and increments index', async () => {
     await loadModule()
     const input = fakeInput([fakeTextNode('a')])

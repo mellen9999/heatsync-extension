@@ -5,6 +5,9 @@
 // handlers dead until hard refresh
 const _onceGuardsInput = {}
 
+// the box changed by our own hand: all that listens for an edit hears it (undo, picks, the counter)
+const fireInput = (el) => el.dispatchEvent(new Event('input', { bubbles: true }))
+
 // Broken-image recovery for input-area emote imgs. Browser negatively caches
 // failed image responses (proxy hiccup, CDN blip); without this hook the typed
 // word renders forever as a broken-image placeholder in the composer.
@@ -1460,7 +1463,7 @@ function initInput() {
           range.collapse(false)
           sel.removeAllRanges()
           sel.addRange(range)
-          input.dispatchEvent(new Event('input', { bubbles: true }))
+          fireInput(input)
         }
       }
     })
@@ -1718,7 +1721,7 @@ function initInput() {
           document.execCommand('insertText', false, e.key)
         } else {
           input.value += e.key
-          input.dispatchEvent(new Event('input', { bubbles: true }))
+          fireInput(input)
         }
       },
       { capture: true, signal: mcSignal },
@@ -1759,7 +1762,7 @@ function initInput() {
         // Insert pasted text into the input
         if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA') {
           input.value = text
-          input.dispatchEvent(new Event('input', { bubbles: true }))
+          fireInput(input)
         } else {
           document.execCommand('insertText', false, text)
         }
@@ -2698,7 +2701,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
         const input = document.getElementById('hs-mc-search-input')
         if (!input) return
         input.value = `@${String(username).toLowerCase()}`
-        input.dispatchEvent(new Event('input', { bubbles: true }))
+        fireInput(input)
         input.focus()
       },
     })
@@ -2996,7 +2999,7 @@ function mcQuoteToInput(text) {
   } else {
     input.value = (input.value || '') + toInsert
   }
-  input.dispatchEvent(new Event('input', { bubbles: true }))
+  fireInput(input)
 }
 
 // What sits in a row beside the message and is never part of its text. The row's own buttons
@@ -3059,7 +3062,7 @@ function _prefillMcInput(text) {
     try {
       input.setSelectionRange(text.length, text.length)
     } catch {}
-    input.dispatchEvent(new Event('input', { bubbles: true }))
+    fireInput(input)
   } else {
     // mirror mcQuoteToInput: select-all + execCommand insertText replaces the
     // content, fires the input event, and leaves the caret at the end —
@@ -3072,7 +3075,7 @@ function _prefillMcInput(text) {
     sel.addRange(range)
     if (!document.execCommand('insertText', false, text)) {
       input.textContent = text
-      input.dispatchEvent(new Event('input', { bubbles: true }))
+      fireInput(input)
     }
   }
 }
@@ -3546,10 +3549,12 @@ function handleInputKeydownInner(e, input) {
         // Just delete the one chip — never auto-merge adjacent chips back
         // to text. The "merge intent" path was destroying valid WYSIWYG
         // state on every backspace.
+        // an edit like any other, so an input event: it ends the pick of the word that left (the
+        // name pasted back is a typed word). the box is saved first, so an undo brings chip + pick back
         e.preventDefault()
+        input._undoManager?.capture()
         target.remove()
-        pendingMessage = getInputText()
-        updateCharCount()
+        fireInput(input)
         return
       }
     }
@@ -4045,7 +4050,7 @@ function handleInputChange(_e) {
     // a pick lives while its word is in the box: delete the chip and the same name typed by hand
     // is a hand-typed word. An undo that brings the chip back brings its pick back.
     const type = _e?.inputType
-    keepPicksIn(() => getInputText(), inputEl, type === 'historyUndo' || type === 'historyRedo')
+    keepPicksIn(() => getInputText(), inputEl, _e?.hsUndo || /^history/.test(type))
     for (const stack of inputEl.querySelectorAll('.hs-input-stack')) {
       if (stack.getAttribute('contenteditable') !== 'false') {
         stack.setAttribute('contenteditable', 'false')
@@ -9233,7 +9238,7 @@ function insertComposerText(text) {
     }
   } else {
     input.value = `${(input.value || '') + text} `
-    input.dispatchEvent(new Event('input', { bubbles: true }))
+    fireInput(input)
   }
 }
 

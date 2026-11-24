@@ -13,6 +13,15 @@ const LAW_PIN = LAW_SEND.slice(at, LAW_SEND.indexOf('\n}\n', at) + 2)
 export function pickRig() {
   const box = {}
   const lawBox = () => box
-  const lawPin = new Function('lawBox', 'pinPickedEmote', `${LAW_PIN}\nreturn lawPin`)(lawBox, pinPickedEmote)
-  return { lawBox, lawPin, heldPick, endDraftPicks, keepPicksIn }
+  // the box has no chips here: what a harness can hold is that a pin (or a put-back) asked for the re-read
+  const followPicks = () => {
+    followPicks.asked++
+  }
+  followPicks.asked = 0
+  const lawPin = new Function('lawBox', 'pinPickedEmote', 'followPicks', `${LAW_PIN}\nreturn lawPin`)(
+    lawBox,
+    pinPickedEmote,
+    followPicks,
+  )
+  return { lawBox, lawPin, followPicks, heldPick, endDraftPicks, keepPicksIn }
 }

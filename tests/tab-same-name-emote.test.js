@@ -277,6 +277,23 @@ describe('2b. a step only looked at leaves its name as it found it', () => {
     r.insertCompletionKeepOpen(catalogIdk)
     expect(pick(r, 'IDK').url).toBe(OTHER)
   })
+
+  // one name is one picture in a line: an IDK already in the box is read again when the name's
+  // answer changes (render case x holds the box itself; here, that every change asks)
+  test('a step that pins asks for the box to be read again', () => {
+    const r = rig()
+    r.insertCompletionKeepOpen(catalogIdk)
+    expect(r.env.followPicks.asked).toBe(1)
+  })
+
+  test('so does a step that only gives a name back: on to an emoji, which pins nothing', () => {
+    const r = rig()
+    r.insertCompletionKeepOpen(catalogIdk)
+    const before = r.env.followPicks.asked
+    r.insertCompletionKeepOpen({ type: 'emoji', name: 'smile', char: '🙂' })
+    expect(pick(r, 'IDK')).toBeUndefined()
+    expect(r.env.followPicks.asked).toBe(before + 1)
+  })
 })
 
 describe('4. sending a picked variant', () => {

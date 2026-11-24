@@ -164,7 +164,18 @@ function lawPin(name, e) {
   // refOf (inside the pin) keeps only what is really there: a hash, a string id, a boolean animated
   const { url, zeroWidth, hash, id, animated } = e
   pinPickedEmote({ name, url, provider: e.provider || e.source, zeroWidth, hash, id, animated }, box)
+  followPicks()
 }
+
+// One draft, one meaning per name: a line carries one ref per name, so a pick answers every copy
+// of its name in the line. A chip drawn before the pick kept its old picture: the box showed two
+// pictures of one name, and the line shipped the older one for both. The box is read again once
+// the step that pinned (or put a name back) has drawn its own chip.
+const followPicks = () => queueMicrotask(rereadInputChips)
+
+/** lawSendCtx over the overlay's own sets: your emotes, the globals, every channel's */
+const lawCtx = (legs, picks) =>
+  lawSendCtx({ legs, mine: viewerPersonalEmotes, globals: emoteCache, caches: channelEmoteCaches, picks })
 
 /** a pick as an overlay entry, for a picture no cache holds (a catalog hit) */
 const LAW_SOURCE = { hs: 'heatsync' }
@@ -186,16 +197,7 @@ function lawPickEntry(e) {
  * @returns {{e:object, overlay:boolean, key:string, from:string}|null} `e` is the overlay's own entry
  */
 function lawChip(word, legs) {
-  const hit = hsEmoteLaw.sendWord(
-    word,
-    lawSendCtx({
-      legs: legs || lawOpenLegs(),
-      mine: viewerPersonalEmotes,
-      globals: emoteCache,
-      caches: channelEmoteCaches,
-      picks: draftPicks(lawBox()),
-    }),
-  )
+  const hit = hsEmoteLaw.sendWord(word, lawCtx(legs || lawOpenLegs(), draftPicks(lawBox())))
   if (!hit) return null
   const e = hit.emote
   // a pick is a bare record: draw the cache's own entry when it is that very picture, else the pick
@@ -215,10 +217,8 @@ function lawChip(word, legs) {
  * @returns {{wire:object, refs:object|undefined, picked:string[]|undefined, used:Array<{name:string,url:string}>, chosen:Array<[string, object]>|undefined}}
  */
 function lawShip(text, legs, box) {
-  const read = (picks) =>
-    lawSendCtx({ legs, mine: viewerPersonalEmotes, globals: emoteCache, caches: channelEmoteCaches, picks })
   const held = draftPicks(box)
-  let ctx = read(held)
+  let ctx = lawCtx(legs, held)
   // Enter ships what the box shows. A chip is drawn by this same answer and read again when the
   // tab or its emotes change, but whatever a chip still shows as the line leaves is what goes
   // out, as this line's own pick. Read here alone: it never joins the draft, so nothing is added
@@ -238,7 +238,7 @@ function lawShip(text, legs, box) {
       zeroWidth: d.zeroWidth === '1',
     })
   }
-  if (shown) ctx = read({ picked: shown, remote: held.remote })
+  if (shown) ctx = lawCtx(legs, { picked: shown, remote: held.remote })
   const sent = hsEmoteLaw.sendLine(text, ctx)
   // a name can be anything, __proto__ included: file a ref by definition, never by `=`
   let refs

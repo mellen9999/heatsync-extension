@@ -4977,7 +4977,10 @@ function _hsAcEmoteBlocked(name, emote) {
 // the step pins; the cycle's last step is the one that stays (hideAutocomplete forgets the step).
 function acPinStep(match, box) {
   const step = acState._pinStep
-  if (step && step.name !== match.name) putBackPick(step.name, step.held, box)
+  if (step && step.name !== match.name) {
+    putBackPick(step.name, step.held, box)
+    followPicks()
+  }
   if (match.type !== 'emote' || !match.name) acState._pinStep = null
   else if (step?.name !== match.name) acState._pinStep = { name: match.name, held: heldPick(match.name, box) }
 }

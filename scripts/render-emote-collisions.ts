@@ -31,6 +31,8 @@
  *   q. an emote only the viewer has, removed from the box -> the word is text again (as it ships)
  *   r. the channel's W changes while its chip sits in the box -> the row sent is the picture the
  *      box showed at enter, whichever that was
+ *   x. `Wlol and Wlol` + Tab, Tab -> both are the viewer's own: a pick answers every copy of its
+ *      name in the line, and the row draws what the box showed
  * Modifiers (shared/emote-mods.vectors.json is the rule): one emote changes, the same one in the
  * box, on the wire and on the row:
  *   s. a chatter's `Wlol w! Wlol` widens the second, `Wlol ffzX Wlol` flips the first, a word
@@ -406,6 +408,41 @@ try {
   await p.keyboard.press('Control+A')
   await p.keyboard.press('Backspace')
   await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+
+  // ── one name is one picture in a line: a pick answers every copy of its name ──
+  const boxSrcs = () => p.evaluate(() => [...document.querySelectorAll('#hs-mc-input img.hs-input-emote')].map((i) => i.getAttribute('src') || ''))
+  const rowSrcs = (word: string) =>
+    p.evaluate((w: string) => {
+      const row = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes(w))
+      return [...(row?.querySelectorAll('.hs-mc-emote-wrapper img, img.hs-mc-emote') || [])].map((i) => i.getAttribute('src') || '')
+    }, word)
+  const all = (list: string[], part: string) => list.length === 2 && list.every((s) => s.includes(part))
+  await typeLine('own6 Wlol and Wlol')
+  await p.keyboard.press('Tab')
+  await until(p, async () => all(await boxSrcs(), 'Wlol_room'), 5000)
+  await p.keyboard.press('Tab')
+  await until(p, async () => all(await boxSrcs(), 'Wlol_inv'), 5000)
+  const two = await boxSrcs()
+  check(all(two, 'Wlol_inv'), `x. Tab on to your own Wlol: the Wlol typed earlier in the line is your own too, one name is one picture (got ${JSON.stringify(two)})`)
+  await p.keyboard.press('Enter')
+  await rowHas('own6')
+  await p.waitForTimeout(800)
+  const twoRow = await rowSrcs('own6')
+  check(all(twoRow, 'Wlol_inv'), `x. and the row draws both as the box showed them (got ${JSON.stringify(twoRow)})`)
+  // and all the way round the cycle
+  await typeLine('own7 Wlol and Wlo')
+  await p.keyboard.press('Tab')
+  await until(p, async () => (await boxSrcs()).length === 2, 5000)
+  const cycle: string[][] = [await boxSrcs()]
+  for (let i = 0; i < 6 && !(cycle.length > 1 && cycle.at(-1)?.join() === cycle[0].join()); i++) {
+    await p.keyboard.press('Tab')
+    await p.waitForTimeout(250)
+    cycle.push(await boxSrcs())
+  }
+  const lied = cycle.filter(([first, second]) => /Wlol_/.test(second || '') && first !== second)
+  check(!lied.length, `x. through a whole Tab cycle the two Wlol never show two pictures (${lied.length ? JSON.stringify(lied[0]) : cycle.length + ' steps'})`)
+  await p.keyboard.press('Control+A')
+  await p.keyboard.press('Backspace')
 
   // ── modifiers: one emote changes, the same one in the box, on the wire and on the row ──
   // each emote of a row with the effects stamped on it, in order

@@ -15,13 +15,7 @@ const LAW_PEOPLE_MAX = 50
  * @param {Array|null} [o.emoji]
  */
 function lawOfferCtx({ catalog, emoji } = {}) {
-  const s = lawSendCtx({
-    legs: lawOpenLegs(),
-    mine: viewerPersonalEmotes,
-    globals: emoteCache,
-    caches: channelEmoteCaches,
-    picks: null,
-  })
+  const s = lawCtx(lawOpenLegs(), null)
   const frec = loadEmoteFrecency()
   // inventory's `at` reads your whole set, the platform emotes in it too
   const views = [s.room?.names, s.own.inventory, s.globals]

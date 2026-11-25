@@ -46,6 +46,7 @@ free · open source (MIT) · no ads, no third-party analytics · your emotes sta
 ## tags / categories
 - cws category: social & communication
 - cws tags: `chat, streaming, twitch, kick, youtube, emotes, 7tv`
+- edge category: social; edge search terms (english listing, ≤7): `twitch chat, kick chat, youtube live chat, multichat, 7tv emotes, bttv, ffz`
 - amo tags are a fixed vocabulary (`kick`, `emotes`, `7tv` don't exist): `chat, social media, streaming, twitch, youtube`
 
 ## submit checklist

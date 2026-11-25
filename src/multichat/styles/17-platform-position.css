@@ -67,6 +67,17 @@
       stroke: #000 !important;
       border-color: #000 !important;
     }
+    /* A filled row's name sits on a black cutout (21-brand-rows.css). When the row
+       inverts, the rule above turned the name black too: black on its black cutout read
+       as a blacked-out bar over the name (switched-to / went-live, 2026-11-25). The name
+       stays white on its cutout; on the name itself it still inverts alone (rule above). */
+    #hs-mc-container :where([data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):not([data-hs-name-hover]):hover .hs-name-cut :where(a, .hs-mc-user):not(:hover),
+    #hs-mc-container :where([data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):not([data-hs-name-hover]):hover .hs-name-cut :where(a, .hs-mc-user):not(:hover) *,
+    #hs-mc-container :where([data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):focus-visible .hs-name-cut :where(a, .hs-mc-user),
+    #hs-mc-container :where([data-hs-clickable]):not(:disabled):not([aria-disabled="true"]):focus-visible .hs-name-cut :where(a, .hs-mc-user) * {
+      color: #fff !important;
+      -webkit-text-fill-color: #fff !important;
+    }
 
     /* ============================================
        C BUTTON — chat panel position around the player.

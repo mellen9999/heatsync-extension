@@ -1,5 +1,13 @@
 # changelog
 
+## [1.7.141] — 2026-11-24
+
+### added
+- **`:` list shows** — choose emotes first (the default) or emoji first for the list `:` opens. emoji first puts 🐱 above the room's catJAM; tab and the picker keep one order. set it once and the site and the extension share it.
+
+### fixed
+- **twitch's and kick's own chat boxes** offer emotes in the same order as the heatsync panel: the room's first, both spellings of a name (`KEKW` and `kekw`), and kick's `:` list shows emotes and emoji together.
+
 ## [1.7.140] — 2026-11-24
 
 ### added

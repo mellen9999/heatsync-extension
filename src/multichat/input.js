@@ -2050,7 +2050,7 @@ function initInput() {
           if (stack) blockAllEmotesInStack(stack)
           return
         }
-        // Collapsed stack left-click → add unowned emotes to inventory, then
+        // Collapsed stack left-click → register each emote for auto-add on send, then
         // paste every postable item (emotes + emojis) to input in DOM order.
         // Emojis in the nest are treated as first-class stack members so a
         // composite like "emote + :smile:0 overlay" round-trips into the input
@@ -2080,24 +2080,19 @@ function initInput() {
             if (hadUnpostableEmote) showToast(t('mc_input_nothing_postable'), 'error')
             return
           }
-          // Fire add-to-inventory for each unowned emote (don't block paste on the
-          // server roundtrip; state flips green when each resolves).
+          // A click never changes what you own: every member (unadded too) is pasted and
+          // registered, and the set only changes when the message is SENT.
           for (const it of items) {
             if (it.kind !== 'emote') continue
             const w = it.el
-            if (w.dataset.state === 'unadded') {
-              const name = w.dataset.emoteName
-              if (!name || pendingEmoteOps.has(name)) continue
-              const url = w.dataset.emoteUrl || w.querySelector('img')?.src || ''
-              const source = w.dataset.source || 'heatsync'
-              lawPin(name, { url, source }) // a clicked emote is this message's pick of its name
-              addEmoteToInventory(name, url, source, w)
-            } else {
-              // global/channel/owned stack members follow the same
-              // auto-add-on-send contract as the single-emote click path.
-              const url = w.dataset.emoteUrl || w.querySelector('img')?.src || ''
-              registerClickPasteForAutoAdd(w.dataset.emoteName, url, w.dataset.source || 'unknown')
+            const name = w.dataset.emoteName
+            const url = w.dataset.emoteUrl || w.querySelector('img')?.src || ''
+            const source = w.dataset.source || 'unknown'
+            // the picker's own rule: a name the resolver can't draw yet is seeded from the clicked element
+            if (url && /^https?:/i.test(url) && !viewerPersonalEmotes.has(name) && !lookupEmoteWithOverlay(name)) {
+              viewerPersonalEmotes.set(name, { url, source, state: 'owned', addedAt: Date.now() })
             }
+            registerClickPasteForAutoAdd(name, url, source)
           }
           showInputBar()
           for (let i = 0; i < items.length; i++) {

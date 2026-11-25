@@ -57,6 +57,7 @@ what it does:
 
 - **chrome fails → firefox never runs.** the run stops at the chrome error and prints `firefox: not attempted`. fix chrome, or finish firefox alone with `--firefox-only --publish`.
 - **`ITEM_NOT_UPDATABLE`** — the chrome web store holds one pending review at a time. wait for the last one to clear, or cancel it in the dashboard, then `--chrome-only --publish`.
+  to wait without watching: start `heatsync-cws-retry.timer` (hourly `scripts/cws-retry-publish.sh X.Y.Z`). it builds from the tag `vX.Y.Z` in its own worktree, publishes once the store takes it, and switches itself off.
 - **never re-run the chrome leg after main moved past the tag** — it rebuilds HEAD under the same version. submit the draft that's already uploaded from the dashboard instead.
 
 ## one-time credential setup

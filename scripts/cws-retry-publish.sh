@@ -7,7 +7,7 @@
 # own systemd timer once the upload lands, so it never needs cleaning up.
 #
 # The AMO/tag/GitHub-release legs are already done by scripts/publish.js; this
-# only ever runs --chrome-only.
+# only ever runs --chrome-only, built from the version's tag (a worktree it makes once).
 #
 # Usage: cws-retry-publish.sh <version>    (version defaults to package.json)
 set -uo pipefail
@@ -22,6 +22,20 @@ cd "$REPO" || { echo "$(date -Is) repo missing" >>"$LOG"; exit 1; }
 VERSION="${1:-$(grep -m1 '"version"' package.json | cut -d'"' -f4)}"
 
 say() { echo "$(date -Is) $*" >>"$LOG"; }
+
+# Build from the release tag, never from main: the retry can fire days later, after main has
+# moved, and publish.js builds the tree it runs in under the version it is given.
+TAG="v$VERSION"
+SRC="$REPO/.worktrees/release-$TAG"
+if [ ! -d "$SRC" ]; then
+  if ! { git fetch -q origin tag "$TAG" && git worktree add -q --detach "$SRC" "$TAG" && (cd "$SRC" && bun install --frozen-lockfile >/dev/null 2>&1); } 2>>"$LOG"; then
+    say "FAILED: no checkout of $TAG to build from"
+    command -v notify-send >/dev/null && notify-send "heatsync" "cws publish failed — see $LOG"
+    exit 1
+  fi
+fi
+cd "$SRC" || { say "FAILED: $SRC missing"; exit 1; }
+[ "$(git rev-parse HEAD)" = "$(git rev-parse "$TAG^{commit}")" ] || { say "FAILED: $SRC is not at $TAG"; exit 1; }
 
 out=$(bun scripts/publish.js --version "$VERSION" --chrome-only --publish 2>&1)
 rc=$?

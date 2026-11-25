@@ -1,5 +1,15 @@
 # changelog
 
+## [1.7.143] — 2026-11-25
+
+### added
+- **"7tv is down — showing saved emotes"** — when 7tv, bttv or ffz stops answering, the status strip says so and the room keeps the emotes it last had. the line clears as soon as fresh emotes arrive.
+- **case-insensitive emotes** — settings › chat › input: `pogchamp` draws as PogChamp. off by default.
+
+### fixed
+- **a stacked emote click** pastes the emote and saves it when you send, like a single click, instead of adding it to your inventory on the click.
+- **saved channel emotes older than 30 days** are dropped at startup, so the store can't grow forever.
+
 ## [1.7.142] — 2026-11-25
 
 ### fixed

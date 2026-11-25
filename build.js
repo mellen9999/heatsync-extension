@@ -24,6 +24,7 @@ import { computeBuildStamp } from './scripts/lib/build-stamp.mjs'
 import { rebindBgDebugLog, rebindDebugLog, unbindBgDebugLog, unbindDebugLog } from './scripts/lib/debug-log.mjs'
 import { emojiPairsSource } from './scripts/lib/emoji-pairs.mjs'
 import { emoteLawSource, lawIsUsed } from './scripts/lib/emote-law-bundle.mjs'
+import { scopeSiteModule } from './scripts/lib/scope-site-module.mjs'
 import { trackedFiles } from './scripts/lib/tracked-files.mjs'
 
 // Build stamp — swapped into bootstrap.js's '__HS_BUILD_STAMP__' literal so
@@ -921,6 +922,7 @@ const MULTICHAT_MODULES = [
   'auth-irc.js',
   'kick-send.js',
   'emote-rungs.js',
+  'emote-sprite.js',
   'emote-rooms.js',
   'emote-law-read.js',
   'emote-law-send.js',
@@ -1134,6 +1136,18 @@ function readMultichatModules() {
       combined += `\n// --- lib/${mod} ---\n${stripExports(readFileSync(p, 'utf8'))}\n`
     }
   }
+
+  // animated-texture.js is the site's sprite rung, copied byte for byte (sync-site-copies.sh), so
+  // it cannot be edited to fit this scope and is wrapped to get one instead: its top-level names
+  // (frameNow, build, layout...) would collide with the lib above, and its one import — a logger —
+  // is handed in. `log` is bootstrap.js's own (a hoisted declaration, so naming it here is safe)
+  // and says nothing unless MC_DEBUG: a source that cannot be a strip falls back to its <img>
+  // without a word, exactly once (the module remembers every refusal).
+  combined += `\n// --- lib/animated-texture.js ---\n${scopeSiteModule(
+    readFileSync(join(SRC_DIR, 'lib', 'animated-texture.js'), 'utf8'),
+    'hsSpriteTexture',
+    { logger: '{ warn: log, debug: log }' },
+  )}\n`
 
   const modules = CORE_MODULES
   for (const file of modules) {

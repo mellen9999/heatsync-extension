@@ -500,6 +500,9 @@ function hsSwapRowEmotesForIdle(row, idle) {
     const orig = wrap?.dataset?.emoteUrl
     if (!orig) continue
     if (idle) {
+      // A sprite leaves with the row (emote-sprite.js); the img under it is
+      // already on its static frame, so the guard below keeps it there.
+      hsSpriteDrop(img, wrap)
       // Only swap a row still showing the true original — a static/avif
       // fallback already in place (hsStaticFell/hsAvifFell) or a prior idle
       // swap must not be clobbered.
@@ -507,6 +510,9 @@ function hsSwapRowEmotesForIdle(row, idle) {
       const staticSrc = deriveStaticEmoteSrc(orig, wrap.dataset.animated === '1')
       if (staticSrc === orig) continue // no static variant for this CDN/url
       img.src = staticSrc
+    } else if (hsSpriteTry(img, wrap, orig)) {
+      // Back on screen as a sprite: every copy of this emote on the wall clock
+      // (emote-sprite.js). The img stays on its static frame beneath it.
     } else if (img.src !== orig) {
       img.src = orig
     }
@@ -580,6 +586,7 @@ function scheduleHsEmoteIdleSweep(force) {
  * on its static src. Switching back into 'always' just lets the next
  * scroll/pin re-arm the observer from scratch (ensureHsEmoteIdleObserver). */
 function teardownHsEmoteIdleGate() {
+  hsSpriteDropAll()
   if (hsIdleEmoteObserver) {
     for (const row of hsIdleEmoteRows) hsSwapRowEmotesForIdle(row, false)
     hsIdleEmoteObserver.disconnect()

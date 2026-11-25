@@ -30,6 +30,11 @@
 # ONE brand layer (palette, fills, row metrics, the filled-row styles) — generated from the site's
 # shared/brand/tokens.json; the site and the extension render rows from the same bytes.
 #
+# client/cosmetics/animated-texture.js is the sprite rung: an animated emote decoded ONCE into a strip and
+# played on the wall clock, so every copy of it shows the same frame. Its one import is a logger, so the
+# build embeds it inside a function scope that hands it one (scripts/lib/scope-site-module.mjs) — the
+# bundle shares one scope and the file's own top-level names (frameNow, build, layout...) would collide.
+#
 # scripts/lib/{inline-doctrine,strip-comments}.mjs → tests/lib/: the inline-css doctrine scanner,
 # so the site and the extension judge js-built style by the same rules.
 #
@@ -58,6 +63,7 @@ for pair in \
   client/utils/emote-refs.js:src/lib/emote-refs.js \
   client/utils/emote-refs-normalize.js:src/lib/emote-refs-normalize.js \
   client/utils/stream-event-text.js:src/lib/stream-event-text.js \
+  client/cosmetics/animated-texture.js:src/lib/animated-texture.js \
   client/card/card-time.js:src/lib/card-time.js \
   client/card/card-model.js:src/lib/card-model.js \
   client/card/card-render.js:src/lib/card-render.js \

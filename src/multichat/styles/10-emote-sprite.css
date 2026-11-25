@@ -1,0 +1,40 @@
+    /* The sprite rung (emote-sprite.js): an animated emote played as a strip moved under a
+       one-frame window, over the <img>, which keeps the box, the hover plate and the click.
+       The rules are the site's (public/css/modules/cosmetics.css) with the three things this
+       wrapper does differently. Geometry is all relative; nothing is measured. */
+    .hs-mc-emote-wrapper > .hs-sprite {
+      position: absolute;
+      /* The img's content box: img.hs-mc-emote carries 2px of padding inside a wrapper that is
+         exactly its border box. */
+      inset: 2px;
+      overflow: hidden;
+      /* Above the img (z-index 1 in 10-emotes.css) so the strip is what shows. */
+      z-index: 2;
+      pointer-events: none;
+      contain: layout paint;
+    }
+    .hs-sprite > i {
+      display: block;
+      width: calc(100% * var(--hs-sp-cols));
+      height: calc(100% * var(--hs-sp-rows));
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      /* Longhands, and the step counts are written as literals by mountSprite: a var() inside
+         steps() invalidates a shorthand on an engine that refuses it, taking animation-name with it. */
+      animation-name: hs-sprite-run-x, hs-sprite-run-y;
+      animation-duration: var(--hs-sp-row-dur), var(--hs-sp-dur);
+      animation-iteration-count: infinite, infinite;
+      animation-timing-function: steps(1), steps(1);
+      /* Negative: starts part-way through, which is how every copy lands on one frame. */
+      animation-delay: var(--hs-sp-delay), var(--hs-sp-delay);
+      will-change: transform, translate;
+    }
+    @keyframes hs-sprite-run-x { to { transform: translateX(-100%); } }
+    @keyframes hs-sprite-run-y { to { translate: 0 -100%; } }
+    /* Hidden, not removed: display:none would collapse the box the img is still providing. */
+    .hs-mc-emote-wrapper.hs-sprite-on > img.hs-mc-emote { opacity: 0; }
+    /* The hover plate darkens the emote on white (10-emotes.css); the strip is the emote now. */
+    .hs-mc-emote-wrapper.hs-emote-highlight:not(.hs-state-blocked):not(.hs-state-stale) > .hs-sprite {
+      filter: brightness(0.2);
+    }
+    body.hs-tab-cycling .hs-mc-emote-wrapper.hs-emote-highlight > .hs-sprite { filter: none !important; }

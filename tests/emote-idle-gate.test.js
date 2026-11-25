@@ -60,6 +60,11 @@ function loadIdleGateModule({ IntersectionObserver, documentImpl, raf } = {}) {
     'IntersectionObserver',
     'document',
     'requestAnimationFrame',
+    // emote-sprite.js's three hooks, stood in as no-ops: this file tests the gate's own src swap and
+    // restore; the sprite wiring has its own suite (emote-sprite-wiring.test.js).
+    'hsSpriteDrop',
+    'hsSpriteTry',
+    'hsSpriteDropAll',
     `${body}
     return {
       deriveStaticEmoteSrc, staticEmoteSrc, hsSwapRowEmotesForIdle,
@@ -69,7 +74,14 @@ function loadIdleGateModule({ IntersectionObserver, documentImpl, raf } = {}) {
       getObserved: () => hsIdleEmoteRows,
     }`,
   )
-  return factory(IntersectionObserver, documentImpl, raf)
+  return factory(
+    IntersectionObserver,
+    documentImpl,
+    raf,
+    () => {},
+    () => false,
+    () => {},
+  )
 }
 
 // ── deriveStaticEmoteSrc / staticEmoteSrc ───────────────────────────────────

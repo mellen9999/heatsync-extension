@@ -91,6 +91,9 @@ describe('design doctrine', () => {
       for (const m of css.matchAll(/@keyframes\s+([A-Za-z0-9_-]+)\s*\{([\s\S]*?)\n\s*\}\n/g)) {
         const [, name, body] = m
         if (name.startsWith('hs-fx-')) continue
+        // hs-sprite-run-* steps an animated emote's frames past a window (emote-sprite.js): the
+        // emote's own picture playing, not an element moving on the page.
+        if (name.startsWith('hs-sprite-run-')) continue
         if (/translate|scale/.test(body)) movingFrames.push(`${f}: @keyframes ${name}`)
       }
     }

@@ -85,7 +85,8 @@
         "src/lib/card-time.js",
         "src/lib/card-model.js",
         "src/lib/card-render.js",
-        "src/lib/stream-event-text.js"
+        "src/lib/stream-event-text.js",
+        "src/lib/animated-texture.js"
       ],
       "formatter": {
         "enabled": false

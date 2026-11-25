@@ -1,0 +1,15 @@
+twitch, kick + youtube live chat sa iisang panel — basahin ang lahat ng channel mo nang sabay at sumagot sa alinman nang hindi nag-a-alt-tab. ang streamer na live sa tatlo ay iisang tab. dagdag pa ang sarili mong mga emote sa kahit anong channel: 5,000 libreng slot, walang sub, walang setup ng streamer. nakikita ito ng ibang gumagamit ng heatsync; ang iba ay payak na pangalan ang nakikita. libre.
+
+• cross-platform na multichat — live chat ng twitch, kick + youtube sa iisang panel na may mga tab: isang tab bawat channel, o isa bawat streamer na pinagsama ang tatlong chat. mga tab ng mentions + whispers, listahan ng mga live na follow, at import ng mga follow mo sa twitch + kick. baguhin ang laki, i-dock sa kahit anong gilid, o ihiwalay sa sariling window. hindi kailangan ng account para magbasa.
+
+• mga emote mo, kahit anong channel — mag-upload o mag-import ng kahit anong emote (7tv, bttv, ffz, o sarili mo) sa libreng inventory na 5,000 slot na gumagana sa mismong chat ng twitch + kick at sa panel, sa kahit anong channel. i-tab-complete ang kahit anong 7tv emote at ipadala — idinadagdag ito para sa iyo. isang click lang para kopyahin ang lahat ng emote ng isang channel. mga gif + emoji sa picker.
+
+• 7tv / bttv / ffz built in — ang mga emote, paints + badges nila ay lumalabas nang kusa, channel, global at personal. hindi kailangan ng ibang extension.
+
+• keyboard muna — nagiging larawan ang mga emote habang nagta-type ka, kasaysayan ng mensahe, mga reply, at search box na nagpapaliit ng live chat sa isang salita o @name. opsyonal na mga vim key sa bawat chat box: twitch, kick, youtube + ang panel.
+
+• moderation + mga tao — mga mod button kapag nag-hover na ikaw ang pumipili (delete, timeouts, purge, ban, unban), automod queue ng twitch, mga mod tool (shield mode, mga unban request, mga naka-block na termino) at mod log. mga profile card na may followage, badges, pronouns, pribadong tala at kasaysayan ng chat. sinusundan ng mute o block ang mga naka-link na account ng isang tao. isang click na clip mula sa mga live na twitch stream.
+
+• mga stream event + filter — pag-live, raid, hype train, sub, redeem, prediction, poll, youtube super chat + membership, bawat isa ay maaaring i-on o i-off. ang mga filter rule ay nagha-highlight o nagtatago ng chat ayon sa salita, user, badge o uri. kusang kinukuha ang channel points sa twitch.
+
+libre · open source (MIT) · walang ads, walang third-party analytics · sa iyo pa rin ang mga emote mo

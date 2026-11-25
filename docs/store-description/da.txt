@@ -1,0 +1,15 @@
+twitch, kick + youtube livechat i ét panel — læs alle dine kanaler på én gang og svar i hvilken som helst uden alt-tab. en streamer, der er live på alle tre, er én fane. plus dine egne emotes i enhver kanal: 5.000 gratis pladser, intet abonnement, ingen opsætning hos streameren. andre heatsync-brugere kan se dem; alle andre ser det almindelige navn. gratis.
+
+• multichat på tværs af platforme — livechat fra twitch, kick + youtube i ét panel med faner: en fane pr. kanal, eller en pr. streamer med alle tre chats samlet. faner til omtaler + hvisken, en liste over live-følger og import af dine twitch- + kick-følger. tilpas størrelsen, fastgør det til en vilkårlig kant, eller pop det ud. ingen konto nødvendig for at læse.
+
+• dine emotes, enhver kanal — upload eller importér en hvilken som helst emote (7tv, bttv, ffz eller din egen) til et gratis lager med 5.000 pladser, der virker i twitch + kicks eget chat og i panelet, i enhver kanal. tab-fuldfør en hvilken som helst 7tv-emote og send den — den bliver tilføjet for dig. ét klik kopierer alle emotes fra en kanal. gifs + emoji i vælgeren.
+
+• 7tv / bttv / ffz indbygget — deres emotes, paints + badges vises af sig selv, kanal-, globale og personlige. ingen anden udvidelse nødvendig.
+
+• tastatur først — emotes bliver til billeder, mens du skriver, beskedhistorik, svar og et søgefelt, der indsnævrer livechatten til et ord eller @name. valgfri vim-taster i hvert chatfelt: twitch, kick, youtube + panelet.
+
+• moderation + folk — mod-knapper ved hover, som du selv vælger (slet, timeouts, purge, ban, unban), twitchs automod-kø, mod-værktøjer (shield mode, unban-anmodninger, blokerede ord) og en mod-log. profilkort med følgetid, badges, pronominer, private noter og chathistorik. mute eller blokering følger en persons tilknyttede konti. klip af live twitch-streams med ét klik.
+
+• stream-events + filtre — går live, raids, hype trains, subs, indløsninger, forudsigelser, afstemninger, youtube super chats + medlemskaber, hver kan slås til eller fra. filterregler fremhæver eller skjuler chat efter ord, bruger, badge eller type. kanalpoint hentes af sig selv på twitch.
+
+gratis · open source (MIT) · ingen reklamer, ingen tredjeparts-analytics · dine emotes forbliver dine

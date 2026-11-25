@@ -1,0 +1,15 @@
+twitch, kick + youtube sembang langsung dalam satu panel — baca semua saluran anda sekaligus dan balas di mana-mana tanpa alt-tab. streamer yang live di ketiga-tiganya jadi satu tab. tambah emote anda sendiri di mana-mana saluran: 5,000 slot percuma, tanpa sub, tanpa tetapan oleh streamer. pengguna heatsync lain dapat melihatnya; semua orang lain nampak nama biasa. percuma.
+
+• multichat merentas platform — sembang langsung twitch, kick + youtube dalam satu panel bertab: satu tab setiap saluran, atau satu setiap streamer dengan ketiga-tiga sembang digabung. tab sebutan + bisikan, senarai follow yang sedang live, dan import follow twitch + kick anda. ubah saiznya, lekatkan pada mana-mana tepi, atau keluarkan sebagai tetingkap sendiri. tak perlu akaun untuk membaca.
+
+• emote anda, mana-mana saluran — muat naik atau import mana-mana emote (7tv, bttv, ffz, atau buatan sendiri) ke dalam inventori percuma 5,000 slot yang berfungsi dalam sembang asal twitch + kick dan dalam panel, di mana-mana saluran. lengkapkan mana-mana emote 7tv dengan tab dan hantar — ia ditambah untuk anda. satu klik menyalin semua emote sesebuah saluran. gif + emoji dalam pemilih.
+
+• 7tv / bttv / ffz terbina dalam — emote, paints + badges mereka dipaparkan sendiri, milik saluran, global dan peribadi. tak perlu sambungan lain.
+
+• papan kekunci dahulu — emote bertukar jadi gambar semasa anda menaip, sejarah mesej, balasan, dan kotak carian yang menyempitkan sembang langsung kepada satu perkataan atau @name. kekunci vim pilihan dalam setiap kotak sembang: twitch, kick, youtube + panel.
+
+• penyederhanaan + orang — butang mod ketika tuding yang anda pilih sendiri (padam, timeout, purge, ban, unban), baris gilir automod twitch, alat mod (shield mode, permintaan unban, istilah disekat) dan log mod. kad profil dengan tempoh follow, badge, kata ganti, nota peribadi dan sejarah sembang. senyap atau sekat mengikut akaun berpaut seseorang. klip satu klik daripada stream twitch yang sedang live.
+
+• acara stream + penapis — mula live, raid, hype train, sub, tebusan, ramalan, undian, super chat + keahlian youtube, setiap satu boleh dihidupkan atau dimatikan. peraturan penapis menyerlah atau menyembunyikan sembang mengikut perkataan, pengguna, badge atau jenis. mata saluran dituntut sendiri di twitch.
+
+percuma · sumber terbuka (MIT) · tiada iklan, tiada analitik pihak ketiga · emote anda kekal milik anda

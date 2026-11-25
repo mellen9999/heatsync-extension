@@ -1,0 +1,15 @@
+twitch, kick + youtube chat ao vivo em um só painel — leia todos os seus canais de uma vez e responda em qualquer um sem alt-tab. um streamer ao vivo nos três é uma aba só. além disso, seus próprios emotes em qualquer canal: 5.000 espaços grátis, sem sub, sem configuração do streamer. outros usuários do heatsync veem; todo mundo vê o nome normal. grátis.
+
+• multichat multiplataforma — chat ao vivo de twitch, kick + youtube em um painel com abas: uma aba por canal, ou uma por streamer com os três chats juntos. abas de menções + sussurros, uma lista de seguidos ao vivo e importação dos seus seguidos de twitch + kick. redimensione, encaixe em qualquer borda ou solte em outra janela. não precisa de conta para ler.
+
+• seus emotes, qualquer canal — envie ou importe qualquer emote (7tv, bttv, ffz ou o seu) para um inventário grátis de 5.000 espaços que funciona no chat próprio da twitch + kick e no painel, em qualquer canal. complete qualquer emote do 7tv com tab e envie — ele é adicionado para você. um clique copia todos os emotes de um canal. gifs + emoji no seletor.
+
+• 7tv / bttv / ffz integrados — os emotes, paints + badges deles aparecem sozinhos, do canal, globais e pessoais. nenhuma outra extensão necessária.
+
+• teclado em primeiro lugar — emotes viram imagens enquanto você digita, histórico de mensagens, respostas e uma caixa de busca que filtra o chat ao vivo por uma palavra ou @name. teclas vim opcionais em toda caixa de chat: twitch, kick, youtube + o painel.
+
+• moderação + pessoas — botões de mod ao passar o mouse que você escolhe (apagar, timeouts, purge, ban, unban), a fila de automod da twitch, ferramentas de mod (modo escudo, pedidos de unban, termos bloqueados) e um log de mod. cartões de perfil com tempo de follow, badges, pronomes, notas privadas e histórico de chat. silenciar ou bloquear acompanha as contas vinculadas de uma pessoa. clipes com um clique de lives da twitch.
+
+• eventos da live + filtros — entrar ao vivo, raids, hype trains, subs, resgates, previsões, enquetes, super chats + assinaturas de membro do youtube, cada um pode ser ligado ou desligado. regras de filtro destacam ou escondem o chat por palavra, usuário, badge ou tipo. os pontos do canal são resgatados sozinhos na twitch.
+
+grátis · código aberto (MIT) · sem anúncios, sem analytics de terceiros · seus emotes continuam seus

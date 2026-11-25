@@ -1,0 +1,15 @@
+twitch, kick + youtube direktechat i ett panel — les alle kanalene dine samtidig og svar i hvilken som helst uten alt-tab. en streamer som er live på alle tre, er én fane. pluss dine egne emotes i alle kanaler: 5 000 gratis plasser, ingen sub, ingen oppsett hos streameren. andre heatsync-brukere ser dem; alle andre ser det vanlige navnet. gratis.
+
+• multichat på tvers av plattformer — direktechat fra twitch, kick + youtube i ett panel med faner: én fane per kanal, eller én per streamer med alle tre chattene slått sammen. faner for omtaler + hvisking, en liste over live-følger og import av twitch- + kick-følgene dine. endre størrelse, fest det til en hvilken som helst kant, eller løsne det i eget vindu. ingen konto trengs for å lese.
+
+• dine emotes, alle kanaler — last opp eller importer hvilken som helst emote (7tv, bttv, ffz eller din egen) til et gratis lager med 5 000 plasser som fungerer i twitch + kicks egen chat og i panelet, i alle kanaler. tab-fullfør hvilken som helst 7tv-emote og send den — den blir lagt til for deg. ett klikk kopierer alle emotene i en kanal. gifs + emoji i velgeren.
+
+• 7tv / bttv / ffz innebygd — emotene, paints + badges deres vises av seg selv, kanal-, globale og personlige. ingen annen utvidelse trengs.
+
+• tastatur først — emotes blir til bilder mens du skriver, meldingshistorikk, svar og et søkefelt som snevrer inn direktechatten til et ord eller @name. valgfrie vim-taster i hvert chatfelt: twitch, kick, youtube + panelet.
+
+• moderering + folk — mod-knapper ved hover som du velger selv (slett, timeouts, purge, ban, unban), twitchs automod-kø, mod-verktøy (shield mode, unban-forespørsler, blokkerte ord) og en mod-logg. profilkort med følgetid, badges, pronomener, private notater og chathistorikk. demping eller blokkering følger en persons koblede kontoer. klipp av live twitch-streams med ett klikk.
+
+• stream-events + filtre — går live, raids, hype trains, subs, innløsninger, spådommer, avstemninger, youtube super chats + medlemskap, hver kan slås av eller på. filterregler fremhever eller skjuler chat etter ord, bruker, badge eller type. kanalpoeng hentes av seg selv på twitch.
+
+gratis · åpen kildekode (MIT) · ingen reklame, ingen analyse fra tredjepart · emotene dine forblir dine

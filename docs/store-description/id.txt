@@ -1,0 +1,15 @@
+twitch, kick + youtube live chat dalam satu panel — baca semua channel-mu sekaligus dan balas di mana pun tanpa alt-tab. streamer yang live di ketiganya jadi satu tab. plus emote-mu sendiri di channel mana pun: 5.000 slot gratis, tanpa sub, tanpa setup dari streamer. pengguna heatsync lain bisa melihatnya; semua orang lain melihat nama biasa. gratis.
+
+• multichat lintas platform — live chat twitch, kick + youtube dalam satu panel bertab: satu tab per channel, atau satu per streamer dengan ketiga chat digabung. tab mention + bisikan, daftar follow yang sedang live, dan impor follow twitch + kick-mu. ubah ukurannya, tempelkan ke tepi mana pun, atau lepas jadi jendela sendiri. tidak perlu akun untuk membaca.
+
+• emote-mu, channel mana pun — unggah atau impor emote apa pun (7tv, bttv, ffz, atau buatanmu) ke inventaris gratis 5.000 slot yang berfungsi di chat bawaan twitch + kick dan di panel, di channel mana pun. lengkapi emote 7tv apa pun dengan tab lalu kirim — otomatis ditambahkan untukmu. satu klik menyalin semua emote sebuah channel. gif + emoji di pemilih.
+
+• 7tv / bttv / ffz terpasang — emote, paints + badges mereka tampil sendiri, milik channel, global, dan pribadi. tidak perlu ekstensi lain.
+
+• utamakan keyboard — emote berubah jadi gambar saat kamu mengetik, riwayat pesan, balasan, dan kotak pencarian yang mempersempit live chat ke satu kata atau @name. tombol vim opsional di setiap kotak chat: twitch, kick, youtube + panel.
+
+• moderasi + orang — tombol mod saat kursor di atas pesan yang kamu pilih sendiri (hapus, timeout, purge, ban, unban), antrean automod twitch, alat mod (shield mode, permintaan unban, kata terblokir), dan log mod. kartu profil dengan lama follow, badge, pronomina, catatan pribadi, dan riwayat chat. mute atau blokir mengikuti akun tertaut seseorang. klip satu klik dari stream twitch yang sedang live.
+
+• event stream + filter — mulai live, raid, hype train, sub, penukaran, prediksi, polling, super chat + keanggotaan youtube, masing-masing bisa dinyalakan atau dimatikan. aturan filter menyorot atau menyembunyikan chat berdasarkan kata, pengguna, badge, atau jenis. poin channel diklaim sendiri di twitch.
+
+gratis · open source (MIT) · tanpa iklan, tanpa analitik pihak ketiga · emote-mu tetap milikmu

@@ -1,0 +1,15 @@
+twitch, kick + youtube livechat in einem panel — lies alle deine kanäle gleichzeitig und antworte in jedem davon, ohne alt-tab. ein streamer, der auf allen dreien live ist, bekommt einen tab. dazu deine eigenen emotes in jedem kanal: 5.000 kostenlose plätze, kein abo, keine einrichtung durch den streamer. andere heatsync-nutzer sehen sie; alle anderen sehen den normalen namen. kostenlos.
+
+• plattformübergreifender multichat — livechat von twitch, kick + youtube in einem panel mit tabs: ein tab pro kanal oder einer pro streamer, mit allen drei chats zusammengeführt. tabs für erwähnungen + flüstern, eine liste der live-follows und ein import deiner twitch- + kick-follows. größe ändern, an jeden rand andocken oder als eigenes fenster lösen. zum lesen brauchst du kein konto.
+
+• deine emotes, jeder kanal — lade beliebige emotes hoch oder importiere sie (7tv, bttv, ffz oder eigene) in ein kostenloses inventar mit 5.000 plätzen, das im eigenen chat von twitch + kick und im panel funktioniert, in jedem kanal. vervollständige jedes 7tv-emote per tab und sende es — es wird dir automatisch hinzugefügt. ein klick kopiert alle emotes eines kanals. gifs + emoji in der auswahl.
+
+• 7tv / bttv / ffz eingebaut — ihre emotes, paints + badges werden von selbst angezeigt, kanalweit, global und persönlich. keine weitere erweiterung nötig.
+
+• tastatur zuerst — emotes werden beim tippen zu bildern, nachrichtenverlauf, antworten und ein suchfeld, das den livechat auf ein wort oder @name eingrenzt. optionale vim-tasten in jedem chatfeld: twitch, kick, youtube + das panel.
+
+• moderation + leute — mod-buttons beim darüberfahren, die du selbst auswählst (löschen, timeouts, purge, ban, unban), die automod-warteschlange von twitch, mod-tools (shield mode, entbannungsanfragen, blockierte begriffe) und ein mod-log. profilkarten mit followzeit, badges, pronomen, privaten notizen und chatverlauf. stummschalten oder blockieren gilt für die verknüpften konten einer person. clips von laufenden twitch-streams mit einem klick.
+
+• stream-events + filter — live gehen, raids, hype trains, subs, einlösungen, vorhersagen, umfragen, youtube super chats + mitgliedschaften, jedes einzeln abschaltbar. filterregeln heben chat nach wort, nutzer, badge oder art hervor oder blenden ihn aus. kanalpunkte holen sich auf twitch von selbst ab.
+
+kostenlos · open source (MIT) · keine werbung, keine analytics von drittanbietern · deine emotes bleiben deine

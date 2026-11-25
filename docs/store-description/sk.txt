@@ -1,0 +1,15 @@
+twitch, kick + youtube živý chat v jednom paneli — čítaj všetky svoje kanály naraz a odpovedaj v ktoromkoľvek bez alt-tabu. streamer naživo na všetkých troch je jedna karta. k tomu tvoje vlastné emoty v každom kanáli: 5 000 voľných miest zdarma, žiadny sub, žiadne nastavovanie u streamera. ostatní používatelia heatsync ich vidia; všetci ostatní vidia obyčajný názov. zadarmo.
+
+• multichat naprieč platformami — živý chat z twitch, kick + youtube v jednom paneli s kartami: karta na kanál, alebo jedna na streamera so všetkými tromi chatmi dokopy. karty zmienok + šepkania, zoznam sledovaných naživo a import tvojich sledovaní z twitch + kick. zmeň veľkosť, pripni k ľubovoľnému okraju alebo odpoj do vlastného okna. na čítanie nie je potrebný účet.
+
+• tvoje emoty, každý kanál — nahraj alebo importuj ľubovoľný emote (7tv, bttv, ffz alebo vlastný) do bezplatného inventára s 5 000 miestami, ktorý funguje v chate twitch + kick aj v paneli, v každom kanáli. doplň tabom ľubovoľný emote zo 7tv a odošli ho — pridá sa ti sám. jedno kliknutie skopíruje všetky emoty kanála. gify + emoji vo výbere.
+
+• 7tv / bttv / ffz zabudované — ich emoty, paints + badges sa zobrazujú samy, kanálové, globálne aj osobné. žiadne ďalšie rozšírenie nie je potrebné.
+
+• klávesnica predovšetkým — emoty sa pri písaní menia na obrázky, história správ, odpovede a vyhľadávacie pole, ktoré zúži živý chat na slovo alebo @name. voliteľné klávesy vim v každom chatovom poli: twitch, kick, youtube + panel.
+
+• moderovanie + ľudia — tlačidlá moda pri prejdení myšou, ktoré si sám zvolíš (zmazať, timeouty, purge, ban, unban), automod fronta twitchu, nástroje moda (shield mode, žiadosti o unban, blokované výrazy) a log moda. profilové karty s dobou sledovania, badges, zámenami, súkromnými poznámkami a históriou chatu. stlmenie alebo blokovanie sa vzťahuje na prepojené účty danej osoby. klipy zo živých streamov na twitchi jedným kliknutím.
+
+• udalosti streamu + filtre — spustenie streamu, raidy, hype trainy, suby, výbery odmien, predikcie, ankety, youtube super chaty + členstvá, každú možno zapnúť alebo vypnúť. pravidlá filtrov zvýraznia alebo skryjú chat podľa slova, používateľa, badge alebo druhu. body kanála sa na twitchi vyzdvihnú samy.
+
+zadarmo · open source (MIT) · bez reklám, bez analytiky tretích strán · tvoje emoty zostávajú tvoje

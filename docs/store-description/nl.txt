@@ -1,0 +1,15 @@
+twitch, kick + youtube livechat in één paneel — lees al je kanalen tegelijk en reageer in elk ervan zonder alt-tab. een streamer die op alle drie live is, is één tab. plus je eigen emotes in elk kanaal: 5.000 gratis plekken, geen sub, geen instelwerk voor de streamer. andere heatsync-gebruikers zien ze; iedereen anders ziet de gewone naam. gratis.
+
+• multichat voor alle platforms — livechat van twitch, kick + youtube in één paneel met tabs: een tab per kanaal, of eentje per streamer met alle drie de chats samengevoegd. tabs voor vermeldingen + fluisterberichten, een lijst met live-follows en een import van je twitch- + kick-follows. pas het formaat aan, dock het aan elke rand of maak het los als eigen venster. je hebt geen account nodig om te lezen.
+
+• jouw emotes, elk kanaal — upload of importeer elke emote (7tv, bttv, ffz of je eigen) in een gratis inventaris met 5.000 plekken die werkt in de eigen chat van twitch + kick en in het paneel, in elk kanaal. vul elke 7tv-emote aan met tab en verstuur hem — hij wordt voor je toegevoegd. met één klik kopieer je alle emotes van een kanaal. gifs + emoji in de kiezer.
+
+• 7tv / bttv / ffz ingebouwd — hun emotes, paints + badges verschijnen vanzelf, van het kanaal, globaal en persoonlijk. geen andere extensie nodig.
+
+• toetsenbord eerst — emotes worden plaatjes terwijl je typt, berichtgeschiedenis, antwoorden en een zoekvak dat de livechat versmalt tot een woord of @name. optionele vim-toetsen in elk chatvak: twitch, kick, youtube + het paneel.
+
+• moderatie + mensen — modknoppen bij hover die je zelf kiest (verwijderen, timeouts, purge, ban, unban), de automod-wachtrij van twitch, modtools (shield mode, unban-verzoeken, geblokkeerde termen) en een modlog. profielkaarten met volgduur, badges, voornaamwoorden, privénotities en chatgeschiedenis. dempen of blokkeren volgt de gekoppelde accounts van een persoon. clips van live twitch-streams met één klik.
+
+• streamevents + filters — live gaan, raids, hype trains, subs, inwisselingen, voorspellingen, polls, youtube super chats + lidmaatschappen, elk apart aan of uit te zetten. filterregels markeren of verbergen chat op woord, gebruiker, badge of soort. kanaalpunten worden op twitch vanzelf geclaimd.
+
+gratis · open source (MIT) · geen advertenties, geen analytics van derden · je emotes blijven van jou

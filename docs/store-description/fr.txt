@@ -1,0 +1,15 @@
+twitch, kick + youtube : le chat en direct dans un seul panneau — lis toutes tes chaînes en même temps et réponds dans n'importe laquelle sans alt-tab. un streamer en direct sur les trois n'a qu'un seul onglet. en plus, tes propres emotes dans n'importe quelle chaîne : 5 000 places gratuites, sans abonnement, sans rien à configurer côté streamer. les autres utilisateurs de heatsync les voient ; tous les autres voient le nom en texte simple. gratuit.
+
+• multichat multiplateforme — le chat en direct de twitch, kick + youtube dans un panneau à onglets : un onglet par chaîne, ou un par streamer avec les trois chats fusionnés. onglets mentions + chuchotements, une liste des suivis en direct et un import de tes suivis twitch + kick. redimensionne-le, ancre-le sur n'importe quel bord ou détache-le. aucun compte requis pour lire.
+
+• tes emotes, n'importe quelle chaîne — téléverse ou importe n'importe quelle emote (7tv, bttv, ffz ou la tienne) dans un inventaire gratuit de 5 000 places qui fonctionne dans le chat natif de twitch + kick et dans le panneau, sur n'importe quelle chaîne. complète n'importe quelle emote 7tv avec tab et envoie-la — elle est ajoutée pour toi. un clic copie toutes les emotes d'une chaîne. gifs + emoji dans le sélecteur.
+
+• 7tv / bttv / ffz intégrés — leurs emotes, paints + badges s'affichent tout seuls, de chaîne, globaux et personnels. aucune autre extension nécessaire.
+
+• clavier d'abord — les emotes deviennent des images pendant que tu tapes, historique des messages, réponses, et une barre de recherche qui réduit le chat en direct à un mot ou un @name. touches vim en option dans chaque zone de saisie : twitch, kick, youtube + le panneau.
+
+• modération + personnes — boutons de modération au survol que tu choisis (supprimer, timeouts, purge, ban, unban), file automod de twitch, outils de modération (mode bouclier, demandes de débannissement, termes bloqués) et un journal de modération. cartes de profil avec ancienneté de suivi, badges, pronoms, notes privées et historique de chat. masquer ou bloquer s'applique aux comptes liés d'une personne. clips en un clic des streams twitch en direct.
+
+• événements de stream + filtres — passage en direct, raids, hype trains, abonnements, récompenses, prédictions, sondages, super chats + abonnements membres youtube, chacun activable ou non. les règles de filtre mettent en avant ou masquent le chat par mot, utilisateur, badge ou type. les points de chaîne se récupèrent tout seuls sur twitch.
+
+gratuit · open source (MIT) · sans pub, sans analytics tiers · tes emotes restent à toi

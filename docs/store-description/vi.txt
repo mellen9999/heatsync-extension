@@ -1,0 +1,15 @@
+twitch, kick + youtube chat trực tiếp trong một bảng — đọc tất cả kênh của bạn cùng lúc và trả lời ở bất kỳ kênh nào mà không cần alt-tab. một streamer đang live trên cả ba chỉ là một tab. thêm nữa là emote của riêng bạn ở mọi kênh: 5.000 ô miễn phí, không cần sub, streamer không phải cài đặt gì. người dùng heatsync khác sẽ thấy chúng; những người còn lại thấy tên thường. miễn phí.
+
+• multichat đa nền tảng — chat trực tiếp của twitch, kick + youtube trong một bảng có tab: một tab cho mỗi kênh, hoặc một tab cho mỗi streamer gộp cả ba chat. tab nhắc đến + tin nhắn thì thầm, danh sách follow đang live và nhập danh sách follow twitch + kick của bạn. đổi cỡ, ghim vào bất kỳ cạnh nào hoặc tách ra thành cửa sổ riêng. không cần tài khoản để đọc.
+
+• emote của bạn, mọi kênh — tải lên hoặc nhập bất kỳ emote nào (7tv, bttv, ffz hoặc của riêng bạn) vào kho 5.000 ô miễn phí, dùng được trong chat gốc của twitch + kick và trong bảng, ở mọi kênh. gõ tab để hoàn thành bất kỳ emote 7tv nào rồi gửi — emote được thêm cho bạn. một cú nhấp sao chép toàn bộ emote của một kênh. gif + emoji trong bộ chọn.
+
+• 7tv / bttv / ffz tích hợp sẵn — emote, paints + badges của họ tự hiển thị, của kênh, toàn cục và cá nhân. không cần tiện ích nào khác.
+
+• ưu tiên bàn phím — emote biến thành hình ngay khi bạn gõ, lịch sử tin nhắn, trả lời và hộp tìm kiếm thu hẹp chat trực tiếp theo một từ hoặc @name. phím vim tùy chọn trong mọi ô chat: twitch, kick, youtube + bảng.
+
+• kiểm duyệt + con người — nút mod hiện khi rê chuột mà bạn tự chọn (xóa, timeout, purge, ban, unban), hàng chờ automod của twitch, công cụ mod (shield mode, yêu cầu unban, từ bị chặn) và nhật ký mod. thẻ hồ sơ có thời gian follow, badge, đại từ, ghi chú riêng và lịch sử chat. tắt tiếng hoặc chặn áp dụng cho các tài khoản liên kết của một người. clip một cú nhấp từ các stream twitch đang live.
+
+• sự kiện stream + bộ lọc — lên sóng, raid, hype train, sub, đổi thưởng, dự đoán, bình chọn, super chat + thành viên youtube, mỗi thứ đều bật tắt được. quy tắc lọc làm nổi bật hoặc ẩn chat theo từ, người dùng, badge hoặc loại. điểm kênh tự được nhận trên twitch.
+
+miễn phí · mã nguồn mở (MIT) · không quảng cáo, không phân tích của bên thứ ba · emote của bạn vẫn là của bạn

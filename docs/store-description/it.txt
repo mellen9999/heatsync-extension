@@ -1,0 +1,15 @@
+twitch, kick + youtube chat live in un solo pannello — leggi tutti i tuoi canali insieme e rispondi in uno qualsiasi senza alt-tab. uno streamer in diretta su tutti e tre è una sola scheda. in più i tuoi emote in qualsiasi canale: 5.000 posti gratis, niente sub, nessuna configurazione dello streamer. gli altri utenti heatsync li vedono; tutti gli altri vedono il nome semplice. gratis.
+
+• multichat multipiattaforma — chat live di twitch, kick + youtube in un pannello a schede: una scheda per canale, o una per streamer con le tre chat unite. schede per menzioni + sussurri, un elenco dei seguiti in diretta e l'importazione dei tuoi seguiti di twitch + kick. ridimensionalo, ancoralo a qualsiasi bordo o staccalo in una finestra. non serve un account per leggere.
+
+• i tuoi emote, qualsiasi canale — carica o importa qualsiasi emote (7tv, bttv, ffz o tuo) in un inventario gratuito da 5.000 posti che funziona nella chat nativa di twitch + kick e nel pannello, in qualsiasi canale. completa con tab qualsiasi emote 7tv e invialo: viene aggiunto per te. un clic copia tutti gli emote di un canale. gif + emoji nel selettore.
+
+• 7tv / bttv / ffz integrati — i loro emote, paint + badge si mostrano da soli, di canale, globali e personali. nessun'altra estensione necessaria.
+
+• tastiera al primo posto — gli emote diventano immagini mentre scrivi, cronologia dei messaggi, risposte e una casella di ricerca che restringe la chat live a una parola o a un @name. tasti vim opzionali in ogni casella di chat: twitch, kick, youtube + il pannello.
+
+• moderazione + persone — pulsanti di moderazione al passaggio del mouse che scegli tu (elimina, timeout, purge, ban, unban), la coda automod di twitch, strumenti di moderazione (modalità scudo, richieste di unban, termini bloccati) e un registro di moderazione. schede profilo con anzianità di follow, badge, pronomi, note private e cronologia chat. silenziare o bloccare segue gli account collegati di una persona. clip con un clic dei live twitch.
+
+• eventi dello stream + filtri — inizio diretta, raid, hype train, sub, riscatti, previsioni, sondaggi, super chat + abbonamenti youtube, ognuno attivabile a piacere. le regole dei filtri evidenziano o nascondono la chat per parola, utente, badge o tipo. i punti canale si riscattano da soli su twitch.
+
+gratis · open source (MIT) · niente pubblicità, niente analytics di terze parti · i tuoi emote restano tuoi

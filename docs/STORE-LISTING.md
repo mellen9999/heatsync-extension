@@ -40,6 +40,9 @@ twitch, kick + youtube live chat in one panel — read all your channels at once
 free · open source (MIT) · no ads, no third-party analytics · your emotes stay yours
 ```
 
+## translated long description
+`docs/store-description/<locale>.txt` holds the long description above in each `_locales` language (edge add-ons shows one per listing language). when the english block changes, re-translate these in the same commit.
+
 ## tags / categories
 - cws category: social & communication
 - cws tags: `chat, streaming, twitch, kick, youtube, emotes, 7tv`

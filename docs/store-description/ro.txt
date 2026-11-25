@@ -1,0 +1,15 @@
+twitch, kick + youtube chat live într-un singur panou — citește toate canalele tale deodată și răspunde în oricare fără alt-tab. un streamer live pe toate trei este un singur tab. în plus, emote-urile tale în orice canal: 5.000 de locuri gratuite, fără sub, fără configurare la streamer. ceilalți utilizatori heatsync le văd; toți ceilalți văd numele simplu. gratis.
+
+• multichat multiplatformă — chat live de pe twitch, kick + youtube într-un panou cu taburi: un tab pe canal sau unul pe streamer, cu toate trei chaturile unite. taburi pentru mențiuni + șoapte, o listă cu follow-urile live și import al follow-urilor tale de pe twitch + kick. redimensionează-l, ancorează-l la orice margine sau scoate-l în fereastră separată. nu ai nevoie de cont ca să citești.
+
+• emote-urile tale, orice canal — încarcă sau importă orice emote (7tv, bttv, ffz sau al tău) într-un inventar gratuit de 5.000 de locuri care funcționează în chatul propriu twitch + kick și în panou, în orice canal. completează cu tab orice emote 7tv și trimite-l — se adaugă pentru tine. un clic copiază toate emote-urile unui canal. gif-uri + emoji în selector.
+
+• 7tv / bttv / ffz integrate — emote-urile, paints + badges lor apar de la sine, de canal, globale și personale. nu ai nevoie de altă extensie.
+
+• tastatura mai întâi — emote-urile se transformă în imagini pe măsură ce scrii, istoric de mesaje, răspunsuri și o casetă de căutare care restrânge chatul live la un cuvânt sau @name. taste vim opționale în fiecare casetă de chat: twitch, kick, youtube + panoul.
+
+• moderare + oameni — butoane de mod la trecerea cursorului, pe care le alegi tu (șterge, timeouts, purge, ban, unban), coada automod din twitch, unelte de mod (shield mode, cereri de unban, termeni blocați) și un log de mod. carduri de profil cu vechime de follow, badges, pronume, notițe private și istoric de chat. mute sau blocarea urmează conturile asociate ale unei persoane. clipuri cu un clic din stream-uri twitch live.
+
+• evenimente de stream + filtre — intrare live, raiduri, hype trains, subs, răscumpărări, predicții, sondaje, youtube super chats + calități de membru, fiecare se poate activa sau dezactiva. regulile de filtrare evidențiază sau ascund chatul după cuvânt, utilizator, badge sau tip. punctele canalului se revendică singure pe twitch.
+
+gratis · open source (MIT) · fără reclame, fără analytics de la terți · emote-urile tale rămân ale tale

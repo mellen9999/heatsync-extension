@@ -1,0 +1,15 @@
+twitch, kick + youtube live-chat yhdessä paneelissa — lue kaikkia kanaviasi yhtä aikaa ja vastaa mihin tahansa ilman alt-tabia. striimaaja, joka on livenä kaikilla kolmella, on yksi välilehti. lisäksi omat emotesi millä tahansa kanavalla: 5 000 ilmaista paikkaa, ei subia, ei asetuksia striimaajan puolella. muut heatsync-käyttäjät näkevät ne; kaikki muut näkevät pelkän nimen. ilmainen.
+
+• alustat ylittävä multichat — twitchin, kickin + youtuben live-chat yhdessä välilehtipaneelissa: välilehti per kanava tai yksi per striimaaja kaikki kolme chattia yhdistettynä. maininnat + kuiskaukset -välilehdet, lista livenä olevista seuratuista ja twitch- + kick-seuraustesi tuonti. muuta kokoa, telakoi mihin tahansa reunaan tai irrota omaksi ikkunaksi. lukemiseen ei tarvita tiliä.
+
+• omat emotesi, mikä tahansa kanava — lataa tai tuo mikä tahansa emote (7tv, bttv, ffz tai oma) ilmaiseen 5 000 paikan varastoon, joka toimii twitchin + kickin omassa chatissa ja paneelissa, millä tahansa kanavalla. täydennä tabilla mikä tahansa 7tv-emote ja lähetä se — se lisätään sinulle. yhdellä klikkauksella kopioit kanavan kaikki emotet. gifit + emoji valitsimessa.
+
+• 7tv / bttv / ffz sisäänrakennettuna — niiden emotet, paints + badges näkyvät itsestään, kanavakohtaiset, yleiset ja henkilökohtaiset. muuta laajennusta ei tarvita.
+
+• näppäimistö ensin — emotet muuttuvat kuviksi kirjoittaessasi, viestihistoria, vastaukset ja hakukenttä, joka rajaa live-chatin sanaan tai @name. valinnaiset vim-näppäimet jokaisessa chat-kentässä: twitch, kick, youtube + paneeli.
+
+• moderointi + ihmiset — modi-painikkeet, jotka tulevat näkyviin kohdistaessa ja jotka valitset itse (poista, timeoutit, purge, ban, unban), twitchin automod-jono, modityökalut (shield mode, unban-pyynnöt, estetyt sanat) ja modilogi. profiilikortit seuraamisajalla, badgeilla, pronomineilla, yksityisillä muistiinpanoilla ja chat-historialla. mykistys tai esto seuraa henkilön linkitettyjä tilejä. klipit livenä olevista twitch-lähetyksistä yhdellä klikkauksella.
+
+• striimin tapahtumat + suodattimet — livelle meno, raidit, hype trainit, subit, lunastukset, ennustukset, äänestykset, youtuben super chatit + jäsenyydet, kukin erikseen päälle tai pois. suodatussäännöt korostavat tai piilottavat chatin sanan, käyttäjän, badgen tai tyypin mukaan. kanavapisteet lunastuvat twitchissä itsestään.
+
+ilmainen · avoin lähdekoodi (MIT) · ei mainoksia, ei kolmannen osapuolen analytiikkaa · emotesi pysyvät sinun

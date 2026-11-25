@@ -1,0 +1,15 @@
+twitch, kick + youtube chat em direto num só painel — lê todos os teus canais ao mesmo tempo e responde em qualquer um sem alt-tab. um streamer em direto nos três é um separador só. além disso, os teus próprios emotes em qualquer canal: 5 000 espaços grátis, sem sub, sem configuração do streamer. outros utilizadores do heatsync veem-nos; todos os outros veem o nome normal. grátis.
+
+• multichat multiplataforma — chat em direto de twitch, kick + youtube num painel com separadores: um separador por canal, ou um por streamer com os três chats juntos. separadores de menções + sussurros, uma lista de seguidos em direto e importação dos teus seguidos de twitch + kick. redimensiona, encaixa em qualquer margem ou solta numa janela própria. não precisas de conta para ler.
+
+• os teus emotes, qualquer canal — carrega ou importa qualquer emote (7tv, bttv, ffz ou o teu) para um inventário grátis de 5 000 espaços que funciona no chat próprio da twitch + kick e no painel, em qualquer canal. completa qualquer emote do 7tv com tab e envia — é adicionado por ti. um clique copia todos os emotes de um canal. gifs + emoji no seletor.
+
+• 7tv / bttv / ffz integrados — os emotes, paints + badges deles aparecem sozinhos, do canal, globais e pessoais. não precisas de outra extensão.
+
+• teclado primeiro — os emotes viram imagens enquanto escreves, histórico de mensagens, respostas e uma caixa de pesquisa que filtra o chat em direto por uma palavra ou @name. teclas vim opcionais em todas as caixas de chat: twitch, kick, youtube + o painel.
+
+• moderação + pessoas — botões de mod ao passar o rato que tu escolhes (apagar, timeouts, purge, ban, unban), a fila de automod da twitch, ferramentas de mod (modo escudo, pedidos de unban, termos bloqueados) e um registo de mod. cartões de perfil com tempo de follow, badges, pronomes, notas privadas e histórico de chat. silenciar ou bloquear acompanha as contas associadas de uma pessoa. clipes com um clique de streams da twitch em direto.
+
+• eventos do stream + filtros — entrar em direto, raids, hype trains, subs, resgates, previsões, sondagens, super chats + subscrições de membro do youtube, cada um pode ser ligado ou desligado. regras de filtro destacam ou escondem o chat por palavra, utilizador, badge ou tipo. os pontos do canal são resgatados sozinhos na twitch.
+
+grátis · código aberto (MIT) · sem anúncios, sem analytics de terceiros · os teus emotes continuam teus

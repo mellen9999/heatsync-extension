@@ -1,0 +1,15 @@
+twitch, kick + youtube élő chat egyetlen panelben — olvasd az összes csatornádat egyszerre, és válaszolj bármelyikben alt-tab nélkül. az a streamer, aki mindhárom helyen élőben van, egyetlen fül. emellett a saját emote-jaid bármelyik csatornán: 5 000 ingyenes hely, nincs sub, nem kell a streamernek beállítania semmit. a többi heatsync-felhasználó látja őket; mindenki más a sima nevet látja. ingyenes.
+
+• platformok közötti multichat — twitch, kick + youtube élő chat egyetlen füles panelben: egy fül csatornánként, vagy egy streamerenként mindhárom chattel összevonva. említések + suttogások fül, élő követések listája és a twitch- + kick-követéseid importja. átméretezheted, bármelyik szélre rögzítheted, vagy külön ablakba emelheted. olvasáshoz nem kell fiók.
+
+• a te emote-jaid, bármelyik csatorna — tölts fel vagy importálj bármilyen emote-ot (7tv, bttv, ffz vagy saját) egy ingyenes, 5 000 helyes tárba, amely a twitch + kick saját chatjében és a panelben is működik, bármelyik csatornán. egészíts ki tabbal bármilyen 7tv-emote-ot, és küldd el — hozzáadjuk neked. egy kattintással lemásolhatod egy csatorna összes emote-ját. gifek + emoji a választóban.
+
+• 7tv / bttv / ffz beépítve — az emote-jaik, paints + badges maguktól megjelennek, csatornaiak, globálisak és személyesek. nincs szükség másik bővítményre.
+
+• billentyűzet az első — az emote-ok gépelés közben képpé alakulnak, üzenetelőzmények, válaszok és egy keresőmező, amely az élő chatet egy szóra vagy @name-re szűkíti. opcionális vim-billentyűk minden chatmezőben: twitch, kick, youtube + a panel.
+
+• moderálás + emberek — egérrel való ráhúzásra megjelenő mod-gombok, amiket te választasz (törlés, timeoutok, purge, ban, unban), a twitch automod-sora, mod-eszközök (shield mode, unban-kérések, tiltott kifejezések) és mod-napló. profilkártyák követési idővel, badge-ekkel, névmásokkal, privát jegyzetekkel és chatelőzményekkel. a némítás vagy letiltás követi az adott személy összekapcsolt fiókjait. élő twitch-streamekből egy kattintással klipek.
+
+• stream-események + szűrők — élő indulás, raidek, hype trainek, subok, jutalomváltások, jóslatok, szavazások, youtube super chatek + tagságok, mindegyik külön ki- és bekapcsolható. a szűrőszabályok szó, felhasználó, badge vagy fajta szerint kiemelik vagy elrejtik a chatet. a csatornapontok twitchen maguktól beváltódnak.
+
+ingyenes · nyílt forráskódú (MIT) · nincs hirdetés, nincs harmadik féltől származó analitika · az emote-jaid a tieid maradnak

@@ -1,0 +1,15 @@
+twitch, kick + youtube chat en vivo en un solo panel — lee todos tus canales a la vez y responde en cualquiera sin hacer alt-tab. un streamer en directo en los tres es una sola pestaña. además, tus propios emotes en cualquier canal: 5.000 espacios gratis, sin sub, sin configuración del streamer. otros usuarios de heatsync los ven; todos los demás ven el nombre normal. gratis.
+
+• multichat multiplataforma — chat en vivo de twitch, kick + youtube en un panel con pestañas: una pestaña por canal, o una por streamer con los tres chats juntos. pestañas de menciones + susurros, una lista de seguidos en directo y una importación de tus seguidos de twitch + kick. cámbialo de tamaño, acóplalo a cualquier borde o sácalo en una ventana aparte. no hace falta cuenta para leer.
+
+• tus emotes, cualquier canal — sube o importa cualquier emote (7tv, bttv, ffz o el tuyo) a un inventario gratuito de 5.000 espacios que funciona en el chat propio de twitch + kick y en el panel, en cualquier canal. autocompleta con tab cualquier emote de 7tv y envíalo: se añade por ti. un clic copia todos los emotes de un canal. gifs + emoji en el selector.
+
+• 7tv / bttv / ffz integrados — sus emotes, paints + badges se muestran solos, de canal, globales y personales. no hace falta otra extensión.
+
+• teclado primero — los emotes se convierten en imágenes mientras escribes, historial de mensajes, respuestas y un cuadro de búsqueda que filtra el chat en vivo por una palabra o un @name. teclas vim opcionales en cada cuadro de chat: twitch, kick, youtube + el panel.
+
+• moderación + personas — botones de mod al pasar el cursor que tú eliges (borrar, timeouts, purge, ban, unban), la cola de automod de twitch, herramientas de mod (modo escudo, solicitudes de desbaneo, términos bloqueados) y un registro de mod. tarjetas de perfil con tiempo de seguimiento, badges, pronombres, notas privadas e historial de chat. silenciar o bloquear sigue las cuentas vinculadas de una persona. clips con un clic de streams de twitch en directo.
+
+• eventos del stream + filtros — inicio de directo, raids, hype trains, subs, canjes, predicciones, encuestas, super chats + membresías de youtube, cada uno se puede activar o desactivar. las reglas de filtro resaltan u ocultan el chat por palabra, usuario, badge o tipo. los puntos del canal se reclaman solos en twitch.
+
+gratis · código abierto (MIT) · sin anuncios, sin analíticas de terceros · tus emotes siguen siendo tuyos

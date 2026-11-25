@@ -1,0 +1,15 @@
+twitch, kick + youtube canlı sohbeti tek panelde — tüm kanallarını aynı anda oku ve alt-tab yapmadan herhangi birine yanıt ver. üçünde de canlı olan bir yayıncı tek sekmedir. ayrıca kendi emote'ların her kanalda: 5.000 ücretsiz yuva, abonelik yok, yayıncı tarafında kurulum yok. diğer heatsync kullanıcıları onları görür; geri kalan herkes düz adı görür. ücretsiz.
+
+• platformlar arası multichat — twitch, kick + youtube canlı sohbeti sekmeli tek panelde: kanal başına bir sekme ya da yayıncı başına bir sekme, üç sohbet birleşik. bahsetmeler + fısıltılar sekmeleri, canlı takipler listesi ve twitch + kick takiplerinin içe aktarımı. yeniden boyutlandır, herhangi bir kenara tuttur ya da ayrı pencere olarak ayır. okumak için hesap gerekmez.
+
+• emote'ların, her kanal — herhangi bir emote'u (7tv, bttv, ffz ya da kendinki) yükle veya içe aktar; twitch + kick'in kendi sohbetinde ve panelde, her kanalda çalışan 5.000 yuvalık ücretsiz envantere gelsin. herhangi bir 7tv emote'unu tab ile tamamla ve gönder — senin için eklenir. tek tıkla bir kanalın tüm emote'ları kopyalanır. seçicide gif + emoji.
+
+• 7tv / bttv / ffz hazır — onların emote'ları, paints + badges kendiliğinden görünür; kanal, global ve kişisel olanlar. başka uzantı gerekmez.
+
+• önce klavye — yazarken emote'lar resme dönüşür, mesaj geçmişi, yanıtlar ve canlı sohbeti bir kelimeye ya da @name'e daraltan arama kutusu. her sohbet kutusunda isteğe bağlı vim tuşları: twitch, kick, youtube + panel.
+
+• moderasyon + insanlar — üzerine gelince çıkan, senin seçtiğin mod düğmeleri (sil, timeouts, purge, ban, unban), twitch'in automod kuyruğu, mod araçları (shield mode, unban istekleri, engelli terimler) ve mod günlüğü. takip süresi, badges, zamirler, özel notlar ve sohbet geçmişi olan profil kartları. sessize alma veya engelleme, kişinin bağlı hesaplarını da kapsar. canlı twitch yayınlarından tek tıkla klipler.
+
+• yayın olayları + filtreler — yayına başlama, raidler, hype train'ler, abonelikler, ödül kullanımları, tahminler, anketler, youtube super chat + üyelikler, her biri tek tek açılıp kapatılabilir. filtre kuralları sohbeti kelime, kullanıcı, badge ya da türe göre öne çıkarır veya gizler. kanal puanları twitch'te kendiliğinden toplanır.
+
+ücretsiz · açık kaynak (MIT) · reklam yok, üçüncü taraf analitik yok · emote'ların senin kalır

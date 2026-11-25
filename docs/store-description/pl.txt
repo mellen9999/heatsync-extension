@@ -1,0 +1,15 @@
+twitch, kick + youtube czat na żywo w jednym panelu — czytaj wszystkie swoje kanały naraz i odpowiadaj w dowolnym bez alt-tab. streamer na żywo na wszystkich trzech to jedna karta. do tego twoje własne emotki na każdym kanale: 5 000 darmowych miejsc, bez suba, bez konfiguracji po stronie streamera. inni użytkownicy heatsync je widzą; wszyscy pozostali widzą zwykłą nazwę. za darmo.
+
+• multichat na wielu platformach — czat na żywo z twitch, kick + youtube w jednym panelu z kartami: karta na kanał albo jedna na streamera ze wszystkimi trzema czatami razem. karty wzmianek + szeptów, lista śledzonych na żywo i import twoich obserwowanych z twitch + kick. zmieniaj rozmiar, dokuj do dowolnej krawędzi albo odepnij w osobne okno. do czytania nie trzeba konta.
+
+• twoje emotki, każdy kanał — wgraj lub zaimportuj dowolną emotkę (7tv, bttv, ffz albo własną) do darmowego ekwipunku na 5 000 miejsc, który działa w czacie twitch + kick i w panelu, na każdym kanale. uzupełnij tabem dowolną emotkę 7tv i wyślij ją — zostanie dodana za ciebie. jedno kliknięcie kopiuje wszystkie emotki kanału. gify + emoji w selektorze.
+
+• 7tv / bttv / ffz wbudowane — ich emotki, paints + badges wyświetlają się same, kanałowe, globalne i osobiste. nie potrzeba żadnego innego rozszerzenia.
+
+• klawiatura przede wszystkim — emotki zamieniają się w obrazki w trakcie pisania, historia wiadomości, odpowiedzi i pole wyszukiwania, które zawęża czat na żywo do słowa albo @name. opcjonalne klawisze vim w każdym polu czatu: twitch, kick, youtube + panel.
+
+• moderacja + ludzie — przyciski moderatora po najechaniu, które sam wybierasz (usuń, timeouty, purge, ban, unban), kolejka automod twitcha, narzędzia moderatora (tryb tarczy, prośby o unban, zablokowane wyrazy) i log moda. karty profilu z czasem obserwowania, badges, zaimkami, prywatnymi notatkami i historią czatu. wyciszenie lub blokada obejmuje powiązane konta danej osoby. klipy z live'ów na twitchu jednym kliknięciem.
+
+• wydarzenia na streamie + filtry — start streamu, raidy, hype traini, suby, nagrody, przewidywania, ankiety, youtube super chats + członkostwa, każde można włączyć lub wyłączyć. reguły filtrów wyróżniają albo ukrywają czat według słowa, użytkownika, badge lub rodzaju. punkty kanału odbierają się same na twitchu.
+
+za darmo · open source (MIT) · bez reklam, bez zewnętrznej analityki · twoje emotki zostają twoje

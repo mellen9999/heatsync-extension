@@ -253,8 +253,19 @@ function foldedLegsOf(m) {
 let _legBadgesFresh = new Set()
 const hasBadges = (m) => (Array.isArray(m.badges) ? m.badges.length > 0 : !!m.badges)
 function lendBadges(row, m, lent, prev) {
-  if (lent.has(row) || hasBadges(row) || !hasBadges(m) || legPlatform(m) === 'youtube') return
-  lent.set(row, { badges: m.badges, channel: m.channel, platform: legPlatform(m) })
+  if (lent.has(row) || legPlatform(m) === 'youtube') return
+  // a non-twitch row (kick's) may carry badges of its own that draw nothing for you (kick ids the
+  // twitch art does not know): the row's draw decides, it uses these only when it has none
+  const badges = hasBadges(m) && (!hasBadges(row) || legPlatform(row) !== 'twitch') ? m.badges : null
+  // a twitch copy's name colour is the sender's real one: kick's copy has a hashed or picked one
+  const color = legPlatform(m) === 'twitch' && legPlatform(row) !== 'twitch' && m.color ? m.color : null
+  if (!badges && !color) return
+  lent.set(row, {
+    ...(badges ? { badges } : {}),
+    ...(color ? { color } : {}),
+    channel: m.channel,
+    platform: legPlatform(m),
+  })
   if (!prev.has(row)) _legBadgesFresh.add(row)
 }
 function legBadgesOf(m) {
@@ -276,7 +287,10 @@ function carryCleared(row, m) {
   row.clearedReason = m.clearedReason
 }
 // msgs chronological (fairMerge's order); the earliest leg stands for the rest
-function foldSimulcastLegs(msgs) {
+// `hiddenLegs`: copies a tab already dropped as dual-send duplicates (m.hidden, from the retro-fold or
+// the history replay). They never stand for a line, but the row that does still takes their badges and
+// colour: your twitch copy was the one dropped whenever kick's painted first, and with it went the mod+sub.
+function foldSimulcastLegs(msgs, hiddenLegs) {
   const out = []
   const legs = new Map()
   const bySend = new Map() // send id -> the row standing for it
@@ -312,6 +326,18 @@ function foldSimulcastLegs(msgs) {
     if (!folded) {
       out.push(m)
       if (m.hsSendId) bySend.set(m.hsSendId, m)
+    }
+  }
+  for (const m of hiddenLegs || []) {
+    if (!m || m.type || typeof m.text !== 'string' || !m.time) continue
+    if (typeof hsOriginStamp === 'function') hsOriginStamp(m)
+    for (let j = out.length - 1, n = 0; j >= 0 && n < 120; j--, n++) {
+      const row = out[j]
+      if (!row || row === m) continue
+      if (isSimulcastLeg(row, m, legs)) {
+        lendBadges(row, m, lent, prev)
+        break
+      }
     }
   }
   _legBadges = lent

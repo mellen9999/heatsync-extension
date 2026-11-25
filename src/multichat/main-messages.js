@@ -595,7 +595,7 @@ function buildMessageDiv(m, tabId) {
   }
   // one send folded into this row from another platform: its badges when this copy has none
   const lent = typeof legBadgesOf === 'function' ? legBadgesOf(m) : null
-  if (lent && !badges) badges = renderBadges(lent.badges, lent.channel, lent.platform)
+  if (lent?.badges && !badges) badges = renderBadges(lent.badges, lent.channel, lent.platform)
   // YT messages don't carry a Twitch ID — resolve via heatsync profile
   // lookup keyed by the YT @handle. If cached, hoist into m.userId so the
   // existing badge + cosmetics pipeline applies; if not, queue a lookup
@@ -720,6 +720,8 @@ function buildMessageDiv(m, tabId) {
     if (picked) hsNameColor = picked
     else if (plat === 'yt') hsNameColor = hsUsernameColor(m.user)
   }
+  // the same send's twitch copy folded into this row: its real name colour
+  if (lent?.color) hsNameColor = lent.color
   // Build the channel link for the username. YouTube usernames arrive
   // prefixed with "@" so we strip it before concatenating to avoid
   // youtube.com/@/%40handle-style double-encoding.

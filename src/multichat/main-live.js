@@ -285,7 +285,8 @@ function _renderMessagesImpl(id, opts) {
   // Fold before the filter: a removed leg must reach the row it folded into, and a
   // removed leg that stood for the line must not leave another leg standing in.
   let toRender = msgs.filter((m) => !m?.hidden)
-  if (mtSrcs) toRender = foldSimulcastLegs(toRender)
+  const droppedLegs = mtSrcs ? msgs.filter((m) => m?.hidden) : null
+  if (mtSrcs) toRender = foldSimulcastLegs(toRender, droppedLegs)
   else if (typeof clearLegBadges === 'function') clearLegBadges()
   const _cut = lclearCutFor(id)
   toRender = toRender.filter(

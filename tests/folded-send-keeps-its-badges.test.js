@@ -49,10 +49,41 @@ test('the kick leg stands; the twitch leg folded into it lends its badges, with 
   expect(kick.badges).toBe('')
 })
 
-test('a row with badges of its own keeps them', () => {
+test("origin-badges: a kick row that stands for your twitch send draws twitch's name colour too", () => {
+  const kick = { ...line('kick', ''), color: '#00ff00' }
+  const twitch = { ...line('twitch', 'moderator/1,subscriber/12', 400), color: '#ff8700' }
+  lib.foldSimulcastLegs([kick, twitch])
+  expect(lib.legBadgesOf(kick)).toEqual({
+    badges: 'moderator/1,subscriber/12',
+    color: '#ff8700',
+    channel: 'mellen',
+    platform: 'twitch',
+  })
+  expect(kick.color).toBe('#00ff00')
+  // a kick row with badges of its own is offered the twitch ones too: its own may draw nothing
+  // (mellen 11-25: data-msg-platform=kick, self, flame only), and the draw uses them only then
+  const kick2 = { ...line('kick', 'og/1', 1000), color: '#00ff00' }
+  const tw2 = { ...line('twitch', 'moderator/1', 1400), color: '#ff8700' }
+  lib.foldSimulcastLegs([kick2, tw2])
+  expect(lib.legBadgesOf(kick2)).toEqual({
+    badges: 'moderator/1',
+    color: '#ff8700',
+    channel: 'mellen',
+    platform: 'twitch',
+  })
+  const MSG = readFileSync(join(MC, 'main-messages.js'), 'utf8')
+  expect(MSG).toContain('if (lent?.color) hsNameColor = lent.color')
+})
+
+test('a twitch row with badges of its own lends nothing to itself; a kick row with its own is offered them', () => {
+  const tw = line('twitch', 'moderator/1')
+  lib.foldSimulcastLegs([tw, line('kick', 'og/1', 400)])
+  expect(lib.legBadgesOf(tw)).toBeNull()
   const kick = line('kick', 'og/1')
   lib.foldSimulcastLegs([kick, line('twitch', 'moderator/1', 400)])
-  expect(lib.legBadgesOf(kick)).toBeNull()
+  expect(lib.legBadgesOf(kick)?.badges).toBe('moderator/1')
+  const MSG = readFileSync(join(MC, 'main-messages.js'), 'utf8')
+  expect(MSG).toContain('if (lent?.badges && !badges)')
 })
 
 test('a borrow asks for one redraw of the row already drawn, then not again', () => {
@@ -79,11 +110,48 @@ test('the row draws the lent badges in their own platform, and the render clears
   expect(MSG).toMatch(/renderBadges\(lent\.badges, lent\.channel, lent\.platform\)/)
   const LIVE = readFileSync(join(MC, 'main-live.js'), 'utf8')
   expect(LIVE).toMatch(
-    /if \(mtSrcs\) toRender = foldSimulcastLegs\(toRender\)\n\s*else if \(typeof clearLegBadges === 'function'\) clearLegBadges\(\)/,
+    /if \(mtSrcs\) toRender = foldSimulcastLegs\(toRender, droppedLegs\)\n\s*else if \(typeof clearLegBadges === 'function'\) clearLegBadges\(\)/,
   )
   expect(LIVE).toMatch(/legBadgesChanged\(_rm\)/)
   // a copy dropped as a dual-send duplicate is still in the buffer: a render folds it in
   const MAIN = readFileSync(join(MC, 'main.js'), 'utf8')
   expect(MAIN).toContain("if (isSentEcho(msg.text, 'twitch', msg)) return scheduleMergedRender()")
   expect(MAIN).toContain("if (isSentEcho(msg.text, 'kick', msg)) return scheduleMergedRender()")
+})
+
+// the real case (mellen 11-25, ext 1.7.142): the twitch copy was DROPPED as the dual-send duplicate
+// (m.hidden: the retro-fold when kick painted first, or the history replay), and the render folded only
+// what was left, so the standing kick row never saw the mod+sub badges to borrow
+test('origin-badges: a hidden twitch copy still lends badges + colour to the row that stands', () => {
+  const kick = { ...line('kick', ''), color: '#00ff00' }
+  const twitch = { ...line('twitch', 'moderator/1,subscriber/12', 1500), color: '#ff8700', hidden: true }
+  expect(lib.foldSimulcastLegs([kick], [twitch])).toEqual([kick])
+  expect(lib.legBadgesOf(kick)).toEqual({
+    badges: 'moderator/1,subscriber/12',
+    color: '#ff8700',
+    channel: 'mellen',
+    platform: 'twitch',
+  })
+  expect(lib.legBadgesChanged(kick)).toBe(true) // an already-drawn row is asked to repaint
+})
+
+test('origin-badges: twitch first then kick, and a twitch copy 3s late, both land on the one row', () => {
+  const tw = { ...line('twitch', 'moderator/1,subscriber/12'), color: '#ff8700' }
+  const kick = { ...line('kick', '', 200), color: '#00ff00' }
+  // twitch earliest: it stands with its own badges, nothing lent
+  expect(lib.foldSimulcastLegs([tw, kick])).toEqual([tw])
+  expect(lib.legBadgesOf(tw)).toBeNull()
+  const k2 = { ...line('kick', '', 10_000), color: '#00ff00' }
+  const t2 = { ...line('twitch', 'moderator/1,subscriber/12', 13_000), color: '#ff8700' }
+  expect(lib.foldSimulcastLegs([k2, t2])).toEqual([k2])
+  expect(lib.legBadgesOf(k2)?.badges).toBe('moderator/1,subscriber/12')
+})
+
+test('origin-badges: a hidden copy of somebody else, or of another send, lends nothing', () => {
+  const kick = { ...line('kick', ''), color: '#00ff00' }
+  const other = { ...line('twitch', 'moderator/1', 400), user: 'stranger', hidden: true }
+  const sendA = { ...line('twitch', 'moderator/1', 400), hidden: true, hsSendId: 'a' }
+  kick.hsSendId = 'b'
+  lib.foldSimulcastLegs([kick], [other, sendA])
+  expect(lib.legBadgesOf(kick)).toBeNull()
 })

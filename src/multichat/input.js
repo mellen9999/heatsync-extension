@@ -295,6 +295,8 @@ function retroFoldOwnEchoes() {
     leg.m.hidden = true
     removeRow(leg.div)
   }
+  // the standing row may take the dropped leg's twitch badges: that is a render's job
+  if (typeof scheduleMergedRender === 'function') scheduleMergedRender()
 }
 
 // Hydration twin of isSentEcho — folds the OTHER platform legs of one

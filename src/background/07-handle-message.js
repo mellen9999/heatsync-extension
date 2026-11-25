@@ -2520,6 +2520,8 @@ async function handleMessage(message, sender, sendResponse) {
               hash: e.hash || '',
               variants: Array.isArray(e.variants) ? e.variants : undefined,
               nsfw: !!e.nsfw, // v1.6 — cyan dashed border in chat + picker
+              // the upload's measured flag; absent is unknown, never "still"
+              animated: typeof e.animated === 'boolean' ? e.animated : undefined,
             }
             // The upper bound, from a historical pairing (a name they USED with an
             // emote they no longer hold): the last time the archive saw them use

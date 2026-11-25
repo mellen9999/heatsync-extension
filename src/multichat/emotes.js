@@ -3090,6 +3090,7 @@ function replaceSenderEmotes(senderKey, nameToEmote) {
       prev.state !== data.state ||
       prev.source !== data.source ||
       prev.cw !== data.cw ||
+      prev.animated !== data.animated ||
       prev.addedAt !== data.addedAt ||
       prev.removedAt !== data.removedAt ||
       prev.untilAt !== data.untilAt

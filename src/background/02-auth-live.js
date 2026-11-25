@@ -1118,6 +1118,9 @@ function fetchEmoteInventory() {
         // Server CW annotation (own inventory is never filtered) — chat hides
         // own flagged emotes at render when the owner's toggles say so.
         cw_cats: Array.isArray(emote.cw_cats) && emote.cw_cats.length ? emote.cw_cats : undefined,
+        // measured when the upload was made (emotes.animated): true/false is the answer, absent is
+        // unknown and stays undefined, never "still" (emoteIsAnimated then asks the picture)
+        animated: typeof emote.animated === 'boolean' ? emote.animated : undefined,
       }))
       log(' 🔍 Transformed inventory length:', inventoryEmotes.length)
       log(' 🔍 First transformed emote:', inventoryEmotes[0])

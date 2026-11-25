@@ -116,6 +116,19 @@ describe('replaceSenderEmotes', () => {
     expect(senderEmoteSets.get('twitch:1').has('Evil')).toBe(false)
   })
 
+  test("a stored entry learns the server's animated flag even when nothing else about it changed", () => {
+    // sets persisted before the flag existed carry none; the refetch must stamp them, or they would
+    // sit unflagged for as long as the entry lives (30 days)
+    replaceSenderEmotes('twitch:1', { Wave: E() })
+    const r = replaceSenderEmotes('twitch:1', { Wave: { ...E(), animated: true } })
+    expect(r).toEqual({ changed: true, dropped: false })
+    expect(senderEmoteSets.get('twitch:1').get('Wave').animated).toBe(true)
+    expect(replaceSenderEmotes('twitch:1', { Wave: { ...E(), animated: true } })).toEqual({
+      changed: false,
+      dropped: false,
+    })
+  })
+
   test('missing senderKey is a no-op with the object shape', () => {
     expect(replaceSenderEmotes(null, { A: E() })).toEqual({ changed: false, dropped: false })
   })

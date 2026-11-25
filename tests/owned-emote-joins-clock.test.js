@@ -15,6 +15,7 @@ import { join } from 'node:path'
 import * as mods from '../src/lib/modifiers.js'
 import { EMOTE_TIER_ORDER, escapeHtml, resolveEmoteProviderWinner, unescapeHtml } from '../src/lib/utils.js'
 import './emote-rungs-globals.js'
+import { bgSource } from './bg-src.js'
 import { makeRig } from './emote-sprite-rig.js'
 import { mainSource } from './main-src.js'
 
@@ -210,6 +211,120 @@ describe('end to end: the owned row mounts a sprite on the shared strip', () => 
       expect(await show(rig, draw('LICK', { ch: 'chan-a', sender: new Map() }))).toBeTruthy()
       expect(await show(rig, draw('LICK'))).toBeTruthy()
       expect(rig.s.decodeCalls).toHaveLength(1)
+    } finally {
+      rig.reset()
+    }
+  })
+})
+
+describe("the server's animated flag reaches the inventory and the sender sets", () => {
+  // 2026-11-25: emotes.animated (site migration 381) is measured when an upload is made and rides
+  // /api/user/emotes and /api/users/emotes/batch. true / false are the answer; NULL is unknown and
+  // must stay undefined, or the by-picture answer above would be overruled by a guess. Each stage is
+  // carved by name out of the real source and run, so a rename of the field in either breaks here.
+  const bg = bgSource()
+  const slice = (from, to, within = bg) => {
+    const a = within.indexOf(from)
+    const b = within.indexOf(to, a)
+    if (a < 0 || b < a) throw new Error(`moved: ${from}`)
+    return within.slice(a, b)
+  }
+  const ROWS = [
+    { n: 'Wave', animated: true },
+    { n: 'Flat', animated: false },
+    { n: 'Unknown', animated: null },
+    { n: 'Absent' },
+    { n: 'Odd', animated: 'yes' },
+  ]
+  const wire = (r) => ({
+    custom_name: r.n,
+    name: r.n,
+    url: file(pic()),
+    hash: r.n,
+    ...('animated' in r ? { animated: r.animated } : {}),
+  })
+
+  test('the inventory transform: true and false ride through, unknown stays undefined', () => {
+    const block = slice('const inventoryEmotes = (data.emotes || []).map(', "log(' 🔍 Transformed inventory length:'")
+    const run = new Function('data', 'absUrl', 'emoteAddedAtMs', `${block}\nreturn inventoryEmotes`)
+    const out = run(
+      { emotes: ROWS.map(wire) },
+      (u) => u,
+      () => 0,
+    )
+    expect(out.map((e) => e.animated)).toEqual([true, false, undefined, undefined, undefined])
+    // `animated` is always an own key with a boolean or undefined: never null, never a string
+    for (const e of out) expect(['boolean', 'undefined']).toContain(typeof e.animated)
+  })
+
+  test("the sender-set builder keeps the same three answers on a heatsync set's entries", () => {
+    const block = slice('const hsEmotes = hs?.emotes || []', '// Only cache when the result is trustworthy')
+    const run = new Function('hs', 'collected', 'emoteAddedAtMs', `${block}\nreturn collected`)
+    const out = run({ emotes: ROWS.map(wire) }, {}, () => 0)
+    expect(['Wave', 'Flat', 'Unknown', 'Absent', 'Odd'].map((n) => out[n].animated)).toEqual([
+      true,
+      false,
+      undefined,
+      undefined,
+      undefined,
+    ])
+  })
+
+  test('the viewer record built from an animated row draws data-animated and joins the strip; a still does not', async () => {
+    const main = mainSource()
+    const block = slice(
+      ';(msg.emotes || []).forEach((e) => {',
+      '// Remove emotes no longer in inventory from cache',
+      main,
+    )
+    const build = new Function(
+      'msg',
+      'inventoryEmotes',
+      'inventoryHashes',
+      'emoteCache',
+      'viewerPersonalEmotes',
+      'isLocallyRemoved',
+      'emoteAddedAtMs',
+      'zeroWidthFromAnyCache',
+      block,
+    )
+    const flat = pic()
+    build(
+      {
+        emotes: [
+          { name: 'LICK', url: file(LICK), hash: LICK, animated: true },
+          { name: 'FLAT', url: file(flat), hash: flat, animated: false },
+          { name: 'MAYBE', url: file(pic()), hash: 'm' },
+        ],
+      },
+      inventoryEmotes,
+      new Map(),
+      new Map(),
+      viewerPersonalEmotes,
+      () => false,
+      () => 0,
+      () => false,
+    )
+    expect(viewerPersonalEmotes.get('LICK').animated).toBe(true)
+    expect(viewerPersonalEmotes.get('FLAT').animated).toBe(false)
+    expect(viewerPersonalEmotes.get('MAYBE').animated).toBeUndefined()
+    // no pool has ever called any of these pictures animated: the record's own flag is all there is
+    const mine = draw('LICK')
+    expect(mine).toContain('hs-state-owned')
+    expect(mine).toContain('data-animated="1"')
+    expect(draw('FLAT')).not.toContain('data-animated')
+    expect(draw('MAYBE')).not.toContain('data-animated')
+    // and it mounts on the shared strip, nothing else about the row changed
+    const rig = makeRig()
+    try {
+      const row = rig.doc.createElement('div')
+      row.className = 'hs-mc-msg'
+      row.innerHTML = mine
+      rig.doc.body.appendChild(row)
+      rig.swap(row, false)
+      await rig.flush()
+      rig.swap(row, false)
+      expect(rig.spriteOf(row.querySelector('.hs-mc-emote-wrapper'))).toBeTruthy()
     } finally {
       rig.reset()
     }

@@ -590,6 +590,8 @@ function listenForSettingsChanges() {
               slot: e.slot,
               zeroWidth: !!(e.zero_width ?? e.zeroWidth ?? zwFromAny),
               variants: e.variants,
+              // the server's measured flag (undefined = unknown): puts an animated upload on the shared clock
+              animated: e.animated,
               // BG-normalized epoch ms — inventory-time render gate
               addedAt: e.addedAt || 0,
               // server CW annotation — own msgs hide these at render when

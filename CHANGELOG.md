@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.145] — 2026-11-25
+
+### fixed
+- **tab steps through 7tv emotes again** — tab put in the first 7tv emote, then the next tab did nothing. now each tab gives the next match.
+
 ## [1.7.144] — 2026-11-25
 
 ### fixed

@@ -272,6 +272,7 @@ const api = new Function(
   'lookupEmoteWithOverlay',
   'emoteIsBlocked',
   'blockedEmoteNames',
+  'getChatResUrl',
   `let pendingMessage = ''
    ${parts.join('\n')}
    return { insertCompletionWysiwyg, caretOnActiveCompletion }`,
@@ -289,6 +290,7 @@ const api = new Function(
   () => null,
   () => false,
   new Set(),
+  (url) => url,
 )
 
 // ─── scenario ───────────────────────────────────────────────────────────────

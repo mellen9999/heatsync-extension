@@ -5279,10 +5279,13 @@ function insertCompletionWysiwyg(match) {
       markInputEmoteBlocked(img, true)
     }
   }
+  // the file the box draws (createInputEmoteImg's): the raw 7tv avif read as another picture to the
+  // re-read after a pick, which redrew the chip without its cycling mark — Tab once, then nothing
+  const stepSrc = getChatResUrl(match.url, match.variants)
   // the chip a Tab step draws: the match's own picture, marked as the step being cycled
   const cyclingImg = () => {
     const img = document.createElement('img')
-    img.src = match.url
+    img.src = stepSrc
     img.alt = match.name
     img.dataset.emoteName = match.name
     img.className = 'hs-input-emote hs-cycling-emote'
@@ -5364,7 +5367,7 @@ function insertCompletionWysiwyg(match) {
       // so every narrower emote Tab landed on sat in the wide one's blank space.
       // Drop the pin and let the new image snap its own once it loads.
       existingEmote.style.removeProperty('width')
-      existingEmote.src = match.url
+      existingEmote.src = stepSrc
       existingEmote.alt = match.name
       existingEmote.dataset.emoteName = match.name
       hsAttachInputEmoteSnap(existingEmote)

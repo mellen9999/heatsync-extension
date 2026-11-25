@@ -598,37 +598,6 @@ if (typeof document !== 'undefined' && document.addEventListener) {
   document.addEventListener('scroll', () => scheduleHsEmoteIdleSweep(false), { capture: true, passive: true })
 }
 
-// Upgrade emote URL to match current emote size setting.
-// Memoized: input URLs are bounded by emote count (~few thousand). Cache
-// resets when emoteSize changes — same input → same output otherwise.
-// 7TV serves emotes as avif by default; the chat chokepoint below rewrites them to webp (see the rung step).
-
-/** The emote url at one rung of its provider's ladder. `want` is a multiple of
- *  the emote's LOGICAL 1x size, not a pixel count — providers disagree about
- *  how many pixels 1x is (twitch 28, 7TV 32) and that disagreement is what
- *  "native size" means. 4 is the largest rung, not literally 4x: twitch's
- *  `3.0` is 112px = 4x its 28px base, and BTTV stops at `3x`. */
-function hsRungUrl(url, want) {
-  if (want === 1) {
-    // True native: downgrade Twitch native (IRC fetches at /2.0) and 3rd-party CDNs to 1x.
-    if (url.includes('static-cdn.jtvnw.net')) return url.replace(/\/[23]\.0/, '/1.0')
-    if (url.includes('cdn.7tv.app')) return url.replace(/\/[234]x/, '/1x')
-    if (url.includes('cdn.betterttv.net')) return url.replace(/\/[23]x/, '/1x')
-    if (url.includes('cdn.frankerfacez.com')) return url.replace(/\/[24](?=\.|$)/, '/1')
-  } else if (want === 2) {
-    if (url.includes('cdn.7tv.app')) return url.replace(/\/[134]x/, '/2x')
-    if (url.includes('cdn.betterttv.net')) return url.replace(/\/[13]x/, '/2x')
-    if (url.includes('cdn.frankerfacez.com')) return url.replace(/\/[14](?=\.|$)/, '/2')
-    if (url.includes('static-cdn.jtvnw.net')) return url.replace(/\/[13]\.0/, '/2.0')
-  } else if (want === 4) {
-    if (url.includes('cdn.7tv.app')) return url.replace(/\/[123]x/, '/4x')
-    if (url.includes('cdn.betterttv.net')) return url.replace(/\/[12]x/, '/3x')
-    if (url.includes('cdn.frankerfacez.com')) return url.replace(/\/[12](?=\.|$)/, '/4')
-    if (url.includes('static-cdn.jtvnw.net')) return url.replace(/\/[12]\.0/, '/3.0')
-  }
-  return url
-}
-
 /**
  * WHICH RUNG A SCREEN ACTUALLY NEEDS.
  *
@@ -735,6 +704,11 @@ function isViewerEmoteUrl(name, url, hash) {
   return isViewerEmote(name, { url, hash })
 }
 
+// Upgrade emote URL to match current emote size setting.
+// Memoized: input URLs are bounded by emote count (~few thousand). Cache
+// resets when the wanted rung changes — same input → same output otherwise.
+// The file itself is hsEmoteFileUrl's (emote-rungs.js): native chat rows ask the
+// same function, so a copy of one picture is one url wherever it is drawn.
 let _resCacheSize = 1
 const _resCache = new Map()
 function getChatResUrl(url, variants) {
@@ -742,7 +716,7 @@ function getChatResUrl(url, variants) {
   const want = hsWantedRung()
   // An advertised-variants emote is a handful of regex steps and its answer
   // depends on the record, not just the url, so it skips the url-keyed cache.
-  if (variants) return hsOwnRungUrl(url, want, variants)
+  if (variants) return hsEmoteFileUrl(url, want, variants)
   // Keyed on the EFFECTIVE rung, not on emoteSize: dragging the window to a
   // monitor with a different pixel ratio changes the answer without the
   // setting moving, and a cache keyed on the setting would keep serving the
@@ -753,11 +727,7 @@ function getChatResUrl(url, variants) {
   }
   const hit = _resCache.get(url)
   if (hit !== undefined) return hit
-  let out = hsRungUrl(url, want)
-  // 7TV avif → webp everywhere: Firefox cannot animate avif, and on chrome a full chat of animated avif
-  // is the heavier decode (frames ~17% longer measured on a 500-row kick chat). Applied after the size
-  // rewrite so it isn't clobbered.
-  if (out.includes('cdn.7tv.app')) out = out.replace(/\.avif(\?|$)/i, '.webp$1')
+  const out = hsEmoteFileUrl(url, want)
   _resCache.set(url, out)
   if (_resCache.size > 2000) _resCache.delete(_resCache.keys().next().value)
   return out

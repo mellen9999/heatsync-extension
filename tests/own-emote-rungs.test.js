@@ -20,7 +20,13 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import * as mods from '../src/lib/modifiers.js'
 import { EMOTE_TIER_ORDER, resolveEmoteProviderWinner } from '../src/lib/utils.js'
-import { hsEmoteDimAttr, hsOwnCanonicalUrl, hsOwnCopyFallback, hsOwnRungUrl } from './emote-rungs-src.js'
+import {
+  hsEmoteDimAttr,
+  hsEmoteFileUrl,
+  hsOwnCanonicalUrl,
+  hsOwnCopyFallback,
+  hsOwnRungUrl,
+} from './emote-rungs-src.js'
 import './emote-rungs-globals.js'
 
 const CDN = 'https://cdn.heatsync.org/uploads'
@@ -154,14 +160,13 @@ function carve(startAnchor, endAnchor) {
   if (a === -1 || b === -1) throw new Error(`carve: ${startAnchor} … ${endAnchor} not found — emotes.js moved`)
   return SRC.slice(a, b + endAnchor.length)
 }
-const CHAIN = `${carve('function hsRungUrl(url, want) {', '\n}')}
-${carve('function hsWantedRung() {', '\n}')}
+const CHAIN = `${carve('function hsWantedRung() {', '\n}')}
 ${carve('let _resCacheSize = 1', '\n  return out\n}')}`
 const chatUrlFor = (emoteSize, dpr) =>
-  new Function('emoteSize', 'devicePixelRatio', 'hsOwnRungUrl', `${CHAIN}\nreturn getChatResUrl`)(
+  new Function('emoteSize', 'devicePixelRatio', 'hsEmoteFileUrl', `${CHAIN}\nreturn getChatResUrl`)(
     emoteSize,
     dpr,
-    hsOwnRungUrl,
+    hsEmoteFileUrl,
   )
 
 describe('getChatResUrl — a channel owner emote follows the screen', () => {

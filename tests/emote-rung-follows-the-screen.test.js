@@ -49,7 +49,10 @@ function carve(startAnchor, endAnchor) {
   return SRC.slice(a, b + endAnchor.length)
 }
 
-const RUNG_SRC = carve('function hsRungUrl(url, want) {', '\n}')
+// hsRungUrl lives in emote-rungs.js (the native chat scripts embed that file, not emotes.js)
+const RUNGS_FILE = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'emote-rungs.js'), 'utf8')
+const RUNG_AT = RUNGS_FILE.indexOf('function hsRungUrl(url, want) {')
+const RUNG_SRC = RUNG_AT === -1 ? null : RUNGS_FILE.slice(RUNG_AT, RUNGS_FILE.indexOf('\n}', RUNG_AT) + 2)
 const WANT_SRC = carve('function hsWantedRung() {', '\n}')
 
 const rungUrl = RUNG_SRC ? new Function(`${RUNG_SRC}; return hsRungUrl`)() : null
@@ -59,7 +62,7 @@ const wantedRung = WANT_SRC ? new Function('emoteSize', 'devicePixelRatio', `${W
 
 describe('the carve markers still exist', () => {
   test('both functions were found — otherwise everything below proves nothing', () => {
-    expect(RUNG_SRC, 'hsRungUrl not found in emotes.js').toBeTruthy()
+    expect(RUNG_SRC, 'hsRungUrl not found in emote-rungs.js').toBeTruthy()
     expect(WANT_SRC, 'hsWantedRung not found in emotes.js').toBeTruthy()
   })
 })

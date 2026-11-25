@@ -1,6 +1,8 @@
-// emote-rungs.js — the smaller copies of our own uploads (server/lib/emote-variants
-// on the site). Kept apart from emotes.js, which sits at its line ceiling; the
-// provider-ladder code that calls this stays in emotes.js with getChatResUrl.
+// emote-rungs.js — which file an emote draws at a given rung: the provider ladders
+// (hsRungUrl) and the smaller copies of our own uploads (server/lib/emote-variants
+// on the site). Kept apart from emotes.js, which sits at its line ceiling, and
+// because the native chat scripts (content.js, youtube-content.js) embed this file
+// but not emotes.js; getChatResUrl, the overlay's memoized caller, stays there.
 
 /**
  * Our own uploads keep a 32/64/96px copy beside the 128px file (4x), named
@@ -41,15 +43,61 @@ function hsOwnRungUrl(url, want, variants) {
   return url
 }
 
+/** The emote url at one rung of its provider's ladder. `want` is a multiple of
+ *  the emote's LOGICAL 1x size, not a pixel count — providers disagree about
+ *  how many pixels 1x is (twitch 28, 7TV 32) and that disagreement is what
+ *  "native size" means. 4 is the largest rung, not literally 4x: twitch's
+ *  `3.0` is 112px = 4x its 28px base, and BTTV stops at `3x`. */
+function hsRungUrl(url, want) {
+  if (want === 1) {
+    // True native: downgrade Twitch native (IRC fetches at /2.0) and 3rd-party CDNs to 1x.
+    if (url.includes('static-cdn.jtvnw.net')) return url.replace(/\/[23]\.0/, '/1.0')
+    if (url.includes('cdn.7tv.app')) return url.replace(/\/[234]x/, '/1x')
+    if (url.includes('cdn.betterttv.net')) return url.replace(/\/[23]x/, '/1x')
+    if (url.includes('cdn.frankerfacez.com')) return url.replace(/\/[24](?=\.|$)/, '/1')
+  } else if (want === 2) {
+    if (url.includes('cdn.7tv.app')) return url.replace(/\/[134]x/, '/2x')
+    if (url.includes('cdn.betterttv.net')) return url.replace(/\/[13]x/, '/2x')
+    if (url.includes('cdn.frankerfacez.com')) return url.replace(/\/[14](?=\.|$)/, '/2')
+    if (url.includes('static-cdn.jtvnw.net')) return url.replace(/\/[13]\.0/, '/2.0')
+  } else if (want === 4) {
+    if (url.includes('cdn.7tv.app')) return url.replace(/\/[123]x/, '/4x')
+    if (url.includes('cdn.betterttv.net')) return url.replace(/\/[12]x/, '/3x')
+    if (url.includes('cdn.frankerfacez.com')) return url.replace(/\/[12](?=\.|$)/, '/4')
+    if (url.includes('static-cdn.jtvnw.net')) return url.replace(/\/[12]\.0/, '/3.0')
+  }
+  return url
+}
+
+/**
+ * The ONE file every copy of an emote draws at rung `want` — overlay and native
+ * rows alike. Chrome gives two <img> with the same src one animation clock (they
+ * stay frame-locked even mounted seconds apart) and two different urls of the
+ * same picture each their own, so a 1x record and a 2x record of one 7tv emote
+ * (a saved copy vs the channel set) played out of step. Every url of a picture
+ * is therefore pulled to the one rung; 7tv's avif goes to webp (Firefox cannot
+ * animate avif, and chrome decodes a chat of animated avif heavier). Our own
+ * uploads go by their advertised `variants` and nothing else.
+ */
+function hsEmoteFileUrl(url, want, variants) {
+  if (!url) return url
+  if (variants) return hsOwnRungUrl(url, want, variants)
+  const out = hsRungUrl(url, want)
+  return out.includes('cdn.7tv.app') ? out.replace(/\.avif(\?|$)/i, '.webp$1') : out
+}
+
 /**
  * The file a NATIVE chat row draws for an emote (content.js, youtube-content.js):
  * the row's emote box is 28px, so the rung is the screen's — 2x on a dense
  * screen (devicePixelRatio >= 1.5, the overlay's own cut in hsWantedRung), else
- * 1x. Emotes without advertised `variants` keep their url.
+ * 1x. The same file the overlay draws (hsEmoteFileUrl), so two copies of one
+ * picture stay on one clock. Zero-width (overlay) emotes keep their own url at
+ * the call site: they are sized by the file's natural width, and a different
+ * file would be a different size.
  */
 function hsNativeRowUrl(emote) {
   const dpr = typeof devicePixelRatio === 'number' && devicePixelRatio >= 1.5 ? 2 : 1
-  return hsOwnRungUrl(emote?.url, dpr, emote?.variants)
+  return hsEmoteFileUrl(emote?.url, dpr, emote?.variants)
 }
 
 /**

@@ -9,6 +9,7 @@ import { join } from 'node:path'
 
 const SRC = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'emote-rungs.js'), 'utf8')
 
-export const { hsOwnRungUrl, hsEmoteDimAttr, hsOwnCopyFallback, hsOwnCanonicalUrl } = new Function(
-  `${SRC}\nreturn { hsOwnRungUrl, hsEmoteDimAttr, hsOwnCopyFallback, hsOwnCanonicalUrl }`,
-)()
+export const { hsRungUrl, hsEmoteFileUrl, hsOwnRungUrl, hsEmoteDimAttr, hsOwnCopyFallback, hsOwnCanonicalUrl } =
+  new Function(
+    `${SRC}\nreturn { hsRungUrl, hsEmoteFileUrl, hsOwnRungUrl, hsEmoteDimAttr, hsOwnCopyFallback, hsOwnCanonicalUrl }`,
+  )()

@@ -125,9 +125,11 @@ describe('style recalc cost', () => {
 
 describe('emote format', () => {
   test('7tv avif is rewritten to webp on every browser, not only firefox', () => {
-    const e = src('emotes.js')
-    expect(e).toContain("if (out.includes('cdn.7tv.app')) out = out.replace(/\\.avif(\\?|$)/i, '.webp$1')")
+    // the rule lives in emote-rungs.js (hsEmoteFileUrl), shared by the overlay and the native rows
+    const e = src('emote-rungs.js')
+    expect(e).toContain("out.includes('cdn.7tv.app') ? out.replace(/\\.avif(\\?|$)/i, '.webp$1') : out")
     expect(e).not.toContain('HS_IS_FF')
+    expect(src('emotes.js')).not.toContain('HS_IS_FF')
   })
 })
 

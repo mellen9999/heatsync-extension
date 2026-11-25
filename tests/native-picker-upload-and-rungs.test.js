@@ -39,10 +39,14 @@ describe('native rows pick your own emote rung by screen', () => {
       'https://cdn.heatsync.org/uploads/abc123-3x.webp',
     )
   })
-  test('no advertised variants = the url, untouched (old uploads, 7tv, bttv)', () => {
+  test('no advertised variants = the url, untouched (old uploads, kick, any single-file provider)', () => {
     expect(rungs(2).hsNativeRowUrl({ url: UP })).toBe(UP)
+    const kick = 'https://files.kick.com/emotes/5756668/fullsize'
+    expect(rungs(2).hsNativeRowUrl({ url: kick })).toBe(kick)
+  })
+  test('a 7tv emote follows the screen like the overlay (one file per picture: native-emote-one-file.test.js)', () => {
     expect(rungs(2).hsNativeRowUrl({ url: 'https://cdn.7tv.app/emote/x/1x.webp' })).toBe(
-      'https://cdn.7tv.app/emote/x/1x.webp',
+      'https://cdn.7tv.app/emote/x/2x.webp',
     )
   })
   test('a variants list never retargets a url that is not our own upload', () => {

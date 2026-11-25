@@ -693,6 +693,25 @@ function emoteAssetKey(url) {
   return u.replace(/\/(?:\d+x?(?:\.(?:webp|avif|png|gif))?|default|fullsize)$/i, '')
 }
 
+// Does this picture move? The flag is 7tv's / bttv's / ffz's own, on the entries of the room's and
+// the globals' pools. A record built anywhere else carries none: your inventory (the server's inventory
+// rows have no such column), a server ref, a removed copy. The shared clock (emote-sprite.js) only takes
+// an emote stamped animated, so such a copy sat out of it: the raw file on the browser's own clock, one
+// per row, beside copies of the same picture on the shared one (2026-11-25, the owner's own LICK).
+// The pools teach this set, by PICTURE and not by name (an inventory name is the owner's own rename).
+// Unknown stays unknown: a still must never ask for a `_static` file, which 7tv answers with a 404.
+const hsAnimatedPictures = new Set()
+function hsNoteAnimated(e) {
+  if (e.animated !== true || !e.url) return
+  const k = emoteAssetKey(e.url)
+  if (hsAnimatedPictures.size > 4999 && !hsAnimatedPictures.has(k))
+    hsAnimatedPictures.delete(hsAnimatedPictures.values().next().value)
+  hsAnimatedPictures.add(k)
+}
+/** The flag a row draws by: the record's own when it has one, else what its picture is known to be. */
+const emoteIsAnimated = (e) =>
+  typeof e?.animated === 'boolean' ? e.animated : !!e && hsAnimatedPictures.has(emoteAssetKey(e.url))
+
 // Is this resolved emote the one the viewer owns under that name? Same name alone
 // is not enough: the room's W and your W are two emotes (rule 10).
 function isViewerEmote(name, emote) {
@@ -3394,6 +3413,7 @@ function _buildChannelEmoteCache(ch, emotes, platform) {
       // category the viewer turned off, same as an own-inventory annotation
       cwCats: Array.isArray(e.cw_cats) && e.cw_cats.length ? e.cw_cats : null,
     }
+    hsNoteAnimated(entry)
     // Same-name collision between two third-party providers (7tv/bttv/ffz):
     // emoteProviderPriority decides the winner instead of plain array-order
     // last-write-wins. Every other pairing (heatsync, twitch, kick, or a
@@ -3548,6 +3568,7 @@ async function loadEmotes() {
             nsfw: !!e.nsfw,
             os: e.os,
           }
+          hsNoteAnimated(entry)
           // See _buildChannelEmoteCache — same 7tv/bttv/ffz collision rule
           // applied to the global-tier pool.
           emoteCache.set(e.name, resolveEmoteProviderWinner(emoteCache.get(e.name), entry, EMOTE_TIER_ORDER.global))
@@ -4484,8 +4505,9 @@ function processEmotes(
       const safeName = escapeHtml(rawEmoteName)
       const chatUrl = getChatResUrl(finalUrl, cached?.variants)
       const safeUrlAttr = escapeHtml(chatUrl)
-      const safeSrc = escapeHtml(staticEmoteSrc(chatUrl, cached?.animated === true))
-      const animAttr = cached?.animated === true ? ' data-animated="1"' : ''
+      const kickAnimated = emoteIsAnimated(cached)
+      const safeSrc = escapeHtml(staticEmoteSrc(chatUrl, kickAnimated))
+      const animAttr = kickAnimated ? ' data-animated="1"' : ''
       const safeProvider = escapeHtml(provider)
       const safeHash = cached?.hash ? escapeHtml(cached.hash) : ''
       const ownerAttr = cached?.ownerDisplay ? ` data-owner="${escapeHtml(cached.ownerDisplay)}"` : ''
@@ -4673,8 +4695,9 @@ function processEmotes(
       const source = escapeHtml(emote.source || 'unknown')
       const rawChatUrl = getChatResUrl(emote.url, emote.variants)
       const imgSrc = escapeHtml(rawChatUrl)
-      const staticSrc = escapeHtml(staticEmoteSrc(rawChatUrl, emote.animated === true))
-      const animAttr = emote.animated === true ? ' data-animated="1"' : ''
+      const animated = emoteIsAnimated(emote)
+      const staticSrc = escapeHtml(staticEmoteSrc(rawChatUrl, animated))
+      const animAttr = animated ? ' data-animated="1"' : ''
       const safeHash = emote.hash ? escapeHtml(emote.hash) : ''
       const displayName = escapeHtml(rawWord)
       const ownerAttr = emote.ownerDisplay ? ` data-owner="${escapeHtml(emote.ownerDisplay)}"` : ''

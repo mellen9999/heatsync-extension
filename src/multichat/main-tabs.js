@@ -1591,6 +1591,8 @@ function computeMessageText(m) {
         // reader (emotes.js); the server sends cw_cats snake_case.
         cwCats: Array.isArray(r.cw_cats) && r.cw_cats.length ? r.cw_cats : null,
         nsfw: !!r.nsfw,
+        // the flag the sender's app shipped with its pick; absent is unknown, never false
+        ...(typeof r.animated === 'boolean' ? { animated: r.animated } : {}),
         // a name the server (or the sender's app) only matched to a word reads below the room; what
         // the sender's app shipped as its pick (no nm) is the picture they chose, above it
         named: !!r.nm,

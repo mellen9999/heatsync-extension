@@ -43,6 +43,10 @@ test('a hovered filled row keeps its name white on the black cutout', () => {
   for (const sel of name.sels.filter((x) => x.includes(':hover'))) {
     expect({ sel, wins: beats(specificity(sel), specificity(rowSel)) }).toEqual({ sel, wins: true })
   }
+  const focusRow = row.sels.find((x) => x.endsWith(':focus-visible *'))
+  for (const sel of name.sels.filter((x) => x.includes(':focus-visible'))) {
+    expect({ sel, wins: beats(specificity(sel), specificity(focusRow)) }).toEqual({ sel, wins: true })
+  }
 })
 
 test('the name itself still inverts alone: the white rule stands down under the pointer', () => {

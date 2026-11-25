@@ -63,6 +63,23 @@ describe('building a strip', () => {
     expect(i.className).toContain('hs-sprite-run')
   })
 
+  test('a bttv emote is read through the heatsync proxy (its cdn sends no CORS header) and still plays', async () => {
+    const url = 'https://cdn.betterttv.net/emote/54fa8f1401e468494b85b537/2x.webp'
+    const rows = [rig.emote(url), rig.emote(url)]
+    for (const e of rows) await show(e)
+    // One read, of the proxy — never of cdn.betterttv.net, which the browser would refuse.
+    expect(rig.s.fetchCalls).toEqual([`https://heatsync.org/api/emote-proxy?url=${encodeURIComponent(url)}`])
+    for (const e of rows) expect(rig.spriteOf(e.wrap)).toBeTruthy()
+    // The hidden img parks on bttv's own static file — no proxy request behind every visible row.
+    for (const e of rows) expect(e.img.getAttribute('src')).toBe(url.replace('/2x.webp', '/static/2x.webp'))
+  })
+
+  test('a 7tv emote is never read through the proxy', async () => {
+    const e = rig.emote()
+    await show(e)
+    expect(rig.s.fetchCalls).toEqual([ANIM])
+  })
+
   test('a row that rendered before the strip landed switches over by itself', async () => {
     const e = rig.emote()
     rig.swap(e.row, false)
@@ -207,14 +224,6 @@ describe('what must NOT become a sprite', () => {
     expect(rig.s.fetchCalls).toHaveLength(1)
     expect(rig.s.warned).toHaveLength(1)
     for (const e of rows) expect(e.img.getAttribute('src')).toBe(ANIM)
-  })
-
-  test('a cdn that sends no CORS header is never asked (bttv)', async () => {
-    const url = 'https://cdn.betterttv.net/emote/54fa8f1401e468494b85b537/2x.webp'
-    const e = rig.emote(url)
-    await show(e)
-    expect(rig.s.fetchCalls).toHaveLength(0)
-    expect(rig.spriteOf(e.wrap)).toBeNull()
   })
 
   test('an emote nothing says is animated is not decoded for nothing', async () => {

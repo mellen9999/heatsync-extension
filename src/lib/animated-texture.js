@@ -77,13 +77,73 @@ const MAX_CELLS = 512
  *  animation budget like any other refusal. */
 const MAX_SOURCE_FRAMES = 1000
 
+/** Most built strips held in memory. Each is a live blob: URL — a bitmap the
+ *  browser keeps until it is revoked — and a tab open for hours (the extension
+ *  runs this file inside twitch.tv) meets far more distinct emotes than that.
+ *  Past it the oldest strip nothing is showing is revoked; a mounted one never. */
+const READY_MAX = 200
+
+/** Most strips kept in Cache Storage. Nothing else ever removes one, so without
+ *  a ceiling the bucket only grows, for as long as the device lives. */
+const STORE_MAX = 400
+
 /** In-flight builds, keyed by source URL, so N simultaneous mounts of one
  *  emote do ONE decode. */
 const strips = new Map()
 
 /** Built strips, keyed by source URL. Separate from `strips` because the
- *  render path needs a SYNCHRONOUS answer — reconcile() cannot await. */
+ *  render path needs a SYNCHRONOUS answer — reconcile() cannot await.
+ *  Insertion order is recency order: a read re-inserts (see `touch`). */
 const ready = new Map()
+
+/** `ready.get`, and a hit moves to the young end. Two map ops, no scan. */
+function touch(url) {
+    const strip = ready.get(url)
+    if (strip) { ready.delete(url); ready.set(url, strip) }
+    return strip
+}
+
+/** What mountSprite wrote, read back: `url(x)` as written, `url("x")` as Chrome
+ *  serializes it. */
+const STYLE_URL = /^url\(\s*(["']?)(.*?)\1\s*\)$/
+
+/** Make room: revoke and forget the oldest strips no element is painting, until
+ *  `ready` fits READY_MAX. Mounted ones are skipped, so a page showing more than
+ *  that simply holds more — bounded by the screen, not the session. `keep` is the
+ *  strip that just landed. */
+function trimReady(keep) {
+    if (ready.size <= READY_MAX) return
+    const live = new Set()
+    const runs = document.getElementsByClassName(SPRITE_RUN_CLASS)
+    for (let n = 0; n < runs.length; n++) {
+        const m = STYLE_URL.exec(runs[n].style?.backgroundImage || '')
+        if (m) live.add(m[2])
+    }
+    for (const [url, strip] of ready) {
+        if (ready.size <= READY_MAX) break
+        if (url === keep || live.has(strip.src)) continue
+        ready.delete(url)
+        paintableStrips.delete(strip.src)
+        URL.revokeObjectURL(strip.src)
+    }
+}
+
+/** Hosts whose images send no CORS header, so a cross-origin read of their bytes
+ *  is refused by the browser. betterttv's cdn is one: `fetch(url, { mode:
+ *  'cors' })` fails there, which used to refuse every bttv animated emote for
+ *  good. Their bytes are read through the CORS proxy when one is set. */
+const NO_CORS_SOURCES = /^https:\/\/cdn\.betterttv\.net\//
+
+/** Where a NO_CORS_SOURCES url is read from: `${base}?url=<source>`, bytes
+ *  unchanged. Null (the default) means there is none, and such a url is refused
+ *  as before. Everything stays keyed by the ORIGINAL url — the maps, the
+ *  refusals, the cooldowns, the stored copy — so no caller or stored strip
+ *  depends on which way the bytes arrived. */
+let corsProxy = null
+
+/** Set the proxy base for sources without CORS (`/api/emote-proxy` on the
+ *  site, its absolute url from the extension), or null for none. */
+export function setCorsProxy(base) { corsProxy = typeof base === 'string' && base ? base : null }
 
 /** Called after a build lands, so elements that asked too early can re-ask. */
 let onReady = null
@@ -93,9 +153,40 @@ let onReady = null
  *  about when an emote may move. */
 export function setOnReady(fn) { onReady = fn }
 
-/** Sources that cannot be turned into a strip — wrong type, no CORS, single
- *  frame, decoder missing. Remembered so a busy room does not retry per row. */
+/** Sources that cannot be turned into a strip — wrong type, single frame, too
+ *  long, nothing to draw on. Final: remembered so a busy room does not retry per
+ *  row. A failure that says nothing about the SOURCE is not in here (see
+ *  RetryLater). */
 const refused = new Set()
+
+/** A build that failed for a reason that may not hold next time — the network
+ *  dropped, the cdn answered 5xx, a decode broke part-way. Every other way a
+ *  build ends (a null, any other throw) is about the source itself and final.
+ *  Before this, one bad moment refused the url for the whole session. */
+class RetryLater extends Error {}
+
+/** `p`, but if it rejects the build is retryable rather than refused. */
+function flaky(p, what) {
+    return p.catch((err) => { throw new RetryLater(`${what}: ${err?.message || err}`, { cause: err }) })
+}
+
+/** Wait after the 1st, then the 2nd failure of a url; a 3rd is final. Spaced so
+ *  a cdn blip clears but a dead url costs three asks, not one per row. */
+const RETRY_MS = [30_000, 120_000]
+
+/** url → { at: performance.now() it may be asked again, tries: failures so far }.
+ *  While `at` is ahead, spriteFor answers null with no fetch. */
+const retries = new Map()
+
+/** Note a retryable failure of `url`. True while it will be asked again; false
+ *  once it has failed RETRY_MS.length + 1 times, which makes it final. */
+function coolDown(url, err) {
+    const tries = (retries.get(url)?.tries || 0) + 1
+    if (tries > RETRY_MS.length) return false
+    retries.set(url, { at: performance.now() + RETRY_MS[tries - 1], tries })
+    logger.warn(`[sprite] try ${tries} of ${RETRY_MS.length + 1} failed — asking again in ${RETRY_MS[tries - 1] / 1000}s`, url, err.message)
+    return true
+}
 
 export function supported() {
     return typeof ImageDecoder === 'function'
@@ -116,10 +207,12 @@ function whenIdle(fn) {
  */
 export function spriteFor(url) {
     if (!url || !supported() || refused.has(url)) return Promise.resolve(null)
-    const done = ready.get(url)
+    const done = touch(url)
     if (done) return Promise.resolve(done)
     const existing = strips.get(url)
     if (existing) return existing
+    const wait = retries.get(url)
+    if (wait && performance.now() < wait.at) return Promise.resolve(null)
     let why = null
     const p = build(url).catch((err) => { why = err; return null }).then((strip) => {
         strips.delete(url)
@@ -132,11 +225,16 @@ export function spriteFor(url) {
         // frame, tainted canvas, no decoder) — the same permanent refusal, with
         // nothing said about it at all.
         if (!strip) {
+            // A bad moment is not a verdict: cool down and let the next ask retry.
+            if (why instanceof RetryLater && coolDown(url, why)) return null
+            retries.delete(url)
             refused.add(url)
             logger.warn('[sprite] refusing url — this emote stays raster and counts against the animation budget', url, why || '(no strip produced)')
             return null
         }
+        retries.delete(url)
         ready.set(url, strip)
+        try { trimReady(url) } catch (err) { logger.debug('[sprite] trim threw', err) }
         // Rows that rendered before this landed are still showing the animated
         // <img>; tell the owner so they can switch over.
         try { onReady?.(url, strip) } catch (err) { logger.debug('[sprite] onReady threw', err) }
@@ -149,18 +247,23 @@ export function spriteFor(url) {
 async function build(url) {
     const cached = await readStore(url)
     if (cached) return cached
-    return new Promise((resolve) => whenIdle(() => decodeToStrip(url).then(resolve, () => resolve(null))))
+    return new Promise((resolve, reject) => whenIdle(() => decodeToStrip(url).then(resolve, reject)))
 }
 
 async function decodeToStrip(url) {
     // The same bytes the <img> already pulled — after the service worker's
     // image cache learned to match on request.destination, this is usually a
     // cache hit rather than a second network trip.
-    const resp = await fetch(url, { mode: 'cors', credentials: 'omit' })
-    if (!resp.ok) return null
+    let from = url
+    if (NO_CORS_SOURCES.test(url)) {
+        if (!corsProxy) throw new Error('no CORS header and no proxy set')
+        from = `${corsProxy}?url=${encodeURIComponent(url)}`
+    }
+    const resp = await flaky(fetch(from, { mode: 'cors', credentials: 'omit' }), 'fetch')
+    if (!resp.ok) throw new RetryLater(`fetch: http ${resp.status}`)
     const type = (resp.headers.get('content-type') || '').split(';')[0].trim()
     if (!/^image\/(webp|gif|apng|png|avif)$/.test(type)) return null
-    const data = await resp.arrayBuffer()
+    const data = await flaky(resp.arrayBuffer(), 'body')
 
     const dec = new ImageDecoder({ data, type })
     try {
@@ -194,7 +297,7 @@ async function decodeToStrip(url) {
         let w = 0, h = 0
         const durs = []
         for (let i = 0; i < track.frameCount; i++) {
-            const { image } = await dec.decode({ frameIndex: i })
+            const { image } = await flaky(dec.decode({ frameIndex: i }), 'decode')
             if (i === 0) { w = image.displayWidth; h = image.displayHeight }
             durs.push(image.duration || 0)
             image.close()
@@ -238,7 +341,7 @@ async function decodeToStrip(url) {
             if (list) list.push(c); else cellsOf.set(src, [c])
         }
         for (const [src, cells] of cellsOf) {
-            const { image } = await dec.decode({ frameIndex: src })
+            const { image } = await flaky(dec.decode({ frameIndex: src }), 'decode')
             for (const c of cells) ctx.drawImage(image, (c % grid.cols) * w, Math.floor(c / grid.cols) * h, w, h)
             image.close()
         }
@@ -414,6 +517,15 @@ async function readStore(url) {
     }
 }
 
+/** Successful puts this page. The store is trimmed on the first and every 32nd:
+ *  one `keys()` listing per 32 writes, not per write. */
+let storeWrites = 0
+
+/** Drop the oldest entries past STORE_MAX. `keys()` lists in insertion order. */
+function trimStore(c) {
+    return c.keys().then((keys) => Promise.all(keys.slice(0, Math.max(0, keys.length - STORE_MAX)).map(k => c.delete(k))))
+}
+
 function writeStore(url, blob, strip) {
     if (typeof caches === 'undefined') return
     caches.open(STORE).then(c => c.put(storeKey(url), new Response(blob, {
@@ -425,7 +537,8 @@ function writeStore(url, blob, strip) {
             'x-h': String(strip.h),
             'x-duration': String(strip.durationMs),
         },
-    }))).catch(() => { /* quota — the in-memory map still serves this session */ })
+    })).then(() => (storeWrites++ % 32 === 0 ? trimStore(c) : null)))
+        .catch(() => { /* quota — the in-memory map still serves this session */ })
 }
 
 // ── mounting ────────────────────────────────────────────────────────────────
@@ -597,7 +710,7 @@ export function spriteRefused(url) {
  * completion re-runs reconcile for the elements that asked.
  */
 export function peekSprite(url) {
-    return ready.get(url)
+    return touch(url)
 }
 
 /** Test seam — drops every memo so a case starts from nothing. */
@@ -606,6 +719,9 @@ export function _resetForTests() {
     strips.clear()
     ready.clear()
     refused.clear()
+    retries.clear()
+    corsProxy = null
     paintableStrips.clear()
+    storeWrites = 0
     onReady = null
 }

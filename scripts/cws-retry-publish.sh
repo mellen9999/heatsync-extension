@@ -40,7 +40,9 @@ cd "$SRC" || { say "FAILED: $SRC missing"; exit 1; }
 out=$(bun scripts/publish.js --version "$VERSION" --chrome-only --publish 2>&1)
 rc=$?
 
-if [ $rc -eq 0 ] && ! grep -q 'not attempted' <<<"$out"; then
+# the chrome line itself, not the whole summary: a --chrome-only run always prints
+# "firefox: not attempted", which read as a failed chrome leg and kept the timer on
+if [ $rc -eq 0 ] && grep -qE 'chrome *: published' <<<"$out"; then
   say "PUBLISHED $VERSION to CWS — disabling $TIMER"
   grep -E 'chrome *:' <<<"$out" >>"$LOG"
   systemctl --user disable --now "$TIMER" 2>>"$LOG"

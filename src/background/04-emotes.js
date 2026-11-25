@@ -453,14 +453,14 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     // so the next join retries the refresh.
     if (Array.isArray(prevCached)) {
       channelEmotesMap[key] = prevCached
-      // the whole read failed: every third-party provider the kept copy holds is a saved one
-      channelEmotesStale[key] = outageProviders(new Set(prevCached.map((e) => e?.source)))
+      // the whole read failed — that can be our own network, not a provider, so
+      // the line keeps whatever per-provider outage it already knew and names no new one
       broadcastToTabs({
         type: 'channel_emotes_update',
         emotes: prevCached,
         channelOwner: channelName,
         platform,
-        stale: channelEmotesStale[key],
+        stale: channelEmotesStale[key] || [],
       })
     } else {
       // Nothing to fall back to — clear the sentinel so the next join retries.

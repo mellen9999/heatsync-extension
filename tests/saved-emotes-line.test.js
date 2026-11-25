@@ -86,3 +86,10 @@ test('every locale has all three lines', () => {
     }
   }
 })
+
+test('a whole failed read names no provider — it can be our own network', () => {
+  const i = SRC.indexOf('Channel emotes fetch failed')
+  expect(i).toBeGreaterThan(-1)
+  const tail = SRC.slice(i, SRC.indexOf('} else {', i))
+  expect(tail).not.toMatch(/channelEmotesStale\[key\]\s*=/)
+})

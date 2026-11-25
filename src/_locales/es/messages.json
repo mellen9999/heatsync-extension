@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "ofrece tu inventario en el autocompletado con tab y en las sugerencias al escribir. apagado deja solo emotes de canal y globales"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emotes sin distinguir mayúsculas"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "reconoce emotes sin importar las mayúsculas — 'pogchamp' se muestra como PogChamp. el autocompletado con tab siempre ignora mayúsculas"
+  },
   "mc_settings_tab_list": {
     "message": "tab abre una lista"
   },

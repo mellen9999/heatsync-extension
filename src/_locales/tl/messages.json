@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "ialok ang inventory mo sa tab-complete at mga suhestiyon habang nagta-type. kapag off, channel at global emotes lang ang matitira"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emotes kahit mali ang laki ng letra"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "tugma ang emotes kahit ano ang capitalization — ang 'pogchamp' ay lalabas na PogChamp. laging ganito ang tab-complete"
+  },
   "mc_settings_tab_list": {
     "message": "tab ay nagbubukas ng listahan"
   },

@@ -818,6 +818,10 @@ function getSetting(key) {
   return bridge ? bridge.get() : def.default
 }
 
+// The emote-refs builder (a byte copy of the site's, bundled ahead of this file) asks this live:
+// case is exact unless the user turned the setting on.
+setCaseInsensitiveProbe(() => getSetting('caseInsensitiveEmotes') === true)
+
 // Single write path: coerce + validate, update cache + legacy binding,
 // persist through the existing storage routes, run the applier.
 // opts.silent skips applier + rerender (storage-change rehydration uses it

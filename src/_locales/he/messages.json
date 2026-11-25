@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "הצע את המלאי שלך בהשלמת tab ובהצעות הקלדה. כבוי משאיר רק אימוטי ערוץ וגלובליים"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "התאמת אימוטים בלי רגישות לאותיות"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "מתאים אימוטים בלי קשר לאותיות גדולות — 'pogchamp' יוצג כ-PogChamp. השלמה עם tab תמיד לא רגישה"
+  },
   "mc_settings_tab_list": {
     "message": "tab פותח רשימה"
   },

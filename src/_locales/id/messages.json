@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "tawarkan inventarismu di tab-complete dan saran saat mengetik. kalau mati, hanya emote channel dan global"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emote tak peka huruf besar"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "cocokkan emote tanpa peduli huruf besar-kecil — 'pogchamp' tampil sebagai PogChamp. tab-complete selalu tak peka"
+  },
   "mc_settings_tab_list": {
     "message": "tab membuka daftar"
   },

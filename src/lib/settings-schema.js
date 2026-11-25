@@ -766,6 +766,21 @@ const SETTINGS = [
     alias: 'personal inventory emotes tab complete autocomplete',
   },
   {
+    // Match emotes regardless of capitalisation ('pogchamp' draws PogChamp). Off = case is exact.
+    // The same switch as the site's; the emote-refs builder reads it live through its probe.
+    key: 'caseInsensitiveEmotes',
+    type: 'bool',
+    default: false,
+    scope: 'sync',
+    category: 'chat',
+    section: 'input',
+    sectionKey: 'btn_settings_input',
+    labelKey: 'mc_settings_case_insensitive_emotes',
+    tipKey: 'mc_settings_case_insensitive_emotes_desc',
+    control: 'pill',
+    alias: 'case sensitive capitalization uppercase lowercase emote names match',
+  },
+  {
     // Tab on a word opens the ranked suggestion list above the composer (the
     // same list ":kek" pops) instead of completing in place. Arrows move, Tab
     // or Enter takes the highlighted emote, Esc closes. Off keeps the classic

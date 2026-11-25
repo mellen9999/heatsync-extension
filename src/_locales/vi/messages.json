@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "đưa kho của bạn vào tab-complete và gợi ý khi gõ. tắt thì chỉ còn emote kênh và toàn cục"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emote không phân biệt hoa thường"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "khớp emote bất kể hoa thường — 'pogchamp' hiện thành PogChamp. tab-complete luôn không phân biệt hoa thường"
+  },
   "mc_settings_tab_list": {
     "message": "tab mở danh sách"
   },

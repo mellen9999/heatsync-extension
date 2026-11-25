@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "اعرض مخزونك في إكمال tab واقتراحات الكتابة. الإيقاف يترك emotes القناة والعامة فقط"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "مطابقة الإيموت بلا حساسية للحروف"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "مطابقة الإيموتات بغض النظر عن حالة الأحرف — 'pogchamp' تظهر PogChamp. الإكمال بـ tab دائمًا بلا حساسية"
+  },
   "mc_settings_tab_list": {
     "message": "tab يفتح قائمة"
   },

@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "在 tab 补全和输入建议中提供你的库存。关闭则只保留频道和全局 emote"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "表情匹配忽略大小写"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "不管大小写都匹配表情 — 'pogchamp' 会显示 PogChamp。tab 补全始终忽略大小写"
+  },
   "mc_settings_tab_list": {
     "message": "tab 打开候选列表"
   },

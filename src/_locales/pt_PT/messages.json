@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "oferece o teu inventário no tab-complete e nas sugestões ao escrever. desligado deixa só emotes de canal e globais"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emotes sem distinguir maiúsculas"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "reconhece emotes independentemente das maiúsculas — 'pogchamp' mostra PogChamp. o tab-complete ignora sempre maiúsculas"
+  },
   "mc_settings_tab_list": {
     "message": "tab abre uma lista"
   },

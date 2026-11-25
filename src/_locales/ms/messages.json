@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "tawarkan inventori kau dalam tab-complete dan cadangan menaip. mati tinggalkan emote saluran dan global sahaja"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "padanan emote tak peka huruf"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "padankan emote tanpa kira huruf besar/kecil — 'pogchamp' dipaparkan sebagai PogChamp. tab-complete sentiasa tak peka huruf"
+  },
   "mc_settings_tab_list": {
     "message": "tab membuka senarai"
   },

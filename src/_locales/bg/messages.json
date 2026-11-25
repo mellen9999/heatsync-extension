@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "предлага инвентара ти при tab допълване и предложения докато пишеш. изключено оставя само канални и глобални emotes"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "емоути без значение на регистъра"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "разпознава емоути независимо от главните букви — 'pogchamp' става PogChamp. tab-допълването винаги е без значение на регистъра"
+  },
   "mc_settings_tab_list": {
     "message": "tab отваря списък"
   },

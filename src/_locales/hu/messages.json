@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "felkínálja a készletedet a tab-kiegészítésben és a gépelés közbeni javaslatokban. kikapcsolva csak a csatorna és globális emote-ok maradnak"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "kis- és nagybetűre nem érzékeny emote-ok"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "az emote-ot betűméret nélkül is felismeri — a 'pogchamp' PogChamp-ként jelenik meg. a tab-kiegészítés mindig ilyen"
+  },
   "mc_settings_tab_list": {
     "message": "a tab listát nyit"
   },

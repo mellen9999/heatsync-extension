@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "προσφέρει το inventory σου στο tab-complete και στις προτάσεις πληκτρολόγησης. off αφήνει μόνο emotes καναλιού και global"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emotes χωρίς διάκριση κεφαλαίων"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "ταιριάζει τα emotes ανεξάρτητα από κεφαλαία/πεζά — το 'pogchamp' δείχνει PogChamp. το tab-complete δεν κάνει ποτέ διάκριση"
+  },
   "mc_settings_tab_list": {
     "message": "το tab ανοίγει λίστα"
   },

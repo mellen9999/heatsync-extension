@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "oferuj swój ekwipunek w uzupełnianiu tabem i podpowiedziach przy pisaniu. wyłączone zostawia tylko emotki kanałowe i globalne"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emotki bez rozróżniania wielkości liter"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "dopasowuje emotki niezależnie od wielkości liter — 'pogchamp' pokaże PogChamp. tab-uzupełnianie zawsze ignoruje wielkość"
+  },
   "mc_settings_tab_list": {
     "message": "tab otwiera listę"
   },

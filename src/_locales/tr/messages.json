@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "envanterini tab ile tamamlamada ve yazarken önerilerde sun. kapalıyken sadece kanal ve genel emotes kalır"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "büyük/küçük harf fark etmesin"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "emote'lar harf boyutundan bağımsız eşleşir — 'pogchamp' yazarsan PogChamp çıkar. tab tamamlama her zaman böyle"
+  },
   "mc_settings_tab_list": {
     "message": "tab bir liste açar"
   },

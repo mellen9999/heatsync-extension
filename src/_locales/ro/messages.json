@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "oferă inventarul tău la tab-complete și în sugestiile de tastare. oprit lasă doar emote-urile de canal și globale"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emote-uri fără distincție mari/mici"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "potrivește emote-urile indiferent de majuscule — 'pogchamp' devine PogChamp. completarea cu tab ignoră mereu majusculele"
+  },
   "mc_settings_tab_list": {
     "message": "tab deschide o listă"
   },

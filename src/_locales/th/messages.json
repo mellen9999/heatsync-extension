@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "เสนอคลังของคุณตอนกด tab เติมคำและตอนพิมพ์ ปิดจะเหลือเฉพาะ emotes ของช่องและส่วนกลาง"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "จับอิโมตไม่สนตัวพิมพ์ใหญ่เล็ก"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "จับอิโมตโดยไม่สนตัวพิมพ์ใหญ่เล็ก — 'pogchamp' ขึ้นเป็น PogChamp ส่วน tab-complete ไม่สนอยู่แล้ว"
+  },
   "mc_settings_tab_list": {
     "message": "tab เปิดรายการ"
   },

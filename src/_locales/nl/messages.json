@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "bied je inventaris aan bij tab-aanvullen en typsuggesties. uit laat alleen kanaal- en globale emotes over"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emotes hoofdletterongevoelig"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "emotes matchen ongeacht hoofdletters — 'pogchamp' wordt PogChamp. tab-aanvullen is altijd hoofdletterongevoelig"
+  },
   "mc_settings_tab_list": {
     "message": "tab opent een lijst"
   },

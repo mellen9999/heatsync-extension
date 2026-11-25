@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "пропонує твій інвентар в автодоповненні tab і підказках під час набору. вимкнено — лишаються лише канальні та глобальні emotes"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "емоути без урахування регістру"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "розпізнавати емоути незалежно від регістру — 'pogchamp' стане PogChamp. автодоповнення по tab завжди без регістру"
+  },
   "mc_settings_tab_list": {
     "message": "tab відкриває список"
   },

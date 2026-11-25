@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "tilby inventaret ditt i tab-fullføring og skriveforslag. av levner bare kanal- og globale emotes"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emote-treff uten store/små bokstaver"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "match emotes uansett store/små bokstaver — 'pogchamp' blir PogChamp. tab-fullføring ignorerer alltid store/små"
+  },
   "mc_settings_tab_list": {
     "message": "tab åpner en liste"
   },

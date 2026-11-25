@@ -1119,6 +1119,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "offer your inventory in tab-complete and typing suggestions. off leaves only channel and global emotes"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "case-insensitive emote matching"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "match emotes regardless of capitalization — 'pogchamp' renders PogChamp. tab-complete is always CI"
+  },
   "mc_settings_tab_list": {
     "message": "tab opens a list"
   },

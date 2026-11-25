@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "nabídne tvůj inventář v tab-doplňování a návrzích při psaní. vypnuto nechá jen kanálové a globální emotes"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emoty bez ohledu na velikost písmen"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "páruje emoty bez ohledu na velká/malá písmena — 'pogchamp' zobrazí PogChamp. tab-doplňování je vždy bez rozlišení"
+  },
   "mc_settings_tab_list": {
     "message": "tab otevře seznam"
   },

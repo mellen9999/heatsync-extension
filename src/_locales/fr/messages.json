@@ -1118,6 +1118,12 @@
   "mc_settings_suggest_inventory_emotes_desc": {
     "message": "propose ton inventaire dans la complétion par tab et les suggestions de saisie. désactivé, il ne reste que les emotes de chaîne et globaux"
   },
+  "mc_settings_case_insensitive_emotes": {
+    "message": "emotes sans casse"
+  },
+  "mc_settings_case_insensitive_emotes_desc": {
+    "message": "reconnaît les emotes quelle que soit la casse — 'pogchamp' affiche PogChamp. la complétion par tab ignore toujours la casse"
+  },
   "mc_settings_tab_list": {
     "message": "tab ouvre une liste"
   },

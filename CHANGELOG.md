@@ -1,5 +1,11 @@
 # changelog
 
+## [1.7.144] — 2026-11-25
+
+### fixed
+- **tab cycles emotes in kick's own chat box** — the list under the box took the first tab and left nothing to step through, so tab stuck on the first emote.
+- **a line you send to twitch and kick at once keeps your twitch badges and name colour** — when the panel showed kick's copy, it drew only the flame and kick's green name.
+
 ## [1.7.143] — 2026-11-25
 
 ### added

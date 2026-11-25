@@ -1,9 +1,0 @@
-[Unit]
-Description=heatsync ext: retry the chrome web store upload until cws takes it
-After=network-online.target
-
-[Service]
-Type=oneshot
-ExecStart=%h/projects/heatsync-extension/scripts/cws-retry-publish.sh
-Environment=PATH=%h/.bun/bin:/usr/bin:/bin
-TimeoutStartSec=30min

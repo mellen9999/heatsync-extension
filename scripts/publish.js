@@ -1,11 +1,12 @@
 #!/usr/bin/env bun
-// one-command release publisher — chrome web store + amo (firefox listed channel).
+// one-command release publisher — chrome web store, amo (firefox listed channel), edge add-ons.
 //
 // usage:
-//   bun scripts/publish.js                          # dry-run, current version, both stores
-//   bun scripts/publish.js --version 1.7.24 --publish   # bump + build + publish both
+//   bun scripts/publish.js                          # dry-run, current version, all three stores
+//   bun scripts/publish.js --version 1.7.24 --publish   # bump + build + publish all three
 //   bun scripts/publish.js --chrome-only --publish
 //   bun scripts/publish.js --firefox-only --publish
+//   bun scripts/publish.js --edge-only --publish     # edge takes the chrome build as-is
 //   bun scripts/publish.js --cws-auth                # one-time: mint a CWS_REFRESH_TOKEN
 //   bun scripts/publish.js --sync-summaries --publish   # push _locales summaries to AMO only
 //   bun scripts/publish.js --sync-previews <dir> --publish  # replace AMO screenshots with <dir>/*.png
@@ -26,13 +27,26 @@ import { basename, dirname, join } from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import { fileURLToPath } from 'node:url'
 import { amoFetchWithRetry, amoHealthy } from './lib/amo-retry.js'
+import { EDGE_LOCKED, EDGE_SAME, edgeClient } from './lib/edge-addons.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = dirname(__dirname)
 
 const CWS_ITEM_ID = 'afadollcanjpemaonbgnkhjddaebjeja'
 const AMO_SLUG = 'heatsync-chat'
-const REQUIRED_KEYS = ['AMO_JWT_ISSUER', 'AMO_JWT_SECRET', 'CWS_CLIENT_ID', 'CWS_CLIENT_SECRET', 'CWS_REFRESH_TOKEN']
+const EDGE_PRODUCT_ID = 'db3d12bb-778e-40b1-b112-8df75859a0b8'
+const REQUIRED_KEYS = [
+  'AMO_JWT_ISSUER',
+  'AMO_JWT_SECRET',
+  'CWS_CLIENT_ID',
+  'CWS_CLIENT_SECRET',
+  'CWS_REFRESH_TOKEN',
+  'EDGE_CLIENT_ID',
+  'EDGE_API_KEY',
+]
+const KEY_PREFIX = { chrome: 'CWS_', firefox: 'AMO_', edge: 'EDGE_' }
+// a store still reviewing the last version takes no new one: the leg waits on the hourly retry
+const STORE_LOCKED = { chrome: 'ITEM_NOT_UPDATABLE', edge: EDGE_LOCKED }
 
 // ── args ─────────────────────────────────────────────────────────────────────
 
@@ -49,6 +63,7 @@ function parseArgs(argv) {
     version: value('version'),
     chromeOnly: flags.has('--chrome-only'),
     firefoxOnly: flags.has('--firefox-only'),
+    edgeOnly: flags.has('--edge-only'),
     dryRun: flags.has('--dry-run'),
     publish: flags.has('--publish'),
     cwsAuth: flags.has('--cws-auth'),
@@ -56,10 +71,12 @@ function parseArgs(argv) {
     syncSummaries: flags.has('--sync-summaries'),
     syncPreviews: value('sync-previews'),
   }
-  if (opts.chromeOnly && opts.firefoxOnly) {
-    console.error('error: --chrome-only and --firefox-only are mutually exclusive')
+  const only = ['chrome', 'firefox', 'edge'].filter((s) => opts[`${s}Only`])
+  if (only.length > 1) {
+    console.error(`error: pick one of --chrome-only, --firefox-only, --edge-only (got ${only.join(' + ')})`)
     process.exit(1)
   }
+  opts.only = only[0] || null
   if (opts.version && !/^\d+\.\d+\.\d+$/.test(opts.version)) {
     console.error(`error: --version must be X.Y.Z, got "${opts.version}"`)
     process.exit(1)
@@ -97,6 +114,8 @@ create/edit ${path} (chmod 600) with:
   CWS_CLIENT_ID=...
   CWS_CLIENT_SECRET=...
   CWS_REFRESH_TOKEN=...
+  EDGE_CLIENT_ID=...
+  EDGE_API_KEY=...
 
 1. amo (firefox) api keys
    https://addons.mozilla.org/en-US/developers/addon/api/key/
@@ -110,7 +129,12 @@ create/edit ${path} (chmod 600) with:
    d. bun scripts/publish.js --cws-auth
       (opens the consent flow, catches the redirect on 127.0.0.1:8976 — writes CWS_REFRESH_TOKEN for you, never printed)
 
-3. chmod 600 ${path}
+3. edge add-ons api
+   https://partner.microsoft.com/dashboard/microsoftedge/publishapi
+   turn on the api (or "new api key") -> paste Client ID / the key into EDGE_CLIENT_ID / EDGE_API_KEY
+   the key is shown once and expires: the page lists its expiry date
+
+4. chmod 600 ${path}
 `)
 }
 
@@ -185,7 +209,7 @@ function promptSecret(label) {
 async function setCredsFlow() {
   const path = credsPath()
   const existing = parseEnvFile(path) || {}
-  const keys = ['AMO_JWT_ISSUER', 'AMO_JWT_SECRET', 'CWS_CLIENT_ID', 'CWS_CLIENT_SECRET']
+  const keys = REQUIRED_KEYS.filter((k) => k !== 'CWS_REFRESH_TOKEN')
   console.log(`writing to ${path} (chmod 600). input is hidden; blank keeps the current value.\n`)
   for (const key of keys) {
     const have = existing[key] ? ' [set]' : ''
@@ -194,7 +218,7 @@ async function setCredsFlow() {
   }
   const after = parseEnvFile(path) || {}
   const still = keys.filter((k) => !after[k])
-  console.log(still.length ? `\nstill missing: ${still.join(', ')}` : '\nall 4 keys set.')
+  console.log(still.length ? `\nstill missing: ${still.join(', ')}` : `\nall ${keys.length} keys set.`)
   console.log(
     after.CWS_REFRESH_TOKEN
       ? 'CWS_REFRESH_TOKEN already present — you are ready to publish.'
@@ -713,6 +737,58 @@ async function doFirefox(zipPath, sourceZipPath, creds, willPublish, ver) {
   return { status: 'submitted', versionId: versionData.id, versionNumber: versionData.version }
 }
 
+// ── edge add-ons ─────────────────────────────────────────────────────────────
+
+// notes for edge's reviewers (not public). edge takes the chrome build byte for byte
+function composeEdgeNotes(ver) {
+  return [
+    `heatsync v${ver}: an update built from the same source as the chrome web store version.`,
+    'no account is needed to test: open any live channel on twitch.tv or kick.com and the heatsync panel shows in the chat column.',
+    `source: https://github.com/mellen9999/heatsync-extension/tree/v${ver}`,
+    '',
+    'changes:',
+    composeReleaseNotes(),
+  ]
+    .join('\n')
+    .slice(0, 2000)
+}
+
+async function doEdge(zipPath, creds, willPublish, ver) {
+  if (!existsSync(zipPath)) throw new Error(`missing ${zipPath} — build failed?`)
+  if (!willPublish) {
+    console.log(`  [dry-run] edge: would upload ${basename(zipPath)} to product ${EDGE_PRODUCT_ID}, then submit it for review`)
+    return { status: 'dry-run' }
+  }
+  const edge = edgeClient({ productId: EDGE_PRODUCT_ID, clientId: creds.EDGE_CLIENT_ID, apiKey: creds.EDGE_API_KEY })
+  console.log(`  edge: uploading ${basename(zipPath)}…`)
+  await edge.upload(readFileSync(zipPath))
+  console.log('  edge: submitting for review…')
+  try {
+    await edge.submit(composeEdgeNotes(ver))
+  } catch (e) {
+    if (e.code !== EDGE_SAME) throw e
+    // the draft already is the version in review or live: this leg's work is done
+    return { status: 'same' }
+  }
+  return { status: 'published' }
+}
+
+// a locked store retries on its own: heatsync-store-retry@<store>.timer runs the leg hourly and
+// switches itself off once the store takes it (scripts/store-retry-publish.sh)
+function armRetry(store) {
+  const timer = `heatsync-store-retry@${store}.timer`
+  try {
+    execFileSync('systemctl', ['--user', 'enable', '--now', timer], { stdio: 'ignore' })
+    console.log(`  ${store}: still reviewing the last version — ${timer} retries hourly until it takes this one`)
+  } catch {
+    console.log(
+      `  ${store}: still reviewing the last version. to retry hourly on its own:\n` +
+        '    cp scripts/systemd/heatsync-store-retry@.* ~/.config/systemd/user/ && systemctl --user daemon-reload\n' +
+        `    systemctl --user enable --now ${timer}`,
+    )
+  }
+}
+
 // ── summary ──────────────────────────────────────────────────────────────────
 
 function printSummary(ver, results, willPublish) {
@@ -722,12 +798,15 @@ function printSummary(ver, results, willPublish) {
     if (!r) return console.log(`  ${label}: not attempted`)
     if (r.status === 'dry-run') return console.log(`  ${label}: dry-run — would publish`)
     if (r.status === 'published') return console.log(`  ${label}: published — pending review (hours-to-days)`)
+    if (r.status === 'same') return console.log(`  ${label}: already holds this version — nothing new to submit`)
+    if (r.status === 'failed') return console.log(`  ${label}: FAILED — ${r.error}`)
     if (r.status === 'submitted') {
       return console.log(`  ${label}: submitted v${r.versionNumber} (id ${r.versionId}) — pending listed review (days)`)
     }
   }
   line('chrome ', results.chrome)
   line('firefox', results.firefox)
+  line('edge   ', results.edge)
   if (!willPublish) console.log('\nnothing was uploaded — re-run with --publish for a real release')
 }
 
@@ -789,12 +868,8 @@ async function main() {
 
   // Only demand the keys for the store(s) actually being published — a
   // chrome-only release must not block on absent AMO keys (and vice versa).
-  const requiredKeys = opts.chromeOnly
-    ? REQUIRED_KEYS.filter((k) => k.startsWith('CWS_'))
-    : opts.firefoxOnly
-      ? REQUIRED_KEYS.filter((k) => k.startsWith('AMO_'))
-      : REQUIRED_KEYS
-  const creds = loadCreds(requiredKeys)
+  const stores = opts.only ? [opts.only] : ['chrome', 'firefox', 'edge']
+  const creds = loadCreds(REQUIRED_KEYS.filter((k) => stores.some((s) => k.startsWith(KEY_PREFIX[s]))))
   const willPublish = opts.publish && !opts.dryRun
   console.log(
     `mode: ${willPublish ? 'LIVE — will publish to stores' : 'dry-run — no store network calls'}` +
@@ -803,20 +878,30 @@ async function main() {
 
   if (opts.version) bumpVersion(opts.version)
 
-  const target = opts.chromeOnly ? 'chrome' : opts.firefoxOnly ? 'firefox' : null
-  runBuild(target)
+  // edge ships the chrome build; a firefox-only run builds only firefox
+  runBuild(opts.only === 'firefox' ? 'firefox' : opts.only ? 'chrome' : null)
   verifyCheckVersions()
 
   const ver = getCurrentVersion()
   const zips = zipPaths(ver)
-  const results = { chrome: null, firefox: null }
-
-  try {
-    if (!opts.firefoxOnly) results.chrome = await doChrome(zips.chrome, creds, willPublish)
-    if (!opts.chromeOnly) results.firefox = await doFirefox(zips.firefox, zips.source, creds, willPublish, ver)
-  } finally {
-    printSummary(ver, results, willPublish)
+  const legs = {
+    chrome: () => doChrome(zips.chrome, creds, willPublish),
+    firefox: () => doFirefox(zips.firefox, zips.source, creds, willPublish, ver),
+    edge: () => doEdge(zips.chrome, creds, willPublish, ver),
   }
+  // each store on its own: one holding a review (or down) never keeps the others from this version
+  const results = {}
+  for (const store of stores) {
+    try {
+      results[store] = await legs[store]()
+    } catch (e) {
+      console.error(`  ${store}: ${e.message}`)
+      results[store] = { status: 'failed', error: e.message.split('\n')[0] }
+      if (willPublish && STORE_LOCKED[store] && e.message.includes(STORE_LOCKED[store])) armRetry(store)
+    }
+  }
+  printSummary(ver, results, willPublish)
+  if (Object.values(results).some((r) => r.status === 'failed')) process.exitCode = 1
 }
 
 main().catch((e) => {

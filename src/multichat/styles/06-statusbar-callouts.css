@@ -18,7 +18,19 @@
       overflow: hidden;
     }
     /* No toast → no bar at all. Reclaims the row; never a reserved gap. */
-    #hs-mc-statusbar:not(:has(.hs-notif)) { display: none; }
+    #hs-mc-statusbar:not(:has(.hs-notif)):not(:has(#hs-mc-emote-outage:not([hidden]))) { display: none; }
+    /* Standing line while a room draws saved emotes (a provider is down): yellow = warn, no motion. */
+    #hs-mc-emote-outage {
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 2px 8px;
+      font-size: 13px;
+      color: #ffff00;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #hs-mc-emote-outage[hidden] { display: none; }
 
     /* The collapse '>' now lives in the tab bar's util cluster (flush square,
        styled by .hs-mc-util-btn). Here we only set its position-aware glyph

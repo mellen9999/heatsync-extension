@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "대소문자 상관없이 이모티콘을 찾아요 — 'pogchamp'도 PogChamp로 보여요. 탭 자동완성은 항상 대소문자를 무시해요"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ 장애 중 — 저장된 이모트 표시",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$, $P2$ 장애 중 — 저장된 이모트 표시",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$, $P3$ 장애 중 — 저장된 이모트 표시",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab으로 목록 열기"
   },

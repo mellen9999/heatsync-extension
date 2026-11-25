@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "مطابقة الإيموتات بغض النظر عن حالة الأحرف — 'pogchamp' تظهر PogChamp. الإكمال بـ tab دائمًا بلا حساسية"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ متوقف — تُعرض الإيموجي المحفوظة",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ و$P2$ متوقفان — تُعرض الإيموجي المحفوظة",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$ و$P2$ و$P3$ متوقفة — تُعرض الإيموجي المحفوظة",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab يفتح قائمة"
   },

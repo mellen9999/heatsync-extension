@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "разпознава емоути независимо от главните букви — 'pogchamp' става PogChamp. tab-допълването винаги е без значение на регистъра"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ не работи — показват се запазените емотикони",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ и $P2$ не работят — показват се запазените емотикони",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ и $P3$ не работят — показват се запазените емотикони",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab отваря списък"
   },

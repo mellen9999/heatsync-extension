@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "大文字小文字に関係なくエモートを判定 — 'pogchamp' も PogChamp になります。タブ補完は常に区別なし"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ が停止中 — 保存済みのエモートを表示",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ と $P2$ が停止中 — 保存済みのエモートを表示",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$、$P2$、$P3$ が停止中 — 保存済みのエモートを表示",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab で候補リストを開く"
   },

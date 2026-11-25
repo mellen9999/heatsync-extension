@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "מתאים אימוטים בלי קשר לאותיות גדולות — 'pogchamp' יוצג כ-PogChamp. השלמה עם tab תמיד לא רגישה"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ לא זמין — מוצגים אימוטים שמורים",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ ו-$P2$ לא זמינים — מוצגים אימוטים שמורים",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ ו-$P3$ לא זמינים — מוצגים אימוטים שמורים",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab פותח רשימה"
   },

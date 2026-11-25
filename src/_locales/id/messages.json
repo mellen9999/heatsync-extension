@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "cocokkan emote tanpa peduli huruf besar-kecil — 'pogchamp' tampil sebagai PogChamp. tab-complete selalu tak peka"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ sedang down — menampilkan emote tersimpan",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ dan $P2$ sedang down — menampilkan emote tersimpan",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ dan $P3$ sedang down — menampilkan emote tersimpan",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab membuka daftar"
   },

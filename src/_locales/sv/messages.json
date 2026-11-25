@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "matcha emotes oavsett stora/små bokstäver — 'pogchamp' visar PogChamp. tab-komplettering är alltid okänslig"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ ligger nere — visar sparade emotes",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ och $P2$ ligger nere — visar sparade emotes",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ och $P3$ ligger nere — visar sparade emotes",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab öppnar en lista"
   },

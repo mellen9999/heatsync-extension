@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "不管大小寫都比對表情 —— 'pogchamp' 會顯示成 PogChamp。tab 補全一律不分大小寫"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ 已當機 — 顯示已儲存的表情",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ 和 $P2$ 已當機 — 顯示已儲存的表情",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$、$P2$ 和 $P3$ 已當機 — 顯示已儲存的表情",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab 開啟候選清單"
   },

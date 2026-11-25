@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "riconosci le emote a prescindere dalle maiuscole — 'pogchamp' diventa PogChamp. il completamento con tab ignora sempre le maiuscole"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ è giù — mostro gli emote salvati",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ e $P2$ sono giù — mostro gli emote salvati",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ e $P3$ sono giù — mostro gli emote salvati",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab apre un elenco"
   },

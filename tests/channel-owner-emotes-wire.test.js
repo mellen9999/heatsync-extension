@@ -40,6 +40,7 @@ const PROGRAM = [
   fn('withNsfwParam'),
   fn('channelOwnerEmotesUrl'),
   fn('mapChannelOwnerEmote'),
+  between('const OUTAGE_ORDER', '\n\n'),
   fn('fetchChannelOwnerEmotes'),
   'return { fetchChannelOwnerEmotes, mapChannelOwnerEmote, channelOwnerEmotesUrl }',
 ].join('\n')
@@ -58,6 +59,7 @@ function world(payload, { status = 200 } = {}) {
     viewerShowHate: true,
     channelEmotesMap,
     channelEmotesFetchedAt: {},
+    channelEmotesStale: {},
     CHANNEL_EMOTES_TTL: 30 * 60 * 1000,
     CHANNEL_EMOTES_EMPTY_TTL: 5 * 60 * 1000,
     tabChannels: new Map(),

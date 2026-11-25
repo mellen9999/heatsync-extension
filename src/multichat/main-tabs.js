@@ -1103,6 +1103,7 @@ function switchTab(id, sub, subOpts) {
   flushHeldOlder()
   snapshotTabState(currentTab)
   currentTab = id
+  renderEmoteOutage() // the saved-emotes line follows the tab's own rooms
   resetScrollback() // new tab starts at the live tail, not prior scrollback depth
   markTabSeen(id)
 

@@ -86,6 +86,7 @@ async function initialize() {
         if (!Array.isArray(row?.emotes) || channelEmotesMap[key] !== undefined) continue
         channelEmotesMap[key] = row.emotes
         channelEmotesFetchedAt[key] = Number(row.at) || 0
+        if (Array.isArray(row.stale)) channelEmotesStale[key] = outageProviders(new Set(row.stale))
         restored++
       }
       // One-time: a build before the IndexedDB move kept the whole map in

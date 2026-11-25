@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "reconhece emotes independente de maiúsculas — 'pogchamp' vira PogChamp. o tab-complete sempre ignora maiúsculas"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ está fora do ar — mostrando emotes salvos",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ e $P2$ estão fora do ar — mostrando emotes salvos",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ e $P3$ estão fora do ar — mostrando emotes salvos",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab abre uma lista"
   },

@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "match emotes uanset store/små bogstaver — 'pogchamp' bliver til PogChamp. tab-udfyldning ignorerer altid store/små"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ er nede — viser gemte emotes",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ og $P2$ er nede — viser gemte emotes",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ og $P3$ er nede — viser gemte emotes",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab åbner en liste"
   },

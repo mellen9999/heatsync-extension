@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "จับอิโมตโดยไม่สนตัวพิมพ์ใหญ่เล็ก — 'pogchamp' ขึ้นเป็น PogChamp ส่วน tab-complete ไม่สนอยู่แล้ว"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ ล่ม — แสดงอีโมทที่บันทึกไว้",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ และ $P2$ ล่ม — แสดงอีโมทที่บันทึกไว้",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ และ $P3$ ล่ม — แสดงอีโมทที่บันทึกไว้",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab เปิดรายการ"
   },

@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "erkennt Emotes unabhängig von der Schreibweise — 'pogchamp' zeigt PogChamp. Tab-Vervollständigung ignoriert sie immer"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ ist down — zeige gespeicherte emotes",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ und $P2$ sind down — zeige gespeicherte emotes",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ und $P3$ sind down — zeige gespeicherte emotes",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab öffnet eine liste"
   },

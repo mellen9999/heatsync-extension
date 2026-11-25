@@ -505,6 +505,7 @@ function listenForSettingsChanges() {
           }
         }
         _buildChannelEmoteCache(_ownerKey, msg.emotes, msg.platform)
+        noteEmoteOutage(msg)
         if (msg.platform === 'youtube') {
           // Alias the SAME Map under the shapes getCurrentChannel() yields on
           // yt pages — raw-case videoId (watch?v=) and bare handle (no @) —

@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "emote'lar harf boyutundan bağımsız eşleşir — 'pogchamp' yazarsan PogChamp çıkar. tab tamamlama her zaman böyle"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ çalışmıyor — kayıtlı emote'lar gösteriliyor",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ ve $P2$ çalışmıyor — kayıtlı emote'lar gösteriliyor",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ ve $P3$ çalışmıyor — kayıtlı emote'lar gösteriliyor",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab bir liste açar"
   },

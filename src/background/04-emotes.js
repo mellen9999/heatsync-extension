@@ -57,8 +57,18 @@ function mapChannelOwnerEmote(e) {
 function bgPersistChannelEmotes(key) {
   const emotes = channelEmotesMap[key]
   if (!Array.isArray(emotes)) return Promise.resolve()
-  return bgIdbPut(BG_IDB_EMOTES, key, { emotes, at: channelEmotesFetchedAt[key] || 0 })
+  return bgIdbPut(BG_IDB_EMOTES, key, {
+    emotes,
+    at: channelEmotesFetchedAt[key] || 0,
+    stale: channelEmotesStale[key] || [],
+  })
 }
+
+// The providers a room draws from a saved copy (a refetch failed and the last good set was kept),
+// in the order the site words them. The pane says so while this is non-empty, and clears it when
+// fresh data lands (the next fetch files [] here).
+const OUTAGE_ORDER = ['7tv', 'bttv', 'ffz']
+const outageProviders = (held) => OUTAGE_ORDER.filter((p) => held.has(p))
 
 // A streamer changed their emotes (the `emote:added|removed` push every socket gets, with the
 // account's platform tokens in `senderKeys`): a channel in use that is theirs reads its set
@@ -129,7 +139,13 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     const age = Date.now() - (channelEmotesFetchedAt[key] || 0)
     const ttl = cached.length > 0 ? CHANNEL_EMOTES_TTL : CHANNEL_EMOTES_EMPTY_TTL
     // Always broadcast cached data immediately — content script needs emotes NOW
-    broadcastToTabs({ type: 'channel_emotes_update', emotes: cached, channelOwner: channelName, platform })
+    broadcastToTabs({
+      type: 'channel_emotes_update',
+      emotes: cached,
+      channelOwner: channelName,
+      platform,
+      stale: channelEmotesStale[key] || [],
+    })
     if (age < ttl) return
   }
   channelEmotesMap[key] = 'loading'
@@ -301,12 +317,16 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     // the fetch timeout are the usual trigger). Stale beats missing, per
     // provider — same philosophy as the whole-fetch fallback in the catch
     // below. Third-party entries carry `source`; heatsync entries don't.
+    const salvaged = new Set()
     if (isRefresh) {
       const SALVAGE = { bttv: 'bttv', ffz: 'ffz', sevenTV: '7tv', twitch: 'twitch', kick: 'kick' }
       for (const [slot, src] of Object.entries(SALVAGE)) {
         if (failed[slot] && slots[slot].length === 0) {
           slots[slot] = prevCached.filter((e) => e && e.source === src)
-          if (slots[slot].length) log(` ♻️ ${src} refetch failed — keeping ${slots[slot].length} stale entries`)
+          if (slots[slot].length) {
+            salvaged.add(src)
+            log(` ♻️ ${src} refetch failed — keeping ${slots[slot].length} stale entries`)
+          }
         }
       }
       if (!heatsyncResult?.ok && heatsyncEmotes.length === 0) {
@@ -334,6 +354,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     const anyFailed = failed.bttv || failed.ffz || failed.sevenTV || failed.twitch || failed.kick
     await stampThirdPartyFlags(emotes, channelName, platform)
     channelEmotesMap[key] = emotes
+    channelEmotesStale[key] = outageProviders(salvaged)
     // If any provider had a transient failure, backdate fetchedAt so the next
     // channel join refetches within ~60s (regardless of empty/non-empty TTL).
     channelEmotesFetchedAt[key] = anyFailed ? Date.now() - CHANNEL_EMOTES_TTL + 60000 : Date.now()
@@ -364,6 +385,7 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
       for (const old of evictable.slice(0, channelKeys.length - 20)) {
         delete channelEmotesMap[old]
         delete channelEmotesFetchedAt[old]
+        delete channelEmotesStale[old]
         bgIdbDelete(BG_IDB_EMOTES, old)
         const evictedSetId = seventvEmoteSetIds.get(old)
         seventvEmoteSetIds.delete(old)
@@ -398,7 +420,13 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     broadcastToTabs({ type: 'loading_status', done: true })
 
     // Broadcast to content scripts (include channel owner name for filtering)
-    broadcastToTabs({ type: 'channel_emotes_update', emotes, channelOwner: channelName, platform })
+    broadcastToTabs({
+      type: 'channel_emotes_update',
+      emotes,
+      channelOwner: channelName,
+      platform,
+      stale: channelEmotesStale[key],
+    })
 
     // Save per-channel map to storage for persistence (filter out 'loading' sentinels)
     await bgPersistChannelEmotes(key)
@@ -425,7 +453,15 @@ async function fetchChannelOwnerEmotes(channelName, channelId = null, platform =
     // so the next join retries the refresh.
     if (Array.isArray(prevCached)) {
       channelEmotesMap[key] = prevCached
-      broadcastToTabs({ type: 'channel_emotes_update', emotes: prevCached, channelOwner: channelName, platform })
+      // the whole read failed: every third-party provider the kept copy holds is a saved one
+      channelEmotesStale[key] = outageProviders(new Set(prevCached.map((e) => e?.source)))
+      broadcastToTabs({
+        type: 'channel_emotes_update',
+        emotes: prevCached,
+        channelOwner: channelName,
+        platform,
+        stale: channelEmotesStale[key],
+      })
     } else {
       // Nothing to fall back to — clear the sentinel so the next join retries.
       delete channelEmotesMap[key]

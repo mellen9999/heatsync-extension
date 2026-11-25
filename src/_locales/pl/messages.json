@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "dopasowuje emotki niezależnie od wielkości liter — 'pogchamp' pokaże PogChamp. tab-uzupełnianie zawsze ignoruje wielkość"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ nie działa — pokazuję zapisane emotki",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ i $P2$ nie działają — pokazuję zapisane emotki",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ i $P3$ nie działają — pokazuję zapisane emotki",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab otwiera listę"
   },

@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "khớp emote bất kể hoa thường — 'pogchamp' hiện thành PogChamp. tab-complete luôn không phân biệt hoa thường"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ đang sập — hiển thị emote đã lưu",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ và $P2$ đang sập — hiển thị emote đã lưu",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ và $P3$ đang sập — hiển thị emote đã lưu",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab mở danh sách"
   },

@@ -1148,6 +1148,7 @@ browser.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     channelEmotesMap = {}
     channelEmotesFetchedAt = {}
+    channelEmotesStale = {}
     bgIdbTx(BG_IDB_EMOTES, 'readwrite', (st) => st.clear()).catch(() => {})
     // Tells multichat's first init to hide feed/whispers/mentions/modlog —
     // empty/login-walled for a signed-out first-run user — until first login.
@@ -1199,6 +1200,7 @@ browser.storage.local
     if (!data.migrated_emote_cache_v154) {
       channelEmotesMap = {}
       channelEmotesFetchedAt = {}
+      channelEmotesStale = {}
       await browser.storage.local.remove(['channel_emotes_map', 'channel_emotes_fetched_at'])
       await bgIdbTx(BG_IDB_EMOTES, 'readwrite', (st) => st.clear()).catch(() => {})
       await browser.storage.local.set({ migrated_emote_cache_v154: true })
@@ -1255,6 +1257,7 @@ browser.storage.onChanged.addListener((changes, area) => {
 
 let channelEmotesMap = {} // Per-channel emotes: { "platform/channel": emotes[] }
 let channelEmotesFetchedAt = {} // "platform/channel" → timestamp of last successful fetch
+let channelEmotesStale = {} // "platform/channel" → the 7tv/bttv/ffz a room draws from a saved copy
 
 /**
  * A channel entry from another device's multichat config. twitch is sent to IRC

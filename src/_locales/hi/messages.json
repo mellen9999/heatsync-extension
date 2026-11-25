@@ -1124,6 +1124,39 @@
   "mc_settings_case_insensitive_emotes_desc": {
     "message": "बड़े-छोटे अक्षर से फ़र्क़ नहीं — 'pogchamp' से PogChamp दिखेगा। टैब-कंप्लीट हमेशा केस-इनसेंसिटिव है"
   },
+  "mc_emote_outage_1": {
+    "message": "$P1$ बंद है — सहेजे हुए इमोट दिख रहे हैं",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_outage_2": {
+    "message": "$P1$ और $P2$ बंद हैं — सहेजे हुए इमोट दिख रहे हैं",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "mc_emote_outage_3": {
+    "message": "$P1$, $P2$ और $P3$ बंद हैं — सहेजे हुए इमोट दिख रहे हैं",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
   "mc_settings_tab_list": {
     "message": "tab से सूची खुले"
   },

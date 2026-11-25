@@ -78,6 +78,11 @@ async function initialize() {
       const rows = await emotesP
       let restored = 0
       for (const [key, row] of Object.entries(rows)) {
+        // a set last written over 30 days ago (2592e6 ms) is not kept: dropped here so the store cannot grow forever
+        if (!(Number(row?.at) > Date.now() - 2592e6)) {
+          bgIdbDelete(BG_IDB_EMOTES, key)
+          continue
+        }
         if (!Array.isArray(row?.emotes) || channelEmotesMap[key] !== undefined) continue
         channelEmotesMap[key] = row.emotes
         channelEmotesFetchedAt[key] = Number(row.at) || 0

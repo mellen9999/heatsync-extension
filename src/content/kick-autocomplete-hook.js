@@ -505,6 +505,10 @@
   function handleKeydown(e) {
     if (!emoteDropdown || emoteDropdown.style.display === 'none' || !matches.length) return
 
+    // Tab on the list's first row is content.js's cycle (it fills the row and every next Tab steps on). Taking
+    // it here filled the first row, closed the list, and left the cycle nothing to step: Tab stuck on one emote.
+    // The hook keeps Tab for the rows the cycle cannot read (a name or a mention) and for a row picked by arrow.
+    if (e.key === 'Tab' && selectedIdx === 0 && !matches[0].isChatter && !matches[0].isMention) return
     if (e.key === 'Tab' || e.key === 'Enter') {
       e.preventDefault()
       e.stopPropagation()

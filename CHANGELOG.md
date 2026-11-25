@@ -1,5 +1,12 @@
 # changelog
 
+## [1.7.142] — 2026-11-25
+
+### fixed
+- **animated emotes stay in step** — every copy of an animated emote shows the same frame, however far apart the rows landed or however often you scroll past them. 7tv, bttv, ffz, twitch, kick and heatsync emotes all play on one clock.
+- **native chat** draws one file per emote, so a 1x copy and a 2x copy no longer animate apart.
+- **went-live and switched-to rows** keep the name white on its black cutout while you hover the row.
+
 ## [1.7.141] — 2026-11-24
 
 ### added

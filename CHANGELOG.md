@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.146] — 2026-11-25
+
+### fixed
+- **your own copy of an animated emote plays in step with everyone else's** — an emote from your set drew on its own clock, out of time with the same emote in other people's lines.
+
 ## [1.7.145] — 2026-11-25
 
 ### fixed

@@ -240,7 +240,8 @@ const SETTINGS = [
     // account setting as heatsync.org's bigEmoteLines (server/lib/settings-bridge.ts).
     key: 'bigEmoteLines',
     type: 'bool',
-    default: true,
+    // off by default (11-26): a big line takes 2 to 4 rows, and chat reads one row per line
+    default: false,
     scope: 'sync',
     category: 'display',
     section: 'chat messages',

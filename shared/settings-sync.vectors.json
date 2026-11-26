@@ -14,7 +14,7 @@
     "anonChat": {"type":"bool","scope":"sync","default":false},
     "autoHideEmpty": {"type":"bool","scope":"sync","default":false},
     "avatars": {"type":"bool","scope":"sync","default":false},
-    "bigEmoteLines": {"type":"bool","scope":"sync","default":true},
+    "bigEmoteLines": {"type":"bool","scope":"sync","default":false},
     "caseInsensitiveEmotes": {"type":"bool","scope":"sync","default":false},
     "channelVolumeDefault": {"type":"range","scope":"sync","default":0,"min":0,"max":1},
     "channelVolumeMemory": {"type":"bool","scope":"sync","default":true},

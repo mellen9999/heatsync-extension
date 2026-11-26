@@ -55,7 +55,7 @@ function hsBigRowOk(m, div) {
     !m.gigantified &&
     !k.contains('hs-mc-system') &&
     !k.contains('hs-filled') &&
-    getSetting('bigEmoteLines') !== false
+    getSetting('bigEmoteLines') === true
   )
 }
 

@@ -58,6 +58,8 @@ const FILES = [
   ['shared/emote-law.vectors.json', 'shared/emote-law.vectors.json'],
   ['shared/emote-mark.vectors.json', 'shared/emote-mark.vectors.json'],
   ['shared/emote-mods.vectors.json', 'shared/emote-mods.vectors.json'],
+  ['shared/emote-only.ts', 'shared/emote-only.ts'],
+  ['shared/emote-only.vectors.json', 'shared/emote-only.vectors.json'],
   ['tests/helpers/emote-world.ts', 'tests/helpers/emote-world.ts'],
 ]
 

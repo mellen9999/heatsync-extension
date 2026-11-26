@@ -57,6 +57,12 @@
 # the words add up to and which emote a word changes. tests/emote-mods-vectors.test.js runs every
 # row through the real row renderer.
 #
+# shared/emote-only.{ts,vectors.json} is the big-emote-line rule (docs/emote-law.md, "big emote-only
+# lines"): a chat line of nothing but 1 to 5 pictures is drawn twice as big. The rule reads the law's
+# read of the line, so processEmotes feeds it from what it already drew; tests/emote-only-vectors.test.ts
+# runs every case, tests/big-emote-lines.test.js runs the same lines through the real row renderer.
+# build.js bundles the .ts beside the law (scripts/lib/emote-law-bundle.mjs).
+#
 #   scripts/sync-site-copies.sh            # from ../heatsync (or $HS_SITE_DIR)
 set -euo pipefail
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -85,6 +91,8 @@ for pair in \
   shared/emote-law.vectors.json:shared/emote-law.vectors.json \
   shared/emote-mark.vectors.json:shared/emote-mark.vectors.json \
   shared/emote-mods.vectors.json:shared/emote-mods.vectors.json \
+  shared/emote-only.ts:shared/emote-only.ts \
+  shared/emote-only.vectors.json:shared/emote-only.vectors.json \
   tests/helpers/emote-world.ts:tests/helpers/emote-world.ts
 do
   src_rel="${pair%%:*}"

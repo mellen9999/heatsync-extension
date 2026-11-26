@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x стандартен, 2x ретина, 4x голям"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "големи редове само с emotes"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "ред само с emotes (до 5) се рисува два пъти по-голям. изкл.: всеки emote остава в един размер"
+  },
   "mc_settings_input_preview_desc": {
     "message": "изображения на емотикони в полето при писане"
   },

@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x 기본, 2x 레티나, 4x 크게"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "emote만 있는 줄 크게"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "emote만 있는 줄(최대 5개)을 2배 크기로 그립니다. 끄면 모든 emote가 한 가지 크기로 유지됩니다"
+  },
   "mc_settings_input_preview_desc": {
     "message": "입력 중 이모트 이미지 표시"
   },

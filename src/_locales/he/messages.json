@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x ברירת מחדל, 2x רטינה, 4x גדול"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "שורות של אימוטים בלבד בגדול"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "שורה שכולה אימוטים (עד 5) מצוירת בגודל כפול. כבוי: כל אימוט נשאר בגודל אחד"
+  },
   "mc_settings_input_preview_desc": {
     "message": "תמונות אמוט בשדה בזמן הקלדה"
   },

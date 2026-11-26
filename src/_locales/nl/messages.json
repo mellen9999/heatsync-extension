@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x standaard, 2x retina, 4x groot"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "grote regels met alleen emotes"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "een regel met alleen emotes (maximaal 5) wordt twee keer zo groot getekend. uit: elke emote houdt één grootte"
+  },
   "mc_settings_input_preview_desc": {
     "message": "emote-afbeeldingen in veld tijdens typen"
   },

@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x lalai, 2x retina, 4x besar"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "baris emote sahaja dibesarkan"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "baris yang hanya ada emote (hingga 5) dilukis dua kali ganda besar. mati: setiap emote kekal satu saiz"
+  },
   "mc_settings_input_preview_desc": {
     "message": "gambar emot dalam medan semasa menaip"
   },

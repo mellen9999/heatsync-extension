@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x oletus, 2x retina, 4x iso"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "isot vain emoteja sisältävät rivit"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "rivi, jossa on vain emoteja (enintään 5), piirretään kaksi kertaa isompana. pois: jokainen emote pysyy yhden kokoisena"
+  },
   "mc_settings_input_preview_desc": {
     "message": "emote-kuvat kentässä kirjoitettaessa"
   },

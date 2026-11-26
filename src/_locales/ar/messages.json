@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x افتراضي، 2x شبكية، 4x كبير"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "أسطر الإيموت وحده بحجم كبير"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "السطر الذي فيه إيموت فقط (حتى 5) يُرسم بضعف الحجم. إيقاف: كل إيموت يبقى بحجم واحد"
+  },
   "mc_settings_input_preview_desc": {
     "message": "صور إيموت في الإدخال أثناء الكتابة"
   },

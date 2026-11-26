@@ -451,6 +451,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x default, 2x retina, 4x huge"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "big emote-only lines"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "a line of only emotes (up to 5) is drawn twice as big. off: every emote keeps one size"
+  },
   "mc_settings_input_preview_desc": {
     "message": "emote images in input as you type"
   },

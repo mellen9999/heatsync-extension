@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x mặc định, 2x retina, 4x lớn"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "dòng chỉ có emote vẽ to"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "dòng chỉ có emote (tối đa 5) được vẽ to gấp đôi. tắt: mọi emote giữ một cỡ"
+  },
   "mc_settings_input_preview_desc": {
     "message": "hình ảnh emote trong ô khi gõ"
   },

@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x predvolený, 2x retina, 4x veľký"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "veľké riadky len z emotiek"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "riadok len z emotiek (najviac 5) sa kreslí dvakrát väčší. vypnuté: každá emotka má jednu veľkosť"
+  },
   "mc_settings_input_preview_desc": {
     "message": "obrázky emotov v poli počas písania"
   },

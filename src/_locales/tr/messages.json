@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x varsayılan, 2x retina, 4x büyük"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "yalnızca emote içeren satırlar büyük"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "yalnızca emote içeren bir satır (en çok 5) iki kat büyük çizilir. kapalı: her emote tek boyutta kalır"
+  },
   "mc_settings_input_preview_desc": {
     "message": "yazarken alana emote görselleri"
   },

@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x ค่าเริ่มต้น, 2x retina, 4x ใหญ่"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "แถวที่มีแต่ emotes ขยายใหญ่"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "แถวที่มีแต่ emotes (ไม่เกิน 5 ตัว) จะวาดใหญ่เป็นสองเท่า ปิด: ทุก emote คงขนาดเดียว"
+  },
   "mc_settings_input_preview_desc": {
     "message": "แสดงรูปอีโมตในช่องขณะพิมพ์"
   },

@@ -235,6 +235,23 @@ const SETTINGS = [
     ],
   },
   {
+    // A plain chat line of nothing but 1 to 5 pictures draws them twice as big (shared/emote-only.ts,
+    // the one rule every app runs). Read when a row is drawn, so a change rebuilds the rows. The same
+    // account setting as heatsync.org's bigEmoteLines (server/lib/settings-bridge.ts).
+    key: 'bigEmoteLines',
+    type: 'bool',
+    default: true,
+    scope: 'sync',
+    category: 'display',
+    section: 'chat messages',
+    sectionKey: 'lib_sec_chat_messages',
+    labelKey: 'mc_settings_big_emote_lines',
+    tipKey: 'mc_settings_big_emote_lines_desc',
+    control: 'pill',
+    rerender: true,
+    alias: 'emote only lines large giant pictures twice size',
+  },
+  {
     key: 'timestamps',
     basic: true, // day-one row — shows in the default (basic) settings view
     type: 'bool',

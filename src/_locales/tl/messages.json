@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x default, 2x retina, 4x malaki"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "malalaking linya na emotes lang"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "ang linyang emotes lang (hanggang 5) ay dalawang beses ang laki. patay: bawat emote ay isang laki lang"
+  },
   "mc_settings_input_preview_desc": {
     "message": "mga larawan ng emote sa field habang nagta-type"
   },

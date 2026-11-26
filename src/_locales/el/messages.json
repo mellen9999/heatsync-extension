@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x προεπιλογή, 2x retina, 4x μεγάλο"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "μεγάλες γραμμές μόνο με emotes"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "μια γραμμή μόνο με emotes (έως 5) σχεδιάζεται διπλάσια σε μέγεθος. κλειστό: κάθε emote μένει σε ένα μέγεθος"
+  },
   "mc_settings_input_preview_desc": {
     "message": "εικόνες emote στο πεδίο κατά την πληκτρολόγηση"
   },

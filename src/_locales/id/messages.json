@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x bawaan, 2x retina, 4x besar"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "baris khusus emote tampil besar"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "baris yang hanya berisi emote (maksimal 5) digambar dua kali lebih besar. mati: setiap emote tetap satu ukuran"
+  },
   "mc_settings_input_preview_desc": {
     "message": "gambar emote di kolom saat mengetik"
   },

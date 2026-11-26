@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x डिफ़ॉल्ट, 2x रेटिना, 4x बड़ा"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "सिर्फ़ emotes वाली बड़ी लाइनें"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "सिर्फ़ emotes वाली लाइन (5 तक) दोगुनी बड़ी बनती है। बंद: हर emote एक ही साइज़ में रहता है"
+  },
   "mc_settings_input_preview_desc": {
     "message": "टाइप करते समय इनपुट में इमोट छवियाँ"
   },

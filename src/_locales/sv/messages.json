@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x standard, 2x retina, 4x stor"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "stora rader med bara emotes"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "en rad med bara emotes (upp till 5) ritas dubbelt så stor. av: varje emote behåller en storlek"
+  },
   "mc_settings_input_preview_desc": {
     "message": "emote-bilder i fältet vid skrivning"
   },

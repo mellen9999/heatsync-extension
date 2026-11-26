@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x implicit, 2x retina, 4x mare"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "linii mari doar cu emote-uri"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "o linie doar cu emote-uri (cel mult 5) se desenează de două ori mai mare. oprit: fiecare emote rămâne la o singură dimensiune"
+  },
   "mc_settings_input_preview_desc": {
     "message": "imagini emote în câmp la tastare"
   },

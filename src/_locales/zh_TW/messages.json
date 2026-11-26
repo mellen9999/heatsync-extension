@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x 預設，2x 視網膜，4x 超大"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "純 emote 行放大"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "只有 emote 的一行（最多 5 個）會畫成兩倍大。關閉：每個 emote 維持同一大小"
+  },
   "mc_settings_input_preview_desc": {
     "message": "輸入時在欄位中顯示表情圖片"
   },

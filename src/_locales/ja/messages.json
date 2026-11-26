@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1xデフォルト、2xレティナ、4x大"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "emote だけの行を大きく"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "emote だけの行（最大5つ）を2倍の大きさで表示。オフ：すべての emote が同じ大きさのまま"
+  },
   "mc_settings_input_preview_desc": {
     "message": "入力中にエモート画像を表示"
   },

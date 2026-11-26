@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x alap, 2x retina, 4x nagy"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "nagy, csak emote-os sorok"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "a csak emote-okból álló sor (legfeljebb 5) kétszer akkorára rajzolódik. ki: minden emote egy méretű marad"
+  },
   "mc_settings_input_preview_desc": {
     "message": "emote képek a mezőben gépelés közben"
   },

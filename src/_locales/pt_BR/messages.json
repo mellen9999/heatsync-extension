@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x padrão, 2x retina, 4x grande"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "linhas só de emotes em tamanho grande"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "uma linha só de emotes (até 5) é desenhada com o dobro do tamanho. desligado: cada emote mantém um só tamanho"
+  },
   "mc_settings_input_preview_desc": {
     "message": "imagens de emotes no campo ao digitar"
   },

@@ -450,6 +450,12 @@
   "mc_settings_emote_size_desc": {
     "message": "1x Standard, 2x Retina, 4x groß"
   },
+  "mc_settings_big_emote_lines": {
+    "message": "große Zeilen nur mit Emotes"
+  },
+  "mc_settings_big_emote_lines_desc": {
+    "message": "eine Zeile nur aus Emotes (bis zu 5) wird doppelt so groß gezeichnet. aus: jedes Emote behält eine Größe"
+  },
   "mc_settings_input_preview_desc": {
     "message": "Emote-Bilder im Eingabefeld beim Tippen"
   },

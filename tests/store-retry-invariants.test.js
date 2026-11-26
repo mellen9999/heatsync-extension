@@ -37,6 +37,18 @@ describe('store retry', () => {
     expect(PUBLISH).toContain("if (r.status === 'same') return console.log(`  ${label}: already holds this version")
   })
 
+  test('the retry runs the version publish.js armed it for, and not at the moment it is armed', () => {
+    // main may not hold the release commit yet when publish.js arms the timer
+    expect(PUBLISH).toContain('`store-retry-${store}.version`')
+    expect(RETRY).toContain('ARMED="$(dirname "$LOG")/store-retry-$STORE.version"')
+    expect(PUBLISH).toContain("join(homedir(), '.local', 'state', 'heatsync')")
+    expect(RETRY).toContain('LOG=/home/mellen/.local/state/heatsync/store-retry.log')
+    // a boot-relative trigger already in the past fires the instant the timer is enabled
+    const timer = read('scripts/systemd/heatsync-store-retry@.timer')
+    expect(timer).not.toMatch(/OnBootSec|OnStartupSec/)
+    expect(timer).toContain('OnActiveSec=1h')
+  })
+
   test('publish.js arms the timer the units define, and the service runs the script that exists', () => {
     expect(PUBLISH).toContain('const timer = `heatsync-store-retry@${store}.timer`')
     expect(RETRY).toContain('TIMER="heatsync-store-retry@$STORE.timer"')

@@ -774,10 +774,14 @@ async function doEdge(zipPath, creds, willPublish, ver) {
 }
 
 // a locked store retries on its own: heatsync-store-retry@<store>.timer runs the leg hourly and
-// switches itself off once the store takes it (scripts/store-retry-publish.sh)
-function armRetry(store) {
+// switches itself off once the store takes it (scripts/store-retry-publish.sh). The version it
+// retries is written down here: at arm time main may not hold the release commit yet
+function armRetry(store, ver) {
   const timer = `heatsync-store-retry@${store}.timer`
   try {
+    const state = join(homedir(), '.local', 'state', 'heatsync')
+    mkdirSync(state, { recursive: true })
+    writeFileSync(join(state, `store-retry-${store}.version`), `${ver}\n`)
     execFileSync('systemctl', ['--user', 'enable', '--now', timer], { stdio: 'ignore' })
     console.log(`  ${store}: still reviewing the last version — ${timer} retries hourly until it takes this one`)
   } catch {
@@ -897,7 +901,7 @@ async function main() {
     } catch (e) {
       console.error(`  ${store}: ${e.message}`)
       results[store] = { status: 'failed', error: e.message.split('\n')[0] }
-      if (willPublish && STORE_LOCKED[store] && e.message.includes(STORE_LOCKED[store])) armRetry(store)
+      if (willPublish && STORE_LOCKED[store] && e.message.includes(STORE_LOCKED[store])) armRetry(store, ver)
     }
   }
   printSummary(ver, results, willPublish)

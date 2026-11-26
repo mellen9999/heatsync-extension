@@ -2,7 +2,6 @@
 Description=hourly %i store retry (switches itself off once the store takes the version)
 
 [Timer]
-OnBootSec=5min
 OnActiveSec=1h
 OnUnitActiveSec=1h
 

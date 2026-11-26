@@ -11,7 +11,8 @@
 # The other legs and the tag are done by publish.js; this only ever runs
 # --<store>-only, built from the version's tag (a worktree it makes once).
 #
-# Usage: store-retry-publish.sh chrome|edge [version]    (version defaults to main's package.json)
+# Usage: store-retry-publish.sh chrome|edge [version]
+#   version: the one publish.js armed it for (store-retry-<store>.version beside the log), else main's package.json
 set -uo pipefail
 
 REPO=/home/mellen/projects/heatsync-extension
@@ -37,7 +38,9 @@ done_now() {
 }
 cd "$REPO" || { say "repo missing"; exit 1; }
 
-VERSION="${2:-$(git show origin/main:package.json 2>/dev/null | grep -m1 '"version"' | cut -d'"' -f4)}"
+ARMED="$(dirname "$LOG")/store-retry-$STORE.version"
+VERSION="${2:-$(cat "$ARMED" 2>/dev/null)}"
+VERSION="${VERSION:-$(git show origin/main:package.json 2>/dev/null | grep -m1 '"version"' | cut -d'"' -f4)}"
 VERSION="${VERSION:-$(grep -m1 '"version"' package.json | cut -d'"' -f4)}"
 
 # Build from the release tag, never from main: the retry can fire days later, after main has

@@ -41,8 +41,9 @@ export function assertBuilt() {
 /**
  * Launch a persistent context with the extension loaded.
  * `headless: false` + `--headless=new`: MV3 service workers need the new mode.
+ * `options` are playwright context options on top (viewport, deviceScaleFactor).
  */
-export async function launchWithExtension(profile: string, extraArgs: string[] = []) {
+export async function launchWithExtension(profile: string, extraArgs: string[] = [], options: Record<string, unknown> = {}) {
   const chromium = await loadChromium()
   return chromium.launchPersistentContext(profile, {
     executablePath: CHROME_BIN,
@@ -54,6 +55,7 @@ export async function launchWithExtension(profile: string, extraArgs: string[] =
       '--no-sandbox',
       ...extraArgs,
     ],
+    ...options,
   })
 }
 

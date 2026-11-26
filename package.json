@@ -16,6 +16,7 @@
     "test:smoke:firefox": "bun run build.js firefox --minify && bun scripts/smoke-firefox.ts",
     "test:freshness:firefox": "bun run build.js firefox --minify && bun scripts/freshness-firefox.ts",
     "test:render": "bun run build.js chrome --minify && bun scripts/render-extension.ts",
+    "shots:store": "bun run build.js chrome --minify --no-test && bun scripts/render-store-shots.ts",
     "test:rtl": "bun run build.js chrome --minify && bun scripts/render-rtl.ts",
     "test:emotes": "bun run build.js chrome --minify && bun scripts/render-emote-collisions.ts && bun scripts/render-emote-collisions-native.ts && bun scripts/render-emote-collisions-kick.ts && bun scripts/render-emote-favorites.ts && bun scripts/render-emote-big.ts && bun scripts/render-tab-cycle.ts && bun scripts/render-tab-cycle-kick.ts",
     "test:e2e-live": "bun run build.js chrome --minify && bun scripts/e2e-live.ts",

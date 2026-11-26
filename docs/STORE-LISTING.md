@@ -51,6 +51,7 @@ free · open source (MIT) · no ads, no third-party analytics · your emotes sta
 
 ## submit checklist
 - [ ] `bun run build.js --package` green (build, `node --check`, zips, source zip, tests)
+- [ ] screenshots: `bun run shots:store` writes the five 1280x800 shots (fixture data only, in this listing's order) to `store-assets/cws-ready-2026-11/`; look at each before uploading to cws, edge and amo
 - [ ] cws: short description comes from the manifest; paste the long description; set tags
 - [ ] amo: `scripts/publish.js` attaches `dist/heatsync-source-X.Y.Z.zip` and sends the build steps as reviewer notes; AMO-REVIEW-NOTES has the rest for a reviewer's question
 - [ ] amo data form must match the manifest `data_collection_permissions` (category list in `docs/AMO-REVIEW-NOTES.md`): required authentication info, personal communications (dms, whispers, posts, the sent-line report), browsing activity (the open channel) and website content (chat links for previews); optional technical and interaction data for the rotating-id check-in. never "no data collected". no third-party sharing or analytics. twitch/kick/youtube cookies are read locally and never sent to us.

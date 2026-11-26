@@ -237,7 +237,7 @@ describe('2. the box shows the pick; cycling back to the local one un-picks the 
     const { emoteCycleMeta } = new Function('t', `${CYCLE_META}; return { emoteCycleMeta }`)(t)
     const meta = emoteCycleMeta({ type: 'emote', source: '7tv', tier: 0, shadowed: true })
     expect(meta.cat).toBe('channel')
-    expect(meta.vis).toEqual({ t: "won't show here", c: 'var(--hs-danger)' })
+    expect(meta.vis).toEqual({ t: "won't show here", c: 'var(--hs-danger)', k: 'wont' })
   })
 })
 

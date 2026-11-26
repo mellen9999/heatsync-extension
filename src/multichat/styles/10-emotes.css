@@ -103,6 +103,25 @@
     .hs-mc-picker-emote-wrap:not(.blocked):hover > img {
       filter: brightness(0.2);
     }
+    /* Who sees it if sent: a one-letter mark (7 B F = that provider's users, H = heatsync
+       users) in the tile's bottom-right corner, white on a black cutout, inverted on the
+       hover plate. Everyone-sees-it tiles carry no data-mark and draw nothing. */
+    .hs-mc-picker-emote-wrap[data-mark]::after {
+      content: attr(data-mark);
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      z-index: 2;
+      padding: 0 2px;
+      font: bold 13px/1 monospace;
+      color: #fff;
+      background: #000;
+      pointer-events: none;
+    }
+    .hs-mc-picker-emote-wrap[data-mark]:not(.blocked):hover::after {
+      color: #000;
+      background: #fff;
+    }
     /* Blocked: persistent dashed rect via ::before (not outline on the
        wrap) so it tracks emote content size like the green/orange hover
        does, instead of sitting 4px outside on the wrap's padding-box. */

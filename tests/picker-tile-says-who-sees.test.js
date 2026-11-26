@@ -18,7 +18,7 @@ const slice = (src, from, to) => {
 }
 const TILE = slice(
   read('emotes.js'),
-  'function emoteImgHtml([name, emote])',
+  '// the one-letter corner mark of a picker tile',
   '/**\n * Emote picker — DOM is built once',
 )
 const META = slice(read('input.js'), 'function emoteCycleMeta(m)', 'function showCycleTooltip()')
@@ -54,5 +54,51 @@ describe('a picker tile says who sees it', () => {
   })
   test('a search answer or an away favorite (a variant tile) is not loaded here: heatsync only', () => {
     expect(title('KEKW', { source: '7tv', variant: '7tv:01X' })).toBe('KEKW (7tv · heatsync only)')
+  })
+})
+
+describe('a picker tile carries a corner mark for who sees it', () => {
+  const mkHtml = new Function(
+    't',
+    'escapeHtml',
+    'hsEmoteHiddenForViewer',
+    'emoteIsBlocked',
+    'hsRungUrl',
+    `${META}\n${TILE}\nreturn emoteImgHtml`,
+  )(
+    t,
+    (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'),
+    () => null,
+    () => false,
+    (u) => u,
+  )
+  const html = (name, emote) => mkHtml([name, { url: 'https://x/e.webp', ...emote }])
+  const mark = (name, emote) => /data-mark="([^"]*)"/.exec(html(name, emote))?.[1] ?? null
+  test('everyone sees it: no mark', () => {
+    expect(mark('Kappa', { source: 'twitch' })).toBeNull()
+    expect(mark('kickW', { source: 'kick' })).toBeNull()
+  })
+  test('provider users only: 7, B, F', () => {
+    expect(mark('a', { source: '7tv', state: 'global' })).toBe('7')
+    expect(mark('b', { source: 'bttv' })).toBe('B')
+    expect(mark('c', { source: 'ffz' })).toBe('F')
+  })
+  test('heatsync users only: H (own copy, heatsync upload, a search hit)', () => {
+    expect(mark('a', { source: '7tv', state: 'owned' })).toBe('H')
+    expect(mark('b', { source: 'heatsync' })).toBe('H')
+    expect(mark('c', { source: 'bttv', variant: 'bttv:01X' })).toBe('H')
+  })
+  test('the words stay in the label and the title', () => {
+    const h = html('KEKW', { source: '7tv', state: 'global' })
+    expect(h).toContain('aria-label="KEKW · 7tv users"')
+    expect(h).toContain('title="KEKW (7tv · 7tv users)"')
+  })
+  test('one css rule draws the mark: black cutout, inverted on hover, square', () => {
+    const css = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'styles', '10-emotes.css'), 'utf8')
+    expect(css).toMatch(
+      /\.hs-mc-picker-emote-wrap\[data-mark\]::after\s*\{[^}]*content:\s*attr\(data-mark\)[^}]*background:\s*#000/s,
+    )
+    expect(css).toMatch(/\[data-mark\]:not\(\.blocked\):hover::after\s*\{[^}]*color:\s*#000[^}]*background:\s*#fff/s)
+    expect(css).not.toMatch(/\[data-mark\][^{]*\{[^}]*border-radius:\s*[1-9]/)
   })
 })

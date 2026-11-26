@@ -5681,30 +5681,31 @@ function emoteCycleMeta(m) {
   // another emote of this name shows instead on the platform this line goes to (the law marks it)
   if (m.shadowed) {
     const cat = emoteCycleMeta({ ...m, shadowed: false }).cat
-    return { cat, vis: { t: t('mc_cycle_wont_show'), c: 'var(--hs-danger)' } }
+    return { cat, vis: { t: t('mc_cycle_wont_show'), c: 'var(--hs-danger)', k: 'wont' } }
   }
   if (m.type === 'user' || m.type === 'user-bare')
-    return { cat: t('mc_input_chatter'), vis: { t: t('mc_input_everyone'), c: 'var(--hs-ok)' } }
-  if (m.type === 'emoji') return { cat: t('btn_tab_emoji'), vis: { t: t('mc_input_everyone'), c: 'var(--hs-ok)' } }
+    return { cat: t('mc_input_chatter'), vis: { t: t('mc_input_everyone'), c: 'var(--hs-ok)', k: 'everyone' } }
+  if (m.type === 'emoji')
+    return { cat: t('btn_tab_emoji'), vis: { t: t('mc_input_everyone'), c: 'var(--hs-ok)', k: 'everyone' } }
   // Name the provider: a catalog IDK sits right after the channel's IDK in the
   // cycle, and "which one is this" is the whole question.
   if (m.remote)
     return {
       cat: t('mc_cycle_catalog', [m.source || '7tv']),
-      vis: { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)' },
+      vis: { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)', k: 'heatsync' },
     }
   const tier = m.tier ?? 2
   const cat = tier === 0 ? t('btn_tab_channel') : tier === 1 ? t('mc_input_your_inventory') : t('btn_tab_global')
-  if (m.source === 'twitch') return { cat, vis: { t: t('mc_input_all_twitch'), c: 'var(--hs-ok)' } }
+  if (m.source === 'twitch') return { cat, vis: { t: t('mc_input_all_twitch'), c: 'var(--hs-ok)', k: 'everyone' } }
   // Kick-native channel/sub emotes are platform-native too — every Kick viewer
   // sees them, no extension needed.
-  if (m.source === 'kick') return { cat, vis: { t: t('mc_input_all_kick'), c: 'var(--hs-ok)' } }
+  if (m.source === 'kick') return { cat, vis: { t: t('mc_input_all_kick'), c: 'var(--hs-ok)', k: 'everyone' } }
   // Your personal set (tier 1) or a heatsync-hosted emote: others only see it via
   // heatsync's sender-set merge — non-heatsync viewers get plain text.
   if (tier === 1 || m.source === 'heatsync')
-    return { cat, vis: { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)' } }
+    return { cat, vis: { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)', k: 'heatsync' } }
   // Third-party emote active in the channel/global set — provider-ext users see it.
-  return { cat, vis: { t: t('mc_input_ext_users', [m.source || 'ext']), c: 'var(--hs-gold)' } }
+  return { cat, vis: { t: t('mc_input_ext_users', [m.source || 'ext']), c: 'var(--hs-gold)', k: 'ext' } }
 }
 
 function showCycleTooltip() {

@@ -161,6 +161,19 @@ try {
   check(roomTip === 'Wlol (7tv · 7tv users)', `a. the room's tile says who sees it (got ${JSON.stringify(roomTip)})`)
   const awayTip = await tip(`${PICKER} [data-section-key="favorite"] .hs-mc-picker-emote-wrap img[alt="AwayFav"]`)
   check(awayTip.endsWith(' · heatsync only)'), `a. the away favorite's tile says heatsync only (got ${JSON.stringify(awayTip)})`)
+  // and wears the corner mark for it: 7 on the room's 7tv tile, H on the heatsync-only favorite, drawn
+  // white on a black cutout by the one ::after rule
+  const markOf = (sel: string) =>
+    p.$eval(sel, (x: Element) => {
+      const w = x.closest('.hs-mc-picker-emote-wrap') as HTMLElement
+      const c = getComputedStyle(w, '::after')
+      return { mark: w.dataset.mark ?? null, content: c.content, color: c.color, bg: c.backgroundColor, radius: c.borderTopLeftRadius }
+    })
+  const roomMark = await markOf(roomTile)
+  check(roomMark.mark === '7' && roomMark.content === '"7"', `a. the room's 7tv tile is marked 7 (got ${JSON.stringify(roomMark)})`)
+  check(roomMark.color === 'rgb(255, 255, 255)' && roomMark.bg === 'rgb(0, 0, 0)' && roomMark.radius === '0px', `a. the mark is white on black, square (got ${JSON.stringify(roomMark)})`)
+  const awayMark = await markOf(`${PICKER} [data-section-key="favorite"] .hs-mc-picker-emote-wrap img[alt="AwayFav"]`)
+  check(awayMark.mark === 'H', `a. the heatsync-only favorite is marked H (got ${JSON.stringify(awayMark)})`)
   await p.click(roomTile, { button: 'right', modifiers: ['Shift'] })
   const m1 = await (await until(p, async () => (await menu()).length > 0, 5000), menu())
   check(m1[0] === 'add to favorites', `b. the emote menu leads with the pin row (got ${JSON.stringify(m1.slice(0, 3))})`)

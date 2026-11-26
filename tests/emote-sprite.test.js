@@ -74,6 +74,28 @@ describe('building a strip', () => {
     for (const e of rows) expect(e.img.getAttribute('src')).toBe(url.replace('/2x.webp', '/static/2x.webp'))
   })
 
+  test('an upload on cdn.heatsync.org joins the clock, read straight from the cdn (its bucket sends CORS now)', async () => {
+    const url = 'https://cdn.heatsync.org/uploads/4483901d9d05dd6ef23bcf9445de32d2.webp'
+    const rows = [rig.emote(url), rig.emote(url)]
+    for (const e of rows) await show(e)
+    // One read of the cdn itself, never through the proxy: R2 answers Access-Control-Allow-Origin: *.
+    expect(rig.s.fetchCalls).toEqual([url])
+    for (const e of rows) expect(rig.spriteOf(e.wrap)).toBeTruthy()
+  })
+
+  test('only the cdn host itself is trusted for that: a lookalike or another subdomain is left alone', async () => {
+    for (const url of [
+      'https://cdn.heatsync.org.evil.example/uploads/a.webp',
+      'https://evilcdn.heatsync.org/uploads/a.webp',
+      'http://cdn.heatsync.org/uploads/a.webp',
+    ]) {
+      const e = rig.emote(url)
+      await show(e)
+      expect(rig.spriteOf(e.wrap)).toBeFalsy()
+    }
+    expect(rig.s.fetchCalls).toEqual([])
+  })
+
   test('a 7tv emote is never read through the proxy', async () => {
     const e = rig.emote()
     await show(e)

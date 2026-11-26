@@ -21,10 +21,11 @@
 // Bytes: fetched from the content script itself, no background hop. Verified 2026-11-25 against
 // the cdns' own headers: cdn.7tv.app, cdn.frankerfacez.com, static-cdn.jtvnw.net, files.kick.com
 // and heatsync.org all answer `access-control-allow-origin: *`, which is all a cross-origin read
-// from a page-world fetch needs. cdn.betterttv.net sends none, so its bytes are read through
-// heatsync.org/api/emote-proxy (setCorsProxy below): the same bytes with that header, no new host
-// permission. The strip is still keyed on the bttv url; the <img> under it parks on bttv's own
-// static file.
+// from a page-world fetch needs. cdn.heatsync.org (our uploads, the R2 mirror) answers it too since
+// the bucket's cors policy was set (site repo, scripts/ops/r2-cors.ts); before that it sent none.
+// cdn.betterttv.net sends none, so its bytes are read through heatsync.org/api/emote-proxy
+// (setCorsProxy below): the same bytes with that header, no new host permission. The strip is
+// still keyed on the bttv url; the <img> under it parks on bttv's own static file.
 //
 // Hold-still reasons, same set as the site's: the setting (only 'always' animates), a hidden tab,
 // and offscreen (the idle gate in emotes.js). Reduced-motion is NOT one — an emote is content
@@ -34,7 +35,7 @@
 // cropped kick art, and anything that is not stamped animated.
 
 const HS_SPRITE_HOSTS =
-  /^https:\/\/(?:cdn\.7tv\.app|cdn\.frankerfacez\.com|cdn\.betterttv\.net|static-cdn\.jtvnw\.net|files\.kick\.com|heatsync\.org)\//
+  /^https:\/\/(?:cdn\.7tv\.app|cdn\.frankerfacez\.com|cdn\.betterttv\.net|static-cdn\.jtvnw\.net|files\.kick\.com|(?:cdn\.)?heatsync\.org)\//
 
 hsSpriteTexture.setCorsProxy('https://heatsync.org/api/emote-proxy')
 

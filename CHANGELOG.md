@@ -1,5 +1,13 @@
 # changelog
 
+## [1.7.149] — 2026-11-26
+
+### added
+- **turn off the install count** — settings › system › privacy › "count this install". off, the extension's check-in still asks for updates but sends nothing about you or how you use it.
+
+### fixed
+- **the toolbar badge says 200+** — past 200 unread notifications it reads 200+, like the site.
+
 ## [1.7.148] — 2026-11-25
 
 ### added

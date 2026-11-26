@@ -3824,6 +3824,9 @@
   "mc_input_all_kick": {
     "message": "minden kick"
   },
+  "mc_input_all_youtube": {
+    "message": "minden youtube"
+  },
   "mc_input_ext_users": {
     "message": "$SOURCE$ felhasználók",
     "placeholders": {

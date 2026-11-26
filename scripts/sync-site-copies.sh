@@ -48,6 +48,11 @@
 # tests/helpers/emote-world.ts, copied too). They keep the site's shared/ layout so the helper's
 # own imports resolve unchanged. build.js transpiles the .ts into the multichat bundle.
 #
+# shared/emote-mark.{ts,vectors.json} is the picker tile's who-sees-it mark and its one-name-one-tile
+# rule as law data (docs/emote-law.md, offer + tile mark): the extension's picker, Tab and tile words
+# read tileSays through the law bundle (`hsEmoteLaw.tileSays`), and tests/emote-mark-vectors.test.ts
+# runs every case against that same bundle.
+#
 # shared/emote-mods.vectors.json is the modifier rule as data (docs/emote-law.md, modifiers): what
 # the words add up to and which emote a word changes. tests/emote-mods-vectors.test.js runs every
 # row through the real row renderer.
@@ -76,7 +81,9 @@ for pair in \
   shared/emote-law.ts:shared/emote-law.ts \
   shared/emote-rank.ts:shared/emote-rank.ts \
   shared/emote-usage.ts:shared/emote-usage.ts \
+  shared/emote-mark.ts:shared/emote-mark.ts \
   shared/emote-law.vectors.json:shared/emote-law.vectors.json \
+  shared/emote-mark.vectors.json:shared/emote-mark.vectors.json \
   shared/emote-mods.vectors.json:shared/emote-mods.vectors.json \
   tests/helpers/emote-world.ts:tests/helpers/emote-world.ts
 do

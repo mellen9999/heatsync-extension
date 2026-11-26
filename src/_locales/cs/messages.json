@@ -3824,6 +3824,9 @@
   "mc_input_all_kick": {
     "message": "všechny kick"
   },
+  "mc_input_all_youtube": {
+    "message": "všechny youtube"
+  },
   "mc_input_ext_users": {
     "message": "uživatelé $SOURCE$",
     "placeholders": {

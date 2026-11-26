@@ -18,11 +18,12 @@ export function emoteLawSource(root) {
     throw new Error(`${entry} is missing: run scripts/sync-site-copies.sh (the emote-law.ts copy is what every chat row reads)`)
   }
   // the law, the one ranking helper its callers need beside it (people in Tab are bucketed exactly
-  // like emote names) and the usage record's arithmetic (emote-usage.ts), as one namespace
+  // like emote names), the usage record's arithmetic (emote-usage.ts) and the picker tile's mark
+  // (emote-mark.ts), as one namespace
   const out = buildSync({
     stdin: {
       contents:
-        "export * from './emote-law.ts'\nexport { matchBucket } from './emote-rank.ts'\nexport * from './emote-usage.ts'\n",
+        "export * from './emote-law.ts'\nexport { matchBucket } from './emote-rank.ts'\nexport * from './emote-usage.ts'\nexport * from './emote-mark.ts'\n",
       resolveDir: join(root, 'shared'),
       loader: 'ts',
     },

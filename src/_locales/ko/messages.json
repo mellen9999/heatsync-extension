@@ -3824,6 +3824,9 @@
   "mc_input_all_kick": {
     "message": "kick 전체"
   },
+  "mc_input_all_youtube": {
+    "message": "youtube 전체"
+  },
   "mc_input_ext_users": {
     "message": "$SOURCE$ 사용자",
     "placeholders": {

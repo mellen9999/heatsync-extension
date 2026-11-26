@@ -3824,6 +3824,9 @@
   "mc_input_all_kick": {
     "message": "सारे kick"
   },
+  "mc_input_all_youtube": {
+    "message": "सारे youtube"
+  },
   "mc_input_ext_users": {
     "message": "$SOURCE$ यूज़र",
     "placeholders": {

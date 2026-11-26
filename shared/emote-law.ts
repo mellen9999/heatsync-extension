@@ -43,6 +43,14 @@ export interface Emote {
   height?: number
   /** channels carrying it (catalog hits only) */
   pop?: number
+  /**
+   * the picture this copy shows, when a client reads it from an address and it is another's:
+   * a saved copy of a 7tv emote at another size has its own `key` and the picture's `pic`
+   * (`7tv:<id>`). Absent = `key`. Read by shared/emote-mark.ts only.
+   */
+  pic?: string
+  /** one of our own uploads is the same picture under any host: its hash. Read by shared/emote-mark.ts only. */
+  hash?: string
 }
 
 /** exact name -> the one emote that name means in this set */

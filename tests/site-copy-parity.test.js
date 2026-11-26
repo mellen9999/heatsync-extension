@@ -54,7 +54,9 @@ const FILES = [
   ['shared/emote-law.ts', 'shared/emote-law.ts'],
   ['shared/emote-rank.ts', 'shared/emote-rank.ts'],
   ['shared/emote-usage.ts', 'shared/emote-usage.ts'],
+  ['shared/emote-mark.ts', 'shared/emote-mark.ts'],
   ['shared/emote-law.vectors.json', 'shared/emote-law.vectors.json'],
+  ['shared/emote-mark.vectors.json', 'shared/emote-mark.vectors.json'],
   ['shared/emote-mods.vectors.json', 'shared/emote-mods.vectors.json'],
   ['tests/helpers/emote-world.ts', 'tests/helpers/emote-world.ts'],
 ]

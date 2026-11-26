@@ -23,13 +23,36 @@ const TILE = slice(
 )
 const META = slice(read('input.js'), 'function emoteCycleMeta(m)', 'function showCycleTooltip()')
 
+// the overlay's entry as the law's emote, and the law's own tileSays over a room (shared/emote-mark.ts):
+// what emote-law-send.js lawTileSays does with the open tab's room
+const lawOf = (name, e) => {
+  const provider = e.source === 'heatsync' ? 'hs' : e.source
+  return { name, key: `${provider}:${e.url}`, provider, id: e.url, pic: e.url }
+}
+const roomOf = (held) => {
+  const names = new Map(Object.entries(held).map(([n, e]) => [n, lawOf(n, e)]))
+  const index = { size: names.size, get: (n) => names.get(n), values: () => names.values(), at: () => undefined }
+  const empty = { size: 0, get: () => undefined, values: () => [].values(), at: () => undefined }
+  const room = { platform: 'twitch', channel: 'c', loaded: true, names: index }
+  return {
+    room,
+    legs: [room],
+    own: { inventory: empty, personal: empty, native: { twitch: empty, kick: empty } },
+    globals: empty,
+    fold: false,
+  }
+}
+const lawTileSaysIn = (held) => (name, e, tier) => hsEmoteLaw.tileSays(roomOf(held), lawOf(name, e), tier)
+const lawTileSaysRoomless = (name, e, tier) =>
+  hsEmoteLaw.tileSays({ room: null, legs: [], own: roomOf({}).own, globals: roomOf({}).globals }, lawOf(name, e), tier)
+
 const emoteImgHtml = new Function(
   't',
   'escapeHtml',
   'hsEmoteHiddenForViewer',
   'emoteIsBlocked',
   'hsRungUrl',
-  'lawTileShip',
+  'lawTileSays',
   `${META}\n${TILE}\nreturn emoteImgHtml`,
 )(
   t,
@@ -37,7 +60,7 @@ const emoteImgHtml = new Function(
   () => null,
   () => false,
   (u) => u,
-  () => ({}),
+  lawTileSaysRoomless,
 )
 const title = (name, emote) => /title="([^"]*)"/.exec(emoteImgHtml([name, { url: 'https://x/e.webp', ...emote }]))[1]
 
@@ -49,6 +72,7 @@ describe('a picker tile says who sees it', () => {
   test("a platform's own emote: everyone there", () => {
     expect(title('Kappa', { source: 'twitch' })).toBe('Kappa (twitch · all twitch)')
     expect(title('kickW', { source: 'kick' })).toBe('kickW (kick · all kick)')
+    expect(title('ytW', { source: 'youtube' })).toBe('ytW (youtube · all youtube)')
   })
   test('your own copy, whatever provider it came from: heatsync only', () => {
     expect(title('KEKW', { source: '7tv', state: 'owned' })).toBe('KEKW (7tv · heatsync only)')
@@ -66,7 +90,7 @@ describe('a picker tile carries a corner mark for who sees it', () => {
     'hsEmoteHiddenForViewer',
     'emoteIsBlocked',
     'hsRungUrl',
-    'lawTileShip',
+    'lawTileSays',
     `${META}\n${TILE}\nreturn emoteImgHtml`,
   )(
     t,
@@ -74,13 +98,14 @@ describe('a picker tile carries a corner mark for who sees it', () => {
     () => null,
     () => false,
     (u) => u,
-    () => ({}),
+    lawTileSaysRoomless,
   )
   const html = (name, emote) => mkHtml([name, { url: 'https://x/e.webp', ...emote }])
   const mark = (name, emote) => /data-mark="([^"]*)"/.exec(html(name, emote))?.[1] ?? null
-  test("a platform's own emote wears its platform's letter: T twitch, K kick", () => {
+  test("a platform's own emote wears its platform's letter: T twitch, K kick, Y youtube", () => {
     expect(mark('Kappa', { source: 'twitch' })).toBe('T')
     expect(mark('kickW', { source: 'kick' })).toBe('K')
+    expect(mark('ytW', { source: 'youtube' })).toBe('Y')
   })
   test('no mark is only for what has no platform letter: an unclassifiable provider', () => {
     expect(mark('x', { source: 'newthing' })).toBeNull()
@@ -111,16 +136,16 @@ describe('a picker tile carries a corner mark for who sees it', () => {
 })
 
 // the law: a typed word is the room's emote and a click pins the tile's own picture, so a tile's mark
-// says what SENDING it from this room ships (emote-law-send.js lawTileShip answers; the tile reads it)
+// says what SENDING it from this room ships (emote-law-send.js lawTileSays answers; the tile reads it)
 describe('a picker tile says what sending it from this room ships', () => {
-  const build = (ship) =>
+  const build = (held) =>
     new Function(
       't',
       'escapeHtml',
       'hsEmoteHiddenForViewer',
       'emoteIsBlocked',
       'hsRungUrl',
-      'lawTileShip',
+      'lawTileSays',
       `${META}\n${TILE}\nreturn emoteImgHtml`,
     )(
       t,
@@ -128,18 +153,20 @@ describe('a picker tile says what sending it from this room ships', () => {
       () => null,
       () => false,
       (u) => u,
-      ship,
+      lawTileSaysIn(held),
     )
-  const mark = (ship, emote) =>
-    /data-mark="([^"]*)"/.exec(build(ship)(['BigDog', { url: 'https://x/e.webp', ...emote }]))?.[1] ?? null
+  const mark = (held, emote) =>
+    /data-mark="([^"]*)"/.exec(build(held)(['BigDog', { url: 'https://x/e.webp', ...emote }]))?.[1] ?? null
   test("your copy of the room's own 7tv picture ships as the room's: 7, never H", () => {
-    expect(mark(() => ({ source: '7tv', tier: 0 }), { source: '7tv', state: 'owned' })).toBe('7')
+    expect(mark({ BigDog: { source: '7tv', url: 'https://x/e.webp' } }, { source: '7tv', state: 'owned' })).toBe('7')
   })
   test('a picture the room does not hold stays yours alone: H', () => {
-    expect(mark(() => ({}), { source: '7tv', state: 'owned' })).toBe('H')
+    expect(mark({}, { source: '7tv', state: 'owned' })).toBe('H')
   })
   test('a copy the room would override is never drawn (lawTileHidden), so no tile carries a cross', () => {
     expect(emoteImgHtml).toBeDefined()
-    expect(mark(() => ({ shadowed: true }), { source: '7tv', state: 'owned' })).toBe('H')
+    expect(mark({ BigDog: { source: '7tv', url: 'https://x/other.webp' } }, { source: '7tv', state: 'owned' })).toBe(
+      'H',
+    )
   })
 })

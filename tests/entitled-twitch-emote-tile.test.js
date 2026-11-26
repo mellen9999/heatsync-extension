@@ -44,9 +44,9 @@ const scope = {
   rig,
 }
 const names = Object.keys(scope)
-const { lawTileShip, lawTileHidden, inventorySourceOf, lawSendCtx } = new Function(
+const { lawTileSays, lawTileHidden, inventorySourceOf, lawSendCtx } = new Function(
   ...names,
-  `${PIC}\n${read('emote-law-send.js')}\nlawOpenLegs = () => rig.legs\nreturn { lawTileShip, lawTileHidden, inventorySourceOf, lawSendCtx }`,
+  `${PIC}\n${read('emote-law-send.js')}\nlawOpenLegs = () => rig.legs\nreturn { lawTileSays, lawTileHidden, inventorySourceOf, lawSendCtx }`,
 )(...names.map((k) => scope[k]))
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
@@ -56,7 +56,7 @@ const emoteImgHtml = new Function(
   'hsEmoteHiddenForViewer',
   'emoteIsBlocked',
   'hsRungUrl',
-  'lawTileShip',
+  'lawTileSays',
   `${META}\n${TILE}\nreturn emoteImgHtml`,
 )(
   t,
@@ -64,7 +64,7 @@ const emoteImgHtml = new Function(
   () => null,
   () => false,
   (u) => u,
-  lawTileShip,
+  lawTileSays,
 )
 const mark = (name, e) => /data-mark="([^"]*)"/.exec(emoteImgHtml([name, e]))?.[1] ?? null
 

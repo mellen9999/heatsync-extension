@@ -3824,6 +3824,9 @@
   "mc_input_all_kick": {
     "message": "كل kick"
   },
+  "mc_input_all_youtube": {
+    "message": "كل youtube"
+  },
   "mc_input_ext_users": {
     "message": "مستخدمو $SOURCE$",
     "placeholders": {

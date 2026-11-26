@@ -7,7 +7,13 @@ import { describe, expect, test } from 'bun:test'
 import { readdirSync, readFileSync } from 'node:fs'
 
 const DIR = new URL('../src/_locales/', import.meta.url).pathname
-const KEYS = ['mc_mod_no_twitch_tab', 'mc_mod_stale_twitch_tab', 'mc_input_announce_twitch_only', 'common_close']
+const KEYS = [
+  'mc_mod_no_twitch_tab',
+  'mc_mod_stale_twitch_tab',
+  'mc_input_announce_twitch_only',
+  'common_close',
+  'mc_input_all_youtube',
+]
 const API = readFileSync(new URL('../src/multichat/twitch-api.js', import.meta.url), 'utf8')
 
 describe('locale gap keys', () => {

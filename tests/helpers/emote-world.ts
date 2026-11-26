@@ -8,7 +8,7 @@ import {
   type Emote, type NameIndex, type OwnSets, type Platform, type Provider, type Room,
 } from '../../shared/emote-law'
 
-export interface RawEmote { p: string; id: string; name: string; zw?: boolean; pop?: number }
+export interface RawEmote { p: string; id: string; name: string; zw?: boolean; pop?: number; pic?: string; hash?: string }
 export interface RawRoom { owner?: string[]; third?: string[]; native?: string[]; loaded?: boolean }
 export interface RawPerson { inventory?: string[]; personal?: string[]; native?: Partial<Record<Platform, string[]>> }
 export interface RawWorld { rooms: Record<string, RawRoom>; globals: string[]; people: Record<string, RawPerson> }
@@ -37,6 +37,8 @@ export const toEmote = (r: RawEmote): Emote => {
   const e: Emote = { key: emoteKey(r.p, r.id), name: r.name, provider: r.p as Provider, id: r.id }
   if (r.zw) e.zeroWidth = true
   if (r.pop !== undefined) e.pop = r.pop
+  if (r.pic !== undefined) e.pic = r.pic
+  if (r.hash !== undefined) e.hash = r.hash
   return e
 }
 

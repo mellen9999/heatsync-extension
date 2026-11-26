@@ -3824,6 +3824,9 @@
   "mc_input_all_kick": {
     "message": "semua kick"
   },
+  "mc_input_all_youtube": {
+    "message": "semua youtube"
+  },
   "mc_input_ext_users": {
     "message": "pengguna $SOURCE$",
     "placeholders": {

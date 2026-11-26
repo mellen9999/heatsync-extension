@@ -1017,18 +1017,12 @@ async function hsMcImportChannelEmotes(btn, channel) {
   }
 }
 
-// the one-letter corner mark of a picker tile: who sees the emote if sent, from the readout's own
-// classification (`k`). a platform's own emote wears that platform's letter (T twitch, K kick: only
-// that platform's viewers see it), an ext class its provider's letter, heatsync-only H; a copy the
-// platform would not show is never drawn (lawTileHidden). no mark only when nothing classifies (unknown provider)
-const HS_VIS_MARK = { '7tv': '7', bttv: 'B', ffz: 'F' }
-const NATIVE_VIS_MARK = { twitch: 'T', kick: 'K' }
-function emoteVisMark(vis, source) {
-  if (vis?.k === 'heatsync') return 'H'
-  if (vis?.k === 'everyone') return NATIVE_VIS_MARK[source] || ''
-  return vis?.k === 'ext' ? HS_VIS_MARK[source] || '' : ''
-}
-
+// the one-letter corner mark of a picker tile: who sees the emote if sent FROM THIS ROOM, from the law's
+// own function (lawTileSays, shared/emote-mark.ts) so the tile, the Tab readout, the site and both rust
+// clients cannot disagree. a platform's own emote wears that platform's letter (T twitch, K kick, Y
+// youtube: only its viewers see it), an addon's users-only picture that addon's (7 B F), a heatsync-only
+// picture H, no mark for what everyone sees. a picture the room answers its name with another of is
+// never drawn (lawTileHidden)
 function emoteImgHtml([name, emote]) {
   // Filtered out for this viewer: the same labeled dashed box chat draws, no
   // image — you still see that the emote is in your set, just not what it is.
@@ -1052,18 +1046,11 @@ function emoteImgHtml([name, emote]) {
   const cwAttr = flagCat ? ` data-cw="${escapeHtml(flagCat)}"` : ''
   const wrapCls = (isBlocked ? 'hs-mc-picker-emote-wrap blocked' : 'hs-mc-picker-emote-wrap') + nsfwTag
   const safeName = escapeHtml(name)
-  // who sees it if you send it, in the Tab readout's own words (a variant = not loaded in this room)
-  // what sending it from here ships: your copy of the room's own picture is the room's (lawTileShip)
-  const ship = lawTileShip(name, emote)
-  const vis = emoteCycleMeta({
-    source: ship.source || emote.source,
-    tier: ship.tier ?? (emote.state === 'owned' ? 1 : 2),
-    remote: !!emote.variant && ship.tier === undefined,
-  }).vis
-  const who = vis.t
+  // who sees it if you send it from here, in the Tab readout's own words (a variant = not loaded in this room)
+  const says = lawTileSays(name, emote, emote.variant ? 'catalog' : emote.state === 'owned' ? 'own' : 'global')
+  const who = audienceWords(says).t
   // the corner mark (one css rule reads it); the words stay in the title and the label
-  const mark = emoteVisMark(vis, ship.source || emote.source)
-  const markAttr = mark ? ` data-mark="${mark}"` : ''
+  const markAttr = says.mark ? ` data-mark="${escapeHtml(says.mark)}"` : ''
   // The picker grid is a FIXED 32px box (.hs-mc-picker-emote, max-height:32px)
   // — it does not move with the emote-size setting, so it asks for the rung the
   // SCREEN needs and nothing else. Same reasoning as getChatResUrl: max-height

@@ -15,4 +15,9 @@ const { lawReadCtx, lawReadWord } = new Function(LAW_GLOBAL, `${READ}\nreturn { 
 )
 const ROOMS = readFileSync(join(ROOT, 'src', 'multichat', 'emote-rooms.js'), 'utf8')
 const rooms = new Function(`${ROOMS}\nreturn { channelLeg, channelRoomNames, channelLegPut, channelScanPut }`)()
-Object.assign(globalThis, { lawReadCtx, lawReadWord, ...rooms })
+// `_acPicKey` (input.js: a picture across size, format and host) is what emote-law-send.js stamps as
+// the law's `pic`; a harness that carves that file gets it here as a global, as the bundle has it
+const INPUT = readFileSync(join(ROOT, 'src', 'multichat', 'input.js'), 'utf8')
+const PIC = INPUT.slice(INPUT.indexOf('const _AC_PIC_RE ='), INPUT.indexOf('let _acRemoteToken'))
+const { _acPicKey } = new Function(`${PIC}\nreturn { _acPicKey }`)()
+Object.assign(globalThis, { lawReadCtx, lawReadWord, _acPicKey, ...rooms })

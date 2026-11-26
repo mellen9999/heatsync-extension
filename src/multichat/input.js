@@ -5696,20 +5696,20 @@ function emoteCycleMeta(m) {
   if (m.remote)
     return {
       cat: t('mc_cycle_catalog', [m.source || '7tv']),
-      vis: { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)', k: 'heatsync' },
+      vis: audienceWords(hsEmoteLaw.audience(m.source, 'catalog')),
     }
   const tier = m.tier ?? 2
   const cat = tier === 0 ? t('btn_tab_channel') : tier === 1 ? t('mc_input_your_inventory') : t('btn_tab_global')
-  if (m.source === 'twitch') return { cat, vis: { t: t('mc_input_all_twitch'), c: 'var(--hs-ok)', k: 'everyone' } }
-  // Kick-native channel/sub emotes are platform-native too — every Kick viewer
-  // sees them, no extension needed.
-  if (m.source === 'kick') return { cat, vis: { t: t('mc_input_all_kick'), c: 'var(--hs-ok)', k: 'everyone' } }
-  // Your personal set (tier 1) or a heatsync-hosted emote: others only see it via
-  // heatsync's sender-set merge — non-heatsync viewers get plain text.
-  if (tier === 1 || m.source === 'heatsync')
-    return { cat, vis: { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)', k: 'heatsync' } }
-  // Third-party emote active in the channel/global set — provider-ext users see it.
-  return { cat, vis: { t: t('mc_input_ext_users', [m.source || 'ext']), c: 'var(--hs-gold)', k: 'ext' } }
+  // who sees it is the law's (a platform's own: everyone there; your set, heatsync: heatsync only; an addon: its users)
+  return { cat, vis: audienceWords(hsEmoteLaw.audience(m.source, tier === 1 ? 'own' : '')) }
+}
+
+// an audience (shared/emote-mark.ts) in words and colour: green everyone, yellow an addon's users, white heatsync only
+const MC_VIS_ALL = { twitch: 'mc_input_all_twitch', kick: 'mc_input_all_kick', youtube: 'mc_input_all_youtube' }
+function audienceWords({ kind, as }) {
+  if (kind === 'heatsync') return { t: t('mc_input_heatsync_only'), c: 'var(--hs-brand)', k: kind }
+  if (kind === 'ext') return { t: t('mc_input_ext_users', [as]), c: 'var(--hs-gold)', k: kind }
+  return { t: t(MC_VIS_ALL[as] || 'mc_input_everyone'), c: 'var(--hs-ok)', k: kind }
 }
 
 function showCycleTooltip() {

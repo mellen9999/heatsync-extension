@@ -14,7 +14,18 @@ function lawEmote(name, e) {
   const p = e.provider || e.source
   const provider = LAW_PROVIDER[p] || p || 'hs'
   const id = String(e.id || (provider === 'kick' && LAW_KICK_ID.exec(e.url || '')?.[1]) || e.hash || e.url || name)
-  return { ...e, key: `${provider}:${id}`, name: e.name || name, provider, id, raw: e }
+  // `pic` and `hash` are how the law tells two entries are one picture (shared/emote-mark.ts samePicture):
+  // the picture whatever its size, format or host, and the same upload under any host
+  return {
+    ...e,
+    key: `${provider}:${id}`,
+    name: e.name || name,
+    provider,
+    id,
+    ...(e.url && { pic: _acPicKey(e.url) }),
+    ...(e.hash && { hash: String(e.hash) }),
+    raw: e,
+  }
 }
 
 const LAW_NO_NAMES = new Map()
@@ -184,41 +195,22 @@ const lawCtx = (legs, picks) =>
  */
 let tileCtx = null
 const lawTileCtx = () => (tileCtx ||= (queueMicrotask(() => (tileCtx = null)), lawCtx(lawOpenLegs(), null)))
-const lawSamePicture = (a, b) =>
-  _acPicKey(a?.url) === _acPicKey(b?.url) || (!!a?.hash && !!b?.hash && String(a.hash) === String(b.hash))
-
-/** true = this room answers `name` with another picture than `e`'s: the tile is not drawn here */
-function lawTileHidden(name, e) {
-  if (!e?.url) return false
-  const ctx = lawTileCtx()
-  if (!ctx.legs.length) return false
-  const hit = hsEmoteLaw.sendWord(name, ctx)
-  return !!hit && !lawSamePicture(hit.emote.raw || hit.emote, e)
-}
 
 /**
- * What sending a picker tile's word from the open tab ships, for the tile's who-sees-it mark: when
- * the room's answer for that name is the tile's own picture (your copy of the room's 7tv emote,
- * a twitch emote you may use), the answer's class is the tile's, and the tile is read as that.
- * @returns {{source?:string, tier?:number}} {} = the tile is read as it is
+ * What a picker tile (or a Tab candidate) says if sent from the open tab: who sees it (`mark`, `kind`,
+ * `as`), the tier it sits in once the room has answered, and whether it is offered at all. One name =
+ * one picture = one tile: a tile whose picture is not the room's answer for its name is not offered.
+ * The rule is the law's (shared/emote-mark.ts tileSays: one function, vectors, four clients); this only
+ * hands it the overlay's entry as the law's emote.
+ * @param {string} name
+ * @param {object} e the overlay's entry
+ * @param {string} tier where the tile sits (room, own, global, catalog)
+ * @returns {{offered:boolean, mark:string, kind:string, as:string, tier:string}}
  */
-function lawTileShip(name, e) {
-  if (!e?.url) return {}
-  const ctx = lawTileCtx()
-  const hit = hsEmoteLaw.sendWord(name, ctx)
-  let ship = {}
-  if (hit && lawSamePicture(hit.emote.raw || hit.emote, e)) {
-    const tier = { room: 0, own: 1, native: 1, personal: 1, global: 2 }[hit.from]
-    ship = { source: hit.emote.raw?.source || hit.emote.provider, ...(tier !== undefined && { tier }) }
-  }
-  // a platform's own emote is drawn only on that platform: where this send does not reach it, the
-  // picture travels as a ref and only heatsync users see it (a twitch emote in a kick-only room)
-  const own = ship.source || e.source
-  if ((own === 'twitch' || own === 'kick') && ctx.legs.length && !ctx.legs.some((r) => r.platform === own)) {
-    return { source: 'heatsync', tier: 1 }
-  }
-  return ship
-}
+const lawTileSays = (name, e, tier) => hsEmoteLaw.tileSays(lawTileCtx(), lawEmote(name, e), tier)
+
+/** true = this room answers `name` with another picture than `e`'s: the tile is not drawn here */
+const lawTileHidden = (name, e) => !!e?.url && !lawTileSays(name, e, 'global').offered
 
 /**
  * Where an inventory row's picture is drawn from. A twitch emote the viewer may use (the server's

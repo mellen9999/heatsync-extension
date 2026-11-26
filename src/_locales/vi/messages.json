@@ -3824,6 +3824,9 @@
   "mc_input_all_kick": {
     "message": "tất cả kick"
   },
+  "mc_input_all_youtube": {
+    "message": "tất cả youtube"
+  },
   "mc_input_ext_users": {
     "message": "người dùng $SOURCE$",
     "placeholders": {

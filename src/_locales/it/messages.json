@@ -3824,6 +3824,9 @@
   "mc_input_all_kick": {
     "message": "tutto kick"
   },
+  "mc_input_all_youtube": {
+    "message": "tutto youtube"
+  },
   "mc_input_ext_users": {
     "message": "utenti $SOURCE$",
     "placeholders": {

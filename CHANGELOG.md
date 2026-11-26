@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.151] — 2026-11-26
+
+### fixed
+- **big emote-only lines really are off by default** — 1.7.150 changed the default, but every install had already saved "on" while it was the default, so nothing changed. the setting has a new name now, and only turning it on yourself turns it on.
+
 ## [1.7.150] — 2026-11-26
 
 ### changed

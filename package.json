@@ -1,6 +1,6 @@
 {
   "name": "heatsync-extension",
-  "version": "1.7.150",
+  "version": "1.7.151",
   "description": "twitch, kick and youtube live chat in one panel, plus your own emotes in any channel: 5,000 free slots",
   "private": true,
   "license": "MIT",

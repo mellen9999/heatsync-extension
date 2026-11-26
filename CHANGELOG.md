@@ -1,5 +1,16 @@
 # changelog
 
+## [1.7.147] — 2026-11-25
+
+### added
+- **every picker tile says who sees it** — a corner letter: `T` or `K` for twitch or kick viewers, `7`, `B`, `F` for 7tv, bttv, ffz users, `H` for heatsync users only. no letter means everyone sees it.
+
+### changed
+- **one name, one emote** — in a room the picker and tab only offer the emote that name sends there. your own different copy of that name shows in rooms that don't have it.
+
+### fixed
+- **your twitch sub emotes are twitch's own** — they wear `T` and go out as plain twitch emotes, not as heatsync ones.
+
 ## [1.7.146] — 2026-11-25
 
 ### fixed

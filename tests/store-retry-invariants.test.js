@@ -56,3 +56,10 @@ describe('store retry', () => {
     expect(statSync(join(ROOT, 'scripts/store-retry-publish.sh')).mode & 0o111).toBeTruthy()
   })
 })
+
+describe('store retry failure log', () => {
+  test('a failure with no summary line still logs why', () => {
+    expect(RETRY).toContain(`[ -n "$why" ] || why=$(grep -v '^[[:space:]]*$' <<<"$out" | tail -3`)
+    expect(RETRY).toContain('say "FAILED (rc=$rc): ${why:-no output}"')
+  })
+})

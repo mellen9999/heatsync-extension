@@ -87,6 +87,10 @@ if [ "$STORE" = chrome ] && grep -q 'PKG_INVALID_VERSION_NUMBER' <<<"$out" && gr
 fi
 
 # Anything else is a real failure worth surfacing rather than retrying blindly.
-say "FAILED (rc=$rc): $(grep -E "^  $STORE *:" <<<"$out" | tail -1 | tr -s ' ')"
+# no summary line means publish.js stopped before it (build, tests, network): log its last
+# lines so the reason is in the log, not lost
+why=$(grep -E "^  $STORE *:" <<<"$out" | tail -1 | tr -s ' ')
+[ -n "$why" ] || why=$(grep -v '^[[:space:]]*$' <<<"$out" | tail -3 | tr -s ' ' | tr '\n' '|')
+say "FAILED (rc=$rc): ${why:-no output}"
 command -v notify-send >/dev/null && notify-send "heatsync" "$STORE publish retry failed — see $LOG"
 exit 1

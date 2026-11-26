@@ -804,9 +804,11 @@ function buildMessageDiv(m, tabId) {
   // (data-uid stays twitch-id-space only). Lets a kick-namespaced
   // HS paint resolution find this row in-place (updateHsPaintsInPlace).
   if (m.hsPaintUid) div.dataset.hsPaintUid = m.hsPaintUid
-  // First-time chatter highlight (this session, per channel)
+  // First-time chatter highlight (this session, per channel). A replay row (a vod's own past chat) is
+  // never a first message and never enters the seen set: it would turn the live room's glow off.
   if (
     firstChatterGlow &&
+    !m.replay &&
     m.user &&
     m.channel &&
     !isMembership &&
@@ -861,7 +863,7 @@ function buildMessageDiv(m, tabId) {
   }
   // Filter rule highlight — per-rule color accent (a hide never gets this far: ruleHides)
   const _frHL = evaluateFilterRules(m, ruleScopeOf(m, tabId))
-  if (_frHL.highlight) {
+  if (_frHL.highlight && !m.replay) {
     div.classList.add('hs-mc-rule-highlight')
     div.style.setProperty('--hs-rule-hl', _frHL.highlight)
     div.style.setProperty('--hs-rule-bg', ruleFillVar(_frHL.highlight))
@@ -968,8 +970,9 @@ function buildMessageDiv(m, tabId) {
   // formatTimeFromTs builds a Date per call, and at 100msg/s that's free CPU
   // we can give back when timestamps are off.
   const showTs = timestampsEnabled || tabId === 'mentions'
-  const ts = showTs ? formatTimeFromTs(m.time) : ''
-  const tsHtml = ts ? `<span class="hs-mc-ts">${ts}</span>` : ''
+  const ts = showTs && !m.replay ? formatTimeFromTs(m.time) : ''
+  // a replay row's stamp is the video's own time, and seeks it (vod-replay.js); never a wall clock
+  const tsHtml = m.replay ? (timestampsEnabled ? vodStampHtml(m) : '') : ts ? `<span class="hs-mc-ts">${ts}</span>` : ''
   const msgBody =
     (m.type === 'usernotice' || m.type === 'notice') && !m.text
       ? `${tsHtml}${systemLine}`
@@ -1014,6 +1017,8 @@ function buildMessageDiv(m, tabId) {
   // @-mention reply (send-targets ytReplyText) and every yt mod action: the
   // ctx menu reads dataset.msgPlatform, so a yt row read as twitch with an
   // empty channel and the whole mod block was skipped.
+  // a replay row: every action that reads rows leaves it alone (reply, mod, pin, thread, post: vod-replay.js)
+  if (m.replay) div.dataset.hsReplay = '1'
   if (m.id) {
     div.dataset.msgId = m.id
     div.dataset.msgUser = m.user
@@ -1043,11 +1048,13 @@ function buildMessageDiv(m, tabId) {
     // were never shown. `»` mirrors the `>>id` quote syntax the feed already
     // uses. Click drops the composer into quote mode (input.js) — the user
     // still types their own take, they just never have to know /op exists.
-    const threadBtn = document.createElement('button')
-    threadBtn.className = 'hs-mc-thread-btn'
-    threadBtn.textContent = '»'
-    threadBtn.title = t('mc_msg_quote_thread') || 'quote into a thread'
-    div.appendChild(threadBtn)
+    if (!m.replay) {
+      const threadBtn = document.createElement('button')
+      threadBtn.className = 'hs-mc-thread-btn'
+      threadBtn.textContent = '»'
+      threadBtn.title = t('mc_msg_quote_thread') || 'quote into a thread'
+      div.appendChild(threadBtn)
+    }
   }
   // Reply-thread linkage for hover highlight
   if (m.replyTo) {
@@ -1956,6 +1963,9 @@ function appendMessage(msg, tabId) {
   if (editingChannel) return false
   // Hidden by share-dedupe (real USERNOTICE replaced our synthetic)
   if (msg?.hidden) return true
+  // The vod tab holds replay rows and nothing else: a live event aimed at it (a followed channel's
+  // went-live, a game switch) is handled and dropped, never drawn there
+  if (tabId === 'vod' && !msg?.replay) return true
   // Skip live append while profile card is open — buffer keeps the msg, restored on close
   if (typeof activeProfileCard !== 'undefined' && activeProfileCard) return true
   if (hsPanePanelOpen()) return true // a confirm panel covers the pane; close repaints

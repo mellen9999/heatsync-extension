@@ -27,32 +27,39 @@ const kappa = `<span class="text-fragment">hi </span><div class="chat-line__mess
 let win
 let h
 let calls
+let frames
 
-function load(path = '/videos/2934223993', { link = true, listHtml = '' } = {}) {
+function load(path = '/videos/2934223993', { link = true, listHtml = '', cap = 5 } = {}) {
   win = new Window()
   const d = win.document
   d.body.innerHTML = `
     <div id="hs-mc-tabbar"><button data-tab="vod" style="display:none"></button></div>
     ${link ? '<div class="channel-info-content"><a href="/nl_kripp">kripp</a></div>' : ''}
+    <video></video><div id="hs-mc-new-msgs"></div>
     <div class="video-chat"><div class="video-chat__message-list-wrapper"><ol>${listHtml}</ol></div></div>`
   calls = []
+  frames = []
   const timers = []
   const body = `
     let currentTab = 'feed'
     let _autoSwitching = false
     const hostPlatform = 'twitch'
-    const SCROLLBACK_MAX = 5
+    const SCROLLBACK_MAX = ${cap}
     const location = LOC
     const tabBarElement = document.getElementById('hs-mc-tabbar')
     const twitchBadgeUrls = new Map([['subscriber/1', 'https://static-cdn.jtvnw.net/badges/v1/aaa-111/1'], ['nl_kripp:moderator/1', 'https://static-cdn.jtvnw.net/badges/v1/bbb-222/1']])
     const sanitizeColor = (c) => c
     const t = (k) => k
+    const escapeHtml = (x) => String(x).replace(/[&<>"']/g, (c) => '&#' + c.charCodeAt(0) + ';')
+    let isScrolledUp = false
+    function rafOrTimeout(fn) { frames.push(fn) }
     function switchTab(id) { calls.push(['switch', id, _autoSwitching]); currentTab = id }
     function liveTarget() { return 'feed' }
     function mcIsReservedTab(id) { return ['feed', 'live', 'mentions'].includes(id) }
     function getChannelById(id) { return id === 'xqc' ? { id } : null }
-    function appendMessage(m, tab) { calls.push(['append', tab, m.id]); return true }
-    function renderMessages(tab) { calls.push(['render', tab, vodBuffer.map((m) => m.text)]) }
+    // the pane's own contract: a scrolled-up reader's row is not appended, the caller renders
+    function appendMessage(m, tab) { calls.push(['append', tab, m.id]); return !isScrolledUp }
+    function renderMessages(tab, opts) { calls.push(['render', tab, vodBuffer.map((m) => m.text), opts]) }
     function _dropTabCache(tab) { calls.push(['drop', tab]) }
     async function fetchGlobalBadges() {}
     async function fetchChannelBadges(c) { calls.push(['badges', c]) }
@@ -60,9 +67,21 @@ function load(path = '/videos/2934223993', { link = true, listHtml = '' } = {}) 
     const joinExtraChannel = (p, c) => calls.push(['join', c])
     const leaveExtraChannel = (p, c) => calls.push(['leave', c])
     const safeSendMessage = (m) => { calls.push(['send', m.type, m.path]); return Promise.resolve(API(m)) }
-    const cleanup = { setTimeout: (fn) => { timers.push(fn); return timers.length }, clearTimeout: () => {}, trackObserver() {}, untrackObserver() {} }
+    const cleanup = {
+      setTimeout: (fn) => { timers.push(fn); return timers.length },
+      clearTimeout: (id) => { if (id > 0 && id <= timers.length) timers[id - 1] = () => {} },
+      trackObserver() {},
+      untrackObserver() {},
+      addEventListener(target, ev, fn, opts) {
+        target.addEventListener(ev, fn, opts)
+        return () => target.removeEventListener(ev, fn, opts)
+      },
+    }
     ${SRC}
-    return { vodSync, vodBuffer, vodRowToMsg, setTab: (x) => (currentTab = x), tab: () => currentTab }`
+    return {
+      vodSync, vodBuffer, vodRowToMsg, vodOffsetSecs, vodStampHtml, vodEmptyText,
+      setTab: (x) => (currentTab = x), tab: () => currentTab, scrolledUp: (x) => (isScrolledUp = x),
+    }`
   const loc = { pathname: path, hostname: 'www.twitch.tv' }
   const obsMade = []
   const MO = class extends win.MutationObserver {
@@ -79,11 +98,12 @@ function load(path = '/videos/2934223993', { link = true, listHtml = '' } = {}) 
     'twitchPageKind',
     'twitchVodId',
     'calls',
+    'frames',
     'timers',
     'LOC',
     'API',
     body,
-  )(d, (el) => win.getComputedStyle(el), MO, twitchPageKind, twitchVodId, calls, timers, loc, api)
+  )(d, (el) => win.getComputedStyle(el), MO, twitchPageKind, twitchVodId, calls, frames, timers, loc, api)
   h.loc = loc
   h.timers = timers
   h.obsMade = obsMade
@@ -93,7 +113,14 @@ function load(path = '/videos/2934223993', { link = true, listHtml = '' } = {}) 
     for (const fn of timers.splice(0)) fn()
   }
 }
-const flush = () => new Promise((r) => setTimeout(r, 5))
+const runFrames = () => {
+  for (const fn of frames.splice(0)) fn()
+}
+// the observer's microtask, then the frame it queued
+const flush = async () => {
+  await new Promise((r) => setTimeout(r, 5))
+  runFrames()
+}
 const has = (kind, ...rest) => calls.some((c) => c[0] === kind && rest.every((r, i) => c[i + 1] === r))
 
 beforeEach(() => {})
@@ -199,6 +226,296 @@ describe('on a vod page', () => {
   })
 })
 
+const pillClicks = () => calls.filter((c) => c[0] === 'pill').length
+const renders = () => calls.filter((c) => c[0] === 'render')
+const appends = () => calls.filter((c) => c[0] === 'append')
+const playing = () => Object.defineProperty(win.document.querySelector('video'), 'paused', { value: false })
+
+describe('the stamp is the video offset', () => {
+  test('h:mm:ss, m:ss and ss all read as seconds; anything else is not an offset', () => {
+    load()
+    expect(h.vodOffsetSecs('2:00:14')).toBe(7214)
+    expect(h.vodOffsetSecs('0:01:02')).toBe(62)
+    expect(h.vodOffsetSecs('5:07')).toBe(307)
+    expect(h.vodOffsetSecs('45')).toBe(45)
+    expect(h.vodOffsetSecs(' 1:00 ')).toBe(60)
+    for (const bad of ['', null, undefined, 'x', '1:xx', '1:2:3:4', '-5', '1.5', ':30'])
+      expect(h.vodOffsetSecs(bad)).toBeNull()
+  })
+
+  test('the row carries the offset twitch prints in its header', () => {
+    load('/videos/1', { listHtml: row('A', 'one') })
+    const el = win.document.querySelector('.vod-message')
+    expect(h.vodRowToMsg(el, 'c', 'x')).toMatchObject({ replay: true, replayAt: '0:01:02' })
+    el.querySelector('.vod-message__header').innerHTML = '<button>2:00:14</button>'
+    expect(h.vodRowToMsg(el, 'c', 'x').replayAt).toBe('2:00:14')
+    el.querySelector('.vod-message__header').innerHTML = ''
+    expect(h.vodRowToMsg(el, 'c', 'x').replayAt).toBe('')
+  })
+
+  test('the stamp shows the offset and says what a click does; no offset, no stamp (never a wall clock)', () => {
+    load()
+    const html = h.vodStampHtml({ replayAt: '2:00:14' })
+    expect(html).toContain('class="hs-mc-ts"')
+    expect(html).toContain('data-hs-seek="2:00:14"')
+    expect(html).toContain('>2:00:14<')
+    expect(html).toContain('mc_vod_seek')
+    expect(h.vodStampHtml({ replayAt: '' })).toBe('')
+    expect(h.vodStampHtml({})).toBe('')
+    expect(h.vodStampHtml({ replayAt: '"><img src=x onerror=1>' })).toBe('')
+  })
+
+  test('a click on a stamp sets the page video to that second; a click elsewhere does nothing', () => {
+    load('/videos/1', { listHtml: row('A', 'one') })
+    h.vodSync()
+    const d = win.document
+    d.body.insertAdjacentHTML(
+      'beforeend',
+      `<div id="s">${h.vodStampHtml({ replayAt: '2:00:14' })}</div><p id="other">x</p>`,
+    )
+    const video = d.querySelector('video')
+    video.currentTime = 3
+    d.querySelector('#other').dispatchEvent(new win.MouseEvent('click', { bubbles: true }))
+    expect(video.currentTime).toBe(3)
+    d.querySelector('[data-hs-seek]').dispatchEvent(new win.MouseEvent('click', { bubbles: true }))
+    expect(video.currentTime).toBe(7214)
+  })
+
+  test('a stamp with no video on the page does nothing, quietly', () => {
+    load('/videos/1')
+    h.vodSync()
+    const d = win.document
+    d.querySelector('video').remove()
+    d.body.insertAdjacentHTML('beforeend', h.vodStampHtml({ replayAt: '1:00' }))
+    expect(() =>
+      d.querySelector('[data-hs-seek]').dispatchEvent(new win.MouseEvent('click', { bubbles: true })),
+    ).not.toThrow()
+  })
+
+  test('the click listener lives only while a vod page is open', () => {
+    const clickAt = () => {
+      const d = win.document
+      d.body.insertAdjacentHTML('beforeend', h.vodStampHtml({ replayAt: '1:00' }))
+      d.querySelector('video').currentTime = 0
+      d.querySelector('[data-hs-seek]:last-of-type')?.dispatchEvent(new win.MouseEvent('click', { bubbles: true }))
+      return d.querySelector('video').currentTime
+    }
+    load('/nl_kripp')
+    h.vodSync()
+    expect(clickAt()).toBe(0) // a channel page: nothing is listening
+    load('/videos/1')
+    h.vodSync()
+    expect(clickAt()).toBe(60)
+    h.loc.pathname = '/nl_kripp'
+    h.vodSync()
+    win.document.querySelector('video').currentTime = 0
+    win.document.querySelector('[data-hs-seek]').dispatchEvent(new win.MouseEvent('click', { bubbles: true }))
+    expect(win.document.querySelector('video').currentTime).toBe(0) // left the vod: gone
+  })
+})
+
+describe('a vod with no replay chat says so', () => {
+  const quiet = () => h.timers[0]() // vodNew's own timer is the first one armed
+
+  test('10s of the video playing with no row: one plain line, rendered', () => {
+    load('/videos/1')
+    h.vodSync()
+    expect(h.vodEmptyText()).toBe('mc_no_messages')
+    playing()
+    calls.length = 0
+    quiet()
+    expect(h.vodEmptyText()).toBe('mc_vod_no_replay')
+    expect(renders()).toHaveLength(1)
+  })
+
+  test("it waits for the 10 seconds (the timer is the module's one quiet clock)", () => {
+    expect(SRC).toMatch(/VOD_QUIET_MS = 10000/)
+    load('/videos/1')
+    h.vodSync()
+    expect(h.timers.length).toBeGreaterThan(0)
+    expect(h.vodEmptyText()).toBe('mc_no_messages')
+  })
+
+  test('a paused or not-yet-playing video owes nothing: no line, the clock re-arms', () => {
+    load('/videos/1')
+    h.vodSync()
+    const before = h.timers.length
+    calls.length = 0
+    quiet()
+    expect(h.vodEmptyText()).toBe('mc_no_messages')
+    expect(renders()).toHaveLength(0)
+    expect(h.timers.length).toBe(before + 1)
+  })
+
+  test('a row arriving clears the line and redraws', async () => {
+    load('/videos/1')
+    h.vodSync()
+    h.runTimers()
+    await flush()
+    playing()
+    quiet()
+    expect(h.vodEmptyText()).toBe('mc_vod_no_replay')
+    calls.length = 0
+    h.add(row('A', 'hello'))
+    await flush()
+    expect(h.vodEmptyText()).toBe('mc_no_messages')
+    expect(h.vodBuffer.map((m) => m.text)).toEqual(['hello'])
+  })
+
+  test('a replay that is talking never gets the line', async () => {
+    load('/videos/1', { listHtml: row('A', 'one') })
+    h.vodSync()
+    await flush()
+    playing()
+    quiet()
+    expect(h.vodEmptyText()).toBe('mc_no_messages')
+  })
+
+  test('a seek into a stretch with no chat gets the line too', async () => {
+    load('/videos/1', { listHtml: row('A', 'one') })
+    h.vodSync()
+    await flush() // the replay is talking: the first clock ends with nothing owed
+    playing()
+    h.runTimers()
+    expect(h.vodEmptyText()).toBe('mc_no_messages')
+    h.list().innerHTML = '' // seek into a stretch with no chat
+    await flush()
+    expect(h.vodBuffer).toHaveLength(0)
+    h.runTimers()
+    expect(h.vodEmptyText()).toBe('mc_vod_no_replay')
+  })
+
+  test('leaving the vod stops the clock', () => {
+    load('/videos/1')
+    h.vodSync()
+    playing()
+    h.loc.pathname = '/nl_kripp'
+    h.vodSync()
+    calls.length = 0
+    h.runTimers()
+    expect(renders()).toHaveLength(0)
+    expect(h.vodEmptyText()).toBe('mc_no_messages')
+  })
+})
+
+describe('a fast vod', () => {
+  test('500 rows in one burst: one frame, one render, no per-row appends', async () => {
+    load('/videos/1', { cap: 1000, listHtml: row('S', 'seed') })
+    h.vodSync()
+    h.runTimers()
+    await flush()
+    calls.length = 0
+    // twitch draws in several turns before the next frame: each turn's mutation callback asks again
+    for (let turn = 0; turn < 5; turn++) {
+      for (let n = 0; n < 100; n++) h.add(row('A', `m${turn * 100 + n}`))
+      await new Promise((r) => setTimeout(r, 5))
+    }
+    expect(frames).toHaveLength(1) // 500 mutations, five callbacks, one frame
+    runFrames()
+    expect(h.vodBuffer).toHaveLength(501)
+    expect(appends()).toHaveLength(0)
+    expect(renders()).toHaveLength(1)
+    expect(renders()[0][3]).toEqual({ added: 500 })
+  })
+
+  test('a burst past the cap reads only the rows the tab can hold', async () => {
+    load('/videos/1', { cap: 50, listHtml: row('S', 'seed') })
+    h.vodSync()
+    h.runTimers()
+    await flush()
+    for (let n = 0; n < 500; n++) h.add(row('A', `m${n}`))
+    await flush()
+    expect(h.vodBuffer).toHaveLength(50)
+    expect(h.vodBuffer[0].text).toBe('m450')
+    expect(h.vodBuffer[49].text).toBe('m499')
+  })
+
+  test("a few rows in a frame are appended like a live tab's", async () => {
+    load('/videos/1', { cap: 1000, listHtml: row('S', 'seed') })
+    h.vodSync()
+    h.runTimers()
+    await flush()
+    calls.length = 0
+    for (let n = 0; n < 12; n++) h.add(row('A', `m${n}`))
+    await flush()
+    expect(appends()).toHaveLength(12)
+    expect(renders()).toHaveLength(0)
+  })
+
+  test('exactly one observer: a vod → vod hop disconnects the old one', async () => {
+    load('/videos/1', { listHtml: row('A', 'one') })
+    h.vodSync()
+    expect(h.obsMade).toHaveLength(1)
+    h.add(row('B', 'two'))
+    await new Promise((r) => setTimeout(r, 5))
+    expect(frames).toHaveLength(1)
+    runFrames()
+    h.loc.pathname = '/videos/2'
+    h.vodSync()
+    expect(h.obsMade).toHaveLength(2)
+    h.add(row('C', 'three'))
+    await new Promise((r) => setTimeout(r, 5))
+    expect(frames).toHaveLength(1) // the first observer is gone: one frame, not two
+  })
+})
+
+describe("the reader's scroll", () => {
+  test('a paused reader: the rows are not appended, the render holds them back and counts them', async () => {
+    load('/videos/1', { cap: 1000, listHtml: row('S', 'seed') })
+    h.vodSync()
+    h.runTimers()
+    await flush()
+    h.scrolledUp(true)
+    calls.length = 0
+    h.add(row('A', 'one'))
+    h.add(row('B', 'two'))
+    h.add(row('C', 'three'))
+    await flush()
+    expect(renders()).toHaveLength(1)
+    expect(renders()[0][3]).toEqual({ added: 3 })
+    expect(pillClicks()).toBe(0) // the reader's place is never taken
+  })
+
+  test('a live reader keeps following: appended, no render', async () => {
+    load('/videos/1', { cap: 1000, listHtml: row('S', 'seed') })
+    h.vodSync()
+    h.runTimers()
+    await flush()
+    calls.length = 0
+    h.add(row('A', 'one'))
+    await flush()
+    expect(appends()).toHaveLength(1)
+    expect(renders()).toHaveLength(0)
+  })
+
+  test('a seek while following: the tab is drawn again from the bottom', async () => {
+    load('/videos/1', { listHtml: row('A', 'one') })
+    h.vodSync()
+    h.runTimers()
+    await flush()
+    calls.length = 0
+    h.list().innerHTML = row('C', 'three')
+    await flush()
+    expect(renders().at(-1)[3]).toBeUndefined() // a whole render (lands at the bottom, as any tab render does)
+    expect(pillClicks()).toBe(0)
+  })
+
+  test("a seek while scrolled up snaps back to the bottom through the pane's own pill", async () => {
+    load('/videos/1', { listHtml: row('A', 'one') })
+    win.document.querySelector('#hs-mc-new-msgs').addEventListener('click', () => calls.push(['pill']))
+    h.vodSync()
+    h.runTimers()
+    await flush()
+    h.scrolledUp(true)
+    calls.length = 0
+    h.list().innerHTML = row('C', 'three') + row('D', 'four')
+    await flush()
+    expect(h.vodBuffer.map((m) => m.text)).toEqual(['three', 'four'])
+    expect(pillClicks()).toBe(1)
+    expect(renders()).toHaveLength(0) // the pill's own jump renders: never twice
+  })
+})
+
 describe('leaving the vod', () => {
   test('in-app hop to a channel: tab gone, watching stopped, reader back where they were', async () => {
     load('/videos/1', { listHtml: row('A', 'one') })
@@ -282,6 +599,11 @@ describe('wiring', () => {
   })
   test('renderMessages reads the vod buffer', () => {
     expect(read('main-live.js')).toMatch(/id === 'vod'\) \{\s*msgs = vodBuffer/)
+  })
+  test("the pane counts a batched render by the rows it holds back, and the empty line is the vod's own", () => {
+    const live = read('main-live.js')
+    expect(live).toMatch(/newMessageCount \+= opts\?\.added \|\| 1/)
+    expect(live).toMatch(/id === 'vod' \? vodEmptyText\(\) : t\('mc_no_messages'\)/)
   })
   test('the module is in the bundle, before spa-nav', () => {
     const b = readFileSync(join(ROOT, 'build.js'), 'utf8')

@@ -48,6 +48,7 @@ function getMentionTargets() {
 
 function isMention(msg) {
   if (!isEnabled('mentions')) return false // live subsystem gate
+  if (msg.replay) return false // a vod's replayed chat names nobody to you: no row mark, no ping, no list
   const targets = getMentionTargets()
   if (!targets.length) return false
   // a youtube line names its sender `@handle`; the targets are bare

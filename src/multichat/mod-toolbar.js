@@ -813,7 +813,7 @@ function wireModToolbarHover(messagesEl) {
     'mouseover',
     (e) => {
       const row = e.target.closest('.hs-mc-msg')
-      if (!row) return
+      if (!row || row.dataset.hsReplay) return // a replay row (vod tab) is nobody's live message to act on
       if (row === _modRow) {
         cancelModHide()
         return

@@ -160,7 +160,7 @@ describe('subsystem chokepoints', () => {
     // A menu row that turns a disabled feature back on is the same lie in UI form.
     expect(INPUT).toContain("if (gateAtBoot('whispers') !== false) {")
     expect(INPUT).toContain("if (gateAtBoot('profile-cards') !== false) {")
-    expect(INPUT).toContain("if (msg && gateAtBoot('feed') !== false) {")
+    expect(INPUT).toContain("if (msg && !replay && gateAtBoot('feed') !== false) {")
     // …and the rows no switch owns keep showing.
     expect(INPUT).toContain("{ label: t('mc_input_dm'), fn: () => _openDmFor(username, platform) }")
     expect(INPUT).toContain("{ label: t('content_card_mention'), fn: () => _mentionInMcInput(username) }")

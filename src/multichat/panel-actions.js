@@ -77,6 +77,7 @@ function ensureChatRestorePill(show) {
 function resolvePopoutContext() {
   const id = currentTab
   if (!id) return null
+  if (id === 'vod') return null // a replay is not a chat to pop out (a vod page has no live room)
   // Per-channel tab → use its config row directly
   if (_isChatTab(id) && id !== 'live') {
     const ch = (config.channels || []).find((c) => c.id === id)

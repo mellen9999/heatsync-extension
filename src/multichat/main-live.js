@@ -129,7 +129,7 @@ function _renderMessagesImpl(id, opts) {
   } else if (
     id &&
     id !== 'add' &&
-    !['mentions', 'feed', 'whispers', 'discover', 'pinned', 'modlog', 'settings'].includes(id)
+    !['mentions', 'feed', 'whispers', 'discover', 'pinned', 'modlog', 'settings', 'vod'].includes(id)
   ) {
     // Per-channel tab — id may be a username or a linked-tab id; resolve from config
     const ch = getChannelById(id)
@@ -178,7 +178,7 @@ function _renderMessagesImpl(id, opts) {
       _holdMissedRender = true
       return
     }
-    newMessageCount++
+    newMessageCount += opts?.added || 1 // a batch (the vod tab's frame) says how many rows it holds back
     if (newBtn) {
       const arrow = document.createElement('span')
       arrow.className = 'hs-arrow-down'
@@ -215,10 +215,11 @@ function _renderMessagesImpl(id, opts) {
 
   // Merge follow stream events into channel + live tabs (went live,
   // switched game, went offline). Skip mentions: it's reserved for actual
-  // @-mentions of the user, not followed-channel stream events. msgs is
-  // already chronological from fairMerge, and `missing` is tiny, so
+  // @-mentions of the user, not followed-channel stream events. Skip vod too: its list is the
+  // replay buffer itself (spliced into, not copied), and a replay holds replay rows only.
+  // msgs is already chronological from fairMerge, and `missing` is tiny, so
   // binary-insert each at its position instead of re-sorting the whole buffer.
-  if (id !== 'mentions' && activityEvents.length > 0 && msgs.length > 0) {
+  if (id !== 'mentions' && id !== 'vod' && activityEvents.length > 0 && msgs.length > 0) {
     // Cheap pre-filter first: only scan msgs for existing stream-event texts
     // when there actually are follow-class events to merge — activityEvents
     // is usually all non-follow, and the msgs scan is O(buffer) per render.
@@ -259,7 +260,7 @@ function _renderMessagesImpl(id, opts) {
       // haven't actually connected to.
       empty.textContent = t('mc_connecting')
     } else {
-      empty.textContent = t('mc_no_messages')
+      empty.textContent = id === 'vod' ? vodEmptyText() : t('mc_no_messages')
     }
     msgsEl.appendChild(empty)
     return

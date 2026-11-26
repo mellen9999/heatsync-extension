@@ -9,17 +9,56 @@
 //        + div.video-chat__message > span(":") + span(text fragments, emote imgs)
 // Twitch gives no row ids. The newest row seen is the cursor: rows after it are new; when it is
 // gone the list was replaced (a seek) and the tab is rebuilt from what twitch shows now.
+//
+// A replay row is not a live message: every row carries `replay: true`, the one flag the pane reads
+// to leave its live-only habits off it (the first-message glow and the seen set, mention marks,
+// highlight rules, the thread button, reply / mod / pin / post actions) and to show the video's own
+// offset in the stamp slot. The tab is its own buffer: no live buffer, mentions list, counter,
+// archive or relay ever sees a row, and the tab takes replay rows only (appendMessage).
+// One observer queues one frame; the frame mirrors every row twitch drew since the last one.
 
 const VOD_LIST = '.video-chat__message-list-wrapper'
 const VOD_ROW = '.vod-message'
 const VOD_TICK_MS = 500
 const VOD_TICKS_MAX = 40 // 20s for twitch to draw the replay list
 const VOD_API_AFTER = 6 // ticks with no channel link on the page before the site is asked
+const VOD_QUIET_MS = 10000 // playing this long with no replay row: the vod has no replay chat
+const VOD_APPEND_MAX = 30 // a frame's rows are appended up to this many; a burst is one render
 const VOD_EMOTE_SRC = /^https:\/\/static-cdn\.jtvnw\.net\/emoticons\//
+const VOD_AT = /\d{1,3}(?::\d{1,2}){0,2}/ // the offset twitch prints in a row's header: h:mm:ss, m:ss or ss
 
 // every row the pane holds for the tab (renderMessages reads it, like mentionsBuffer)
 const vodBuffer = []
-let _vod = null // { id, owner, prev, ticks, timer, obs, ready, last, seq }
+let _vod = null // { id, owner, prev, ticks, timer, obs, ready, last, seq, queued, quiet, quietTimer }
+let _vodClickOff = null // the stamp's click listener: held only while a vod page is open
+
+/** "2:00:14", "5:07" or "45" → seconds; null for anything else */
+function vodOffsetSecs(text) {
+  const parts = String(text ?? '')
+    .trim()
+    .split(':')
+  if (parts.length > 3 || !parts.every((p) => /^\d{1,3}$/.test(p))) return null
+  return parts.reduce((total, p) => total * 60 + Number(p), 0)
+}
+
+/** a replay row's stamp: the video's own time, which seeks the video when clicked. '' without an offset
+ *  (never a wall clock in its place) */
+function vodStampHtml(m) {
+  const at = String(m.replayAt || '')
+  if (vodOffsetSecs(at) === null) return ''
+  return `<span class="hs-mc-ts" role="button" data-hs-seek="${escapeHtml(at)}" title="${escapeHtml(t('mc_vod_seek'))}">${escapeHtml(at)}</span>`
+}
+
+// the stamp's click: the page's own video, to that second (a seek twitch then answers by replacing its list)
+function vodStampClick(e) {
+  const el = e.target?.closest?.('[data-hs-seek]')
+  if (!el) return
+  const secs = vodOffsetSecs(el.dataset.hsSeek)
+  const video = document.querySelector('video')
+  if (secs === null || !video) return
+  e.preventDefault()
+  video.currentTime = secs
+}
 
 // "rgb(r, g, b)" → "#rrggbb"; anything else passes through for sanitizeColor to judge
 function vodColor(css) {
@@ -89,6 +128,7 @@ function vodRowToMsg(row, owner, id) {
     .filter(Boolean)
     .join(',')
   const css = nameEl.style?.color || (typeof getComputedStyle === 'function' ? getComputedStyle(nameEl).color : '')
+  const at = VOD_AT.exec(row.querySelector('.vod-message__header')?.textContent || '')?.[0] || ''
   const msg = {
     user,
     login,
@@ -100,6 +140,8 @@ function vodRowToMsg(row, owner, id) {
     time: Date.now(),
     id,
     replyTo: null,
+    replay: true,
+    replayAt: at,
   }
   if (Object.keys(emotes).length) msg.twitchEmotes = emotes
   return msg
@@ -147,31 +189,93 @@ function vodNewRows(v) {
   return { rows, at }
 }
 
+// twitch's rows → messages. Only the newest the tab can hold are read (a burst past the cap is never
+// walked), and a row with no chatter is skipped.
+function vodMsgs(rows, v) {
+  const out = []
+  for (const row of rows.length > SCROLLBACK_MAX ? rows.slice(-SCROLLBACK_MAX) : rows) {
+    const msg = vodRowToMsg(row, v.owner, `vod:${v.id}:${v.seq++}`)
+    if (msg) out.push(msg)
+  }
+  return out
+}
+
+function vodTrim() {
+  if (vodBuffer.length > SCROLLBACK_MAX) vodBuffer.splice(0, vodBuffer.length - SCROLLBACK_MAX)
+}
+
+// what a frame found, onto the screen: a few rows are appended like a live tab's, a burst is one render
+// (a paused reader gets the pane's own pill, counted by the rows it holds back)
+function vodDraw(fresh) {
+  if (currentTab !== 'vod') return
+  if (fresh.length <= VOD_APPEND_MAX) {
+    for (let i = 0; i < fresh.length; i++) {
+      if (appendMessage(fresh[i], 'vod')) continue
+      renderMessages('vod', { added: fresh.length - i }) // paused or busy: the render holds the rest back
+      return
+    }
+    return
+  }
+  renderMessages('vod', { added: fresh.length })
+}
+
+// the whole tab again (the first look, a seek, an emptied list): the reader lands at the bottom of the
+// new moment, even from scrolled up. The pill is the pane's one way back to the tail: it renders.
+function vodRedraw() {
+  if (currentTab !== 'vod') return
+  if (isScrolledUp) document.getElementById('hs-mc-new-msgs')?.click()
+  else renderMessages('vod')
+}
+
 function vodScan() {
   const v = _vod
   if (!v?.ready) return
   const { rows, at } = vodNewRows(v)
   if (at >= 0) {
     // twitch drew more: only the rows after the one we held last
-    for (const row of rows.slice(at + 1)) {
-      const msg = vodRowToMsg(row, v.owner, `vod:${v.id}:${v.seq++}`)
-      if (!msg) continue
-      vodBuffer.push(msg)
-      if (currentTab === 'vod' && !appendMessage(msg, 'vod')) renderMessages('vod')
-    }
-    if (vodBuffer.length > SCROLLBACK_MAX) vodBuffer.splice(0, vodBuffer.length - SCROLLBACK_MAX)
+    const fresh = vodMsgs(rows.slice(at + 1), v)
+    if (!fresh.length) return
+    v.quiet = false
+    for (const msg of fresh) vodBuffer.push(msg)
+    vodTrim()
+    vodDraw(fresh)
     return
   }
   // the first look, a seek, or twitch emptying the list: the tab is what twitch shows now
   if (!rows.length && !vodBuffer.length) return
   vodBuffer.length = 0
-  for (const row of rows) {
-    const msg = vodRowToMsg(row, v.owner, `vod:${v.id}:${v.seq++}`)
-    if (msg) vodBuffer.push(msg)
-  }
-  if (vodBuffer.length > SCROLLBACK_MAX) vodBuffer.splice(0, vodBuffer.length - SCROLLBACK_MAX)
+  for (const msg of vodMsgs(rows, v)) vodBuffer.push(msg)
+  if (vodBuffer.length) v.quiet = false
+  else if (!v.quietTimer) v.quietTimer = cleanup.setTimeout(vodQuiet, VOD_QUIET_MS) // a seek into silence
   _dropTabCache('vod')
-  if (currentTab === 'vod') renderMessages('vod')
+  vodRedraw()
+}
+
+// the observer only asks: the rows of everything twitch drew since come in ONE frame
+function vodQueue(v) {
+  if (v.queued) return
+  v.queued = true
+  rafOrTimeout(() => {
+    v.queued = false
+    if (_vod === v) vodScan()
+  })
+}
+
+// the tab's empty line while it waits: after VOD_QUIET_MS of the video playing with no row, it says so
+function vodEmptyText() {
+  return t(_vod?.quiet ? 'mc_vod_no_replay' : 'mc_no_messages')
+}
+
+function vodQuiet() {
+  const v = _vod
+  if (!v) return
+  v.quietTimer = 0
+  if (vodBuffer.length) return // the replay is talking
+  const video = document.querySelector('video')
+  if (video && !video.paused && !video.ended) {
+    v.quiet = true
+    if (currentTab === 'vod') renderMessages('vod')
+  } else v.quietTimer = cleanup.setTimeout(vodQuiet, VOD_QUIET_MS) // not playing yet: nothing is owed
 }
 
 function vodBind(v, list) {
@@ -180,7 +284,7 @@ function vodBind(v, list) {
   joinExtraChannel('twitch', v.owner)
   v.joined = true
   const root = list.closest('.video-chat') || list.parentElement || list
-  v.obs = new MutationObserver(vodScan)
+  v.obs = new MutationObserver(() => vodQueue(v))
   v.obs.observe(root, { childList: true, subtree: true })
   cleanup.trackObserver(v.obs)
   Promise.allSettled([fetchGlobalBadges(), fetchChannelBadges(v.owner)]).then(() => {
@@ -205,6 +309,7 @@ function vodTick() {
 
 function vodStopWatching(v) {
   if (v.timer) cleanup.clearTimeout(v.timer)
+  if (v.quietTimer) cleanup.clearTimeout(v.quietTimer)
   if (v.obs) {
     v.obs.disconnect()
     cleanup.untrackObserver(v.obs)
@@ -214,6 +319,23 @@ function vodStopWatching(v) {
     leaveExtraChannel('twitch', v.owner)
   vodBuffer.length = 0
   _dropTabCache('vod')
+}
+
+function vodNew(id, prev) {
+  return {
+    id,
+    owner: '',
+    prev,
+    ticks: 0,
+    timer: 0,
+    obs: null,
+    ready: false,
+    last: null,
+    seq: 0,
+    queued: false,
+    quiet: false,
+    quietTimer: cleanup.setTimeout(vodQuiet, VOD_QUIET_MS),
+  }
 }
 
 /** Match the pane to the page: on a vod page, the vod tab; anywhere else, none. Safe to call on
@@ -226,7 +348,7 @@ function vodSync() {
     // vod → vod: same tab, new replay
     const prev = _vod.prev
     vodStopWatching(_vod)
-    _vod = { id, owner: '', prev, ticks: 0, timer: 0, obs: null, ready: false, last: null, seq: 0 }
+    _vod = vodNew(id, prev)
     if (currentTab === 'vod') renderMessages('vod')
     vodTick()
     return
@@ -236,26 +358,19 @@ function vodSync() {
     const { prev } = _vod
     vodStopWatching(_vod)
     _vod = null
+    if (_vodClickOff) _vodClickOff()
+    _vodClickOff = null
     if (tabEl) tabEl.style.display = 'none'
     if (currentTab === 'vod')
       vodGoTo(prev && prev !== 'vod' && (mcIsReservedTab(prev) || getChannelById(prev)) ? prev : liveTarget())
     return
   }
   if (!id) return
-  _vod = {
-    id,
-    owner: '',
-    prev: currentTab === 'vod' ? '' : currentTab,
-    ticks: 0,
-    timer: 0,
-    obs: null,
-    ready: false,
-    last: null,
-    seq: 0,
-  }
+  _vod = vodNew(id, currentTab === 'vod' ? '' : currentTab)
+  _vodClickOff = cleanup.addEventListener(document, 'click', vodStampClick, { capture: true })
   if (tabEl) tabEl.style.display = ''
   vodGoTo('vod')
   vodTick()
 }
 
-export { vodBuffer, vodRowToMsg, vodSync }
+export { vodBuffer, vodEmptyText, vodOffsetSecs, vodRowToMsg, vodStampHtml, vodSync }

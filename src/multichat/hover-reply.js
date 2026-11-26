@@ -15,7 +15,7 @@ let _hoverReplyWired = false
 
 function rowReplyState(msg, fallbackUser = '') {
   const d = msg?.dataset
-  if (!d?.msgId) return null
+  if (!d?.msgId || d.hsReplay) return null // a replay row (vod tab) has nobody to reply to
   return {
     msgId: d.msgId,
     user: d.msgUser || fallbackUser,

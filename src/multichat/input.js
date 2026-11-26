@@ -2443,6 +2443,9 @@ async function _ctxMod(action, channel, platform, target, msgId, durationSec, la
 
 function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   const { msg, feedDiv, feedMsg, keyboard } = ctx
+  // a replay row (vod tab) is a line of someone's past chat: copy it, read about its author, nothing
+  // that posts it, answers it or acts on it in a room it is not in (reply: rowReplyState)
+  const replay = !!msg?.dataset?.hsReplay
   const rel = hsRelPeek(username, platform)?.relationship || null
   const youFollow = !!(rel?.youFollow || rel?.isFollowing)
   const youBlock =
@@ -2492,7 +2495,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   }
   // Op this message to the heatsync feed — posting emerges from chat, where the
   // moment actually happens, quoting the author with @attribution.
-  if (msg && gateAtBoot('feed') !== false) {
+  if (msg && !replay && gateAtBoot('feed') !== false) {
     items.push({ label: t('mc_input_op_to_feed'), fn: () => _quickOpToFeed(username, msg) })
   }
   items.push({
@@ -2507,7 +2510,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       label: t('mc_input_copy_message'),
       fn: () => mcCopyToClipboard(_extractMcMsgText(msg), t('mc_input_message_copied')),
     })
-    const link = msg.dataset?.msgId ? buildRowPermalink(msg) : null
+    const link = msg.dataset?.msgId && !replay ? buildRowPermalink(msg) : null // a replay line has no archived twin
     if (link) {
       items.push({
         label: t('mc_input_copy_link'),
@@ -2518,7 +2521,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       label: t('mc_input_copy_to_input'),
       fn: () => mcQuoteToInput(_extractMcMsgText(msg)),
     })
-    if (msg.dataset?.msgId) {
+    if (msg.dataset?.msgId && !replay) {
       items.push({
         label: t('mc_msg_quote_thread'),
         fn: () => startQuoteFromRow(msg),
@@ -2548,6 +2551,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   // LOGIN (display-name ≠ login for non-Latin users → ban would miss).
   if (
     msg &&
+    !replay &&
     (typeof isModForSync === 'function' ||
       typeof isKickModForSync === 'function' ||
       typeof isYtModForSync === 'function')
@@ -2618,7 +2622,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   }
   // Pin — its own gate: a broadcaster pins their own channel without being a mod
   // there. Only on a row of the channel tab on screen (the pin lives on its room).
-  if (msg?.dataset?.msgId && typeof pinRoomOfRow === 'function') {
+  if (msg?.dataset?.msgId && !replay && typeof pinRoomOfRow === 'function') {
     const pr = pinRoomOfRow(msg)
     if (pr && pinCanAct(pr.platform, pr.channel)) {
       items.push({
@@ -6138,7 +6142,7 @@ function clearQuoteState() {
 // time) falls back to a plain quoted-text state, same degradation the old
 // /op-seed flow used.
 function startQuoteFromRow(msg) {
-  if (!msg) return
+  if (!msg || msg.dataset?.hsReplay) return // a replay line has no archived receipt to cite
   const permalink = buildRowPermalink(msg)
   const text = (msg.querySelector(':scope > .hs-mc-text')?.textContent || '').trim().slice(0, 240)
   if (!permalink && !text) return

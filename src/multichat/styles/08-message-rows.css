@@ -15,6 +15,10 @@
       margin-right: 4px;
       font-variant-numeric: tabular-nums;
     }
+    /* a replay row's stamp seeks the video (vod-replay.js); the hover invert comes with role=button */
+    .hs-mc-ts[data-hs-seek] {
+      cursor: pointer;
+    }
     .hs-mc-avatar {
       width: 18px;
       height: 18px;

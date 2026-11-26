@@ -1015,9 +1015,10 @@ async function hsMcImportChannelEmotes(btn, channel) {
 }
 
 // the one-letter corner mark of a picker tile: who sees the emote if sent, from the readout's own
-// classification (`k`). everyone (and a won't-show) = no mark. an ext class names its provider's letter
+// classification (`k`). everyone = no mark; a copy the platform would not show is the red cross. an ext class names its provider's letter
 const HS_VIS_MARK = { '7tv': '7', bttv: 'B', ffz: 'F' }
 function emoteVisMark(vis, source) {
+  if (vis?.k === 'wont') return '✗'
   if (vis?.k === 'heatsync') return 'H'
   return vis?.k === 'ext' ? HS_VIS_MARK[source] || '' : ''
 }
@@ -1046,14 +1047,17 @@ function emoteImgHtml([name, emote]) {
   const wrapCls = (isBlocked ? 'hs-mc-picker-emote-wrap blocked' : 'hs-mc-picker-emote-wrap') + nsfwTag
   const safeName = escapeHtml(name)
   // who sees it if you send it, in the Tab readout's own words (a variant = not loaded in this room)
+  // what sending it from here ships: your copy of the room's own picture is the room's (lawTileShip)
+  const ship = lawTileShip(name, emote)
   const vis = emoteCycleMeta({
-    source: emote.source,
-    tier: emote.state === 'owned' ? 1 : 2,
-    remote: !!emote.variant,
+    source: ship.source || emote.source,
+    tier: ship.tier ?? (emote.state === 'owned' ? 1 : 2),
+    remote: !!emote.variant && ship.tier === undefined,
+    shadowed: ship.shadowed,
   }).vis
   const who = vis.t
   // the corner mark (one css rule reads it); the words stay in the title and the label
-  const mark = emoteVisMark(vis, emote.source)
+  const mark = emoteVisMark(vis, ship.source || emote.source)
   const markAttr = mark ? ` data-mark="${mark}"` : ''
   // The picker grid is a FIXED 32px box (.hs-mc-picker-emote, max-height:32px)
   // — it does not move with the emote-size setting, so it asks for the rung the

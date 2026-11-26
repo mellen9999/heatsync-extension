@@ -118,6 +118,9 @@
       background: #000;
       pointer-events: none;
     }
+    .hs-mc-picker-emote-wrap[data-mark='✗']::after {
+      color: var(--hs-danger);
+    }
     .hs-mc-picker-emote-wrap[data-mark]:not(.blocked):hover::after {
       color: #000;
       background: #fff;

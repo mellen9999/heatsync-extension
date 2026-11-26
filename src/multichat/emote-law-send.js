@@ -177,6 +177,28 @@ const followPicks = () => queueMicrotask(rereadInputChips)
 const lawCtx = (legs, picks) =>
   lawSendCtx({ legs, mine: viewerPersonalEmotes, globals: emoteCache, caches: channelEmoteCaches, picks })
 
+/**
+ * What sending a picker tile's word from the open tab ships, for the tile's who-sees-it mark. A
+ * click pins the tile's own picture as this message's pick, so the tile is its own picture: but when
+ * the plain send of that word is already that very picture (your copy of the room's 7tv emote), it
+ * goes out as the room's, and the room's class is the answer. Where the platform would still draw
+ * its own emote of the name, the tile will not show.
+ * @returns {{source?:string, tier?:number, shadowed?:boolean}} {} = the tile is read as it is
+ */
+let tileCtx = null
+function lawTileShip(name, e) {
+  if (!e?.url) return {}
+  tileCtx ||= (queueMicrotask(() => (tileCtx = null)), lawCtx(lawOpenLegs(), null))
+  const pic = _acPicKey(e.url)
+  const hit = hsEmoteLaw.sendWord(name, tileCtx)
+  if (hit && _acPicKey(hit.emote.url) === pic) {
+    const tier = { room: 0, own: 1, personal: 1, global: 2 }[hit.from]
+    return { source: hit.emote.raw?.source || hit.emote.provider, ...(tier !== undefined && { tier }) }
+  }
+  const pinned = hsEmoteLaw.sendWord(name, { ...tileCtx, picks: lawView(new Map([[name, e]])) })
+  return pinned && _acPicKey(pinned.emote.url) !== pic ? { shadowed: true } : {}
+}
+
 /** a pick as an overlay entry, for a picture no cache holds (a catalog hit) */
 const LAW_SOURCE = { hs: 'heatsync' }
 function lawPickEntry(e) {

@@ -26,6 +26,8 @@ const PNG = Buffer.from(
   'base64',
 )
 const E = (n: string) => `https://cdn.heatsync.org/emote/${n}.png`
+// one 7tv picture the room holds and the viewer owns too
+const BIGDOG = 'https://cdn.7tv.app/emote/01BIGDOGBIGDOGBIGDOGBIGD/2x.webp'
 const body = '<div id="host-content" style="height:100vh">host page</div><div class="right-column right-column--beside" id="rcol"></div>'
 const html = `<!doctype html><html><head><title>fixture</title></head><body style="margin:0">${body}</body></html>`
 
@@ -66,6 +68,7 @@ try {
   })
   for (const h of ['https://api.frankerfacez.com/**', 'https://7tv.io/**', 'https://api.7tv.app/**', 'https://api.betterttv.net/**'])
     await c.route(h, (r: any) => r.abort())
+  await c.route('https://cdn.7tv.app/**', (r: any) => r.fulfill({ status: 200, contentType: 'image/png', body: PNG }))
   await c.route('https://cdn.heatsync.org/**', (r: any) => r.fulfill({ status: 200, contentType: 'image/png', body: PNG }))
   await c.route('https://static-cdn.jtvnw.net/**', (r: any) => r.fulfill({ status: 200, contentType: 'image/png', body: PNG }))
   await c.route('https://www.twitch.tv/**', (r: any) => r.fulfill({ status: 200, contentType: 'text/html', body: html }))
@@ -94,12 +97,17 @@ try {
       emote_favorites: [{ name: 'AwayFav', url: u.Away_fav, provider: 'hs' }],
       emote_favorites_owner: '7',
       global_emotes: [],
-      emote_inventory: [{ name: 'Mine', url: u.Mine_inv, source: 'heatsync', hash: 'minehash' }],
+      // BigDog is in the room's 7tv set AND your own set, as one picture (two sizes of it)
+      emote_inventory: [
+        { name: 'Mine', url: u.Mine_inv, source: 'heatsync', hash: 'minehash' },
+        { name: 'BigDog', url: u.BigDog_inv, source: '7tv', hash: 'bigdoghash' },
+      ],
     })
-  }, Object.fromEntries(['Away_fav', 'Mine_inv'].map((n) => [n, E(n)])))
+  }, { ...Object.fromEntries(['Away_fav', 'Mine_inv'].map((n) => [n, E(n)])), BigDog_inv: BIGDOG.replace('2x', '1x') })
   const room = [
     { name: 'Wlol', url: E('Wlol_room'), source: '7tv', hash: 'wlolroomhash' },
     { name: 'Awake', url: E('Awake_room'), source: '7tv', hash: 'awakeroomhash' },
+    { name: 'BigDog', url: BIGDOG, source: '7tv', id: '01BIGDOGBIGDOGBIGDOGBIGD' },
   ]
   const seedRoom = (tell: boolean) =>
     sw.evaluate(async ([emotes, tell]: [unknown[], boolean]) => {
@@ -174,6 +182,14 @@ try {
   check(roomMark.color === 'rgb(255, 255, 255)' && roomMark.bg === 'rgb(0, 0, 0)' && roomMark.radius === '0px', `a. the mark is white on black, square (got ${JSON.stringify(roomMark)})`)
   const awayMark = await markOf(`${PICKER} [data-section-key="favorite"] .hs-mc-picker-emote-wrap img[alt="AwayFav"]`)
   check(awayMark.mark === 'H', `a. the heatsync-only favorite is marked H (got ${JSON.stringify(awayMark)})`)
+  // the law: sending BigDog here ships the room's 7tv picture, and your own copy of it is that same picture,
+  // so every BigDog tile says 7 (7tv users), never H
+  const bigMarks = await p.$$eval(`${PICKER} .hs-mc-picker-emote-wrap img[alt="BigDog"]`, (els: HTMLImageElement[]) =>
+    els.map((x) => (x.closest('.hs-mc-picker-emote-wrap') as HTMLElement).dataset.mark ?? null),
+  )
+  check(bigMarks.length > 0 && bigMarks.every((m: string | null) => m === '7'), `a. every BigDog tile (room + yours, one picture) is marked 7 (got ${JSON.stringify(bigMarks)})`)
+  const mineMark = await markOf(`${PICKER} .hs-mc-picker-emote-wrap img[alt="Mine"]`)
+  check(mineMark.mark === 'H', `a. a name only your set has stays H (got ${JSON.stringify(mineMark)})`)
   await p.click(roomTile, { button: 'right', modifiers: ['Shift'] })
   const m1 = await (await until(p, async () => (await menu()).length > 0, 5000), menu())
   check(m1[0] === 'add to favorites', `b. the emote menu leads with the pin row (got ${JSON.stringify(m1.slice(0, 3))})`)

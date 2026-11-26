@@ -29,6 +29,7 @@ const emoteImgHtml = new Function(
   'hsEmoteHiddenForViewer',
   'emoteIsBlocked',
   'hsRungUrl',
+  'lawTileShip',
   `${META}\n${TILE}\nreturn emoteImgHtml`,
 )(
   t,
@@ -36,6 +37,7 @@ const emoteImgHtml = new Function(
   () => null,
   () => false,
   (u) => u,
+  () => ({}),
 )
 const title = (name, emote) => /title="([^"]*)"/.exec(emoteImgHtml([name, { url: 'https://x/e.webp', ...emote }]))[1]
 
@@ -64,6 +66,7 @@ describe('a picker tile carries a corner mark for who sees it', () => {
     'hsEmoteHiddenForViewer',
     'emoteIsBlocked',
     'hsRungUrl',
+    'lawTileShip',
     `${META}\n${TILE}\nreturn emoteImgHtml`,
   )(
     t,
@@ -71,6 +74,7 @@ describe('a picker tile carries a corner mark for who sees it', () => {
     () => null,
     () => false,
     (u) => u,
+    () => ({}),
   )
   const html = (name, emote) => mkHtml([name, { url: 'https://x/e.webp', ...emote }])
   const mark = (name, emote) => /data-mark="([^"]*)"/.exec(html(name, emote))?.[1] ?? null
@@ -100,5 +104,38 @@ describe('a picker tile carries a corner mark for who sees it', () => {
     )
     expect(css).toMatch(/\[data-mark\]:not\(\.blocked\):hover::after\s*\{[^}]*color:\s*#000[^}]*background:\s*#fff/s)
     expect(css).not.toMatch(/\[data-mark\][^{]*\{[^}]*border-radius:\s*[1-9]/)
+  })
+})
+
+// the law: a typed word is the room's emote and a click pins the tile's own picture, so a tile's mark
+// says what SENDING it from this room ships (emote-law-send.js lawTileShip answers; the tile reads it)
+describe('a picker tile says what sending it from this room ships', () => {
+  const build = (ship) =>
+    new Function(
+      't',
+      'escapeHtml',
+      'hsEmoteHiddenForViewer',
+      'emoteIsBlocked',
+      'hsRungUrl',
+      'lawTileShip',
+      `${META}\n${TILE}\nreturn emoteImgHtml`,
+    )(
+      t,
+      (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'),
+      () => null,
+      () => false,
+      (u) => u,
+      ship,
+    )
+  const mark = (ship, emote) =>
+    /data-mark="([^"]*)"/.exec(build(ship)(['BigDog', { url: 'https://x/e.webp', ...emote }]))?.[1] ?? null
+  test("your copy of the room's own 7tv picture ships as the room's: 7, never H", () => {
+    expect(mark(() => ({ source: '7tv', tier: 0 }), { source: '7tv', state: 'owned' })).toBe('7')
+  })
+  test('a picture the room does not hold stays yours alone: H', () => {
+    expect(mark(() => ({}), { source: '7tv', state: 'owned' })).toBe('H')
+  })
+  test("an emote the platform would draw itself instead: won't show, the red cross", () => {
+    expect(mark(() => ({ shadowed: true }), { source: '7tv', state: 'owned' })).toBe('✗')
   })
 })

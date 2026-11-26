@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "visionnage"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "onglet temporaire : un autre stream prend sa place · clic droit pour le garder"
   },

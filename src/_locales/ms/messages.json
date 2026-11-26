@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "menonton"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "tab sementara: menonton strim lain mengambil tempatnya · klik kanan untuk simpan"
   },

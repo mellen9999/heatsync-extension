@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "vizionez"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "tab temporar: alt stream îi ia locul · click dreapta ca să-l păstrezi"
   },

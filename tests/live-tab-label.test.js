@@ -68,6 +68,7 @@ function make(o = {}) {
     const resolveLiveCandidateToTab = async (c) => { calls.resolved.push(c) }
     const _savedActiveTab = env.saved ?? 'live'
     const bootActiveTab = () => env.boot
+    const vodSync = () => {}
     ${block}
     return { liveCoverId, liveTabShown, liveTarget, syncLiveTab, bootSwitch, keepLiveTab, updateLiveTabLabel,
       st: () => ({ currentTab, _bouncedFromLive, _autoSwitching }),
@@ -366,6 +367,7 @@ function popout({ host, path, search = '', channels = [], stored = {}, hidden = 
     const parseYoutubeChannelType = (p, s) => (/^\\/@/.test(p) ? 'handle' : /v=/.test(s) ? 'video' : null)
     const ytHandleLiveUrl = (p) => 'https://www.youtube.com' + p
     const hsLiveChannelEntry = () => ({})
+    const vodSync = () => {}
     const saveConfig = () => {}
     const saveUiSetting = (k, v) => persisted.push([k, v])
     const switchTab = (id) => {

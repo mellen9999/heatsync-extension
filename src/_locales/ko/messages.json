@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "시청 중"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "임시 탭: 다른 방송을 보면 이 자리가 바뀌어 · 우클릭으로 유지"
   },

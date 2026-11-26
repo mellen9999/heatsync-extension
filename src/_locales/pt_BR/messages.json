@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "assistindo"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "aba temporária: assistir a outra stream ocupa o lugar dela · clique direito para manter"
   },

@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "المشاهدة"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "تبويب مؤقت: مشاهدة بث آخر تأخذ مكانه · انقر يمينًا للاحتفاظ به"
   },

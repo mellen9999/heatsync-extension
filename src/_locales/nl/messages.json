@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "kijken"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "tijdelijke tab: een andere stream neemt de plek over · rechtsklik om te houden"
   },

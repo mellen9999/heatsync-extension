@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "oglądam"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "karta tymczasowa: inny stream zajmie jej miejsce · prawy klik, żeby zachować"
   },

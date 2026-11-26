@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "sleduji"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "dočasný tab: jiný stream zabere jeho místo · pravým kliknutím ho ponecháš"
   },

@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "視聴中"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "一時タブ: 別の配信を見るとこの枠が入れ替わる · 右クリックで残す"
   },

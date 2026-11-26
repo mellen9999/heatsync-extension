@@ -106,7 +106,9 @@ function mcTabButtonHtml(tab) {
   const label = tab.labelKey ? t(tab.labelKey) : tab.label
   if (tab.id === 'add') return `<button class="hs-mc-tab" data-tab="add">${escapeHtml(label)}</button>`
   const on = tab.id === 'live'
-  return `<button class="hs-mc-tab${on ? ' active' : ''}" role="tab" aria-selected="${on}" data-tab="${escapeHtml(tab.id)}">${escapeHtml(label)}</button>`
+  // a temp tab starts out of the strip; its owner shows it while it has something to show
+  const temp = tab.temp ? ` hs-mc-tab-temp" style="display:none" title="${escapeHtml(t('mc_tab_temp_title'))}` : ''
+  return `<button class="hs-mc-tab${on ? ' active' : ''}${temp}" role="tab" aria-selected="${on}" data-tab="${escapeHtml(tab.id)}">${escapeHtml(label)}</button>`
 }
 
 // Rebuild the 2nd row for the active tab; hidden when the tab has no cells.

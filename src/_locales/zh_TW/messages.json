@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "觀看中"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "暫時分頁：觀看其他直播會佔用它的位置 · 右鍵保留"
   },

@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "đang xem"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "tab tạm: xem stream khác sẽ chiếm chỗ của nó · chuột phải để giữ"
   },

@@ -1026,6 +1026,8 @@ function switchTab(id, sub, subOpts) {
   // the temp tab is gone while a saved tab covers the page channel (or the page
   // has none): any stray 'live' lands on liveTarget() instead
   if (id === 'live' && _liveSyncArmed && !liveTabShown()) id = liveTarget()
+  // the vod tab exists on a vod page only (vod-replay.js)
+  if (id === 'vod' && !twitchVodId(location.pathname)) id = liveTarget()
   ;({ id, sub } = mcCanonTab(id, sub))
   const nextSub = mcResolveSub(id, sub, lastSubByTab)
   if (id === currentTab && sub && nextSub === sub) {
@@ -1158,7 +1160,7 @@ function switchTab(id, sub, subOpts) {
 
   // Persist active tab across refreshes/popouts (skip transient tabs, and the
   // auto-bounce off an empty watching tab — that is the page's doing, not a pick)
-  if (id !== 'add' && !_autoSwitching) {
+  if (id !== 'add' && id !== 'vod' && !_autoSwitching) {
     try {
       saveUiSetting('activeTab', id)
     } catch (_) {

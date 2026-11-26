@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "กำลังดู"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "แท็บชั่วคราว: ดูสตรีมอื่นแล้วจะถูกแทนที่ · คลิกขวาเพื่อเก็บไว้"
   },

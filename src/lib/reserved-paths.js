@@ -114,3 +114,25 @@ export function isKickChannelRoute(pathname) {
   const ch = p.match(/^\/([a-zA-Z0-9_-]+)(?:\/chatroom)?\/?$/)
   return !!ch && !RESERVED_PATHS.has(ch[1].toLowerCase())
 }
+
+// What a twitch url is: a channel page (its live chat), a past broadcast
+// (/videos/<id>), a clip, or anything else. Every caller that used to guess a
+// channel from the first path segment asks this instead, so "videos" can never
+// be read as a channel name (the pane booted a saved tab's live lines over a
+// VOD's replay chat). `popout|embed/<ch>/chat` is a channel; a sub-page of a
+// channel (/<ch>/videos, /<ch>/about) is still that channel.
+const VOD_PATH = /^\/videos\/(\d{1,15})\/?$/
+const CLIP_PATH = /^\/[a-zA-Z0-9_-]+\/clip\/[a-zA-Z0-9_-]+\/?$/
+const CHANNEL_PATH = /^\/(?:(?:popout|embed)\/)?([a-zA-Z0-9_-]+)/
+export function twitchVodId(pathname) {
+  const m = VOD_PATH.exec(String(pathname || ''))
+  return m ? m[1] : ''
+}
+export function twitchPageKind(pathname, hostname = '') {
+  const p = String(pathname || '')
+  if (String(hostname).toLowerCase() === 'clips.twitch.tv') return 'clip'
+  if (VOD_PATH.test(p)) return 'vod'
+  if (CLIP_PATH.test(p)) return 'clip'
+  const m = CHANNEL_PATH.exec(p)
+  return m && !RESERVED_PATHS.has(m[1].toLowerCase()) ? 'channel' : 'other'
+}

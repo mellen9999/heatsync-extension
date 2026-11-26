@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "watching"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "temporary tab: watching another stream takes its slot · right-click to keep"
   },

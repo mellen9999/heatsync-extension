@@ -194,6 +194,8 @@ function _renderMessagesImpl(id, opts) {
   const asOf = renderAsOf(msgsEl)
   if (id === 'mentions') {
     msgs = mentionsBuffer
+  } else if (id === 'vod') {
+    msgs = vodBuffer
   } else if (id === 'add') {
     hideMultistreamBanner()
     // The form (or its import / paste view) is already up. Renders land here from all over
@@ -1015,6 +1017,11 @@ function getCurrentChannel() {
   // gate on host instead.
   if (!/^(www\.|m\.)?(twitch\.tv|kick\.com)$/.test(location.hostname)) return null
 
+  // A VOD or a clip has no live channel: its page is not the channel's chat (twitchPageKind)
+  if (location.hostname.includes('twitch.tv') && twitchPageKind(location.pathname, location.hostname) !== 'channel') {
+    return null
+  }
+
   // Match /username or /popout/username/chat or /embed/username/chat
   const match = location.pathname.match(/^\/(?:popout\/|embed\/)?([a-zA-Z0-9_-]+)/)
   if (match?.[1]) {
@@ -1190,6 +1197,7 @@ function bootSwitch() {
     _autoSwitching = false
   }
   if (followsPage) _bouncedFromLive = to
+  vodSync() // a vod page opens on its replay tab
 }
 
 /** Promote the temp tab to a saved channel tab (the existing resolve path does

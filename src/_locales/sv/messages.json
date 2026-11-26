@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "tittar"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "tillfällig flik: en annan stream tar dess plats · högerklicka för att behålla"
   },

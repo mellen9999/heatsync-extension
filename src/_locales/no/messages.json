@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "ser på"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "midlertidig fane: en annen stream tar plassen · høyreklikk for å beholde"
   },

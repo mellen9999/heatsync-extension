@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "izliyor"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "geçici tab: başka bir yayın izlenince yerini o alır · tutmak için sağ tık"
   },

@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "гледане"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "временен таб: друг стрийм заема мястото му · десен клик, за да го запазиш"
   },

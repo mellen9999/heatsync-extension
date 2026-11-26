@@ -32,6 +32,8 @@ const MC_TABS = [
   { id: 'pinned', labelKey: 'mc_tab_pinned', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'modlog', labelKey: 'mc_tab_modlog', bar: 'scroll', hiddenByDefault: true, restorable: true },
   { id: 'live', labelKey: 'mc_tab_live', bar: 'scroll', restorable: true, sub: MC_LIVE_SUB },
+  // temp: no saved cell, no restore; it exists only on a twitch VOD (vod-replay.js) and never syncs
+  { id: 'vod', labelKey: 'mc_tab_vod', bar: 'scroll', temp: true },
   { id: 'add', label: '+', bar: 'scroll', restorable: true },
   {
     id: 'settings',

@@ -68,6 +68,7 @@ function handleMcNav() {
   // Popout chat is exempt since it never SPA-navigates between URLs.
   if (hostPlatform === 'twitch' && !document.body.classList.contains('hs-popout')) {
     softTwitchNav(prevLiveCh)
+    vodSync() // onto a vod: its replay tab; off one: back to where the reader was
     return
   }
 

@@ -211,6 +211,7 @@
   "mc_tab_feed": ["da", "de", "es", "it", "nl", "no", "pt_BR", "pt_PT", "tl"],
   "mc_tab_mentions": ["fr", "tl"],
   "mc_tab_modlog": ["tl"],
+  "mc_tab_vod": ["ar", "bg", "cs", "da", "de", "el", "es", "fi", "fr", "he", "hi", "hu", "id", "it", "ja", "ko", "ms", "nl", "no", "pl", "pt_BR", "pt_PT", "ro", "ru", "sk", "sv", "th", "tl", "tr", "uk", "vi", "zh_CN", "zh_TW"],
   "mc_tab_whispers": ["da", "el", "ms", "nl", "no", "ro", "tl", "vi"],
   "mc_tip_corpus_msgs": ["es", "fr", "pt_BR", "pt_PT"],
   "mc_tip_emoji": ["cs", "da", "el", "es", "fi", "fr", "hu", "id", "it", "ms", "nl", "no", "pl", "pt_BR", "pt_PT", "ro", "sk", "sv", "tl", "tr", "vi"],

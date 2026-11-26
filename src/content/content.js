@@ -9049,7 +9049,7 @@
       platform = 'twitch'
       // Extract channel from URL: /popout/CHANNEL/chat or just /CHANNEL
       const match = url.match(/\/popout\/([^/]+)\/chat/) || url.match(/twitch\.tv\/([^/?]+)/)
-      channelName = match ? match[1] : null
+      channelName = match && twitchPageKind(location.pathname, location.hostname) === 'channel' ? match[1] : null
       // Exclude system paths that aren't actual channels
       const excludedPaths = TWITCH_EXCLUDED_PATHS
       if (channelName && excludedPaths.has(channelName.toLowerCase())) {

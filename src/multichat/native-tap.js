@@ -81,6 +81,19 @@ function _tapReaderMissed(ch, now) {
   } catch (_) {}
 }
 
+// The channel a native line belongs to, read now: the page's own, else the last one tapped, but only
+// while the page IS a channel. After an in-app hop onto a VOD or a clip the old channel is dropped,
+// or its replay lines would be filed (and archived) under the channel left behind.
+function _tapPageChannel() {
+  try {
+    const page = getCurrentChannel()
+    if (page) return page.toLowerCase()
+    return twitchPageKind(location.pathname, location.hostname) === 'channel' ? (_tapChannel || '').toLowerCase() : ''
+  } catch (_) {
+    return ''
+  }
+}
+
 function _tapFindContainer() {
   return hsQuery('twitch:chat-message-container', [
     CONFIG.SELECTORS.TWITCH_CHAT_CONTAINER,
@@ -244,10 +257,7 @@ function _tapHandleRow(rowEl) {
   // channel resolved at MINE time — twitch SPA navs change the page channel
   // without re-running init; a stale _tapChannel would file (and archive!)
   // messages under the previous channel
-  let ch = _tapChannel
-  try {
-    ch = (getCurrentChannel() || _tapChannel || '').toLowerCase()
-  } catch (_) {}
+  const ch = _tapPageChannel()
   if (!ch) return
   if (ch !== _tapChannel) _tapChannel = ch
   // richness guard: when IRC flow is HEALTHY for this channel (3+ msgs in
@@ -441,10 +451,7 @@ function _nsStart() {
         return
       }
       // channel resolved at receive time — same SPA-nav rationale as the tap
-      let ch = ''
-      try {
-        ch = (getCurrentChannel() || _tapChannel || '').toLowerCase()
-      } catch (_) {}
+      const ch = _tapPageChannel()
       if (!ch) {
         _nsStats.dropNoCh++
         return

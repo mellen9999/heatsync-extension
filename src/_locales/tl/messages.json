@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "pinapanood"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "pansamantalang tab: papalitan ito kapag nanood ng ibang stream · i-right-click para panatilihin"
   },

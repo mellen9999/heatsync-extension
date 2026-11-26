@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "nézem"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "ideiglenes lap: másik stream nézésekor átveszi a helyét · jobb klikk a megtartáshoz"
   },

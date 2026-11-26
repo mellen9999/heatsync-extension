@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "θέαση"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "προσωρινή καρτέλα: άλλο stream παίρνει τη θέση της · δεξί κλικ για να την κρατήσεις"
   },

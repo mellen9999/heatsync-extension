@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "sledujem"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "dočasná karta: iný stream zaberie jej miesto · pravý klik ju ponechá"
   },

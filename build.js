@@ -997,6 +997,7 @@ const MULTICHAT_MODULES = [
   'seed-legs.js',
   'rejoin.js',
   'channel-mgmt.js',
+  'vod-replay.js',
   'spa-nav.js',
   'type-to-focus.js',
 ]

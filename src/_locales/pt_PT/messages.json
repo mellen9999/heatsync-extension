@@ -344,6 +344,9 @@
   "mc_tab_live": {
     "message": "a ver"
   },
+  "mc_tab_vod": {
+    "message": "vod"
+  },
   "mc_tab_temp_title": {
     "message": "separador temporário: ver outra stream ocupa o lugar dele · clique direito para manter"
   },

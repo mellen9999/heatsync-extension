@@ -78,9 +78,12 @@ describe('a picker tile carries a corner mark for who sees it', () => {
   )
   const html = (name, emote) => mkHtml([name, { url: 'https://x/e.webp', ...emote }])
   const mark = (name, emote) => /data-mark="([^"]*)"/.exec(html(name, emote))?.[1] ?? null
-  test('everyone sees it: no mark', () => {
-    expect(mark('Kappa', { source: 'twitch' })).toBeNull()
-    expect(mark('kickW', { source: 'kick' })).toBeNull()
+  test("a platform's own emote wears its platform's letter: T twitch, K kick", () => {
+    expect(mark('Kappa', { source: 'twitch' })).toBe('T')
+    expect(mark('kickW', { source: 'kick' })).toBe('K')
+  })
+  test('no mark is only for what has no platform letter: an unclassifiable provider', () => {
+    expect(mark('x', { source: 'newthing' })).toBeNull()
   })
   test('provider users only: 7, B, F', () => {
     expect(mark('a', { source: '7tv', state: 'global' })).toBe('7')

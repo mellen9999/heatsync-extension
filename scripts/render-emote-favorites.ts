@@ -28,6 +28,8 @@ const PNG = Buffer.from(
 const E = (n: string) => `https://cdn.heatsync.org/emote/${n}.png`
 // one 7tv picture the room holds and the viewer owns too
 const BIGDOG = 'https://cdn.7tv.app/emote/01BIGDOGBIGDOGBIGDOGBIGD/2x.webp'
+// twitch's own picture the room draws, and the same picture in your set at another size
+const KAPPA = 'https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/2.0'
 const body = '<div id="host-content" style="height:100vh">host page</div><div class="right-column right-column--beside" id="rcol"></div>'
 const html = `<!doctype html><html><head><title>fixture</title></head><body style="margin:0">${body}</body></html>`
 
@@ -101,12 +103,14 @@ try {
       emote_inventory: [
         { name: 'Mine', url: u.Mine_inv, source: 'heatsync', hash: 'minehash' },
         { name: 'BigDog', url: u.BigDog_inv, source: '7tv', hash: 'bigdoghash' },
+        { name: 'KappaNat', url: u.Kappa_inv, source: 'twitch', hash: 'kappaownhash' },
       ],
     })
-  }, { ...Object.fromEntries(['Away_fav', 'Mine_inv'].map((n) => [n, E(n)])), BigDog_inv: BIGDOG.replace('2x', '1x') })
+  }, { ...Object.fromEntries(['Away_fav', 'Mine_inv'].map((n) => [n, E(n)])), BigDog_inv: BIGDOG.replace('2x', '1x'), Kappa_inv: KAPPA.replace('2.0', '1.0') })
   const room = [
     { name: 'Wlol', url: E('Wlol_room'), source: '7tv', hash: 'wlolroomhash' },
     { name: 'Awake', url: E('Awake_room'), source: '7tv', hash: 'awakeroomhash' },
+    { name: 'KappaNat', url: KAPPA, source: 'twitch', hash: 'kapparoomhash' },
     { name: 'BigDog', url: BIGDOG, source: '7tv', id: '01BIGDOGBIGDOGBIGDOGBIGD' },
   ]
   const seedRoom = (tell: boolean) =>
@@ -124,6 +128,8 @@ try {
 
   const p = await c.newPage()
   p.on('pageerror', (e: unknown) => errors.push(String(e).slice(0, 300)))
+  // what you sent last: BigDog's picture, drawn in the recents row too
+  await p.addInitScript(() => localStorage.setItem('hs-mc-recent-emotes', JSON.stringify(['BigDog\ncdn.7tv.app/01BIGDOGBIGDOGBIGDOGBIGD'])))
   await p.goto('https://www.twitch.tv/probechan', { waitUntil: 'domcontentloaded' })
   await p.waitForSelector('#hs-mc-input', { timeout: 25_000 })
   await until(p, async () => irc.frames.some((f) => f.startsWith('JOIN')))
@@ -188,6 +194,19 @@ try {
     els.map((x) => (x.closest('.hs-mc-picker-emote-wrap') as HTMLElement).dataset.mark ?? null),
   )
   check(bigMarks.length > 0 && bigMarks.every((m: string | null) => m === '7'), `a. every BigDog tile (room + yours, one picture) is marked 7 (got ${JSON.stringify(bigMarks)})`)
+  // a platform's own emote wears its platform's letter: twitch's tile says T, in the same white-on-black corner
+  const natMark = await markOf(`${PICKER} .hs-mc-picker-emote-wrap img[alt="KappaNat"]`)
+  check(natMark.mark === 'T' && natMark.content === '"T"' && natMark.bg === 'rgb(0, 0, 0)', `a. a twitch-native tile is marked T (got ${JSON.stringify(natMark)})`)
+  // one picture, one mark in every section: BigDog is in the recents row and the room,
+  // twitch's own picture in the room and your set at another size: T in each
+  const bigWhere = await p.$$eval(`${PICKER} .hs-mc-picker-emote-wrap img[alt="BigDog"]`, (els: HTMLImageElement[]) =>
+    els.map((x) => x.closest('[data-section-key]')?.getAttribute('data-section-key')),
+  )
+  check(bigWhere.includes('recent') && bigWhere.includes('channel'), `a. BigDog is drawn in recents and the room (got ${JSON.stringify(bigWhere)})`)
+  const natMarks = await p.$$eval(`${PICKER} .hs-mc-picker-emote-wrap img[alt="KappaNat"]`, (els: HTMLImageElement[]) =>
+    els.map((x) => (x.closest('.hs-mc-picker-emote-wrap') as HTMLElement).dataset.mark ?? null),
+  )
+  check(natMarks.length >= 1 && natMarks.every((m: string | null) => m === 'T'), `a. every KappaNat tile is marked T, your copy at another size is no won't-show cross (got ${JSON.stringify(natMarks)})`)
   const mineMark = await markOf(`${PICKER} .hs-mc-picker-emote-wrap img[alt="Mine"]`)
   check(mineMark.mark === 'H', `a. a name only your set has stays H (got ${JSON.stringify(mineMark)})`)
   await p.click(roomTile, { button: 'right', modifiers: ['Shift'] })

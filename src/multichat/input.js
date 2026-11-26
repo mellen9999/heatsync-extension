@@ -900,10 +900,14 @@ let _acRemoteAbort = null
 // the whole url for anything else ('' for none). Emotes that share a NAME are told
 // apart by this — a twin is the same picture, never merely the same name.
 const _AC_PIC_RE = /^https?:\/\/(cdn\.7tv\.app|cdn\.betterttv\.net|cdn\.frankerfacez\.com)\/emote\/([^/?#]+)/i
+// a platform's own emote is its id at any size or theme (twitch .../v2/25/default/dark/2.0 = .../1.0)
+const _AC_NATIVE_RE = /^https:\/\/(static-cdn\.jtvnw\.net\/emoticons\/v2|files\.kick\.com\/emotes)\/([^/?#]+)\//
 function _acPicKey(url) {
   if (!url) return ''
   const m = _AC_PIC_RE.exec(url)
-  return m ? `${m[1].toLowerCase()}/${m[2]}` : String(url)
+  if (m) return `${m[1].toLowerCase()}/${m[2]}`
+  const n = _AC_NATIVE_RE.exec(url)
+  return n ? `${n[1].slice(0, n[1].indexOf('/'))}/${n[2]}` : String(url)
 }
 let _acRemoteToken = 0
 // Searches the remote catalog will never serve: @user, :emoji, modifier

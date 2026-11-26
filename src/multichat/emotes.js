@@ -1015,11 +1015,15 @@ async function hsMcImportChannelEmotes(btn, channel) {
 }
 
 // the one-letter corner mark of a picker tile: who sees the emote if sent, from the readout's own
-// classification (`k`). everyone = no mark; a copy the platform would not show is the red cross. an ext class names its provider's letter
+// classification (`k`). a platform's own emote wears that platform's letter (T twitch, K kick: only
+// that platform's viewers see it), an ext class its provider's letter, heatsync-only H; a copy the
+// platform would not show is the red cross. no mark only when nothing classifies (unknown provider)
 const HS_VIS_MARK = { '7tv': '7', bttv: 'B', ffz: 'F' }
+const NATIVE_VIS_MARK = { twitch: 'T', kick: 'K' }
 function emoteVisMark(vis, source) {
   if (vis?.k === 'wont') return '✗'
   if (vis?.k === 'heatsync') return 'H'
+  if (vis?.k === 'everyone') return NATIVE_VIS_MARK[source] || ''
   return vis?.k === 'ext' ? HS_VIS_MARK[source] || '' : ''
 }
 

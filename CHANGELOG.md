@@ -1,5 +1,14 @@
 # changelog
 
+## [1.7.148] — 2026-11-25
+
+### added
+- **big emote-only lines** — a chat line of just emotes (up to 5) draws them twice as big. settings › chat turns it off.
+
+### fixed
+- **your uploaded emotes animate in step** — an animated emote you uploaded to heatsync now plays on the same clock as every other copy.
+- **every picker letter agrees with the site** — youtube emotes wear `Y`, and a kick emote in a twitch-only room wears `H`, the same answer heatsync.org gives.
+
 ## [1.7.147] — 2026-11-25
 
 ### added

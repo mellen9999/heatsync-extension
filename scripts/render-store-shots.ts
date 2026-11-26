@@ -3,8 +3,11 @@
  *
  *   bun run build.js chrome --minify && bun scripts/render-store-shots.ts      (bun run shots:store)
  *
+ * Also the two promo tiles the chrome and edge stores show: small-440x280.png and marquee-1400x560.png
+ * (the icon, the name and one line; the marquee adds a crop of the panel as shot in 01).
+ *
  * Writes store-assets/cws-ready-2026-11/01..05-*.png (OUT=<dir> to put them elsewhere; ONLY=3 or
- * ONLY=3,4 to redo some). The order is the store listing's order (docs/STORE-LISTING.md): the claim
+ * ONLY=3,4 or ONLY=small,marquee to redo some). The order is the store listing's order (docs/STORE-LISTING.md): the claim
  * each picture proves is the line above it.
  *
  * Everything on screen is invented: the channel, the chatters, their lines, and every emote picture
@@ -13,7 +16,7 @@
  * checked after it is written: exact size, 24-bit rgb (no alpha, as the chrome store asks), and no
  * orange anywhere but heatsync's own brand marks (BRAND below).
  */
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { assertBuilt } from './lib/chromium'
 import { KK, MERGED, OTHER_TABS, ROOM, TW, VIEWER, YT, YT_COLORS, emote, ytId } from './render/store-cast'
@@ -143,12 +146,63 @@ async function compose(s: Stage, panel: Buffer, caption: string) {
   return png
 }
 
+
+// ── promo tiles: icon + name + one line, black, white text; the marquee adds a crop of the panel ─
+const TAGLINE = 'twitch, kick and youtube chat in one panel'
+const icon = (f: string) => `data:image/png;base64,${readFileSync(join(import.meta.dir, '..', 'chrome', f)).toString('base64')}`
+
+interface Tile {
+  file: string
+  w: number
+  h: number
+  /** the panel crop on the right, 1 device px per px (marquee only) */
+  panel?: boolean
+}
+const TILES: Tile[] = [
+  { file: 'small-440x280.png', w: 440, h: 280 },
+  { file: 'marquee-1400x560.png', w: 1400, h: 560, panel: true },
+]
+
+async function composeTile(s: Stage, t: Tile, panel: Buffer | null) {
+  const page = await s.c.newPage()
+  await page.setViewportSize({ width: t.w, height: t.h })
+  const small = !panel
+  const ic = small ? 96 : 128
+  const name = small ? 48 : 96
+  const line = small ? 22 : 36
+  const left = small ? 0 : 640
+  await page.setContent(
+    `<!doctype html><html><head><style>
+      html,body{margin:0;background:#000;color:#fff;overflow:hidden}
+      body{width:${t.w}px;height:${t.h}px;position:relative;font-family:monospace;text-transform:lowercase}
+      #copy{position:absolute;left:${small ? 24 : 56}px;top:0;width:${small ? t.w - 48 : 560}px;height:${t.h}px;display:flex;flex-direction:column;justify-content:center;gap:${small ? 14 : 28}px}
+      #row{display:flex;align-items:center;gap:${small ? 14 : 24}px}
+      #ic{width:${ic}px;height:${ic}px;image-rendering:pixelated;display:block}
+      #nm{font-size:${name}px;font-weight:700;line-height:1}
+      #ln{font-size:${line}px;line-height:1.25}
+      #pn{position:absolute;left:${left}px;top:0;width:${t.w - left}px;height:${t.h}px;overflow:hidden;border-left:1px solid #fff;box-sizing:border-box}
+      #pn img{position:absolute;left:0;top:0;display:block;width:1280px;height:744px}
+    </style></head><body>
+      <div id="copy"><div id="row"><img id="ic" src="${icon(small ? 'icon-96.png' : 'icon-128.png')}"><div id="nm">heatsync</div></div><div id="ln">${TAGLINE}</div></div>
+      ${panel ? `<div id="pn"><img src="data:image/png;base64,${panel.toString('base64')}"></div>` : ''}
+    </body></html>`,
+  )
+  await page.evaluate(() => Promise.all([...document.images].map((i) => i.decode())))
+  const brand: Box[] = await page.evaluate(() => {
+    const r = document.getElementById('ic')!.getBoundingClientRect()
+    return [{ x: Math.floor(r.left) - 2, y: Math.floor(r.top) - 2, w: Math.ceil(r.width) + 4, h: Math.ceil(r.height) + 4 }]
+  })
+  const png = await page.screenshot({ type: 'png', scale: 'css' })
+  await page.close()
+  return { png, brand }
+}
+
 // ── check what was written ──────────────────────────────────────────────────────────────────────
 type Box = { x: number; y: number; w: number; h: number }
-async function check(s: Stage, png: Buffer, brand: Box[], file: string) {
+async function check(s: Stage, png: Buffer, brand: Box[], file: string, W = SHOT_W, H = SHOT_H) {
   const w = png.readUInt32BE(16)
   const h = png.readUInt32BE(20)
-  if (w !== SHOT_W || h !== SHOT_H) throw new Error(`${file}: ${w}x${h}, not ${SHOT_W}x${SHOT_H}`)
+  if (w !== W || h !== H) throw new Error(`${file}: ${w}x${h}, not ${W}x${H}`)
   if (png[25] !== 2) throw new Error(`${file}: png colour type ${png[25]}, not 2 (24-bit rgb with no alpha)`)
   const page = await s.c.newPage()
   const orange = await page.evaluate(
@@ -187,6 +241,7 @@ async function check(s: Stage, png: Buffer, brand: Box[], file: string) {
 async function main() {
   assertBuilt()
   mkdirSync(OUT, { recursive: true })
+  const wantTiles = TILES.filter((t) => !ONLY.length || ONLY.some((o) => t.file.startsWith(o)))
   const todo = SHOTS.filter((x, i) => !ONLY.length || ONLY.includes(String(i + 1)) || ONLY.includes(x.file))
   for (const shot of todo) {
     console.log(`\n── ${shot.file} ──`)
@@ -219,7 +274,34 @@ async function main() {
       await s.stop()
     }
   }
-  console.log(`\n✓ ${todo.length} store shot(s) in ${OUT}`)
+  if (wantTiles.length) {
+    // the marquee's panel is shot the way 01 is, alone, then cropped
+    const s = await bootStage({ ...base, ...SHOTS[0].opts } as StageOpts)
+    try {
+      await SHOTS[0].run(s)
+      await s.settle()
+      const brand: Box[] = await s.p.evaluate(
+        ([sel, sc]: [string, number]) =>
+          [...document.querySelectorAll(sel)].map((e) => {
+            const r = e.getBoundingClientRect()
+            return { x: Math.floor(r.left * sc) - 2 + 640, y: Math.floor(r.top * sc) - 2, w: Math.ceil(r.width * sc) + 4, h: Math.ceil(r.height * sc) + 4 }
+          }),
+        [BRAND, SCALE] as [string, number],
+      )
+      const panel = await s.p.screenshot({ type: 'png' })
+      for (const t of wantTiles) {
+        console.log(`\n── ${t.file} ──`)
+        const r = await composeTile(s, t, t.panel ? panel : null)
+        await check(s, r.png, [...r.brand, ...(t.panel ? brand : [])], t.file, t.w, t.h)
+        if (s.errors.length) throw new Error(`${t.file}: page errors: ${s.errors.join(' | ')}`)
+        writeFileSync(join(OUT, t.file), r.png)
+        console.log(`✓ ${t.file}  "${TAGLINE}"`)
+      }
+    } finally {
+      await s.stop()
+    }
+  }
+  console.log(`\n✓ ${todo.length} store shot(s) + ${wantTiles.length} tile(s) in ${OUT}`)
 }
 
 try {

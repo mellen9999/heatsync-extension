@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.150] — 2026-11-26
+
+### changed
+- **big emote-only lines are off by default** — a big line takes 2 to 4 rows, and chat reads best one row per line. turn them on in settings › display › chat messages › "big emote-only lines". the site, the desktop app and the terminal app changed the same way.
+
 ## [1.7.149] — 2026-11-26
 
 ### added

@@ -17,22 +17,31 @@
  * then the kick channel of the same name loads a W of its own and a KiOnly: a twitch row still
  * draws twitch's W, and KiOnly is text there (each platform's row reads its own emotes).
  * What the viewer sends (the emote law, send + offer), with Wlol in the channel AND in their
- * inventory as two pictures:
+ * inventory as two pictures. One name = one picture = one tile in a room: the viewer's own Wlol
+ * is a second picture of a name the room answers, so it is never offered there (picker, Tab).
+ * Fav is the pick that can still be a choice: a favorite of theirs that the first tab's room does
+ * not hold (typed, it is text there); the second tab's room holds a Fav of its own; the third
+ * tab's room holds neither Wlol nor Fav:
  *   e. Wlol typed by hand                   -> the chip and the sent row are the channel's
- *   f. Wlol + Tab, Tab                      -> the second copy is theirs; it ships and their row draws it
- *   g. Wlol typed by hand in the next line  -> the channel's again: a pick dies with its message
- *   h. the picker's recents                 -> both pictures of Wlol, as sent, the last one first
+ *   f. Wlol + Tab, Tab                      -> one candidate, the channel's, caret stays in the box; Tab on Fav
+ *      picks the favorite and it ships and their row draws it. in the third tab's room the viewer's own
+ *      Wlol IS offered (picker tile marked H, Tab) and is what typing it sends
+ *   g. Wlol and Fav typed by hand in the next line -> the channel's Wlol, Fav text: a pick dies with its message
+ *   h. the picker's recents                 -> the room's Wlol (the picture sent that this room reaches), and no tile
+ *      anywhere in this room's picker is the viewer's own Wlol; no tile wears the red cross
+ *   m. a line brought back with the up arrow keeps a pick made in another room (ArrowUp), sent from the next tab
  * A right-click on an emote in the box acts on the picture the box shows, as it does on a chat line:
  *   n. the channel's Wlol typed in the box (a name the viewer also owns) -> that picture is
  *      blocked, the viewer's own Wlol is NOT removed; a second right-click unblocks it
  *   o. blocking the channel's Wlol on a chat line never dashes a box chip of the viewer's own Wlol
- *   p. the viewer's own Wlol in the box -> removed from their set; the chip is read again and is
- *      the channel's, which is what the line then ships
+ *      (in the third tab, whose room does not hold the name)
+ *   p. the viewer's own Wlol in that box -> removed from their set; the chip is read again: no other
+ *      Wlol is held there, so it is text, which is what the line then ships
  *   q. an emote only the viewer has, removed from the box -> the word is text again (as it ships)
  *   r. the channel's W changes while its chip sits in the box -> the row sent is the picture the
  *      box showed at enter, whichever that was
- *   x. `Wlol and Wlol` + Tab, Tab -> both are the viewer's own: a pick answers every copy of its
- *      name in the line, and the row draws what the box showed
+ *   x. `Fav and Fav` + Tab -> both are the favorite: a pick answers every copy of its name in the
+ *      line (the earlier one was text), and the row draws what the box showed
  * Modifiers (shared/emote-mods.vectors.json is the rule): one emote changes, the same one in the
  * box, on the wire and on the row:
  *   s. a chatter's `Wlol w! Wlol` widens the second, `Wlol ffzX Wlol` flips the first, a word
@@ -46,16 +55,16 @@
  *      that went out, and what the box showed at enter. every other one is sent straight after
  *      its last word, before the box has taken it
  *   y. 30 messages of a seeded random session (HS_SESSION_LINES, HS_SESSION_SEED): typed names, Tab
- *      picks, a second Tab, tab switches mid-line, the up arrow. the box at enter is the row, a
+ *      picks of the open room's Wlol (kept across a tab switch), tab switches mid-line, the up arrow. the box at enter is the row, a
  *      typed word is its tab's emote, a pick is its picture, a recalled line keeps the picks that
  *      were a choice. words are deleted with backspace and their names put back by keys or by a
  *      paste: a pick is over when its word leaves the box. a pick is also a click on a picker
  *      tile, and a letter typed against an emote leaves it the emote it was
- *   z. `Wlol` + Tab, Tab (your own), backspace it out, paste `Wlol` -> the room's emote, a typed
- *      word, not the pick that was deleted. the same delete, then ctrl-z -> the chip is back as
- *      your own, and ships as it
- *      two copies both your own, the second deleted, a word typed, undone back -> both still
- *      your own. after a delete and its undo, Tab on the next name completes that name
+ *   z. `Fav` + Tab (the favorite), backspace it out, paste `Fav` -> a typed word, text here, not
+ *      the pick that was deleted. the same delete, then ctrl-z -> the chip is back as the favorite,
+ *      and ships as it
+ *      two copies both the favorite, the second deleted, a word typed, undone back -> both still
+ *      the favorite. after a delete and its undo, Tab on the next name completes that name
  * then right-click another chatter's W: it is blocked, the viewer's own W is NOT removed, and
  * only that exact emote hides.
  */
@@ -74,6 +83,7 @@ const body = '<div id="host-content" style="height:100vh">host page</div><div cl
 const html = `<!doctype html><html><head><title>fixture</title></head><body style="margin:0">${body}</body></html>`
 
 const failures: string[] = []
+const one = (list: string[], part: string) => list.length === 1 && list[0].includes(part)
 const check = (cond: boolean, msg: string) => {
   console.log(`${cond ? '✓' : '✗'} ${msg}`)
   if (!cond) failures.push(msg)
@@ -165,9 +175,15 @@ try {
           { id: 'probechan', twitch: 'probechan', kick: '', youtube: '' },
           // a second tab with its own Wlol: the box is read against the tab it is in (case l)
           { id: 'probechan2', twitch: 'probechan2', kick: '', youtube: '' },
+          // a third tab whose room holds neither Wlol nor Fav: your own Wlol is offered there (case f)
+          { id: 'probechan3', twitch: 'probechan3', kick: '', youtube: '' },
         ],
       },
-      user_info: { username: 'probeuser' },
+      user_info: { id: 7, username: 'probeuser' },
+      // a favorite no room, no set and no global holds in the first tab: a pick of it is a real choice (typed, Fav is text
+      // there). the second tab's room holds a Fav of its own, so there the favorite is the room's to override
+      emote_favorites: [{ name: 'Fav', url: u.Fav_fav, provider: 'hs' }],
+      emote_favorites_owner: '7',
       global_emotes: [{ name: 'W', url: u.W_global, source: '7tv', hash: 'globalhash' }],
       emote_inventory: [
         { name: 'W', url: u.W_inv, source: 'heatsync', hash: 'invhash' },
@@ -176,7 +192,7 @@ try {
         { name: 'Mine', url: u.Mine_inv, source: 'heatsync', hash: 'mineinvhash' },
       ],
     })
-  }, Object.fromEntries(['W_global', 'W_inv', 'Wlol_inv', 'Mine_inv', 'W_bttv', 'W_7tv', 'W_ffz'].map((n) => [n, E(n)])))
+  }, Object.fromEntries(['W_global', 'W_inv', 'Wlol_inv', 'Mine_inv', 'W_bttv', 'W_7tv', 'W_ffz', 'Fav_fav'].map((n) => [n, E(n)])))
   // Seed the channel's sets the way the background holds them after a real fetch: in its memory
   // and in its IndexedDB (never storage.local, which every tab would hear). It answers a tab's
   // cold-start pull (get_channel_emotes_map) from there.
@@ -229,8 +245,11 @@ try {
       emotes,
     })
   }, Object.fromEntries(['W_bttv', 'W_7tv', 'W_ffz', 'Wlol_room'].map((n) => [n, E(n)])))
-  await sw.evaluate(async (url: string) => {
-    const emotes = [{ name: 'Wlol', url, source: '7tv', hash: 'wlolroom2hash' }]
+  await sw.evaluate(async ([url, favUrl]: string[]) => {
+    const emotes = [
+      { name: 'Wlol', url, source: '7tv', hash: 'wlolroom2hash' },
+      { name: 'Fav', url: favUrl, source: '7tv', hash: 'favroom2hash' },
+    ]
     // @ts-ignore — service worker globals
     channelEmotesMap['twitch/probechan2'] = emotes
     // @ts-ignore
@@ -239,7 +258,19 @@ try {
     await bgPersistChannelEmotes('twitch/probechan2')
     // @ts-ignore
     broadcastToTabs({ type: 'channel_emotes_update', channelOwner: 'probechan2', platform: 'twitch', emotes })
-  }, E('Wlol_room2'))
+  }, [E('Wlol_room2'), E('Fav_room2')])
+  // the third room holds a name of its own and nothing the viewer owns: yours is offered there
+  await sw.evaluate(async (url: string) => {
+    const emotes = [{ name: 'Other', url, source: '7tv', hash: 'otherhash' }]
+    // @ts-ignore — service worker globals
+    channelEmotesMap['twitch/probechan3'] = emotes
+    // @ts-ignore
+    channelEmotesFetchedAt['twitch/probechan3'] = Date.now()
+    // @ts-ignore
+    await bgPersistChannelEmotes('twitch/probechan3')
+    // @ts-ignore
+    broadcastToTabs({ type: 'channel_emotes_update', channelOwner: 'probechan3', platform: 'twitch', emotes })
+  }, E('Other_room3'))
   await p.waitForTimeout(1500)
 
   const now = Date.now()
@@ -316,7 +347,7 @@ try {
     await p.keyboard.press('Backspace')
     await p.keyboard.type(text, { delay: 30 })
   }
-  const sent = (text: string) => irc.frames.some((f) => f.startsWith('PRIVMSG #probechan') && f.includes(text))
+  const sent = (text: string) => irc.frames.some((f) => f.startsWith('PRIVMSG #probechan') && f.replace(/\s+/g, ' ').includes(text))
   const rowHas = (word: string) => until(p, async () => (await imgOf(word)).has, 10_000)
 
   await typeLine('own1 Wlol ')
@@ -329,34 +360,52 @@ try {
   check(sent('own1 Wlol'), 'e. the line went out as the bare word')
   check(own1.src.includes('Wlol_room'), `e. the viewer's own row draws the channel's Wlol (got ${own1.src || 'nothing'})`)
 
+  const boxSrcs = () => p.evaluate(() => [...document.querySelectorAll('#hs-mc-input img.hs-input-emote')].map((i) => i.getAttribute('src') || ''))
+  const rowSrcs = (word: string) =>
+    p.evaluate((w: string) => {
+      const row = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes(w))
+      return [...(row?.querySelectorAll('.hs-mc-emote-wrapper img, img.hs-mc-emote') || [])].map((i) => i.getAttribute('src') || '')
+    }, word)
+  const inBoxNow = () => p.evaluate(() => document.activeElement?.id === 'hs-mc-input')
+  // one name = one picture = one tile: the viewer's own Wlol is a second picture of a name this room holds, so it is
+  // never offered here. Tab's only answer is the room's, a second Tab stays on it (a cycle of one keeps focus in the
+  // box), and what is sent is the room's. Fav is the pick that can still be a choice: nothing here holds the name, so
+  // typed it is text, and the favorite's picture is offered, picked and shipped
   await typeLine('own2 Wlol')
   await p.keyboard.press('Tab')
   await until(p, async () => !!(await chipSrc()), 5000)
   const tab1 = await chipSrc()
   check(tab1.includes('Wlol_room'), `f. Tab's first answer for the typed name is what typing it sends: the channel's (got ${tab1 || 'no chip'})`)
   await p.keyboard.press('Tab')
-  await until(p, async () => (await chipSrc()).includes('Wlol_inv'), 5000)
-  const tab2 = await chipSrc()
-  check(tab2.includes('Wlol_inv'), `f. the second Tab is the viewer's own copy of the name (got ${tab2 || 'no chip'})`)
+  await p.waitForTimeout(400)
+  const tab2 = await boxSrcs()
+  check(one(tab2, 'Wlol_room') && (await inBoxNow()), `f. the second Tab has no second copy to step to: the viewer's own Wlol is not offered in a room that holds the name, and the caret stays in the box (got ${JSON.stringify(tab2)})`)
+  await p.keyboard.type(' Fav', { delay: 30 })
+  await p.keyboard.press('Tab')
+  await until(p, async () => (await boxSrcs()).length === 2, 5000)
+  const favBox = await boxSrcs()
+  check(favBox.length === 2 && favBox[0].includes('Wlol_room') && favBox[1].includes('Fav_fav'), `f. Tab on Fav, a name this room does not hold, offers the favorite and its picture is the pick (got ${JSON.stringify(favBox)})`)
   await p.keyboard.press('Enter')
   await rowHas('own2')
   await p.waitForTimeout(800)
-  const own2 = await imgOf('own2')
-  check(sent('own2 Wlol'), 'f. the picked line went out as the bare word too')
-  check(own2.src.includes('Wlol_inv'), `f. the picked copy is what the viewer's own row draws (got ${own2.src || (own2.has ? 'a row with no emote' : 'no row')})`)
+  const own2 = await rowSrcs('own2')
+  check(sent('own2 Wlol Fav'), `f. the picked line went out as bare words (frames ${JSON.stringify(irc.frames.filter((f) => f.includes('own2')).map((f) => f.slice(0, 120)))})`)
+  check(own2.length === 2 && own2[0].includes('Wlol_room') && own2[1].includes('Fav_fav'), `f. the viewer's own row draws the room's Wlol and the favorite picked (got ${JSON.stringify(own2)})`)
 
-  await typeLine('own3 Wlol ')
+  await typeLine('own3 Wlol Fav ')
   await until(p, async () => !!(await chipSrc()), 5000)
-  const chip3 = await chipSrc()
-  check(chip3.includes('Wlol_room'), `g. the next line, Wlol typed by hand: the channel's again, the pick died with its message (got ${chip3 || 'no chip'})`)
+  await p.waitForTimeout(300)
+  const chip3 = await boxSrcs()
+  check(one(chip3, 'Wlol_room'), `g. the next line, Wlol and Fav typed by hand: the channel's Wlol, and Fav is text again, the pick died with its message (got ${JSON.stringify(chip3)})`)
   await p.keyboard.press('Enter')
   await rowHas('own3')
-  const own3 = await imgOf('own3')
-  check(own3.src.includes('Wlol_room'), `g. and that row draws the channel's Wlol (got ${own3.src || 'nothing'})`)
-  const own2Still = await imgOf('own2')
-  check(own2Still.src.includes('Wlol_inv'), `g. the earlier row keeps the picture it was sent with (got ${own2Still.src || 'nothing'})`)
+  await p.waitForTimeout(500)
+  const own3 = await rowSrcs('own3')
+  check(one(own3, 'Wlol_room'), `g. and that row draws the channel's Wlol and Fav as text (got ${JSON.stringify(own3)})`)
+  const own2Still = await rowSrcs('own2')
+  check(own2Still.length === 2 && own2Still[1].includes('Fav_fav'), `g. the earlier row keeps the picture it was sent with (got ${JSON.stringify(own2Still)})`)
 
-  // the picker's recents are the pictures those three lines shipped, the last one first
+  // the picker's recents are the pictures those lines shipped, the last one first, and only those this room can reach
   await p.click('#hs-mc-emote-btn', { timeout: 5000 })
   await p.waitForSelector('#hs-mc-emote-picker.visible', { timeout: 10_000 })
   const recentPics = () =>
@@ -366,9 +415,18 @@ try {
   await until(p, async () => (await recentPics()).length >= 2, 5000)
   const rec = await recentPics()
   check(
-    rec.length === 2 && rec[0].includes('Wlol_room') && rec[1].includes('Wlol_inv'),
-    `h. recents hold both pictures of Wlol that were sent, the last sent first (got ${JSON.stringify(rec)})`,
+    rec.length >= 1 && rec[0].includes('Wlol_room') && !rec.some((r) => r.includes('Wlol_inv')),
+    `h. recents hold the pictures that were sent and this room reaches, the room's Wlol first: the viewer's own Wlol, never the one this room answers with, is not in them (got ${JSON.stringify(rec)})`,
   )
+  const everyTile = () =>
+    p.$$eval('#hs-mc-emote-picker .hs-mc-picker-emote-wrap img', (els: HTMLImageElement[]) =>
+      els.map((x) => `${(x.closest('[data-section-key]') as HTMLElement)?.dataset.sectionKey}:${x.alt}=${x.getAttribute('src') || ''}`),
+    )
+  const tilesA = await everyTile()
+  check(!tilesA.some((t) => t.includes('Wlol_inv')), `h. the viewer's own Wlol is no tile of this room's picker, in any section: the room's answer for the name is its Wlol (got ${JSON.stringify(tilesA.filter((t) => t.includes('Wlol')))})`)
+  check(tilesA.filter((t) => t.includes('=https://cdn.heatsync.org/emote/Wlol_room.png')).length >= 2, `h. the room's Wlol keeps its tile in each section that holds it (got ${JSON.stringify(tilesA.filter((t) => t.includes('Wlol')))})`)
+  const marksA = await p.$$eval('#hs-mc-emote-picker .hs-mc-picker-emote-wrap', (els: HTMLElement[]) => [...new Set(els.map((x) => x.dataset.mark || ''))])
+  check(marksA.every((m) => ['', '7', 'B', 'F', 'H', 'T', 'K'].includes(m)), `h. and no tile wears the red cross any more, only who-sees-it letters (marks ${JSON.stringify(marksA)})`)
   await p.click('#hs-mc-emote-btn', { timeout: 5000 }).catch(() => {})
   await p.keyboard.press('Escape').catch(() => {})
 
@@ -395,17 +453,40 @@ try {
   // ── a line brought back with the up arrow keeps the copy chosen in it ──
   await p.keyboard.press('ArrowUp') // own3: Wlol typed by hand
   await until(p, async () => (await chipSrc()).includes('Wlol_room'), 5000)
-  await p.keyboard.press('ArrowUp') // own2: the viewer's own Wlol, picked with a second Tab
-  await until(p, async () => (await chipSrc()).includes('Wlol_inv'), 5000)
-  const back = await chipSrc()
-  check(back.includes('Wlol_inv'), `m. the line sent with your own Wlol comes back with your own Wlol, not the channel's (got ${back || 'no chip'})`)
+  await p.keyboard.press('Control+A')
+  await p.keyboard.press('Backspace')
+  // a pick made in this room and sent from the next one is a real choice there (typed, Wlol is that room's own Wlol_room2):
+  // the line ships the pick, and a line brought back keeps it, in either room
+  await typeLine('own2b Wlol')
+  await p.keyboard.press('Tab')
+  await until(p, async () => one(await boxSrcs(), 'Wlol_room.'), 5000)
+  await p.click('.hs-mc-tab[data-tab="probechan2"]', { timeout: 5000 })
+  await p.waitForTimeout(400)
+  await p.focus('#hs-mc-input')
+  await p.keyboard.press('Control+End')
+  await p.keyboard.press('Enter')
+  await rowHas('own2b')
+  await p.waitForTimeout(800)
+  check(irc.frames.some((f) => f.startsWith('PRIVMSG #probechan2 ') && f.includes('own2b Wlol')), 'm. the picked line went out from the second tab, as the bare word')
+  const pickedRow = await rowSrcs('own2b')
+  check(one(pickedRow, 'Wlol_room.'), `m. and its row draws the pick, not the second room's Wlol (got ${JSON.stringify(pickedRow)})`)
+  await p.click('#hs-mc-input', { timeout: 5000 })
+  await p.keyboard.press('ArrowUp')
+  await until(p, async () => (await boxSrcs()).length === 1, 5000)
+  const back = await boxSrcs()
+  check(one(back, 'Wlol_room.'), `m. the line sent with a pick comes back with that pick, not the room's Wlol (got ${JSON.stringify(back)})`)
   await p.keyboard.type(' again', { delay: 30 })
   await p.keyboard.press('Enter')
   await rowHas('again')
   await p.waitForTimeout(800)
-  const again = await imgOf('again')
-  check(sent('own2 Wlol again'), 'm. the recalled line went out')
-  check(again.src.includes('Wlol_inv'), `m. and its row draws the copy that was picked (got ${again.src || (again.has ? 'a row with no emote' : 'no row')})`)
+  const again = await rowSrcs('again')
+  check(sent('own2b Wlol again'), 'm. the recalled line went out')
+  check(one(again, 'Wlol_room.'), `m. and its row draws the copy that was picked (got ${JSON.stringify(again)})`)
+  await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+  await p.click('#hs-mc-input', { timeout: 5000 })
+  await p.keyboard.press('Control+A')
+  await p.keyboard.press('Backspace')
+  // and the first room's own Wlol is no pick at all
   // a Tab that took the channel's own emote is no choice: recalled in another tab it is THAT tab's
   await typeLine('own5 Wlol')
   await p.keyboard.press('Tab')
@@ -438,26 +519,72 @@ try {
   await p.keyboard.press('Control+A')
   await p.keyboard.press('Backspace')
 
+  // ── a room that does not hold the name: the viewer's own copy is offered there, and it is what typing the word sends ──
+  await p.click('.hs-mc-tab[data-tab="probechan3"]', { timeout: 5000 })
+  await typeLine('cc1 Wlol')
+  await p.keyboard.press('Tab')
+  await until(p, async () => one(await boxSrcs(), 'Wlol_inv'), 5000)
+  check(one(await boxSrcs(), 'Wlol_inv'), `f. in a room that does not hold the name, Tab offers the viewer's own Wlol, the one typing it sends (got ${JSON.stringify(await boxSrcs())})`)
+  await p.keyboard.press('Tab')
+  await p.waitForTimeout(300)
+  check(one(await boxSrcs(), 'Wlol_inv') && (await inBoxNow()), 'f. and there is one candidate there too: the second Tab keeps the caret in the box')
+  await p.click('#hs-mc-emote-btn', { timeout: 5000 })
+  await p.waitForSelector('#hs-mc-emote-picker.visible', { timeout: 10_000 })
+  await p.waitForTimeout(600)
+  const tilesC = await everyTile()
+  check(tilesC.some((t) => t.startsWith('set:Wlol=') && t.includes('Wlol_inv')), `f. the picker of that room offers the viewer's own Wlol in their set (got ${JSON.stringify(tilesC.filter((t) => t.includes('Wlol')))})`)
+  check(!tilesC.some((t) => t.includes('Wlol_room')), `f. and nothing of another room's Wlol (got ${JSON.stringify(tilesC.filter((t) => t.includes('Wlol')))})`)
+  const markC = await p.$eval('#hs-mc-emote-picker [data-section-key="set"] .hs-mc-picker-emote-wrap img[alt="Wlol"]', (x: Element) => (x.closest('.hs-mc-picker-emote-wrap') as HTMLElement).dataset.mark ?? null)
+  check(markC === 'H', `f. that tile is marked H: only heatsync users see it (got ${JSON.stringify(markC)})`)
+  await p.click('#hs-mc-emote-btn', { timeout: 5000 }).catch(() => {})
+  await p.focus('#hs-mc-input')
+  await p.keyboard.press('Control+End')
+  await p.keyboard.press('Enter')
+  await rowHas('cc1')
+  await p.waitForTimeout(800)
+  check(sent('cc1 Wlol'), 'f. the line went out as the bare word')
+  check(one(await rowSrcs('cc1'), 'Wlol_inv'), `f. and the viewer's own row draws their Wlol (got ${JSON.stringify(await rowSrcs('cc1'))})`)
+  await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+  await p.click('#hs-mc-input', { timeout: 5000 })
+  await p.keyboard.press('Control+A')
+  await p.keyboard.press('Backspace')
+
   // ── one name is one picture in a line: a pick answers every copy of its name ──
-  const boxSrcs = () => p.evaluate(() => [...document.querySelectorAll('#hs-mc-input img.hs-input-emote')].map((i) => i.getAttribute('src') || ''))
-  const rowSrcs = (word: string) =>
-    p.evaluate((w: string) => {
-      const row = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes(w))
-      return [...(row?.querySelectorAll('.hs-mc-emote-wrapper img, img.hs-mc-emote') || [])].map((i) => i.getAttribute('src') || '')
-    }, word)
   const all = (list: string[], part: string) => list.length === 2 && list.every((s) => s.includes(part))
-  await typeLine('own6 Wlol and Wlol')
+  // a pick made in the first tab (Tab on the room's Wlol) belongs to the message, not the room: carried to the second
+  // tab, the chip stays the first room's picture, and the Wlol typed after it there is that picture too (typed alone
+  // in that room it is the room's own Wlol_room2)
+  await typeLine('own6 Wlol')
   await p.keyboard.press('Tab')
-  await until(p, async () => all(await boxSrcs(), 'Wlol_room'), 5000)
-  await p.keyboard.press('Tab')
-  await until(p, async () => all(await boxSrcs(), 'Wlol_inv'), 5000)
+  await until(p, async () => one(await boxSrcs(), 'Wlol_room'), 5000)
+  await p.click('.hs-mc-tab[data-tab="probechan2"]', { timeout: 5000 })
+  await p.waitForTimeout(400)
+  await p.focus('#hs-mc-input')
+  await p.keyboard.press('Control+End')
+  await p.keyboard.type(' and Wlol ', { delay: 30 })
+  await until(p, async () => (await boxSrcs()).length === 2, 5000)
   const two = await boxSrcs()
-  check(all(two, 'Wlol_inv'), `x. Tab on to your own Wlol: the Wlol typed earlier in the line is your own too, one name is one picture (got ${JSON.stringify(two)})`)
+  check(all(two, 'Wlol_room.'), `x. the pick follows the message to the next room, and the Wlol typed after it there is the same picture: one name is one picture in a line (got ${JSON.stringify(two)})`)
   await p.keyboard.press('Enter')
   await rowHas('own6')
   await p.waitForTimeout(800)
   const twoRow = await rowSrcs('own6')
-  check(all(twoRow, 'Wlol_inv'), `x. and the row draws both as the box showed them (got ${JSON.stringify(twoRow)})`)
+  check(all(twoRow, 'Wlol_room.'), `x. and the row draws both as the box showed them (got ${JSON.stringify(twoRow)})`)
+  await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+  // a favorite no room holds: the Tab'd copy is the pick, the Fav typed before it was text (a word nobody owns is text in
+  // the box until Tab) and the line ships one picture for the name, so the row draws both as the favorite
+  await typeLine('own6b Fav and Fav')
+  await p.keyboard.press('Tab')
+  await until(p, async () => one(await boxSrcs(), 'Fav_fav'), 5000)
+  check(one(await boxSrcs(), 'Fav_fav'), `x. Tab on the last Fav picks the favorite (got ${JSON.stringify(await boxSrcs())})`)
+  await p.keyboard.press('Tab')
+  await p.waitForTimeout(300)
+  check(one(await boxSrcs(), 'Fav_fav') && (await inBoxNow()), 'x. a second Tab has no other copy of the name to step to, and the caret stays in the box')
+  await p.keyboard.press('Enter')
+  await rowHas('own6b')
+  await p.waitForTimeout(800)
+  const favRow = await rowSrcs('own6b')
+  check(all(favRow, 'Fav_fav'), `x. one name is one picture on the wire: the row draws both Fav as the favorite (got ${JSON.stringify(favRow)})`)
   // and all the way round the cycle
   await typeLine('own7 Wlol and Wlo')
   await p.keyboard.press('Tab')
@@ -480,58 +607,52 @@ try {
       dt.setData('text/plain', text)
       document.getElementById('hs-mc-input')?.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }))
     }, text)
-  const one = (list: string[], part: string) => list.length === 1 && list[0].includes(part)
   const pickMineThenDelete = async (mark: string) => {
-    await typeLine(`${mark} Wlol`)
+    await typeLine(`${mark} Fav`)
     await p.keyboard.press('Tab')
-    await until(p, async () => one(await boxSrcs(), 'Wlol_room'), 5000)
-    await p.keyboard.press('Tab')
-    await until(p, async () => one(await boxSrcs(), 'Wlol_inv'), 5000)
+    await until(p, async () => one(await boxSrcs(), 'Fav_fav'), 5000)
     const picked = await boxSrcs()
     // the space after the chip, then the chip
     await p.keyboard.press('Backspace')
     await p.keyboard.press('Backspace')
     await until(p, async () => !(await boxSrcs()).length, 5000)
-    return one(picked, 'Wlol_inv') && !(await boxSrcs()).length
+    return one(picked, 'Fav_fav') && !(await boxSrcs()).length
   }
   const z0 = await pickMineThenDelete('own8')
-  await paste('Wlol')
+  await paste('Fav')
   await p.keyboard.type(' ', { delay: 20 })
-  await until(p, async () => (await boxSrcs()).length === 1, 5000)
-  await p.waitForTimeout(300)
+  await p.waitForTimeout(600)
   const z1 = await boxSrcs()
-  check(z0 && one(z1, 'Wlol_room'), `z. your own Wlol picked, deleted, then pasted back: the name is a typed word, the room's emote (picked and deleted ${z0}, box ${JSON.stringify(z1)})`)
+  check(z0 && z1.length === 0, `z. a favorite picked, deleted, then pasted back: the name is a typed word again, and nothing here holds it, so it is text (picked and deleted ${z0}, box ${JSON.stringify(z1)})`)
   await p.keyboard.press('Enter')
   await rowHas('own8')
   await p.waitForTimeout(800)
   const z1row = await rowSrcs('own8')
-  check(one(z1row, 'Wlol_room'), `z. and the row draws the room's Wlol (got ${JSON.stringify(z1row)})`)
+  check(z1row.length === 0, `z. and the row draws the word, no emote (got ${JSON.stringify(z1row)})`)
   const z2 = await pickMineThenDelete('own9')
   await p.keyboard.press('Control+z')
   await until(p, async () => (await boxSrcs()).length === 1, 5000)
   const z3 = await boxSrcs()
-  check(z2 && one(z3, 'Wlol_inv'), `z. the same delete, then ctrl-z: the chip is back as the picture picked (picked and deleted ${z2}, box ${JSON.stringify(z3)})`)
+  check(z2 && one(z3, 'Fav_fav'), `z. the same delete, then ctrl-z: the chip is back as the picture picked (picked and deleted ${z2}, box ${JSON.stringify(z3)})`)
   await p.keyboard.press('Control+End')
   await p.keyboard.press('Enter')
   await rowHas('own9')
   await p.waitForTimeout(800)
   const z3row = await rowSrcs('own9')
-  check(one(z3row, 'Wlol_inv'), `z. and the line ships the pick the undo brought back (row ${JSON.stringify(z3row)})`)
-  // two copies of the name, both your own by a second Tab on the second. the second is deleted, a word
+  check(one(z3row, 'Fav_fav'), `z. and the line ships the pick the undo brought back (row ${JSON.stringify(z3row)})`)
+  // two copies of the name, both the favorite by a Tab on the second. the second is deleted, a word
   // is typed, and the undos walk back: the box is as it was, both copies still the picture picked
-  const wlols = async () => (await boxSrcs()).filter((src) => src.includes('Wlol'))
-  const allMine = (list: string[]) => list.length === 2 && list.every((src) => src.includes('Wlol_inv'))
+  const wlols = async () => (await boxSrcs()).filter((src) => src.includes('Fav_'))
+  const allMine = (list: string[]) => list.length === 2 && list.every((src) => src.includes('Fav_fav'))
   for (const typedBetween of [false, true]) {
     const how = typedBetween ? 'delete, type a word, undo' : 'delete, undo'
     await p.click('#hs-mc-input', { timeout: 5000 })
     await p.keyboard.press('Control+A')
     await p.keyboard.press('Backspace')
-    await typeLine('own10 Wlol')
+    await typeLine('own10 Fav')
     await p.keyboard.press('Tab')
-    await until(p, async () => one(await wlols(), 'Wlol_room'), 5000)
-    await p.keyboard.type(' Mine Wlol', { delay: 20 })
-    await p.keyboard.press('Tab')
-    await p.waitForTimeout(150)
+    await until(p, async () => one(await wlols(), 'Fav_fav'), 5000)
+    await p.keyboard.type(' Mine Fav', { delay: 20 })
     await p.keyboard.press('Tab')
     await until(p, async () => allMine(await wlols()), 5000)
     const z4 = await wlols()
@@ -555,23 +676,23 @@ try {
     await p.click('#hs-mc-input', { timeout: 5000 })
     await p.keyboard.press('Control+A')
     await p.keyboard.press('Backspace')
-    await typeLine('own11 Wlol')
+    await typeLine('own11 Fav')
     await p.keyboard.press('Tab')
-    await until(p, async () => one(await wlols(), 'Wlol_room'), 5000)
+    await until(p, async () => one(await wlols(), 'Fav_fav'), 5000)
     await p.keyboard.press('Backspace')
     await p.keyboard.press('Backspace')
     await until(p, async () => !(await wlols()).length, 5000)
     await p.keyboard.press('Control+z')
-    await until(p, async () => one(await wlols(), 'Wlol_room'), 5000)
+    await until(p, async () => one(await wlols(), 'Fav_fav'), 5000)
     await p.keyboard.press('Control+End')
-    await p.keyboard.type(' Mine Wlol', { delay: 20 })
+    await p.keyboard.type(' Mine Fav', { delay: 20 })
     await p.keyboard.press('Tab')
     await until(p, async () => (await wlols()).length === 2, 2000)
     const z6 = await wlols()
     await p.keyboard.press('Tab')
-    await until(p, async () => allMine(await wlols()), 2000)
+    await p.waitForTimeout(300)
     const z7 = await wlols()
-    check(z6.length === 2 && z6.every((src) => src.includes('Wlol_room')) && allMine(z7), `z. after a delete and its undo, Tab completes the name just typed, and a second Tab is your own copy (Tab ${JSON.stringify(z6)}, Tab again ${JSON.stringify(z7)})`)
+    check(allMine(z6) && allMine(z7) && (await inBoxNow()), `z. after a delete and its undo, Tab completes the name just typed (the first chip's cycle is over), and a second Tab has no other copy to step to (Tab ${JSON.stringify(z6)}, Tab again ${JSON.stringify(z7)})`)
   }
   await p.click('#hs-mc-input', { timeout: 5000 })
   await p.keyboard.press('Control+A')
@@ -713,7 +834,7 @@ try {
   {
     type Room = 'A' | 'B'
     const TAB: Record<Room, string> = { A: 'probechan', B: 'probechan2' }
-    const PICS: Array<[string, string]> = [['Wlol_room2', 'roomB'], ['Wlol_room', 'roomA'], ['Wlol_inv', 'mine'], ['W_ffz', 'Wroom'], ['W_inv', 'Wmine'], ['Mine_inv', 'mine2']]
+    const PICS: Array<[string, string]> = [['Wlol_room2', 'roomB'], ['Wlol_room', 'roomA'], ['W_ffz', 'Wroom'], ['W_inv', 'Wmine'], ['Mine_inv', 'mine2']]
     const label = (src: string) => PICS.find(([id]) => src.includes(id))?.[1] ?? `?(${src})`
     const typed = (room: Room, word: string): string | null =>
       word === 'Wlol' ? (room === 'A' ? 'roomA' : 'roomB') : word === 'W' ? (room === 'A' ? 'Wroom' : 'Wmine') : word === 'Mine' ? 'mine2' : null
@@ -750,7 +871,7 @@ try {
     await p.keyboard.press('Control+A')
     await p.keyboard.press('Backspace')
     for (let n = 1; n <= MESSAGES && bad < 3; n++) {
-      type Step = { hand: string } | { tabs: 1 | 2 } | { click: 'room' | 'mine' } | { touch: 'off' | 'stay' } | { again: null | 'keys' | 'paste' | 'undo' | 'typed-undo' } | 'switch'
+      type Step = { hand: string } | { tabs: 1 | 2 } | { click: 'room' } | { touch: 'off' | 'stay' } | { again: null | 'keys' | 'paste' | 'undo' | 'typed-undo' } | 'switch'
       const steps: Step[] = []
       const recall = !!last && rand() < 0.25
       const words = recall ? Math.floor(rand() * 3) : 1 + Math.floor(rand() * 4)
@@ -762,8 +883,11 @@ try {
         if (i && rand() < 0.1) steps.push(del())
         // a pick is a Tab or a click on the name's tile in the picker
         const kind = rand()
-        const step: Step = kind < 0.3 ? { tabs: rand() < 0.5 ? 1 : 2 } : kind < 0.45 ? { click: rand() < 0.5 ? 'room' : 'mine' } : { hand: HAND[Math.floor(rand() * HAND.length)] }
+        const step: Step = kind < 0.3 ? { tabs: rand() < 0.5 ? 1 : 2 } : kind < 0.45 ? { click: 'room' } : { hand: HAND[Math.floor(rand() * HAND.length)] }
         steps.push(step)
+        // a pick differs from the typed word only in another room (one name = one picture in a room, so the room's
+        // own answer is the only copy offered there): half of them are carried to the next tab straight away
+        if (!('hand' in step) && rand() < 0.5) steps.push('switch')
         // a pick is the word most worth deleting: put back by hand, its name is a typed word again
         if (!('hand' in step) && rand() < 0.35) steps.push(del())
         // a letter typed right against the last word, taken off again or left there
@@ -772,7 +896,7 @@ try {
       if (rand() < 0.25) steps.push('switch')
       const settled = n % 3 !== 0
       const mark = `ys${n}x`
-      const said = `y. message ${n} ${recall ? `<up ${JSON.stringify(last?.words)} kept ${JSON.stringify(last?.chosen)}> ` : ''}${JSON.stringify(steps.map((s) => (s === 'switch' ? '<switch>' : 'hand' in s ? s.hand : 'again' in s ? `<del${s.again ? ` +${s.again}` : ''}>` : 'click' in s ? `Wlol+click ${s.click}` : 'touch' in s ? `<touch ${s.touch}>` : `Wlol+Tab×${s.tabs}`)))} from ${TAB[room]}`
+      const said = `y. message ${n} ${recall ? `<up ${JSON.stringify(last?.words)} kept ${JSON.stringify(last?.chosen)}> ` : ''}${JSON.stringify(steps.map((s) => (s === 'switch' ? '<switch>' : 'hand' in s ? s.hand : 'again' in s ? `<del${s.again ? ` +${s.again}` : ''}>` : 'click' in s ? `Wlol+click` : 'touch' in s ? `<touch ${s.touch}>` : `Wlol+Tab×${s.tabs}`)))} from ${TAB[room]}`
       const fail = (msg: string) => { bad++; check(false, `${said}: ${msg}`) }
       const draft: Array<{ word: string; pick?: string }> = []
       const pickOf = (word: string) => draft.filter((d) => d.word === word && d.pick).at(-1)?.pick
@@ -876,18 +1000,19 @@ try {
           continue
         }
         if ('click' in s) {
-          const id = s.click === 'mine' ? 'Wlol_inv' : room === 'A' ? 'Wlol_room.' : 'Wlol_room2'
-          const tile = `#hs-mc-emote-picker .hs-mc-picker-emote-wrap img[alt="Wlol"][src*="${id}"]`
+          const name = 'Wlol'
+          const id = room === 'A' ? 'Wlol_room.' : 'Wlol_room2'
+          const tile = `#hs-mc-emote-picker .hs-mc-picker-emote-wrap img[alt="${name}"][src*="${id}"]`
           await p.click('#hs-mc-emote-btn', { timeout: 5000 })
           await p.waitForSelector('#hs-mc-emote-picker.visible', { timeout: 10_000 })
           if (!(await until(p, async () => !!(await p.$(tile)), 5000))) {
             const have = await p.$$eval('#hs-mc-emote-picker .hs-mc-picker-emote-wrap img', (els: HTMLImageElement[]) => els.map((x) => `${(x.closest('[data-section-key]') as HTMLElement)?.dataset.sectionKey}:${x.alt}=${x.getAttribute('src')}`))
-            fail(`the picker has no tile for ${s.click === 'mine' ? 'my' : "the room's"} Wlol (tiles ${JSON.stringify(have)})`)
+            fail(`the picker has no tile for the room's Wlol (tiles ${JSON.stringify(have)})`)
           } else {
             const before = await wordsIn()
             await p.click(tile, { timeout: 5000 })
             if (!(await until(p, async () => (await wordsIn()) === before + 1, 5000))) fail(`a click on a picker tile put no word in the box (${JSON.stringify(await boxText())})`)
-            draft.push({ word: 'Wlol', pick: s.click === 'mine' ? 'mine' : room === 'A' ? 'roomA' : 'roomB' })
+            draft.push({ word: 'Wlol', pick: room === 'A' ? 'roomA' : 'roomB' })
             seen.picks++
             seen.clicks++
           }
@@ -906,8 +1031,8 @@ try {
           await p.waitForTimeout(120)
         }
         if (!(await inBox())) fail(`the caret left the box after Tab×${s.tabs}`)
-        // copies of one name go room, then yours
-        draft.push({ word: 'Wlol', pick: s.tabs === 1 ? (room === 'A' ? 'roomA' : 'roomB') : 'mine' })
+        // one copy of the name in a room, so a second Tab stays on it: the pick is that room's Wlol, kept when the tab changes
+        draft.push({ word: 'Wlol', pick: room === 'A' ? 'roomA' : 'roomB' })
         seen.picks++
         if (!(await endsWithGap())) await key(' ')
       }
@@ -980,24 +1105,23 @@ try {
   const n3 = await chip()
   check(n3?.blocked === false && n3.src.includes('Wlol_room'), `n. a second right-click unblocks it and the picture is back (got ${JSON.stringify(n3)})`)
 
-  await typeLine('box2 Wlol')
-  await p.keyboard.press('Tab')
-  await p.keyboard.press('Tab')
-  await until(p, async () => (await chipSrc()).includes('Wlol_inv'), 5000)
-  await p.evaluate(() => {
-    const row = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes('own1'))
-    ;(row?.querySelector('.hs-mc-emote-wrapper') as HTMLElement | null)?.setAttribute('data-hs-probe', 'own1')
-  })
+  // o. the channel's Wlol is blocked on a chat line of its room; in a room that does not hold the name, the viewer's
+  // own Wlol (a different picture) sits in the box and is not dashed by it
+  const probeOwn1 = () =>
+    p.evaluate(() => {
+      const row = [...document.querySelectorAll('#hs-mc-messages .hs-mc-msg')].find((r) => (r.textContent || '').includes('own1'))
+      ;(row?.querySelector('.hs-mc-emote-wrapper') as HTMLElement | null)?.setAttribute('data-hs-probe', 'own1')
+    })
+  await probeOwn1()
   await p.click('[data-hs-probe="own1"]', { button: 'right' })
   await until(p, async () => (await imgOf('own1')).state === 'blocked', 5000)
-  const o1 = await chip()
   check((await imgOf('own1')).state === 'blocked', "o. the channel's Wlol is blocked on a chat line")
+  await p.click('.hs-mc-tab[data-tab="probechan3"]', { timeout: 5000 })
+  await typeLine('box2 Wlol ')
+  await until(p, async () => (await chipSrc()).includes('Wlol_inv'), 5000)
+  await p.waitForTimeout(500)
+  const o1 = await chip()
   check(!!o1 && !o1.blocked && o1.src.includes('Wlol_inv'), `o. a box chip of the viewer's OWN Wlol is not dashed by it (got ${JSON.stringify(o1)})`)
-  // a blocked emote is its dashed box: the click lands on the wrapper, as a viewer's does
-  await p.click('[data-hs-probe="own1"]', { button: 'right' })
-  await until(p, async () => (await imgOf('own1')).state !== 'blocked', 5000)
-  const o2 = await imgOf('own1')
-  check(o2.state !== 'blocked' && o2.src.includes('Wlol_room'), `o. a right-click on its dashed box unblocks it: the row draws the channel's Wlol again (got ${JSON.stringify(o2)})`)
 
   // the server call cannot be made here (heatsync.org is refused): the background's remove answers yes
   await sw.evaluate(() => {
@@ -1012,19 +1136,37 @@ try {
       return { success: true }
     }
   })
+  // p. removing it from the box: gone from their set, nothing else is. no other Wlol is held in this room, so the chip
+  // is read again as the word it was typed as: text, which is what the line then ships
   await rightClickChip()
-  await until(p, async () => (await chipSrc()).includes('Wlol_room'), 5000)
+  await until(p, async () => !(await chip()), 5000)
   const p1 = await chip()
   const invP = await inventory()
   check(!invP.includes('Wlol') && invP.includes('W'), `p. right-click the viewer's own Wlol in the box: it is removed from their set, nothing else is (inventory: ${JSON.stringify(invP)})`)
-  check(!!p1 && !p1.blocked && p1.src.includes('Wlol_room'), `p. the chip is read again: the channel's Wlol, not the copy just removed (got ${JSON.stringify(p1)})`)
+  check(!p1 && (await boxWords()) === 'box2 Wlol', `p. the chip is read again: this room holds no other Wlol, so the word is text (got ${JSON.stringify(p1)} / ${JSON.stringify(await boxWords())})`)
   await p.click('#hs-mc-input', { timeout: 5000 })
   await p.keyboard.press('Control+End')
   await p.keyboard.press('Enter')
   await rowHas('box2')
   await p.waitForTimeout(800)
   const box2 = await imgOf('box2')
-  check(box2.src.includes('Wlol_room'), `p. and the line ships what the box showed (got ${box2.src || (box2.has ? 'a row with no emote' : 'no row')})`)
+  const box2Wire = irc.frames.filter((f) => f.startsWith('PRIVMSG #probechan3 ') && f.includes('box2'))
+  check(box2Wire.length === 1 && box2Wire[0].trim().endsWith(':box2 Wlol'), `p. and the line ships what the box showed: the bare word (frames ${JSON.stringify(box2Wire.map((f) => f.slice(0, 80)))})`)
+  // (the row may still draw the host page's own channel's Wlol: the overlay's pools always include the page's channel, a
+  // legacy reading outside this rule. what it must not draw is the copy just removed)
+  check(box2.has && !box2.src.includes('Wlol_inv'), `p. and the row never draws the copy just removed (got ${box2.src || (box2.has ? 'a row with no emote' : 'no row')})`)
+
+  // back in the channel's room the blocked Wlol on its row is a dashed box, and a right-click on it unblocks it
+  await p.click('.hs-mc-tab[data-tab="probechan"]', { timeout: 5000 })
+  await until(p, async () => (await imgOf('own1')).state === 'blocked', 5000)
+  await probeOwn1()
+  await p.click('[data-hs-probe="own1"]', { button: 'right' })
+  await until(p, async () => (await imgOf('own1')).state !== 'blocked', 5000)
+  const o2 = await imgOf('own1')
+  check(o2.state !== 'blocked' && o2.src.includes('Wlol_room'), `o. a right-click on its dashed box unblocks it: the row draws the channel's Wlol again (got ${JSON.stringify(o2)})`)
+  await p.click('#hs-mc-input', { timeout: 5000 })
+  await p.keyboard.press('Control+A')
+  await p.keyboard.press('Backspace')
 
   await typeLine('box3 Mine ')
   await until(p, async () => (await chipSrc()).includes('Mine_inv'), 5000)

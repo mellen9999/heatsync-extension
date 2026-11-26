@@ -1229,6 +1229,15 @@ function _hsTransportEl(provider) {
     vol.addEventListener('input', () => setEmbedVolume(Number(vol.value) / 100))
     bar.appendChild(vol)
   }
+  // Video only: the way to end it. A player outlives its row, so it needs its own off switch.
+  if (provider.video) {
+    const x = hsXButton('hs-mc-transport-close', t('mc_feed_close_player'), (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      _hsAudioStop()
+    })
+    bar.appendChild(x)
+  }
   // The card underneath is one big play/pause target — a drag on the slider
   // must not read as a press on the card.
   for (const ev of ['click', 'pointerdown', 'mousedown']) {
@@ -1314,10 +1323,19 @@ function _hsPlacePlayer() {
       }
     }
   }
-  if (!scroller || !a.card.isConnected) {
-    // The anchor row aged out of the DOM cap. Orphan audio you can't reach a
-    // stop button for is worse than silence.
-    _hsAudioStop()
+  if (!scroller) return
+  a.pinned = !a.card.isConnected
+  if (a.pinned) {
+    // The anchor row aged out of the DOM cap, or another tab is showing. A
+    // player you started keeps playing until you close it (✕ on its transport),
+    // so it pins to the bottom of the visible window instead of dying with the
+    // row. It re-parks over its card the moment a row for the same url is back.
+    const w = Math.max(80, Math.min(240, scroller.clientWidth))
+    const h = Math.round((w * 9) / 16)
+    a.host.style.top = `${Math.max(0, scroller.scrollTop + scroller.clientHeight - h)}px`
+    a.host.style.left = `${Math.max(0, scroller.clientWidth - w)}px`
+    a.host.style.width = `${w}px`
+    a.host.style.height = `${h}px`
     return
   }
   const cr = a.card.getBoundingClientRect()
@@ -1489,8 +1507,7 @@ document.addEventListener(
 
 function _hsSetFill(on) {
   if (!_hsAudio?.provider.video) return
-  // Going back pauses: the small player is a parked video, not a second screen.
-  if (!on && _hsAudio.fill && _hsAudio.playing) chatEmbedToggle(_hsAudio.url)
+  // Going back keeps playing: you went back to read chat while you listen.
   _hsAudio.fill = on
   _hsPlacePlayer()
 }
@@ -1501,7 +1518,7 @@ function _hsSetFill(on) {
 document.addEventListener(
   'scroll',
   (e) => {
-    if (_hsAudio?.fill && e.target?.id === 'hs-mc-messages') _hsPlacePlayer()
+    if ((_hsAudio?.fill || _hsAudio?.pinned) && e.target?.id === 'hs-mc-messages') _hsPlacePlayer()
   },
   { signal: mcSignal, capture: true, passive: true },
 )

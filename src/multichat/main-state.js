@@ -1139,7 +1139,9 @@ function snapshotTabState(tabId) {
   const clientHeight = msgsEl.clientHeight
   const atBottom = !isScrolledUp || scrollHeight - clientHeight - scrollTop < 8
   const frag = document.createDocumentFragment()
-  while (msgsEl.firstChild) frag.appendChild(msgsEl.firstChild)
+  // The playing video is not a row: moving it into a fragment detaches the
+  // iframe, which kills playback. It stays put across the tab switch.
+  for (const c of [...msgsEl.childNodes]) if (c.id !== 'hs-mc-embed-player') frag.appendChild(c)
   const msgKeyIndex = new Set(_msgKeyIndex)
   const uidIndex = new Map()
   for (const [k, v] of _uidIndex) uidIndex.set(k, new Set(v))

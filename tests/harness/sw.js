@@ -51,7 +51,7 @@
 
 import { readFileSync } from 'node:fs'
 import vm from 'node:vm'
-import { BG_HEAD, BG_PART_PATHS } from '../bg-src.js'
+import { BG_HEAD, BG_PART_PATHS, bgLibSource } from '../bg-src.js'
 import { createClock } from './clock.js'
 import { createFakeChrome } from './fake-chrome.js'
 import { createFakeIdb } from './fake-idb.js'
@@ -68,7 +68,8 @@ let bundleCache = null
 let scriptCache = null
 /** the worker as it ships: head line + every part, build order */
 export function bundleSource() {
-  if (bundleCache == null) bundleCache = BG_HEAD + BG_PART_PATHS.map((p) => readFileSync(p, 'utf8')).join('\n')
+  if (bundleCache == null)
+    bundleCache = BG_HEAD + bgLibSource() + BG_PART_PATHS.map((p) => readFileSync(p, 'utf8')).join('\n')
   return bundleCache
 }
 // compiled once per process; a vm.Script runs in any number of contexts (each boot gets its own scope)

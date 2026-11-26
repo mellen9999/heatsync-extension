@@ -699,24 +699,9 @@ async function fetchKickChannelEmotes(channelName) {
   }
 }
 
-// Rule 3, winner first (bare word, no sender ref): a channel's set is ffz, 7tv, bttv; globals are
-// 7tv, bttv, ffz, twitch. Mirrors EMOTE_TIER_ORDER / rankEmotePool in src/lib/utils.js (this file
-// can't import lib — tests/emote-tier-order.test.js pins the two together). Entries with no
+// Rule 3, winner first (bare word, no sender ref): EMOTE_TIER_ORDER / rankEmotePool come from
+// src/lib/emote-tier.js, which build.js puts ahead of these parts (BG_LIB). Entries with no
 // `source` (the channel owner's heatsync set) stay in front.
-const EMOTE_TIER_ORDER = {
-  channel: ['heatsync', 'ffz', '7tv', 'bttv', 'twitch', 'kick'],
-  global: ['7tv', 'bttv', 'ffz', 'twitch', 'heatsync'],
-}
-function rankEmotePool(list, tier) {
-  const order = EMOTE_TIER_ORDER[tier] || EMOTE_TIER_ORDER.global
-  const rank = (e) => {
-    if (!e?.source) return tier === 'channel' ? -1 : order.length
-    const i = order.indexOf(e.source)
-    return i === -1 ? order.length : i
-  }
-  // Array.prototype.sort is stable: equal ranks keep their input order
-  return [...(list || [])].sort((a, b) => rank(a) - rank(b))
-}
 
 function fetchGlobalEmotes() {
   if (globalEmotesFetchPromise) return globalEmotesFetchPromise

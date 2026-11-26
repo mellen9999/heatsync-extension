@@ -1,7 +1,7 @@
 // rule 3: channel ffz, 7tv, bttv; globals 7tv, bttv, ffz, twitch — one order on every path.
 // rule 2: on native chat the sender's pick beats the room's same-name emote.
 import { expect, test } from 'bun:test'
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { EMOTE_TIER_ORDER, rankEmotePool, resolveEmoteProviderWinner } from '../src/lib/utils.js'
 import { bgSource } from './bg-src.js'
@@ -36,12 +36,23 @@ test('multichat pool merge picks the same winner as the order', () => {
   }
 })
 
-test('background.js carries the same two orders as lib', () => {
+test('background.js runs the lib file itself: no second order, no second ranker', () => {
   const bg = bgSource()
-  const m = bg.match(/const EMOTE_TIER_ORDER = \{\s*channel: (\[[^\]]*\]),\s*global: (\[[^\]]*\]),?\s*\}/)
-  expect(m).not.toBeNull()
-  expect(JSON.parse(m[1].replace(/'/g, '"'))).toEqual(EMOTE_TIER_ORDER.channel)
-  expect(JSON.parse(m[2].replace(/'/g, '"'))).toEqual(EMOTE_TIER_ORDER.global)
+  const lib = read('src/lib/emote-tier.js').replace(/^export\s+/gm, '')
+  expect(bg.split(lib).length - 1).toBe(1)
+  expect(bg.match(/(?:const|let|var)\s+EMOTE_TIER_ORDER\b/g)).toHaveLength(1)
+  expect(bg.match(/function\s+rankEmotePool\b/g)).toHaveLength(1)
+})
+
+test('one definition of the order and the ranker in the extension', () => {
+  const walk = (dir) =>
+    readdirSync(join(root, dir), { withFileTypes: true }).flatMap((d) =>
+      d.isDirectory() ? walk(join(dir, d.name)) : d.name.endsWith('.js') ? [join(dir, d.name)] : [],
+    )
+  const hits = walk('src').filter((f) =>
+    /(?:^|\n)\s*(?:export\s+)?(?:(?:const|let|var)\s+EMOTE_TIER_ORDER\b|function\s+rankEmotePool\b)/.test(read(f)),
+  )
+  expect(hits).toEqual(['src/lib/emote-tier.js'])
 })
 
 // native chat: which emote a word is on a row is tests/native-emote-law.test.ts (the law's order,

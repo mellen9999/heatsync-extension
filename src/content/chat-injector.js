@@ -478,27 +478,6 @@
     return div
   }
 
-  /**
-   * Escape HTML to prevent XSS
-   * mirrors src/lib/utils.js escapeHtml — the two must remain identical
-   * @param {string} text - Text to escape
-   * @returns {string} Escaped text
-   */
-  function escapeHtml(text) {
-    if (text == null) return ''
-    return String(text).replace(
-      /[&<>"']/g,
-      (c) =>
-        ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;',
-        })[c],
-    )
-  }
-
   // Twitch global emotes - map of text codes to emote IDs
   const TWITCH_GLOBAL_EMOTES = {
     '<3': '9', // Heart (escaped as &lt;3 from server)

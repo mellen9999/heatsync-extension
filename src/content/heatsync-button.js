@@ -10,23 +10,6 @@
   const DEBUG = false
   const log = DEBUG ? console.log.bind(console, '[heatsync-btn]') : () => {}
 
-  // mirrors src/lib/utils.js escapeHtml — kept local because this file may load
-  // before lib bundling completes; the two must remain identical
-  function escapeHtml(text) {
-    if (text == null) return ''
-    return String(text).replace(
-      /[&<>"']/g,
-      (c) =>
-        ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;',
-        })[c],
-    )
-  }
-
   // mirrors emoteBlockKey in src/multichat/emotes.js and content.js's native filing: the emote's
   // own id/hash, else the FULL base64 of its url. A url prefix is the same for every emote on
   // one cdn (it blocked a whole provider); keys older builds stored that way match nothing now.

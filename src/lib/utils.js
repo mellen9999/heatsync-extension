@@ -1,4 +1,6 @@
 // @ts-check
+import { EMOTE_TIER_ORDER, rankEmotePool } from './emote-tier.js'
+
 /**
  * Shared utilities for heatsync extension.
  * XSS prevention, DOM helpers, debouncing, etc.
@@ -726,37 +728,6 @@ function resolveEmoteProviderWinner(existing, incoming, preferred) {
   const inI = order.indexOf(incoming.source || '')
   if (exI === -1 || inI === -1 || existing.source === incoming.source) return incoming
   return exI < inI ? existing : incoming
-}
-
-/**
- * The ONE provider order for a bare word with no sender ref (rule 3), winner first:
- * a channel's set is ffz, 7tv, bttv; globals are 7tv, bttv, ffz, twitch. Platform
- * natives (twitch/kick) trail the third parties in a channel: they arrive as tokens
- * (rule 1), a bare word never lets one beat a 7tv/bttv/ffz copy. chrome/background.js
- * builds its arrays in this same order (tests pin the two together).
- * @type {{channel: readonly string[], global: readonly string[]}}
- */
-const EMOTE_TIER_ORDER = {
-  channel: ['heatsync', 'ffz', '7tv', 'bttv', 'twitch', 'kick'],
-  global: ['7tv', 'bttv', 'ffz', 'twitch', 'heatsync'],
-}
-
-/**
- * Stable re-rank of a pool array so index 0 is the winner for every name: in a channel,
- * entries with no `source` (the owner's heatsync set) stay in front, then providers by tier
- * order, unknown providers last. Returns a new array; the input is untouched.
- * @param {Array<{source?: string}>} list
- * @param {'channel'|'global'} tier
- */
-function rankEmotePool(list, tier) {
-  const order = EMOTE_TIER_ORDER[tier] || EMOTE_TIER_ORDER.global
-  const rank = (e) => {
-    if (!e?.source) return tier === 'channel' ? -1 : order.length
-    const i = order.indexOf(e.source)
-    return i === -1 ? order.length : i
-  }
-  // Array.prototype.sort is stable: equal ranks keep their input order
-  return [...(list || [])].sort((a, b) => rank(a) - rank(b))
 }
 
 /**

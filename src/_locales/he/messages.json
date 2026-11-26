@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "לסרטון הזה אין צ'אט משוחזר"
+  },
+  "mc_vod_seek": {
+    "message": "דלג לרגע הזה"
+  },
   "mc_tab_temp_title": {
     "message": "לשונית זמנית: צפייה בסטרים אחר תופסת את מקומה · קליק ימני כדי לשמור"
   },

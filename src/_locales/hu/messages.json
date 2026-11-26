@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "ennek a vodnak nincs chat-visszajátszása"
+  },
+  "mc_vod_seek": {
+    "message": "ugrás erre a pillanatra"
+  },
   "mc_tab_temp_title": {
     "message": "ideiglenes lap: másik stream nézésekor átveszi a helyét · jobb klikk a megtartáshoz"
   },

@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "dieses vod hat keinen chat-replay"
+  },
+  "mc_vod_seek": {
+    "message": "zu diesem moment springen"
+  },
   "mc_tab_temp_title": {
     "message": "temporärer tab: ein anderer stream übernimmt seinen platz · rechtsklick zum behalten"
   },

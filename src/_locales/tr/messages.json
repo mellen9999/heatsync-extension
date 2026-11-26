@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "bu vod'da sohbet tekrarı yok"
+  },
+  "mc_vod_seek": {
+    "message": "bu ana atla"
+  },
   "mc_tab_temp_title": {
     "message": "geçici tab: başka bir yayın izlenince yerini o alır · tutmak için sağ tık"
   },

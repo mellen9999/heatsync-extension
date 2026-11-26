@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "denne vod-en har ingen chatavspilling"
+  },
+  "mc_vod_seek": {
+    "message": "hopp til dette øyeblikket"
+  },
   "mc_tab_temp_title": {
     "message": "midlertidig fane: en annen stream tar plassen · høyreklikk for å beholde"
   },

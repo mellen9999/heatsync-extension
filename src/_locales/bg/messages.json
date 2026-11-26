@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "в този vod няма запис на чата"
+  },
+  "mc_vod_seek": {
+    "message": "към този момент"
+  },
   "mc_tab_temp_title": {
     "message": "временен таб: друг стрийм заема мястото му · десен клик, за да го запазиш"
   },

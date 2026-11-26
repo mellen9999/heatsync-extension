@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "vod ini tidak memiliki replay chat"
+  },
+  "mc_vod_seek": {
+    "message": "lompat ke momen ini"
+  },
   "mc_tab_temp_title": {
     "message": "tab sementara: menonton stream lain mengambil tempatnya · klik kanan untuk menyimpan"
   },

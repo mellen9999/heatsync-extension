@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "このvodにはチャットのリプレイがありません"
+  },
+  "mc_vod_seek": {
+    "message": "この場面にジャンプ"
+  },
   "mc_tab_temp_title": {
     "message": "一時タブ: 別の配信を見るとこの枠が入れ替わる · 右クリックで残す"
   },

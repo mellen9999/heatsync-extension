@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "vod này không có phát lại chat"
+  },
+  "mc_vod_seek": {
+    "message": "chuyển đến thời điểm này"
+  },
   "mc_tab_temp_title": {
     "message": "tab tạm: xem stream khác sẽ chiếm chỗ của nó · chuột phải để giữ"
   },

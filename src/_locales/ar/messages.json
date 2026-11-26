@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "لا توجد دردشة معادة في هذا الفيديو"
+  },
+  "mc_vod_seek": {
+    "message": "انتقل إلى هذه اللحظة"
+  },
   "mc_tab_temp_title": {
     "message": "تبويب مؤقت: مشاهدة بث آخر تأخذ مكانه · انقر يمينًا للاحتفاظ به"
   },

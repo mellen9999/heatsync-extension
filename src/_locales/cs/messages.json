@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "toto vod nemá záznam chatu"
+  },
+  "mc_vod_seek": {
+    "message": "skočit na tento okamžik"
+  },
   "mc_tab_temp_title": {
     "message": "dočasný tab: jiný stream zabere jeho místo · pravým kliknutím ho ponecháš"
   },

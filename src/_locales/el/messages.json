@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "αυτό το vod δεν έχει επανάληψη συνομιλίας"
+  },
+  "mc_vod_seek": {
+    "message": "μετάβαση σε αυτή τη στιγμή"
+  },
   "mc_tab_temp_title": {
     "message": "προσωρινή καρτέλα: άλλο stream παίρνει τη θέση της · δεξί κλικ για να την κρατήσεις"
   },

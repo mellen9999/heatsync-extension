@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "den här vod:en har ingen chattuppspelning"
+  },
+  "mc_vod_seek": {
+    "message": "hoppa till det här ögonblicket"
+  },
   "mc_tab_temp_title": {
     "message": "tillfällig flik: en annan stream tar dess plats · högerklicka för att behålla"
   },

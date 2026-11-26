@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "acest vod nu are reluare de chat"
+  },
+  "mc_vod_seek": {
+    "message": "sari la acest moment"
+  },
   "mc_tab_temp_title": {
     "message": "tab temporar: alt stream îi ia locul · click dreapta ca să-l păstrezi"
   },

@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "walang chat replay ang vod na ito"
+  },
+  "mc_vod_seek": {
+    "message": "tumalon sa sandaling ito"
+  },
   "mc_tab_temp_title": {
     "message": "pansamantalang tab: papalitan ito kapag nanood ng ibang stream · i-right-click para panatilihin"
   },

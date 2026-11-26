@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "此 vod 沒有聊天室重播"
+  },
+  "mc_vod_seek": {
+    "message": "跳到此刻"
+  },
   "mc_tab_temp_title": {
     "message": "暫時分頁：觀看其他直播會佔用它的位置 · 右鍵保留"
   },

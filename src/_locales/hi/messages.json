@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "इस vod में चैट रीप्ले नहीं है"
+  },
+  "mc_vod_seek": {
+    "message": "इस पल पर जाएँ"
+  },
   "mc_tab_temp_title": {
     "message": "अस्थायी टैब: दूसरी स्ट्रीम देखने पर इसकी जगह चली जाती है · रखने के लिए राइट-क्लिक करो"
   },

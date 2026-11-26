@@ -347,6 +347,12 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_vod_no_replay": {
+    "message": "vod นี้ไม่มีการรีเพลย์แชท"
+  },
+  "mc_vod_seek": {
+    "message": "ข้ามไปยังช่วงนี้"
+  },
   "mc_tab_temp_title": {
     "message": "แท็บชั่วคราว: ดูสตรีมอื่นแล้วจะถูกแทนที่ · คลิกขวาเพื่อเก็บไว้"
   },

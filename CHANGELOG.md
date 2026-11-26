@@ -1,5 +1,10 @@
 # changelog
 
+## [1.7.152] — 2026-11-26
+
+### added
+- **twitch gifs show as gifs in the multichat** — a line sent from twitch's gif keyboard drew as its caption, like "[Mood Lol GIF by Giphy]". it now draws the picture, the same as on heatsync.org. turning off external images keeps the caption.
+
 ## [1.7.151] — 2026-11-26
 
 ### fixed

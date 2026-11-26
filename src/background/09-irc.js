@@ -1281,6 +1281,9 @@ function bgIrcRecordToExt(rec, channelHint) {
     // authoritative per-message set the sender actually used, so the panel
     // renders them without fetching the sender's set. See emote-enrich.ts.
     if (rec.hsEmotes && typeof rec.hsEmotes === 'object') msg.hsEmotes = rec.hsEmotes
+    // A twitch gif-keyboard line: the text is only a caption and the picture is the server's validated
+    // gifs [{text, url}]. Carried as sent; the row checks it again as it draws (multichat/gif-lines.js).
+    if (Array.isArray(rec.gifs) && rec.gifs.length) msg.gifs = rec.gifs
     if (rec.bits && rec.bits > 0) msg.bits = rec.bits
     if (rec.isHighlighted) msg.isHighlighted = true
     if (rec.isFirstMsg) msg.isFirstMsg = true

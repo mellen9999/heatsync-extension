@@ -1054,31 +1054,53 @@ function buildMessageDiv(m, tabId) {
     if (m.replyTo.id) div.dataset.replyId = m.replyTo.id
     if (m.replyTo.threadId) div.dataset.replyThreadId = m.replyTo.threadId
   }
-  // Inline media — a single lightweight embed (direct img/video, a youtube
-  // thumbnail, or a server-resolved rich card) below the text. NEVER a live
-  // iframe: chat is high-volume and runs on low-RAM hardware. Appended as a
-  // sibling node (outside the cached _renderedHtml) so toggling the setting
-  // takes effect on the next rerender. Lazy-loaded, error-guarded, capped.
-  if (
-    mediaEmbedsEnabled &&
-    !m.cleared &&
-    m.text &&
-    m.type !== 'usernotice' &&
-    m.type !== 'notice' &&
-    typeof extractChatEmbed === 'function'
-  ) {
-    const embedHtml = extractChatEmbed(m.text, { partialLinks: linksEnabled })
-    if (embedHtml) {
-      const holder = document.createElement('div')
-      holder.className = 'hs-mc-media-wrap'
-      holder.insertAdjacentHTML('afterbegin', embedHtml)
-      div.appendChild(holder)
-      if (typeof resolvePendingFeedEmbeds === 'function') resolvePendingFeedEmbeds(holder)
-      if (typeof attachFeedFallbacks === 'function') attachFeedFallbacks(holder)
-      foldEmbeddedMediaUrl(div, holder)
-    }
-  }
+  appendRowMedia(div, m)
   return div
+}
+
+// Inline media — a single lightweight embed (direct img/video, a youtube
+// thumbnail, or a server-resolved rich card) below the text. NEVER a live
+// iframe: chat is high-volume and runs on low-RAM hardware. Appended as a
+// sibling node (outside the cached _renderedHtml) so toggling the setting
+// takes effect on the next rerender. Lazy-loaded, error-guarded, capped.
+// Also what a late `chat:gif` redraws a row with (gif-lines.js): one path, so a row born
+// with its gif and one that learns it later cannot differ.
+function appendRowMedia(div, m) {
+  if (
+    !mediaEmbedsEnabled ||
+    m.cleared ||
+    !m.text ||
+    m.type === 'usernotice' ||
+    m.type === 'notice' ||
+    typeof extractChatEmbed !== 'function'
+  )
+    return
+  // A twitch gif-keyboard line says only a caption; its picture is on the message (gif-lines.js). It is
+  // the row's one embed and goes first. One the rules refuse draws nothing and keeps the caption: it does
+  // NOT fall through to a card for a url the line does not have.
+  const held = hsGifsOf(m)
+  const gifs = held?.length ? hsChatGifs.chatGifs(held) : null
+  const gif = gifs?.[0]
+  if (gifs) div._hsGifs = gifs
+  const embedHtml = gifs
+    ? gif
+      ? chatEmbedForUrl(gif.url)
+      : ''
+    : extractChatEmbed(m.text, { partialLinks: linksEnabled })
+  if (!embedHtml) return
+  const holder = document.createElement('div')
+  holder.className = 'hs-mc-media-wrap'
+  holder.insertAdjacentHTML('afterbegin', embedHtml)
+  div.appendChild(holder)
+  if (typeof resolvePendingFeedEmbeds === 'function') resolvePendingFeedEmbeds(holder)
+  if (typeof attachFeedFallbacks === 'function') attachFeedFallbacks(holder)
+  // a gif's picture replaces its caption, and only when the caption is all the line says
+  let target
+  if (gif)
+    target = hsChatGifs.lineIsOnlyCaption(m.text, gif.text, !!m.replyTo)
+      ? div.querySelector(':scope > .hs-mc-text')
+      : null
+  foldEmbeddedMediaUrl(div, holder, target)
 }
 
 // A pasted image posts as its URL — that IS the wire payload, chat has no
@@ -1095,7 +1117,10 @@ function buildMessageDiv(m, tabId) {
 // sat there as a blank line, url hidden behind an image that was never coming,
 // until you happened to scroll it into view. Waiting for the load event has no
 // such hole — nothing is hidden until its replacement is on screen.
-function foldEmbeddedMediaUrl(row, holder) {
+//
+// `target` is what the picture replaces when that is not a link: a gif line's caption (null: the
+// line says more than the caption, and keeps its words). Left out, it is the url's own link.
+function foldEmbeddedMediaUrl(row, holder, target) {
   const media = holder.querySelector('[data-hs-src-url]')
   const src = media?.dataset.hsSrcUrl
   if (!src) return
@@ -1103,9 +1128,10 @@ function foldEmbeddedMediaUrl(row, holder) {
   // display, and linkifyPartialLinks synthesizes an href for a url that was
   // never fully typed. The href is the only field that means the same thing
   // in both cases.
-  const link = Array.from(row.querySelectorAll('a.hs-mc-link')).find(
-    (a) => a.getAttribute('href') === src || a.href === src,
-  )
+  const link =
+    target !== undefined
+      ? target
+      : Array.from(row.querySelectorAll('a.hs-mc-link')).find((a) => a.getAttribute('href') === src || a.href === src)
   if (!link) return
   const img = media.querySelector('img')
   if (!img) return

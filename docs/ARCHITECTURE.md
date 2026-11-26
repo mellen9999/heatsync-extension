@@ -53,6 +53,7 @@ these files are byte-for-byte copies of the site's. edit them in the site repo (
 | `shared/brand/tokens.gen.js` | `src/lib/brand-tokens.js` |
 | `scripts/lib/{inline-doctrine,strip-comments}.mjs` | `tests/lib/…` (test helpers) |
 | `shared/emote-{law,rank,usage}.ts`, `shared/emote-{law,mods}.vectors.json` | `shared/…` (the emote law and its vectors) |
+| `client/utils/chat-gifs.js`, `shared/gif-links.ts` | `src/lib/chat-gifs.js`, `shared/gif-links.ts` (a twitch gif line's validator and frame rules, bundled as `hsChatGifs`) |
 | `tests/helpers/emote-world.ts` | `tests/helpers/emote-world.ts` |
 | `client/utils/{paint-core,scene-spec,paint-spec,paint-authoring,plus-tenure,badge-catalogue}.js`, `client/cosmetics/{animation-phase,fill-layers,glyph-mask}.js`, `client/chat/stv-paint-css.js` | `src/lib/…` (the paint compiler and its runtime) |
 

@@ -1998,6 +1998,13 @@ function handleWSMessage(msg) {
         }
         break
 
+      case 'chat:gif':
+        // A twitch gif-keyboard line's picture (the line itself is only a caption). Same room and
+        // same id-keyed shape as chat:origin: the tabs redraw the row if it is on screen, or hold
+        // the picture for the line that has not come yet. Checked by the tab, never trusted here.
+        if (msg.messageId && Array.isArray(msg.gifs)) broadcastToTabs({ ...msg, type: 'chat_gif' })
+        break
+
       case 'chat:origin_broadcast':
         // User sent a chat message from the heatsync.org chat-tile on a
         // different device — fan out to all tabs so multichat can tag the

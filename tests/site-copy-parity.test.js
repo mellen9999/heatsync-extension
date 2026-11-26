@@ -51,6 +51,8 @@ const FILES = [
   ['shared/brand/tokens.gen.js', 'src/lib/brand-tokens.js'],
   ['scripts/lib/inline-doctrine.mjs', 'tests/lib/inline-doctrine.mjs'],
   ['scripts/lib/strip-comments.mjs', 'tests/lib/strip-comments.mjs'],
+  ['client/utils/chat-gifs.js', 'src/lib/chat-gifs.js'],
+  ['shared/gif-links.ts', 'shared/gif-links.ts'],
   ['shared/emote-law.ts', 'shared/emote-law.ts'],
   ['shared/emote-rank.ts', 'shared/emote-rank.ts'],
   ['shared/emote-usage.ts', 'shared/emote-usage.ts'],

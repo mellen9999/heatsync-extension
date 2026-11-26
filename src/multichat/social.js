@@ -1378,6 +1378,11 @@ function listenForSocialEvents() {
       hsOriginLive(msg)
       return
     }
+    if (msg.type === 'chat_gif' && msg.messageId) {
+      // a twitch gif line's picture, by id: redraw its row, or hold it for the line that has not come
+      hsGifLive(msg)
+      return
+    }
     if (msg.type === 'seen_update') {
       // Another client (web, other browser, ext on another tab) bumped a
       // tab's seen-at. Apply locally so the red dot clears here too.

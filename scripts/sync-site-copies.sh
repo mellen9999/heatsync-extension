@@ -53,6 +53,13 @@
 # read tileSays through the law bundle (`hsEmoteLaw.tileSays`), and tests/emote-mark-vectors.test.ts
 # runs every case against that same bundle.
 #
+# shared/gif-links.ts + client/utils/chat-gifs.js are a twitch gif-keyboard line's rules: the validator (https, a giphy/tenor
+# media host, a picture file, a few at most) and the frame parser, held-event ledger and caption rule that read it. The
+# line's text is only a caption; the picture arrives on the record or as the id-keyed `chat:gif` room event, and a hand-made
+# second validator is how a row would draw a url the site refuses. src/lib/chat-gifs.js imports '../../shared/gif-links.ts'
+# by the path it has on the site, which resolves from src/lib/ here too; scripts/lib/chat-gifs-bundle.mjs bundles the pair
+# as `hsChatGifs`, and tests/site-copy-parity.test.js holds both byte for byte.
+#
 # shared/emote-mods.vectors.json is the modifier rule as data (docs/emote-law.md, modifiers): what
 # the words add up to and which emote a word changes. tests/emote-mods-vectors.test.js runs every
 # row through the real row renderer.
@@ -90,6 +97,8 @@ for pair in \
   shared/brand/tokens.gen.js:src/lib/brand-tokens.js \
   scripts/lib/inline-doctrine.mjs:tests/lib/inline-doctrine.mjs \
   scripts/lib/strip-comments.mjs:tests/lib/strip-comments.mjs \
+  client/utils/chat-gifs.js:src/lib/chat-gifs.js \
+  shared/gif-links.ts:shared/gif-links.ts \
   shared/emote-law.ts:shared/emote-law.ts \
   shared/emote-rank.ts:shared/emote-rank.ts \
   shared/emote-usage.ts:shared/emote-usage.ts \

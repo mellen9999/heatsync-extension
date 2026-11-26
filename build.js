@@ -21,6 +21,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { transformSync } from 'esbuild'
 import { computeBuildStamp } from './scripts/lib/build-stamp.mjs'
+import { chatGifsSource } from './scripts/lib/chat-gifs-bundle.mjs'
 import { rebindBgDebugLog, rebindDebugLog, unbindBgDebugLog, unbindDebugLog } from './scripts/lib/debug-log.mjs'
 import { emojiPairsSource } from './scripts/lib/emoji-pairs.mjs'
 import { emoteLawSource, lawIsUsed } from './scripts/lib/emote-law-bundle.mjs'
@@ -913,6 +914,7 @@ const MULTICHAT_MODULES = [
   'mod-log.js',
   'live-search.js',
   'hs-origins.js',
+  'gif-lines.js',
   'merged-tab.js',
   'stream-stats.js',
   'player-guard.js',
@@ -1114,6 +1116,11 @@ function readMultichatModules() {
   // The emote law (shared/emote-law.ts, byte copy of the site's) as one namespace object. Only when a
   // multichat module names it: unused it is ~10KB of nothing.
   if (lawIsUsed(__dirname)) combined += `\n// --- shared/emote-law.ts ---\n${emoteLawSource(__dirname)}\n`
+
+  // A twitch gif-keyboard line's rules (src/lib/chat-gifs.js + shared/gif-links.ts, byte copies of the site's) as one
+  // namespace: the validator a row draws through, the room event's parser and the held-event ledger. gif-lines.js and
+  // main-messages.js name it, so it lands before the modules loop.
+  combined += `\n// --- lib/chat-gifs.js + shared/gif-links.ts ---\n${chatGifsSource(__dirname)}\n`
 
   // What a stream event says and which stored ones a reload brings back
   // (scripts/sync-site-copies.sh mirror of client/utils/stream-event-text.js).

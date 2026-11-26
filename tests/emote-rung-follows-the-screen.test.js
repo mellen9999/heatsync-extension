@@ -164,11 +164,20 @@ describe('the resolution cache cannot outlive the answer', () => {
     // Dragging a window to a monitor with a different pixel ratio changes the
     // rung without the setting moving. A cache keyed on emoteSize would keep
     // serving the old screen's file for the rest of the session.
-    const fn = carve('function getChatResUrl(url, variants) {', '\n}')
+    const fn = carve('function getChatResUrl(url, variants, big) {', '\n}')
     expect(fn, 'getChatResUrl not found').toBeTruthy()
     const body = fn.replace(/^\s*\/\/.*$/gm, '')
     expect(body).toContain('hsWantedRung()')
     expect(body).toContain('_resCacheSize !== want')
     expect(/_resCacheSize !== emoteSize/.test(body), 'still keyed on the setting alone').toBe(false)
+  })
+
+  test('a big emote-only line asks for the next rung up and never reads or fills the cache', () => {
+    const fn = carve('function getChatResUrl(url, variants, big) {', '\n}')
+    const body = fn.replace(/^\s*\/\/.*$/gm, '')
+    expect(body).toContain('big ? hsBigRung(hsWantedRung()) : hsWantedRung()')
+    // the answer is returned before the cache the normal rung is keyed on is touched
+    expect(body.indexOf('if (variants || big)')).toBeGreaterThan(-1)
+    expect(body.indexOf('if (variants || big)')).toBeLessThan(body.indexOf('_resCacheSize !== want'))
   })
 })

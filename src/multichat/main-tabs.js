@@ -1497,9 +1497,11 @@ function isYtDuplicate(user, text, channelId, id) {
 // produces BYTE-IDENTICAL output to a fresh rebuild — one source of truth,
 // no drift.
 // @param {object} m  message object (m.text, m.channel, m.twitchEmotes, …)
+// @param {boolean} [big]  draw it as a big emote-only line (emote-big.js): the same words at the next rung
+//   up. Only asked of a line the first draw read as big, so it is never cached over the normal html.
 // @returns {string}  sanitized HTML for the message text span
-function computeMessageText(m) {
-  if (m._renderedHtml != null) return m._renderedHtml
+function computeMessageText(m, big) {
+  if (!big && m._renderedHtml != null) return m._renderedHtml
   // Pass Twitch native emotes (per-message IRC tags) into processEmotes so
   // they participate in the overlay-stack pipeline alongside 7TV emotes.
   const isOwn = isSelf(m)
@@ -1546,6 +1548,8 @@ function computeMessageText(m) {
     senderEmotes = getSenderEmotes(senderKey)
     queueSenderEmoteFetch(senderKey, m)
   }
+  // what the renderer reads of this line, for the big emote-only rule (the youtube pictures a later pass draws)
+  const line = { read: big ? null : [], big: !!big, yt: m.emotes?.length ? ytEmoteUrls(m.emotes) : null }
   // skipMentions=true: highlightMentionsInHtml (below) is the single source
   // of truth for mention anchors on this surface (uid resolution, HeatSync
   // paint/7TV precedence, letter-split). Letting processEmotes ALSO wrap
@@ -1610,6 +1614,7 @@ function computeMessageText(m) {
     null,
     // twitch chat carries no platform: unnamed, the row would read every platform's list at once
     m.platform || 'twitch',
+    line,
   )
   if (m.emotes && m.emotes.length > 0) {
     processedText = processYtEmotes(processedText, m.emotes, true)
@@ -1633,6 +1638,8 @@ function computeMessageText(m) {
   }
   // Cheermotes — only when twitch IRC tagged bits=N (server-confirmed cheer).
   if (m.bits) processedText = renderCheermotesInText(processedText, m.bits)
+  if (big) return processedText
+  m._hsBig = hsBigLine(line.read)
   m._renderedHtml = processedText
   return processedText
 }
@@ -1694,7 +1701,11 @@ function reprocessEmoteTextInPlace() {
     // That memo handed back the text the row was first drawn with, so history
     // drawn before the channel's set landed kept its emote names as text.
     m._renderedHtml = null
-    const html = computeMessageText(m)
+    let html = computeMessageText(m)
+    // a plain line of only pictures draws them big (emote-big.js); the mark follows the line
+    const big = hsBigRowOk(m, div)
+    if (big) html = computeMessageText(m, true)
+    hsMarkBigRow(div, big)
     // No-op when the recompute produced identical HTML — innerHTML assignment
     // recreates every <img> even for byte-identical markup, and a recreated
     // emote paints its alt TEXT for a frame before the image decodes (the

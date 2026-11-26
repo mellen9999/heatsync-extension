@@ -53,6 +53,7 @@ const renderEmoteHtml = new Function(
   'isViewerEmote',
   'emoteIsBlocked',
   'hsEmoteDimAttr',
+  '_big', // a big emote-only line (emote-big.js) draws the next rung up; these are normal lines
   // emoteFromInv is declared upstream of the carved slice in processEmotes
   // (provenance flag for data-inv); default false here — attribution has its
   // own coverage in emote-inventory-gate.test.js.
@@ -83,6 +84,7 @@ function render(word, emote, overrides = {}) {
       (overrides.blocked || new Set()).has(name) ||
       !!(e?.hash && (overrides.blockedHashes || new Set()).has(String(e.hash))),
     hsEmoteDimAttr,
+    false,
   )
 }
 

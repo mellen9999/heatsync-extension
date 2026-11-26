@@ -20,4 +20,11 @@ const rooms = new Function(`${ROOMS}\nreturn { channelLeg, channelRoomNames, cha
 const INPUT = readFileSync(join(ROOT, 'src', 'multichat', 'input.js'), 'utf8')
 const PIC = INPUT.slice(INPUT.indexOf('const _AC_PIC_RE ='), INPUT.indexOf('let _acRemoteToken'))
 const { _acPicKey } = new Function(`${PIC}\nreturn { _acPicKey }`)()
-Object.assign(globalThis, { lawReadCtx, lawReadWord, _acPicKey, ...rooms })
+// big emote-only lines: the row's read of a line and the rung it draws at (emote-big.js)
+const BIG = readFileSync(join(ROOT, 'src', 'multichat', 'emote-big.js'), 'utf8')
+const big = new Function(
+  LAW_GLOBAL,
+  'getSetting',
+  `${BIG}\nreturn { hsReadEmoji, hsBigLine, hsBigRung, hsBigBoxW, hsBigRowOk, hsMarkBigRow }`,
+)(globalThis[LAW_GLOBAL], (k) => globalThis.getSetting?.(k))
+Object.assign(globalThis, { lawReadCtx, lawReadWord, _acPicKey, ...rooms, ...big })

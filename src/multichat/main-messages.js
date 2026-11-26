@@ -783,7 +783,7 @@ function buildMessageDiv(m, tabId) {
   // render via ${systemLine}, never ${processedText}, so computing would just
   // cache a spurious '' (and pointlessly queue a sender-emote fetch).
   const keptHtml = m._renderedHtml != null // drawn before: its html predates what has been learned since
-  const processedText = m.text ? computeMessageText(m) : ''
+  let processedText = m.text ? computeMessageText(m) : ''
 
   // Sticker for super stickers
   let stickerHtml = ''
@@ -947,6 +947,12 @@ function buildMessageDiv(m, tabId) {
   // event is the label line, their line sits under it as in chat. run together it read as one long line
   const saidUnder = filledRow && !!m.systemMsg && !!m.text && m.type !== 'notice'
   if (filledRow && !saidUnder && div.classList.contains('hs-mc-system')) div.classList.add('hs-row-label')
+  // a plain line of only pictures draws them big (emote-big.js): the same words at the next rung up
+  if (hsBigRowOk(m, div)) {
+    processedText = computeMessageText(m, true)
+    div._hsAppliedText = processedText
+    hsMarkBigRow(div, true)
+  }
   let firstMsgLabel = ''
   if (m.isFirstMsg) {
     firstMsgLabel = `<span class="hs-mc-system-text hs-row-label hs-mc-first-label">\u25C7 ${t('mc_main_first_msg')}</span>`
@@ -1133,6 +1139,22 @@ function _getYtCombinedRegex(joined) {
 
 // Process YouTube emotes (inline emoji images from innertube)
 // preEscaped=true when input is already HTML-escaped (chained after processEmotes)
+// The youtube pictures a line draws: escaped alt text → url, the ones processYtEmotes swaps in. One list for
+// that and for the big emote-only read (a name in it is a picture, not a word).
+function ytEmoteUrls(emotes) {
+  const out = new Map()
+  for (const emote of emotes) {
+    const url = typeof emote.url === 'string' ? emote.url.trim() : ''
+    const alt = typeof emote.alt === 'string' ? emote.alt : ''
+    if (!alt || !url || !(url.startsWith('http') || url.startsWith('//'))) continue
+    // Don't skip names with `<` — escapeHtml() handles them correctly and emotes
+    // like `<3`, `<3` need to render. (Alt is set via escaped attribute below.)
+    const escaped = escapeHtml(alt)
+    if (!out.has(escaped)) out.set(escaped, url)
+  }
+  return out
+}
+
 function processYtEmotes(text, emotes, preEscaped) {
   if (!emotes || emotes.length === 0) return preEscaped ? text : escapeHtml(text)
 
@@ -1141,14 +1163,7 @@ function processYtEmotes(text, emotes, preEscaped) {
   // Build replacement map: escaped alt text → img HTML
   const replacements = new Map()
   const altPatterns = []
-  for (const emote of emotes) {
-    const url = typeof emote.url === 'string' ? emote.url.trim() : ''
-    const alt = typeof emote.alt === 'string' ? emote.alt : ''
-    if (!alt || !url || !(url.startsWith('http') || url.startsWith('//'))) continue
-    // Don't skip names with `<` — escapeHtml() handles them correctly and emotes
-    // like `<3`, `<3` need to render. (Alt is set via escaped attribute below.)
-    const escaped = escapeHtml(alt)
-    if (replacements.has(escaped)) continue
+  for (const [escaped, url] of ytEmoteUrls(emotes)) {
     const imgHtml = `<img src="${escapeHtml(url)}" alt="${escaped}" class="hs-mc-emote" loading="lazy" decoding="async" style="height:1.2em;vertical-align:middle;" />`
     replacements.set(escaped, imgHtml)
     altPatterns.push(escaped.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))

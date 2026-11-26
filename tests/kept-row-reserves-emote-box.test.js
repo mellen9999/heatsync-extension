@@ -70,7 +70,7 @@ describe('a row drawn from kept html', () => {
   test('the row builder does this for kept html only, and only when the text holds an emote', () => {
     const main = mainSource()
     expect(main).toMatch(
-      /const keptHtml = m\._renderedHtml != null[^\n]*\n\s*const processedText = m\.text \? computeMessageText\(m\) : ''/,
+      /const keptHtml = m\._renderedHtml != null[^\n]*\n\s*(?:const|let) processedText = m\.text \? computeMessageText\(m\) : ''/,
     )
     expect(main).toMatch(
       /div\.innerHTML = `\$\{replyBar\}\$\{msgBody\}`\n\s*if \(keptHtml && processedText\.includes\('hs-mc-emote-wrapper'\)\) hsReserveEmoteBoxes\(div\)/,

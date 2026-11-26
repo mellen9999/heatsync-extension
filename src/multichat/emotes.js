@@ -737,12 +737,14 @@ function isViewerEmoteUrl(name, url, hash) {
 // same function, so a copy of one picture is one url wherever it is drawn.
 let _resCacheSize = 1
 const _resCache = new Map()
-function getChatResUrl(url, variants) {
+function getChatResUrl(url, variants, big) {
   if (!url) return url
-  const want = hsWantedRung()
+  // a big emote-only line (emote-big.js) takes the next rung up, so twice the size stays sharp
+  const want = big ? hsBigRung(hsWantedRung()) : hsWantedRung()
   // An advertised-variants emote is a handful of regex steps and its answer
   // depends on the record, not just the url, so it skips the url-keyed cache.
-  if (variants) return hsEmoteFileUrl(url, want, variants)
+  // A big line's rung is not the one the cache is keyed on: same skip.
+  if (variants || big) return hsEmoteFileUrl(url, want, variants)
   // Keyed on the EFFECTIVE rung, not on emoteSize: dragging the window to a
   // monitor with a different pixel ratio changes the answer without the
   // setting moving, and a cache keyed on the setting would keep serving the
@@ -3889,7 +3891,8 @@ async function hydrateEmoteBoxWidths() {
 // go on here, by the same rule a fresh render follows: a plain wrapper only (a stack sizes
 // itself from its members, a modifier and a kick crop carry their own box).
 function hsReserveEmoteBoxes(root) {
-  if (!_hsEmoteBoxW.size) return
+  // a big emote-only line (emote-big.js) is reserved by its imgs' own width/height, never by a normal-size width
+  if (!_hsEmoteBoxW.size || root.classList?.contains('hs-emote-big')) return
   for (const w of root.querySelectorAll('.hs-mc-emote-wrapper[data-emote-url]')) {
     if (w.style.width || w.dataset.hsModSx) continue
     if (w.classList.contains('hs-kick-crop') || w.classList.contains('hs-mc-emote-cw')) continue
@@ -4007,7 +4010,8 @@ function hsSnapEmoteBox(img) {
         im.closest('.hs-mc-emote-stack') ||
         im.closest('.hs-mc-emote-wrapper') ||
         (im.classList.contains('hs-input-emote') ? im : null)
-      if (box?.isConnected) items.push({ box, im })
+      // a big emote-only line has no text after its pictures to smear, and its widths are not the normal ones
+      if (box?.isConnected && !im.closest('.hs-emote-big')) items.push({ box, im })
     }
     _hsSnapQueue.clear()
     // Read every width first, then write — one layout pass per frame. Use
@@ -4271,6 +4275,9 @@ function hsAnyChannelEmotes() {
   return all
 }
 
+// `line` (optional) is how a big emote-only line (emote-big.js) is read and drawn: `read` is filled with one
+// kind per word drawn (shared/emote-only.ts), `big` draws every picture at the next rung up, `yt` holds the
+// escaped names of the youtube pictures a later pass draws over this text.
 function processEmotes(
   text,
   channel,
@@ -4281,6 +4288,7 @@ function processEmotes(
   msgRefs = null,
   lastResort = null,
   platform = undefined,
+  line = null,
 ) {
   if (
     emoteCache.size === 0 &&
@@ -4398,6 +4406,8 @@ function processEmotes(
       .split(/(\s+)/)
   }
   const result = []
+  const _read = line?.read
+  const _big = !!line?.big
   // pendingStack tracks an items list. Each item (base OR overlay) has its
   // OWN mods/hue. Modifier tokens attach to the LAST item — so
   // "Kappa RainTime w!" makes RainTime wide, not Kappa.
@@ -4469,9 +4479,11 @@ function processEmotes(
       for (const m of _cls.mods) pendingMods.push(m)
       if (_cls.hue != null) pendingHue = _cls.hue
       pendingWhitespace = ''
+      _read?.push('mod')
       continue
     }
     if (_side === 'last') {
+      _read?.push('mod')
       const target = _lastItem()
       for (const m of _cls.mods) target.mods.push(m)
       if (_cls.hue != null) target.hue = _cls.hue
@@ -4516,7 +4528,7 @@ function processEmotes(
       let state = isBlocked ? 'blocked' : cached?.state || 'channel'
       if (state === 'unadded' && (inventoryEmotes.has(emoteName) || inventoryEmotes.has(rawEmoteName))) state = 'owned'
       const safeName = escapeHtml(rawEmoteName)
-      const chatUrl = getChatResUrl(finalUrl, cached?.variants)
+      const chatUrl = getChatResUrl(finalUrl, cached?.variants, _big)
       const safeUrlAttr = escapeHtml(chatUrl)
       const kickAnimated = emoteIsAnimated(cached)
       const safeSrc = escapeHtml(staticEmoteSrc(chatUrl, kickAnimated))
@@ -4525,7 +4537,10 @@ function processEmotes(
       const safeHash = cached?.hash ? escapeHtml(cached.hash) : ''
       const ownerAttr = cached?.ownerDisplay ? ` data-owner="${escapeHtml(cached.ownerDisplay)}"` : ''
       const nsfwClass = cached?.nsfw ? ' hs-state-nsfw' : ''
-      const _boxW = _hsEmoteBoxW.get(chatUrl)
+      // a big line's box: twice the width learned for this picture at the normal rung, if it was ever seen there
+      const _boxW = _big
+        ? hsBigBoxW(_hsEmoteBoxW.get(getChatResUrl(finalUrl, cached?.variants)))
+        : _hsEmoteBoxW.get(chatUrl)
       // a kick-CDN emote with wide art crops to it (see _kickCrop); a 7TV copy has its own aspect
       const _crop = useCachedUrl ? null : _kickCrop.get(emoteId)
       if (!useCachedUrl && _crop === undefined) _kickCropRequest(emoteId)
@@ -4546,6 +4561,8 @@ function processEmotes(
       const imgHtmlRaw = kickCwCat
         ? _hsCwBoxHtml(kickCwCat, safeName, _boxW)
         : `<span class="hs-mc-emote-wrapper hs-state-${state}${nsfwClass}${cropClass}" data-kick-id="${emoteId}" data-emote-name="${safeName}" data-emote-url="${safeUrlAttr}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr}${animAttr}${safeHash ? ` data-emote-hash="${safeHash}"` : ''}${wAttr}><img src="${safeSrc}" alt="${safeName}"${hsEmoteDimAttr(cached)} class="hs-mc-emote hs-emote-${state}"${osAttr} data-emote-name="${safeName}" data-state="${state}" data-source="${safeProvider}"${ownerAttr}${invAttr} loading="lazy" decoding="async"></span>`
+      // a hidden (blocked) or covered (content filter) emote draws a box, not a picture
+      _read?.push(isBlocked || kickCwCat ? 'text' : isOverlay && pendingStack ? 'overlay' : 'emote')
       if (isOverlay && pendingStack) {
         const itemMods = pendingMods.slice()
         const itemHue = pendingHue
@@ -4706,7 +4723,7 @@ function processEmotes(
       )
         state = 'owned'
       const source = escapeHtml(emote.source || 'unknown')
-      const rawChatUrl = getChatResUrl(emote.url, emote.variants)
+      const rawChatUrl = getChatResUrl(emote.url, emote.variants, _big)
       const imgSrc = escapeHtml(rawChatUrl)
       const animated = emoteIsAnimated(emote)
       const staticSrc = escapeHtml(staticEmoteSrc(rawChatUrl, animated))
@@ -4749,7 +4766,9 @@ function processEmotes(
         }
       } catch (_) {}
       const nsfwClass = emote.nsfw ? ' hs-state-nsfw' : ''
-      const _boxW = _hsEmoteBoxW.get(rawChatUrl)
+      const _boxW = _big
+        ? hsBigBoxW(_hsEmoteBoxW.get(getChatResUrl(emote.url, emote.variants)))
+        : _hsEmoteBoxW.get(rawChatUrl)
       const wAttr = _boxW ? ` style="width:${_boxW}px"` : ''
       const _os = _hsEmoteOversize(emote)
       const osAttr = _os ? ` style="--hs-os:${_os}"` : ''
@@ -4780,6 +4799,7 @@ function processEmotes(
         if (typeof _hsInlineModSuffix === 'string') itemMods.push(_hsInlineModSuffix)
         else if (_hsInlineModSuffix.hue != null) itemHue = _hsInlineModSuffix.hue
       }
+      _read?.push(isBlocked || cwCat ? 'text' : isOverlayEmote && pendingStack ? 'overlay' : 'emote')
       if (isOverlayEmote && pendingStack) {
         // Append as overlay item in the current group; floating mods (none yet
         // typically) drain onto this overlay
@@ -4814,6 +4834,7 @@ function processEmotes(
           const emojiEntry = EMOJI_BY_NAME.get(emojiName)
           if (emojiEntry) {
             const emojiHtmlRaw = `<span class="hs-mc-emoji" title=":${escapeHtml(emojiName)}:">${emojiEntry.emoji}</span>`
+            _read?.push(emojiOverlay && pendingStack ? 'overlay' : 'emoji')
             if (emojiOverlay && pendingStack) {
               const itemMods = pendingMods.slice()
               const itemHue = pendingHue
@@ -4839,6 +4860,7 @@ function processEmotes(
       }
       // Check for Unicode emoji — treat as stackable base
       if (UNICODE_EMOJI_RE.test(word)) {
+        if (_read) hsReadEmoji(_read, word)
         _flushStackToResult()
         if (pendingWhitespace) {
           result.push(pendingWhitespace)
@@ -4859,6 +4881,7 @@ function processEmotes(
       // messages only: elsewhere the sender's access decides, and a sender with
       // none wrote plain text.
       if (senderEmotes === viewerPersonalEmotes && blockedEmoteNames.has(word)) {
+        _read?.push('text')
         _flushStackToResult()
         pendingMods = []
         pendingHue = null
@@ -4873,6 +4896,7 @@ function processEmotes(
         continue
       }
       // Text - flush stack and add text. Drop any pending mods/hue (they had no anchor).
+      _read?.push(line.yt?.has(word) ? 'emote' : 'text')
       _flushStackToResult()
       pendingMods = []
       pendingHue = null

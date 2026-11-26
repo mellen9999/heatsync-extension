@@ -4,13 +4,15 @@
          instead of drawing at the asset's own pixel size, which left twitch's
          28px emotes visibly smaller than heatsync.org's. Wide emotes keep their
          aspect through width:auto; max-height below still caps oversize ones. */
-      height: calc(var(--hs-emote-size, 32px) * var(--hs-os, 1));
+      height: calc(var(--hs-emote-size, 32px) * var(--hs-os, 1) * var(--hs-big, 1));
+      /* --hs-big = a big emote-only line's row sets it (emote-big.js, 2); every box below that holds an
+         emote multiplies by it, so the reserved box and the img clamp stay one number. Default 1. */
       /* --hs-os = oversize ratio for BTTV emotes whose declared 1x height
          exceeds the 28px baseline (NaM = 40/28). Raising the CLAMP (not
          forcing a height) lets the asset draw at its true pixel size at
          every size tier — 1x/2x/3x assets are exact multiples of the
          baseline, so no resampling blur. Default 1 = unchanged. */
-      max-height: calc(var(--hs-emote-size, 32px) * var(--hs-os, 1));
+      max-height: calc(var(--hs-emote-size, 32px) * var(--hs-os, 1) * var(--hs-big, 1));
       /* The host page (Twitch/Kick) sets a global img{max-width:100%}. When the
          wrapper carries a pinned width (wAttr from the box-width cache), that 100%
          resolves against the pinned width and a WIDE emote gets scaled down to fit
@@ -149,7 +151,7 @@
     }
 
     .hs-mc-emoji {
-      font-size: calc(1em * var(--hs-emoji-scale, 2));
+      font-size: calc(1em * var(--hs-emoji-scale, 2) * var(--hs-big, 1));
       /* line-height matches --hs-emote-size so the inline-block reports the
          same height as emote imgs. line-height: 1 (= font-size = ~26px) left
          the glyph filling the box edge-to-edge; some emoji glyphs (Noto)
@@ -157,7 +159,7 @@
          overflow:hidden. Pinning to emote size gives ~3px headroom above
          and below the glyph, matches emote-row visual height, keeps mixed
          emoji+text rows visually consistent with emote+text rows. */
-      line-height: var(--hs-emote-size, 32px);
+      line-height: calc(var(--hs-emote-size, 32px) * var(--hs-big, 1));
       vertical-align: text-bottom;
       display: inline-block;
     }
@@ -169,7 +171,7 @@
       vertical-align: text-bottom;
       /* Lock height so collapsed↔expanded toggle doesn't shift line height
          (expanded adds 2px vertical padding via pseudo-element). */
-      height: 36px;
+      height: calc(36px * var(--hs-big, 1));
       box-sizing: border-box;
     }
     .hs-mc-emote-stack-emotes {
@@ -285,7 +287,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: calc(var(--hs-emote-size, 32px) + 4px);
+      min-height: calc(var(--hs-emote-size, 32px) * var(--hs-big, 1) + 4px);
     }
     .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper:not(:first-child) {
       min-height: 0;
@@ -800,8 +802,8 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
     .hs-mc-emote-wrapper.hs-kick-crop {
       position: relative;
       overflow: hidden;
-      height: var(--hs-emote-size, 32px) !important;
-      width: calc(var(--hs-emote-size, 32px) * var(--kc-ar)) !important;
+      height: calc(var(--hs-emote-size, 32px) * var(--hs-big, 1)) !important;
+      width: calc(var(--hs-emote-size, 32px) * var(--hs-big, 1) * var(--kc-ar)) !important;
     }
     .hs-mc-emote-wrapper.hs-kick-crop > img.hs-mc-emote {
       position: absolute;
@@ -812,3 +814,11 @@ html[data-hs-emote-anim="hover"] .hs-mc-msg:hover .hs-mc-emoji[class*="hs-fx-"] 
       left: calc(-100% * var(--kc-x));
       top: calc(-100% * var(--kc-y));
     }
+
+    /* A big emote-only line (emote-big.js): the pictures are drawn --hs-big times larger by the vars above.
+       A wide one never runs past the row: its box is capped at the row's width and the picture is
+       contained in it (never squeezed). A youtube picture carries its height inline, so this one needs
+       the override. */
+    .hs-emote-big .hs-mc-emote-wrapper:not(.hs-kick-crop) { max-width: 100%; }
+    .hs-emote-big .hs-mc-emote-wrapper:not(.hs-kick-crop) > img.hs-mc-emote { max-width: 100%; object-fit: contain; }
+    .hs-emote-big .hs-mc-text > img.hs-mc-emote { height: calc(1.2em * var(--hs-big, 1)) !important; }

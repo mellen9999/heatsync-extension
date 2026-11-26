@@ -157,7 +157,8 @@ function recomputeBadge() {
     badgeApi.setBadgeText({ text: String(live) }).catch(() => {})
     badgeApi.setBadgeBackgroundColor({ color: '#ff0000' }).catch(() => {}) // doctrine: --hs-danger
   } else if (notifs > 0) {
-    badgeApi.setBadgeText({ text: String(notifs) }).catch(() => {})
+    // the server counts to 201: past 200 it says 200+, like the site's nav badge
+    badgeApi.setBadgeText({ text: notifs > 200 ? '200+' : String(notifs) }).catch(() => {})
     badgeApi.setBadgeBackgroundColor({ color: '#000000' }).catch(() => {})
   } else {
     badgeApi.setBadgeText({ text: '' }).catch(() => {})

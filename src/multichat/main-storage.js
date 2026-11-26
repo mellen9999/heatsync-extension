@@ -565,6 +565,7 @@ function listenForSettingsChanges() {
       const prevInventory = new Set(inventoryEmotes)
       inventoryEmotes.clear()
       inventoryHashes.clear()
+      const sourceOf = inventorySourceOf(msg.emotes || [])
       ;(msg.emotes || []).forEach((e) => {
         // a poll that raced the DELETE still lists it — the server catches up
         if (e.name && !isLocallyRemoved(e.name)) {
@@ -584,7 +585,9 @@ function listenForSettingsChanges() {
             const zwFromAny = typeof zeroWidthFromAnyCache === 'function' ? zeroWidthFromAnyCache(e.name) : false
             viewerPersonalEmotes.set(e.name, {
               url: e.url,
-              source: 'heatsync',
+              // a twitch emote you may use stays twitch's (inventorySourceOf); the rest is yours
+              source: sourceOf(e),
+              subscription: !!e.subscription,
               state: 'owned',
               hash: e.hash,
               slot: e.slot,

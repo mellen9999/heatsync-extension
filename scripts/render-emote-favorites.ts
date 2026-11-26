@@ -30,6 +30,11 @@ const E = (n: string) => `https://cdn.heatsync.org/emote/${n}.png`
 const BIGDOG = 'https://cdn.7tv.app/emote/01BIGDOGBIGDOGBIGDOGBIGD/2x.webp'
 // twitch's own picture the room draws, and the same picture in your set at another size
 const KAPPA = 'https://static-cdn.jtvnw.net/emoticons/v2/25/default/dark/2.0'
+// a twitch sub emote the viewer may use, and a twitch emote they only saved (not entitled)
+// the room's own picture of a name you hold another picture of
+const CLASH = 'https://cdn.7tv.app/emote/01GWQ3XHWR0007M1MRN40XNE1A/2x.webp'
+const SUBPIC = 'https://static-cdn.jtvnw.net/emoticons/v2/9001/default/dark/3.0'
+const SAVEDPIC = 'https://static-cdn.jtvnw.net/emoticons/v2/9002/default/dark/3.0'
 const body = '<div id="host-content" style="height:100vh">host page</div><div class="right-column right-column--beside" id="rcol"></div>'
 const html = `<!doctype html><html><head><title>fixture</title></head><body style="margin:0">${body}</body></html>`
 
@@ -104,13 +109,19 @@ try {
         { name: 'Mine', url: u.Mine_inv, source: 'heatsync', hash: 'minehash' },
         { name: 'BigDog', url: u.BigDog_inv, source: '7tv', hash: 'bigdoghash' },
         { name: 'KappaNat', url: u.Kappa_inv, source: 'twitch', hash: 'kappaownhash' },
+        // a sub emote of yours (the server's get-user-emotes row: no source, `subscription`) and a twitch picture saved from someone else's sub
+        { name: 'SubOnly', url: u.SubPic, subscription: true, hash: 'subpichash' },
+        // a copy of yours (ffz) under a name the room holds as another picture (7tv): the room's answer, so no tile of yours
+        { name: 'Clash', url: u.Clash_inv, source: 'ffz', hash: 'clashownhash' },
+        { name: 'SavedSub', url: u.SavedPic, hash: 'savedpichash' },
       ],
     })
-  }, { ...Object.fromEntries(['Away_fav', 'Mine_inv'].map((n) => [n, E(n)])), BigDog_inv: BIGDOG.replace('2x', '1x'), Kappa_inv: KAPPA.replace('2.0', '1.0') })
+  }, { ...Object.fromEntries(['Away_fav', 'Mine_inv'].map((n) => [n, E(n)])), BigDog_inv: BIGDOG.replace('2x', '1x'), Kappa_inv: KAPPA.replace('2.0', '1.0'), SubPic: SUBPIC, SavedPic: SAVEDPIC, Clash_inv: 'https://cdn.frankerfacez.com/emote/746265/1' })
   const room = [
     { name: 'Wlol', url: E('Wlol_room'), source: '7tv', hash: 'wlolroomhash' },
     { name: 'Awake', url: E('Awake_room'), source: '7tv', hash: 'awakeroomhash' },
     { name: 'KappaNat', url: KAPPA, source: 'twitch', hash: 'kapparoomhash' },
+    { name: 'Clash', url: CLASH, source: '7tv', id: '01GWQ3XHWR0007M1MRN40XNE1A' },
     { name: 'BigDog', url: BIGDOG, source: '7tv', id: '01BIGDOGBIGDOGBIGDOGBIGD' },
   ]
   const seedRoom = (tell: boolean) =>
@@ -207,6 +218,16 @@ try {
     els.map((x) => (x.closest('.hs-mc-picker-emote-wrap') as HTMLElement).dataset.mark ?? null),
   )
   check(natMarks.length >= 1 && natMarks.every((m: string | null) => m === 'T'), `a. every KappaNat tile is marked T, your copy at another size is no won't-show cross (got ${JSON.stringify(natMarks)})`)
+  // an entitled twitch sub emote in your inventory is twitch's own (T); a twitch picture you only saved is yours alone (H)
+  const subMark = await markOf(`${PICKER} .hs-mc-picker-emote-wrap img[alt="SubOnly"]`)
+  check(subMark.mark === 'T', `a. an entitled twitch sub emote in your inventory is marked T (got ${JSON.stringify(subMark)})`)
+  const savedMark = await markOf(`${PICKER} .hs-mc-picker-emote-wrap img[alt="SavedSub"]`)
+  check(savedMark.mark === 'H', `a. a twitch picture you are not entitled to stays H (got ${JSON.stringify(savedMark)})`)
+  // one name = one picture = one tile: your ffz Clash is overridden by the room's 7tv Clash, so only the room's is drawn
+  const clash = await p.$$eval(`${PICKER} .hs-mc-picker-emote-wrap img[alt="Clash"]`, (els: HTMLImageElement[]) =>
+    els.map((x) => [x.src, (x.closest('.hs-mc-picker-emote-wrap') as HTMLElement).dataset.mark ?? null]),
+  )
+  check(clash.length >= 1 && clash.every(([src, m]: string[]) => src.includes('cdn.7tv.app') && m === '7'), `a. a name the room holds is one tile, the room's, marked 7 (got ${JSON.stringify(clash)})`)
   const mineMark = await markOf(`${PICKER} .hs-mc-picker-emote-wrap img[alt="Mine"]`)
   check(mineMark.mark === 'H', `a. a name only your set has stays H (got ${JSON.stringify(mineMark)})`)
   await p.click(roomTile, { button: 'right', modifiers: ['Shift'] })

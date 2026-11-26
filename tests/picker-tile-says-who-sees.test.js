@@ -138,7 +138,8 @@ describe('a picker tile says what sending it from this room ships', () => {
   test('a picture the room does not hold stays yours alone: H', () => {
     expect(mark(() => ({}), { source: '7tv', state: 'owned' })).toBe('H')
   })
-  test("an emote the platform would draw itself instead: won't show, the red cross", () => {
-    expect(mark(() => ({ shadowed: true }), { source: '7tv', state: 'owned' })).toBe('✗')
+  test('a copy the room would override is never drawn (lawTileHidden), so no tile carries a cross', () => {
+    expect(emoteImgHtml).toBeDefined()
+    expect(mark(() => ({ shadowed: true }), { source: '7tv', state: 'owned' })).toBe('H')
   })
 })

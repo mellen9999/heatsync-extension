@@ -26,11 +26,11 @@ function world({ room = {}, own = {}, globals = {} } = {}) {
 }
 
 describe('one name, several pictures', () => {
-  test("a fully typed name: the room's copy, then yours, then the global", () => {
+  test("a fully typed name: one candidate, the room's (your copy and the global are overridden there)", () => {
     const rig = world({ room: { KEKW: e('room') }, own: { KEKW: mine('mine') }, globals: { KEKW: e('glob', 'bttv') } })
     const list = rig.findEmoteMatches('KEKW')
-    expect(urls(list)).toEqual([e('room').url, mine('mine').url, e('glob', 'bttv').url])
-    expect(list.map((x) => x.tier)).toEqual([0, 1, 2])
+    expect(urls(list)).toEqual([e('room').url])
+    expect(list.map((x) => x.tier)).toEqual([0])
   })
 
   test("Tab's first answer for a typed name is what typing it sends (the chip)", () => {
@@ -52,13 +52,10 @@ describe('one name, several pictures', () => {
 })
 
 describe("the platform's own emote of a name", () => {
-  test('your twitch emote leads on a twitch room, and the other copies are marked: they will not show there', () => {
+  test('your twitch emote is the one candidate on a twitch room: the other copies will not show there, so they are not offered', () => {
     const rig = world({ room: { Pog: e('room') }, own: { Pog: e('sub', 'twitch', { subscription: true }) } })
     const list = rig.findEmoteMatches('Pog')
-    expect(list.map((x) => [x.source, !!x.shadowed])).toEqual([
-      ['twitch', false],
-      ['7tv', true],
-    ])
+    expect(list.map((x) => [x.source, !!x.shadowed])).toEqual([['twitch', false]])
   })
 })
 
@@ -237,30 +234,22 @@ describe("the picker's search", () => {
     const rig = world({ room: { KEKW: e('room') }, own: { KEKW: mine('mine') } })
     const list = rig.lawPickerSearch('KEKW', [], false)
     expect(list[0].raw.url).toBe(rig.lawChip('KEKW').e.url)
-    expect(tiles(list)).toEqual([
-      ['KEKW', e('room').url, false],
-      ['KEKW', mine('mine').url, false],
-    ])
+    expect(tiles(list)).toEqual([['KEKW', e('room').url, false]])
   })
 
-  test('every other picture the search returned follows: another KEKW can be picked on purpose', () => {
+  test('another picture under a name the room holds is not a tile; other names the search found follow', () => {
     const rig = world({ room: { KEKW: { url: seven('ROOM'), source: '7tv', state: 'global' } } })
     const list = rig.lawPickerSearch('kekw', [hit('KEKW', 'B'), hit('KEKW', 'C'), hit('kekwait', 'D')], false)
     expect(tiles(list)).toEqual([
       ['KEKW', seven('ROOM'), false],
       ['kekwait', seven('D', '1x.avif'), true],
-      ['KEKW', seven('B', '1x.avif'), true],
-      ['KEKW', seven('C', '1x.avif'), true],
     ])
   })
 
   test("the room's own emote coming back from the search is not a second tile, in any size or format", () => {
     const rig = world({ room: { KEKW: { url: seven('ROOM'), source: '7tv', state: 'global' } } })
     const list = rig.lawPickerSearch('kekw', [hit('KEKW', 'ROOM'), hit('KEKW', 'B')], false)
-    expect(tiles(list)).toEqual([
-      ['KEKW', seven('ROOM'), false],
-      ['KEKW', seven('B', '1x.avif'), true],
-    ])
+    expect(tiles(list)).toEqual([['KEKW', seven('ROOM'), false]])
   })
 
   test('"exact" keeps only the name typed, any case: the room copy leads the search answer', () => {

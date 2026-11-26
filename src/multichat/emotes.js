@@ -810,7 +810,10 @@ function groupEmotes() {
   if (recent) sections.unshift(recent)
   const fav = hsFavSection([viewerPersonalEmotes, ...activeTabEmotePools(), emoteCache])
   if (fav) sections.unshift(fav)
+  // one name = one picture = one tile: a picture this room answers its name with another of is not drawn
   return sections
+    .map((s) => ({ ...s, emotes: s.emotes.filter(([n, e]) => !lawTileHidden(n, e)) }))
+    .filter((s) => s.emotes.length)
 }
 
 // Chunked lazy render: with 2k+ emotes, building all <img> up-front blocks
@@ -1017,11 +1020,10 @@ async function hsMcImportChannelEmotes(btn, channel) {
 // the one-letter corner mark of a picker tile: who sees the emote if sent, from the readout's own
 // classification (`k`). a platform's own emote wears that platform's letter (T twitch, K kick: only
 // that platform's viewers see it), an ext class its provider's letter, heatsync-only H; a copy the
-// platform would not show is the red cross. no mark only when nothing classifies (unknown provider)
+// platform would not show is never drawn (lawTileHidden). no mark only when nothing classifies (unknown provider)
 const HS_VIS_MARK = { '7tv': '7', bttv: 'B', ffz: 'F' }
 const NATIVE_VIS_MARK = { twitch: 'T', kick: 'K' }
 function emoteVisMark(vis, source) {
-  if (vis?.k === 'wont') return '✗'
   if (vis?.k === 'heatsync') return 'H'
   if (vis?.k === 'everyone') return NATIVE_VIS_MARK[source] || ''
   return vis?.k === 'ext' ? HS_VIS_MARK[source] || '' : ''
@@ -1057,7 +1059,6 @@ function emoteImgHtml([name, emote]) {
     source: ship.source || emote.source,
     tier: ship.tier ?? (emote.state === 'owned' ? 1 : 2),
     remote: !!emote.variant && ship.tier === undefined,
-    shadowed: ship.shadowed,
   }).vis
   const who = vis.t
   // the corner mark (one css rule reads it); the words stay in the title and the label
@@ -3608,9 +3609,10 @@ async function loadEmotes() {
       // viewer's personal '67' from bleeding into other users' messages.
       // Render path passes viewerPersonalEmotes as senderEmotes for own outgoing,
       // and lookupEmote() composes both for picker/hover/UI use cases.
+      const sourceOf = inventorySourceOf(stored.emote_inventory || [])
       ;(stored.emote_inventory || []).forEach((e) => {
         if (e.name && e.url) {
-          const source = e.source || 'heatsync'
+          const source = e.source || sourceOf(e)
           // server returns zero_width (snake_case from postgres column), older
           // payloads may carry zeroWidth — accept either; falsy default is fine.
           viewerPersonalEmotes.set(e.name, {

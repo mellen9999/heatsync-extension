@@ -189,12 +189,22 @@ function lawWithPeople(list, people, seams = { exact: 0, room: 0 }) {
   ]
 }
 
+/** the law's offer without the emotes this room overrides; `exact` and `room` count what is left */
+function lawOneCopy(o) {
+  const keep = o.list.map((c) => !lawTileHidden(c.emote.name, c.emote.raw))
+  const upto = (n) => keep.slice(0, n).filter(Boolean).length
+  return { list: o.list.filter((_, i) => keep[i]), exact: upto(o.exact), room: upto(o.room) }
+}
+
 /**
  * One Tab cycle's matches for `typed`. With `prev` + `cursor` it is a late arrival (a catalog
  * answer): everything up to the cursor stays where it is, the rest is the fresh ranking minus it.
  */
 function lawTabList(typed, { catalog, emoji, people, prev, cursor = -1, emojiFirst = false, src } = {}) {
-  const fresh = hsEmoteLaw.offerSeams(typed, { ...lawOfferCtx({ catalog, emoji, src }), emojiFirst })
+  const offered = hsEmoteLaw.offerSeams(typed, { ...lawOfferCtx({ catalog, emoji, src }), emojiFirst })
+  // one name = one candidate: a copy this room answers its name with another picture of is not offered
+  // (a native page's holdings are its own room's: nothing to drop there). the seams move with the list
+  const fresh = src ? offered : lawOneCopy(offered)
   const all = lawWithPeople(fresh.list.map(lawMatchOf), people, fresh)
   if (!prev) return all
   const head = prev.slice(0, cursor + 1)
@@ -265,7 +275,7 @@ function lawPickerSearch(typed, found, exact) {
   const have = new Set()
   const add = (e, remote) => {
     const pic = `${e.name}\n${_acPicKey(e.raw.url)}`
-    if (have.has(pic) || (exact && e.name.toLowerCase() !== q)) return
+    if (have.has(pic) || (exact && e.name.toLowerCase() !== q) || lawTileHidden(e.name, e.raw)) return
     have.add(pic)
     out.push({ name: e.name, raw: e.raw, remote })
   }

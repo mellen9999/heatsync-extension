@@ -178,25 +178,64 @@ const lawCtx = (legs, picks) =>
   lawSendCtx({ legs, mine: viewerPersonalEmotes, globals: emoteCache, caches: channelEmoteCaches, picks })
 
 /**
- * What sending a picker tile's word from the open tab ships, for the tile's who-sees-it mark. A
- * click pins the tile's own picture as this message's pick, so the tile is its own picture: but when
- * the plain send of that word is already that very picture (your copy of the room's 7tv emote), it
- * goes out as the room's, and the room's class is the answer. Where the platform would still draw
- * its own emote of the name, the tile will not show.
- * @returns {{source?:string, tier?:number, shadowed?:boolean}} {} = the tile is read as it is
+ * The picture a word is in the open tab's room: what typing it sends, no picks. One name = one
+ * picture = one tile: a tile whose picture is not that one is never offered (picker, Tab), so a
+ * click can never pin a picture the room would override. Read per microtask, like the law ctx.
  */
 let tileCtx = null
+const lawTileCtx = () => (tileCtx ||= (queueMicrotask(() => (tileCtx = null)), lawCtx(lawOpenLegs(), null)))
+const lawSamePicture = (a, b) =>
+  _acPicKey(a?.url) === _acPicKey(b?.url) || (!!a?.hash && !!b?.hash && String(a.hash) === String(b.hash))
+
+/** true = this room answers `name` with another picture than `e`'s: the tile is not drawn here */
+function lawTileHidden(name, e) {
+  if (!e?.url) return false
+  const ctx = lawTileCtx()
+  if (!ctx.legs.length) return false
+  const hit = hsEmoteLaw.sendWord(name, ctx)
+  return !!hit && !lawSamePicture(hit.emote.raw || hit.emote, e)
+}
+
+/**
+ * What sending a picker tile's word from the open tab ships, for the tile's who-sees-it mark: when
+ * the room's answer for that name is the tile's own picture (your copy of the room's 7tv emote,
+ * a twitch emote you may use), the answer's class is the tile's, and the tile is read as that.
+ * @returns {{source?:string, tier?:number}} {} = the tile is read as it is
+ */
 function lawTileShip(name, e) {
   if (!e?.url) return {}
-  tileCtx ||= (queueMicrotask(() => (tileCtx = null)), lawCtx(lawOpenLegs(), null))
-  const pic = _acPicKey(e.url)
-  const hit = hsEmoteLaw.sendWord(name, tileCtx)
-  if (hit && _acPicKey(hit.emote.url) === pic) {
-    const tier = { room: 0, own: 1, personal: 1, global: 2 }[hit.from]
-    return { source: hit.emote.raw?.source || hit.emote.provider, ...(tier !== undefined && { tier }) }
+  const ctx = lawTileCtx()
+  const hit = hsEmoteLaw.sendWord(name, ctx)
+  let ship = {}
+  if (hit && lawSamePicture(hit.emote.raw || hit.emote, e)) {
+    const tier = { room: 0, own: 1, native: 1, personal: 1, global: 2 }[hit.from]
+    ship = { source: hit.emote.raw?.source || hit.emote.provider, ...(tier !== undefined && { tier }) }
   }
-  const pinned = hsEmoteLaw.sendWord(name, { ...tileCtx, picks: lawView(new Map([[name, e]])) })
-  return pinned && _acPicKey(pinned.emote.url) !== pic ? { shadowed: true } : {}
+  // a platform's own emote is drawn only on that platform: where this send does not reach it, the
+  // picture travels as a ref and only heatsync users see it (a twitch emote in a kick-only room)
+  const own = ship.source || e.source
+  if ((own === 'twitch' || own === 'kick') && ctx.legs.length && !ctx.legs.some((r) => r.platform === own)) {
+    return { source: 'heatsync', tier: 1 }
+  }
+  return ship
+}
+
+/**
+ * Where an inventory row's picture is drawn from. A twitch emote the viewer may use (the server's
+ * get-user-emotes rows: subscriptions, bits tiers, follower, turbo, carried as `subscription`) is
+ * twitch's own: twitch draws that word for every twitch viewer, so the row is `twitch`, never an
+ * upload of theirs. A saved copy of the same picture (id at any size or theme) under the entitled
+ * word is that emote too; the same picture under another word is not (twitch would show the bare
+ * word), nor is one they are not entitled to.
+ * @param {{name?:string,url?:string,subscription?:boolean}[]} rows the whole list, entitlement included
+ * @returns {(e:{name?:string,url?:string,subscription?:boolean}) => 'twitch'|'heatsync'}
+ */
+const _TWITCH_PIC_ID = /^https:\/\/static-cdn\.jtvnw\.net\/emoticons\/v2\/([^/?#]+)\//
+function inventorySourceOf(rows) {
+  const idOf = (u) => _TWITCH_PIC_ID.exec(u || '')?.[1] || ''
+  const entitled = new Map()
+  for (const e of rows) if (e?.subscription && idOf(e.url)) entitled.set(idOf(e.url), e.name)
+  return (e) => (e.subscription || (idOf(e.url) && entitled.get(idOf(e.url)) === e.name) ? 'twitch' : 'heatsync')
 }
 
 /** a pick as an overlay entry, for a picture no cache holds (a catalog hit) */

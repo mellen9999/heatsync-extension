@@ -273,7 +273,7 @@ describe("the server's animated flag reaches the inventory and the sender sets",
   test('the viewer record built from an animated row draws data-animated and joins the strip; a still does not', async () => {
     const main = mainSource()
     const block = slice(
-      ';(msg.emotes || []).forEach((e) => {',
+      'const sourceOf = inventorySourceOf(',
       '// Remove emotes no longer in inventory from cache',
       main,
     )
@@ -286,6 +286,7 @@ describe("the server's animated flag reaches the inventory and the sender sets",
       'isLocallyRemoved',
       'emoteAddedAtMs',
       'zeroWidthFromAnyCache',
+      'inventorySourceOf',
       block,
     )
     const flat = pic()
@@ -304,6 +305,7 @@ describe("the server's animated flag reaches the inventory and the sender sets",
       () => false,
       () => 0,
       () => false,
+      () => () => 'heatsync',
     )
     expect(viewerPersonalEmotes.get('LICK').animated).toBe(true)
     expect(viewerPersonalEmotes.get('FLAT').animated).toBe(false)

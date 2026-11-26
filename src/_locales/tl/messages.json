@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "puno na ang mga paborito — mag-alis muna ng isa"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "pagkapribado"
+  },
+  "mc_settings_checkin": {
+    "message": "isama sa bilang ang install na ito"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "naka-on: kasama sa pag-check ng update ang random na id na nagbabago araw-araw, ang bersyon, anong mga bahagi ang binuksan mo at tantiyang edad ng install. naka-off: wala sa mga iyon."
   }
 }

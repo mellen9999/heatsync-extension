@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "favorieten vol — verwijder er eerst een"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "privacy-opties"
+  },
+  "mc_settings_checkin": {
+    "message": "deze installatie meetellen"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "aan: de updatecontrole stuurt ook een willekeurig id dat elke dag wisselt, de versie, welke onderdelen je opende en een grove leeftijd van de installatie mee. uit: niets daarvan."
   }
 }

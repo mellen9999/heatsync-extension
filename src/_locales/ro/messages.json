@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "favorite pline — elimină mai întâi unul"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "confidențialitate"
+  },
+  "mc_settings_checkin": {
+    "message": "numără această instalare"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "pornit: verificarea de actualizări trimite și un id aleatoriu care se schimbă zilnic, versiunea, ce părți ai deschis și o vârstă aproximativă a instalării. oprit: nimic din toate astea."
   }
 }

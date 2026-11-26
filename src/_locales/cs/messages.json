@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "oblíbené jsou plné — nejdřív jeden odeber"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "soukromí"
+  },
+  "mc_settings_checkin": {
+    "message": "započítat tuto instalaci"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "zapnuto: kontrola aktualizací pošle i náhodné id, které se mění každý den, verzi, které části jste otevřeli a hrubé stáří instalace. vypnuto: nic z toho."
   }
 }

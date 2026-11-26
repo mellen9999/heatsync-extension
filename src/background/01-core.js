@@ -1006,7 +1006,8 @@ async function clearPendingSurfaces(sent) {
 // data category (src/manifests/firefox.json), so there it is the user's call:
 // without the grant the poll still goes out — the kill-switch must never
 // depend on it — but carries no id and no surfaces. Chromium has no such
-// permission; its store disclosure covers the poll. Every Firefox this build
+// permission; its settings switch (hs_checkin) is the opt-out there, and it
+// applies on Firefox too. Every Firefox this build
 // installs on (140+, strict_min_version) knows the key, so a throw is
 // something broken, and broken reads as no consent.
 //
@@ -1023,6 +1024,13 @@ async function isDevInstall() {
 
 async function mayCountInstall() {
   if (await isDevInstall()) return false
+  // The settings switch (system > privacy, hs_checkin, on by default) is the
+  // chromium opt-out and a second lock on firefox. Only an explicit false
+  // stops it, and an unreadable store reads as the default, never as consent
+  // withdrawn or given by accident: the poll goes out plain either way.
+  try {
+    if ((await browser.storage.local.get(['hs_checkin'])).hs_checkin === false) return false
+  } catch {}
   if (typeof browser.runtime.getBrowserInfo !== 'function') return true
   try {
     return (await browser.permissions.contains({ data_collection: ['technicalAndInteraction'] })) === true

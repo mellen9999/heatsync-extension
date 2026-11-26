@@ -7543,5 +7543,14 @@
   },
   "mc_fav_full": {
     "message": "favorites full — remove one first"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "privacy"
+  },
+  "mc_settings_checkin": {
+    "message": "count this install"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "on: the update check also sends a random id that changes every day, the version, which parts you opened and a rough install age. off: none of that."
   }
 }

@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "お気に入りがいっぱいです — 先に1つ削除してください"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "プライバシー"
+  },
+  "mc_settings_checkin": {
+    "message": "このインストールを数える"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "オン: 更新チェックが、毎日変わるランダムなid、バージョン、開いた画面、おおよそのインストール期間も送ります。オフ: どれも送りません。"
   }
 }

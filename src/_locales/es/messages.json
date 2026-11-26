@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "favoritos llenos — quita uno primero"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "privacidad"
+  },
+  "mc_settings_checkin": {
+    "message": "contar esta instalación"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "activado: la comprobación de actualizaciones envía también un id aleatorio que cambia cada día, la versión, qué partes abriste y una antigüedad aproximada. desactivado: nada de eso."
   }
 }

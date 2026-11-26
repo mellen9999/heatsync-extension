@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "favoritter er fulle — fjern én først"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "personvern"
+  },
+  "mc_settings_checkin": {
+    "message": "tell denne installasjonen"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "på: oppdateringssjekken sender også en tilfeldig id som skifter hver dag, versjonen, hvilke deler du åpnet og en grov alder på installasjonen. av: ingenting av det."
   }
 }

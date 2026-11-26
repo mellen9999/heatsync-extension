@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "preferiti pieni — rimuovine uno prima"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "privacy"
+  },
+  "mc_settings_checkin": {
+    "message": "conta questa installazione"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "attivo: il controllo aggiornamenti invia anche un id casuale che cambia ogni giorno, la versione, quali parti hai aperto e un'età approssimativa dell'installazione. disattivo: niente di tutto questo."
   }
 }

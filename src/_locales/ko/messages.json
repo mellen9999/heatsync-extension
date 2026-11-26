@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "즐겨찾기가 가득 찼습니다 — 먼저 하나를 제거하세요"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "개인정보"
+  },
+  "mc_settings_checkin": {
+    "message": "이 설치 집계에 포함"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "켜짐: 업데이트 확인이 매일 바뀌는 무작위 id, 버전, 열어 본 화면, 대략적인 설치 기간도 함께 보냅니다. 꺼짐: 아무것도 보내지 않습니다."
   }
 }

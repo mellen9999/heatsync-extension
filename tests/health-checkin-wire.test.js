@@ -36,8 +36,9 @@ function sliceBetween(marker, endMarker) {
 const PRELUDE_SRC = sliceBetween('const HEALTH_URL =', 'async function fetchHealth()')
 const FETCH_HEALTH_SRC = sliceBetween('async function fetchHealth()', '\n// A cached kill/disabled')
 
-function makeHarness({ pending = [], ok = true, installType, installedDay } = {}) {
+function makeHarness({ pending = [], ok = true, installType, installedDay, checkin, firefoxGranted } = {}) {
   const store = pending.length ? { hs_surfaces_pending: [...pending] } : {}
+  if (checkin !== undefined) store.hs_checkin = checkin
   if (installedDay !== undefined) store.hs_installed_day = installedDay
   const urls = []
   const browser = {
@@ -54,7 +55,11 @@ function makeHarness({ pending = [], ok = true, installType, installedDay } = {}
         },
       },
     },
-    runtime: { getManifest: () => ({ version: '1.7.64' }) },
+    runtime: {
+      getManifest: () => ({ version: '1.7.64' }),
+      ...(firefoxGranted !== undefined && { getBrowserInfo: async () => ({}) }),
+    },
+    ...(firefoxGranted !== undefined && { permissions: { contains: async () => firefoxGranted } }),
     ...(installType && { management: { getSelf: async () => ({ installType }) } }),
   }
   const fetchWithTimeout = async (url) => {
@@ -118,6 +123,35 @@ describe('fetchHealth — surface names on the wire', () => {
     await h.fetchHealth()
     expect(h.urls).toEqual(['https://heatsync.org/api/extension/health'])
     expect(await h.takePendingSurfaces()).toEqual(['feed'])
+  })
+
+  // The settings switch (system > privacy). Chromium has no browser-level
+  // data permission, so this is its opt-out; the poll still goes out plain.
+  test('the check-in switch off: polls plain, sends no id, keeps the surfaces unsent', async () => {
+    const h = makeHarness({ pending: ['feed'], installType: 'normal', checkin: false })
+    await h.fetchHealth()
+    expect(h.urls).toEqual(['https://heatsync.org/api/extension/health'])
+    expect(await h.takePendingSurfaces()).toEqual(['feed'])
+  })
+
+  test('the check-in switch on, or never touched, is counted as before', async () => {
+    for (const checkin of [true, undefined]) {
+      const h = makeHarness({ installType: 'normal', checkin })
+      await h.fetchHealth()
+      expect(new URL(h.urls[0]).searchParams.get('id')).toBe('install-fixed-id')
+    }
+  })
+
+  test('firefox: the switch off stops it even with the data permission granted; permission still required with it on', async () => {
+    const off = makeHarness({ installType: 'normal', checkin: false, firefoxGranted: true })
+    await off.fetchHealth()
+    expect(off.urls).toEqual(['https://heatsync.org/api/extension/health'])
+    const denied = makeHarness({ installType: 'normal', firefoxGranted: false })
+    await denied.fetchHealth()
+    expect(denied.urls).toEqual(['https://heatsync.org/api/extension/health'])
+    const ok = makeHarness({ installType: 'normal', firefoxGranted: true })
+    await ok.fetchHealth()
+    expect(new URL(ok.urls[0]).searchParams.get('id')).toBe('install-fixed-id')
   })
 
   test('a store install is counted', async () => {

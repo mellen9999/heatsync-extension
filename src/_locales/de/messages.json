@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "favoriten voll — erst einen entfernen"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "datenschutz"
+  },
+  "mc_settings_checkin": {
+    "message": "diese installation mitzählen"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "an: die update-abfrage sendet zusätzlich eine zufällige id, die sich täglich ändert, die version, welche bereiche du geöffnet hast und ein grobes installationsalter. aus: nichts davon."
   }
 }

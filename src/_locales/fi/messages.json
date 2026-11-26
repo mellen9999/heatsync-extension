@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "suosikit täynnä — poista ensin yksi"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "yksityisyys"
+  },
+  "mc_settings_checkin": {
+    "message": "laske tämä asennus mukaan"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "päällä: päivitystarkistus lähettää myös satunnaisen tunnuksen, joka vaihtuu joka päivä, version, mitä osia avasit ja asennuksen likimääräisen iän. pois: ei mitään näistä."
   }
 }

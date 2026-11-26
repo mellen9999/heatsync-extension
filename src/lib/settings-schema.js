@@ -1698,6 +1698,27 @@ const SETTINGS = [
     ],
   },
 
+  // ── system / privacy — the install check-in ────────────────────────────
+  // Every few minutes the background asks heatsync.org for update + kill-switch
+  // info. With this on it also carries a daily-rotating random id, the version,
+  // which surfaces were opened and a coarse install age (privacy policy: "the
+  // extension check-in"). Off = the same poll, plain: no id, nothing about you.
+  // Read by the background (mayCountInstall), so local storage, not ui_settings.
+  {
+    key: 'hs_checkin',
+    basic: true,
+    type: 'bool',
+    default: true,
+    scope: 'local',
+    category: 'system',
+    section: 'privacy',
+    sectionKey: 'mc_settings_sec_privacy',
+    labelKey: 'mc_settings_checkin',
+    tipKey: 'mc_settings_checkin_desc',
+    control: 'pill',
+    alias: 'checkin telemetry analytics count install id ping',
+  },
+
   // Plumbing that stays on: no panel toggle (nobody wants chat without tab-complete
   // or the native-chat tap), but the gates still exist in code. Anything stored
   // `false` for these from an older panel is reset on boot (main.js snapshotGates).

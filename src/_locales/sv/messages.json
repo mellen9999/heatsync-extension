@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "favoriter fulla — ta bort en först"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "integritet"
+  },
+  "mc_settings_checkin": {
+    "message": "räkna med den här installationen"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "på: uppdateringskollen skickar också ett slumpmässigt id som byts varje dag, versionen, vilka delar du öppnade och en grov ålder på installationen. av: inget av det."
   }
 }

@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "ulubione pełne — najpierw usuń jedną"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "prywatność"
+  },
+  "mc_settings_checkin": {
+    "message": "licz tę instalację"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "włączone: sprawdzanie aktualizacji wysyła też losowe id zmieniane co dzień, wersję, które części otwarto i przybliżony wiek instalacji. wyłączone: nic z tego."
   }
 }

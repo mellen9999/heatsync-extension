@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "favoris pleins — retires-en un d'abord"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "confidentialité"
+  },
+  "mc_settings_checkin": {
+    "message": "compter cette installation"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "activé : la vérification de mise à jour envoie aussi un id aléatoire qui change chaque jour, la version, les parties ouvertes et un âge approximatif de l'installation. désactivé : rien de tout ça."
   }
 }

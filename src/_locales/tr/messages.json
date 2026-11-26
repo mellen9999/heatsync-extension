@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "favoriler dolu — önce birini çıkar"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "gizlilik"
+  },
+  "mc_settings_checkin": {
+    "message": "bu kurulumu say"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "açık: güncelleme kontrolü ayrıca her gün değişen rastgele bir id, sürüm, hangi bölümleri açtığın ve kabaca kurulum yaşını da gönderir. kapalı: bunların hiçbiri."
   }
 }

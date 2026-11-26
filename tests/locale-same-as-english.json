@@ -184,6 +184,7 @@
   "mc_settings_poll_banner": ["nl", "no", "sv"],
   "mc_settings_prediction_banner": ["da", "no", "sv"],
   "mc_settings_raids": ["da", "el", "es", "fr", "ms", "nl", "no", "pt_BR", "pt_PT", "ro", "sv", "tl"],
+  "mc_settings_sec_privacy": ["it"],
   "mc_settings_seventv_paints": ["nl"],
   "mc_settings_spellcheck": ["tl"],
   "mc_settings_sub_whispers": ["da", "el", "nl", "no", "vi"],

@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "a kedvencek megteltek — előbb vegyél ki egyet"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "adatvédelem"
+  },
+  "mc_settings_checkin": {
+    "message": "telepítés beszámítása"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "be: a frissítésellenőrzés egy naponta változó véletlen azonosítót, a verziót, a megnyitott részeket és a telepítés hozzávetőleges korát is elküldi. ki: ezek közül semmit."
   }
 }

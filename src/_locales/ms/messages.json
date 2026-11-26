@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "kegemaran penuh — buang satu dahulu"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "privasi"
+  },
+  "mc_settings_checkin": {
+    "message": "kira pemasangan ini"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "hidup: semakan kemas kini turut menghantar id rawak yang bertukar setiap hari, versi, bahagian yang anda buka dan anggaran umur pemasangan. mati: tiada satu pun."
   }
 }

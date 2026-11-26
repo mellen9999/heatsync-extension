@@ -770,7 +770,7 @@ function _renderCategoryPaneInner(cat) {
     return _renderPageDefaultsRow(cat) + _regSections(cat) + mrGroupHtml()
   }
   if (cat === 'system') {
-    return _regSections(cat, ['tabs', 'subsystems', 'language']) + _renderMutedGroup() + _renderBackupGroup()
+    return _regSections(cat, ['tabs', 'subsystems', 'language', 'privacy']) + _renderMutedGroup() + _renderBackupGroup()
   }
   return _renderPageDefaultsRow(cat) + _regSections(cat)
 }

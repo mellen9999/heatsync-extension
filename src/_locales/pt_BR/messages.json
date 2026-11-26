@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "favoritos cheios — remova um primeiro"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "privacidade"
+  },
+  "mc_settings_checkin": {
+    "message": "contar esta instalação"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "ligado: a checagem de atualização também envia um id aleatório que muda todo dia, a versão, quais partes você abriu e uma idade aproximada da instalação. desligado: nada disso."
   }
 }

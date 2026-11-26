@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "yêu thích đã đầy — hãy xóa một mục trước"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "quyền riêng tư"
+  },
+  "mc_settings_checkin": {
+    "message": "tính lượt cài đặt này"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "bật: lần kiểm tra cập nhật còn gửi một id ngẫu nhiên đổi mỗi ngày, phiên bản, những phần bạn đã mở và tuổi cài đặt ước chừng. tắt: không gửi gì trong số đó."
   }
 }

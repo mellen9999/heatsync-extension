@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "收藏已滿 — 請先移除一個"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "隱私"
+  },
+  "mc_settings_checkin": {
+    "message": "統計此安裝"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "開啟：檢查更新時還會傳送每天更換的隨機 id、版本、開啟過的部分與大約的安裝時間。關閉：以上都不傳送。"
   }
 }

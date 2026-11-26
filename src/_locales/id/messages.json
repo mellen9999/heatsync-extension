@@ -7525,5 +7525,14 @@
   },
   "mc_fav_full": {
     "message": "favorit penuh — hapus satu dulu"
+  },
+  "mc_settings_sec_privacy": {
+    "message": "privasi"
+  },
+  "mc_settings_checkin": {
+    "message": "hitung instalasi ini"
+  },
+  "mc_settings_checkin_desc": {
+    "message": "aktif: pengecekan pembaruan juga mengirim id acak yang berganti tiap hari, versi, bagian yang kamu buka, dan perkiraan usia instalasi. nonaktif: tidak ada yang dikirim."
   }
 }

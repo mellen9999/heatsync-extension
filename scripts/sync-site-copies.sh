@@ -63,6 +63,12 @@
 # runs every case, tests/big-emote-lines.test.js runs the same lines through the real row renderer.
 # build.js bundles the .ts beside the law (scripts/lib/emote-law-bundle.mjs).
 #
+# shared/filter-rules.vectors.json is the chat filter rules' engine as data (the setting chatFilterRules):
+# tests/filter-rules-vectors.test.js runs every case through src/multichat/filter-rules.js.
+# shared/settings-sync.vectors.json is the account-synced settings catalog, written FROM this repo's
+# registry (bun scripts/dump-settings-sync-vectors.js), copied to the site, and back here by this script;
+# tests/settings-sync-vectors.test.js fails when the registry and the file differ.
+#
 #   scripts/sync-site-copies.sh            # from ../heatsync (or $HS_SITE_DIR)
 set -euo pipefail
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -93,6 +99,8 @@ for pair in \
   shared/emote-mods.vectors.json:shared/emote-mods.vectors.json \
   shared/emote-only.ts:shared/emote-only.ts \
   shared/emote-only.vectors.json:shared/emote-only.vectors.json \
+  shared/filter-rules.vectors.json:shared/filter-rules.vectors.json \
+  shared/settings-sync.vectors.json:shared/settings-sync.vectors.json \
   tests/helpers/emote-world.ts:tests/helpers/emote-world.ts
 do
   src_rel="${pair%%:*}"

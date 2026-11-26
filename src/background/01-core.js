@@ -421,6 +421,9 @@ const RETIRED_UI_KEYS = new Set([
   'crossFollowTwitchNotify',
   'ytFeedShelves',
   'nativeVisible',
+  // 11-26: on by default for a day, and every device saved that default as if it were a choice; the
+  // opt-in setting is bigEmoteLinesOptIn, so a stale true here never turns big lines back on
+  'bigEmoteLines',
 ])
 // registry key → chrome.storage.local key name — must match src/lib/utils.js
 // OVERFLOW_MIRROR_KEYS exactly (parity-checked at build time).

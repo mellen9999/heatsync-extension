@@ -261,7 +261,7 @@ try {
       // @ts-ignore — extension page
       const cur = (await chrome.storage.sync.get('ui_settings')).ui_settings || {}
       // @ts-ignore
-      await chrome.storage.sync.set({ ui_settings: { ...cur, bigEmoteLines: on } })
+      await chrome.storage.sync.set({ ui_settings: { ...cur, bigEmoteLinesOptIn: on } })
     }, on)
   }
   await setIt(false)

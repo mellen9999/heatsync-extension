@@ -237,10 +237,11 @@ const SETTINGS = [
   {
     // A plain chat line of nothing but 1 to 5 pictures draws them twice as big (shared/emote-only.ts,
     // the one rule every app runs). Read when a row is drawn, so a change rebuilds the rows. The same
-    // account setting as heatsync.org's bigEmoteLines (server/lib/settings-bridge.ts).
-    key: 'bigEmoteLines',
+    // account setting as heatsync.org's bigEmoteLinesOptIn (server/lib/settings-bridge.ts).
+    key: 'bigEmoteLinesOptIn',
     type: 'bool',
-    // off by default (11-26): a big line takes 2 to 4 rows, and chat reads one row per line
+    // off by default (11-26): a big line takes 2 to 4 rows, and chat reads one row per line. a new
+    // key, so the `true` every device saved while it was on by default is not read as a choice
     default: false,
     scope: 'sync',
     category: 'display',

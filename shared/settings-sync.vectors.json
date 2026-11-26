@@ -14,7 +14,7 @@
     "anonChat": {"type":"bool","scope":"sync","default":false},
     "autoHideEmpty": {"type":"bool","scope":"sync","default":false},
     "avatars": {"type":"bool","scope":"sync","default":false},
-    "bigEmoteLines": {"type":"bool","scope":"sync","default":false},
+    "bigEmoteLinesOptIn": {"type":"bool","scope":"sync","default":false},
     "caseInsensitiveEmotes": {"type":"bool","scope":"sync","default":false},
     "channelVolumeDefault": {"type":"range","scope":"sync","default":0,"min":0,"max":1},
     "channelVolumeMemory": {"type":"bool","scope":"sync","default":true},
@@ -75,7 +75,7 @@
     "zebra": {"type":"bool","scope":"sync","default":true}
   },
   "local": ["hs_auto_claim_points","hs_checkin","hs_dim_timeouts","hs_emoji_size","hs_emote_size","hs_mod_toolbar_buttons","hs_notifications","hs_readable_names","hs_remember_sent","hs_spellcheck","hs_sr_announce","hs_ui_locale","viewer_show_drug","viewer_show_gore","viewer_show_hate","viewer_show_sexual","viewer_show_weapon"],
-  "retired": ["automodAllCaps","automodRegex","bttvBadges","channelVolumeKick","channelVolumeTwitch","channelVolumeYouTube","chatterinoBadges","compactChatInput","crashTelemetry","crossFollowTwitchNotify","customPresets","debugLogging","emoteProviderPriority","emoteSpaceAfter","emoteWysiwyg","ffzBadges","hideChatHeader","highlightMentions","keywordHighlights","lineHeight","nativeVisible","partialLinksEnabled","rightClickBlockMode","showCosmetics","ytFeedShelves"],
+  "retired": ["automodAllCaps","automodRegex","bigEmoteLines","bttvBadges","channelVolumeKick","channelVolumeTwitch","channelVolumeYouTube","chatterinoBadges","compactChatInput","crashTelemetry","crossFollowTwitchNotify","customPresets","debugLogging","emoteProviderPriority","emoteSpaceAfter","emoteWysiwyg","ffzBadges","hideChatHeader","highlightMentions","keywordHighlights","lineHeight","nativeVisible","partialLinksEnabled","rightClickBlockMode","showCosmetics","ytFeedShelves"],
   "deviceLocal": ["platformFilters"],
   "largeKeys": ["chatFilterRules"],
   "largeKeyMax": 32768

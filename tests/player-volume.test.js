@@ -120,6 +120,7 @@ describe('the glue — a player mounts, the page races us, the reader decides', 
   let win
   let store
   let listeners
+  let watched
   let realSetTimeout = null
   let timers = new Set()
   const real = {}
@@ -140,10 +141,11 @@ describe('the glue — a player mounts, the page races us, the reader decides', 
   }
   const flush = (ms = 0) => new Promise((r) => setTimeout(r, ms))
 
-  const boot = async ({ url, local = {}, sync = {} }) => {
+  const boot = async ({ url, local = {}, sync = {}, before }) => {
     store = { local: { ...local }, sync: { ...sync } }
     listeners = []
     win = new Window({ url })
+    before?.(win)
     const api = {
       storage: {
         local: {
@@ -161,7 +163,13 @@ describe('the glue — a player mounts, the page races us, the reader decides', 
     globalThis.window = win
     globalThis.document = win.document
     globalThis.location = win.location
-    globalThis.MutationObserver = win.MutationObserver
+    watched = []
+    globalThis.MutationObserver = class extends win.MutationObserver {
+      observe(target, opts) {
+        watched.push({ target, opts })
+        return super.observe(target, opts)
+      }
+    }
     globalThis.Event = win.Event
     globalThis.chrome = api
     delete globalThis.browser
@@ -313,6 +321,73 @@ describe('the glue — a player mounts, the page races us, the reader decides', 
     await flush(5)
     v.dispatchEvent(new win.Event('loadedmetadata'))
     expect(v.volume).toBe(0.2)
+  })
+
+  // the page is not watched for added nodes: a <video> is met the moment it speaks, wherever and
+  // whenever it mounted (a document-wide observer paid for every chat row twitch drew)
+  describe('a player is found without watching the page', () => {
+    const remembered = { hs_channel_volume: { v: 1, map: { 'twitch:kripp': [0.15, 1] } } }
+
+    test('one that mounts late, deep inside a column the page draws later', async () => {
+      await boot({ url: 'https://www.twitch.tv/kripp', local: remembered })
+      const column = win.document.createElement('div')
+      win.document.body.appendChild(column)
+      await flush(5)
+      const slot = win.document.createElement('div')
+      column.appendChild(slot)
+      const v = fakeVideo(win, 1)
+      slot.appendChild(v)
+      await flush(5)
+      v.dispatchEvent(new win.Event('loadstart'))
+      v.dispatchEvent(new win.Event('loadedmetadata'))
+      expect(v.volume).toBe(0.15)
+    })
+
+    test('the player twitch replaces on navigation: the new <video> gets the volume too', async () => {
+      await boot({ url: 'https://www.twitch.tv/kripp', local: remembered })
+      const first = fakeVideo(win, 1)
+      win.document.body.appendChild(first)
+      await flush(5)
+      first.dispatchEvent(new win.Event('loadedmetadata'))
+      expect(first.volume).toBe(0.15)
+      first.remove()
+      const second = fakeVideo(win, 1)
+      win.document.body.appendChild(second)
+      await flush(5)
+      second.dispatchEvent(new win.Event('loadedmetadata'))
+      expect(second.volume).toBe(0.15)
+    })
+
+    test('one that is already loaded when it first speaks (a re-parented player starting to play)', async () => {
+      await boot({ url: 'https://www.twitch.tv/kripp', local: remembered })
+      const v = fakeVideo(win, 1)
+      win.document.body.appendChild(v)
+      await flush(5)
+      v.dispatchEvent(new win.Event('play'))
+      expect(v.volume).toBe(0.15)
+    })
+
+    test('one that is in the page before we start is found by the first look', async () => {
+      let v
+      await boot({
+        url: 'https://www.twitch.tv/kripp',
+        local: remembered,
+        before: (w) => {
+          v = fakeVideo(w, 1)
+          w.document.body.appendChild(v)
+        },
+      })
+      v.dispatchEvent(new win.Event('loadedmetadata'))
+      expect(v.volume).toBe(0.15)
+    })
+
+    test('nothing observes the document', async () => {
+      await boot({ url: 'https://www.twitch.tv/kripp', local: remembered })
+      const v = fakeVideo(win, 1)
+      win.document.body.appendChild(v)
+      await flush(5)
+      expect(watched).toEqual([])
+    })
   })
 
   test('a vod embed has no key, so no memory is read or written', async () => {

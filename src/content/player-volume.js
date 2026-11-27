@@ -313,17 +313,20 @@
     if (video.readyState >= 1) resolve()
   }
 
-  const scan = (root) => {
-    if (root.nodeType !== 1) return
-    if (root.tagName === 'VIDEO') attach(root)
-    for (const v of root.querySelectorAll?.('video') || []) attach(v)
+  // A <video> is met the moment it speaks. Media events do not bubble, but a capture listener on the
+  // document hears them from every <video> in the page, whenever it mounted and wherever it was put,
+  // and costs nothing between them. Watching the document for added nodes instead ran a callback and a
+  // querySelectorAll('video') for every chat row and tooltip the page drew. A player has always said
+  // loadstart (a new source) or play (one that was re-parented, which pauses it) before its volume
+  // matters, and attach() is idempotent.
+  const SPEAKS = ['loadstart', 'loadedmetadata', 'play', 'playing', 'volumechange']
+  const met = (e) => {
+    if (e.target?.tagName === 'VIDEO') attach(e.target)
   }
 
   function boot() {
-    new MutationObserver((muts) => {
-      for (const m of muts) for (const n of m.addedNodes) scan(n)
-    }).observe(document.documentElement, { childList: true, subtree: true })
-    scan(document.documentElement)
+    for (const type of SPEAKS) document.addEventListener(type, met, { capture: true, passive: true })
+    for (const v of document.querySelectorAll('video')) attach(v)
     // a youtube SPA navigation keeps the same <video>; re-resolve its channel
     document.addEventListener('yt-navigate-finish', () => {
       for (const v of document.querySelectorAll('video')) {

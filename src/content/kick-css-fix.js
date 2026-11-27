@@ -356,11 +356,19 @@
 
   if (document.head) watch(document.head)
   else {
+    // <head> is a direct child of <html>, and <html> of the document: wait for a child at each step
+    // (document_start can run before either), never for the whole page being drawn
     const boot = new MutationObserver(() => {
-      if (!document.head) return
-      boot.disconnect()
-      watch(document.head)
+      if (document.head) {
+        boot.disconnect()
+        watch(document.head)
+      } else if (document.documentElement && target !== document.documentElement) {
+        target = document.documentElement
+        boot.disconnect()
+        boot.observe(target, { childList: true })
+      }
     })
-    boot.observe(document, { childList: true, subtree: true })
+    let target = document.documentElement || document
+    boot.observe(target, { childList: true })
   }
 })()

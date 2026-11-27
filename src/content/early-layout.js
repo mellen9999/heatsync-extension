@@ -350,7 +350,8 @@ ${
     const obs = new MutationObserver(() => {
       if (applyBodyClasses()) obs.disconnect()
     })
-    obs.observe(document.documentElement, { childList: true, subtree: true })
+    // <body> is a direct child of <html>: wait for a child, not for the whole page being drawn
+    obs.observe(document.documentElement, { childList: true })
     setTimeout(() => obs.disconnect(), 5000)
   }
 

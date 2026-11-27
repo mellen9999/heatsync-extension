@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "इस vod की रीप्ले चैट · छोड़ते ही बंद हो जाती है"
+  },
   "mc_vod_no_replay": {
     "message": "इस vod में चैट रीप्ले नहीं है"
   },

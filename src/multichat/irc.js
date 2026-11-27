@@ -7,11 +7,13 @@
 // a saved twitch channel was booked as that twitch channel: its own set fell
 // out of the in-use list and the retry alarm, its emote use went to the wrong
 // room.
-function joinExtraChannel(platform, channel) {
-  safeSendMessage({ type: 'ws_send', data: { type: 'channel:join', platform, channel } })
+// scoped: the worker holds the room for THIS tab only, never saves it, and lets it go when the tab
+// closes, reloads or leaves (the vod tab's owner room).
+function joinExtraChannel(platform, channel, { scoped = false } = {}) {
+  safeSendMessage({ type: 'ws_send', data: { type: 'channel:join', platform, channel }, ...(scoped && { scoped }) })
 }
-function leaveExtraChannel(platform, channel) {
-  safeSendMessage({ type: 'ws_send', data: { type: 'channel:leave', platform, channel } })
+function leaveExtraChannel(platform, channel, { scoped = false } = {}) {
+  safeSendMessage({ type: 'ws_send', data: { type: 'channel:leave', platform, channel }, ...(scoped && { scoped }) })
 }
 
 // Raid windows: channel(lowercase) → ms timestamp until which incoming

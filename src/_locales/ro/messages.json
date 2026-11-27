@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "chatul reluării acestui vod · se închide când pleci"
+  },
   "mc_vod_no_replay": {
     "message": "acest vod nu are reluare de chat"
   },

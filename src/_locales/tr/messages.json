@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "bu vod'un tekrar sohbeti · ayrıldığında kapanır"
+  },
   "mc_vod_no_replay": {
     "message": "bu vod'da sohbet tekrarı yok"
   },

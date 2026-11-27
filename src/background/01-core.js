@@ -1333,6 +1333,11 @@ const tabChannels = new Map() // tabId → { channel, channelOwner }
 // tabChannels only tracks the primary tab channel — multichat adds many more.
 // On WS reconnect (incl. server restart) these must be re-joined or messages drop silently.
 const joinedExtraChannels = new Set() // "platform/channel" keys
+// Extras a single tab asked for and owns (the twitch vod tab's room): key → tabIds. Held in memory
+// only and never written to joined_extra_channels, so a closed tab, a reload or a worker restart
+// cannot leave the room joined. A saved tab's plain join on the same key takes it over (it is then
+// persisted like any other).
+const scopedExtraJoins = new Map()
 
 /**
  * Hold a per-channel history store to `max` rings without dropping one a tab is
@@ -1513,11 +1518,28 @@ function saveJoinedExtraChannels() {
   // would orphan kick channel subscriptions on every "reload extension"
   // click and never resubscribe until the user manually edits a channel.
   // Local survives reloads, only cleared by explicit unjoin or storage wipe.
-  browser.storage.local.set({ joined_extra_channels: [...joinedExtraChannels] }).catch(() => {})
+  browser.storage.local
+    .set({ joined_extra_channels: [...joinedExtraChannels].filter((k) => !scopedExtraJoins.has(k)) })
+    .catch(() => {})
+}
+
+// A tab's own extra joins end with it (closed, reloaded, hard-navigated, or it said leave). A room
+// another tab still holds, or some tab's page is on, stays.
+function dropScopedExtraJoins(tabId, only) {
+  for (const [key, tabs] of [...scopedExtraJoins]) {
+    if (only && key !== only) continue
+    if (!tabs.delete(tabId) || tabs.size) continue
+    scopedExtraJoins.delete(key)
+    joinedExtraChannels.delete(key)
+    if ([...tabChannels.values()].some((t) => t?.channel?.toLowerCase() === key)) continue
+    const { platform, channel } = splitChKey(key)
+    if (channel) wsSend({ type: 'channel:leave', platform, channel })
+  }
 }
 
 // Clean up tab tracking on close
 browser.tabs.onRemoved.addListener((tabId) => {
+  dropScopedExtraJoins(tabId)
   feedThreadSet(tabId, null)
   feedAuthorSet(tabId, null)
   tabChannels.delete(tabId)
@@ -1532,6 +1554,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if (changeInfo.status === 'loading') {
     feedThreadSet(tabId, null)
     feedAuthorSet(tabId, null)
+    dropScopedExtraJoins(tabId)
   }
   if (tabChannels.has(tabId) && changeInfo.url && !/twitch\.tv|kick\.com|youtube\.com/.test(changeInfo.url)) {
     tabChannels.delete(tabId)

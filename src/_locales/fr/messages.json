@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "le chat de rediffusion de ce vod · se ferme quand vous partez"
+  },
   "mc_vod_no_replay": {
     "message": "ce vod n'a pas de relecture du chat"
   },

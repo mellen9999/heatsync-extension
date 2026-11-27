@@ -55,6 +55,7 @@ function load(path = '/videos/2934223993', { link = true, listHtml = '', cap = 5
     function rafOrTimeout(fn) { frames.push(fn) }
     function switchTab(id) { calls.push(['switch', id, _autoSwitching]); currentTab = id }
     function liveTarget() { return 'feed' }
+    function updatePopoutBtnVisibility() {}
     function mcIsReservedTab(id) { return ['feed', 'live', 'mentions'].includes(id) }
     function getChannelById(id) { return id === 'xqc' ? { id } : null }
     // the pane's own contract: a scrolled-up reader's row is not appended, the caller renders

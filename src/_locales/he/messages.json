@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "צ'אט השידור החוזר של ה-vod הזה · נסגר כשעוזבים"
+  },
   "mc_vod_no_replay": {
     "message": "לסרטון הזה אין צ'אט משוחזר"
   },

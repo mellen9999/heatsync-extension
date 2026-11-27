@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "chat phát lại của vod này · đóng khi bạn rời đi"
+  },
   "mc_vod_no_replay": {
     "message": "vod này không có phát lại chat"
   },

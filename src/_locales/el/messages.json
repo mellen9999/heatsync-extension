@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "η συνομιλία επανάληψης αυτού του vod · κλείνει όταν φύγετε"
+  },
   "mc_vod_no_replay": {
     "message": "αυτό το vod δεν έχει επανάληψη συνομιλίας"
   },

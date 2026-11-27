@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "chat replay vod ini · tertutup saat kamu pergi"
+  },
   "mc_vod_no_replay": {
     "message": "vod ini tidak memiliki replay chat"
   },

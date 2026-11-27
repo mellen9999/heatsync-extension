@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "이 vod의 다시보기 채팅 · 떠나면 닫힙니다"
+  },
   "mc_vod_no_replay": {
     "message": "이 vod에는 채팅 리플레이가 없습니다"
   },

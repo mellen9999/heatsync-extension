@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "la chat del replay di questo vod · si chiude quando esci"
+  },
   "mc_vod_no_replay": {
     "message": "questo vod non ha la replica della chat"
   },

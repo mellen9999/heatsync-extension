@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "dette vods genafspilningschat · lukker, når du forlader siden"
+  },
   "mc_vod_no_replay": {
     "message": "denne vod har ingen chat-afspilning"
   },

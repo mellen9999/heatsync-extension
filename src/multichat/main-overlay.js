@@ -107,7 +107,9 @@ function mcTabButtonHtml(tab) {
   if (tab.id === 'add') return `<button class="hs-mc-tab" data-tab="add">${escapeHtml(label)}</button>`
   const on = tab.id === 'live'
   // a temp tab starts out of the strip; its owner shows it while it has something to show
-  const temp = tab.temp ? ` hs-mc-tab-temp" style="display:none" title="${escapeHtml(t('mc_tab_temp_title'))}` : ''
+  const temp = tab.temp
+    ? ` hs-mc-tab-temp" style="display:none" title="${escapeHtml(t(tab.titleKey || 'mc_tab_temp_title'))}`
+    : ''
   return `<button class="hs-mc-tab${on ? ' active' : ''}${temp}" role="tab" aria-selected="${on}" data-tab="${escapeHtml(tab.id)}">${escapeHtml(label)}</button>`
 }
 
@@ -427,6 +429,12 @@ function createTabBar() {
       if (tabId === 'mentions') bumpSeen('mentions')
       else if (tabId === 'whispers') bumpSeen('whispers')
       else if (tabId === 'feed') bumpSeen('live')
+      return
+    }
+
+    // the vod tab is a replay, never a stream: nothing to keep, rename, move or save (vod-replay.js)
+    if (tabId === 'vod') {
+      e.preventDefault()
       return
     }
 

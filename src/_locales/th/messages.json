@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "แชทรีเพลย์ของ vod นี้ · ปิดเมื่อคุณออก"
+  },
   "mc_vod_no_replay": {
     "message": "vod นี้ไม่มีการรีเพลย์แชท"
   },

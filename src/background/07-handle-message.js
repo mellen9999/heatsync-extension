@@ -744,8 +744,20 @@ async function handleMessage(message, sender, sendResponse) {
           sendResponse?.({ ok: false, error: 'reserved path' })
           return true
         }
-        if (!joinedExtraChannels.has(key)) {
-          joinedExtraChannels.add(key)
+        const scopedTab = message.scoped && sender?.tab?.id != null ? sender.tab.id : null
+        if (scopedTab != null) {
+          // this tab's own room: held while it lives, never persisted. A room already held for
+          // anyone else stays theirs.
+          if (!joinedExtraChannels.has(key) || scopedExtraJoins.has(key)) {
+            joinedExtraChannels.add(key)
+            const tabs = scopedExtraJoins.get(key) || new Set()
+            tabs.add(scopedTab)
+            scopedExtraJoins.set(key, tabs)
+          }
+        } else {
+          // a plain join (a saved tab) makes the room permanent, a scoped holder or not
+          scopedExtraJoins.delete(key)
+          if (!joinedExtraChannels.has(key)) joinedExtraChannels.add(key)
           saveJoinedExtraChannels()
         }
         // Multichat extra channels get their emote sets HERE — this join is the
@@ -771,6 +783,13 @@ async function handleMessage(message, sender, sendResponse) {
         }
       } else if (message.data.type === 'channel:leave' && message.data.platform && message.data.channel) {
         const key = `${message.data.platform}/${message.data.channel.toLowerCase()}`
+        if (message.scoped && sender?.tab?.id != null) {
+          // a tab letting go of its own room: the drop sends the leave when nobody else holds it
+          dropScopedExtraJoins(sender.tab.id, key)
+          sendResponse({ ok: true })
+          return
+        }
+        scopedExtraJoins.delete(key)
         if (joinedExtraChannels.delete(key)) saveJoinedExtraChannels()
         // a channel some tab's page is on keeps its room: removing it from the
         // saved list does not take it from the page showing it

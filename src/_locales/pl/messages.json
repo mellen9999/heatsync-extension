@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "czat powtórki tego vod · zamyka się po wyjściu"
+  },
   "mc_vod_no_replay": {
     "message": "to vod nie ma powtórki czatu"
   },

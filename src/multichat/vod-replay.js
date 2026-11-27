@@ -158,6 +158,7 @@ function vodGoTo(tab) {
   } finally {
     _autoSwitching = false
   }
+  updatePopoutBtnVisibility() // the strip's button follows the tab the page just put us on, whatever switchTab did
 }
 
 /** the owner's login from the page: the channel link beside the player */
@@ -281,7 +282,7 @@ function vodQuiet() {
 function vodBind(v, list) {
   // this room's emote sets and badges, before the first row is drawn (a late set repaints rows
   // anyway; badges would not)
-  joinExtraChannel('twitch', v.owner)
+  joinExtraChannel('twitch', v.owner, { scoped: true })
   v.joined = true
   const root = list.closest('.video-chat') || list.parentElement || list
   v.obs = new MutationObserver(() => vodQueue(v))
@@ -316,7 +317,7 @@ function vodStopWatching(v) {
   }
   // an extra we added: let it go, unless a saved tab or the page holds the same room
   if (v.joined && !config.channels.some((c) => c.twitch?.toLowerCase() === v.owner))
-    leaveExtraChannel('twitch', v.owner)
+    leaveExtraChannel('twitch', v.owner, { scoped: true })
   vodBuffer.length = 0
   _dropTabCache('vod')
 }

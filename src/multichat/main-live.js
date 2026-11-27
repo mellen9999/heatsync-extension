@@ -1205,7 +1205,7 @@ function bootSwitch() {
  *  identity, dedupe and saveConfig; the cover rule then hides the temp tab). */
 async function keepLiveTab() {
   const cur = getLiveChannel()
-  if (!cur || _keepingLive || !liveTabShown()) return
+  if (!cur || _keepingLive || !liveTabShown() || currentTab === 'vod') return // a replay is never saved
   _keepingLive = true
   try {
     if (hostPlatform === 'yt') {

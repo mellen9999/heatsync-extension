@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "tämän vodin toistochat · sulkeutuu, kun poistut"
+  },
   "mc_vod_no_replay": {
     "message": "tällä vodilla ei ole chatin toistoa"
   },

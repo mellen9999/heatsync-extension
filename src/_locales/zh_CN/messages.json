@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "此vod的回放聊天 · 离开时关闭"
+  },
   "mc_vod_no_replay": {
     "message": "此 vod 没有聊天回放"
   },

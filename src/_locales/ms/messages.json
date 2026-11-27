@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "sembang ulang tayang vod ini · ditutup apabila anda keluar"
+  },
   "mc_vod_no_replay": {
     "message": "vod ini tidak mempunyai main semula sembang"
   },

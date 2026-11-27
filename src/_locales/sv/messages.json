@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "den här vodens replay-chatt · stängs när du lämnar"
+  },
   "mc_vod_no_replay": {
     "message": "den här vod:en har ingen chattuppspelning"
   },

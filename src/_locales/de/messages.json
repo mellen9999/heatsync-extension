@@ -347,6 +347,9 @@
   "mc_tab_vod": {
     "message": "vod"
   },
+  "mc_tab_vod_title": {
+    "message": "chat-replay dieses vods · schließt sich beim verlassen"
+  },
   "mc_vod_no_replay": {
     "message": "dieses vod hat keinen chat-replay"
   },

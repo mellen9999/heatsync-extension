@@ -31,3 +31,7 @@ paths = ['''tests/user-key\.test\.js''']
 [[allowlists]]
 description = "render harness channel key ('twitch/probechan' is a platform/channel map key, not a credential)"
 regexes = ['''twitch/probechan''']
+
+[[allowlists]]
+description = "test fixtures: fake session-shaped jwts (header.payload.'signature1'), the worker only signs in with a jwt-looking value"
+paths = ['''tests/sw-ws-reconnect\.test\.js''', '''tests/a-placeholder-token-is-not-a-login\.test\.js''']

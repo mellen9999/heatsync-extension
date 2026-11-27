@@ -310,6 +310,11 @@
       font-kerning: normal !important;
       font-feature-settings: "kern" 1, "liga" 1, "calt" 1 !important;
     }
+    /* the display above is !important, so an inline display:none never hid a
+       util button (the popout ⛶ showed on every tab). `hidden` is the switch. */
+    .hs-mc-util-btn[hidden] {
+      display: none !important;
+    }
     /* Last button in each cluster keeps its own right border (no overlap target) */
     .hs-mc-util-btn:last-child {
       margin-inline-end: 0 !important;

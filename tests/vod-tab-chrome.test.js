@@ -79,7 +79,7 @@ describe('no popout button on the vod tab', () => {
     const { own, btn } = stripWith('live', { switchTab: (id) => (own.currentTab = id) })
     runIn(own, `${SYNC}\n vodSync()`)
     expect(own.currentTab).toBe('vod')
-    expect(btn.style.display).toBe('none')
+    expect(btn.hidden).toBe(true)
   })
 
   test('landing through the real switchTab hides it too, and leaving the vod brings it back', () => {
@@ -87,7 +87,7 @@ describe('no popout button on the vod tab', () => {
     own.liveTarget = () => 'live'
     runIn(own, `${fn(MT, 'switchTab')}\n${SYNC}\n vodSync()`)
     expect(own.currentTab).toBe('vod')
-    expect(btn.style.display).toBe('none')
+    expect(btn.hidden).toBe(true)
   })
 
   test('the leave path: back on the tab the reader was on, the button follows that tab', () => {
@@ -99,7 +99,7 @@ describe('no popout button on the vod tab', () => {
  vodSync(); setVod(''); vodSync()`,
     )
     expect(own.currentTab).toBe('live')
-    expect(btn.style.display).toBe('')
+    expect(btn.hidden).toBe(false)
   })
 })
 
@@ -208,5 +208,16 @@ describe('a vod can never be saved', () => {
     expect(r[0]).toBe(false)
     expect(r[1]).toEqual([])
     expect(own.config.channels.map((c) => c.id)).toEqual(['xqc', 'a'])
+  })
+})
+
+describe('a hidden util button is hidden', () => {
+  test("the stylesheet lets `hidden` beat the util buttons' !important display", () => {
+    // .hs-mc-util-btn sets display: inline-block !important, which beat the old
+    // inline display:none, so the popout button showed on every tab
+    const css = readFileSync(join(ROOT, 'src/multichat/styles/02-tab-bar.css'), 'utf8')
+    expect(css).toMatch(/\.hs-mc-util-btn\[hidden\]\s*\{\s*display:\s*none\s*!important;?\s*\}/)
+    const overlay = readFileSync(join(ROOT, 'src/multichat/main-overlay.js'), 'utf8')
+    expect(overlay).not.toMatch(/hs-mc-util-btn[^>]*style="display:none"/)
   })
 })

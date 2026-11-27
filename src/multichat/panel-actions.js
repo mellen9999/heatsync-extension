@@ -155,7 +155,7 @@ function openPopoutForCurrentTab() {
 function updatePopoutBtnVisibility() {
   const btn = tabBarElement?.querySelector('.hs-mc-popout-btn')
   if (!btn) return
-  btn.style.display = resolvePopoutContext() ? '' : 'none'
+  btn.hidden = !resolvePopoutContext()
 }
 
 // Platform subscribe deep-links for a channel tab. The money path must
@@ -231,7 +231,7 @@ function openSubForCurrentTab(anchorEl) {
 function updateSubBtnVisibility() {
   const btn = tabBarElement?.querySelector('.hs-mc-sub-btn')
   if (!btn) return
-  btn.style.display = channelSubLinks(getChannelById(currentTab)).length ? '' : 'none'
+  btn.hidden = !channelSubLinks(getChannelById(currentTab)).length
 }
 
 // Drop a panel callout (status/error banner) directly below the search/filter

@@ -465,7 +465,7 @@ describe('the mod toolbar and the popout', () => {
   })
 
   test('the popout button is hidden while the vod tab is active, and shown for a channel tab', () => {
-    const btn = { style: { display: '' } }
+    const btn = { hidden: false }
     const real = {
       currentTab: 'vod',
       tabBarElement: { querySelector: () => btn },
@@ -487,10 +487,10 @@ describe('the mod toolbar and the popout', () => {
     )
     f.updatePopoutBtnVisibility()
     expect(f.resolvePopoutContext()).toBeNull()
-    expect(btn.style.display).toBe('none')
+    expect(btn.hidden).toBe(true)
     real.currentTab = 'xqc'
     f.updatePopoutBtnVisibility()
-    expect(btn.style.display).toBe('')
+    expect(btn.hidden).toBe(false)
   })
 })
 

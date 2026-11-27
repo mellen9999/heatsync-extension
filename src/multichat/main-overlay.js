@@ -354,8 +354,8 @@ function createTabBar() {
         <div class="hs-mc-util-row">
           <button class="hs-mc-tab hs-mc-util-btn" data-tab="settings" title="${t('mc_btn_settings')}">\u2699</button>
           <button class="hs-mc-tab hs-mc-util-btn hs-mc-collapse-btn" id="hs-mc-collapse-btn" data-tab="collapse" title="${t('mc_main_hide_chat_title')}" aria-label="${t('mc_main_hide_chat')}"></button>
-          <button class="hs-mc-tab hs-mc-util-btn hs-mc-popout-btn" data-tab="popout" title="${t('mc_main_popout_title')}" style="display:none">\u26f6</button>
-          <button class="hs-mc-tab hs-mc-util-btn hs-mc-sub-btn" data-tab="subscribe" title="${t('mc_main_subscribe_title')}" style="display:none">$</button>
+          <button class="hs-mc-tab hs-mc-util-btn hs-mc-popout-btn" data-tab="popout" title="${t('mc_main_popout_title')}" hidden>\u26f6</button>
+          <button class="hs-mc-tab hs-mc-util-btn hs-mc-sub-btn" data-tab="subscribe" title="${t('mc_main_subscribe_title')}" hidden>$</button>
         </div>
       </div>
       <div id="hs-mc-subrow" role="tablist" aria-label="${t('mc_main_views_aria')}" hidden></div>

@@ -150,6 +150,8 @@ describe('a vod can never be saved', () => {
     const own = {
       container,
       document: win.document,
+      cleanup: { setTimeout: () => 0 },
+      mcSignal: undefined,
       keepLiveTab: () => calls.keep++,
       mcIsReservedTab: (id) => ['live', 'vod', 'feed'].includes(id),
       t: (k) => k,

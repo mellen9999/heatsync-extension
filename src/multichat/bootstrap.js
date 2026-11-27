@@ -1167,3 +1167,11 @@ function setRootVar(name, value) {
     if (s.getPropertyValue(name) !== '') s.removeProperty(name)
   } else if (s.getPropertyValue(name) !== value) s.setProperty(name, value)
 }
+
+// True when every record of a MutationObserver batch landed inside our own panel. A watcher of the
+// HOST page's DOM (a mount to wait for, a frame to hide) can never learn anything from those, and
+// every chat row we draw is one: call this first and return before any querySelector.
+function mutationsAreOurs(muts) {
+  const mine = document.getElementById('hs-mc-container')
+  return !!mine && muts.every((m) => mine.contains(m.target))
+}

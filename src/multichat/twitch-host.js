@@ -139,7 +139,8 @@ function watchTwitchPersistentPlayer() {
         cleanup.untrackObserver(_ttvPpObserver)
       } catch (_) {}
     }
-    _ttvPpObserver = new MutationObserver(() => {
+    _ttvPpObserver = new MutationObserver((muts) => {
+      if (mutationsAreOurs(muts)) return // our own chat rows: not twitch's player
       if (_ttvPpLastSeen?.isConnected) {
         try {
           cleanup.untrackObserver(_ttvPpObserver)

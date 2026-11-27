@@ -1002,20 +1002,10 @@ function setupHsCalloutCloseButton() {
     _hsCalloutCloseObs.observe(parent, { childList: true, subtree: true })
   }
   _hsCalloutCloseObs = new MutationObserver((muts) => {
-    // While un-narrowed this observes document.body — our own overlay appends
+    // While un-narrowed this observes the app root — our own overlay appends
     // (every chat row) land here too. Callouts are twitch DOM and can never
-    // appear inside the overlay, so batches entirely within it are noise.
-    const _ov = document.getElementById('hs-mc-overlay')
-    if (_ov) {
-      let outside = false
-      for (const m of muts) {
-        if (!_ov.contains(m.target)) {
-          outside = true
-          break
-        }
-      }
-      if (!outside) return
-    }
+    // appear inside our panel, so batches entirely within it are noise.
+    if (mutationsAreOurs(muts)) return
     // Callouts touched by this batch: a container inserted empty gets its
     // children as later mutations whose target IS the container (or a
     // descendant) — closest() catches those without the document-wide

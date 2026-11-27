@@ -39,7 +39,8 @@ function watchYtFlexyMount() {
   if (hostPlatform !== 'yt') return
   if (_ytFlexyMountObs) return
   if (hsQuery('yt:watch-flexy', 'ytd-watch-flexy:not([hidden])')) return // already there
-  _ytFlexyMountObs = new MutationObserver(() => {
+  _ytFlexyMountObs = new MutationObserver((muts) => {
+    if (mutationsAreOurs(muts)) return // our own chat rows: nothing youtube mounted
     if (!hsQuery('yt:watch-flexy', 'ytd-watch-flexy:not([hidden])')) return
     cleanup.untrackObserver(_ytFlexyMountObs)
     _ytFlexyMountObs = null

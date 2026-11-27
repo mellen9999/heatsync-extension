@@ -59,29 +59,22 @@
     return origRemove.apply(this, arguments)
   }
 
-  // Belt-and-braces: patch <video>.pause() too, in case a code path calls it
-  // outside a key event (e.g. YT's internal state machine triggered via a
-  // toggle that bypasses the listener system). Only blocks while our input
-  // has focus — user-initiated pauses via clicks still work because focus
-  // moves to the player.
-  const patchVideo = (v) => {
-    if (!v || v._hsMcPausePatched) return
-    v._hsMcPausePatched = true
-    const origPause = v.pause
-    v.pause = function () {
+  // Belt-and-braces: <video>.pause() is a no-op while our input has focus, in case a code path
+  // calls it outside a key event (e.g. YT's internal state machine triggered via a toggle that
+  // bypasses the listener system). User-initiated pauses via clicks still work because focus
+  // moves to the player. One patch on the prototype reaches every <video>, the ones YT makes
+  // later included; finding each one with a document-wide MutationObserver cost a
+  // querySelectorAll('video') on every change YT made to the page (its player redraws its clock
+  // all day). Only <video>: audio keeps the native method.
+  const origPause = HTMLMediaElement.prototype.pause
+  Object.defineProperty(HTMLVideoElement.prototype, 'pause', {
+    configurable: true,
+    writable: true,
+    value: function pause() {
       const ae = document.activeElement
-      if (ae && (ae.id === 'hs-mc-input' || (ae.closest && ae.closest('#hs-mc-input')))) return
+      if (ae && (ae.id === 'hs-mc-input' || ae.closest?.('#hs-mc-input'))) return
       // biome-ignore lint/complexity/noArguments: transparent monkeypatch forward. `arguments` passes through every argument the host actually called with, including any we don't model, and keeps the wrapper's arity — rest params would change fn.length, which host code can branch on.
       return origPause.apply(this, arguments)
-    }
-  }
-  const scan = () => {
-    const vids = document.querySelectorAll('video')
-    for (let i = 0; i < vids.length; i++) patchVideo(vids[i])
-  }
-  if (document.documentElement) scan()
-  new MutationObserver(scan).observe(document.documentElement || document, {
-    childList: true,
-    subtree: true,
+    },
   })
 })()

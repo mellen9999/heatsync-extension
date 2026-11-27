@@ -21,6 +21,14 @@
  * A viewer's own emotes are not an input to reading someone else's line. That
  * is how "your emotes never draw someone else's word" is enforced: there is no
  * parameter to pass them in.
+ *
+ * A row's room is its OWN leg's, with one exception: a folded send. One send to twitch and kick
+ * comes back as two copies and every client keeps one row for it, the earliest, often kick's. That
+ * row stands for both legs, and the twitch leg's badges and colour are what it already takes, so it
+ * reads its words in the twitch leg's room too (the word was typed against it, and kick's room may
+ * hold none of them). Anyone's folded send, not only yours; per render, never written to the
+ * buffer's row, so a view showing only kick still draws kick's copy in kick's room. Each client
+ * applies it where it folds, not here, so a row that reads another leg's room is the rule, not drift.
  */
 import { matchBucket, BUCKET_EXACT, BUCKET_PREFIX, BUCKET_NONE } from './emote-rank'
 

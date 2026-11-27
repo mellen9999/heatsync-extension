@@ -1174,10 +1174,18 @@ function _getYtCombinedRegex(joined) {
 // preEscaped=true when input is already HTML-escaped (chained after processEmotes)
 // The youtube pictures a line draws: escaped alt text → url, the ones processYtEmotes swaps in. One list for
 // that and for the big emote-only read (a name in it is a picture, not a word).
+// youtube hands each emote as its smallest picture (24px), and the row draws every emote at the
+// room's emote size (32px, 64 on a big line). ggpht serves any size from the same key, so ask for 64.
+function ytEmoteAtSize(url) {
+  if (!/^(https:)?\/\/(yt\d\.ggpht\.com|yt\d\.googleusercontent\.com|lh\d\.googleusercontent\.com)\//.test(url))
+    return url
+  return url.replace(/=w\d+-h\d+(?=-|$)/, '=w64-h64').replace(/=s\d+(?=-|$)/, '=s64')
+}
+
 function ytEmoteUrls(emotes) {
   const out = new Map()
   for (const emote of emotes) {
-    const url = typeof emote.url === 'string' ? emote.url.trim() : ''
+    const url = ytEmoteAtSize(typeof emote.url === 'string' ? emote.url.trim() : '')
     const alt = typeof emote.alt === 'string' ? emote.alt : ''
     if (!alt || !url || !(url.startsWith('http') || url.startsWith('//'))) continue
     // Don't skip names with `<` — escapeHtml() handles them correctly and emotes
@@ -1197,7 +1205,7 @@ function processYtEmotes(text, emotes, preEscaped) {
   const replacements = new Map()
   const altPatterns = []
   for (const [escaped, url] of ytEmoteUrls(emotes)) {
-    const imgHtml = `<img src="${escapeHtml(url)}" alt="${escaped}" class="hs-mc-emote" loading="lazy" decoding="async" style="height:1.2em;vertical-align:middle;" />`
+    const imgHtml = `<img src="${escapeHtml(url)}" alt="${escaped}" class="hs-mc-emote" loading="lazy" decoding="async" />`
     replacements.set(escaped, imgHtml)
     altPatterns.push(escaped.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
   }

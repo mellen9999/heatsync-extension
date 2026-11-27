@@ -12,7 +12,10 @@ import { bootSw, disposeAll, tabSender } from './harness/sw.js'
 
 afterEach(disposeAll)
 
-const AUTH = { name: 'auth', value: 'tok-1', domain: 'heatsync.org' }
+// session-shaped: the worker only signs a socket in with a jwt-looking value (a-placeholder-token-is-not-a-login.test.js)
+const TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJpZCI6InUxIn0.c2lnbmF0dXJlMQ'
+const TOKEN_2 = 'eyJhbGciOiJIUzI1NiJ9.eyJpZCI6InUyIn0.c2lnbmF0dXJlMg'
+const AUTH = { name: 'auth', value: TOKEN, domain: 'heatsync.org' }
 const TAB_URL = 'https://www.twitch.tv/kripp'
 const twitchTab = tabSender(7, TAB_URL)
 
@@ -53,7 +56,7 @@ describe('connect', () => {
   test('on open: heartbeat, then authenticate, then the joins one per 80ms (the server rate-limits bursts)', async () => {
     const sw = await boot()
     const ws = await sw.connect()
-    expect(ws.frames).toEqual([{ type: 'presence:heartbeat' }, { type: 'authenticate', token: 'tok-1' }])
+    expect(ws.frames).toEqual([{ type: 'presence:heartbeat' }, { type: 'authenticate', token: TOKEN }])
     await sw.advance(79)
     expect(ws.frames).toHaveLength(2)
     await sw.advance(1)
@@ -187,10 +190,10 @@ describe('what stops or skips a reconnect', () => {
     expect(hsSockets(sw)).toHaveLength(1) // not looping authenticate -> authentication_failed
     expect(sw.broadcasts('auth_changed', 7).map((m) => m.message.reason)).toContain('authentication_failed')
 
-    sw.cookies.set({ ...AUTH, value: 'tok-2' }) // the user signs in again
+    sw.cookies.set({ ...AUTH, value: TOKEN_2 }) // the user signs in again
     await sw.settle()
     const again = await sw.connect()
-    expect(sent(again, 'authenticate')).toEqual([{ type: 'authenticate', token: 'tok-2' }])
+    expect(sent(again, 'authenticate')).toEqual([{ type: 'authenticate', token: TOKEN_2 }])
   })
 
   test('the last platform tab closing shuts the socket for good; a returning tab reopens it', async () => {

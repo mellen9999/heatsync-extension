@@ -1101,7 +1101,11 @@ async function connectWebSocket() {
         // and triggering IP-level fetch backoffs. 80ms cadence (≈12 msg/s) is
         // well under refill rate, full drain still completes in ~2s.
         const burst = []
-        if (authToken) burst.push({ type: 'authenticate', token: authToken })
+        // heatsync.org refuses a token that is not a jwt of 20..2000 chars and the worker then reads that as a
+        // dead login. A cookie or stored value that cannot be one (a test harness's placeholder, a half-written
+        // cookie) is no login: the socket joins as a viewer, the same as with no cookie.
+        const wsToken = /^(?=.{20,2000}$)[\w-]+\.[\w-]+\.[\w-]+$/.test(authToken) && authToken
+        if (wsToken) burst.push({ type: 'authenticate', token: wsToken })
         const rejoinedChannels = new Set()
         for (const entry of tabChannels.values()) {
           if (entry.channel && !rejoinedChannels.has(entry.channel)) {
@@ -1146,7 +1150,7 @@ async function connectWebSocket() {
           }, i * 80)
         })
 
-        if (!authToken) {
+        if (!wsToken) {
           log(' ℹ️ No auth token - viewer mode')
           flushMessageQueue()
         }

@@ -1,5 +1,13 @@
 # changelog
 
+## [1.7.154] — 2026-11-27
+
+### fixed
+- **a line you send from another device shows once** — a line sent to twitch and kick together from heatsync.org on your phone could show twice in the multichat. the two copies fold into one again.
+
+### changed
+- **lighter on busy channels** — the parts that wait on the twitch, kick and youtube page no longer wake up for every chat line the page draws. volume memory and the youtube keyboard guard listen to the video itself.
+
 ## [1.7.153] — 2026-11-26
 
 ### added

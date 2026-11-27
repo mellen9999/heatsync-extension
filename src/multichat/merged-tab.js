@@ -242,6 +242,9 @@ function isSimulcastLeg(row, m, legs) {
 // your own line from the site then showed kick's badges, none, and lost its twitch mod and sub
 // badges (11-20). A row with none borrows a folded leg's, with the platform they resolve in. Per
 // render, never on the buffer's object: a kick-only view draws kick's copy as kick sent it.
+// The same borrow carries the twitch leg's ROOM: a folded send's row reads its words there (the
+// emote law's one exception to "a line's room is its own leg's", shared/emote-law.ts). Kick's room
+// has no 7tv set where twitch's does, so a typed 7tv word drew as text on the kept kick copy (11-27).
 let _legBadges = new WeakMap()
 // The legs each row stands for, by the row's message: a delete has to reach every
 // copy (a folded twitch+kick send deleted on one platform stayed on the other).
@@ -258,25 +261,38 @@ function foldedLegsOf(m) {
 let _legBadgesFresh = new Set()
 const hasBadges = (m) => (Array.isArray(m.badges) ? m.badges.length > 0 : !!m.badges)
 function lendBadges(row, m, lent, prev) {
-  if (lent.has(row) || legPlatform(m) === 'youtube') return
+  if (legPlatform(m) === 'youtube') return
+  // a twitch copy folded into another platform's row: its colour is the sender's real one (kick's copy
+  // has a hashed or picked one), and its room is the one the row's words read in, whoever sent it
+  const fromTwitch = legPlatform(m) === 'twitch' && legPlatform(row) !== 'twitch'
+  const room = fromTwitch && m.channel ? { channel: m.channel, platform: 'twitch' } : null
+  const had = lent.get(row)
+  // the first leg's badges and colour stand; a later twitch leg still adds the room they lack
+  if (had) {
+    if (room && !had.room) {
+      lent.set(row, { ...had, room })
+      if (!prev.get(row)?.room) _legBadgesFresh.add(row)
+    }
+    return
+  }
   // a non-twitch row (kick's) may carry badges of its own that draw nothing for you (kick ids the
   // twitch art does not know): the row's draw decides, it uses these only when it has none
   const badges = hasBadges(m) && (!hasBadges(row) || legPlatform(row) !== 'twitch') ? m.badges : null
-  // a twitch copy's name colour is the sender's real one: kick's copy has a hashed or picked one
-  const color = legPlatform(m) === 'twitch' && legPlatform(row) !== 'twitch' && m.color ? m.color : null
-  if (!badges && !color) return
+  const color = fromTwitch && m.color ? m.color : null
+  if (!badges && !color && !room) return
   lent.set(row, {
     ...(badges ? { badges } : {}),
     ...(color ? { color } : {}),
+    ...(room ? { room } : {}),
     channel: m.channel,
     platform: legPlatform(m),
   })
-  if (!prev.has(row)) _legBadgesFresh.add(row)
+  if (!prev.has(row) || (room && !prev.get(row).room)) _legBadgesFresh.add(row)
 }
 function legBadgesOf(m) {
   return _legBadges.get(m) || null
 }
-// true once, for the render that first lends a row badges: its drawn div predates them
+// true once, for the render that first lends a row badges or a room: its drawn div predates them
 function legBadgesChanged(m) {
   return _legBadgesFresh.delete(m)
 }

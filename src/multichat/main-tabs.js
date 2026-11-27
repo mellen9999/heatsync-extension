@@ -1503,7 +1503,15 @@ function isYtDuplicate(user, text, channelId, id) {
 //   up. Only asked of a line the first draw read as big, so it is never cached over the normal html.
 // @returns {string}  sanitized HTML for the message text span
 function computeMessageText(m, big) {
-  if (!big && m._renderedHtml != null) return m._renderedHtml
+  // a folded send's row reads its words in the twitch leg's room (merged-tab.js lendBadges). That is
+  // this render's, never the buffer's: the memo remembers the room it was read in, so a view that
+  // shows only this copy never takes the folded view's html, and draws it in its own room
+  const lentRoom = (typeof legBadgesOf === 'function' ? legBadgesOf(m)?.room : null) || null
+  const roomKey = lentRoom ? `${lentRoom.platform}:${lentRoom.channel}` : ''
+  if (!big && m._renderedHtml != null && (m._renderedRoom || '') === roomKey) return m._renderedHtml
+  // the row's room: its own leg's, or the twitch leg's. twitch chat carries no platform: unnamed, the
+  // row would read every platform's list at once
+  const room = lentRoom || { channel: m.emoteChannel || m.channel, platform: m.platform || 'twitch' }
   // Pass Twitch native emotes (per-message IRC tags) into processEmotes so
   // they participate in the overlay-stack pipeline alongside 7TV emotes.
   const isOwn = isSelf(m)
@@ -1607,15 +1615,14 @@ function computeMessageText(m, big) {
   }
   let processedText = processEmotes(
     escapeHtml(m.text),
-    m.emoteChannel || m.channel,
+    room.channel,
     twitchExtra,
     senderEmotes,
     m.time,
     true,
     hsMsgRefs,
     null,
-    // twitch chat carries no platform: unnamed, the row would read every platform's list at once
-    m.platform || 'twitch',
+    room.platform,
     line,
   )
   if (m.emotes && m.emotes.length > 0) {
@@ -1643,6 +1650,7 @@ function computeMessageText(m, big) {
   if (big) return processedText
   m._hsBig = hsBigLine(line.read)
   m._renderedHtml = processedText
+  m._renderedRoom = roomKey
   return processedText
 }
 pcLineHtmlHook = computeMessageText // the profile card draws its live lines with it

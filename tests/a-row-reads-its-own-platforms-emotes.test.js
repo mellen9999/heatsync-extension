@@ -165,8 +165,9 @@ describe('the set', () => {
     // none, and an unnamed row reads the whole set, so a twitch row drew a name only kick has
     const flat = mainSource().replace(/\s+/g, ' ')
     expect(flat).toContain(
-      "hsMsgRefs, null, // twitch chat carries no platform: unnamed, the row would read every platform's list at once m.platform || 'twitch', line, )",
+      "const room = lentRoom || { channel: m.emoteChannel || m.channel, platform: m.platform || 'twitch' }",
     )
+    expect(flat).toContain('hsMsgRefs, null, room.platform, line, )')
     build('chan', [stv('KEKW', TW)], 'twitch')
     build('chan', [stv('KiOnly', KI)], 'kick')
     expect(row('KiOnly', undefined)).toContain(KI)

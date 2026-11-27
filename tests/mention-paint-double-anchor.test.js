@@ -212,7 +212,7 @@ describe('computeMessageText call-site guard — structural invariant', () => {
     const flat = MAIN_SRC.replace(/\s+/g, ' ')
     // the sixth argument is skipMentions; what follows it (the row's refs, its platform) is not this guard's
     const marker =
-      'let processedText = processEmotes( escapeHtml(m.text), m.emoteChannel || m.channel, twitchExtra, senderEmotes, m.time, true, '
+      'let processedText = processEmotes( escapeHtml(m.text), room.channel, twitchExtra, senderEmotes, m.time, true, '
     expect(flat.includes(marker) || flat.includes(marker.replace('( ', '('))).toBe(true)
   })
 

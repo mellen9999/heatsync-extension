@@ -3,7 +3,8 @@
  * the rest. Kick's copy relays through this extension and usually lands first, so the row was
  * kick's: no twitch mod or sub badge on your own twitch line (mellen, 11-20). The site's fold
  * takes the absorbed leg's badges when the kept row has none; the pane now does the same, and
- * keeps the platform they belong to (a twitch badge resolved as kick's is the wrong picture).
+ * keeps the platform they belong to (a twitch badge resolved as kick's is the wrong picture). The
+ * same borrow carries the twitch leg's room (folded-send-reads-the-twitch-room.test.js).
  * View-level like the fold itself: a kick-only view draws kick's own copy with kick's own badges.
  */
 import { afterAll, expect, test } from 'bun:test'
@@ -44,7 +45,12 @@ test('the kick leg stands; the twitch leg folded into it lends its badges, with 
   const kick = line('kick', '')
   const twitch = line('twitch', 'moderator/1,subscriber/12', 400)
   expect(lib.foldSimulcastLegs([kick, twitch])).toEqual([kick])
-  expect(lib.legBadgesOf(kick)).toEqual({ badges: 'moderator/1,subscriber/12', channel: 'mellen', platform: 'twitch' })
+  expect(lib.legBadgesOf(kick)).toEqual({
+    badges: 'moderator/1,subscriber/12',
+    room: { channel: 'mellen', platform: 'twitch' },
+    channel: 'mellen',
+    platform: 'twitch',
+  })
   // the buffer's copy is not touched: another view draws kick's line as kick sent it
   expect(kick.badges).toBe('')
 })
@@ -56,6 +62,7 @@ test("origin-badges: a kick row that stands for your twitch send draws twitch's 
   expect(lib.legBadgesOf(kick)).toEqual({
     badges: 'moderator/1,subscriber/12',
     color: '#ff8700',
+    room: { channel: 'mellen', platform: 'twitch' },
     channel: 'mellen',
     platform: 'twitch',
   })
@@ -68,6 +75,7 @@ test("origin-badges: a kick row that stands for your twitch send draws twitch's 
   expect(lib.legBadgesOf(kick2)).toEqual({
     badges: 'moderator/1',
     color: '#ff8700',
+    room: { channel: 'mellen', platform: 'twitch' },
     channel: 'mellen',
     platform: 'twitch',
   })
@@ -129,6 +137,7 @@ test('origin-badges: a hidden twitch copy still lends badges + colour to the row
   expect(lib.legBadgesOf(kick)).toEqual({
     badges: 'moderator/1,subscriber/12',
     color: '#ff8700',
+    room: { channel: 'mellen', platform: 'twitch' },
     channel: 'mellen',
     platform: 'twitch',
   })

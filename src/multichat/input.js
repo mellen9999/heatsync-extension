@@ -250,8 +250,8 @@ function retroFoldOwnEchoes() {
   const msgsEl = document.getElementById('hs-mc-messages')
   if (!msgsEl) return
   const cutoff = Date.now() - SENT_DEDUP_WINDOW
-  // Recent tail only — an echo that beat the broadcast is seconds old.
-  const rows = Array.from(msgsEl.children).slice(-60)
+  // Recent tail only — an echo that beat the broadcast is seconds old, but a busy chat piles hundreds of rows on it in that time.
+  const rows = Array.from(msgsEl.children).slice(-400)
   const legs = []
   for (const div of rows) {
     const m = div._hsMsg

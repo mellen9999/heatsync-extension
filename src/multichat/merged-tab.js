@@ -162,6 +162,11 @@ function mtNoteAppend() {
 // A view-level fold: the buffers keep every leg, so a kick-only view still
 // shows its own copy.
 const LEG_WINDOW_MS = 5000
+// How far up the list a leg is looked for. By TIME, never by adjacency or an early stop: the list is
+// ordered by display ord, and a leg a relay delivered late (kick stamps whole seconds, its relay
+// lags) is parked at the visual now, far below its twin and past rows with later clocks. A cheap
+// time test gates every row, so the long reach costs one subtraction each.
+const LEG_SCAN_ROWS = 600
 function legPlatform(m) {
   const p = m.platform || 'twitch'
   return p === 'yt' ? 'youtube' : p
@@ -312,9 +317,9 @@ function foldSimulcastLegs(msgs, hiddenLegs) {
       noteFoldedLeg(folds, standing, m)
       continue
     }
-    for (let j = out.length - 1, n = 0; j >= 0 && n < 80; j--, n++) {
+    for (let j = out.length - 1, n = 0; j >= 0 && n < LEG_SCAN_ROWS; j--, n++) {
       const row = out[j]
-      if (row?.time && m.time - row.time > LEG_WINDOW_MS) break
+      if (!row?.time || Math.abs(m.time - row.time) > LEG_WINDOW_MS) continue
       if (isSimulcastLeg(row, m, legs)) {
         carryCleared(row, m)
         lendBadges(row, m, lent, prev)
@@ -331,9 +336,9 @@ function foldSimulcastLegs(msgs, hiddenLegs) {
   for (const m of hiddenLegs || []) {
     if (!m || m.type || typeof m.text !== 'string' || !m.time) continue
     if (typeof hsOriginStamp === 'function') hsOriginStamp(m)
-    for (let j = out.length - 1, n = 0; j >= 0 && n < 120; j--, n++) {
+    for (let j = out.length - 1, n = 0; j >= 0 && n < LEG_SCAN_ROWS; j--, n++) {
       const row = out[j]
-      if (!row || row === m) continue
+      if (!row || row === m || !row.time || Math.abs(m.time - row.time) > LEG_WINDOW_MS) continue
       if (isSimulcastLeg(row, m, legs)) {
         lendBadges(row, m, lent, prev)
         break
@@ -367,10 +372,9 @@ function mayBeSimulcastLeg(m, rowEls) {
       if (r && !r.type && isSimulcastLeg(r, m, new Map())) return true
     }
   }
-  for (let i = rowEls.length - 1, n = 0; i >= 0 && n < 40; i--, n++) {
+  for (let i = rowEls.length - 1, n = 0; i >= 0 && n < LEG_SCAN_ROWS; i--, n++) {
     const row = rowEls[i]?._hsMsg
-    if (!row?.time) continue
-    if (m.time - row.time > LEG_WINDOW_MS) break
+    if (!row?.time || Math.abs(m.time - row.time) > LEG_WINDOW_MS) continue
     if (isSimulcastLeg(row, m, new Map())) return true
   }
   return false

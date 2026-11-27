@@ -1,5 +1,14 @@
 # changelog
 
+## [1.7.153] — 2026-11-26
+
+### added
+- **a vod tab for twitch vods** — watching an old twitch vod showed the channel's live chat instead. a vod now opens a temporary `vod` tab with the vod's own replay chat, in step with the video, drawn with your 7tv, bttv, ffz and heatsync emotes. turn on timestamps and each line shows its time in the video; click it to jump there. the tab closes when you leave the vod.
+
+### fixed
+- **a youtube video keeps playing while you read chat** — going back to chat paused it, and chat moving on or a tab switch could stop it. it now plays until you close it with ✕.
+- **the popout and $ buttons only show where they work** — they showed on every tab.
+
 ## [1.7.152] — 2026-11-26
 
 ### added

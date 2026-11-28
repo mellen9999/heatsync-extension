@@ -1,5 +1,11 @@
 # changelog
 
+## [1.7.155] — 2026-11-27
+
+### fixed
+- **youtube member emotes are full size** — they drew small, at the text's height, from a 24px picture. they now draw at your emote size, sharp.
+- **a line sent to several platforms at once shows its emotes** — a line typed once and sent to twitch, kick and youtube keeps one row; that row now reads its words with the twitch room's emotes, for anyone's send, so a 7tv emote no longer shows as plain text on the kick copy.
+
 ## [1.7.154] — 2026-11-27
 
 ### fixed

@@ -65,9 +65,9 @@ describe('button font-family', () => {
     expect(offenders).toEqual([])
   })
 
-  it('the reply and thread chips keep the panel font — their pixel alignment depends on it', () => {
+  it('the reply chip keeps the panel font — their pixel alignment depends on it', () => {
     const css = readFileSync(join(STYLES, '08-message-rows.css'), 'utf8')
-    for (const cls of ['.hs-mc-reply-btn', '.hs-mc-thread-btn']) {
+    for (const cls of ['.hs-mc-reply-btn']) {
       const rule = css.match(new RegExp(`\\n\\s*\\${cls}\\s*\\{([^}]*)\\}`))
       expect(rule).not.toBeNull()
       expect(rule[1]).toContain('font-family: var(--hs-mc-font')

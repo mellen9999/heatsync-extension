@@ -1,6 +1,6 @@
 // A replay row is not a live message. The vod tab draws twitch's own past chat through the pane's
 // ordinary append/build path, and that path is full of live-only habits: the first-message glow,
-// "seen" tracking, mention styling, highlight rules, the heatsync thread button. A row marked
+// "seen" tracking, mention styling, highlight rules. A row marked
 // `replay` (vod-replay.js) trips none of them, and a live row is untouched by that.
 //
 // Real code, carved: buildMessageDiv + appendMessage (main-messages.js), isMention (mentions.js),
@@ -152,9 +152,9 @@ describe('a replay row draws without the live habits', () => {
     expect(p.build({ ...REPLAY, ruleColor: '#ffff00' }, 'vod').classList.contains('hs-mc-rule-highlight')).toBe(false)
   })
 
-  test('the heatsync thread button is on a live row and not on a replay row', () => {
+  test('no row draws a hover thread button, live or replay (quote lives in the row menu)', () => {
     const p = pane()
-    expect(p.build({ ...LINE }, 'live').querySelector('.hs-mc-thread-btn')).not.toBeNull()
+    expect(p.build({ ...LINE }, 'live').querySelector('.hs-mc-thread-btn')).toBeNull()
     expect(p.build({ ...REPLAY }, 'vod').querySelector('.hs-mc-thread-btn')).toBeNull()
   })
 

@@ -4,9 +4,7 @@ import { join } from 'node:path'
 import { Window } from 'happy-dom'
 
 /**
- * "copy message" and "quote" read a row's text by walking what follows the name. The row's own
- * thread button (») sits there too and was not on the skip list, so every copied message ended
- * in " »" (e2e s23, 11-17). The walker runs for real on a row built the way the renderer does.
+ * "copy message" and "quote" read a row's text by walking what follows the name. Row furniture (mod bar, stack collapse) sits there too and must stay out of the copy. The walker runs for real on a row built the way the renderer does.
  */
 const INPUT = readFileSync(join(import.meta.dir, '..', 'src', 'multichat', 'input.js'), 'utf8')
 const s = INPUT.indexOf('const MC_ROW_FURNITURE =')
@@ -29,20 +27,6 @@ function row(build) {
   return msg
 }
 
-test('the thread button is not part of the message', () => {
-  const msg = row((m, el) => {
-    m.append(': ', el('span', 'hs-mc-text', 'hello world'), el('button', 'hs-mc-thread-btn', '»'))
-  })
-  expect(_extractMcMsgText(msg)).toBe('hello world')
-})
-
-test('a » the chatter typed is kept', () => {
-  const msg = row((m, el) => {
-    m.append(': ', el('span', 'hs-mc-text', 'look » here »'), el('button', 'hs-mc-thread-btn', '»'))
-  })
-  expect(_extractMcMsgText(msg)).toBe('look » here »')
-})
-
 test('emotes copy as their names, in place, and row furniture stays out', () => {
   const msg = row((m, el, doc) => {
     const text = el('span', 'hs-mc-text')
@@ -54,7 +38,6 @@ test('emotes copy as their names, in place, and row furniture stays out', () => 
       text,
       el('span', 'hs-mod-toolbar', 'ban'),
       el('button', 'hs-mc-stack-collapse', '-'),
-      el('button', 'hs-mc-thread-btn', '»'),
     )
   })
   expect(_extractMcMsgText(msg)).toBe('Kappa nice one')

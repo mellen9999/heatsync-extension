@@ -1125,6 +1125,9 @@ function bgIrcFetchRobotty(ch) {
         msg.isHistory = true
         if (msg.id && existingIds.has(msg.id)) continue
         if (!msg.id && existingFp.has(fpKey(msg))) continue
+        // one line once, even if the answer carries it twice
+        if (msg.id) existingIds.add(msg.id)
+        else existingFp.add(fpKey(msg))
         toAdd.push(msg)
       }
       if (toAdd.length === 0) {
@@ -1378,6 +1381,9 @@ function bgIrcMergeServerBacklog(ch, records) {
     // wording and different ids, so both slipped through and the same action
     // rendered twice. bgIrcDupModNotice is the same collapse the live path uses.
     if (bgIrcDupModNotice(buf, msg)) continue
+    // the batch itself can hold a line twice (two server workers both wrote the ring, 11-28)
+    if (msg.id) existingIds.add(msg.id)
+    else existingFp.add(fpKey(msg))
     toAdd.push(msg)
   }
   if (toAdd.length === 0) return

@@ -311,10 +311,16 @@ function carryCleared(row, m) {
 // `hiddenLegs`: copies a tab already dropped as dual-send duplicates (m.hidden, from the retro-fold or
 // the history replay). They never stand for a line, but the row that does still takes their badges and
 // colour: your twitch copy was the one dropped whenever kick's painted first, and with it went the mod+sub.
+// One platform message, by its own id: a second copy of it (two history sources, a server ring that
+// held the line twice) is the same line, never another leg or another row.
+function legMessageKey(m) {
+  return m.id ? `${legPlatform(m)}:${String(m.channel || '').toLowerCase()}:${m.id}` : ''
+}
 function foldSimulcastLegs(msgs, hiddenLegs) {
   const out = []
   const legs = new Map()
   const bySend = new Map() // send id -> the row standing for it
+  const byMessage = new Map() // legMessageKey -> the row its first copy stands in or folded into
   const prev = _legBadges
   const lent = new WeakMap()
   const folds = new WeakMap()
@@ -324,6 +330,15 @@ function foldSimulcastLegs(msgs, hiddenLegs) {
       out.push(m)
       continue
     }
+    // A copy of a message already placed goes where its first copy went. It used to be judged as a
+    // leg: the row its twin folded into already stood for that platform, so the copy stood as a
+    // second row of the send (kick's copy kept, the twitch line twice in history, 11-28).
+    const key = legMessageKey(m)
+    const placed = key ? byMessage.get(key) : null
+    if (placed) {
+      carryCleared(placed, m)
+      continue
+    }
     let folded = false
     if (typeof hsOriginStamp === 'function') hsOriginStamp(m)
     const standing = m.hsSendId ? bySend.get(m.hsSendId) : null
@@ -331,6 +346,7 @@ function foldSimulcastLegs(msgs, hiddenLegs) {
       carryCleared(standing, m)
       lendBadges(standing, m, lent, prev)
       noteFoldedLeg(folds, standing, m)
+      if (key) byMessage.set(key, standing)
       continue
     }
     for (let j = out.length - 1, n = 0; j >= 0 && n < LEG_SCAN_ROWS; j--, n++) {
@@ -340,6 +356,7 @@ function foldSimulcastLegs(msgs, hiddenLegs) {
         carryCleared(row, m)
         lendBadges(row, m, lent, prev)
         noteFoldedLeg(folds, row, m)
+        if (key) byMessage.set(key, row)
         folded = true
         break
       }
@@ -347,6 +364,7 @@ function foldSimulcastLegs(msgs, hiddenLegs) {
     if (!folded) {
       out.push(m)
       if (m.hsSendId) bySend.set(m.hsSendId, m)
+      if (key) byMessage.set(key, m)
     }
   }
   for (const m of hiddenLegs || []) {

@@ -33,6 +33,7 @@ import { emoteEffectsCheck } from './render/emote-effects'
 import { gateCheck } from './render/gate'
 import { gifsTabCheck } from './render/gifs'
 import { kickModCheck } from './render/kick-mod'
+import { modHoverCheck } from './render/mod-hover'
 import { kickSendCheck } from './render/kick-send'
 import { closeContext, errors, fail, checks } from './render/lib'
 import { pickerClickCheck } from './render/picker'
@@ -111,6 +112,7 @@ try {
   // youtube drives youtube's own composer. Only the first was covered.
   await kickSendCheck()
   await kickModCheck()
+  await modHoverCheck()
   await youtubeSendCheck()
 
   // ── one send on three platforms is one row; a mod removes ONE copy ───────

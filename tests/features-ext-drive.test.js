@@ -31,7 +31,10 @@ describe('ext column drive', () => {
       expect(renderHsBadgeToken('nope-not-a-badge')).toBe('')
       expect(renderHsBadgeToken(BADGES[0].id)).toContain(`data-badge="${BADGES[0].id}"`)
     } finally {
-      for (const k of keys) saved[k] === undefined ? delete globalThis[k] : (globalThis[k] = saved[k])
+      for (const k of keys) {
+        if (saved[k] === undefined) delete globalThis[k]
+        else globalThis[k] = saved[k]
+      }
     }
   })
 

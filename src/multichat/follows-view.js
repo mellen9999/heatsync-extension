@@ -119,11 +119,17 @@ function openFollowsView() {
           cell('hs-fl-up', followsUptime(f.startedAt)),
           cell('hs-fl-views', followsAbbrev(f.viewers)),
         )
+        // a click selects; a click on the selected row opens it, like Enter. Not a dblclick: a finger has
+        // none (a second tap in a beat is a zoom), and a double-click is these two clicks anyway.
         row.addEventListener('click', () => {
+          if (i === sel) {
+            closeIt(true)
+            followsOpenChat(f)
+            return
+          }
           sel = i
           render()
         })
-        row.addEventListener('dblclick', () => followsOpenChat(f))
         return row
       }),
     )

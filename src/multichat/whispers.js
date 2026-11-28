@@ -221,14 +221,14 @@ function loadWhispers() {
               platform: conv.platform || (key.startsWith('hs:') ? 'heatsync' : 'twitch'),
               userId: conv.userId,
               displayName: conv.displayName,
-              color: conv.color || '#fff',
+              color: conv.color || '',
             })
             for (const m of conv.msgs) {
               if (whisperTimeline.some((e) => e.time === m.time && e.text === m.text)) continue
               whisperTimeline.push({
                 user: m.self ? 'you' : m.user,
                 text: m.text,
-                color: m.color || '#fff',
+                color: m.color || '',
                 time: m.time,
                 self: !!m.self,
                 platform: conv.platform || (key.startsWith('hs:') ? 'heatsync' : 'twitch'),
@@ -325,7 +325,7 @@ function handleServerWhisperPush(data) {
     user: data.from_display_name || data.from_twitch_login || 'unknown',
     userId: data.from_twitch_id,
     text: data.content,
-    color: data.from_color || '#fff',
+    color: data.from_color || '',
     time: data.created_at ? new Date(data.created_at).getTime() : Date.now(),
     id: data.external_message_id || data.id || '',
     src: 'server',
@@ -356,13 +356,13 @@ function handleIncomingDm(data) {
     platform: 'heatsync',
     userId: data.from_user_id,
     displayName: data.from_display_name,
-    color: data.from_color || '#fff',
+    color: data.from_color || '',
   })
 
   whisperTimeline.push({
     user: data.from_display_name,
     text: data.content,
-    color: data.from_color || '#fff',
+    color: data.from_color || '',
     time,
     self: false,
     platform: 'heatsync',
@@ -382,7 +382,7 @@ function handleIncomingDm(data) {
       user: data.from_display_name,
       userId: data.from_user_id,
       text: data.content,
-      color: data.from_color || '#fff',
+      color: data.from_color || '',
       time,
       platform: 'heatsync',
     })
@@ -390,7 +390,7 @@ function handleIncomingDm(data) {
       HsNotifs.emit('whisper-receipt', {
         user: data.from_display_name,
         text: data.content,
-        color: data.from_color || '#fff',
+        color: data.from_color || '',
         platform: 'heatsync',
       })
     }
@@ -718,7 +718,7 @@ function renderWhispersTab() {
         }
         for (const dm of whisperConversations(resp.data)) {
           const otherName = dm.display_name || dm.username || ''
-          const otherColor = dm.user_color || '#fff'
+          const otherColor = dm.user_color || ''
           const key = `hs:${dm.other_user_id}`
           whisperUsersSet(key, {
             platform: 'heatsync',
@@ -810,7 +810,7 @@ function renderWhispersTab() {
     // m.self, so the separator itself is direction-free on purpose)
     const target = whisperUsers.get(m.key)
     const them = target?.displayName || m.user || m.key
-    const theirColor = target ? sanitizeColor(target.color) : sanitizeColor(m.color)
+    const theirColor = (target ? target.color : m.color) ? sanitizeColor(target ? target.color : m.color) : undefined
     const theirUsername = (target?.displayName || m.user || '').toLowerCase()
 
     // Build username links with hs-mc-user class for tooltip + click.

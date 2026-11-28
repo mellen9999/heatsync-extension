@@ -4916,7 +4916,9 @@ function processEmotes(
           .replace(/[,.:!?]+$/, '')
           .toLowerCase()
         const color =
-          typeof mentionColor === 'function' ? mentionColor(name) : sanitizeColor(knownColors.get(name) || '#fff')
+          typeof mentionColor === 'function'
+            ? mentionColor(name)
+            : hsRowNameColour('twitch', knownColors.get(name), name)
         // skipMentions=false only ever reaches here for twitch prediction/
         // outcome titles (twitch-api.js) — the only processEmotes() callers
         // that don't pass skipMentions=true — so twitch is not a guess here.

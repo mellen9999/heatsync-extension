@@ -1312,13 +1312,14 @@ function resolveMentionColor(lower) {
 }
 // Sanitized color for a mentioned user. Returns a known color synchronously
 // (seen this session, or cached from a prior lookup); otherwise queues the
-// async resolve+repaint and falls back to white until it lands.
+// async resolve+repaint and draws the name's palette colour until it lands
+// (never white: a name with no colour of its own is that palette colour).
 function mentionColor(lower) {
   let c = knownColors.get(lower)
   if (!c && typeof _hsUserColorCache !== 'undefined') c = _hsUserColorCache.get(lower) || null
   if (c) return sanitizeColor(c)
   resolveMentionColor(lower)
-  return '#fff'
+  return hsRowNameColour('twitch', '', lower)
 }
 
 // Everyday words that are never a bare mention, even when someone with that

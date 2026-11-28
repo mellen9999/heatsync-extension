@@ -126,9 +126,15 @@ describe('wiring', () => {
   const INPUT = ml('input.js')
   test('a failed send leaves a mark; an echo or a retry retires it', () => {
     expect(INPUT).toContain('entry.markId = injectSendMark(entry, reason)')
-    const confirm = INPUT.slice(INPUT.indexOf('function confirmPending('), INPUT.indexOf('function findPendingByEchoText('))
+    const confirm = INPUT.slice(
+      INPUT.indexOf('function confirmPending('),
+      INPUT.indexOf('function findPendingByEchoText('),
+    )
     expect(confirm).toContain('retireSendMark(entry)')
-    const retry = INPUT.slice(INPUT.indexOf('function retryPendingSend('), INPUT.indexOf('function retryPendingSend(') + 400)
+    const retry = INPUT.slice(
+      INPUT.indexOf('function retryPendingSend('),
+      INPUT.indexOf('function retryPendingSend(') + 400,
+    )
     expect(retry).toContain('retireSendMark(entry)')
   })
   test('the row paints with the rails, refusals from twitch included', () => {

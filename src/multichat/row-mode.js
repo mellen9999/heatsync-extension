@@ -342,7 +342,8 @@ function initRowLongPress(signal) {
       if (e.touches.length !== 1) return
       const t0 = e.touches[0]
       const target = e.target
-      if (!(target instanceof Element) || !target.closest('#hs-mc-messages .hs-mc-msg, #hs-mc-messages .hs-feed-msg')) return
+      if (!(target instanceof Element) || !target.closest('#hs-mc-messages .hs-mc-msg, #hs-mc-messages .hs-feed-msg'))
+        return
       at = { x: t0.clientX, y: t0.clientY }
       timer = setTimeout(() => {
         timer = 0

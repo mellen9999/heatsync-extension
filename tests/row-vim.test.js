@@ -30,7 +30,14 @@ beforeEach(() => {
     row.dataset.msgKey = `k${i}`
     row.dataset.msgId = `m${i}`
     row.innerHTML = `<span class="hs-mc-user" data-username="${who}" data-platform="twitch">${who}</span> <a href="https://x.test/${i}">link${i}</a>`
-    row.getBoundingClientRect = () => ({ top: i * 20, bottom: i * 20 + 18, left: 0, right: 100, width: 100, height: 18 })
+    row.getBoundingClientRect = () => ({
+      top: i * 20,
+      bottom: i * 20 + 18,
+      left: 0,
+      right: 100,
+      width: 100,
+      height: 18,
+    })
     list.appendChild(row)
     for (const el of row.querySelectorAll('a, .hs-mc-user')) {
       el.getBoundingClientRect = () => ({ top: i * 20, bottom: i * 20 + 18, left: 0, right: 50, width: 50, height: 18 })
@@ -59,7 +66,15 @@ beforeEach(() => {
     ${SRC}
     return { enterRowMode, exitRowMode, rowModeActive, handleRowModeKey, initRowMode, initOverlayKeys, initOwnedKeyups, rowHintLabels }
     `,
-  )(doc, win, win.MouseEvent, win.MutationObserver, t, { emit: (_x, p) => calls.status.push(p.text), dismissByKey() {} }, calls)
+  )(
+    doc,
+    win,
+    win.MouseEvent,
+    win.MutationObserver,
+    t,
+    { emit: (_x, p) => calls.status.push(p.text), dismissByKey() {} },
+    calls,
+  )
   api.initOverlayKeys(ctl.signal)
   api.initOwnedKeyups(ctl.signal)
   api.initRowMode(ctl.signal)

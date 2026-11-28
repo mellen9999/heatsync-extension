@@ -11,13 +11,21 @@ import { t } from './en-t.js'
 
 const ml = (f) => readFileSync(join(import.meta.dir, '..', 'src', 'multichat', f), 'utf8')
 const INPUT = ml('input.js')
-const MENU = INPUT.slice(INPUT.indexOf('  function openEmoteCtxMenu('), INPUT.indexOf('  // Right-click menu for emoji.'))
+const MENU = INPUT.slice(
+  INPUT.indexOf('  function openEmoteCtxMenu('),
+  INPUT.indexOf('  // Right-click menu for emoji.'),
+)
 const RENAME = ml('emote-rename.js')
-const NOTICE = readFileSync(join(import.meta.dir, '..', 'src', 'lib', 'emote-notice.js'), 'utf8').replace(/export /g, '')
+const NOTICE = readFileSync(join(import.meta.dir, '..', 'src', 'lib', 'emote-notice.js'), 'utf8').replace(
+  /export /g,
+  '',
+)
 
 function scopeOf(over) {
   return new Proxy(over, {
-    has: (_, k) => typeof k === 'string' && !['emoteName', 'emoteUrl', 'state', 'source', 'targetEl', 'wrapper', 'hash', 'x', 'y'].includes(k),
+    has: (_, k) =>
+      typeof k === 'string' &&
+      !['emoteName', 'emoteUrl', 'state', 'source', 'targetEl', 'wrapper', 'hash', 'x', 'y'].includes(k),
     get: (o, k) => (k in o ? o[k] : k in globalThis ? globalThis[k] : () => undefined),
   })
 }
@@ -39,7 +47,15 @@ function menuFor(state, { owned = false } = {}) {
     removeEmoteFromInventory: () => calls.push(['remove']),
   })
   const open = new Function('scope', `with (scope) { ${MENU}; return openEmoteCtxMenu }`)(scope)
-  open(0, 0, { emoteName: 'KEKW', emoteUrl: 'https://cdn.7tv.app/emote/abc/1x.webp', state, source: '7tv', targetEl: null, wrapper: null, hash: 'h' })
+  open(0, 0, {
+    emoteName: 'KEKW',
+    emoteUrl: 'https://cdn.7tv.app/emote/abc/1x.webp',
+    state,
+    source: '7tv',
+    targetEl: null,
+    wrapper: null,
+    hash: 'h',
+  })
   return { items: shown.filter((i) => i !== 'sep'), calls }
 }
 const labels = (m) => m.items.map((i) => i.label)
@@ -115,7 +131,12 @@ describe('renameEmoteInInventory', () => {
 
   test('PUTs the slot, says the shared line, and the maps follow the new name', async () => {
     expect(await api.renameEmoteInInventory('KEKW', 'KEKX')).toBe(true)
-    expect(sent[0]).toMatchObject({ type: 'api_fetch', path: '/api/user/emotes/3/rename', method: 'PUT', body: { newName: 'KEKX' } })
+    expect(sent[0]).toMatchObject({
+      type: 'api_fetch',
+      path: '/api/user/emotes/3/rename',
+      method: 'PUT',
+      body: { newName: 'KEKX' },
+    })
     expect(toasts).toEqual([[t('hsbtn_renamed_to', ['KEKX']), 'success']])
     expect(personal.has('KEKW')).toBe(false)
     expect(personal.get('KEKX').slot).toBe(3)

@@ -33,7 +33,9 @@ function labelsFor({ mod }) {
     has: (_, k) => typeof k === 'string' && k !== 'items' && k !== 'msg',
     get: (o, k) => (k in o ? o[k] : k === 'document' ? document : () => undefined),
   })
-  const row = { dataset: { msgId: 'm1', msgChannel: 'chan', msgPlatform: 'twitch', msgLogin: 'viewer', msgUser: 'viewer' } }
+  const row = {
+    dataset: { msgId: 'm1', msgChannel: 'chan', msgPlatform: 'twitch', msgLogin: 'viewer', msgUser: 'viewer' },
+  }
   const run = new Function('scope', `with (scope) { ${SLICE}; return openUserCtxMenu }`)(scope)
   run(0, 0, 'viewer', 'twitch', { msg: row })
   return shown.map((i) => (i === 'sep' ? '-' : i.label))

@@ -5,11 +5,11 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { slashHelpText } from '../src/multichat/slash-registry.js'
-import { renderHsBadgeToken } from '../src/multichat/badges.js'
 import { BADGES, badgeById } from '../src/lib/badge-catalogue.js'
+import { userKey, userSetMatches } from '../src/lib/user-key.js'
 import { escapeHtml } from '../src/lib/utils.js'
-import { userSetMatches, userKey } from '../src/lib/user-key.js'
+import { renderHsBadgeToken } from '../src/multichat/badges.js'
+import { slashHelpText } from '../src/multichat/slash-registry.js'
 
 const rd = (f) => readFileSync(join(import.meta.dir, '..', 'src', f), 'utf8')
 // one top-level function, as written, plus any prelude the bundle would have defined around it
@@ -94,7 +94,9 @@ describe('ext column drive', () => {
   test('O06 twitch send rejects are named (reading needs no login, sending says why not)', () => {
     const src = rd('multichat/auth-irc.js')
     const end = src.indexOf('\n])', src.indexOf('TWITCH_SEND_REJECT_NOTICES = new Map')) + 3
-    const m = new Function(`${src.slice(src.indexOf('const TWITCH_SEND_REJECT_NOTICES'), end)}\nreturn TWITCH_SEND_REJECT_NOTICES`)()
+    const m = new Function(
+      `${src.slice(src.indexOf('const TWITCH_SEND_REJECT_NOTICES'), end)}\nreturn TWITCH_SEND_REJECT_NOTICES`,
+    )()
     expect(m.get('msg_slowmode')).toBeTruthy()
   })
 
@@ -110,7 +112,7 @@ describe('ext column drive', () => {
   })
 
   test('FI07 filter-to sets the search bar to @name (clear = empty it)', () => {
-    expect(rd('multichat/input.js')).toContain("input.value = `@${String(username).toLowerCase()}`")
+    expect(rd('multichat/input.js')).toContain('input.value = `@${String(username).toLowerCase()}`')
   })
 
   test('MO11 card clip posts /api/twitch/clip', () => {

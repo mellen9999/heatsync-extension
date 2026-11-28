@@ -207,10 +207,10 @@ function rowVisualKey(k, c) {
     _rowVisual.count += k
     return true
   }
-  if (k === 'j' || k === 'ArrowDown') return go(at + take()), true
-  if (k === 'k' || k === 'ArrowUp') return go(at - take()), true
-  if (k === 'g' || k === 'Home') return go(0), true
-  if (k === 'G' || k === 'End') return go(rows.length - 1), true
+  if (k === 'j' || k === 'ArrowDown') return (go(at + take()), true)
+  if (k === 'k' || k === 'ArrowUp') return (go(at - take()), true)
+  if (k === 'g' || k === 'Home') return (go(0), true)
+  if (k === 'G' || k === 'End') return (go(rows.length - 1), true)
   if (k === 'o') {
     const a = _rowVisual.anchor
     _rowVisual.anchor = rows[at]
@@ -225,7 +225,10 @@ function rowVisualKey(k, c) {
       .join('\n')
     rowVisualExit()
     if (text)
-      mcCopyToClipboard(text, sel.length > 1 ? t('mc_vis_copied_n', [String(sel.length)]) : t('mc_input_message_copied'))
+      mcCopyToClipboard(
+        text,
+        sel.length > 1 ? t('mc_vis_copied_n', [String(sel.length)]) : t('mc_input_message_copied'),
+      )
     else say(t('mc_vis_nothing'))
     return true
   }

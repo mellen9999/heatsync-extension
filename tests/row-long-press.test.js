@@ -23,7 +23,8 @@ let ctl
 beforeEach(() => {
   win = new Window()
   doc = win.document
-  doc.body.innerHTML = '<div id="hs-mc-messages"><div class="hs-mc-msg"><span class="hs-mc-user">a</span> hi</div></div><p id="x">x</p>'
+  doc.body.innerHTML =
+    '<div id="hs-mc-messages"><div class="hs-mc-msg"><span class="hs-mc-user">a</span> hi</div></div><p id="x">x</p>'
   row = doc.querySelector('.hs-mc-msg')
   menus = []
   ctl = new AbortController()

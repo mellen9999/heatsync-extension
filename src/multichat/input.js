@@ -1876,7 +1876,19 @@ function initInput() {
         fn: () => blockEmote(emoteName, emoteUrl, source, { hash }),
       })
       if (state === 'owned' && inventoryEmotes.has(emoteName)) {
+        items.push({
+          label: t('hsbtn_rename'),
+          fn: async () => {
+            const next = await emoteRenamePrompt(emoteName)
+            if (next) renameEmoteInInventory(emoteName, next)
+          },
+        })
         items.push({ label: t('mc_input_remove_from_set'), fn: () => removeEmoteFromInventory(emoteName, targetEl) })
+      } else if (state === 'unadded' || state === 'global' || state === 'channel') {
+        items.push({
+          label: t('btn_ctx_add_inventory'),
+          fn: () => addEmoteToInventory(emoteName, emoteUrl, source, targetEl),
+        })
       }
     }
     items.push('sep')

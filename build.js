@@ -937,6 +937,7 @@ const MULTICHAT_MODULES = [
   'emote-favorites.js',
   'emote-law-offer.js',
   'emotes.js',
+  'emote-rename.js',
   'emote-cache-evict.js',
   'emote-upload-core.js',
   'emote-upload.js',

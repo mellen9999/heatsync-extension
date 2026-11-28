@@ -530,6 +530,7 @@ function confirmPending(synthId, platform) {
   if (platform && entry.awaiting.size > 0) return true
   if (entry.timer) cleanup.clearTimeout(entry.timer)
   pendingSends.delete(synthId)
+  retireSendMark(entry)
   try {
     HsNotifs.dismissByKey('send-pending', `send-pending:${synthId}`)
   } catch (_) {}
@@ -661,6 +662,9 @@ function markPendingFailed(synthId, reason) {
       platforms: [...entry.awaiting],
     })
   } catch (_) {}
+  // and a row in the chat itself: the toast goes, the row stays (send-mark.js)
+  retireSendMark(entry)
+  entry.markId = injectSendMark(entry, reason)
   // Bound retention: dismissing/expiring the retry toast has no cleanup hook,
   // so never-retried failures would pile up holding message text. Evict the
   // oldest FAILED entries beyond the cap (kept only for retry) — recent ones a
@@ -708,6 +712,7 @@ function retryPendingSend(synthId) {
   if (!entry) return
   // Drop the failed entry; sendMessage will register a fresh one.
   pendingSends.delete(synthId)
+  retireSendMark(entry)
   try {
     HsNotifs.dismissByKey('send-pending', `send-pending:${synthId}`)
   } catch (_) {}

@@ -178,6 +178,8 @@ function enterRowMode() {
 function exitRowMode(restoreFocus = false) {
   if (!_rowMode.active) return
   _rowMode.active = false
+  rowVisualExit()
+  rowHintExit()
   _rowMode.observer?.disconnect()
   _rowMode.observer = null
   _rowModeRelease(_rowMode.row)
@@ -254,6 +256,24 @@ function handleRowModeKey(e) {
   const at = Math.max(0, rows.indexOf(_rowMode.row))
   const go = (i) => _rowModeLand(rows[Math.max(0, Math.min(last, i))], rows)
 
+  // hints and the selection are layers inside the mode: they own the keys until they end (row-vim.js)
+  if (rowHintActive()) return rowHintKey(k, () => exitRowMode())
+  if (rowVisualActive()) {
+    rowVisualKey(k, { rows, at, go, leave: () => exitRowMode(), say: _rowModeStatus })
+    if (!_rowMode.active) return true
+    if (rowVisualActive()) _rowModeStatus(t('mc_vis_status', [String(rowVisualPaint(rowModeRows(), _rowMode.row))]))
+    else _rowModeLand(_rowMode.row, rowModeRows()) // back to the plain cursor and its status
+    return true
+  }
+  if (k === 'v') {
+    rowVisualEnter(_rowMode.row)
+    _rowModeStatus(t('mc_vis_status', [String(rowVisualPaint(rows, _rowMode.row))]))
+    return true
+  }
+  if (k === 'f' || k === 'F') {
+    _rowModeStatus(t(rowHintEnter(k === 'F') ? 'mc_hint_status' : 'mc_hint_none'))
+    return true
+  }
   if (k === 'Escape') {
     exitRowMode(true)
     return true

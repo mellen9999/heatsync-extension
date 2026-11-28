@@ -174,6 +174,7 @@ function handleAuthIrcMessage(event) {
             const parsed = parseIrcLine(line)
             if (parsed) {
               parsed.isSynthetic = true
+              if (msgId !== 'msg_rejected') parsed.sendMark = 'refused' // a refusal wears the red rail (send-mark.js)
               if (msgId === 'msg_rejected') {
                 // held for a mod, not refused: say so in house copy, and remember WHICH send it is so
                 // that message's own echo can retire this row (irc.js)

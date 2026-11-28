@@ -871,42 +871,7 @@ const HsNotifs = (() => {
     render: ({ data }) => {
       const el = document.createElement('span')
       el.className = 'hs-notif-toast-text hs-notif-toast-warn'
-      const reasonMap = {
-        auth_failed: t('mc_notif_r_auth_failed'),
-        no_user: t('mc_notif_r_no_user'),
-        connect_failed: t('mc_notif_r_connect_failed'),
-        send_failed: t('mc_notif_r_send_failed'),
-        kick_not_logged_in: t('mc_notif_r_kick_not_logged_in'),
-        no_kick_tab: t('mc_notif_r_no_kick_tab'),
-        kick_bridge_timeout: t('mc_notif_r_kick_bridge_timeout'),
-        no_channel: t('mc_notif_r_no_channel'),
-        // Deliberately not worded as a failure: kick may well have posted it
-        // (see kick-send.js KICK_SEND_TIMEOUT_MS). "retry" here is an informed
-        // choice to send it a second time, not a repair.
-        kick_unconfirmed: t('mc_notif_r_kick_unconfirmed'),
-        'missing params': t('mc_notif_r_missing_params'),
-        no_youtube_tab: t('mc_notif_r_no_youtube_tab'),
-        no_input: t('mc_notif_r_no_input'),
-        chat_disabled: t('mc_notif_r_chat_disabled'),
-        send_disabled: t('mc_notif_r_send_disabled'),
-        send_not_confirmed: t('mc_notif_r_send_not_confirmed'),
-        bridge_timeout: t('mc_notif_r_bridge_timeout'),
-      }
-      let why
-      const _reasonStr = String(data.reason || '')
-      if (data.reason === 'no_echo') {
-        // Name the platform(s) that never confirmed (markPendingFailed sends
-        // the awaiting set) — a kick or yt no-echo used to blame twitch.
-        const plat = (data.platforms || []).map((p) => (p === 'yt' ? 'youtube' : p)).join('+')
-        why = t('mc_notif_r_no_echo', [plat || t('mc_notif_r_platform')])
-      } else if (_reasonStr.startsWith('chat_restricted')) {
-        // "chat_restricted:<yt's human reason>" — surface yt's own words
-        // (subscribers-only mode, members-only, follower age gate).
-        const detail = _reasonStr.includes(':') ? _reasonStr.slice(_reasonStr.indexOf(':') + 1).toLowerCase() : ''
-        why = detail ? t('mc_notif_r_restricted_detail', [detail]) : t('mc_notif_r_restricted')
-      } else {
-        why = reasonMap[data.reason] || data.reason || t('mc_notif_r_unknown')
-      }
+      const why = sendFailWhy(data.reason, data.platforms)
       const snippet = String(data.text || '').slice(0, 60)
       el.textContent = t('mc_notif_pending_line', [why, `${snippet}${data.text?.length > 60 ? '…' : ''}`])
       // Login-shaped failures get a way in, like twitch-auth-required's "open twitch"

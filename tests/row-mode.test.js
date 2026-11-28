@@ -19,7 +19,7 @@ import { Window } from 'happy-dom'
 import { t } from './en-t.js'
 
 const dir = join(import.meta.dir, '..', 'src', 'multichat')
-const SRC = ['overlay-keys.js', 'row-mode.js'].map((f) => readFileSync(join(dir, f), 'utf8')).join('\n')
+const SRC = ['overlay-keys.js', 'row-mode.js', 'row-vim.js'].map((f) => readFileSync(join(dir, f), 'utf8')).join('\n')
 
 let win
 let doc
@@ -153,7 +153,7 @@ describe('getting in', () => {
     addRow('a')
     addRow('b')
     api.enterRowMode()
-    expect(lastStatus()).toBe('2/2 · j k move · enter actions · r reply · esc leave')
+    expect(lastStatus()).toBe('2/2 · j k move · enter actions · r reply · v select · f hints · esc leave')
   })
 })
 

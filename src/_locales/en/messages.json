@@ -7056,7 +7056,7 @@
     }
   },
   "mc_rowmode_status": {
-    "message": "$POS$/$TOTAL$ · j k move · enter actions · r reply · esc leave",
+    "message": "$POS$/$TOTAL$ · j k move · enter actions · r reply · v select · f hints · esc leave",
     "placeholders": {
       "pos": {
         "content": "$1"
@@ -7065,6 +7065,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "visual · $N$ selected · j k stretch · y copy · a links · q quote · b bookmark · m mute · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "copied $N$ lines",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "copied $N$ links",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "no links for these rows"
+  },
+  "mc_vis_nothing": {
+    "message": "nothing to do with these rows"
+  },
+  "mc_vis_muted": {
+    "message": "muted $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "bookmarked $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "hints · type the letters · F opens a link in a new tab · esc"
+  },
+  "mc_hint_none": {
+    "message": "nothing to click here"
   },
   "mc_rowmode_no_actions": {
     "message": "nothing to do on this row"

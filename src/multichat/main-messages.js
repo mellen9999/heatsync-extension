@@ -448,6 +448,8 @@ function buildMessageDiv(m, tabId) {
   // (unban, ban, mod-add, mode-change, sub, raid, etc.) can have its own color/icon
   const noticeKind = (() => {
     if (m.type !== 'notice' && m.type !== 'usernotice') return ''
+    if (m.sendMark === 'refused') return 'hs-mc-notice-error hs-mc-send-refused'
+    if (m.sendMark === 'unconfirmed') return 'hs-mc-send-unconfirmed'
     let id = m.noticeType || m.msgId || ''
     if (!id) return ''
     // shared-chat wrapper: the real event type rides in source-msg-id

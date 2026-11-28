@@ -385,6 +385,10 @@
        magenta(13)=raid/gift/mention/first-msg-ever (special event),
        cyan(14)=stream-hype/milestone (action-needed).
        #fff reserved for brand chrome only (buttons, frames, drag bars). */
+    /* a line you sent that did not land (send-mark.js): red rail refused, yellow rail unconfirmed */
+    .hs-mc-msg.hs-mc-send-refused     { border-left-color: #ff0000 !important; }
+    .hs-mc-msg.hs-mc-send-unconfirmed { border-left-color: #ffff00 !important; background: #000000 !important; }
+    .hs-mc-msg.hs-mc-send-unconfirmed .hs-mc-system-text { color: #ffff00; }
     .hs-mc-msg.hs-mc-notice-ban       { border-left-color: var(--hs-danger) !important; background: var(--hs-danger-tint) !important; }
     .hs-mc-msg.hs-mc-notice-ban       .hs-mc-system-text { color: var(--hs-danger); font-weight: 700; }
     .hs-mc-msg.hs-mc-notice-timeout   { border-left-color: var(--hs-ok-dim) !important; background: #000000 !important; }
@@ -486,6 +490,16 @@
       color: var(--hs-sel-fg) !important;
       outline: none;
     }
+    /* visual mode (row-vim.js): the selected range is black with the cyan rail; the cursor row stays the invert */
+    .hs-mc-msg.hs-mc-row-selected:not(.hs-mc-row-cursor),
+    .hs-feed-msg.hs-mc-row-selected:not(.hs-mc-row-cursor) {
+      background: #000000 !important;
+      box-shadow: inset 3px 0 0 #00ffff !important;
+    }
+    /* hint labels: reverse video, square; the letters already typed are underlined */
+    #hs-hint-layer { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; }
+    .hs-hint { position: absolute; padding: 1px 3px; background: #ffffff; color: #000000; border: 1px solid #000000; border-radius: 0; font: 700 13px/1 monospace; text-transform: lowercase; white-space: nowrap; }
+    .hs-hint .hs-hint-typed { text-decoration: underline; }
     .hs-mc-row-cursor *,
     .hs-mc-row-cursor *::before,
     .hs-mc-row-cursor *::after {

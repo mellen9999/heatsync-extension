@@ -12,6 +12,7 @@ import { Window } from 'happy-dom'
 import * as mods from '../src/lib/modifiers.js'
 import './emote-rungs-globals.js'
 import { escapeHtml, unescapeHtml } from '../src/lib/utils.js'
+import { hsRowNameColour } from '../src/multichat/paints.js'
 
 // bun runs every test file in one global scope: put back what these stubs replaced when the file is done
 const saved = new Map()
@@ -28,6 +29,8 @@ afterAll(() => {
 
 stub('escapeHtml', escapeHtml)
 stub('unescapeHtml', unescapeHtml)
+// the bundle's last rung for a name with no colour (paints.js): an @mention in the text reaches it
+stub('hsRowNameColour', hsRowNameColour)
 stub('cleanup', { setIntervalIfVisible: () => {}, persistInterval: () => {} })
 stub('HS_MOD_TOKENS', mods.HS_MOD_TOKENS)
 stub('hsModClassify', mods.hsModClassify)

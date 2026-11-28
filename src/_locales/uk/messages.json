@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "ці вкладки вже є"
   },
+  "mc_cfg_move": {
+    "message": "перемістити",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "показ"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "виділення · вибрано $N$ · j k розширити · y копіювати · a посилання · q цитата · b закладка · m заглушити · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "скопійовано рядків: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "скопійовано посилань: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "для цих рядків немає посилань"
+  },
+  "mc_vis_nothing": {
+    "message": "з цими рядками нічого робити"
+  },
+  "mc_vis_muted": {
+    "message": "заглушено: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "у закладках: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "підказки · введи літери · F відкриває посилання в новій вкладці · esc"
+  },
+  "mc_hint_none": {
+    "message": "тут нічого натискати"
   },
   "mc_rowmode_no_actions": {
     "message": "з цим рядком нічого робити"

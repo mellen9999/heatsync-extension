@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "você já tem essas abas"
   },
+  "mc_cfg_move": {
+    "message": "mover",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "mostrar"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "visual · $N$ selecionadas · j k estender · y copiar · a links · q citar · b favorito · m silenciar · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "$N$ linhas copiadas",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "$N$ links copiados",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "sem links para essas linhas"
+  },
+  "mc_vis_nothing": {
+    "message": "nada a fazer com essas linhas"
+  },
+  "mc_vis_muted": {
+    "message": "$N$ silenciadas",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "$N$ adicionadas aos favoritos",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "dicas · digite as letras · F abre um link em uma nova aba · esc"
+  },
+  "mc_hint_none": {
+    "message": "nada para clicar aqui"
   },
   "mc_rowmode_no_actions": {
     "message": "nada a fazer nesta linha"

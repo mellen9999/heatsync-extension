@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "tu as déjà ces onglets"
   },
+  "mc_cfg_move": {
+    "message": "déplacer",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "afficher"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "visuel · $N$ sélectionnées · j k étendre · y copier · a liens · q citer · b favori · m masquer · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "$N$ lignes copiées",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "$N$ liens copiés",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "aucun lien pour ces lignes"
+  },
+  "mc_vis_nothing": {
+    "message": "rien à faire avec ces lignes"
+  },
+  "mc_vis_muted": {
+    "message": "$N$ masquées",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "$N$ ajoutées aux favoris",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "indices · tape les lettres · F ouvre un lien dans un nouvel onglet · esc"
+  },
+  "mc_hint_none": {
+    "message": "rien à cliquer ici"
   },
   "mc_rowmode_no_actions": {
     "message": "rien à faire sur cette ligne"

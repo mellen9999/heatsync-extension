@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "bạn đã có các tab đó rồi"
   },
+  "mc_cfg_move": {
+    "message": "di chuyển",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "hiện"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "trực quan · đã chọn $N$ · j k mở rộng · y sao chép · a liên kết · q trích dẫn · b đánh dấu · m tắt tiếng · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "đã sao chép $N$ dòng",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "đã sao chép $N$ liên kết",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "không có liên kết cho các dòng này"
+  },
+  "mc_vis_nothing": {
+    "message": "không có gì để làm với các dòng này"
+  },
+  "mc_vis_muted": {
+    "message": "đã tắt tiếng $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "đã đánh dấu $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "gợi ý · gõ các chữ cái · F mở liên kết trong tab mới · esc"
+  },
+  "mc_hint_none": {
+    "message": "không có gì để bấm ở đây"
   },
   "mc_rowmode_no_actions": {
     "message": "dòng này không có gì để làm"

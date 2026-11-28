@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "te karty już masz"
   },
+  "mc_cfg_move": {
+    "message": "przenieś",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "pokaż"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "wizualny · zaznaczono $N$ · j k rozszerz · y kopiuj · a linki · q cytuj · b zakładka · m wycisz · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "skopiowano $N$ wierszy",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "skopiowano $N$ linków",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "brak linków dla tych wierszy"
+  },
+  "mc_vis_nothing": {
+    "message": "nie ma nic do zrobienia z tymi wierszami"
+  },
+  "mc_vis_muted": {
+    "message": "wyciszono $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "dodano do zakładek $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "podpowiedzi · wpisz litery · F otwiera link w nowej karcie · esc"
+  },
+  "mc_hint_none": {
+    "message": "nie ma tu nic do kliknięcia"
   },
   "mc_rowmode_no_actions": {
     "message": "nic do zrobienia w tym wierszu"

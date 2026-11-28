@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "эти вкладки уже есть"
   },
+  "mc_cfg_move": {
+    "message": "переместить",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "показ"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "выделение · выбрано $N$ · j k расширить · y копировать · a ссылки · q цитата · b закладка · m заглушить · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "скопировано строк: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "скопировано ссылок: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "для этих строк нет ссылок"
+  },
+  "mc_vis_nothing": {
+    "message": "с этими строками нечего делать"
+  },
+  "mc_vis_muted": {
+    "message": "заглушено: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "в закладках: $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "подсказки · введи буквы · F открывает ссылку в новой вкладке · esc"
+  },
+  "mc_hint_none": {
+    "message": "здесь нечего нажимать"
   },
   "mc_rowmode_no_actions": {
     "message": "в этой строке нечего делать"

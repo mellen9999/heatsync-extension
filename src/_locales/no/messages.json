@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "du har allerede de fanene"
   },
+  "mc_cfg_move": {
+    "message": "flytt",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "vis"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "visuell · $N$ valgt · j k utvid · y kopier · a lenker · q siter · b bokmerke · m demp · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "kopierte $N$ linjer",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "kopierte $N$ lenker",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "ingen lenker for disse radene"
+  },
+  "mc_vis_nothing": {
+    "message": "ingenting å gjøre med disse radene"
+  },
+  "mc_vis_muted": {
+    "message": "dempet $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "bokmerket $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "hint · skriv bokstavene · F åpner en lenke i en ny fane · esc"
+  },
+  "mc_hint_none": {
+    "message": "ingenting å klikke på her"
   },
   "mc_rowmode_no_actions": {
     "message": "ingenting å gjøre på denne linjen"

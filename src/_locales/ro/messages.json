@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "ai deja taburile astea"
   },
+  "mc_cfg_move": {
+    "message": "mută",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "arată"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "vizual · $N$ selectate · j k extinde · y copiază · a linkuri · q citează · b semn de carte · m dezactivează sunetul · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "$N$ linii copiate",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "$N$ linkuri copiate",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "nu există linkuri pentru aceste rânduri"
+  },
+  "mc_vis_nothing": {
+    "message": "nu e nimic de făcut cu aceste rânduri"
+  },
+  "mc_vis_muted": {
+    "message": "$N$ dezactivate",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "$N$ salvate în semne de carte",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "indicii · tastează literele · F deschide un link într-o filă nouă · esc"
+  },
+  "mc_hint_none": {
+    "message": "nu e nimic de apăsat aici"
   },
   "mc_rowmode_no_actions": {
     "message": "nimic de făcut pe acest rând"

@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "이미 있는 탭이야"
   },
+  "mc_cfg_move": {
+    "message": "이동",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "표시"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "비주얼 · $N$개 선택 · j k 확장 · y 복사 · a 링크 · q 인용 · b 북마크 · m 음소거 · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "$N$줄 복사됨",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "링크 $N$개 복사됨",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "이 행에는 링크가 없습니다"
+  },
+  "mc_vis_nothing": {
+    "message": "이 행으로 할 수 있는 작업이 없습니다"
+  },
+  "mc_vis_muted": {
+    "message": "$N$개 음소거됨",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "$N$개 북마크됨",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "힌트 · 글자를 입력 · F 는 링크를 새 탭에서 엽니다 · esc"
+  },
+  "mc_hint_none": {
+    "message": "여기엔 클릭할 것이 없습니다"
   },
   "mc_rowmode_no_actions": {
     "message": "이 줄에서 할 수 있는 게 없어"

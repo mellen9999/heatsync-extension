@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "tab itu sudah ada"
   },
+  "mc_cfg_move": {
+    "message": "pindah",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "tampilkan"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "visual · $N$ dipilih · j k perluas · y salin · a tautan · q kutip · b markah · m bisukan · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "$N$ baris disalin",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "$N$ tautan disalin",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "tidak ada tautan untuk baris ini"
+  },
+  "mc_vis_nothing": {
+    "message": "tidak ada yang bisa dilakukan untuk baris ini"
+  },
+  "mc_vis_muted": {
+    "message": "$N$ dibisukan",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "$N$ ditandai",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "petunjuk · ketik hurufnya · F membuka tautan di tab baru · esc"
+  },
+  "mc_hint_none": {
+    "message": "tidak ada yang bisa diklik di sini"
   },
   "mc_rowmode_no_actions": {
     "message": "tidak ada yang bisa dilakukan di baris ini"

@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "ezek a lapok már megvannak"
   },
+  "mc_cfg_move": {
+    "message": "áthelyezés",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "mutat"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "vizuális · $N$ kijelölve · j k bővít · y másol · a linkek · q idéz · b könyvjelző · m némít · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "$N$ sor másolva",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "$N$ link másolva",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "nincs link ezekhez a sorokhoz"
+  },
+  "mc_vis_nothing": {
+    "message": "nincs teendő ezekkel a sorokkal"
+  },
+  "mc_vis_muted": {
+    "message": "$N$ némítva",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "$N$ könyvjelzőzve",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "súgók · írd be a betűket · F új lapon nyit meg egy linket · esc"
+  },
+  "mc_hint_none": {
+    "message": "itt nincs mire kattintani"
   },
   "mc_rowmode_no_actions": {
     "message": "ezen a soron nincs mit tenni"

@@ -135,6 +135,8 @@ function rig({
     kickChat: null,
     selfNamesFor: (p) => (self[p] ? self[p] : []),
     recycleAuthIrc: () => {},
+    retireSendMark: () => {},
+    injectSendMark: () => '',
     restoreWysiwygText: () => {},
     MC_DEBUG: false,
     HsNotifs: {

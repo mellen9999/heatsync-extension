@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "ya tienes esas pestañas"
   },
+  "mc_cfg_move": {
+    "message": "mover",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "mostrar"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "visual · $N$ seleccionadas · j k extender · y copiar · a enlaces · q citar · b marcador · m silenciar · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "$N$ líneas copiadas",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "$N$ enlaces copiados",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "no hay enlaces para estas filas"
+  },
+  "mc_vis_nothing": {
+    "message": "nada que hacer con estas filas"
+  },
+  "mc_vis_muted": {
+    "message": "$N$ silenciadas",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "$N$ guardadas como marcador",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "pistas · escribe las letras · F abre un enlace en una pestaña nueva · esc"
+  },
+  "mc_hint_none": {
+    "message": "nada que pulsar aquí"
   },
   "mc_rowmode_no_actions": {
     "message": "nada que hacer en esta línea"

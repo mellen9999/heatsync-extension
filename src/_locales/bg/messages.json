@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "вече имаш тези табове"
   },
+  "mc_cfg_move": {
+    "message": "премести",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "покажи"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "визуално · избрани $N$ · j k разшири · y копирай · a връзки · q цитирай · b отметка · m заглуши · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "копирани $N$ реда",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "копирани $N$ връзки",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "няма връзки за тези редове"
+  },
+  "mc_vis_nothing": {
+    "message": "няма какво да се прави с тези редове"
+  },
+  "mc_vis_muted": {
+    "message": "заглушени $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "отметнати $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "подсказки · въведи буквите · F отваря връзка в нов раздел · esc"
+  },
+  "mc_hint_none": {
+    "message": "тук няма какво да се кликне"
   },
   "mc_rowmode_no_actions": {
     "message": "няма какво да се прави на този ред"

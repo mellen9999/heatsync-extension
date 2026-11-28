@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "這些分頁已經有了"
   },
+  "mc_cfg_move": {
+    "message": "移動",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "顯示"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "視覺 · 已選 $N$ · j k 延伸 · y 複製 · a 連結 · q 引用 · b 書籤 · m 靜音 · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "已複製 $N$ 行",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "已複製 $N$ 個連結",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "這些列沒有連結"
+  },
+  "mc_vis_nothing": {
+    "message": "這些列無可操作"
+  },
+  "mc_vis_muted": {
+    "message": "已靜音 $N$ 個",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "已加書籤 $N$ 個",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "提示 · 輸入字母 · F 在新分頁開啟連結 · esc"
+  },
+  "mc_hint_none": {
+    "message": "這裡沒有可點擊的內容"
   },
   "mc_rowmode_no_actions": {
     "message": "這一行沒有操作"

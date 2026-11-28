@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "这些标签页已经有了"
   },
+  "mc_cfg_move": {
+    "message": "移动",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "显示"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "可视 · 已选 $N$ · j k 扩展 · y 复制 · a 链接 · q 引用 · b 书签 · m 静音 · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "已复制 $N$ 行",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "已复制 $N$ 个链接",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "这些行没有链接"
+  },
+  "mc_vis_nothing": {
+    "message": "这些行无可操作"
+  },
+  "mc_vis_muted": {
+    "message": "已静音 $N$ 个",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "已加书签 $N$ 个",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "提示 · 输入字母 · F 在新标签页打开链接 · esc"
+  },
+  "mc_hint_none": {
+    "message": "这里没有可点击的内容"
   },
   "mc_rowmode_no_actions": {
     "message": "这一行没有操作"

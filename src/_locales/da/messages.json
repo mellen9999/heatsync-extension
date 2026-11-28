@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "du har allerede de faner"
   },
+  "mc_cfg_move": {
+    "message": "flyt",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "vis"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "visuel · $N$ valgt · j k udvid · y kopiér · a links · q citér · b bogmærke · m gør tavs · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "kopierede $N$ linjer",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "kopierede $N$ links",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "ingen links til disse rækker"
+  },
+  "mc_vis_nothing": {
+    "message": "intet at gøre med disse rækker"
+  },
+  "mc_vis_muted": {
+    "message": "gjorde $N$ tavse",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "bogmærkede $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "hints · skriv bogstaverne · F åbner et link i en ny fane · esc"
+  },
+  "mc_hint_none": {
+    "message": "intet at klikke på her"
   },
   "mc_rowmode_no_actions": {
     "message": "intet at gøre på denne linje"

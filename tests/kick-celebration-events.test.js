@@ -251,7 +251,7 @@ describe('kick send timeout is unconfirmed, never retried', () => {
   })
 
   test('the unconfirmed reason has honest copy wired in notifs', () => {
-    const NOTIFS = readFileSync(join(ROOT, 'src', 'multichat', 'notifs.js'), 'utf8')
+    const NOTIFS = readFileSync(join(ROOT, 'src', 'multichat', 'send-mark.js'), 'utf8')
     expect(NOTIFS).toContain('kick_unconfirmed:')
     expect(NOTIFS).not.toMatch(/kick_unconfirmed: '[^']*failed/)
   })

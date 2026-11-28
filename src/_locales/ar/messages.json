@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "هذه التبويبات موجودة لديك بالفعل"
   },
+  "mc_cfg_move": {
+    "message": "نقل",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "عرض"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "تحديد · $N$ محدد · j k تمديد · y نسخ · a روابط · q اقتباس · b إشارة مرجعية · m كتم · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "تم نسخ $N$ أسطر",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "تم نسخ $N$ روابط",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "لا روابط لهذه الصفوف"
+  },
+  "mc_vis_nothing": {
+    "message": "لا شيء لفعله مع هذه الصفوف"
+  },
+  "mc_vis_muted": {
+    "message": "تم كتم $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "تمت إضافة $N$ إلى الإشارات",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "تلميحات · اكتب الحروف · F يفتح رابطًا في علامة تبويب جديدة · esc"
+  },
+  "mc_hint_none": {
+    "message": "لا شيء للنقر هنا"
   },
   "mc_rowmode_no_actions": {
     "message": "لا يوجد ما يمكن فعله في هذا السطر"

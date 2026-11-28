@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "die tabs heb je al"
   },
+  "mc_cfg_move": {
+    "message": "verplaats",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "toon"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "visueel · $N$ geselecteerd · j k uitbreiden · y kopiëren · a links · q citeren · b bladwijzer · m dempen · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "$N$ regels gekopieerd",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "$N$ links gekopieerd",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "geen links voor deze rijen"
+  },
+  "mc_vis_nothing": {
+    "message": "niets te doen met deze rijen"
+  },
+  "mc_vis_muted": {
+    "message": "$N$ gedempt",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "$N$ als bladwijzer opgeslagen",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "hints · typ de letters · F opent een link in een nieuw tabblad · esc"
+  },
+  "mc_hint_none": {
+    "message": "hier valt niets te klikken"
   },
   "mc_rowmode_no_actions": {
     "message": "niets te doen op deze regel"

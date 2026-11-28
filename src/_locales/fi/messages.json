@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "sinulla on jo nuo välilehdet"
   },
+  "mc_cfg_move": {
+    "message": "siirrä",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "näytä"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "visuaalinen · $N$ valittu · j k laajenna · y kopioi · a linkit · q lainaa · b kirjanmerkki · m mykistä · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "kopioitu $N$ riviä",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "kopioitu $N$ linkkiä",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "näille riveille ei ole linkkejä"
+  },
+  "mc_vis_nothing": {
+    "message": "näille riveille ei ole tehtävää"
+  },
+  "mc_vis_muted": {
+    "message": "mykistetty $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "lisätty kirjanmerkkeihin $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "vihjeet · kirjoita kirjaimet · F avaa linkin uuteen välilehteen · esc"
+  },
+  "mc_hint_none": {
+    "message": "tässä ei ole mitään napsautettavaa"
   },
   "mc_rowmode_no_actions": {
     "message": "tällä rivillä ei ole mitään tehtävää"

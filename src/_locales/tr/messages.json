@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "bu sekmeler zaten var"
   },
+  "mc_cfg_move": {
+    "message": "taşı",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "göster"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "görsel · $N$ seçili · j k genişlet · y kopyala · a bağlantılar · q alıntıla · b yer imi · m sessize al · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "$N$ satır kopyalandı",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "$N$ bağlantı kopyalandı",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "bu satırlar için bağlantı yok"
+  },
+  "mc_vis_nothing": {
+    "message": "bu satırlarla yapılacak bir şey yok"
+  },
+  "mc_vis_muted": {
+    "message": "$N$ sessize alındı",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "$N$ yer imine eklendi",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "ipuçları · harfleri yaz · F bağlantıyı yeni sekmede açar · esc"
+  },
+  "mc_hint_none": {
+    "message": "burada tıklanacak bir şey yok"
   },
   "mc_rowmode_no_actions": {
     "message": "bu satırda yapılacak bir şey yok"

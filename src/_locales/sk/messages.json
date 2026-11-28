@@ -3338,6 +3338,10 @@
   "mc_layout_have_all": {
     "message": "tieto karty už máš"
   },
+  "mc_cfg_move": {
+    "message": "presunúť",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "zobraziť"
   },
@@ -7043,6 +7047,58 @@
         "content": "$2"
       }
     }
+  },
+  "mc_vis_status": {
+    "message": "vizuálny · vybraných $N$ · j k rozšíriť · y kopírovať · a odkazy · q citovať · b záložka · m stlmiť · esc",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_copied_n": {
+    "message": "skopírovaných $N$ riadkov",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_links_n": {
+    "message": "skopírovaných $N$ odkazov",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_no_links": {
+    "message": "pre tieto riadky nie sú odkazy"
+  },
+  "mc_vis_nothing": {
+    "message": "s týmito riadkami nie je čo robiť"
+  },
+  "mc_vis_muted": {
+    "message": "stlmených $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_vis_bookmarked": {
+    "message": "pridaných do záložiek $N$",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_hint_status": {
+    "message": "nápovedy · píš písmená · F otvorí odkaz v novej karte · esc"
+  },
+  "mc_hint_none": {
+    "message": "tu nie je na čo kliknúť"
   },
   "mc_rowmode_no_actions": {
     "message": "na tomto riadku nie je čo robiť"

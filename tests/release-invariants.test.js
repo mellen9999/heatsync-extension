@@ -53,16 +53,15 @@ describe('emote block rollback cannot recurse', () => {
     const calls = [...fn.matchAll(/(?:un)?blockEmote\((?:emoteName)[^)]*\)/g)].map((m) => m[0])
     for (const c of calls) expect(c, c).toContain('silent: true')
   })
-  test('block/unblock only toast success when there is no sync coming', () => {
+  test("block/unblock say nothing themselves: the one toast is syncBlockToAPI's, said from the answer", () => {
     for (const name of ['blockEmote', 'unblockEmote']) {
       const start = EMOTES.indexOf(`function ${name}(`)
-      const body = EMOTES.slice(start, EMOTES.indexOf('\nfunction ', start + 10))
-      const toastLine = body
-        .split('\n')
-        .find((l) => /showToast\(t\((?:block \? )?'mc_emote_(blocked_toast|unblocked)'/.test(l))
-      expect(toastLine, name).toBeTruthy()
-      expect(toastLine, name).toContain('skipSync')
+      const body = EMOTES.slice(start, EMOTES.indexOf('\n}\n', start))
+      expect(body.length, name).toBeGreaterThan(500)
+      expect(body, name).not.toContain('showToast(')
     }
+    expect(fn.match(/showToast\(/g)?.length).toBe(1)
+    expect(fn).toContain('emoteNoticeOf(block ?')
   })
 })
 

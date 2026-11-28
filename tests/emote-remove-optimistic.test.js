@@ -25,7 +25,8 @@ describe('remove from set is optimistic', () => {
   })
 
   test('the toast waits for the server', () => {
-    expect(FN.indexOf("t('mc_emote_removed'")).toBeGreaterThan(FN.indexOf("type: 'remove_from_inventory'"))
+    // the line is the contract's, picked by what the server answered
+    expect(FN.indexOf("emoteNoticeOf('remove'")).toBeGreaterThan(FN.indexOf("type: 'remove_from_inventory'"))
   })
 
   test('the open tooltip is re-run on both paths', () => {

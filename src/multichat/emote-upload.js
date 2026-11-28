@@ -80,7 +80,7 @@ function mcEuFail(r) {
   const why = hsEuReason(r)
   if (why === null) {
     showEmoteLoginNudge()
-    mcEuStatus(t('mc_emote_add_login'), true)
+    mcEuStatus(emoteNotice('add', 401, '').text, true)
   } else {
     mcEuStatus(why, true)
   }
@@ -137,7 +137,8 @@ function mcEuAdded(name, added, up) {
     addedAt: Date.now(),
   })
   dismissEmoteLoginNudge()
-  showToast(t('mc_emote_added', [name]), 'success')
+  const n = emoteNoticeOf('add', added, name)
+  showToast(n.text, n.kind)
   if (up.flagged?.length) showToast(t('mc_emote_upload_flagged', [up.flagged.join(', ')]), 'info')
   mcEuStatus('')
   mcEuReset()

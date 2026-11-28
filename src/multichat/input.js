@@ -8251,7 +8251,7 @@ function autoAddInputEmotes(text, { relayed = false } = {}) {
       // swap seeds its own optimistic entry (the removal clears the old one first)
       const done = swap
         ? swapEmoteInInventory(word, rec.url, rec.source, !!rec.zeroWidth)
-        : addEmoteToInventory(word, rec.url, rec.source, undefined, !!rec.zeroWidth, /* silent */ true)
+        : addEmoteToInventory(word, rec.url, rec.source, undefined, !!rec.zeroWidth, /* silent */ false)
       adds.push(
         Promise.resolve(done)
           .then((ok) => {

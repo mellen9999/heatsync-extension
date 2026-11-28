@@ -2087,17 +2087,19 @@ async function _removeEmoteFromInventory(emoteName, targetEl, opts) {
         else resolve(resp)
       })
     })
-    // Server is authoritative: treat "not found in your set" as already-removed so a
-    // stale 'owned' state can't trap the user looping on a failing remove.
-    if (response?.success || (response?.error && /not found in your set/i.test(response.error))) {
-      if (!opts?.silent) showToast(t('mc_emote_removed', [emoteName]), 'success')
+    // The server's status picks the line (src/lib/emote-notice.js). A slot already empty reads as
+    // removed, so a stale 'owned' state can't trap you looping on a failing remove.
+    const n = emoteNoticeOf('remove', response, emoteName)
+    if (n.id === 'remove.ok') {
+      if (!opts?.silent) showToast(n.text, n.kind)
       return true
     }
     undo(pt)
-    showToast(response?.error || t('mc_emote_remove_failed', [emoteName]), 'error')
+    showToast(n.text, n.kind)
   } catch (_) {
     undo(pt)
-    showToast(t('mc_emote_remove_error', [emoteName]), 'error')
+    const n = emoteNotice('remove', 0, emoteName)
+    showToast(n.text, n.kind)
   }
   return false
 }
@@ -2296,10 +2298,8 @@ function blockEmote(emoteName, clickedUrl, clickedSource, opts) {
   applyInputEmoteBlockState(emoteName)
 
   refreshEmoteTooltip(emoteName, 'blocked')
-  // Success toast fires from syncBlockToAPI on confirmation (or immediately for
-  // the logged-out local path). skipSync means there's no confirmation coming,
-  // so a non-silent skipSync still owes a toast; silent (rollback) owes none.
-  if (opts?.skipSync && !opts?.silent) showToast(t('mc_emote_blocked_toast', [emoteName]), 'success')
+  // The toast fires from syncBlockToAPI on the server's answer. skipSync is only the rollback
+  // of a refused sync, and says nothing here.
   flashAllEmotes(emoteName, 'hs-flash-block')
   // Surgical: only re-key messages that reference this emote (no epoch bump →
   // no whole-chat rebuild flash). Live DOM already updated in-place above.
@@ -2435,7 +2435,6 @@ function unblockEmote(emoteName, opts) {
   applyInputEmoteBlockState(emoteName)
 
   refreshEmoteTooltip(emoteName, newState)
-  if (opts?.skipSync && !opts?.silent) showToast(t('mc_emote_unblocked', [emoteName]), 'success')
   flashAllEmotes(emoteName, 'hs-flash-unblock')
   invalidateRenderedForEmotes(emoteName)
 }
@@ -2543,26 +2542,29 @@ async function addEmoteToInventory(emoteName, emoteUrl, emoteSource, _targetEl, 
 
       refreshEmoteTooltip(emoteName, 'owned')
       if (!silent) {
-        showToast(t('mc_emote_added', [emoteName]), 'success')
+        const n = emoteNoticeOf('add', response, emoteName)
+        showToast(n.text, n.kind)
         flashAllEmotes(emoteName, 'hs-flash-add')
       }
     } else {
       // A failed add is loud even for the silent auto-add on send: only the
       // success toast is skipped. Staying quiet left "my emote is text" with no
-      // clue why. Logged-out is the common case, not a failure — one gentle
-      // nudge (statusbar dedupes to ×N) instead of a red per-emote error.
-      const addErr = String(response?.error || '')
-      if (/not logged in/i.test(addErr)) {
-        showToast(t('mc_emote_add_login'), 'info')
-      } else if (replace && /held by your upload/i.test(addErr)) {
-        showToast(t('mc_emote_swap_upload', [emoteName]), 'error')
-      } else {
-        showToast(addErr || t('mc_emote_add_failed', [emoteName]), 'error')
-      }
+      // clue why. The server's status picks the line (src/lib/emote-notice.js), never
+      // its words. Logged-out is the common case, not a failure — a gentle info toast
+      // (statusbar dedupes to ×N) plus the one-click login banner. Under replace this
+      // add is a swap, and says the swap's own lines.
+      const n = emoteNoticeOf(replace ? 'swap' : 'add', response, emoteName)
+      if (response?.error) log('add emote refused:', response.error)
+      showToast(n.text, n.kind)
+      if (n.id === 'add.login') showEmoteLoginNudge()
     }
   } catch (e) {
     log('Add emote error:', e)
-    if (!silent) showToast(t('mc_emote_add_error', [emoteName]), 'error')
+    // an error after the add landed is not a failed add: the emote is in your set
+    if (!_added) {
+      const n = emoteNotice(replace ? 'swap' : 'add', 0, emoteName)
+      showToast(n.text, n.kind)
+    }
   } finally {
     pendingEmoteOps.delete(emoteName)
   }
@@ -2588,7 +2590,8 @@ async function swapEmoteInInventory(emoteName, emoteUrl, emoteSource, zeroWidth)
   })
   if (await addEmoteToInventory(emoteName, emoteUrl, emoteSource, null, zeroWidth, true, true)) {
     if (old.hash && hashToName.get(old.hash) === emoteName) hashToName.delete(old.hash)
-    showToast(t('mc_emote_swapped', [emoteName]), 'success')
+    const n = emoteNotice('swap', 200, emoteName)
+    showToast(n.text, n.kind)
     return true
   }
   viewerPersonalEmotes.set(emoteName, old)
@@ -2602,7 +2605,8 @@ async function swapEmoteInInventory(emoteName, emoteUrl, emoteSource, zeroWidth)
 // wasn't persisted, and reverted on the next inventory refetch with no signal.
 // Now we await the outcome and, on a confirmed failure, roll the optimistic
 // local change back (reverse op, skipSync so it doesn't re-write the server)
-// and say so. On success we finally emit the toast the UI used to fire blind.
+// and say so. On success we finally emit the toast the UI used to fire blind. No answer at all
+// (the worker did not reply) is a failure too: a block nobody confirmed is not a block.
 async function syncBlockToAPI(emoteName, block, ctx) {
   const silent = !!ctx?.silent
   let resp
@@ -2618,21 +2622,23 @@ async function syncBlockToAPI(emoteName, block, ctx) {
     // A rejected sendMessage is almost always "extension context invalidated"
     // (reload/update) — treat it as a confirmed failure so we don't leave a
     // lie on screen, same as a {success:false} body.
-    resp = { success: false, error: e?.message || 'context' }
+    resp = { success: false, status: 0, error: e?.message || 'context' }
   }
-  if (resp && resp.success === false) {
-    log('block sync rejected:', resp.error)
-    console.warn('[heatsync] emote block refused:', emoteName, ctx?.hash, resp.error)
+  if (!resp?.success) {
+    log('block sync rejected:', resp?.error)
+    console.warn('[heatsync] emote block refused:', emoteName, ctx?.hash, resp?.error)
     // Roll back the optimistic local change. This is a rollback of a rollback-
     // free op, so pass skipSync (don't re-hit the server) + silent (the error
     // toast below is the only message this failure gets).
     if (block) unblockEmote(emoteName, { skipSync: true, silent: true })
     else blockEmote(emoteName, ctx?.url, ctx?.source, { skipSync: true, silent: true, hash: ctx?.hash })
-    if (!silent) showToast(t(block ? 'mc_emote_block_failed' : 'mc_emote_unblock_failed'), 'error')
-    return
   }
-  // Confirmed (or logged-out local success). Emit the success toast now.
-  if (!silent) showToast(t(block ? 'mc_emote_blocked_toast' : 'mc_emote_unblocked', [emoteName]), 'success')
+  // The line is the contract's, by the server's status: blocked / unblocked on a confirmed
+  // answer (or the logged-out local one), couldn't block / couldn't unblock on a refusal.
+  if (!silent) {
+    const n = emoteNoticeOf(block ? 'block' : 'unblock', resp, emoteName)
+    showToast(n.text, n.kind)
+  }
 }
 
 // Emote cache (loaded from storage)

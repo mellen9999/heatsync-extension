@@ -47,6 +47,11 @@ const CYCLE_META = slice(INPUT, 'function emoteCycleMeta(m)', 'function showCycl
 const PIN_STEP = slice(INPUT, 'function acPinStep(match, box)', '// Insert completion and keep cycling state')
 const SWAP = slice(EMOTES, '// Swap what you own under a name', '// Sync block/unblock to heatsync.org API')
 const REMOVE = slice(EMOTES, '// Resolves true when the server dropped it', '// Re-run the hover on whatever')
+// the line every emote result says: in the bundle it is in scope, here it binds to each rig's own t
+const NOTICE = readFileSync(join(import.meta.dir, '..', 'src', 'lib', 'emote-notice.js'), 'utf8').replace(
+  /^export /gm,
+  '',
+)
 
 const seven = (id, size = '2x.webp') => `https://cdn.7tv.app/emote/${id}/${size}`
 const CHAN = seven('01CHANNELIDK00000000000000')
@@ -408,7 +413,7 @@ describe('4b. swapEmoteInInventory: ONE add carrying replace, rolled back on ref
       t: (key, args) => `${key}:${args?.join(',')}`,
     }
     const names = Object.keys(env)
-    const { swapEmoteInInventory } = new Function(...names, `${SWAP}; return { swapEmoteInInventory }`)(
+    const { swapEmoteInInventory } = new Function(...names, `${NOTICE}\n${SWAP}; return { swapEmoteInInventory }`)(
       ...names.map((k) => env[k]),
     )
     return { swapEmoteInInventory, log, toasts, viewerPersonalEmotes, hashToName }
@@ -485,7 +490,7 @@ describe('4b2. addEmoteToInventory carries replace to the background and names a
       log() {},
     }
     const names = Object.keys(env)
-    const { addEmoteToInventory } = new Function(...names, `${ADD}; return { addEmoteToInventory }`)(
+    const { addEmoteToInventory } = new Function(...names, `${NOTICE}\n${ADD}; return { addEmoteToInventory }`)(
       ...names.map((k) => env[k]),
     )
     return { addEmoteToInventory, sent, toasts }
@@ -505,7 +510,7 @@ describe('4b2. addEmoteToInventory carries replace to the background and names a
   })
 
   test('the upload 409 under replace gets the plain "your upload keeps the name" toast', async () => {
-    const r = addRig({ success: false, error: 'name held by your upload' })
+    const r = addRig({ success: false, status: 409, error: 'name held by your upload' })
     expect(await r.addEmoteToInventory('IDK', OTHER, '7tv', null, false, true, true)).toBe(false)
     expect(r.toasts).toEqual([['mc_emote_swap_upload:IDK', 'error']])
   })
@@ -556,9 +561,9 @@ return { addToInventory, inv: () => emoteInventory }`,
     expect('replace' in r.bodies[0]).toBe(false)
   })
 
-  test('the 409 for an upload comes back as the error text', async () => {
+  test('the 409 for an upload comes back with its status, and the error text for the log', async () => {
     const r = await bgRig({ replace: true, ok: false, data: { error: 'name held by your upload' } })
-    expect(r.res).toEqual({ success: false, error: 'name held by your upload' })
+    expect(r.res).toEqual({ success: false, status: 409, error: 'name held by your upload' })
   })
 })
 
@@ -579,26 +584,28 @@ describe('4c. removeEmoteFromInventory reports the outcome and can stay quiet', 
       t: (key) => key,
     }
     const names = Object.keys(env)
-    const { removeEmoteFromInventory } = new Function(...names, `${REMOVE}; return { removeEmoteFromInventory }`)(
-      ...names.map((k) => env[k]),
-    )
+    const { removeEmoteFromInventory } = new Function(
+      ...names,
+      `${NOTICE}\n${REMOVE}; return { removeEmoteFromInventory }`,
+    )(...names.map((k) => env[k]))
     return { removeEmoteFromInventory, toasts, undone, env }
   }
 
   test('success: true, with its "removed" toast unless silent', async () => {
     const loud = removeRig({ response: { success: true } })
     expect(await loud.removeEmoteFromInventory('IDK', null)).toBe(true)
-    expect(loud.toasts).toEqual([['mc_emote_removed', 'success']])
+    expect(loud.toasts).toEqual([['cs_removed', 'success']])
     const quiet = removeRig({ response: { success: true } })
     expect(await quiet.removeEmoteFromInventory('IDK', null, { silent: true })).toBe(true)
     expect(quiet.toasts).toEqual([])
   })
 
   test('refusal: false, local state put back, the reason shown even when silent', async () => {
-    const r = removeRig({ response: { success: false, error: 'nope' } })
+    const r = removeRig({ response: { success: false, status: 500, error: 'nope' } })
     expect(await r.removeEmoteFromInventory('IDK', null, { silent: true })).toBe(false)
     expect(r.undone).toEqual(['undo'])
-    expect(r.toasts).toEqual([['nope', 'error']])
+    // the contract's line for the status, never the server's own words
+    expect(r.toasts).toEqual([['mc_emote_remove_failed', 'error']])
     expect(r.env.pendingEmoteOps.size).toBe(0)
   })
 })
@@ -641,7 +648,7 @@ describe('4b3. an added emote carries the per-emote key, not a truncated url', (
       log() {},
     }
     const names = Object.keys(env)
-    const { addEmoteToInventory } = new Function(...names, `${ADD}; return { addEmoteToInventory }`)(
+    const { addEmoteToInventory } = new Function(...names, `${NOTICE}\n${ADD}; return { addEmoteToInventory }`)(
       ...names.map((k) => env[k]),
     )
     await addEmoteToInventory('IDK', url, '7tv', null, false, true)

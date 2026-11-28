@@ -362,23 +362,6 @@ function listenForSettingsChanges() {
       }
     }
     if (msg.type === 'debug_log' && MC_DEBUG) console.log('[hs-bg]', msg.msg)
-    if (msg.type === 'emote_add_failed') {
-      // BG's collect POST failed (logged out — common right after an ext
-      // reload — rate limit, server error). This was silent on the multichat
-      // surface: the emote kept rendering locally from the session index and
-      // vanished on refresh with no server row (the o7 bug). Fail loud.
-      try {
-        if (msg.notLoggedIn) {
-          // The dominant cause of "emotes don't work / the ext sucks": the user
-          // isn't signed into heatsync, so their added emotes render for nobody
-          // and vanish on refresh. A disappearing toast doesn't fix the
-          // confusion — show a persistent, one-click login nudge instead.
-          showEmoteLoginNudge()
-        } else {
-          showToast(t('mc_main_emote_add_failed', [msg.emoteName || 'emote', msg.error || 'server error']), 'error')
-        }
-      } catch (_) {}
-    }
     if (msg.type === 'api_status') {
       try {
         showApiStatusBanner(msg.source, msg.state)

@@ -1688,12 +1688,29 @@ async function handleMessage(message, sender, sendResponse) {
         // failure, never showing ban buttons to a non-mod.
         const cu = data?.chatroom_user || null
         const role = String(cu?.role || cu?.user_role || '').toLowerCase()
-        const isMod =
+        let isMod =
           role === 'moderator' ||
           role === 'broadcaster' ||
           role === 'mod' ||
           cu?.is_moderator === true ||
           cu?.is_broadcaster === true
+        // the channel object carries no viewer role for everyone: ask kick for this one pair
+        // (channel + the viewer's own name) before calling a real mod a stranger.
+        if (!isMod && session?.value) {
+          try {
+            const me = await fetchWithTimeout('https://kick.com/api/v1/user', { credentials: 'include', headers: statusHeaders }, 5000)
+            const meName = me.ok ? (await me.json().catch(() => null))?.username : ''
+            if (typeof meName === 'string' && meName) {
+              const u = await fetchWithTimeout(
+                `https://kick.com/api/v2/channels/${encodeURIComponent(slug)}/users/${encodeURIComponent(meName)}`,
+                { credentials: 'include', headers: statusHeaders },
+                5000,
+              )
+              const ud = u.ok ? await u.json().catch(() => null) : null
+              isMod = ud?.is_moderator === true || ud?.is_channel_owner === true
+            } else me.body?.cancel?.()
+          } catch (_) {}
+        }
         // log() is a no-op unless DEBUG — flip DEBUG to confirm the field path live
         // (logs the raw viewer object whether mod or not).
         try {

@@ -158,6 +158,15 @@ async function isModFor(channel, { fresh = false } = {}) {
   _modStatePending.set(channel, p)
   return p
 }
+// The viewer's own USERSTATE badges: moderator / broadcaster = a confirmed yes. Only ever
+// a yes (a missing badge proves nothing: staff and admins moderate without one).
+function noteModFromBadges(channel, badges) {
+  if (!channel || !badges) return
+  const has = (b) => (badges instanceof Set ? badges.has(b) : Array.isArray(badges) && badges.includes(b))
+  if (!has('moderator') && !has('broadcaster')) return
+  _modStateCache.set(String(channel).toLowerCase().replace(/^#/, ''), true)
+  modSeedStarterButtons()
+}
 function isModForSync(channel) {
   if (!channel) return false
   const c = channel.toLowerCase()

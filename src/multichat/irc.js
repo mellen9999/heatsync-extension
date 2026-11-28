@@ -738,6 +738,9 @@ class IRC extends ChatClient {
           viewerBadgesPerChannel.delete(k0)
         }
       }
+      // a moderator/broadcaster badge on the viewer's own USERSTATE is twitch saying so
+      // directly: no waiting on (or trusting a failed) graphql answer to show the mod bar.
+      if (typeof noteModFromBadges === 'function') noteModFromBadges(msg.channel, msg.badges)
       // rawBadges carries the full tag string with tier suffixes — feed it
       // into the per-channel own-badges cache so synthetic resub/watchstreak
       // celebrations render with the right sub tier on first-render (before

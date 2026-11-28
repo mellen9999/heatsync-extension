@@ -3346,6 +3346,10 @@
     "message": "already have those tabs",
     "description": "Toast when /layout finds every tab already open"
   },
+  "mc_cfg_move": {
+    "message": "move",
+    "description": "Label of the reorder buttons in the edit-channel form"
+  },
   "mc_cfg_show": {
     "message": "show",
     "description": "Label of the per-platform visibility toggles in the edit-channel form"

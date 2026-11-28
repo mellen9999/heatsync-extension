@@ -985,6 +985,38 @@ function makePlatformFilterRow(ch) {
   return row
 }
 
+// "move" row: the reorder buttons the tab menu used to carry (the menu is edit + remove only).
+// One button per open direction; the same moveChannelOrder tab mode's J/K calls.
+function makeMoveRow(ch) {
+  const tabId = ch.id
+  const strip = { vertical: tabPosition === 'left' || tabPosition === 'right', rtl: HS_DIR() === 'rtl' }
+  if (!channelMoveOptions(tabId, strip).length) return null
+  const row = document.createElement('div')
+  row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;max-width:300px;'
+  const lbl = document.createElement('span')
+  lbl.textContent = t('mc_cfg_move')
+  lbl.style.cssText = 'font-size:13px;font-weight:700;min-width:56px;color:#ffffff;text-transform:lowercase;'
+  row.appendChild(lbl)
+  const group = document.createElement('span')
+  group.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;'
+  row.appendChild(group)
+  const render = () => {
+    group.textContent = ''
+    for (const mv of channelMoveOptions(tabId, strip)) {
+      const b = makeMcBtn(mv.label, false)
+      b.style.padding = '4px 10px'
+      b.style.minWidth = '0'
+      b.style.fontSize = '13px'
+      b.addEventListener('click', () => {
+        if (moveChannelOrder(tabId, mv.delta)) render()
+      })
+      group.appendChild(b)
+    }
+  }
+  render()
+  return row
+}
+
 // One button per sub link (twitch / kick / youtube sub pages) — they lived in
 // the tab menu; the menu is edit + remove now.
 function makeSubLinksRow(ch) {
@@ -1031,6 +1063,8 @@ function showEditChannelForm(tabId) {
   if (showRow) wrapper.appendChild(showRow)
   const sendRow = makeSendTargetsRow(ch)
   if (sendRow) wrapper.appendChild(sendRow)
+  const moveRow = makeMoveRow(ch)
+  if (moveRow) wrapper.appendChild(moveRow)
   const subRow = makeSubLinksRow(ch)
   if (subRow) wrapper.appendChild(subRow)
 

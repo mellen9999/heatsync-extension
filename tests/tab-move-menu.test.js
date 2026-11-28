@@ -1,5 +1,5 @@
 /**
- * A tab's right-click menu can move it: "move left" / "move right" ("up" / "down"
+ * A tab's edit form can move it: "move left" / "move right" ("up" / "down"
  * when the strip is a column), and there is ONE reorder, moveChannelOrder, which
  * tab mode's J/K calls too. Before this a mouse user had no way to reorder tabs
  * at all.
@@ -130,9 +130,9 @@ describe('picking one really moves the tab, through the one reorder', () => {
 })
 
 describe('one implementation, two entry points', () => {
-  test('tab mode (J/K) and the menu both call moveChannelOrder; nobody reorders by hand', () => {
+  test('tab mode (J/K) and the menu edit form both call moveChannelOrder; nobody reorders by hand', () => {
     expect(readFileSync(join(dir, 'tab-mode.js'), 'utf8')).toContain('moveChannelOrder(id, delta)')
-    expect(readFileSync(join(dir, 'main-overlay.js'), 'utf8')).toContain('moveChannelOrder(tabId, mv.delta)')
+    expect(MGMT).toContain('moveChannelOrder(tabId, mv.delta)')
     // the only place a channel is spliced to a new slot is moveChannelOrder itself
     expect(MGMT.match(/list\.splice\(to, 0/g)?.length).toBe(1)
   })

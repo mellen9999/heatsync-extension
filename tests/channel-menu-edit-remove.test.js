@@ -11,14 +11,18 @@ const menu = src.slice(
 )
 const form = mgmt.slice(mgmt.indexOf('function showEditChannelForm('))
 
-describe('channel tab right-click menu: edit, move, remove', () => {
-  test('edit first, remove last (red), the move items between them — nothing else', () => {
-    // every mkItem call, in order: the fixed ones name their catalog key, the move
-    // items come from channelMoveOptions (tests/tab-move-menu.test.js)
-    const items = [...menu.matchAll(/mkItem\((t\('([^']+)'\)|mv\.label)/g)].map((m) => m[2] || 'move')
-    expect(items).toEqual(['mc_ctx_edit', 'move', 'mc_ctx_remove'])
+describe('channel tab right-click menu: edit + remove, exactly (settled 11-04)', () => {
+  test('edit first, remove last (red) — nothing else, no move items', () => {
+    const items = [...menu.matchAll(/mkItem\(([^,]+),/g)].map((m) => m[1])
+    expect(items).toEqual(["t('mc_ctx_edit')", "t('mc_ctx_remove')"])
     expect(menu).toContain("mkItem(t('mc_ctx_remove'), 'var(--hs-danger)'")
-    expect(menu).toContain('for (const mv of channelMoveOptions(tabId, strip))')
+    expect(menu).not.toContain('channelMoveOptions')
+    expect(menu).not.toContain('moveChannelOrder')
+  })
+
+  test('move earlier / later live in the edit form', () => {
+    expect(form).toContain('makeMoveRow(ch)')
+    expect(mgmt).toContain('moveChannelOrder(tabId, mv.delta)')
   })
 
   test('the old controls are gone from the menu', () => {

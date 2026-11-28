@@ -2227,38 +2227,6 @@ function initInput() {
     )
   }
 
-  // Thread button click → quote mode, one click. A native twitch/kick message
-  // has no heatsync id, so it can never be a reply_to target — quoting it into
-  // a NEW top-level thread is the only honest on-ramp. The composer switches
-  // to quote mode (chip above the input, distinct border) instead of sending
-  // immediately: the user still types their own take, they just no longer
-  // have to know the /op command exists or retype a citation by hand.
-  //
-  // The citation is the /search/logs permalink, not the text. heatsync archives the
-  // line, so the post can point AT the original instead of carrying a retyped
-  // copy: both heatsync.org and the panel resolve the link back into the real
-  // chat line — the author, the time, the emotes, the channel — and a reader
-  // can click through to the surrounding log. A pasted copy is a claim about
-  // what someone said; the permalink is the receipt. That is the whole point of
-  // quoting someone else's words, and a copy sitting next to the receipt would
-  // only give the two a way to disagree.
-  //
-  // Falls back to the quoted text when the line cannot be cited — a row with no
-  // archived platform, channel or send time. Better a soft quote than a link to
-  // a page that was never going to hold the message.
-  if (!_onceGuardsInput.threadHandler) {
-    _onceGuardsInput.threadHandler = true
-    document.addEventListener(
-      'click',
-      (e) => {
-        const btn = e.target.closest('.hs-mc-thread-btn')
-        if (!btn) return
-        startQuoteFromRow(btn.closest('.hs-mc-msg'))
-      },
-      { signal: mcSignal },
-    )
-  }
-
   if (typeof initHoverReply === 'function') initHoverReply()
 
   // The held-for-approval row's x: a mod can leave a hold open for good, so the sender decides when
@@ -3010,7 +2978,7 @@ function mcQuoteToInput(text) {
 // What sits in a row beside the message and is never part of its text. The row's own buttons
 // belong here: the thread button was missing and every copied message ended in " »".
 const MC_ROW_FURNITURE =
-  '.hs-mc-platform-badge, .hs-mc-badge, .hs-mc-time, .hs-mc-reply-ctx, .hs-mod-toolbar, .hs-mc-stack-collapse, .hs-mc-stack-block-all, .hs-mc-thread-btn'
+  '.hs-mc-platform-badge, .hs-mc-badge, .hs-mc-time, .hs-mc-reply-ctx, .hs-mod-toolbar, .hs-mc-stack-collapse, .hs-mc-stack-block-all'
 function _extractMcMsgText(msg) {
   // Walk siblings after the username link, gathering text nodes + emote alts.
   // textContent on the whole row leaks badge/timestamp/username junk; this

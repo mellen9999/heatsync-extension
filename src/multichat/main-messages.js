@@ -1045,19 +1045,6 @@ function buildMessageDiv(m, tabId) {
     if (isSelf(m)) {
       div.dataset.msgSelf = '1'
     }
-    // Thread button — the discoverable way to mint a heatsync thread. The
-    // capability already existed as `/op`, a slash command with no UI: 56
-    // posts from 2 authors in 41 days, because nobody finds a command they
-    // were never shown. `»` mirrors the `>>id` quote syntax the feed already
-    // uses. Click drops the composer into quote mode (input.js) — the user
-    // still types their own take, they just never have to know /op exists.
-    if (!m.replay) {
-      const threadBtn = document.createElement('button')
-      threadBtn.className = 'hs-mc-thread-btn'
-      threadBtn.textContent = '»'
-      threadBtn.title = t('mc_msg_quote_thread') || 'quote into a thread'
-      div.appendChild(threadBtn)
-    }
   }
   // Reply-thread linkage for hover highlight
   if (m.replyTo) {

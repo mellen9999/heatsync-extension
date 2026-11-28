@@ -257,33 +257,9 @@
       color: #000;
       background: #fff;
     }
-    .hs-mc-thread-btn {
-      display: none;
-      position: absolute;
-      top: 1px;
-      right: 2px;
-      background: #000;
-      border: 1px solid var(--hs-border);
-      color: #fff;
-      /* same reason as .hs-mc-reply-btn — see the note there */
-      font-family: var(--hs-mc-font, monospace);
-      font-size: 13px;
-      padding: 0 4px;
-      cursor: pointer;
-      line-height: 18px;
-      z-index: 10;
-    }
-    .hs-mc-thread-btn:hover,
-    .hs-mc-thread-btn:active {
-      color: #000;
-      background: #fff;
-    }
-    .hs-mc-msg[data-msg-id]:hover .hs-mc-thread-btn {
-      display: block;
-    }
     /* hoverReply (opt-in): one ↪ moved into the hovered row by hover-reply.js.
-       Absolute at the right edge, so no row shift; the thread chip and mod bar
-       slide left to make room. hover/active = white bg, black text. */
+       Absolute at the right edge, so no row shift; the mod bar
+       slides left to make room. hover/active = white bg, black text. */
     .hs-mc-hover-reply {
       position: absolute;
       top: 1px;
@@ -305,9 +281,6 @@
     .hs-mc-hover-reply:active {
       color: #000;
       background: #fff;
-    }
-    .hs-mc-msg[data-hs-hover-reply] > .hs-mc-thread-btn {
-      right: 22px;
     }
     .hs-mc-msg[data-hs-hover-reply] > .hs-mod-toolbar {
       right: 42px;

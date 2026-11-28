@@ -33,12 +33,7 @@ test('emotes copy as their names, in place, and row furniture stays out', () => 
     const emote = doc.createElement('img')
     emote.alt = 'Kappa'
     text.append(emote, ' nice one ')
-    m.append(
-      ': ',
-      text,
-      el('span', 'hs-mod-toolbar', 'ban'),
-      el('button', 'hs-mc-stack-collapse', '-'),
-    )
+    m.append(': ', text, el('span', 'hs-mod-toolbar', 'ban'), el('button', 'hs-mc-stack-collapse', '-'))
   })
   expect(_extractMcMsgText(msg)).toBe('Kappa nice one')
 })

@@ -1698,7 +1698,11 @@ async function handleMessage(message, sender, sendResponse) {
         // (channel + the viewer's own name) before calling a real mod a stranger.
         if (!isMod && session?.value) {
           try {
-            const me = await fetchWithTimeout('https://kick.com/api/v1/user', { credentials: 'include', headers: statusHeaders }, 5000)
+            const me = await fetchWithTimeout(
+              'https://kick.com/api/v1/user',
+              { credentials: 'include', headers: statusHeaders },
+              5000,
+            )
             const meName = me.ok ? (await me.json().catch(() => null))?.username : ''
             if (typeof meName === 'string' && meName) {
               const u = await fetchWithTimeout(

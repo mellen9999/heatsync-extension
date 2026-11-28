@@ -2823,6 +2823,15 @@
       cleanup.setTimeout(() => t.remove(), 2500)
     })
 
+  // What an emote operation says: the contract line for the background's answer
+  // (src/lib/emote-notice.js, one wording in every heatsync app), as a toast. `resp` is the
+  // background's { success, status, slot }, or null when nothing answered. Returns the notice.
+  function sayEmote(op, resp, name) {
+    const n = emoteNoticeOf(op, resp, name)
+    showToast(n.text, n.kind)
+    return n
+  }
+
   // heatsync.org gate moved to the top of this file (right after API_URL).
   // The early-return there means we never reach this point on heatsync.org,
   // so the legacy block here is removed — OAuth handling already done.
@@ -3307,23 +3316,6 @@
           followedByCurrentUser = new Set(message.users || [])
           log(' Followed users updated:', followedByCurrentUser.size)
           break
-
-        case 'emote_add_failed': {
-          // Logged-out is the common case, not a failure — collapse the per-emote
-          // red errors into one gentle deduped nudge (statusbar dedupes identical
-          // text to ×N). Real failures still surface the actual error.
-          const addErr = String(message.error || '')
-          if (/not logged in/i.test(addErr)) {
-            showToast(t('mc_emote_add_login'), 'info')
-          } else {
-            showToast(t('content_toast_failed_add', [message.emoteName, addErr]), 'error')
-          }
-          // 2-state model: no `add:` pendingOperations keys exist anymore;
-          // stack-click + auto-add-on-send register under different keys.
-          // No emote_remove_failed handler — removal failures come back as
-          // { success:false, error } from remove_from_inventory and toast there.
-          break
-        }
 
         case 'user_muted': {
           // Key may be namespaced (twitch:alice) or legacy bare (alice). Store as
@@ -5135,8 +5127,6 @@
               const allBlocked = Array.from(emoteWrappers).every((wrapper) =>
                 wrapper.classList.contains('emote-overlay-blocked'),
               )
-              const names = []
-
               // Server stores blocks by hash only — skip emotes without a hash to
               // avoid corrupting state with name-keyed entries that won't sync.
               // Reconcile every leg: the background reports an HTTP failure by
@@ -5159,25 +5149,31 @@
                   markLocalBlockToggle(hash, 'blocked')
                   updateEmoteState(hash, name, 'blocked')
                 }
-                if (name) names.push(name)
                 applied.push({ hash, name, wrapper })
               })
               blockAllBtn.textContent = allBlocked ? '⊘' : '◉'
               blockAllBtn.title = allBlocked ? t('btn_block_all') : t('btn_show_all')
-              showToast(
-                t(allBlocked ? 'content_toast_unblocked' : 'content_toast_blocked', [names.join(', ')]),
-                allBlocked ? 'success' : 'info',
-              )
+              // the line is said once the account has answered, never before: a block nobody
+              // confirmed is not a block
+              const op = allBlocked ? 'unblock' : 'block'
               ;(async () => {
                 const results = await Promise.all(
                   applied.map((a) =>
                     safeSendMessage({ type, hash: a.hash })
-                      .then((r) => (r && r.success === false ? { ...a, ok: false } : { ...a, ok: true }))
+                      .then((r) => ({ ...a, ok: !!r?.success }))
                       .catch(() => ({ ...a, ok: false })),
                   ),
                 )
+                const nameList = (rows) =>
+                  rows
+                    .map((r) => r.name)
+                    .filter(Boolean)
+                    .join(', ')
                 const failed = results.filter((r) => !r.ok)
-                if (!failed.length) return
+                if (!failed.length) {
+                  if (results.length) sayEmote(op, { success: true, status: 200 }, nameList(results))
+                  return
+                }
                 // Revert the failed legs to their pre-click state so local state
                 // stops disagreeing with the server.
                 for (const f of failed) {
@@ -5197,15 +5193,7 @@
                   blockAllBtn.textContent = allBlocked ? '◉' : '⊘'
                   blockAllBtn.title = allBlocked ? t('btn_show_all') : t('btn_block_all')
                 }
-                showToast(
-                  t(allBlocked ? 'content_toast_unblock_failed' : 'content_toast_block_failed', [
-                    failed
-                      .map((f) => f.name)
-                      .filter(Boolean)
-                      .join(', '),
-                  ]),
-                  'error',
-                )
+                sayEmote(op, { success: false, status: 0 }, nameList(failed))
               })()
             }
             return
@@ -5234,8 +5222,7 @@
                 const isGlobalEmote = wrapper.classList.contains('emote-overlay-global') || globalNameSet.has(emoteName)
                 // Add to inventory: only own heatsync emotes (have hash, not third-party global)
                 if (!inInv && hash && !isGlobalEmote) {
-                  // Resolve to the name only if it actually persisted — the old
-                  // code pushed the name synchronously and toasted "added" before
+                  // Say it only once it persisted — the old code toasted "added" before
                   // the write resolved, so a {success:false} (rate limit, expired
                   // token, dup slot) or reject claimed a save that never happened,
                   // then reverted on the next inventory poll with no explanation.
@@ -5250,11 +5237,10 @@
                         if (result?.success) {
                           inventoryHashSet.add(result.hash || hash)
                           updateEmoteState(hash, emoteName, 'added')
-                          return emoteName
                         }
-                        return null
+                        return { name: emoteName, result }
                       })
-                      .catch(() => null),
+                      .catch(() => ({ name: emoteName, result: null })),
                   )
                 }
                 // Insert into chat input via MAIN-world hook (handles Slate editor)
@@ -5269,9 +5255,11 @@
                 )
               })
               if (addPromises.length) {
-                Promise.all(addPromises).then((names) => {
-                  const added = names.filter(Boolean)
-                  if (added.length) showToast(t('mc_emote_added', [added.join(', ')]), 'success')
+                // One click, one line: the first add that failed (it is the one that needs
+                // you), else the last that landed.
+                Promise.all(addPromises).then((rows) => {
+                  const row = rows.find((r) => !r.result?.success) || rows[rows.length - 1]
+                  sayEmote('add', row.result, row.name)
                 })
               }
             } else {
@@ -5292,10 +5280,8 @@
                       blockedEmotes.delete(hash)
                       markLocalBlockToggle(hash, 'unblocked')
                       updateEmoteState(hash, emoteName, 'neutral')
-                      showToast(t('content_toast_unblocked', [emoteName]), 'success')
-                    } else {
-                      showToast(t('content_toast_unblock_failed', [emoteName]), 'error')
                     }
+                    sayEmote('unblock', result, emoteName)
                   })
                 } else {
                   // NOT BLOCKED → INSERT into chat
@@ -5354,8 +5340,8 @@
                 blockedEmotes.add(hash)
                 markLocalBlockToggle(hash, 'blocked')
                 updateEmoteState(hash, emoteName, 'blocked')
-                showToast(t('content_toast_failed_unblock', [String(result?.error || 'Unknown error')]), 'error')
               }
+              sayEmote('unblock', result, emoteName)
               stack.classList.add('expanded')
             })
           } else if (removeOwnedEmote(wrapper, hash, emoteName)) {
@@ -5369,10 +5355,8 @@
                 blockedEmotes.delete(hash)
                 markLocalBlockToggle(hash, 'unblocked')
                 updateEmoteState(hash, emoteName, inInv ? 'added' : isGlobalEmote ? 'global' : 'neutral')
-                showToast(t('content_toast_failed_block', [String(result?.error || 'Unknown error')]), 'error')
-              } else {
-                showToast(t('content_toast_blocked', [emoteName]), 'info')
               }
+              sayEmote('block', result, emoteName)
               stack.classList.add('expanded')
             })
           }
@@ -6694,10 +6678,8 @@
                   ? 'global'
                   : 'neutral'
               updateEmoteState(hash, emoteName, restoredState)
-              showToast(t('content_toast_unblocked', [emoteName]), 'success')
-            } else {
-              showToast(t('content_toast_failed_unblock', [String(result?.error || 'Unknown error')]), 'error')
             }
+            sayEmote('unblock', result, emoteName)
           } finally {
             pendingOperations.delete(operationKey)
           }
@@ -6799,14 +6781,14 @@
               blockedEmotes.add(hash)
               markLocalBlockToggle(hash, 'blocked')
               updateEmoteState(hash, emoteName, 'blocked')
-              showToast(t('content_toast_failed_unblock', [String(result?.error || 'Unknown error')]), 'error')
             }
-          } catch (err) {
+            sayEmote('unblock', result, emoteName)
+          } catch (_) {
             if (!extensionContextValid) return
             blockedEmotes.add(hash)
             markLocalBlockToggle(hash, 'blocked')
             updateEmoteState(hash, emoteName, 'blocked')
-            showToast(t('content_toast_failed_unblock', [String(err.message)]), 'error')
+            sayEmote('unblock', null, emoteName)
           } finally {
             pendingOperations.delete(operationKey)
           }
@@ -6825,22 +6807,20 @@
 
           try {
             const result = await safeSendMessage({ type: 'block_emote', hash })
-            if (result?.success) {
-              showToast(t('content_toast_blocked', [emoteName]), 'info')
-            } else {
+            if (!result?.success) {
               // Rollback on failure
               blockedEmotes.delete(hash)
               markLocalBlockToggle(hash, 'unblocked')
               updateEmoteState(hash, emoteName, 'neutral')
-              showToast(t('content_toast_failed_block', [String(result?.error || 'Unknown error')]), 'error')
             }
-          } catch (err) {
+            sayEmote('block', result, emoteName)
+          } catch (_) {
             if (!extensionContextValid) return // Don't rollback/show error if context invalidated
             // Rollback on error
             blockedEmotes.delete(hash)
             markLocalBlockToggle(hash, 'unblocked')
             updateEmoteState(hash, emoteName, 'neutral')
-            showToast(t('content_toast_failed_block', [String(err.message)]), 'error')
+            sayEmote('block', null, emoteName)
           } finally {
             pendingOperations.delete(operationKey)
           }
@@ -6862,21 +6842,15 @@
     pendingOperations.add(operationKey)
     safeSendMessage({ type: 'remove_from_inventory', emoteHash: hash, emoteName })
       .then((result) => {
-        if (result?.success) {
-          const now = wrapper.dataset.hasVariants === '1' ? wrapper.firstElementChild : null
-          const twin = !!now && now.dataset.emoteHash !== hash
-          showToast(
-            twin ? t('cs_removed_now', [emoteName, now.dataset.variantClass]) : t('cs_removed', [emoteName]),
-            'info',
-          )
-        } else if (/not logged in/i.test(String(result?.error || ''))) {
-          showToast(t('cs_login_manage'), 'info')
-        } else {
-          showToast(t('cs_remove_failed', [emoteName, String(result?.error || t('cs_unknown_error'))]), 'error')
-        }
+        const n = emoteNoticeOf('remove', result, emoteName)
+        // a slot already empty reads as removed. When the channel/global twin takes the name over,
+        // the line says which one now draws it
+        const now = n.id === 'remove.ok' && wrapper.dataset.hasVariants === '1' ? wrapper.firstElementChild : null
+        const twin = !!now && now.dataset.emoteHash !== hash
+        showToast(twin ? t('cs_removed_now', [emoteName, now.dataset.variantClass]) : n.text, n.kind)
       })
-      .catch((err) => {
-        if (extensionContextValid) showToast(t('cs_remove_failed', [emoteName, String(err.message)]), 'error')
+      .catch(() => {
+        if (extensionContextValid) sayEmote('remove', null, emoteName)
       })
       .finally(() => pendingOperations.delete(operationKey))
     return true

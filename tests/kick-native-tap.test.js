@@ -63,10 +63,10 @@ describe('kickTapChatToPayload', () => {
     )
     expect(p.replyTo).toEqual({ username: 'op_user', content: 'original text', id: 'orig-id' })
   })
-  test('defaults: missing sender/color/created_at degrade like the BG tap', () => {
+  test('defaults: missing sender/color/created_at degrade like the BG tap (no colour stays no colour)', () => {
     const p = kickTapChatToPayload({ id: 'x', content: 'hi' }, 'ch')
     expect(p.username).toBe('unknown')
-    expect(p.color).toBe('#53fc18')
+    expect(p.color).toBe('')
     expect(p.senderId).toBeNull()
     expect(typeof p.timestamp).toBe('number')
   })

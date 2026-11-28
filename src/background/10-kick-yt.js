@@ -290,7 +290,7 @@ function bgKickIngest(data) {
   const msg = {
     user: data.username || data.user || 'unknown',
     text: data.content || data.message || data.text || '',
-    color: data.color || '#53fc18',
+    color: data.color || '',
     // kick numeric USER id → userId so hydrated history rows thread replies
     // and resolve kick_<id> identity like live rows do (irc.js maps
     // d.senderId → msg.userId on the live path)
@@ -371,7 +371,7 @@ async function bgKickFetchArchive(ch, beforeIso) {
       const msg = {
         user,
         text,
-        color: '#53fc18',
+        color: '',
         badges: badgeStr,
         channel: ch,
         time: ts,
@@ -445,7 +445,7 @@ function mapRecentArchiveRow(platform, row) {
       }
       base.text = text
     }
-    base.color = '#53fc18'
+    base.color = ''
     base.badges = Array.isArray(row.badges)
       ? row.badges.map((b) => `${b?.type || b?.name || 'badge'}/${b?.version || b?.count || '1'}`).join(',')
       : typeof row.badges === 'string'
@@ -1791,7 +1791,7 @@ function _kpHandleChatEvent(d) {
     // kick numeric USER id — reply-threading + kick_<id> identity lookups
     senderId: ev.sender?.id ?? null,
     content: ev.content || '',
-    color: ev.sender?.identity?.color || '#53fc18',
+    color: ev.sender?.identity?.color || '',
     badges: ev.sender?.identity?.badges || [],
     timestamp: ev.created_at ? Date.parse(ev.created_at) || Date.now() : Date.now(),
     id: ev.id || '',

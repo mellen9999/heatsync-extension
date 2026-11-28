@@ -1947,7 +1947,7 @@ function handleWSMessage(msg) {
                 const m = {
                   user: data.username || data.displayName || data.user || 'unknown',
                   text: data.content || data.message || data.text || '',
-                  color: data.color || '#53fc18',
+                  color: data.color || '',
                   userId: data.senderId != null ? String(data.senderId) : '',
                   badges: badgeStr,
                   channel: ch,

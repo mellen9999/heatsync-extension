@@ -35,7 +35,7 @@ function kickTapChatToPayload(ev, slug) {
     displayName: ev.sender?.username || 'Unknown',
     senderId: ev.sender?.id ?? null,
     content: ev.content || '',
-    color: ev.sender?.identity?.color || '#53fc18',
+    color: ev.sender?.identity?.color || '',
     badges: ev.sender?.identity?.badges || [],
     timestamp: ev.created_at ? Date.parse(ev.created_at) || Date.now() : Date.now(),
     id: ev.id || '',

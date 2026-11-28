@@ -204,6 +204,21 @@ function hsUsernameColor(username) {
   return HS_USERNAME_PALETTE[Math.abs(h) % HS_USERNAME_PALETTE.length]
 }
 
+/**
+ * The last rung of the name-colour ladder (the site's resolveNameColor): a twitch or kick chatter who
+ * never set a colour (46% of twitch lines) is given the palette colour for their login, the same one
+ * heatsync.org and the desktop app draw, instead of flat white / kick green. A colour they did set,
+ * a picked colour and a paint all arrive here already resolved and win.
+ * @param {string} plat 'twitch' | 'kick' | 'yt' | ...
+ * @param {string} colour the colour resolved so far ('' = none)
+ * @param {string} name the login (or name) to hash
+ */
+function hsRowNameColour(plat, colour, name) {
+  if (colour && HS_COLOUR_RE.test(String(colour).trim())) return colour
+  return plat === 'twitch' || plat === 'kick' ? hsUsernameColor(name) : colour
+}
+
+const HS_COLOUR_RE = /^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/
 const HS_HEX_RE = /^#[0-9a-fA-F]{6}$/
 function setHsColorEntry(uid, color) {
   if (!hsColorCache.has(uid)) evictOldestPaintEntry(hsColorCache, HS_PAINT_CACHE_MAX)
@@ -1566,6 +1581,7 @@ export {
   hsNameColourDecl,
   hsPaintRender,
   hsPaintUidOfMsg,
+  hsRowNameColour,
   hsUsernameColor,
   hydrateHsCosmetics,
   invalidateHsCosmetics,

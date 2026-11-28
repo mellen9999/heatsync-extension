@@ -25,9 +25,10 @@ const BG_IRC_COLOR_RE = /^#[0-9a-fA-F]{3,6}$/
 // streakCount — mirrors the content-script parser.
 const BG_IRC_PARSER_VERSION = 3
 
-function bgIrcSanitizeColor(c) {
-  if (!c) return '#fff'
-  return BG_IRC_COLOR_RE.test(c) ? c : '#fff'
+// a chatter with no colour set stays '' — the render picks them a palette colour; inventing white here
+// made "never set one" look like "chose white" (same rule as the site's twitch-irc)
+function bgIrcNameColor(c) {
+  return c && BG_IRC_COLOR_RE.test(c) ? c : ''
 }
 
 function bgIrcParseEmotesTag(emotesTag, text) {
@@ -111,7 +112,7 @@ function bgIrcParseLine(raw, channelHint) {
         login,
         userId: tags['user-id'] || '',
         text,
-        color: bgIrcSanitizeColor(tags.color || '#fff'),
+        color: bgIrcNameColor(tags.color),
         badges: tags.badges || '',
         channel: channelHint || privmsg[1].toLowerCase(),
         time: parseInt(tags['tmi-sent-ts'], 10) || parseInt(tags['rm-received-ts'], 10) || Date.now(),
@@ -177,7 +178,7 @@ function bgIrcParseLine(raw, channelHint) {
         user: displayName,
         text: userText,
         systemMsg: bgIrcTagUnescape(tags['system-msg'] || ''),
-        color: bgIrcSanitizeColor(tags.color || '#fff'),
+        color: bgIrcNameColor(tags.color),
         badges: tags.badges || '',
         channel: channelHint || usernotice[1].toLowerCase(),
         time: parseInt(tags['tmi-sent-ts'], 10) || parseInt(tags['rm-received-ts'], 10) || Date.now(),
@@ -1242,7 +1243,7 @@ function bgIrcRecordToExt(rec, channelHint) {
       user: rec.displayName || rec.username || 'anonymous',
       userId: rec.userId || '',
       text: content,
-      color: bgIrcSanitizeColor(rec.color || '#fff'),
+      color: bgIrcNameColor(rec.color),
       badges: rec.badges || '',
       channel: ch,
       time: rec.timestamp || Date.now(),
@@ -1298,7 +1299,7 @@ function bgIrcRecordToExt(rec, channelHint) {
       user: rec.displayName || rec.username || 'system',
       text: rec.content || '',
       systemMsg: rec.systemMessage || '',
-      color: bgIrcSanitizeColor(rec.color || '#fff'),
+      color: bgIrcNameColor(rec.color),
       badges: rec.badges || '',
       channel: ch,
       time: rec.timestamp || Date.now(),

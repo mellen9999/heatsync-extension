@@ -720,6 +720,9 @@ function buildMessageDiv(m, tabId) {
     if (picked) hsNameColor = picked
     else if (plat === 'yt') hsNameColor = hsUsernameColor(m.user)
   }
+  // no colour of their own (a twitch chatter who never set one, a kick one): the palette colour for
+  // their login, the same on heatsync.org and the desktop app. Hashed by login, never the display name.
+  hsNameColor = hsRowNameColour(plat, hsNameColor, m.login || m.user)
   // the same send's twitch copy folded into this row: its real name colour
   if (lent?.color) hsNameColor = lent.color
   // Build the channel link for the username. YouTube usernames arrive

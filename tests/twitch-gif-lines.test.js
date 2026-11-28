@@ -326,7 +326,7 @@ describe('the wires', () => {
   test("the record: the server's gifs ride onto the message, only as a list", () => {
     const bg = bgSource()
     const { bgIrcRecordToExt } = new Function(
-      'bgIrcSanitizeColor',
+      'bgIrcNameColor',
       `${sliceFn(bg, 'bgIrcRecordToExt')}\nreturn { bgIrcRecordToExt }`,
     )((c) => c)
     const rec = { type: 'privmsg', id: 'r1', username: 'viewer', content: CAPTION, timestamp: 1 }

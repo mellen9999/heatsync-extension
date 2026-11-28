@@ -2,11 +2,15 @@
 // build.js concatenates src/background/* in BG_PARTS order into background.js (the service worker cannot import);
 // one scope, so a later part may read an earlier part's constants, never the reverse.
 
+// Every emote answer below carries `status`: the HTTP status the server gave, 0 when there was
+// none (offline, timed out, no request made). The surfaces say the contract line from it
+// (src/lib/emote-notice.js, which the worker cannot import); `error` is for the log only.
+
 // Block emote via HTTP - returns success/failure
 async function blockEmote(hash) {
   // Server stores blocks by hash only — silently 404s for empty/null hashes.
   // Reject early to prevent corrupting blockedEmotes Set with undefined entries.
-  if (!hash || typeof hash !== 'string') return { success: false, error: 'no hash' }
+  if (!hash || typeof hash !== 'string') return { success: false, status: 0, error: 'no hash' }
   try {
     const authToken = await getAuthCookie()
     if (!authToken) {
@@ -18,7 +22,7 @@ async function blockEmote(hash) {
       const allBlocked = new Set([...blockedEmotes, ...localBlockedEmotes])
       broadcastToTabs({ type: 'blocked_update', blocked: Array.from(allBlocked) })
       broadcastToTabs({ type: 'emote_blocked', hash })
-      return { success: true, local: true }
+      return { success: true, status: 200, local: true }
     }
 
     // Optimistically add to blockedEmotes BEFORE HTTP request
@@ -42,7 +46,7 @@ async function blockEmote(hash) {
       blockedEmotes.delete(hash)
       const error = await response.json().catch(() => ({ error: 'Unknown error' }))
       console.warn('[heatsync] block refused by server:', response.status, hash, error.error)
-      return { success: false, error: error.error || `HTTP ${response.status}` }
+      return { success: false, status: response.status, error: error.error || `HTTP ${response.status}` }
     }
 
     // 2-state model: block is a render-preference, not an inventory mutation.
@@ -57,16 +61,16 @@ async function blockEmote(hash) {
     persistServerBlockedEmotes()
     broadcastToTabs({ type: 'blocked_update', blocked: Array.from(new Set([...blockedEmotes, ...localBlockedEmotes])) })
     broadcastToTabs({ type: 'emote_blocked', hash })
-    return { success: true }
+    return { success: true, status: response.status }
   } catch (error) {
-    return { success: false, error: error.message || 'Network error' }
+    return { success: false, status: 0, error: error.message || 'Network error' }
   }
 }
 
 // Unblock emote via HTTP - returns success/failure
 async function unblockEmote(hash) {
   // Same hash-validity guard as blockEmote — silent 404 corrupts state otherwise.
-  if (!hash || typeof hash !== 'string') return { success: false, error: 'no hash' }
+  if (!hash || typeof hash !== 'string') return { success: false, status: 0, error: 'no hash' }
   try {
     // Always strip local block too — covers the anon→login transition where a
     // hash sits in localBlockedEmotes and the user expects "unblock" to clear
@@ -84,7 +88,7 @@ async function unblockEmote(hash) {
       broadcastToTabs({ type: 'emote_unblocked', hash })
 
       log(' 🔓 Unblocked emote locally (not logged in):', hash)
-      return { success: true, local: true }
+      return { success: true, status: 200, local: true }
     }
 
     // If the hash was only ever a local block (anon-era), there's nothing to
@@ -96,7 +100,7 @@ async function unblockEmote(hash) {
       const allBlocked = new Set([...blockedEmotes, ...localBlockedEmotes])
       broadcastToTabs({ type: 'blocked_update', blocked: Array.from(allBlocked) })
       broadcastToTabs({ type: 'emote_unblocked', hash })
-      return { success: true, local: true }
+      return { success: true, status: 200, local: true }
     }
 
     // Optimistically remove from blockedEmotes BEFORE HTTP request
@@ -120,7 +124,7 @@ async function unblockEmote(hash) {
       // Rollback optimistic delete
       blockedEmotes.add(hash)
       const error = await response.json().catch(() => ({ error: 'Unknown error' }))
-      return { success: false, error: error.error || `HTTP ${response.status}` }
+      return { success: false, status: response.status, error: error.error || `HTTP ${response.status}` }
     }
 
     persistServerBlockedEmotes()
@@ -129,9 +133,9 @@ async function unblockEmote(hash) {
     // blocked until its next `get_inventory` round-trip.
     broadcastToTabs({ type: 'blocked_update', blocked: Array.from(new Set([...blockedEmotes, ...localBlockedEmotes])) })
     broadcastToTabs({ type: 'emote_unblocked', hash })
-    return { success: true }
+    return { success: true, status: response.status }
   } catch (error) {
-    return { success: false, error: error.message || 'Network error' }
+    return { success: false, status: 0, error: error.message || 'Network error' }
   }
 }
 
@@ -2611,24 +2615,15 @@ function broadcastEmoteUsage(emoteName, emoteHash, senderTabId = null) {
 // Add emote to your set (for global emotes clicked in chat) - returns success/failure
 //
 // `opts` is for the picker's own-upload flow: `source: 'upload'` (the server
-// keys ownership + hard-delete on it), the upload's phash/width/height, and
-// `quiet` — the caller reports every outcome in its own words, so none of the
-// failure broadcasts (a second, English-only toast) go out.
+// keys ownership + hard-delete on it) and the upload's phash/width/height.
+//
+// The answer carries the HTTP `status` (0 = none) and the slot. Nothing is broadcast on a
+// failure: each caller says the contract line from its own answer (src/lib/emote-notice.js),
+// so one add is one toast, in the caller's language, never the server's words.
 async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false, replace = false, opts = {}) {
   try {
     const authToken = await getAuthCookie()
-    if (!authToken) {
-      if (!opts.quiet)
-        broadcastToTabs({
-          type: 'emote_add_failed',
-          emoteName,
-          error: 'Not logged in - visit heatsync.org to log in',
-          // Distinct flag so the panel shows a one-click login nudge instead of a
-          // transient error toast — the #1 reason emotes "don't work" for people.
-          notLoggedIn: true,
-        })
-      return { success: false, error: 'Not logged in' }
-    }
+    if (!authToken) return { success: false, status: 401, error: 'Not logged in' }
 
     log(' Adding to your set via API:', emoteName)
 
@@ -2659,13 +2654,7 @@ async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false,
     const data = await response.json().catch(() => ({ error: `HTTP ${response.status} (non-JSON body)` }))
 
     if (!response.ok) {
-      if (!opts.quiet)
-        broadcastToTabs({
-          type: 'emote_add_failed',
-          emoteName,
-          error: data.error || `Server error (${response.status})`,
-        })
-      return { success: false, error: data.error || `HTTP ${response.status}` }
+      return { success: false, status: response.status, error: data.error || `HTTP ${response.status}` }
     }
 
     log(' ✅ Added to server inventory:', data)
@@ -2705,15 +2694,15 @@ async function addToInventory(emoteName, emoteHash, emoteUrl, zeroWidth = false,
     // Also update storage for persistence
     await browser.storage.local.set({ emote_inventory: emoteInventory })
 
-    return { success: true, slot: data.slot, hash: data.hash || emoteHash, alreadyExists: data.alreadyExists }
+    return {
+      success: true,
+      status: response.status,
+      slot: data.slot,
+      hash: data.hash || emoteHash,
+      alreadyExists: data.alreadyExists,
+    }
   } catch (error) {
-    if (!opts.quiet)
-      broadcastToTabs({
-        type: 'emote_add_failed',
-        emoteName,
-        error: error.message || 'Network error',
-      })
-    return { success: false, error: error.message || 'Network error' }
+    return { success: false, status: 0, error: error.message || 'Network error' }
   }
 }
 
@@ -2744,7 +2733,7 @@ async function _removeFromInventoryImpl(emoteHash, emoteName) {
   try {
     const authToken = await getAuthCookie()
     if (!authToken) {
-      return { success: false, error: 'Not logged in' }
+      return { success: false, status: 401, error: 'Not logged in' }
     }
 
     log(' Removing from your set via API:', emoteName, 'hash:', emoteHash?.substring(0, 8))
@@ -2767,7 +2756,8 @@ async function _removeFromInventoryImpl(emoteHash, emoteName) {
       emote = emoteInventory.find((e) => e.hash === emoteHash || e.name === emoteName)
       if (!emote) {
         broadcastToTabs({ type: 'emote_removing_cancel', emoteName })
-        return { success: false, error: 'Emote not found in your set' }
+        // an emote that is not in your set is already gone: the 404 says so
+        return { success: false, status: 404, error: 'Emote not found in your set' }
       }
     }
 
@@ -2778,7 +2768,7 @@ async function _removeFromInventoryImpl(emoteHash, emoteName) {
       const refreshedEmote = emoteInventory.find((e) => e.hash === emoteHash || e.name === emoteName)
       if (refreshedEmote?.slot == null) {
         broadcastToTabs({ type: 'emote_removing_cancel', emoteName })
-        return { success: false, error: 'Could not determine emote slot' }
+        return { success: false, status: 0, error: 'Could not determine emote slot' }
       }
       emote.slot = refreshedEmote.slot
     }
@@ -2830,7 +2820,7 @@ async function _removeFromInventoryImpl(emoteHash, emoteName) {
         emoteInventory = emoteInventory.filter((e) => (emoteHash ? e.hash !== emoteHash : e.name !== emoteName))
         await browser.storage.local.set({ emote_inventory: emoteInventory })
         broadcastToTabs({ type: 'emote_removed', emoteName, hash: emoteHash, slot: emote.slot })
-        return { success: true, slot: emote.slot, reconciled: true }
+        return { success: true, status: 200, slot: emote.slot, reconciled: true }
       }
       // else: fresh view still maps it to the same slot the server just 404'd
       // on. That's a server-side inconsistency we can't fix from here; fall
@@ -2844,10 +2834,16 @@ async function _removeFromInventoryImpl(emoteHash, emoteName) {
         emoteInventory = emoteInventory.filter((e) => (emoteHash ? e.hash !== emoteHash : e.name !== emoteName))
         await browser.storage.local.set({ emote_inventory: emoteInventory })
         broadcastToTabs({ type: 'emote_removed', emoteName, hash: emoteHash, slot: emote.slot })
-        return { success: true, slot: emote.slot, reconciled: true }
+        return { success: true, status: 200, slot: emote.slot, reconciled: true }
       }
       broadcastToTabs({ type: 'emote_removing_cancel', emoteName })
-      return { success: false, error: data.error || `HTTP ${response.status}` }
+      // A 404 reaching here is the inconsistency above (the server's own list still holds the emote),
+      // not "already gone" — the contract reads a 404 as a remove that worked, so it goes out as a failure.
+      return {
+        success: false,
+        status: response.status === 404 ? 500 : response.status,
+        error: data.error || `HTTP ${response.status}`,
+      }
     }
 
     log(' ✅ Removed from server inventory:', data)
@@ -2883,9 +2879,9 @@ async function _removeFromInventoryImpl(emoteHash, emoteName) {
       log(' 📤 Broadcasted emote removal:', emoteName)
     }
 
-    return { success: true, slot: emote.slot }
+    return { success: true, status: response.status, slot: emote.slot }
   } catch (error) {
     broadcastToTabs({ type: 'emote_removing_cancel', emoteName })
-    return { success: false, error: error.message || 'Network error' }
+    return { success: false, status: 0, error: error.message || 'Network error' }
   }
 }

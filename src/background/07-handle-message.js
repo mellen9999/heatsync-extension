@@ -916,7 +916,6 @@ async function handleMessage(message, sender, sendResponse) {
       message.upload
         ? {
             source: 'upload',
-            quiet: true,
             phash: message.upload.phash,
             width: message.upload.width,
             height: message.upload.height,

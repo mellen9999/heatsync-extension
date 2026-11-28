@@ -13,6 +13,8 @@ const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 const CORE = read('src/multichat/emote-upload-core.js')
 const NATIVE = read('src/content/native-emote-upload.js')
 const RUNGS = read('src/multichat/emote-rungs.js')
+// the line every emote result says (the bundle has it in scope; here it binds to this file's t)
+const NOTICE = read('src/lib/emote-notice.js').replace(/^export /gm, '')
 
 const t = (key, subs) => (subs ? `${key}:${subs.join(',')}` : key)
 
@@ -132,7 +134,7 @@ function wire(send) {
     'hsEuReason',
     'hsEuSubmit',
     'hsXButtonHtml',
-    `${NATIVE}\nreturn hsNativeUploadWire`,
+    `${NOTICE}\n${NATIVE}\nreturn hsNativeUploadWire`,
   )(
     t,
     { runtime: { sendMessage: send } },
@@ -198,7 +200,7 @@ describe('native picker upload form', () => {
       upload: { phash: 'p', width: 128, height: 128 },
     })
     expect(added).toEqual(['pog'])
-    expect(toasts).toEqual(['mc_emote_added:pog'])
+    expect(toasts).toEqual(['mc_emote_added_slot:pog,3'])
     expect(panel.els.form.hidden).toBe(true)
   })
 
@@ -238,8 +240,9 @@ describe('native picker upload form', () => {
     const { panel, h, toasts } = wire(async () => ({ ok: false, status: 401, error: 'not logged in' }))
     h.pick(png)
     await h.submit()
-    expect(panel.els.status.textContent).toBe('mc_emote_add_login')
-    expect(toasts).toEqual(['mc_emote_add_login'])
+    // the contract's add.login line, said once in the form and once as a toast
+    expect(panel.els.status.textContent).toBe('hsbtn_login_add:')
+    expect(toasts).toEqual(['hsbtn_login_add:'])
     expect(panel.els.form.hidden).toBe(true)
   })
 

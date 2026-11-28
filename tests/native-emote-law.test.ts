@@ -278,7 +278,6 @@ test('every picker tile that pastes an emote notes the pick first', () => {
     'insertEmoteIntoChat(`:${e.name}:`)',
     'insertEmoteIntoChat(e.name, e.hash)',
     'insertEmoteIntoChat(e.name, e.hash)',
-    'insertEmoteIntoChat(e.name, e.hash)',
     'insertEmoteIntoChat(emote.name, emote.hash)',
   ])
   expect(SRC).toContain('window.__hsNativePick = (name, hash) => {')

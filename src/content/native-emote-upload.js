@@ -63,8 +63,9 @@ function hsNativeUploadWire(panel, hooks) {
   const fail = (r) => {
     const why = hsEuReason(r)
     if (why === null) {
-      status(t('mc_emote_add_login'), true)
-      hooks.toast(t('mc_emote_add_login'))
+      const login = emoteNotice('add', 401, '').text
+      status(login, true)
+      hooks.toast(login)
     } else {
       status(why, true)
     }
@@ -120,7 +121,7 @@ function hsNativeUploadWire(panel, hooks) {
       } else {
         status('')
         reset()
-        hooks.toast(t('mc_emote_added', [name]))
+        hooks.toast(emoteNoticeOf('add', res.added, name).text)
         if (res.up?.flagged?.length) hooks.toast(t('mc_emote_upload_flagged', [res.up.flagged.join(', ')]))
         hooks.added(name)
       }

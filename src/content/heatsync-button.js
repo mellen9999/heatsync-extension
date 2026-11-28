@@ -2851,9 +2851,7 @@
           if (e.isEmoji) {
             insertEmoteIntoChat(`:${e.name}:`)
           } else if (!isGlobal && !inInventory && isLoggedIn && currentTab !== 'mine') {
-            addEmoteToInventorySilent(e)
-              .then(() => insertEmoteIntoChat(e.name, e.hash))
-              .catch(() => insertEmoteIntoChat(e.name, e.hash))
+            addEmoteFromPicker(e).then(() => insertEmoteIntoChat(e.name, e.hash))
           } else {
             insertEmoteIntoChat(e.name, e.hash)
           }
@@ -3490,18 +3488,8 @@
     // results and the context-menu "+ add" path.
     async function pasteOrAddFromSearch(emote) {
       const inInv = isInInventory(emote)
-      if (!inInv) {
-        if (!cachedAuthToken) {
-          showPickerToast(t('hsbtn_login_add'))
-          return
-        }
-        try {
-          await addEmoteToInventorySilent(emote)
-        } catch (_) {
-          showPickerToast(t('hsbtn_add_failed'))
-          return
-        }
-      }
+      // a refused add says why (logged out, full, a name you hold) and stops here
+      if (!inInv && !(await addEmoteFromPicker(emote))) return
       recordRecentEmote(emote)
       insertEmoteIntoChat(emote.name, emote.hash)
       closePanel()
@@ -3540,12 +3528,13 @@
               if (result?.success) {
                 _blockedHashSet.delete(hash)
                 renderEmoteGrid()
-                showPickerToast(t('btn_toast_unblocked'))
-              } else {
-                showPickerToast(result?.error || t('hsbtn_unblock_failed'))
               }
+              sayEmote('unblock', result, e.name)
             })
-            .catch((err) => log('Unblock failed:', err.message))
+            .catch((err) => {
+              log('Unblock failed:', err.message)
+              sayEmote('unblock', null, e.name)
+            })
           return
         }
         pasteOrAddFromSearch(e)
@@ -3785,40 +3774,78 @@
       if (searchQuery === q) renderEmoteGrid()
     }
 
-    // Silent add to inventory (no UI feedback, used for click-to-use)
-    async function addEmoteToInventorySilent(emote) {
+    // What an emote operation says: the contract line for the background's answer
+    // (src/lib/emote-notice.js, one wording in every heatsync app), through the picker's toast.
+    // `resp` is the background's `{ success, status, slot }`, or null for no answer. Returns the
+    // notice so a caller can tell a remove that worked from one that did not.
+    function sayEmote(op, resp, name) {
+      const n = emoteNoticeOf(op, resp, name)
+      showPickerToast(n.text)
+      return n
+    }
+
+    // The "extension was updated" notice a call shows when the page outlived its extension: the
+    // answer to anything that fails there, in place of a line about the emote.
+    function showExtensionUpdated() {
+      const toast = document.createElement('div')
+      toast.textContent = t('common_extension_updated')
+      toast.style.cssText =
+        'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#000000; border: 1px solid #ff0000;color:#ff0000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
+      document.body.appendChild(toast)
+      setTimeout(() => toast.remove(), 5000)
+    }
+
+    // Add one emote to your set (click-to-use, a search row, the menu's add) and say how it went.
+    // The import route answers 200 with counts, not a status per emote: it landed (its slot), your
+    // set is full, or the emote was skipped (a name or an emote you already hold). A refusal comes
+    // back as an error carrying its status. Resolves true only when it landed.
+    async function addEmoteFromPicker(emote) {
       const token = await getAuthToken()
-      if (!token) return
+      if (!token) {
+        sayEmote('add', { success: false, status: 401 }, emote.name)
+        return false
+      }
       // Absolutize relative urls like '/uploads/...' that the server returns
       // for own-hosted emotes — import endpoint expects fully-qualified URLs.
       const rawUrl = emote.url || emote.pickerUrl || ''
       const url = rawUrl.startsWith('/') ? `https://heatsync.org${rawUrl}` : rawUrl
 
-      const resp = await HS.apiFetch('/api/user/emotes/import', {
-        method: 'POST',
-        auth: true,
-        body: {
-          emotes: [
-            {
-              name: emote.name,
-              url,
-              provider: emote.provider || 'imported',
-              id: emote.id || emote.hash || '',
-            },
-          ],
-          source: `picker:click`,
-        },
-      })
-
-      // Surface server-side failures so callers can show 'failed' UI instead of
-      // misleading 'added'. apiFetch returns the raw JSON; ok:false means error.
-      if (resp && resp.ok === false) {
-        throw new Error(resp.error || 'import failed')
+      let resp
+      try {
+        const data = await HS.apiFetch('/api/user/emotes/import', {
+          method: 'POST',
+          auth: true,
+          body: {
+            emotes: [
+              {
+                name: emote.name,
+                url,
+                provider: emote.provider || 'imported',
+                id: emote.id || emote.hash || '',
+              },
+            ],
+            source: `picker:click`,
+          },
+        })
+        const slot = (data?.emotes?.find((e) => e?.name === emote.name) || data?.emotes?.[0])?.slot
+        const status =
+          data?.ok === false ? 500 : data?.imported > 0 ? 200 : data?.full ? 403 : data?.skipped > 0 ? 409 : 500
+        resp = { success: status === 200, status, slot }
+      } catch (err) {
+        log('Add emote failed:', err?.message)
+        resp = { success: false, status: Number.isInteger(err?.status) ? err.status : 0 }
       }
+      sayEmote('add', resp, emote.name)
+      if (!resp.success) return false
 
       // Refresh inventory
-      await loadInventoryEmotes()
+      try {
+        await loadInventoryEmotes()
+      } catch (err) {
+        log('Inventory refresh after add failed:', err?.message)
+      }
       fetchHistoryStatus()
+      return true
     }
 
     // Update tab counts
@@ -3835,46 +3862,41 @@
       if (countMine) countMine.textContent = inventoryEmotesCache.length || '0'
     }
 
-    // Block emote (hide from view)
+    // Block emote (hide from view). Says the line for the answer; resolves true when it stuck.
     async function blockEmote(emote) {
+      let result = null
       try {
         const hash = emoteBlockKey(emote)
 
         // Send message to background script (handles both logged in and anonymous)
-        const result = await browser.runtime.sendMessage({
+        result = await browser.runtime.sendMessage({
           type: 'block_emote',
           hash: hash,
         })
 
-        if (!result?.success) {
-          throw new Error(result?.error || 'Block failed')
+        if (result?.success) {
+          if (result.local) {
+            log('Blocked emote locally (not logged in):', emote.name)
+          } else {
+            log('Blocked emote:', emote.name)
+          }
+
+          // Keep the emote in the cache — let the renderer apply the .blocked class
+          // so it stays in place with a dashed outline instead of shifting siblings.
+          _blockedHashSet.add(hash)
+
+          updateTabCounts()
+          renderEmoteGrid()
         }
-
-        if (result.local) {
-          log('Blocked emote locally (not logged in):', emote.name)
-        } else {
-          log('Blocked emote:', emote.name)
-        }
-
-        // Keep the emote in the cache — let the renderer apply the .blocked class
-        // so it stays in place with a dashed outline instead of shifting siblings.
-        _blockedHashSet.add(hash)
-
-        updateTabCounts()
-        renderEmoteGrid()
-        return true
       } catch (err) {
-        if (err.message?.includes('Extension context invalidated')) {
-          const toast = document.createElement('div')
-          toast.textContent = t('common_extension_updated')
-          toast.style.cssText =
-            'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#000000; border: 1px solid #ff0000;color:#ff0000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
-          document.body.appendChild(toast)
-          setTimeout(() => toast.remove(), 5000)
-        }
         log('Failed to block emote:', err.message)
-        return false
+        if (err.message?.includes('Extension context invalidated')) {
+          showExtensionUpdated()
+          return false
+        }
       }
+      sayEmote('block', result, emote.name)
+      return !!result?.success
     }
 
     // --- Context menu ---
@@ -4047,29 +4069,18 @@
               if (result?.success) {
                 _blockedHashSet.delete(hash)
                 renderEmoteGrid()
-                showPickerToast(t('btn_toast_unblocked'))
-              } else {
-                showPickerToast(result?.error || t('hsbtn_unblock_failed'))
               }
+              sayEmote('unblock', result, emote.name)
             } catch (err) {
-              if (err.message?.includes('Extension context invalidated')) {
-                const toast = document.createElement('div')
-                toast.textContent = t('common_extension_updated')
-                toast.style.cssText =
-                  'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#000000; border: 1px solid #ff0000;color:#ff0000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
-                document.body.appendChild(toast)
-                setTimeout(() => toast.remove(), 5000)
-              }
               log('Unblock failed:', err.message)
+              if (err.message?.includes('Extension context invalidated')) showExtensionUpdated()
+              else sayEmote('unblock', null, emote.name)
             }
           } else {
-            // Was fire-and-forget: the "blocked" toast fired before the request
-            // even started, and blockEmote's own failure path only surfaced
-            // "context invalidated" — a 500 / rate-limit / expired token blocked
-            // nothing and said nothing. blockEmote now owns _blockedHashSet on
-            // success and returns whether it stuck; toast accordingly.
-            const ok = await blockEmote(emote)
-            showPickerToast(ok ? t('btn_toast_blocked') : t('btn_toast_block_failed'))
+            // blockEmote owns _blockedHashSet on success, says the line for the answer
+            // (a 500 / rate-limit / expired token blocked nothing and says so) and
+            // resolves whether it stuck.
+            await blockEmote(emote)
           }
         })
         menu.appendChild(blockBtn)
@@ -4098,11 +4109,8 @@
               emoteHash: hash,
               emoteName: emote.name,
             })
-            if (!result?.success) {
-              showPickerToast(result?.error || t('btn_toast_remove_failed'))
-              return
-            }
-            showPickerToast(t('btn_toast_removed'))
+            // a slot that was already empty reads as removed: the goal state is true
+            if (sayEmote('remove', result, emote.name).id !== 'remove.ok') return
             if (tab === 'mine') {
               inventoryEmotesCache = inventoryEmotesCache.filter((e) => e.name !== emote.name)
               rebuildInventoryIndex()
@@ -4111,15 +4119,9 @@
             }
             fetchHistoryStatus()
           } catch (err) {
-            if (err.message?.includes('Extension context invalidated')) {
-              const toast = document.createElement('div')
-              toast.textContent = t('common_extension_updated')
-              toast.style.cssText =
-                'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#000000; border: 1px solid #ff0000;color:#ff0000;padding:8px 16px;border-radius:0;z-index:99999;font-size:14px;'
-              document.body.appendChild(toast)
-              setTimeout(() => toast.remove(), 5000)
-            }
             log('Remove failed:', err.message)
+            if (err.message?.includes('Extension context invalidated')) showExtensionUpdated()
+            else sayEmote('remove', null, emote.name)
           }
         })
         menu.appendChild(removeBtn)
@@ -4129,8 +4131,7 @@
         addBtn.textContent = t('btn_ctx_add_inventory')
         addBtn.addEventListener('click', () => {
           dismissContextMenu()
-          addEmoteToInventorySilent(emote)
-          showPickerToast(t('btn_toast_added'))
+          addEmoteFromPicker(emote)
         })
         menu.appendChild(addBtn)
       }
@@ -4183,16 +4184,15 @@
                 auth: true,
                 body: { newName },
               })
-              if (resp && resp.ok !== false) {
-                showPickerToast(t('hsbtn_renamed_to', [newName]))
+              const renamed = !!resp && resp.ok !== false
+              sayEmote('rename', { success: renamed, status: resp?.status }, newName)
+              if (renamed) {
                 await loadInventoryEmotes()
                 renderEmoteGrid()
                 fetchHistoryStatus()
-              } else {
-                showPickerToast(resp?.error || t('hsbtn_rename_failed'))
               }
             } catch (_) {
-              showPickerToast(t('hsbtn_rename_failed'))
+              sayEmote('rename', null, newName)
             }
           })
           input.addEventListener('keydown', (ev) => {
@@ -4583,7 +4583,7 @@
     }
 
     // Load user's inventory emotes — delegates to background cache via get_inventory
-    // (kept as separate function so retry handlers and addEmoteToInventorySilent can call it).
+    // (kept as separate function so retry handlers and addEmoteFromPicker can call it).
     // Writes to IDB on success so cold opens after SW sleep paint stale instantly.
     async function loadInventoryEmotes() {
       isLoading.mine = true

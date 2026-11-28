@@ -272,22 +272,58 @@
       line-height: 0;
       font-size: 0;
     }
+    /* WHERE A PICTURE SITS ON ITS ROW'S LINE (parity with heatsync.org's emotes.css --hs-eh rule).
+       Every picture centres on the text, at any height. It used to rest on `text-bottom` "for crisp
+       text": that anchors the BOTTOM of the box to the line, so a 36px box sat its centre ~11px above
+       the username (measured by scripts/render-emote-centre.ts: -11.5px at 13px text, -10.5 at 15px).
+
+         vertical-align: round(nearest, <text centre above baseline> - --hs-eh / 2, 1px)
+
+       --hs-eh is the box's own height (the emote size x a big line's scale, plus the img's 2+2px of
+       padding); a box rests its bottom edge on the baseline, so lifting it by (text centre - half its
+       height) puts its centre on the text's. The text centre is how far the glyphs' middle sits above
+       the baseline: 0.33 x the chat font size, measured in this extension's font at 10, 13, 15, 18, 20
+       and 26px (3, 4.5, 4.5, 6, 7, 9px); it is the font size, not a constant, because the chat font is
+       a setting (10..26px) and the distance tracks it. round() and not the raw calc: a whole-pixel
+       length keeps the line box an integer and the bitmap font crisp (what text-bottom was for;
+       `middle` anchors at baseline + half an x-height, fractional, and smears every glyph after it).
+       Gated by scripts/render-emote-centre.ts (real browser) and tests/emote-centre-on-text.test.js. */
+    .hs-mc-msg {
+      --hs-eh: calc(var(--hs-emote-size, 32px) * var(--hs-big, 1) + 4px);
+      --hs-ct: calc(var(--hs-chat-font, 15px) * 0.33);
+    }
     /* In message rows, single emotes render as BARE wrappers (renderEmoteStack
-       only wraps real overlay groups) — middle re-introduces the half-pixel
-       baseline smear on adjacent text (same math as .hs-mc-emote-stack above).
-       Scoped to .hs-mc-msg so picker/tooltip layouts keep middle. */
+       only wraps real overlay groups). Scoped to .hs-mc-msg so picker/tooltip
+       layouts keep middle. */
     .hs-mc-msg .hs-mc-emote-wrapper {
-      vertical-align: text-bottom;
+      vertical-align: round(nearest, calc(var(--hs-ct) - var(--hs-eh) / 2), 1px);
       /* Center the img inside the reserved min-height box. A small native emote
          (e.g. twitch ':)' at ~28px) is display:block and was top-anchored in
          the taller reserved box, so it hugged the top of the line while
-         normal-sized emotes filled it. inline-flex centers it vertically
-         without changing the wrapper's own text-bottom baseline vs adjacent
-         text (so the crisp-text fix stays intact). */
+         normal-sized emotes filled it. inline-flex centers it vertically; the
+         box's baseline is its bottom edge, which the alignment above relies on. */
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: calc(var(--hs-emote-size, 32px) * var(--hs-big, 1) + 4px);
+      min-height: var(--hs-eh);
+    }
+    /* A bare picture with no wrapper (a youtube member emoji): the same box, the same rule. */
+    .hs-mc-msg :not(.hs-mc-emote-wrapper) > img.hs-mc-emote {
+      vertical-align: round(nearest, calc(var(--hs-ct) - var(--hs-eh) / 2), 1px);
+    }
+    /* A stack is as tall as the picture under it (it was a fixed 36px, 72 on a big line against a
+       68px picture) and rests on its bottom edge, so one rule centres it too. */
+    .hs-mc-msg .hs-mc-emote-stack {
+      vertical-align: round(nearest, calc(var(--hs-ct) - var(--hs-eh) / 2), 1px);
+    }
+    .hs-mc-msg .hs-mc-emote-stack:not(.expanded) {
+      height: var(--hs-eh);
+    }
+    /* The unicode emoji is a line of text in an inline-block: its baseline is the glyph's, not its
+       bottom edge. The box's centre sits 0.33em (its own font size, em here) above that baseline
+       (measured: 9px at 26px, 10 at 30, 17 at 52), so lift it by the text centre less that. */
+    .hs-mc-msg .hs-mc-emoji {
+      vertical-align: round(nearest, calc(var(--hs-ct) - 0.33em), 1px);
     }
     .hs-mc-emote-stack-emotes > .hs-mc-emote-wrapper:not(:first-child) {
       min-height: 0;

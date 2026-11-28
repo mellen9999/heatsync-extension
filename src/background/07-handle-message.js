@@ -244,13 +244,7 @@ async function handleMessage(message, sender, sendResponse) {
     if (platform === 'kick') {
       // Kick public v2 — channel slug → banner_image.url and user.profile_pic.
       // Kick provides no accent so we default to the platform brand green.
-      fetchWithTimeout(
-        `https://kick.com/api/v2/channels/${encodeURIComponent(username)}`,
-        {
-          headers: { Accept: 'application/json' },
-        },
-        5000,
-      )
+      fetchKickChannel(username, { headers: { Accept: 'application/json' } }, 5000)
         .then(async (r) => {
           if (!r.ok) {
             if (r.status === 404) handle(null)

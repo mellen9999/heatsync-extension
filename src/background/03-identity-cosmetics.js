@@ -768,6 +768,26 @@ async function resolveTwitchLoginById(userId) {
 // fall back to the extension icon.
 const avatarCache = new Map()
 const AVATAR_CACHE_MAX = 500
+
+// kick keys a channel by its slug, and the slug is the name with `_` written `-`: a chatter called a_b is
+// channel `a-b` and a 404 as typed (about a fifth of kick names). A few older channels kept the underscore,
+// so it is the second ask, not a replacement. Same rule as the desktop app (net/avatars.rs kick_slugs).
+// Only v2/channels is slug-keyed; v1/users/<name> answers to the name as typed.
+function kickChannelSlugs(name) {
+  const n = String(name)
+  return n.includes('_') ? [n.replace(/_/g, '-'), n] : [n]
+}
+// GET v2/channels for a name: the dashed slug first, the typed name when that is a 404. Any other answer
+// (200, 429, 5xx) is final; the last 404 comes back when neither exists.
+async function fetchKickChannel(name, init, ms) {
+  let r
+  for (const slug of kickChannelSlugs(name)) {
+    r = await fetchWithTimeout(`https://kick.com/api/v2/channels/${encodeURIComponent(slug)}`, init, ms)
+    if (r.status !== 404) return r
+    r.body?.cancel?.()
+  }
+  return r
+}
 async function resolveAvatarUrl(username, platform) {
   if (!username) return ''
   const name = String(username).trim()
@@ -782,8 +802,8 @@ async function resolveAvatarUrl(username, platform) {
   let url = ''
   try {
     if (platform === 'kick') {
-      // Kick public v2 — channel slug (= username) → user.profile_pic.
-      const r = await fetchWithTimeout(`https://kick.com/api/v2/channels/${encodeURIComponent(name)}`, {}, 3000)
+      // Kick public v2 — channel slug (the name, `_` written `-`) → user.profile_pic.
+      const r = await fetchKickChannel(name, {}, 3000)
       if (r.ok) {
         const j = await r.json()
         url = j?.user?.profile_pic || ''

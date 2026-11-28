@@ -40,7 +40,8 @@
     body.hs-chat-left   #hs-mc-collapse-btn::before { content: '<'; }
     body.hs-chat-top    #hs-mc-collapse-btn::before { content: '\2303'; }
     body.hs-chat-bottom #hs-mc-collapse-btn::before { content: '\2304'; }
-    body.hs-popout #hs-mc-collapse-btn { display: none; }
+    /* !important: .hs-mc-util-btn sets display with it (02-tab-bar.css), so a plain none never hid this. */
+    body.hs-popout #hs-mc-collapse-btn { display: none !important; }
 
     /* Toast slot — single-line status text; gone when empty. */
     .hs-notif-layer-statusbar {

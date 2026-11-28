@@ -966,6 +966,7 @@ const _SET_HELP_CHAT = [
   ['alt 1-9', 'mc_set_h_nth_tab'],
   ['alt [ ]', 'mc_set_h_tab_cycle'],
   ['alt r', 'mc_set_h_rows'],
+  ['? ctrl / f1', 'mc_set_h_this_help'],
 ]
 // row mode (row-mode.js): the keys once you are in it
 const _SET_HELP_ROWS = [

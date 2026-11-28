@@ -59,6 +59,7 @@ describe('the help pane', () => {
       ['alt 1-9', 'go to that tab'],
       ['alt [ ]', 'previous / next tab'],
       ['alt r', 'row mode'],
+      ['? ctrl / f1', 'this help'],
     ])
   })
 

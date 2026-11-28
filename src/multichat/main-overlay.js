@@ -2456,6 +2456,12 @@ document.addEventListener(
   { signal: mcSignal },
 )
 initSearchWalkKeys(mcSignal, cycleLiveSearch)
+// ? / ctrl+/ / f1: the key help. Inside settings the pane owns a bare ? (it toggles back).
+initKeyHelpKeys(mcSignal, (key) => {
+  if (currentTab === 'settings' && (key === '?' || _settingsSubtab === 'help')) return false
+  switchTab('settings', 'help')
+  return true
+})
 
 // alt+1..9 jump to the Nth content tab, alt+] / alt+[ cycle next/prev, alt+r
 // is row mode (row-mode.js) — the way in for people who don't run vi mode, whose

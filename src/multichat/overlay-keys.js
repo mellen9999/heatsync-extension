@@ -106,3 +106,32 @@ function initSearchWalkKeys(signal, walk) {
     { capture: true, signal },
   )
 }
+
+// ? / ctrl+/ / f1 open the key help (settings › ?), the one table the help pane renders. `?` is a
+// typed character, so it only counts with nothing editable focused; ctrl+/ and f1 type nothing,
+// so they work from the composer too. Capture on the root, like n / N: the host (youtube's own
+// ? shortcut list, f1 = browser help) must not get the press first.
+function isKeyHelpKey(e) {
+  if (e.altKey || e.metaKey) return false
+  if (e.key === 'F1') return !e.ctrlKey && !e.shiftKey
+  if (e.key === '/') return e.ctrlKey && !e.shiftKey
+  if (e.key === '?') return !e.ctrlKey
+  return false
+}
+
+function initKeyHelpKeys(signal, open) {
+  document.documentElement.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.defaultPrevented || !isKeyHelpKey(e)) return
+      const t = e.target
+      const typing = t && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName))
+      if (e.key === '?' && typing) return
+      if (!open(e.key)) return
+      e.preventDefault()
+      e.stopImmediatePropagation()
+      ownKeyup(e)
+    },
+    { capture: true, signal },
+  )
+}

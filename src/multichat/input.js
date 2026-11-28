@@ -2513,6 +2513,8 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       })
   }
   items.push('sep')
+  // mod rows (and pin) LEAD the menu when you mod the room: collected here, put first below
+  const modLead = []
   // ─── Mod actions ─── gated on, and acting on, the CLICKED message's platform
   // (single — no cross-platform noise; a twitch chatter ≠ the same-named kick
   // user). Twitch gates on GQL mod-state, Kick on kick_mod_status. Targets the
@@ -2578,8 +2580,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
         if (!isYt) mod.push(modToolsItem(isKick, modCh))
         if (!isKick && !isYt && msgLogin)
           mod.push({ label: t('mc_input_warn'), fn: () => msWarnPrompt(modCh, msgLogin) })
-        mod.push('sep')
-        items.push(...mod)
+        modLead.push(...mod)
       } else {
         // Warm the right cache so the next right-click surfaces actions.
         if (isKick) {
@@ -2593,7 +2594,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
   if (msg?.dataset?.msgId && !replay && typeof pinRoomOfRow === 'function') {
     const pr = pinRoomOfRow(msg)
     if (pr && pinCanAct(pr.platform, pr.channel)) {
-      items.push({
+      modLead.push({
         label: t(
           pinState.pins.get(pr.room)?.message_id === msg.dataset.msgId ? 'mc_pin_menu_unpin' : 'mc_pin_menu_pin',
         ),
@@ -2716,6 +2717,7 @@ function openUserCtxMenu(x, y, username, platform, ctx = {}) {
       },
     })
   }
+  if (modLead.length) items.unshift(...modLead, 'sep')
   showHsCtxMenu(x, y, username, items, { keyboard })
   // Async warm-up: cache miss or stale → fetch fresh and patch the menu's
   // follow/block labels in place. Survives the typical case where the user's

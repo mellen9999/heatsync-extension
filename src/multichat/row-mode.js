@@ -288,8 +288,83 @@ function handleRowModeKey(e) {
   return k.length === 1
 }
 
+// Long-press on a row opens its menu (touch). Chrome on android fires a contextmenu of its own at
+// ~500ms and the menu opens from that; a browser that does not (firefox android, ios) gets the
+// same event from here at 600ms, so the two never both open one. Moving the finger more than 10px
+// is a scroll, not a press, and a press that opened the menu eats its release so the lift does
+// not also tap whatever is under it.
+const ROW_LONGPRESS_MS = 600
+const ROW_LONGPRESS_SLOP = 10
+
+function initRowLongPress(signal) {
+  let timer = 0
+  let at = null
+  let native = false
+  let fired = false
+  const clear = () => {
+    clearTimeout(timer)
+    timer = 0
+    at = null
+  }
+  document.addEventListener(
+    'contextmenu',
+    (e) => {
+      if (!e.hsLongPress) native = true
+    },
+    { capture: true, signal },
+  )
+  document.addEventListener(
+    'touchstart',
+    (e) => {
+      clear()
+      fired = false
+      native = false
+      if (e.touches.length !== 1) return
+      const t0 = e.touches[0]
+      const target = e.target
+      if (!(target instanceof Element) || !target.closest('#hs-mc-messages .hs-mc-msg, #hs-mc-messages .hs-feed-msg')) return
+      at = { x: t0.clientX, y: t0.clientY }
+      timer = setTimeout(() => {
+        timer = 0
+        if (native || !target.isConnected) return
+        const ev = new MouseEvent('contextmenu', {
+          bubbles: true,
+          cancelable: true,
+          composed: true,
+          clientX: at.x,
+          clientY: at.y,
+        })
+        ev.hsLongPress = true
+        fired = !target.dispatchEvent(ev) // false from dispatch = a handler took it (a menu opened)
+      }, ROW_LONGPRESS_MS)
+    },
+    { capture: true, passive: true, signal },
+  )
+  document.addEventListener(
+    'touchmove',
+    (e) => {
+      if (!timer || !at) return
+      const t0 = e.touches[0]
+      if (t0 && Math.hypot(t0.clientX - at.x, t0.clientY - at.y) > ROW_LONGPRESS_SLOP) clear()
+    },
+    { capture: true, passive: true, signal },
+  )
+  document.addEventListener(
+    'touchend',
+    (e) => {
+      clear()
+      if (!fired) return
+      fired = false
+      e.preventDefault()
+    },
+    { capture: true, signal },
+  )
+  document.addEventListener('touchcancel', clear, { capture: true, passive: true, signal })
+}
+
 /** Wire the mode into the page. Once per overlay; everything unhooks with `signal`. */
 function initRowMode(signal) {
+  initRowLongPress(signal)
   registerOverlayKey('r', () => enterRowMode())
   document.addEventListener(
     'keydown',

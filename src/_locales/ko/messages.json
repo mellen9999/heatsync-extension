@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "이모트 url 복사"
   },
-  "btn_toast_unblocked": {
-    "message": "차단 해제됨"
-  },
-  "btn_toast_block_failed": {
-    "message": "차단 실패 — 다시 시도해"
-  },
   "btn_toast_blocked": {
     "message": "차단됨"
   },
   "btn_toast_removed": {
     "message": "제거됨"
-  },
-  "btn_toast_remove_failed": {
-    "message": "삭제 실패"
-  },
-  "btn_toast_added": {
-    "message": "추가됨"
   },
   "btn_toast_copied": {
     "message": "복사됨"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "클릭하여 펼치기"
   },
-  "content_toast_failed_add": {
-    "message": "$NAME$ 추가 실패: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ 차단 해제됨",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "차단 해제 실패: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "차단 실패: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "삭제 실패 — 다시 시도해"
   },
-  "mc_emote_blocked_toast": {
-    "message": "차단됨: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "차단됨 (클릭하여 해제)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "twitch 팔로우 취소 대기 중 — 다음에 twitch.tv를 열면 동기화돼"
   },
-  "mc_emote_add_error": {
-    "message": "추가 오류: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "추가 실패: $NAME$",
+    "message": "$NAME$ 추가 실패",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "emote를 추가하려면 heatsync.org에 로그인해"
+  "mc_emote_add_dupe": {
+    "message": "$NAME$ 이름의 emote가 이미 있어",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "emote 슬롯이 가득 찼어 — 먼저 몇 개 제거해"
+  },
+  "mc_emote_add_busy": {
+    "message": "검수가 바빠, 다시 시도해"
   },
   "mc_emote_add_unavailable": {
     "message": "$NAME$ 추가 불가 — 이미지 없음",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "차단 실패 — 다시 시도해"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "차단 해제 실패 — 다시 시도해"
+  "mc_emote_added_slot": {
+    "message": "$NAME$을(를) 슬롯 $SLOT$에 추가",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "emote $COUNT$개 차단됨",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "삭제 오류: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "삭제 실패: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "삭제됨: $NAME$",
+    "message": "제거 실패: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "$NAME$이(가) 선택한 것으로 바뀌었어요",
+    "message": "$NAME$ 을(를) 내 선택으로 바꿨어요",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "내가 올린 것이 $NAME$ 이름을 쓰고 있어",
+    "message": "$NAME$ 은(는) 내가 올린 거라 그대로 뒀어요",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "차단 해제됨: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "$NAME$ 을(를) 바꾸지 못했어요 — 내 걸 유지했어요",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "메시지를 보내지 못함 — 축하 줄에는 아직 표시돼"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$가 인벤토리에 저장되지 않음 — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "채널이 저장되지 않음 — 저장소 오류"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "emote를 추가하려면 로그인"
   },
-  "hsbtn_add_failed": {
-    "message": "추가 실패"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "차단 해제 실패"
-  },
   "hsbtn_uses_title": {
     "message": "heatsync에서 $COUNT$회 사용",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "이름 변경 실패"
+    "message": "이름 변경 실패 — 다시 시도해"
   },
   "hsbtn_moved_to_slot": {
     "message": "슬롯 $SLOT$(으)로 이동됨",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "emote를 관리하려면 heatsync.org에 로그인"
-  },
-  "cs_remove_failed": {
-    "message": "$NAME$ 삭제 못 함: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "알 수 없는 오류"
+    "message": "인벤토리를 관리하려면 로그인해"
   },
   "popup_site_label": {
     "message": "heatsync 채팅 사용 사이트"

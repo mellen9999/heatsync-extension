@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "copy emote url"
   },
-  "btn_toast_unblocked": {
-    "message": "unblocked"
-  },
-  "btn_toast_block_failed": {
-    "message": "couldn’t block — try again"
-  },
   "btn_toast_blocked": {
     "message": "blocked"
   },
   "btn_toast_removed": {
     "message": "removed"
-  },
-  "btn_toast_remove_failed": {
-    "message": "remove failed"
-  },
-  "btn_toast_added": {
-    "message": "added"
   },
   "btn_toast_copied": {
     "message": "copied"
@@ -183,17 +171,6 @@
   "btn_click_expand": {
     "message": "click to expand"
   },
-  "content_toast_failed_add": {
-    "message": "failed to add $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "unblocked $NAME$",
     "placeholders": {
@@ -202,24 +179,8 @@
       }
     }
   },
-  "content_toast_failed_unblock": {
-    "message": "failed to unblock: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "failed to block: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
   "content_toast_block_failed": {
-    "message": "couldn’t block $NAME$ — try again",
+    "message": "couldn't block $NAME$ — try again",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -227,7 +188,7 @@
     }
   },
   "content_toast_unblock_failed": {
-    "message": "couldn’t unblock $NAME$ — try again",
+    "message": "couldn't unblock $NAME$ — try again",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -976,14 +937,6 @@
   "mc_feed_delete_failed": {
     "message": "couldn’t delete — try again"
   },
-  "mc_emote_blocked_toast": {
-    "message": "blocked: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "blocked (click to unblock)"
   },
@@ -1485,24 +1438,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "twitch unfollow queued — will sync next time you open twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "error adding: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "failed to add: $NAME$",
+    "message": "couldn't add $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "log in to heatsync.org to add emotes"
+  "mc_emote_add_dupe": {
+    "message": "already have an emote named $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "emote slots full — remove some first"
+  },
+  "mc_emote_add_busy": {
+    "message": "moderation busy, try again"
   },
   "mc_emote_add_unavailable": {
     "message": "can't add $NAME$ — image unavailable",
@@ -1534,11 +1490,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "couldn’t block — try again"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "couldn’t unblock — try again"
+  "mc_emote_added_slot": {
+    "message": "added $NAME$ to slot $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "blocked $COUNT$ emotes",
@@ -1548,24 +1509,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "error removing: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "failed to remove: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "removed: $NAME$",
+    "message": "remove failed: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1573,7 +1518,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "your $NAME$ is now the one you picked",
+    "message": "$NAME$ swapped to your pick",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1581,15 +1526,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "your own upload keeps the name $NAME$",
+    "message": "$NAME$ is your upload — kept it",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "unblocked: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "couldn't swap $NAME$ — kept yours",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2276,17 +2221,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "message could not be sent — it is still shown in your celebration row"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ wasn't saved to your inventory — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "channel not saved — storage error"
@@ -5899,12 +5833,6 @@
   "hsbtn_login_add": {
     "message": "log in to add emotes"
   },
-  "hsbtn_add_failed": {
-    "message": "failed to add"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "unblock failed"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ uses on heatsync",
     "placeholders": {
@@ -5948,7 +5876,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "rename failed"
+    "message": "rename failed — try again"
   },
   "hsbtn_moved_to_slot": {
     "message": "moved to slot $SLOT$",
@@ -6077,21 +6005,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "log in to heatsync.org to manage emotes"
-  },
-  "cs_remove_failed": {
-    "message": "couldn't remove $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "unknown error"
+    "message": "log in to manage inventory"
   },
   "popup_site_label": {
     "message": "heatsync chat on"

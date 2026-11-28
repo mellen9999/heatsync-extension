@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "копирай url на emote"
   },
-  "btn_toast_unblocked": {
-    "message": "отблокирано"
-  },
-  "btn_toast_block_failed": {
-    "message": "не можах да блокирам — опитай пак"
-  },
   "btn_toast_blocked": {
     "message": "блокирано"
   },
   "btn_toast_removed": {
     "message": "премахнато"
-  },
-  "btn_toast_remove_failed": {
-    "message": "премахването не успя"
-  },
-  "btn_toast_added": {
-    "message": "добавено"
   },
   "btn_toast_copied": {
     "message": "копирано"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "натисни за разгъване"
   },
-  "content_toast_failed_add": {
-    "message": "неуспешно добавяне на $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ е деблокиран",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "неуспешно деблокиране: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "неуспешно блокиране: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "не можах да изтрия — опитай пак"
   },
-  "mc_emote_blocked_toast": {
-    "message": "блокиран: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "блокирано (натисни за отблокиране)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "спирането на twitch следването е в опашка — ще се синхронизира при следващото отваряне на twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "грешка при добавяне: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "добавянето не успя: $NAME$",
+    "message": "$NAME$ не се добави",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "влез в heatsync.org, за да добавяш emotes"
+  "mc_emote_add_dupe": {
+    "message": "вече имаш emote с име $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "слотовете за emotes са пълни — първо махни някои"
+  },
+  "mc_emote_add_busy": {
+    "message": "модерацията е заета, опитай пак"
   },
   "mc_emote_add_unavailable": {
     "message": "не мога да добавя $NAME$ — снимката не е налична",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "не можах да блокирам — опитай пак"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "не можах да отблокирам — опитай пак"
+  "mc_emote_added_slot": {
+    "message": "добавен $NAME$ в слот $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "блокирани $COUNT$ emotes",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "грешка при премахване: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "премахването не успя: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "премахнат: $NAME$",
+    "message": "махането не успя: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "твоят $NAME$ вече е този, който избра",
+    "message": "$NAME$ е сменена с твоя избор",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "твоето качване запазва името $NAME$",
+    "message": "$NAME$ е твое качване — запазена",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "отблокиран: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "не успях да сменя $NAME$ — запазена твоята",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "съобщението не можа да се изпрати — още се вижда в реда на празненството"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ не се запази в инвентара ти — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "каналът не е запазен — грешка в хранилището"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "влез, за да добавяш emotes"
   },
-  "hsbtn_add_failed": {
-    "message": "добавянето не успя"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "отблокирането не успя"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ използвания в heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "преименуването не успя"
+    "message": "преименуването не успя — опитай пак"
   },
   "hsbtn_moved_to_slot": {
     "message": "преместен в слот $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "влез в heatsync.org, за да управляваш emotes"
-  },
-  "cs_remove_failed": {
-    "message": "$NAME$ не може да се премахне: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "неизвестна грешка"
+    "message": "влез, за да управляваш инвентара"
   },
   "popup_site_label": {
     "message": "heatsync чат в"

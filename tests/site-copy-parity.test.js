@@ -64,6 +64,7 @@ const FILES = [
   ['shared/emote-only.vectors.json', 'shared/emote-only.vectors.json'],
   ['shared/filter-rules.vectors.json', 'shared/filter-rules.vectors.json'],
   ['shared/settings-sync.vectors.json', 'shared/settings-sync.vectors.json'],
+  ['shared/emote-notice.vectors.json', 'shared/emote-notice.vectors.json'],
   ['tests/helpers/emote-world.ts', 'tests/helpers/emote-world.ts'],
 ]
 

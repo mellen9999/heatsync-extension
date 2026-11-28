@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "copiar url do emote"
   },
-  "btn_toast_unblocked": {
-    "message": "desbloqueado"
-  },
-  "btn_toast_block_failed": {
-    "message": "não foi possível bloquear — tente de novo"
-  },
   "btn_toast_blocked": {
     "message": "bloqueado"
   },
   "btn_toast_removed": {
     "message": "removido"
-  },
-  "btn_toast_remove_failed": {
-    "message": "falha ao remover"
-  },
-  "btn_toast_added": {
-    "message": "adicionado"
   },
   "btn_toast_copied": {
     "message": "copiado"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "clique para expandir"
   },
-  "content_toast_failed_add": {
-    "message": "falha ao adicionar $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ desbloqueado",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "falha ao desbloquear: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "falha ao bloquear: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "não foi possível apagar — tente de novo"
   },
-  "mc_emote_blocked_toast": {
-    "message": "bloqueado: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "bloqueado (clique para desbloquear)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "unfollow da twitch na fila — sincroniza na próxima vez que você abrir o twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "erro ao adicionar: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "falha ao adicionar: $NAME$",
+    "message": "não foi possível adicionar $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "entre no heatsync.org para adicionar emotes"
+  "mc_emote_add_dupe": {
+    "message": "você já tem um emote chamado $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "slots de emote cheios — remova alguns antes"
+  },
+  "mc_emote_add_busy": {
+    "message": "moderação ocupada, tente de novo"
   },
   "mc_emote_add_unavailable": {
     "message": "não dá para adicionar $NAME$ — imagem indisponível",
@@ -1533,24 +1489,21 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "não foi possível bloquear — tente de novo"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "não foi possível desbloquear — tente de novo"
+  "mc_emote_added_slot": {
+    "message": "$NAME$ adicionado ao slot $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emotes bloqueados",
     "placeholders": {
       "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_remove_error": {
-    "message": "erro ao remover: $NAME$",
-    "placeholders": {
-      "name": {
         "content": "$1"
       }
     }
@@ -1563,16 +1516,8 @@
       }
     }
   },
-  "mc_emote_removed": {
-    "message": "removido: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_swapped": {
-    "message": "seu $NAME$ agora é o que você escolheu",
+    "message": "$NAME$ trocado pela sua escolha",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "seu próprio upload mantém o nome $NAME$",
+    "message": "$NAME$ é seu upload — mantido",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "desbloqueado: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "não foi possível trocar $NAME$ — o seu foi mantido",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "não deu para enviar a mensagem — ela continua na sua linha de celebração"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ não foi salvo no seu inventário — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "canal não salvo — erro de armazenamento"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "entre para adicionar emotes"
   },
-  "hsbtn_add_failed": {
-    "message": "falha ao adicionar"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "falha ao desbloquear"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ usos no heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "falha ao renomear"
+    "message": "falha ao renomear — tente de novo"
   },
   "hsbtn_moved_to_slot": {
     "message": "movido para o slot $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "entre em heatsync.org para gerenciar emotes"
-  },
-  "cs_remove_failed": {
-    "message": "não foi possível remover $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "erro desconhecido"
+    "message": "entre para gerenciar o inventário"
   },
   "popup_site_label": {
     "message": "chat do heatsync em"

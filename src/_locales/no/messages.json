@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "kopier emote-url"
   },
-  "btn_toast_unblocked": {
-    "message": "blokkering fjernet"
-  },
-  "btn_toast_block_failed": {
-    "message": "kunne ikke blokkere — prøv igjen"
-  },
   "btn_toast_blocked": {
     "message": "blokkert"
   },
   "btn_toast_removed": {
     "message": "fjernet"
-  },
-  "btn_toast_remove_failed": {
-    "message": "fjerning feilet"
-  },
-  "btn_toast_added": {
-    "message": "lagt til"
   },
   "btn_toast_copied": {
     "message": "kopiert"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "klikk for å utvide"
   },
-  "content_toast_failed_add": {
-    "message": "klarte ikke legge til $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ avblokkert",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "avblokking mislyktes: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "blokkering mislyktes: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "kunne ikke slette — prøv igjen"
   },
-  "mc_emote_blocked_toast": {
-    "message": "blokkert: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "blokkert (klikk for å fjerne blokkering)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "twitch-avfølging i kø — synkroniseres neste gang du åpner twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "feil ved tillegging: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "kunne ikke legge til: $NAME$",
+    "message": "kunne ikke legge til $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "logg inn på heatsync.org for å legge til emotes"
+  "mc_emote_add_dupe": {
+    "message": "du har allerede en emote som heter $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "emote-plassene er fulle — fjern noen først"
+  },
+  "mc_emote_add_busy": {
+    "message": "moderering opptatt, prøv igjen"
   },
   "mc_emote_add_unavailable": {
     "message": "kan ikke legge til $NAME$ — bildet er utilgjengelig",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "kunne ikke blokkere — prøv igjen"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "kunne ikke fjerne blokkeringen — prøv igjen"
+  "mc_emote_added_slot": {
+    "message": "la til $NAME$ i plass $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "blokkerte $COUNT$ emotes",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "feil ved fjerning: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "kunne ikke fjerne: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "fjernet: $NAME$",
+    "message": "fjerning feilet: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "din $NAME$ er nå den du valgte",
+    "message": "$NAME$ byttet til ditt valg",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "din egen opplasting beholder navnet $NAME$",
+    "message": "$NAME$ er din opplasting — beholdt",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "blokkering fjernet: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "kunne ikke bytte $NAME$ — beholdt din",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "meldingen kunne ikke sendes — den vises fortsatt i feiringsraden din"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ ble ikke lagret i inventaret ditt — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "kanalen ble ikke lagret — lagringsfeil"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "logg inn for å legge til emotes"
   },
-  "hsbtn_add_failed": {
-    "message": "kunne ikke legge til"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "avblokkering mislyktes"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ bruk på heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "omdøping feilet"
+    "message": "omdøping feilet — prøv igjen"
   },
   "hsbtn_moved_to_slot": {
     "message": "flyttet til plass $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "logg inn på heatsync.org for å styre emotes"
-  },
-  "cs_remove_failed": {
-    "message": "kunne ikke fjerne $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "ukjent feil"
+    "message": "logg inn for å styre samlingen"
   },
   "popup_site_label": {
     "message": "heatsync-chat på"

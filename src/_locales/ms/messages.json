@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "salin url emote"
   },
-  "btn_toast_unblocked": {
-    "message": "sekatan dibuka"
-  },
-  "btn_toast_block_failed": {
-    "message": "tak dapat sekat — cuba lagi"
-  },
   "btn_toast_blocked": {
     "message": "disekat"
   },
   "btn_toast_removed": {
     "message": "dibuang"
-  },
-  "btn_toast_remove_failed": {
-    "message": "gagal alih keluar"
-  },
-  "btn_toast_added": {
-    "message": "ditambah"
   },
   "btn_toast_copied": {
     "message": "disalin"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "klik untuk kembang"
   },
-  "content_toast_failed_add": {
-    "message": "gagal menambah $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ dinyahsekat",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "gagal nyahsekat: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "gagal sekat: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "tak dapat padam — cuba lagi"
   },
-  "mc_emote_blocked_toast": {
-    "message": "disekat: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "disekat (klik untuk buka)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "nyahikut twitch beratur — disegerakkan kali seterusnya kau buka twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "ralat menambah: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "gagal menambah: $NAME$",
+    "message": "tidak dapat tambah $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "log masuk ke heatsync.org untuk tambah emote"
+  "mc_emote_add_dupe": {
+    "message": "sudah ada emote bernama $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "slot emote penuh — buang beberapa dahulu"
+  },
+  "mc_emote_add_busy": {
+    "message": "penyederhanaan sibuk, cuba lagi"
   },
   "mc_emote_add_unavailable": {
     "message": "tak boleh tambah $NAME$ — imej tiada",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "tak dapat sekat — cuba lagi"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "tak dapat nyahsekat — cuba lagi"
+  "mc_emote_added_slot": {
+    "message": "$NAME$ ditambah ke slot $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emote disekat",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "ralat membuang: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "gagal membuang: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "dibuang: $NAME$",
+    "message": "buang gagal: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "$NAME$ anda kini yang anda pilih",
+    "message": "$NAME$ ditukar kepada pilihanmu",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "muat naik sendiri kekal guna nama $NAME$",
+    "message": "$NAME$ ialah muat naikmu — dikekalkan",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "dinyahsekat: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "gagal tukar $NAME$ — milikmu dikekalkan",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "mesej tak dapat dihantar — masih dipaparkan dalam baris perayaan kau"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ tak disimpan ke inventori kau — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "saluran tak disimpan — ralat storan"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "log masuk untuk tambah emote"
   },
-  "hsbtn_add_failed": {
-    "message": "gagal menambah"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "nyahsekat gagal"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ penggunaan di heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "penamaan semula gagal"
+    "message": "nama semula gagal — cuba lagi"
   },
   "hsbtn_moved_to_slot": {
     "message": "dialih ke slot $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "log masuk ke heatsync.org untuk urus emote"
-  },
-  "cs_remove_failed": {
-    "message": "tak dapat buang $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "ralat tak diketahui"
+    "message": "log masuk untuk urus inventori"
   },
   "popup_site_label": {
     "message": "sembang heatsync di"

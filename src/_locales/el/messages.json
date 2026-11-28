@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "αντιγραφή url emote"
   },
-  "btn_toast_unblocked": {
-    "message": "ξεμπλοκαρίστηκε"
-  },
-  "btn_toast_block_failed": {
-    "message": "δεν έγινε αποκλεισμός — δοκίμασε ξανά"
-  },
   "btn_toast_blocked": {
     "message": "μπλοκαρίστηκε"
   },
   "btn_toast_removed": {
     "message": "αφαιρέθηκε"
-  },
-  "btn_toast_remove_failed": {
-    "message": "η αφαίρεση απέτυχε"
-  },
-  "btn_toast_added": {
-    "message": "προστέθηκε"
   },
   "btn_toast_copied": {
     "message": "αντιγράφηκε"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "πάτα για ανάπτυξη"
   },
-  "content_toast_failed_add": {
-    "message": "αποτυχία προσθήκης $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ ξεμπλοκαρίστηκε",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "αποτυχία ξεμπλοκαρίσματος: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "αποτυχία μπλοκαρίσματος: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "δεν έγινε διαγραφή — δοκίμασε ξανά"
   },
-  "mc_emote_blocked_toast": {
-    "message": "αποκλείστηκε: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "μπλοκαρισμένο (πάτα για ξεμπλοκάρισμα)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "unfollow στο twitch σε ουρά — θα συγχρονιστεί την επόμενη φορά που θα ανοίξεις το twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "σφάλμα προσθήκης: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "η προσθήκη απέτυχε: $NAME$",
+    "message": "δεν προστέθηκε το $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "συνδέσου στο heatsync.org για να προσθέσεις emotes"
+  "mc_emote_add_dupe": {
+    "message": "έχεις ήδη emote με όνομα $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "οι θέσεις emote γέμισαν — αφαίρεσε μερικά πρώτα"
+  },
+  "mc_emote_add_busy": {
+    "message": "το moderation είναι απασχολημένο, δοκίμασε ξανά"
   },
   "mc_emote_add_unavailable": {
     "message": "δεν γίνεται προσθήκη του $NAME$ — η εικόνα δεν είναι διαθέσιμη",
@@ -1533,24 +1489,21 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "δεν έγινε αποκλεισμός — δοκίμασε ξανά"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "δεν έγινε άρση αποκλεισμού — δοκίμασε ξανά"
+  "mc_emote_added_slot": {
+    "message": "το $NAME$ προστέθηκε στη θέση $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "αποκλείστηκαν $COUNT$ emotes",
     "placeholders": {
       "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_remove_error": {
-    "message": "σφάλμα αφαίρεσης: $NAME$",
-    "placeholders": {
-      "name": {
         "content": "$1"
       }
     }
@@ -1563,16 +1516,8 @@
       }
     }
   },
-  "mc_emote_removed": {
-    "message": "αφαιρέθηκε: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_swapped": {
-    "message": "το $NAME$ σου είναι πλέον αυτό που διάλεξες",
+    "message": "το $NAME$ άλλαξε με τη δική σου επιλογή",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "το δικό σου ανέβασμα κρατά το όνομα $NAME$",
+    "message": "το $NAME$ είναι δικό σου ανέβασμα — κρατήθηκε",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "άρση ο αποκλεισμός: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "δεν άλλαξε το $NAME$ — κρατήθηκε το δικό σου",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "το μήνυμα δεν στάλθηκε — φαίνεται ακόμα στη γραμμή γιορτής σου"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "το $EMOTE$ δεν αποθηκεύτηκε στο inventory σου — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "το κανάλι δεν αποθηκεύτηκε — σφάλμα αποθήκευσης"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "συνδέσου για να προσθέσεις emotes"
   },
-  "hsbtn_add_failed": {
-    "message": "αποτυχία προσθήκης"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "η άρση αποκλεισμού απέτυχε"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ χρήσεις στο heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "η μετονομασία απέτυχε"
+    "message": "η μετονομασία απέτυχε — δοκίμασε ξανά"
   },
   "hsbtn_moved_to_slot": {
     "message": "μετακινήθηκε στη θέση $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "συνδέσου στο heatsync.org για διαχείριση emotes"
-  },
-  "cs_remove_failed": {
-    "message": "δεν αφαιρέθηκε το $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "άγνωστο σφάλμα"
+    "message": "συνδέσου για διαχείριση αποθέματος"
   },
   "popup_site_label": {
     "message": "συνομιλία heatsync στο"

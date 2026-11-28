@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "इमोट url कॉपी करें"
   },
-  "btn_toast_unblocked": {
-    "message": "अनब्लॉक किया गया"
-  },
-  "btn_toast_block_failed": {
-    "message": "ब्लॉक नहीं हो पाया — फिर कोशिश करो"
-  },
   "btn_toast_blocked": {
     "message": "ब्लॉक किया गया"
   },
   "btn_toast_removed": {
     "message": "हटाया गया"
-  },
-  "btn_toast_remove_failed": {
-    "message": "हटाना नहीं हुआ"
-  },
-  "btn_toast_added": {
-    "message": "जोड़ा गया"
   },
   "btn_toast_copied": {
     "message": "कॉपी किया"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "विस्तार के लिए क्लिक करें"
   },
-  "content_toast_failed_add": {
-    "message": "$NAME$ जोड़ना विफल: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ अनब्लॉक किया",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "अनब्लॉक विफल: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "ब्लॉक विफल: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "डिलीट नहीं हो पाया — फिर कोशिश करो"
   },
-  "mc_emote_blocked_toast": {
-    "message": "ब्लॉक किया: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "ब्लॉक (अनब्लॉक के लिए क्लिक)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "twitch अनफ़ॉलो कतार में है — अगली बार twitch.tv खोलने पर सिंक होगा"
   },
-  "mc_emote_add_error": {
-    "message": "जोड़ने में एरर: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "जोड़ नहीं पाया: $NAME$",
+    "message": "$NAME$ जोड़ा नहीं जा सका",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "emotes जोड़ने के लिए heatsync.org पर लॉग इन करो"
+  "mc_emote_add_dupe": {
+    "message": "$NAME$ नाम का emote पहले से है",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "emote स्लॉट भरे हैं — पहले कुछ हटाओ"
+  },
+  "mc_emote_add_busy": {
+    "message": "मॉडरेशन व्यस्त है, दोबारा कोशिश करो"
   },
   "mc_emote_add_unavailable": {
     "message": "$NAME$ नहीं जोड़ सकते — इमेज उपलब्ध नहीं",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "ब्लॉक नहीं हो पाया — फिर कोशिश करो"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "अनब्लॉक नहीं हो पाया — फिर कोशिश करो"
+  "mc_emote_added_slot": {
+    "message": "$NAME$ स्लॉट $SLOT$ में जोड़ा",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emotes ब्लॉक किए",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "हटाने में एरर: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "हटा नहीं पाया: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "हटाया: $NAME$",
+    "message": "हटाना फ़ेल: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "तुम्हारा $NAME$ अब वही है जो तुमने चुना",
+    "message": "$NAME$ आपकी पसंद से बदल गया",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "तुम्हारा अपना अपलोड $NAME$ नाम रखता है",
+    "message": "$NAME$ आपका अपलोड है — रखा गया",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "अनब्लॉक किया: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "$NAME$ बदल नहीं सका — आपका रखा",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "मैसेज भेजा नहीं जा सका — वह अब भी तुम्हारी सेलिब्रेशन पंक्ति में दिख रहा है"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ तुम्हारी इन्वेंटरी में सेव नहीं हुआ — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "चैनल सेव नहीं हुआ — स्टोरेज एरर"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "emotes जोड़ने के लिए लॉग इन करो"
   },
-  "hsbtn_add_failed": {
-    "message": "जोड़ नहीं पाए"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "अनब्लॉक नहीं हुआ"
-  },
   "hsbtn_uses_title": {
     "message": "heatsync पर $COUNT$ बार इस्तेमाल",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "नाम नहीं बदला"
+    "message": "नाम बदलना फ़ेल — दोबारा कोशिश करो"
   },
   "hsbtn_moved_to_slot": {
     "message": "स्लॉट $SLOT$ में रखा",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "emotes संभालने के लिए heatsync.org पर लॉग इन करो"
-  },
-  "cs_remove_failed": {
-    "message": "$NAME$ नहीं हटा: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "अनजान एरर"
+    "message": "इन्वेंटरी सँभालने के लिए लॉगिन करो"
   },
   "popup_site_label": {
     "message": "heatsync चैट यहाँ:"

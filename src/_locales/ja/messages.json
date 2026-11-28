@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "エモートurlをコピー"
   },
-  "btn_toast_unblocked": {
-    "message": "ブロック解除済み"
-  },
-  "btn_toast_block_failed": {
-    "message": "ブロック失敗 — もう一度試して"
-  },
   "btn_toast_blocked": {
     "message": "ブロック済み"
   },
   "btn_toast_removed": {
     "message": "削除済み"
-  },
-  "btn_toast_remove_failed": {
-    "message": "削除失敗"
-  },
-  "btn_toast_added": {
-    "message": "追加済み"
   },
   "btn_toast_copied": {
     "message": "コピーしました"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "クリックして展開"
   },
-  "content_toast_failed_add": {
-    "message": "$NAME$ の追加に失敗: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ のブロックを解除",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "ブロック解除に失敗: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "ブロックに失敗: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "削除できなかった — もう一度試して"
   },
-  "mc_emote_blocked_toast": {
-    "message": "ブロック: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "ブロック済み (クリックで解除)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "twitch フォロー解除をキューに入れた — 次に twitch.tv を開いたとき同期"
   },
-  "mc_emote_add_error": {
-    "message": "追加エラー: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "追加失敗: $NAME$",
+    "message": "$NAME$を追加できなかった",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "emote の追加は heatsync.org にログインして"
+  "mc_emote_add_dupe": {
+    "message": "$NAME$という名前のエモートがすでにある",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "エモートスロットがいっぱい — 先にいくつか削除して"
+  },
+  "mc_emote_add_busy": {
+    "message": "モデレーションが混み合っている、もう一度"
   },
   "mc_emote_add_unavailable": {
     "message": "$NAME$ を追加できない — 画像がない",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "ブロック失敗 — もう一度試して"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "ブロック解除失敗 — もう一度試して"
+  "mc_emote_added_slot": {
+    "message": "$NAME$をスロット$SLOT$に追加",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "emote を $COUNT$ 件ブロックした",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "削除エラー: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "削除失敗: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "削除: $NAME$",
+    "message": "削除に失敗: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "$NAME$ を選んだものに入れ替えた",
+    "message": "$NAME$ をあなたの選択に差し替えました",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "自分のアップロードが $NAME$ の名前を使っている",
+    "message": "$NAME$ はあなたのアップロードです — そのままにしました",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "ブロック解除: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "$NAME$ を差し替えられませんでした — あなたのものを残しました",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "メッセージを送信できなかった — お祝い行にはまだ表示されている"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ がインベントリに保存されなかった — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "チャンネルを保存できなかった — ストレージエラー"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "ログインしてエモートを追加"
   },
-  "hsbtn_add_failed": {
-    "message": "追加に失敗"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "ブロック解除に失敗"
-  },
   "hsbtn_uses_title": {
     "message": "heatsync で $COUNT$ 回使用",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "名前の変更に失敗"
+    "message": "名前変更に失敗 — もう一度"
   },
   "hsbtn_moved_to_slot": {
     "message": "スロット $SLOT$ に移動した",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "エモートを管理するには heatsync.org にログイン"
-  },
-  "cs_remove_failed": {
-    "message": "$NAME$ を削除できなかった: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "不明なエラー"
+    "message": "インベントリを管理するにはログイン"
   },
   "popup_site_label": {
     "message": "heatsync チャットを使うサイト"

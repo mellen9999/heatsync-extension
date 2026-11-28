@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "kopioi emoten url"
   },
-  "btn_toast_unblocked": {
-    "message": "esto poistettu"
-  },
-  "btn_toast_block_failed": {
-    "message": "estäminen ei onnistunut — yritä uudelleen"
-  },
   "btn_toast_blocked": {
     "message": "estetty"
   },
   "btn_toast_removed": {
     "message": "poistettu"
-  },
-  "btn_toast_remove_failed": {
-    "message": "poisto epäonnistui"
-  },
-  "btn_toast_added": {
-    "message": "lisätty"
   },
   "btn_toast_copied": {
     "message": "kopioitu"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "klikkaa laajentaaksesi"
   },
-  "content_toast_failed_add": {
-    "message": "$NAME$ lisääminen epäonnistui: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ poistettu estolistalta",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "eston poisto epäonnistui: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "esto epäonnistui: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "poisto ei onnistunut — yritä uudelleen"
   },
-  "mc_emote_blocked_toast": {
-    "message": "estetty: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "estetty (klikkaa poistaaksesi eston)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "twitch-seurannan lopetus jonossa — synkronoituu kun avaat twitch.tv:n seuraavan kerran"
   },
-  "mc_emote_add_error": {
-    "message": "virhe lisättäessä: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "lisäys epäonnistui: $NAME$",
+    "message": "emoten $NAME$ lisäys ei onnistunut",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "kirjaudu heatsync.orgiin lisätäksesi emoteja"
+  "mc_emote_add_dupe": {
+    "message": "sinulla on jo emote nimeltä $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "emote-paikat täynnä — poista ensin joitakin"
+  },
+  "mc_emote_add_busy": {
+    "message": "moderointi kiireinen, yritä uudelleen"
   },
   "mc_emote_add_unavailable": {
     "message": "$NAME$ ei voi lisätä — kuva ei saatavilla",
@@ -1533,24 +1489,21 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "estäminen ei onnistunut — yritä uudelleen"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "eston poisto ei onnistunut — yritä uudelleen"
+  "mc_emote_added_slot": {
+    "message": "lisättiin $NAME$ paikkaan $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "estetty $COUNT$ emotea",
     "placeholders": {
       "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_remove_error": {
-    "message": "virhe poistettaessa: $NAME$",
-    "placeholders": {
-      "name": {
         "content": "$1"
       }
     }
@@ -1563,16 +1516,8 @@
       }
     }
   },
-  "mc_emote_removed": {
-    "message": "poistettu: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_swapped": {
-    "message": "$NAME$ on nyt se, jonka valitsit",
+    "message": "$NAME$ vaihdettu valintaasi",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "oma latauksesi säilyttää nimen $NAME$",
+    "message": "$NAME$ on oma latauksesi — pidettiin",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "esto poistettu: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "$NAME$:n vaihto ei onnistunut — pidettiin omasi",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "viestiä ei voitu lähettää — se näkyy yhä juhlarivissäsi"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ ei tallentunut reppuusi — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "kanavaa ei tallennettu — tallennusvirhe"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "kirjaudu lisätäksesi emotejä"
   },
-  "hsbtn_add_failed": {
-    "message": "lisäys epäonnistui"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "eston poisto epäonnistui"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ käyttökertaa heatsyncissä",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "uudelleennimeäminen epäonnistui"
+    "message": "uudelleennimeäminen epäonnistui — yritä uudelleen"
   },
   "hsbtn_moved_to_slot": {
     "message": "siirretty paikkaan $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "kirjaudu osoitteessa heatsync.org hallitaksesi emotejä"
-  },
-  "cs_remove_failed": {
-    "message": "ei voitu poistaa $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "tuntematon virhe"
+    "message": "kirjaudu sisään hallitaksesi varastoa"
   },
   "popup_site_label": {
     "message": "heatsync-chat sivustolla"

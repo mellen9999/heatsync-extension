@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "emote url másolása"
   },
-  "btn_toast_unblocked": {
-    "message": "tiltás feloldva"
-  },
-  "btn_toast_block_failed": {
-    "message": "nem sikerült blokkolni — próbáld újra"
-  },
   "btn_toast_blocked": {
     "message": "letiltva"
   },
   "btn_toast_removed": {
     "message": "eltávolítva"
-  },
-  "btn_toast_remove_failed": {
-    "message": "az eltávolítás nem sikerült"
-  },
-  "btn_toast_added": {
-    "message": "hozzáadva"
   },
   "btn_toast_copied": {
     "message": "másolva"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "kattints a kibontáshoz"
   },
-  "content_toast_failed_add": {
-    "message": "$NAME$ hozzáadása sikertelen: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ tiltásának feloldva",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "tiltásfeloldás sikertelen: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "tiltás sikertelen: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "nem sikerült törölni — próbáld újra"
   },
-  "mc_emote_blocked_toast": {
-    "message": "blokkolva: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "letiltva (kattints a feloldáshoz)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "twitch követés megszüntetése sorban — szinkronizál, amikor legközelebb megnyitod a twitch.tv-t"
   },
-  "mc_emote_add_error": {
-    "message": "hiba a hozzáadásnál: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "nem sikerült hozzáadni: $NAME$",
+    "message": "$NAME$ hozzáadása nem sikerült",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "emote-ok hozzáadásához jelentkezz be a heatsync.org-ra"
+  "mc_emote_add_dupe": {
+    "message": "már van $NAME$ nevű emote-od",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "betelt az emote hely — előbb törölj párat"
+  },
+  "mc_emote_add_busy": {
+    "message": "a moderáció elfoglalt, próbáld újra"
   },
   "mc_emote_add_unavailable": {
     "message": "$NAME$ nem adható hozzá — a kép nem elérhető",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "nem sikerült blokkolni — próbáld újra"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "nem sikerült feloldani — próbáld újra"
+  "mc_emote_added_slot": {
+    "message": "$NAME$ hozzáadva a(z) $SLOT$. helyre",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emote blokkolva",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "hiba az eltávolításnál: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "nem sikerült eltávolítani: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "eltávolítva: $NAME$",
+    "message": "az eltávolítás nem sikerült: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "a te $NAME$ emotod mostantól az, amelyiket választottál",
+    "message": "$NAME$ lecserélve a te választásodra",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "a saját feltöltésed megtartja a nevet: $NAME$",
+    "message": "$NAME$ a te feltöltésed — megtartva",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "feloldva: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "$NAME$ cseréje nem sikerült — a tied maradt",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "az üzenetet nem sikerült elküldeni — az ünneplő sorodban még látszik"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ nem mentődött a készletedbe — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "a csatorna nem mentődött — tárolási hiba"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "jelentkezz be emote-ok hozzáadásához"
   },
-  "hsbtn_add_failed": {
-    "message": "a hozzáadás nem sikerült"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "a blokk feloldása nem sikerült"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ használat a heatsyncen",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "az átnevezés nem sikerült"
+    "message": "az átnevezés nem sikerült — próbáld újra"
   },
   "hsbtn_moved_to_slot": {
     "message": "áthelyezve a(z) $SLOT$. slotba",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "jelentkezz be a heatsync.org-on az emote-ok kezeléséhez"
-  },
-  "cs_remove_failed": {
-    "message": "$NAME$ nem távolítható el: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "ismeretlen hiba"
+    "message": "lépj be a készlet kezeléséhez"
   },
   "popup_site_label": {
     "message": "heatsync chat itt:"

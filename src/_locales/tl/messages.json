@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "kopyahin ang url ng emote"
   },
-  "btn_toast_unblocked": {
-    "message": "naka-unblock"
-  },
-  "btn_toast_block_failed": {
-    "message": "hindi na-block — subukan ulit"
-  },
   "btn_toast_blocked": {
     "message": "naka-block"
   },
   "btn_toast_removed": {
     "message": "naalis"
-  },
-  "btn_toast_remove_failed": {
-    "message": "hindi natanggal"
-  },
-  "btn_toast_added": {
-    "message": "naidagdag"
   },
   "btn_toast_copied": {
     "message": "kinopya"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "i-click para palawakin"
   },
-  "content_toast_failed_add": {
-    "message": "nabigo sa pagdaragdag ng $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "na-unblock ang $NAME$",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "nabigo sa pag-unblock: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "nabigo sa pag-block: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "hindi nabura — subukan ulit"
   },
-  "mc_emote_blocked_toast": {
-    "message": "na-block: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "naka-block (i-click para i-unblock)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "nakapila ang twitch unfollow — magsi-sync sa susunod na pagbukas mo ng twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "error sa pagdagdag: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "hindi naidagdag: $NAME$",
+    "message": "hindi naidagdag ang $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "mag-log in sa heatsync.org para magdagdag ng emotes"
+  "mc_emote_add_dupe": {
+    "message": "may emote ka nang nagngangalang $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "puno na ang emote slots — mag-alis muna ng ilan"
+  },
+  "mc_emote_add_busy": {
+    "message": "abala ang moderation, subukan ulit"
   },
   "mc_emote_add_unavailable": {
     "message": "hindi maidagdag ang $NAME$ — walang available na larawan",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "hindi na-block — subukan ulit"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "hindi na-unblock — subukan ulit"
+  "mc_emote_added_slot": {
+    "message": "nadagdag ang $NAME$ sa slot $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "na-block ang $COUNT$ emotes",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "error sa pagtanggal: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "hindi natanggal: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "natanggal: $NAME$",
+    "message": "hindi naalis: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "ang $NAME$ mo ay yung pinili mo na ngayon",
+    "message": "napalitan ang $NAME$ ng pinili mo",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "nananatili ang pangalang $NAME$ sa sarili mong upload",
+    "message": "$NAME$ ay upload mo — pinanatili",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "na-unblock: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "hindi napalitan ang $NAME$ — pinanatili ang sa iyo",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "hindi naipadala ang mensahe — nakikita pa rin ito sa celebration row mo"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "hindi nai-save ang $EMOTE$ sa inventory mo — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "hindi nai-save ang channel — error sa storage"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "mag-log in para magdagdag ng emote"
   },
-  "hsbtn_add_failed": {
-    "message": "nabigong idagdag"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "nabigo ang unblock"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ gamit sa heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "nabigo ang pagpapalit ng pangalan"
+    "message": "hindi napalitan ang pangalan — subukan ulit"
   },
   "hsbtn_moved_to_slot": {
     "message": "inilipat sa slot $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "mag-log in sa heatsync.org para pamahalaan ang mga emote"
-  },
-  "cs_remove_failed": {
-    "message": "hindi maalis ang $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "hindi kilalang error"
+    "message": "mag-log in para ayusin ang inventory"
   },
   "popup_site_label": {
     "message": "heatsync chat sa"

@@ -55,6 +55,7 @@ these files are byte-for-byte copies of the site's. edit them in the site repo (
 | `shared/emote-{law,rank,usage}.ts`, `shared/emote-{law,mods}.vectors.json` | `shared/…` (the emote law and its vectors) |
 | `client/utils/chat-gifs.js`, `shared/gif-links.ts` | `src/lib/chat-gifs.js`, `shared/gif-links.ts` (a twitch gif line's validator and frame rules, bundled as `hsChatGifs`) |
 | `tests/helpers/emote-world.ts` | `tests/helpers/emote-world.ts` |
+| `shared/emote-notice.vectors.json` | `shared/emote-notice.vectors.json` (what every app says when you add, remove, rename, swap, block or unblock an emote; `src/lib/emote-notice.js` is ours and `tests/emote-notice-vectors.test.js` runs every row) |
 | `client/utils/{paint-core,scene-spec,paint-spec,paint-authoring,plus-tenure,badge-catalogue}.js`, `client/cosmetics/{animation-phase,fill-layers,glyph-mask}.js`, `client/chat/stv-paint-css.js` | `src/lib/…` (the paint compiler and its runtime) |
 
 four files go the other way: `src/multichat/{slash-registry,filter-rules,filter-rules-legacy,name-marks}.js` are ours, and the site vendors them with its `scripts/sync-ext-copies.sh`. the pre-push hook names the twin to land when one changes.

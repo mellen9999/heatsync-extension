@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "复制表情 url"
   },
-  "btn_toast_unblocked": {
-    "message": "已取消屏蔽"
-  },
-  "btn_toast_block_failed": {
-    "message": "无法屏蔽 — 请重试"
-  },
   "btn_toast_blocked": {
     "message": "已屏蔽"
   },
   "btn_toast_removed": {
     "message": "已移除"
-  },
-  "btn_toast_remove_failed": {
-    "message": "移除失败"
-  },
-  "btn_toast_added": {
-    "message": "已添加"
   },
   "btn_toast_copied": {
     "message": "已复制"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "点击展开"
   },
-  "content_toast_failed_add": {
-    "message": "添加 $NAME$ 失败：$ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "已解除屏蔽 $NAME$",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "解除屏蔽失败：$ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "屏蔽失败：$ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "删除失败 — 请重试"
   },
-  "mc_emote_blocked_toast": {
-    "message": "已屏蔽：$NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "已屏蔽 (点击解除)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "twitch 取消关注已排队 — 下次打开 twitch.tv 时同步"
   },
-  "mc_emote_add_error": {
-    "message": "添加出错：$NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "添加失败：$NAME$",
+    "message": "无法添加 $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "登录 heatsync.org 以添加 emote"
+  "mc_emote_add_dupe": {
+    "message": "已有名为 $NAME$ 的表情",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "表情槽位已满 — 请先移除一些"
+  },
+  "mc_emote_add_busy": {
+    "message": "审核繁忙，请重试"
   },
   "mc_emote_add_unavailable": {
     "message": "无法添加 $NAME$ — 图片不可用",
@@ -1533,24 +1489,21 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "无法屏蔽 — 请重试"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "无法取消屏蔽 — 请重试"
+  "mc_emote_added_slot": {
+    "message": "已将 $NAME$ 加入槽位 $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "已屏蔽 $COUNT$ 个 emote",
     "placeholders": {
       "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_remove_error": {
-    "message": "移除出错：$NAME$",
-    "placeholders": {
-      "name": {
         "content": "$1"
       }
     }
@@ -1563,16 +1516,8 @@
       }
     }
   },
-  "mc_emote_removed": {
-    "message": "已移除：$NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_swapped": {
-    "message": "你的 $NAME$ 现在是你选的那个",
+    "message": "$NAME$ 已换成你选的",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "你自己上传的保留名称 $NAME$",
+    "message": "$NAME$ 是你上传的 — 已保留",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "已取消屏蔽：$NAME$",
+  "mc_emote_swap_failed": {
+    "message": "无法替换 $NAME$ — 已保留你的",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "消息发送失败 — 仍显示在你的庆祝行中"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ 未保存到你的库存 — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "频道未保存 — 存储出错"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "登录后添加表情"
   },
-  "hsbtn_add_failed": {
-    "message": "添加失败"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "取消屏蔽失败"
-  },
   "hsbtn_uses_title": {
     "message": "在 heatsync 使用 $COUNT$ 次",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "重命名失败"
+    "message": "重命名失败 — 请重试"
   },
   "hsbtn_moved_to_slot": {
     "message": "已移到槽位 $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "登录 heatsync.org 管理表情"
-  },
-  "cs_remove_failed": {
-    "message": "无法移除 $NAME$：$ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "未知错误"
+    "message": "登录后才能管理库存"
   },
   "popup_site_label": {
     "message": "heatsync 聊天用于"

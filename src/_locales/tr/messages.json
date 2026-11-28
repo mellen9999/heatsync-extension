@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "emote url'sini kopyala"
   },
-  "btn_toast_unblocked": {
-    "message": "engel kaldırıldı"
-  },
-  "btn_toast_block_failed": {
-    "message": "engellenemedi — tekrar dene"
-  },
   "btn_toast_blocked": {
     "message": "engellendi"
   },
   "btn_toast_removed": {
     "message": "kaldırıldı"
-  },
-  "btn_toast_remove_failed": {
-    "message": "kaldırılamadı"
-  },
-  "btn_toast_added": {
-    "message": "eklendi"
   },
   "btn_toast_copied": {
     "message": "kopyalandı"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "genişletmek için tıkla"
   },
-  "content_toast_failed_add": {
-    "message": "$NAME$ eklenemedi: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ engeli kaldırıldı",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "engel kaldırma başarısız: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "engelleme başarısız: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "silinemedi — tekrar dene"
   },
-  "mc_emote_blocked_toast": {
-    "message": "engellendi: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "engellendi (kaldırmak için tıkla)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "twitch takip bırakma kuyrukta — twitch.tv'yi bir sonraki açışında eşitlenir"
   },
-  "mc_emote_add_error": {
-    "message": "ekleme hatası: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "eklenemedi: $NAME$",
+    "message": "$NAME$ eklenemedi",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "emotes eklemek için heatsync.org'a giriş yap"
+  "mc_emote_add_dupe": {
+    "message": "$NAME$ adında bir emote zaten var",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "emote yuvaları dolu — önce birkaçını kaldır"
+  },
+  "mc_emote_add_busy": {
+    "message": "moderasyon meşgul, tekrar dene"
   },
   "mc_emote_add_unavailable": {
     "message": "$NAME$ eklenemiyor — görsel yok",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "engellenemedi — tekrar dene"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "engel kaldırılamadı — tekrar dene"
+  "mc_emote_added_slot": {
+    "message": "$NAME$ $SLOT$. yuvaya eklendi",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emotes engellendi",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "kaldırma hatası: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "kaldırılamadı: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "kaldırıldı: $NAME$",
+    "message": "kaldırma başarısız: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "$NAME$ artık seçtiğin",
+    "message": "$NAME$ senin seçimine değiştirildi",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "kendi yüklemen $NAME$ adını koruyor",
+    "message": "$NAME$ senin yüklemen — olduğu gibi bırakıldı",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "engeli kaldırıldı: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "$NAME$ değiştirilemedi — seninki kaldı",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "mesaj gönderilemedi — hâlâ kutlama satırında görünüyor"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ envanterine kaydedilmedi — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "kanal kaydedilmedi — depolama hatası"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "emote eklemek için giriş yap"
   },
-  "hsbtn_add_failed": {
-    "message": "eklenemedi"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "engel kaldırılamadı"
-  },
   "hsbtn_uses_title": {
     "message": "heatsync'te $COUNT$ kullanım",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "yeniden adlandırma başarısız"
+    "message": "yeniden adlandırma başarısız — tekrar dene"
   },
   "hsbtn_moved_to_slot": {
     "message": "$SLOT$. slota taşındı",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "emote'ları yönetmek için heatsync.org'da giriş yap"
-  },
-  "cs_remove_failed": {
-    "message": "$NAME$ kaldırılamadı: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "bilinmeyen hata"
+    "message": "envanteri yönetmek için giriş yap"
   },
   "popup_site_label": {
     "message": "heatsync sohbeti şurada:"

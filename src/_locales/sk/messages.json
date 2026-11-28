@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "skopírovať url emotky"
   },
-  "btn_toast_unblocked": {
-    "message": "odblokované"
-  },
-  "btn_toast_block_failed": {
-    "message": "nepodarilo sa zablokovať — skús znova"
-  },
   "btn_toast_blocked": {
     "message": "zablokované"
   },
   "btn_toast_removed": {
     "message": "odstránené"
-  },
-  "btn_toast_remove_failed": {
-    "message": "odstránenie zlyhalo"
-  },
-  "btn_toast_added": {
-    "message": "pridané"
   },
   "btn_toast_copied": {
     "message": "skopírované"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "klikni pre rozbalenie"
   },
-  "content_toast_failed_add": {
-    "message": "pridanie $NAME$ zlyhalo: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ odblokovaný",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "odblokovanie zlyhalo: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "blokovanie zlyhalo: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "nepodarilo sa odstrániť — skús znova"
   },
-  "mc_emote_blocked_toast": {
-    "message": "zablokované: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "zablokované (klikni pre odblokovanie)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "zrušenie sledovania na twitch je vo fronte — synchronizuje sa, keď nabudúce otvoríš twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "chyba pri pridávaní: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "nepodarilo sa pridať: $NAME$",
+    "message": "$NAME$ sa nepodarilo pridať",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "prihlás sa na heatsync.org, aby si mohol pridávať emotes"
+  "mc_emote_add_dupe": {
+    "message": "emote s názvom $NAME$ už máš",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "sloty na emotes sú plné — najprv niektoré odstráň"
+  },
+  "mc_emote_add_busy": {
+    "message": "moderácia je zaneprázdnená, skús znova"
   },
   "mc_emote_add_unavailable": {
     "message": "nemôžem pridať $NAME$ — obrázok nie je dostupný",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "nepodarilo sa zablokovať — skús znova"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "nepodarilo sa odblokovať — skús znova"
+  "mc_emote_added_slot": {
+    "message": "$NAME$ pridané do slotu $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "zablokované emotes: $COUNT$",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "chyba pri odstraňovaní: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "nepodarilo sa odstrániť: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "odstránené: $NAME$",
+    "message": "odstránenie zlyhalo: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "tvoj $NAME$ je teraz ten, ktorý si vybral",
+    "message": "$NAME$ vymenený za tvoj výber",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "tvoj vlastný upload si drží meno $NAME$",
+    "message": "$NAME$ je tvoj upload — ponechaný",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "odblokované: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "nepodarilo sa vymeniť $NAME$ — ponechaný tvoj",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "správu sa nepodarilo odoslať — stále je v tvojom oslavnom riadku"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ sa neuložil do tvojho inventára — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "kanál sa neuložil — chyba úložiska"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "prihlás sa a pridaj emotikony"
   },
-  "hsbtn_add_failed": {
-    "message": "pridanie zlyhalo"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "odblokovanie zlyhalo"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ použití na heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "premenovanie zlyhalo"
+    "message": "premenovanie zlyhalo — skús znova"
   },
   "hsbtn_moved_to_slot": {
     "message": "presunuté do slotu $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "prihlás sa na heatsync.org a spravuj emotikony"
-  },
-  "cs_remove_failed": {
-    "message": "$NAME$ sa nepodarilo odstrániť: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "neznáma chyba"
+    "message": "prihlás sa a spravuj inventár"
   },
   "popup_site_label": {
     "message": "chat heatsync na"

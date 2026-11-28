@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "คัดลอก url อีโมต"
   },
-  "btn_toast_unblocked": {
-    "message": "ปลดบล็อกแล้ว"
-  },
-  "btn_toast_block_failed": {
-    "message": "บล็อกไม่สำเร็จ — ลองอีกครั้ง"
-  },
   "btn_toast_blocked": {
     "message": "บล็อกแล้ว"
   },
   "btn_toast_removed": {
     "message": "นำออกแล้ว"
-  },
-  "btn_toast_remove_failed": {
-    "message": "ลบไม่สำเร็จ"
-  },
-  "btn_toast_added": {
-    "message": "เพิ่มแล้ว"
   },
   "btn_toast_copied": {
     "message": "คัดลอกแล้ว"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "คลิกเพื่อขยาย"
   },
-  "content_toast_failed_add": {
-    "message": "เพิ่ม $NAME$ ไม่สำเร็จ: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "ยกเลิกการบล็อก $NAME$ แล้ว",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "ยกเลิกการบล็อกไม่สำเร็จ: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "บล็อกไม่สำเร็จ: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "ลบไม่สำเร็จ — ลองอีกครั้ง"
   },
-  "mc_emote_blocked_toast": {
-    "message": "บล็อกแล้ว: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "ถูกบล็อก (คลิกเพื่อปลดบล็อก)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "การเลิกติดตาม twitch เข้าคิวแล้ว — จะซิงก์ครั้งหน้าที่คุณเปิด twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "เพิ่มไม่ได้เพราะ error: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "เพิ่มไม่สำเร็จ: $NAME$",
+    "message": "เพิ่ม $NAME$ ไม่ได้",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "ล็อกอิน heatsync.org เพื่อเพิ่ม emotes"
+  "mc_emote_add_dupe": {
+    "message": "มี emote ชื่อ $NAME$ อยู่แล้ว",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "ช่อง emote เต็ม — เอาบางตัวออกก่อน"
+  },
+  "mc_emote_add_busy": {
+    "message": "ระบบตรวจสอบไม่ว่าง ลองอีกครั้ง"
   },
   "mc_emote_add_unavailable": {
     "message": "เพิ่ม $NAME$ ไม่ได้ — ไม่มีรูป",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "บล็อกไม่สำเร็จ — ลองอีกครั้ง"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "เลิกบล็อกไม่สำเร็จ — ลองอีกครั้ง"
+  "mc_emote_added_slot": {
+    "message": "เพิ่ม $NAME$ ลงช่อง $SLOT$ แล้ว",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "บล็อก emotes แล้ว $COUNT$",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "ลบไม่ได้เพราะ error: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "ลบไม่สำเร็จ: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "ลบแล้ว: $NAME$",
+    "message": "เอาออกไม่สำเร็จ: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "$NAME$ ของคุณตอนนี้คืออันที่คุณเลือก",
+    "message": "สลับ $NAME$ เป็นที่คุณเลือกแล้ว",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "อัปโหลดของคุณเองยังใช้ชื่อ $NAME$",
+    "message": "$NAME$ เป็นที่คุณอัปโหลดเอง — เก็บไว้",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "เลิกบล็อกแล้ว: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "สลับ $NAME$ ไม่ได้ — เก็บของคุณไว้",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "ส่งข้อความไม่ได้ — ยังแสดงอยู่ในแถวฉลองของคุณ"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ ไม่ได้ถูกบันทึกลงคลังของคุณ — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "ไม่ได้บันทึกช่อง — ที่เก็บข้อมูลมีปัญหา"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "ล็อกอินเพื่อเพิ่มอีโมต"
   },
-  "hsbtn_add_failed": {
-    "message": "เพิ่มไม่สำเร็จ"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "เลิกบล็อกไม่สำเร็จ"
-  },
   "hsbtn_uses_title": {
     "message": "ใช้ $COUNT$ ครั้งบน heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "เปลี่ยนชื่อไม่สำเร็จ"
+    "message": "เปลี่ยนชื่อไม่สำเร็จ — ลองอีกครั้ง"
   },
   "hsbtn_moved_to_slot": {
     "message": "ย้ายไปช่อง $SLOT$ แล้ว",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "ล็อกอินที่ heatsync.org เพื่อจัดการอีโมต"
-  },
-  "cs_remove_failed": {
-    "message": "ลบ $NAME$ ไม่สำเร็จ: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "error ที่ไม่ทราบสาเหตุ"
+    "message": "เข้าสู่ระบบเพื่อจัดการคลัง"
   },
   "popup_site_label": {
     "message": "แชท heatsync บน"

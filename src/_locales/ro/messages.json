@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "copiază url emote"
   },
-  "btn_toast_unblocked": {
-    "message": "deblocat"
-  },
-  "btn_toast_block_failed": {
-    "message": "nu s-a putut bloca — încearcă din nou"
-  },
   "btn_toast_blocked": {
     "message": "blocat"
   },
   "btn_toast_removed": {
     "message": "eliminat"
-  },
-  "btn_toast_remove_failed": {
-    "message": "ștergerea a eșuat"
-  },
-  "btn_toast_added": {
-    "message": "adăugat"
   },
   "btn_toast_copied": {
     "message": "copiat"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "apasă pentru a extinde"
   },
-  "content_toast_failed_add": {
-    "message": "adăugarea lui $NAME$ a eșuat: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ deblocat",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "deblocarea a eșuat: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "blocarea a eșuat: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "nu s-a putut șterge — încearcă din nou"
   },
-  "mc_emote_blocked_toast": {
-    "message": "blocat: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "blocat (apasă pentru a debloca)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "oprire urmărire twitch la coadă — se sincronizează data viitoare când deschizi twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "eroare la adăugare: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "adăugarea a eșuat: $NAME$",
+    "message": "nu s-a putut adăuga $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "conectează-te pe heatsync.org ca să adaugi emote-uri"
+  "mc_emote_add_dupe": {
+    "message": "ai deja un emote numit $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "locuri de emote pline — șterge câteva întâi"
+  },
+  "mc_emote_add_busy": {
+    "message": "moderarea e ocupată, încearcă din nou"
   },
   "mc_emote_add_unavailable": {
     "message": "nu se poate adăuga $NAME$ — imagine indisponibilă",
@@ -1533,24 +1489,21 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "nu s-a putut bloca — încearcă din nou"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "nu s-a putut debloca — încearcă din nou"
+  "mc_emote_added_slot": {
+    "message": "$NAME$ adăugat în locul $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "$COUNT$ emote-uri blocate",
     "placeholders": {
       "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_remove_error": {
-    "message": "eroare la ștergere: $NAME$",
-    "placeholders": {
-      "name": {
         "content": "$1"
       }
     }
@@ -1563,16 +1516,8 @@
       }
     }
   },
-  "mc_emote_removed": {
-    "message": "șters: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_swapped": {
-    "message": "$NAME$ al tău este acum cel pe care l-ai ales",
+    "message": "$NAME$ înlocuit cu alegerea ta",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "upload-ul tău păstrează numele $NAME$",
+    "message": "$NAME$ e încărcarea ta — păstrat",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "deblocat: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "nu s-a putut înlocui $NAME$ — l-am păstrat pe al tău",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "mesajul nu a putut fi trimis — încă apare în rândul tău de celebrare"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ nu s-a salvat în inventarul tău — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "canal nesalvat — eroare de stocare"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "autentifică-te ca să adaugi emotes"
   },
-  "hsbtn_add_failed": {
-    "message": "adăugarea a eșuat"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "deblocarea a eșuat"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ utilizări pe heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "redenumirea a eșuat"
+    "message": "redenumire eșuată — încearcă din nou"
   },
   "hsbtn_moved_to_slot": {
     "message": "mutat în slotul $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "autentifică-te pe heatsync.org ca să gestionezi emotes"
-  },
-  "cs_remove_failed": {
-    "message": "nu s-a putut elimina $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "eroare necunoscută"
+    "message": "autentifică-te ca să gestionezi inventarul"
   },
   "popup_site_label": {
     "message": "chat heatsync pe"

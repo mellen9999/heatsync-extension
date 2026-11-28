@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "نسخ رابط الإيموت"
   },
-  "btn_toast_unblocked": {
-    "message": "تم إلغاء الحظر"
-  },
-  "btn_toast_block_failed": {
-    "message": "تعذّر الحظر — حاول مرة أخرى"
-  },
   "btn_toast_blocked": {
     "message": "تم الحظر"
   },
   "btn_toast_removed": {
     "message": "تمت الإزالة"
-  },
-  "btn_toast_remove_failed": {
-    "message": "فشلت الإزالة"
-  },
-  "btn_toast_added": {
-    "message": "تمت الإضافة"
   },
   "btn_toast_copied": {
     "message": "تم النسخ"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "اضغط للتوسيع"
   },
-  "content_toast_failed_add": {
-    "message": "فشل إضافة $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "تم رفع الحظر عن $NAME$",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "فشل رفع الحظر: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "فشل الحظر: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "تعذّر الحذف — حاول مرة أخرى"
   },
-  "mc_emote_blocked_toast": {
-    "message": "محظور: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "محظور (اضغط لإلغاء الحظر)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "إلغاء متابعة twitch في الطابور — سيُزامن عند فتح twitch.tv المرة القادمة"
   },
-  "mc_emote_add_error": {
-    "message": "خطأ عند الإضافة: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "فشلت الإضافة: $NAME$",
+    "message": "تعذّرت إضافة $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "سجّل الدخول إلى heatsync.org لإضافة emotes"
+  "mc_emote_add_dupe": {
+    "message": "لديك emote بالاسم $NAME$ بالفعل",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "خانات emote ممتلئة — أزل بعضها أولًا"
+  },
+  "mc_emote_add_busy": {
+    "message": "الإشراف مشغول، حاول مجددًا"
   },
   "mc_emote_add_unavailable": {
     "message": "لا يمكن إضافة $NAME$ — الصورة غير متاحة",
@@ -1533,24 +1489,21 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "تعذّر الحظر — حاول مرة أخرى"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "تعذّر رفع الحظر — حاول مرة أخرى"
+  "mc_emote_added_slot": {
+    "message": "أُضيفت $NAME$ إلى الخانة $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "تم حظر $COUNT$ emotes",
     "placeholders": {
       "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_remove_error": {
-    "message": "خطأ عند الإزالة: $NAME$",
-    "placeholders": {
-      "name": {
         "content": "$1"
       }
     }
@@ -1563,16 +1516,8 @@
       }
     }
   },
-  "mc_emote_removed": {
-    "message": "تمت الإزالة: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_swapped": {
-    "message": "$NAME$ الخاص بك أصبح الآن الذي اخترته",
+    "message": "تم استبدال $NAME$ باختيارك",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "رفعك الخاص يحتفظ بالاسم $NAME$",
+    "message": "$NAME$ من رفعك — أبقيناه",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "رُفع الحظر: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "تعذّر استبدال $NAME$ — أبقينا ما لديك",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "تعذّر إرسال الرسالة — ما زالت ظاهرة في سطر الاحتفال"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "لم يُحفظ $EMOTE$ في مخزونك — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "لم تُحفظ القناة — خطأ في التخزين"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "سجّل دخول لإضافة إيموتس"
   },
-  "hsbtn_add_failed": {
-    "message": "فشلت الإضافة"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "فشل إلغاء الحظر"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ استخدام على heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "فشلت إعادة التسمية"
+    "message": "فشلت إعادة التسمية — حاول مجددًا"
   },
   "hsbtn_moved_to_slot": {
     "message": "نُقل إلى الخانة $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "سجّل دخول على heatsync.org لإدارة الإيموتس"
-  },
-  "cs_remove_failed": {
-    "message": "تعذّرت إزالة $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "خطأ غير معروف"
+    "message": "سجّل الدخول لإدارة المخزون"
   },
   "popup_site_label": {
     "message": "دردشة heatsync على"

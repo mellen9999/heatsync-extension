@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "kopiuj url emotki"
   },
-  "btn_toast_unblocked": {
-    "message": "odblokowano"
-  },
-  "btn_toast_block_failed": {
-    "message": "nie udało się zablokować — spróbuj ponownie"
-  },
   "btn_toast_blocked": {
     "message": "zablokowano"
   },
   "btn_toast_removed": {
     "message": "usunięto"
-  },
-  "btn_toast_remove_failed": {
-    "message": "nie udało się usunąć"
-  },
-  "btn_toast_added": {
-    "message": "dodano"
   },
   "btn_toast_copied": {
     "message": "skopiowano"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "kliknij aby rozwinąć"
   },
-  "content_toast_failed_add": {
-    "message": "nie udało się dodać $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ odblokowany",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "odblokowanie nie powiodło się: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "blokowanie nie powiodło się: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "nie udało się usunąć — spróbuj ponownie"
   },
-  "mc_emote_blocked_toast": {
-    "message": "zablokowano: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "zablokowane (kliknij aby odblokować)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "cofnięcie obserwacji twitch w kolejce — zsynchronizuje się przy następnym otwarciu twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "błąd dodawania: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "nie udało się dodać: $NAME$",
+    "message": "nie udało się dodać $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "zaloguj się na heatsync.org, żeby dodawać emotki"
+  "mc_emote_add_dupe": {
+    "message": "masz już emote o nazwie $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "sloty emote pełne — najpierw usuń kilka"
+  },
+  "mc_emote_add_busy": {
+    "message": "moderacja zajęta, spróbuj ponownie"
   },
   "mc_emote_add_unavailable": {
     "message": "nie można dodać $NAME$ — obraz niedostępny",
@@ -1533,11 +1489,16 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "nie udało się zablokować — spróbuj ponownie"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "nie udało się odblokować — spróbuj ponownie"
+  "mc_emote_added_slot": {
+    "message": "dodano $NAME$ do slotu $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "zablokowano emotek: $COUNT$",
@@ -1547,24 +1508,8 @@
       }
     }
   },
-  "mc_emote_remove_error": {
-    "message": "błąd usuwania: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_remove_failed": {
-    "message": "nie udało się usunąć: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_removed": {
-    "message": "usunięto: $NAME$",
+    "message": "usunięcie nie wyszło: $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1572,7 +1517,7 @@
     }
   },
   "mc_emote_swapped": {
-    "message": "twój $NAME$ to teraz ten, który wybrałeś",
+    "message": "$NAME$ zamieniony na twój wybór",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "twój własny upload zachowuje nazwę $NAME$",
+    "message": "$NAME$ to twój upload — zostawiony",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "odblokowano: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "nie udało się zamienić $NAME$ — zostaje twój",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "nie udało się wysłać wiadomości — wciąż jest w wierszu celebracji"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ nie zapisała się w twoim ekwipunku — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "kanał nie zapisany — błąd pamięci"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "zaloguj się, żeby dodawać emotki"
   },
-  "hsbtn_add_failed": {
-    "message": "nie udało się dodać"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "odblokowanie nie powiodło się"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ użyć w heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "zmiana nazwy nie powiodła się"
+    "message": "zmiana nazwy nie wyszła — spróbuj ponownie"
   },
   "hsbtn_moved_to_slot": {
     "message": "przeniesiono do slotu $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "zaloguj się na heatsync.org, żeby zarządzać emotkami"
-  },
-  "cs_remove_failed": {
-    "message": "nie udało się usunąć $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "nieznany błąd"
+    "message": "zaloguj się, by zarządzać inwentarzem"
   },
   "popup_site_label": {
     "message": "czat heatsync na"

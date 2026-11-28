@@ -135,23 +135,11 @@
   "btn_ctx_copy_url": {
     "message": "zkopírovat url emotky"
   },
-  "btn_toast_unblocked": {
-    "message": "odblokováno"
-  },
-  "btn_toast_block_failed": {
-    "message": "nepodařilo se zablokovat — zkus to znovu"
-  },
   "btn_toast_blocked": {
     "message": "zablokováno"
   },
   "btn_toast_removed": {
     "message": "odebráno"
-  },
-  "btn_toast_remove_failed": {
-    "message": "odebrání selhalo"
-  },
-  "btn_toast_added": {
-    "message": "přidáno"
   },
   "btn_toast_copied": {
     "message": "zkopírováno"
@@ -183,37 +171,10 @@
   "btn_click_expand": {
     "message": "klikni pro rozbalení"
   },
-  "content_toast_failed_add": {
-    "message": "nepodařilo se přidat $NAME$: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
   "content_toast_unblocked": {
     "message": "$NAME$ odblokován",
     "placeholders": {
       "name": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_unblock": {
-    "message": "odblokování selhalo: $ERROR$",
-    "placeholders": {
-      "error": {
-        "content": "$1"
-      }
-    }
-  },
-  "content_toast_failed_block": {
-    "message": "blokování selhalo: $ERROR$",
-    "placeholders": {
-      "error": {
         "content": "$1"
       }
     }
@@ -975,14 +936,6 @@
   "mc_feed_delete_failed": {
     "message": "smazání selhalo — zkus to znovu"
   },
-  "mc_emote_blocked_toast": {
-    "message": "zablokováno: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_blocked": {
     "message": "zablokováno (klikni pro odblokování)"
   },
@@ -1484,24 +1437,27 @@
   "mc_crossfollow_twitch_queued_unfollow": {
     "message": "zrušení sledování na twitch ve frontě — synchronizuje se při příštím otevření twitch.tv"
   },
-  "mc_emote_add_error": {
-    "message": "chyba při přidání: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_add_failed": {
-    "message": "přidání selhalo: $NAME$",
+    "message": "nepodařilo se přidat $NAME$",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_add_login": {
-    "message": "přihlas se na heatsync.org a přidávej emotes"
+  "mc_emote_add_dupe": {
+    "message": "emote se jménem $NAME$ už máš",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "mc_emote_add_full": {
+    "message": "sloty na emotes plné — nejdřív pár odeber"
+  },
+  "mc_emote_add_busy": {
+    "message": "moderace je zaneprázdněná, zkus znovu"
   },
   "mc_emote_add_unavailable": {
     "message": "nelze přidat $NAME$ — obrázek nedostupný",
@@ -1533,24 +1489,21 @@
       }
     }
   },
-  "mc_emote_block_failed": {
-    "message": "nepodařilo se zablokovat — zkus to znovu"
-  },
-  "mc_emote_unblock_failed": {
-    "message": "nepodařilo se odblokovat — zkus to znovu"
+  "mc_emote_added_slot": {
+    "message": "$NAME$ přidáno do slotu $SLOT$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "slot": {
+        "content": "$2"
+      }
+    }
   },
   "mc_emote_blocked_count": {
     "message": "zablokováno emotes: $COUNT$",
     "placeholders": {
       "count": {
-        "content": "$1"
-      }
-    }
-  },
-  "mc_emote_remove_error": {
-    "message": "chyba při odebrání: $NAME$",
-    "placeholders": {
-      "name": {
         "content": "$1"
       }
     }
@@ -1563,16 +1516,8 @@
       }
     }
   },
-  "mc_emote_removed": {
-    "message": "odebráno: $NAME$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      }
-    }
-  },
   "mc_emote_swapped": {
-    "message": "tvůj $NAME$ je teď ten, který sis vybral",
+    "message": "$NAME$ vyměněn za tvůj výběr",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -1580,15 +1525,15 @@
     }
   },
   "mc_emote_swap_upload": {
-    "message": "tvůj vlastní upload si drží jméno $NAME$",
+    "message": "$NAME$ je tvůj upload — nechán",
     "placeholders": {
       "name": {
         "content": "$1"
       }
     }
   },
-  "mc_emote_unblocked": {
-    "message": "odblokováno: $NAME$",
+  "mc_emote_swap_failed": {
+    "message": "nepodařilo se vyměnit $NAME$ — nechán tvůj",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -2275,17 +2220,6 @@
   },
   "mc_main_message_not_sent": {
     "message": "zprávu se nepodařilo odeslat — pořád je vidět v řádku oslavy"
-  },
-  "mc_main_emote_add_failed": {
-    "message": "$EMOTE$ se neuložil do tvého inventáře — $REASON$",
-    "placeholders": {
-      "emote": {
-        "content": "$1"
-      },
-      "reason": {
-        "content": "$2"
-      }
-    }
   },
   "mc_main_config_save_failed": {
     "message": "kanál neuložen — chyba úložiště"
@@ -5881,12 +5815,6 @@
   "hsbtn_login_add": {
     "message": "přihlas se a můžeš přidávat emotky"
   },
-  "hsbtn_add_failed": {
-    "message": "přidání selhalo"
-  },
-  "hsbtn_unblock_failed": {
-    "message": "odblokování selhalo"
-  },
   "hsbtn_uses_title": {
     "message": "$COUNT$ použití na heatsync",
     "placeholders": {
@@ -5930,7 +5858,7 @@
     }
   },
   "hsbtn_rename_failed": {
-    "message": "přejmenování selhalo"
+    "message": "přejmenování selhalo — zkus znovu"
   },
   "hsbtn_moved_to_slot": {
     "message": "přesunuto na pozici $SLOT$",
@@ -6059,21 +5987,7 @@
     }
   },
   "cs_login_manage": {
-    "message": "pro správu emotek se přihlas na heatsync.org"
-  },
-  "cs_remove_failed": {
-    "message": "$NAME$ se nepodařilo odebrat: $ERROR$",
-    "placeholders": {
-      "name": {
-        "content": "$1"
-      },
-      "error": {
-        "content": "$2"
-      }
-    }
-  },
-  "cs_unknown_error": {
-    "message": "neznámá chyba"
+    "message": "přihlas se pro správu inventáře"
   },
   "popup_site_label": {
     "message": "chat heatsync na"

@@ -76,6 +76,12 @@
 # registry (bun scripts/dump-settings-sync-vectors.js), copied to the site, and back here by this script;
 # tests/settings-sync-vectors.test.js fails when the registry and the file differ.
 #
+# shared/emote-notice.vectors.json is what every app says when you add, remove, rename, swap, block or
+# unblock an emote of yours: the line by id, and which line each server answer (op + http status) says.
+# The panel, the picker and the native page all say it through src/lib/emote-notice.js, and
+# tests/emote-notice-vectors.test.js runs every row against that lib and the en catalog; without
+# the copy the extension would word a refusal its own way again.
+#
 #   scripts/sync-site-copies.sh            # from ../heatsync (or $HS_SITE_DIR)
 set -euo pipefail
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -110,6 +116,7 @@ for pair in \
   shared/emote-only.vectors.json:shared/emote-only.vectors.json \
   shared/filter-rules.vectors.json:shared/filter-rules.vectors.json \
   shared/settings-sync.vectors.json:shared/settings-sync.vectors.json \
+  shared/emote-notice.vectors.json:shared/emote-notice.vectors.json \
   tests/helpers/emote-world.ts:tests/helpers/emote-world.ts
 do
   src_rel="${pair%%:*}"

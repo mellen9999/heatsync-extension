@@ -781,6 +781,7 @@ const LIB_ORDER = [
   'font-grid.js',
   'settings-schema.js',
   'browser-api.js',
+  'emote-notice.js',
   'modifiers.js',
   'undo-manager.js',
   'badge-index.js',
@@ -806,10 +807,11 @@ const LIB_EXTRAS = {
     'palette.js',
     'badge-index.js',
     'badge-hires.js',
+    'emote-notice.js',
   ],
   'youtube-content.js': ['config.js', 'modifiers.js'],
   'autocomplete-hook.js': ['modifiers.js'],
-  'heatsync-button.js': ['reserved-paths.js', 'palette.js'],
+  'heatsync-button.js': ['reserved-paths.js', 'palette.js', 'emote-notice.js'],
   'chat-injector.js': [],
 }
 
